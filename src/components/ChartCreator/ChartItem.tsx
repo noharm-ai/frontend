@@ -28,7 +28,7 @@ export const ChartItem = memo(
     const activeFilterCount = chart.filters?.length ?? 0;
 
     return (
-      <Col key={chart.id} span={chart.width === "full" ? 24 : 12}>
+      <Col key={chart.id} span={chart.width === "full" ? 24 : chart.width === "third" ? 8 : 12}>
         <Card
           title={chart.title}
           type="inner"

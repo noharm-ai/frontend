@@ -39,6 +39,7 @@ export default function ChartEventScatter({ reportData, isLoading }) {
   days.forEach(function (day, idx) {
     title.push({
       textBaseline: "middle",
+      left: 0,
       top: ((idx + 0.5) * 100) / 7 + "%",
       text: day,
     });

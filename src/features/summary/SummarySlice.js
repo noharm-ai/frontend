@@ -221,10 +221,14 @@ const summarySlice = createSlice({
         state.error = action.error.message;
       })
       .addCase(setLike.pending, (state, action) => {
-        state.blocks[action.meta.arg.block].like = "loading";
+        if (action.meta.arg.status !== "edited") {
+          state.blocks[action.meta.arg.block].like = "loading";
+        }
       })
       .addCase(setLike.fulfilled, (state, action) => {
-        state.blocks[action.meta.arg.block].like = action.meta.arg.status;
+        if (action.meta.arg.status !== "edited") {
+          state.blocks[action.meta.arg.block].like = action.meta.arg.status;
+        }
       });
   },
 });

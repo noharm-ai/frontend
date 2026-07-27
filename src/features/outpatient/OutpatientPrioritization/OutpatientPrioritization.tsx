@@ -1,6 +1,6 @@
 import { useState, useEffect, type ChangeEvent, type Key } from "react";
 import { ExpandColumn } from "components/ExpandColumn";
-import { debounce } from "lodash";
+import { debounce, deburr } from "lodash";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -80,7 +80,10 @@ export function OutpatientPrioritization() {
 
     debounce((e: ChangeEvent<HTMLInputElement>) => {
       if (e.target.value !== "" && e.target.value.length > 3) {
-        setFilter({ ...filter, searchKey: [e.target.value.toLowerCase()] });
+        setFilter({
+          ...filter,
+          searchKey: [deburr(e.target.value.toLowerCase())],
+        });
       } else if (filter.searchKey) {
         setFilter({ ...filter, searchKey: null });
       }

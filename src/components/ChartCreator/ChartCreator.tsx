@@ -1,13 +1,33 @@
 import { useState, useMemo, useCallback, useEffect, useImperativeHandle } from "react";
-import { Button, Card, Empty, Modal, Row, Col, Space } from "antd";
-import { PlusOutlined } from "@ant-design/icons";
-import { AggregationType, ChartConfig, ChartCreatorProps, ColorPalette, DateGrouping, Filter, ReferenceLine, SortOrder } from "./types";
+import { Button, Card, Empty, Row, Col, Space } from "antd";
+import {
+  BarChartOutlined,
+  BulbOutlined,
+  DashboardOutlined,
+  FunnelPlotOutlined,
+  LineChartOutlined,
+  PieChartOutlined,
+  RadarChartOutlined,
+} from "@ant-design/icons";
+import { ChartConfig, ChartCreatorProps } from "./types";
 import { ChartItem } from "./ChartItem";
-import { ChartFormFields } from "./ChartFormFields";
+import { ChartWizard } from "./ChartWizard";
 import { detectColumnSchema } from "src/utils/dataFilters";
 
-export function ChartCreator({ data, initialCharts, onChartsChange, readOnly, extraActions, ref }: ChartCreatorProps) {
+export function ChartCreator({
+  data,
+  initialCharts,
+  onChartsChange,
+  readOnly,
+  extraActions,
+  onGenerateCharts,
+  ref,
+}: ChartCreatorProps) {
   const [charts, setCharts] = useState<ChartConfig[]>(initialCharts ?? []);
+  const [wizardOpen, setWizardOpen] = useState(false);
+  const [editingChart, setEditingChart] = useState<ChartConfig | null>(null);
+  const [wizardInitialType, setWizardInitialType] = useState<ChartConfig["type"] | null>(null);
+  const [wizardToAgent, setWizardToAgent] = useState(false);
 
   useEffect(() => {
     onChartsChange?.(charts);
@@ -22,161 +42,46 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly, ex
     [],
   );
 
-  // State for NEW chart form
-  const [newTitle, setNewTitle] = useState("");
-  const [newX, setNewX] = useState<string[]>([]);
-  const [newY, setNewY] = useState<string[]>([]);
-  const [newType, setNewType] = useState<"bar" | "hbar" | "line" | "pie">("bar");
-  const [newWidth, setNewWidth] = useState<"full" | "half">("half");
-  const [newAggregation, setNewAggregation] = useState<AggregationType>("none");
-  const [newSortOrder, setNewSortOrder] = useState<SortOrder>("none");
-  const [newXSortOrder, setNewXSortOrder] = useState<SortOrder>("none");
-  const [newXLabelRotate, setNewXLabelRotate] = useState(0);
-  const [newTopN, setNewTopN] = useState(0);
-  const [newShowLabels, setNewShowLabels] = useState(false);
-  const [newHeight, setNewHeight] = useState(400);
-  const [newDateGrouping, setNewDateGrouping] = useState<DateGrouping>("none");
-  const [newReferenceLine, setNewReferenceLine] = useState<ReferenceLine | undefined>(undefined);
-  const [newShowTitle, setNewShowTitle] = useState(true);
-  const [newColorPalette, setNewColorPalette] = useState<ColorPalette>("default");
-  const [newStacked, setNewStacked] = useState(false);
-  const [newFilters, setNewFilters] = useState<Filter[]>([]);
-
-  // State for EDITING chart form (Modal)
-  const [editTitle, setEditTitle] = useState("");
-  const [editX, setEditX] = useState<string[]>([]);
-  const [editY, setEditY] = useState<string[]>([]);
-  const [editType, setEditType] = useState<"bar" | "hbar" | "line" | "pie">("bar");
-  const [editWidth, setEditWidth] = useState<"full" | "half">("full");
-  const [editAggregation, setEditAggregation] = useState<AggregationType>("none");
-  const [editSortOrder, setEditSortOrder] = useState<SortOrder>("none");
-  const [editXSortOrder, setEditXSortOrder] = useState<SortOrder>("none");
-  const [editXLabelRotate, setEditXLabelRotate] = useState(0);
-  const [editTopN, setEditTopN] = useState(0);
-  const [editShowLabels, setEditShowLabels] = useState(false);
-  const [editHeight, setEditHeight] = useState(400);
-  const [editDateGrouping, setEditDateGrouping] = useState<DateGrouping>("none");
-  const [editReferenceLine, setEditReferenceLine] = useState<ReferenceLine | undefined>(undefined);
-  const [editShowTitle, setEditShowTitle] = useState(true);
-  const [editColorPalette, setEditColorPalette] = useState<ColorPalette>("default");
-  const [editStacked, setEditStacked] = useState(false);
-  const [editFilters, setEditFilters] = useState<Filter[]>([]);
-  const [editingChartId, setEditingChartId] = useState<string | null>(null);
-
   const schema = useMemo(() => detectColumnSchema(data), [data]);
   const keys = useMemo(() => schema.map((s) => s.key), [schema]);
 
+  const openWithType = (type: ChartConfig["type"]) => {
+    setEditingChart(null);
+    setWizardInitialType(type);
+    setWizardToAgent(false);
+    setWizardOpen(true);
+  };
 
-  const isNewFormValid =
-    newX.length > 0 &&
-    (newAggregation === "count" || newAggregation === "count_pct" || newY.length > 0) &&
-    !!newTitle;
-
-  const isEditFormValid =
-    editX.length > 0 &&
-    (editAggregation === "count" || editAggregation === "count_pct" || editY.length > 0) &&
-    !!editTitle;
-
-  const handleAddChart = () => {
-    if (isNewFormValid) {
-      setCharts((prev) => [
-        ...prev,
-        {
-          id: Math.random().toString(36).substr(2, 9),
-          type: newType,
-          xKeys: newX,
-          yKeys: newAggregation === "count" || newAggregation === "count_pct" ? [] : newY,
-          title: newTitle,
-          width: newWidth,
-          aggregation: newAggregation,
-          sortOrder: newSortOrder,
-          xSortOrder: newXSortOrder,
-          xLabelRotate: newXLabelRotate,
-          topN: newTopN,
-          showLabels: newShowLabels,
-          height: newHeight,
-          dateGrouping: newDateGrouping,
-          referenceLine: newReferenceLine,
-          showTitle: newShowTitle,
-          colorPalette: newColorPalette,
-          stacked: newStacked,
-          filters: newFilters,
-        },
-      ]);
-      setNewTitle("");
-      setNewX([]);
-      setNewY([]);
-      setNewType("bar");
-      setNewWidth("half");
-      setNewAggregation("none");
-      setNewSortOrder("none");
-      setNewXSortOrder("none");
-      setNewXLabelRotate(0);
-      setNewTopN(0);
-      setNewShowLabels(false);
-      setNewHeight(400);
-      setNewDateGrouping("none");
-      setNewReferenceLine(undefined);
-      setNewShowTitle(true);
-      setNewColorPalette("default");
-      setNewStacked(false);
-      setNewFilters([]);
-    }
+  const openAgent = () => {
+    setEditingChart(null);
+    setWizardInitialType(null);
+    setWizardToAgent(true);
+    setWizardOpen(true);
   };
 
   const startEditing = useCallback((chart: ChartConfig) => {
-    setEditingChartId(chart.id);
-    setEditTitle(chart.title);
-    setEditX(chart.xKeys);
-    setEditY(chart.yKeys);
-    setEditType(chart.type);
-    setEditWidth(chart.width);
-    setEditAggregation(chart.aggregation ?? "none");
-    setEditSortOrder(chart.sortOrder ?? "none");
-    setEditXSortOrder(chart.xSortOrder ?? "none");
-    setEditXLabelRotate(chart.xLabelRotate ?? 0);
-    setEditTopN(chart.topN ?? 0);
-    setEditShowLabels(chart.showLabels ?? false);
-    setEditHeight(chart.height ?? 400);
-    setEditDateGrouping(chart.dateGrouping ?? "none");
-    setEditReferenceLine(chart.referenceLine);
-    setEditShowTitle(chart.showTitle ?? true);
-    setEditColorPalette(chart.colorPalette ?? "default");
-    setEditStacked(chart.stacked ?? false);
-    setEditFilters(chart.filters ?? []);
+    setEditingChart(chart);
+    setWizardInitialType(null);
+    setWizardToAgent(false);
+    setWizardOpen(true);
   }, []);
 
-  const saveEdit = () => {
-    if (editingChartId) {
-      setCharts((prev) =>
-        prev.map((c) =>
-          c.id === editingChartId
-            ? {
-                ...c,
-                title: editTitle,
-                xKeys: editX,
-                yKeys: editAggregation === "count" || editAggregation === "count_pct" ? [] : editY,
-                type: editType,
-                width: editWidth,
-                aggregation: editAggregation,
-                sortOrder: editSortOrder,
-                xSortOrder: editXSortOrder,
-                xLabelRotate: editXLabelRotate,
-                topN: editTopN,
-                showLabels: editShowLabels,
-                height: editHeight,
-                dateGrouping: editDateGrouping,
-                referenceLine: editReferenceLine,
-                showTitle: editShowTitle,
-                colorPalette: editColorPalette,
-                stacked: editStacked,
-                filters: editFilters,
-              }
-            : c,
-        ),
-      );
-      setEditingChartId(null);
-    }
+  const closeWizard = () => {
+    setWizardOpen(false);
+    setEditingChart(null);
+    setWizardInitialType(null);
+    setWizardToAgent(false);
+  };
+
+  const handleFinish = (chart: ChartConfig) => {
+    setCharts((prev) => {
+      const exists = prev.some((c) => c.id === chart.id);
+      return exists ? prev.map((c) => (c.id === chart.id ? chart : c)) : [...prev, chart];
+    });
+    setWizardOpen(false);
+    setEditingChart(null);
+    setWizardInitialType(null);
+    setWizardToAgent(false);
   };
 
   const handleRemoveChart = useCallback((id: string) => {
@@ -204,126 +109,95 @@ export function ChartCreator({ data, initialCharts, onChartsChange, readOnly, ex
         {!readOnly && (
           <Col span={12}>
             <Card
-              title="Adicionar Novo Gráfico"
+              title="Adicionar novo gráfico"
               type="inner"
-              extra={
-                <Space>
-                  {extraActions}
-                  <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    disabled={!isNewFormValid}
-                    onClick={handleAddChart}
-                  >
-                    Adicionar
-                  </Button>
-                </Space>
-              }
+              extra={<Space>{extraActions}</Space>}
             >
-              <ChartFormFields
-                title={newTitle}
-                setTitle={setNewTitle}
-                xKeys={newX}
-                setXKeys={setNewX}
-                yKeys={newY}
-                setYKeys={setNewY}
-                type={newType}
-                setType={setNewType}
-                width={newWidth}
-                setWidth={setNewWidth}
-                aggregation={newAggregation}
-                setAggregation={setNewAggregation}
-                sortOrder={newSortOrder}
-                setSortOrder={setNewSortOrder}
-                xSortOrder={newXSortOrder}
-                setXSortOrder={setNewXSortOrder}
-                xLabelRotate={newXLabelRotate}
-                setXLabelRotate={setNewXLabelRotate}
-                topN={newTopN}
-                setTopN={setNewTopN}
-                showLabels={newShowLabels}
-                setShowLabels={setNewShowLabels}
-                height={newHeight}
-                setHeight={setNewHeight}
-                dateGrouping={newDateGrouping}
-                setDateGrouping={setNewDateGrouping}
-                referenceLine={newReferenceLine}
-                setReferenceLine={setNewReferenceLine}
-                showTitle={newShowTitle}
-                setShowTitle={setNewShowTitle}
-                colorPalette={newColorPalette}
-                setColorPalette={setNewColorPalette}
-                stacked={newStacked}
-                setStacked={setNewStacked}
-                keys={keys}
-                filters={newFilters}
-                setFilters={setNewFilters}
-                schema={schema}
-              />
+              <div style={{ color: "#888", fontSize: 13, marginBottom: 12 }}>
+                Escolha um tipo para começar — o editor abre já configurado, com
+                pré-visualização ao vivo.
+              </div>
+              <Space wrap size={[8, 8]}>
+                <Button
+                  size="large"
+                  icon={<BarChartOutlined />}
+                  onClick={() => openWithType("bar")}
+                >
+                  Barras
+                </Button>
+                <Button
+                  size="large"
+                  icon={<BarChartOutlined style={{ transform: "rotate(90deg)" }} />}
+                  onClick={() => openWithType("hbar")}
+                >
+                  Horizontais
+                </Button>
+                <Button
+                  size="large"
+                  icon={<LineChartOutlined />}
+                  onClick={() => openWithType("line")}
+                >
+                  Linha
+                </Button>
+                <Button
+                  size="large"
+                  icon={<PieChartOutlined />}
+                  onClick={() => openWithType("pie")}
+                >
+                  Pizza
+                </Button>
+                <Button
+                  size="large"
+                  icon={<FunnelPlotOutlined />}
+                  onClick={() => openWithType("funnel")}
+                >
+                  Funil
+                </Button>
+                <Button
+                  size="large"
+                  icon={<DashboardOutlined />}
+                  onClick={() => openWithType("gauge")}
+                >
+                  Medidor
+                </Button>
+                <Button
+                  size="large"
+                  icon={<RadarChartOutlined />}
+                  onClick={() => openWithType("radar")}
+                >
+                  Radar
+                </Button>
+                {onGenerateCharts && (
+                  <Button
+                    size="large"
+                    type="primary"
+                    ghost
+                    icon={<BulbOutlined />}
+                    onClick={openAgent}
+                  >
+                    Gerar com agente
+                  </Button>
+                )}
+              </Space>
             </Card>
           </Col>
         )}
       </Row>
 
-      <Modal
-        title="Editar Gráfico"
-        open={!!editingChartId}
-        onCancel={() => setEditingChartId(null)}
-        footer={[
-          <Button key="cancel" onClick={() => setEditingChartId(null)}>
-            Cancelar
-          </Button>,
-          <Button
-            key="submit"
-            type="primary"
-            disabled={!isEditFormValid}
-            onClick={saveEdit}
-          >
-            Salvar Alterações
-          </Button>,
-        ]}
-      >
-        <ChartFormFields
-          title={editTitle}
-          setTitle={setEditTitle}
-          xKeys={editX}
-          setXKeys={setEditX}
-          yKeys={editY}
-          setYKeys={setEditY}
-          type={editType}
-          setType={setEditType}
-          width={editWidth}
-          setWidth={setEditWidth}
-          aggregation={editAggregation}
-          setAggregation={setEditAggregation}
-          sortOrder={editSortOrder}
-          setSortOrder={setEditSortOrder}
-          xSortOrder={editXSortOrder}
-          setXSortOrder={setEditXSortOrder}
-          xLabelRotate={editXLabelRotate}
-          setXLabelRotate={setEditXLabelRotate}
-          topN={editTopN}
-          setTopN={setEditTopN}
-          showLabels={editShowLabels}
-          setShowLabels={setEditShowLabels}
-          height={editHeight}
-          setHeight={setEditHeight}
-          dateGrouping={editDateGrouping}
-          setDateGrouping={setEditDateGrouping}
-          referenceLine={editReferenceLine}
-          setReferenceLine={setEditReferenceLine}
-          showTitle={editShowTitle}
-          setShowTitle={setEditShowTitle}
-          colorPalette={editColorPalette}
-          setColorPalette={setEditColorPalette}
-          stacked={editStacked}
-          setStacked={setEditStacked}
-          keys={keys}
-          filters={editFilters}
-          setFilters={setEditFilters}
+      {!readOnly && (
+        <ChartWizard
+          open={wizardOpen}
+          data={data}
           schema={schema}
+          keys={keys}
+          editingChart={editingChart}
+          initialType={wizardInitialType}
+          openToAgent={wizardToAgent}
+          onCancel={closeWizard}
+          onFinish={handleFinish}
+          onGenerateCharts={onGenerateCharts}
         />
-      </Modal>
+      )}
     </div>
   );
 }
