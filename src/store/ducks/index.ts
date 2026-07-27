@@ -55,6 +55,7 @@ import notificationsSlice from "features/notifications/NotificationsSlice";
 import trainingCentralSlice from "features/training/TrainingCentralSlice";
 import trainingPlayerSlice from "features/training/TrainingPlayerSlice";
 import clinicalNotesMultiSlice from "features/clinicalNotes/ClinicalNotesSlice";
+import { soapNoteReducer } from "features/clinicalNotes/SoapNote/SoapNoteSlice";
 
 import regulationPrioritizationSlice from "features/regulation/Prioritization/PrioritizationSlice";
 import regulationSlice from "features/regulation/Regulation/RegulationSlice";
@@ -139,6 +140,7 @@ const rootReducer = combineReducers({
   memoryList: memoryListSlice,
   clinicalNotes: clinicalNotesReducer,
   clinicalNotesMulti: clinicalNotesMultiSlice,
+  soapNote: soapNoteReducer,
   drugUnitConversion: drugUnitConversionSlice,
   drugFormStatus: drugFormStatus,
   lists: lists,

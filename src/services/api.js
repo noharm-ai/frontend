@@ -845,6 +845,9 @@ api.clinicalNotes.getUserLastList = (params) =>
 api.clinicalNotes.createClinicalNote = (params = {}) =>
   instance.post(`${endpoints.clinicalNotes}`, params, setHeaders());
 
+api.clinicalNotes.generateSoap = (params = {}) =>
+  instance.post(`${endpoints.clinicalNotes}/soap`, params, setHeaders());
+
 api.clinicalNotes.listByPrescription = (idPrescription) =>
   instance.get(`/prescription-clinical-note/${idPrescription}`, {
     ...setHeaders(),
