@@ -966,6 +966,22 @@ api.lists.getIcds = (params = {}) =>
     ...setHeaders(),
   });
 
+api.lists.findIcds = (term) =>
+  instance.get(`lists/icds/find`, {
+    params: {
+      term,
+    },
+    ...setHeaders(),
+  });
+
+api.lists.resolveIcds = (ids) =>
+  instance.get(`lists/icds/resolve`, {
+    params: {
+      ids: (ids ?? []).join(","),
+    },
+    ...setHeaders(),
+  });
+
 /**
  * PROTOCOLS
  */

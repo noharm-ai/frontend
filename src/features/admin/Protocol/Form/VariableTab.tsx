@@ -14,6 +14,7 @@ import { ProtocolExamSelect } from "./ProtocolExamSelect/ProtocolExamSelect";
 import { ProtocolExamRefSelect } from "./ProtocolExamRefSelect/ProtocolExamRefSelect";
 import { ProtocolDepartmentSelect } from "./ProtocolDepartmentSelect/ProtocolDepartmentSelect";
 import { ProtocolSegmentSelect } from "./ProtocolSegmentSelect/ProtocolSegmentSelect";
+import { ProtocolIcdSelect } from "./ProtocolIcdSelect/ProtocolIcdSelect";
 
 import { VariableContainer, VariableGrid } from "../Protocol.style";
 
@@ -489,6 +490,11 @@ export function VariableTab() {
                       />
                     ) : v.field === ProtocolVariableFieldEnum.ID_SEGMENT ? (
                       <ProtocolSegmentSelect
+                        value={v.value}
+                        onChange={(ids) => setConfig(idx, "value", ids)}
+                      />
+                    ) : v.field === ProtocolVariableFieldEnum.ID_ICD ? (
+                      <ProtocolIcdSelect
                         value={v.value}
                         onChange={(ids) => setConfig(idx, "value", ids)}
                       />
