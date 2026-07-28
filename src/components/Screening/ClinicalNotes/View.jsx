@@ -7,6 +7,7 @@ import {
   QuestionOutlined,
   FullscreenOutlined,
   PrinterOutlined,
+  FileTextOutlined,
 } from "@ant-design/icons";
 import DOMPurify from "dompurify";
 
@@ -22,6 +23,8 @@ import Alert from "components/Alert";
 import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
 import { getMemory } from "features/lists/ListsSlice";
+import { NavigationSoapNote } from "features/clinicalNotes/NavigationSoapNote/NavigationSoapNote";
+import { openNavigationSoapNote } from "features/clinicalNotes/NavigationSoapNote/NavigationSoapNoteSlice";
 
 import Edit from "./Edit";
 import ClinicalNotesIndicator from "./ClinicalNotesIndicator";
@@ -333,6 +336,39 @@ export default function View({
           <div className="help">
             <>
               {!edit &&
+                selected.source !== "prescription" &&
+                PermissionService().has(Permission.READ_NAV) && (
+                  <Tooltip title={t("navigationSoapNote.btnGenerate")}>
+                    <Button
+                      type="primary"
+                      ghost
+                      shape="circle"
+                      className="gtm-bt-soap-generate"
+                      icon={<FileTextOutlined />}
+                      style={{
+                        width: "28px",
+                        height: "28px",
+                        minWidth: "28px",
+                        marginRight: "10px",
+                      }}
+                      onClick={() =>
+                        dispatch(
+                          openNavigationSoapNote({
+                            id: selected.id,
+                            admissionNumber:
+                              selected.admissionNumber || admissionNumber,
+                            sourceContent: {
+                              html,
+                              template: selected.template,
+                              form: selected.form,
+                            },
+                          })
+                        )
+                      }
+                    />
+                  </Tooltip>
+                )}
+              {!edit &&
                 (selected.text || selected.template) &&
                 PermissionService().has(Permission.READ_NAV) && (
                   <Tooltip title="Imprimir">
@@ -470,6 +506,7 @@ export default function View({
           </Legend>
         </>
       )}
+      <NavigationSoapNote />
     </>
   );
 }
