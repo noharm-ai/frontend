@@ -23,8 +23,8 @@ import Alert from "components/Alert";
 import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
 import { getMemory } from "features/lists/ListsSlice";
-import { SoapNote } from "features/clinicalNotes/SoapNote/SoapNote";
-import { openSoapNote } from "features/clinicalNotes/SoapNote/SoapNoteSlice";
+import { NavigationSoapNote } from "features/clinicalNotes/NavigationSoapNote/NavigationSoapNote";
+import { openNavigationSoapNote } from "features/clinicalNotes/NavigationSoapNote/NavigationSoapNoteSlice";
 
 import Edit from "./Edit";
 import ClinicalNotesIndicator from "./ClinicalNotesIndicator";
@@ -338,7 +338,7 @@ export default function View({
               {!edit &&
                 selected.source !== "prescription" &&
                 PermissionService().has(Permission.READ_NAV) && (
-                  <Tooltip title={t("soapNote.btnGenerate")}>
+                  <Tooltip title={t("navigationSoapNote.btnGenerate")}>
                     <Button
                       type="primary"
                       ghost
@@ -353,10 +353,15 @@ export default function View({
                       }}
                       onClick={() =>
                         dispatch(
-                          openSoapNote({
+                          openNavigationSoapNote({
                             id: selected.id,
                             admissionNumber:
                               selected.admissionNumber || admissionNumber,
+                            sourceContent: {
+                              html,
+                              template: selected.template,
+                              form: selected.form,
+                            },
                           })
                         )
                       }
@@ -501,7 +506,7 @@ export default function View({
           </Legend>
         </>
       )}
-      <SoapNote />
+      <NavigationSoapNote />
     </>
   );
 }

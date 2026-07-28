@@ -1056,7 +1056,7 @@
     "saveSuccess": "Plano de cuidado salvo com sucesso!",
     "saveError": "Erro ao salvar o plano de cuidado."
   },
-  "soapNote": {
+  "navigationSoapNote": {
     "btnGenerate": "Gerar evolução SOAP",
     "title": "Evolução Farmacêutica - SOAP",
     "generating": "Gerando evolução com IA. Isso pode levar até 30 segundos...",
@@ -1066,7 +1066,10 @@
     "btnRegenerate": "Gerar novamente",
     "validationEmpty": "A evolução não pode estar vazia.",
     "saveSuccess": "Evolução salva com sucesso!",
-    "generateError": "Não foi possível gerar a evolução."
+    "generateError": "Não foi possível gerar a evolução.",
+    "sourceTitle": "Texto de origem",
+    "generatedTitle": "Evolução gerada",
+    "sourceEmpty": "Nenhum texto de origem disponível."
   },
   "trainingCentral": {
     "title": "Central de Treinamento",

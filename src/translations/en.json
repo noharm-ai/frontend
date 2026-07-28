@@ -1046,7 +1046,7 @@
     "saveSuccess": "Care plan saved successfully!",
     "saveError": "Error saving the care plan."
   },
-  "soapNote": {
+  "navigationSoapNote": {
     "btnGenerate": "Generate SOAP note",
     "title": "Pharmaceutical Note - NoHarm Teleconsultation",
     "generating": "Generating note with AI. This may take up to 30 seconds...",
@@ -1056,7 +1056,10 @@
     "btnRegenerate": "Generate again",
     "validationEmpty": "The note cannot be empty.",
     "saveSuccess": "Note saved successfully!",
-    "generateError": "Unable to generate the note."
+    "generateError": "Unable to generate the note.",
+    "sourceTitle": "Source text",
+    "generatedTitle": "Generated note",
+    "sourceEmpty": "No source text available."
   },
   "trainingCentral": {
     "title": "Training Central",
