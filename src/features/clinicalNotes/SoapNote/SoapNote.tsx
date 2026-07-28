@@ -1,21 +1,26 @@
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Alert, Input, Spin } from "antd";
+import { Alert, Spin } from "antd";
 import { ReloadOutlined } from "@ant-design/icons";
 
 import DefaultModal from "components/Modal";
 import Button from "components/Button";
 import notification from "components/notification";
+import EditorBase from "components/Editor";
 import { getErrorMessage } from "src/utils/errorHandler";
 import { fetchClinicalNotesListThunk } from "store/ducks/clinicalNotes/thunk";
-import {
-  closeSoapNote,
-  generateSoapNote,
-  saveSoapNote,
-} from "./SoapNoteSlice";
+import { closeSoapNote, generateSoapNote, saveSoapNote } from "./SoapNoteSlice";
 
-const SOAP_TPL_NAME = "Evolução Farmacêutica - Teleconsulta";
+const Editor = EditorBase as any;
+const SOAP_TPL_NAME = "Evolução Farmacêutica - SOAP";
+
+interface EditorHandle {
+  insertContent: (html: string) => void;
+  setContent: (html: string) => void;
+  getText: () => string;
+  getHTML: () => string;
+}
 
 export function SoapNote() {
   const dispatch = useDispatch();
@@ -25,18 +30,7 @@ export function SoapNote() {
   const isSaving = useSelector(
     (state: any) => state.soapNote.save.status === "loading",
   );
-  const [text, setText] = useState("");
-  const [syncedText, setSyncedText] = useState<string | null>(null);
-
-  // seed the editor whenever a new generation result arrives (same
-  // render-time sync pattern used by Screening/ClinicalNotes/View.jsx)
-  if (generate.status === "loading" && syncedText !== null) {
-    setSyncedText(null);
-  }
-  if (generate.status === "succeeded" && generate.text !== syncedText) {
-    setSyncedText(generate.text);
-    setText(generate.text);
-  }
+  const editorRef = useRef<EditorHandle | null>(null);
 
   const generateNote = useCallback(
     (id: string) => {
@@ -60,14 +54,16 @@ export function SoapNote() {
   };
 
   const handleSave = async () => {
-    if (!text.trim()) {
+    const plainText = editorRef.current?.getText() ?? "";
+
+    if (!plainText.trim()) {
       notification.error({ message: t("soapNote.validationEmpty") });
       return;
     }
 
     const params = {
       admissionNumber: note.admissionNumber,
-      notes: text.trim().replaceAll("\n", "<br/>"),
+      notes: editorRef.current?.getHTML() ?? "",
       tplName: SOAP_TPL_NAME,
     };
 
@@ -89,6 +85,7 @@ export function SoapNote() {
       open={!!note}
       onCancel={handleClose}
       width="70vw"
+      height="90vh"
       centered
       destroyOnHidden
       maskClosable={false}
@@ -96,8 +93,6 @@ export function SoapNote() {
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
           {generate.status === "succeeded" && (
             <Button
-              ghost
-              type="primary"
               icon={<ReloadOutlined />}
               onClick={() => note && generateNote(note.id)}
               style={{ marginRight: "auto" }}
@@ -132,7 +127,6 @@ export function SoapNote() {
           action={
             <Button
               danger
-              ghost
               icon={<ReloadOutlined />}
               onClick={() => note && generateNote(note.id)}
             >
@@ -150,10 +144,11 @@ export function SoapNote() {
             message={t("soapNote.editHint")}
             style={{ marginBottom: "12px" }}
           />
-          <Input.TextArea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            autoSize={{ minRows: 18, maxRows: 30 }}
+          <Editor
+            ref={editorRef}
+            content={generate.text}
+            onEdit={() => {}}
+            utilities={["basic"]}
           />
         </>
       )}

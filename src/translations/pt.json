@@ -1058,7 +1058,7 @@
   },
   "soapNote": {
     "btnGenerate": "Gerar evolução SOAP",
-    "title": "Evolução Farmacêutica - Teleconsulta NoHarm",
+    "title": "Evolução Farmacêutica - SOAP",
     "generating": "Gerando evolução com IA. Isso pode levar até 30 segundos...",
     "editHint": "Revise e edite o texto antes de salvar. Uma nova evolução será criada.",
     "btnSave": "Salvar evolução",
