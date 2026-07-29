@@ -245,6 +245,12 @@ api.protocols.upsertProtocol = (params = {}) => {
   });
 };
 
+api.protocols.getDepartments = (params = {}) =>
+  instance.get(`/admin/protocol/department/list`, {
+    params,
+    ...setHeaders(),
+  });
+
 /**
  * REPORTS
  */

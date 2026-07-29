@@ -1,7 +1,8 @@
 import { useFormikContext } from "formik";
 
+import Card from "components/Card";
 import { Input, Select, Textarea } from "components/Inputs";
-import { IProtocolFormBaseFields } from "./ProtocolForm";
+import { IProtocolFormBaseFields } from "./types";
 import { ProtocolTypeEnum } from "src/models/ProtocolTypeEnum";
 import { ProtocolStatusTypeEnum } from "src/models/ProtocolStatusTypeEnum";
 
@@ -35,7 +36,7 @@ export function MainTab() {
   };
 
   return (
-    <>
+    <Card>
       <div className={`form-row ${errors.name && touched.name ? "error" : ""}`}>
         <div className="form-label">
           <label>Nome:</label>
@@ -176,6 +177,6 @@ export function MainTab() {
           <div className="form-error">{errors.config?.result?.description}</div>
         )}
       </div>
-    </>
+    </Card>
   );
 }

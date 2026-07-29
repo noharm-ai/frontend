@@ -1,7 +1,8 @@
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { PlusOutlined } from "@ant-design/icons";
 
-import { useAppDispatch, useAppSelector } from "src/store";
+import { useAppSelector } from "src/store";
 import Table from "components/Table";
 import Empty from "components/Empty";
 import BackTop from "components/BackTop";
@@ -11,8 +12,6 @@ import { toDataSource } from "utils/index";
 import { PageCard, PaginationContainer } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
 import Filter from "./Filter/Filter";
-import { setProtocol } from "./ProtocolSlice";
-import { ProtocolForm } from "./Form/ProtocolForm";
 
 const emptyText = (
   <Empty
@@ -23,7 +22,7 @@ const emptyText = (
 
 export function Protocol() {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const list = useAppSelector((state) => state.admin.protocol.list);
   const status = useAppSelector((state) => state.admin.protocol.status);
 
@@ -39,7 +38,7 @@ export function Protocol() {
           <Button
             type="primary"
             icon={<PlusOutlined />}
-            onClick={() => dispatch(setProtocol({ newProtocol: true }))}
+            onClick={() => navigate("/admin/protocolos/new")}
           >
             Adicionar protocolo
           </Button>
@@ -51,14 +50,13 @@ export function Protocol() {
       </PaginationContainer>
       <PageCard>
         <Table
-          columns={columns(setProtocol, dispatch, t)}
+          columns={columns(navigate, t)}
           pagination={false}
           loading={status === "loading"}
           locale={{ emptyText }}
           dataSource={status === "succeeded" ? ds : []}
         />
       </PageCard>
-      <ProtocolForm />
       <BackTop />
     </>
   );

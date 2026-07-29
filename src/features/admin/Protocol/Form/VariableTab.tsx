@@ -1,16 +1,23 @@
-import React from "react";
 import { useFormikContext } from "formik";
-import { Divider } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 
 import { Input, Select, Radio } from "components/Inputs";
 import Button from "components/Button";
-import { IProtocolFormBaseFields } from "./ProtocolForm";
+import { IProtocolFormBaseFields } from "./types";
 import { ProtocolVariableFieldEnum } from "src/models/ProtocolVariableFieldEnum";
 import clinicalNotesIndicator from "src/components/Screening/ClinicalNotes/ClinicalNotesIndicator";
+import { ProtocolSubstanceClassSelect } from "./ProtocolSubstanceClassSelect/ProtocolSubstanceClassSelect";
+import { ProtocolSubstanceSelect } from "./ProtocolSubstanceSelect/ProtocolSubstanceSelect";
+import { ProtocolDrugSelect } from "./ProtocolDrugSelect/ProtocolDrugSelect";
+import { ProtocolExamSelect } from "./ProtocolExamSelect/ProtocolExamSelect";
+import { ProtocolExamRefSelect } from "./ProtocolExamRefSelect/ProtocolExamRefSelect";
+import { ProtocolDepartmentSelect } from "./ProtocolDepartmentSelect/ProtocolDepartmentSelect";
+import { ProtocolSegmentSelect } from "./ProtocolSegmentSelect/ProtocolSegmentSelect";
+import { ProtocolIcdSelect } from "./ProtocolIcdSelect/ProtocolIcdSelect";
+import { ProtocolRouteSelect } from "./ProtocolRouteSelect/ProtocolRouteSelect";
 
-import { VariableContainer } from "../Protocol.style";
+import { VariableContainer, VariableGrid } from "../Protocol.style";
 
 export function VariableTab() {
   const { values, errors, setFieldValue } =
@@ -68,24 +75,59 @@ export function VariableTab() {
     }
   };
 
+  const fieldDescriptions: Record<string, string> = {
+    [ProtocolVariableFieldEnum.SUBSTANCE]:
+      "Verifica se a lista de substâncias (sctid) dos itens prescritos contém (IN) ou não contém (NOTIN) alguma das substâncias informadas.",
+    [ProtocolVariableFieldEnum.ID_DRUG]:
+      "Verifica se algum dos medicamentos prescritos (fkmedicamento) está (IN) ou não está (NOTIN) na lista informada.",
+    [ProtocolVariableFieldEnum.DRUG_CLASS]:
+      "Verifica se a classe dos medicamentos prescritos está (IN) ou não está (NOTIN) na lista informada.",
+    [ProtocolVariableFieldEnum.ROUTE]:
+      "Verifica se alguma das vias dos itens prescritos está (IN) ou não está (NOTIN) na lista informada. A comparação ignora maiúsculas/minúsculas.",
+    [ProtocolVariableFieldEnum.EXAM]:
+      "Compara o valor do último resultado do exame selecionado com o valor informado. Opcionalmente, ignora o exame se ele for mais antigo que a quantidade de dias informada.",
+    [ProtocolVariableFieldEnum.EXAM_REF]:
+      "Igual ao Exame, mas usa o resultado mais recente agrupado pelo exame de referência padrão NoHarm (tp_exam_ref).",
+    [ProtocolVariableFieldEnum.AGE]:
+      "Compara a idade do paciente (em anos) com o valor informado.",
+    [ProtocolVariableFieldEnum.WEIGHT]:
+      "Compara o peso do paciente (em kg) com o valor informado.",
+    [ProtocolVariableFieldEnum.ID_DEPARTMENT]:
+      "Verifica se o setor (fksetor) da prescrição está (IN) ou não está (NOTIN) na lista informada.",
+    [ProtocolVariableFieldEnum.ID_SEGMENT]:
+      "Verifica se o segmento (idsegmento) da prescrição está (IN) ou não está (NOTIN) na lista informada.",
+    [ProtocolVariableFieldEnum.COMBINATION]:
+      "Verifica se existe ao menos um item prescrito que atenda simultaneamente a todos os critérios preenchidos abaixo (substância, classe, medicamento, dose, frequência, via, etc.). Os itens que baterem serão vinculados ao protocolo.",
+    [ProtocolVariableFieldEnum.ADMISSION_TIME]:
+      "Compara o tempo de internação do paciente (em horas, desde a data de admissão) com o valor informado.",
+    [ProtocolVariableFieldEnum.ST_CONCILIA]:
+      "Compara o status de conciliação do paciente (0 = não possui, 1 = possui) com o valor informado.",
+    [ProtocolVariableFieldEnum.CN_STATS]:
+      "Compara o valor do indicador NoHarm Care selecionado com o valor informado.",
+    [ProtocolVariableFieldEnum.ID_ICD]:
+      "Verifica se o CID (id_cid) do paciente está (IN) ou não está (NOTIN) na lista informada. Só funciona com os operadores IN/NOTIN.",
+    [ProtocolVariableFieldEnum.DISCHARGE_REASON]:
+      "Verifica se o motivo de alta do paciente contém o texto informado (comparação parcial, ignora maiúsculas/minúsculas).",
+    [ProtocolVariableFieldEnum.SEGMENT_TYPE]:
+      "Compara o tipo de segmento (ADULTO ou PEDIÁTRICO) com o valor informado.",
+    [ProtocolVariableFieldEnum.INSURANCE]:
+      "Verifica se o convênio da prescrição contém o texto informado (comparação parcial, ignora maiúsculas/minúsculas).",
+  };
+
   return (
     <>
-      {(values.config?.variables ?? []).map((v: any, idx: number) => (
-        <React.Fragment key={v.name}>
-          <VariableContainer>
-            <div className={`form-row`}>
-              <div className="form-label">
-                <label>Nome da variável:</label>
-              </div>
-              <div className="form-input">
-                <Input
-                  value={v.name}
-                  disabled
-                  onChange={({ target }) =>
-                    setConfig(idx, "name", target.value)
-                  }
-                />
-              </div>
+      <VariableGrid>
+        {(values.config?.variables ?? []).map((v: any, idx: number) => (
+          <VariableContainer key={v.name}>
+            <div className="variable-header">
+              <h4 className="variable-title">{v.name}</h4>
+              <Button
+                danger
+                type="text"
+                icon={<DeleteOutlined />}
+                onClick={() => removeVariable(v.name)}
+                title="Remover Variável"
+              />
             </div>
 
             <div className={`form-row`}>
@@ -99,6 +141,9 @@ export function VariableTab() {
                   options={ProtocolVariableFieldEnum.getList()}
                   onChange={(value) => setConfig(idx, "field", value)}
                 />
+                {v.field && fieldDescriptions[v.field] && (
+                  <div className="form-info">{fieldDescriptions[v.field]}</div>
+                )}
               </div>
             </div>
 
@@ -127,10 +172,10 @@ export function VariableTab() {
                     <label>Exame (tp_exame):</label>
                   </div>
                   <div className="form-input">
-                    <Input
+                    <ProtocolExamSelect
                       value={v.examType}
-                      onChange={({ target }) =>
-                        setConfig(idx, "examType", target.value)
+                      onChange={(examType) =>
+                        setConfig(idx, "examType", examType)
                       }
                     />
                   </div>
@@ -159,10 +204,10 @@ export function VariableTab() {
                     <label>Exame (tp_exame):</label>
                   </div>
                   <div className="form-input">
-                    <Input
+                    <ProtocolExamRefSelect
                       value={v.examRefType}
-                      onChange={({ target }) =>
-                        setConfig(idx, "examRefType", target.value)
+                      onChange={(examRefType) =>
+                        setConfig(idx, "examRefType", examRefType)
                       }
                     />
                   </div>
@@ -188,42 +233,36 @@ export function VariableTab() {
               <>
                 <div className={`form-row`}>
                   <div className="form-label">
-                    <label>Substância (sctid):</label>
+                    <label>Substância:</label>
                   </div>
                   <div className="form-input">
-                    <Select
+                    <ProtocolSubstanceSelect
                       value={v.substance}
-                      allowClear
-                      mode="tags"
-                      onChange={(value) => setConfig(idx, "substance", value)}
+                      onChange={(ids) => setConfig(idx, "substance", ids)}
                     />
                   </div>
                 </div>
 
                 <div className={`form-row`}>
                   <div className="form-label">
-                    <label>Classe (idclasse):</label>
+                    <label>Classe:</label>
                   </div>
                   <div className="form-input">
-                    <Select
+                    <ProtocolSubstanceClassSelect
                       value={v.class}
-                      allowClear
-                      mode="tags"
-                      onChange={(value) => setConfig(idx, "class", value)}
+                      onChange={(ids) => setConfig(idx, "class", ids)}
                     />
                   </div>
                 </div>
 
                 <div className={`form-row`}>
                   <div className="form-label">
-                    <label>Medicamento (fkmedicamento):</label>
+                    <label>Medicamento:</label>
                   </div>
                   <div className="form-input">
-                    <Select
+                    <ProtocolDrugSelect
                       value={v.drug}
-                      allowClear
-                      mode="tags"
-                      onChange={(value) => setConfig(idx, "drug", value)}
+                      onChange={(ids) => setConfig(idx, "drug", ids)}
                     />
                   </div>
                 </div>
@@ -472,7 +511,42 @@ export function VariableTab() {
                     <label>Valor:</label>
                   </div>
                   <div className="form-input">
-                    {v.operator === "IN" || v.operator === "NOTIN" ? (
+                    {v.field === ProtocolVariableFieldEnum.DRUG_CLASS ? (
+                      <ProtocolSubstanceClassSelect
+                        value={v.value}
+                        onChange={(ids) => setConfig(idx, "value", ids)}
+                      />
+                    ) : v.field === ProtocolVariableFieldEnum.SUBSTANCE ? (
+                      <ProtocolSubstanceSelect
+                        value={v.value}
+                        onChange={(ids) => setConfig(idx, "value", ids)}
+                      />
+                    ) : v.field === ProtocolVariableFieldEnum.ID_DRUG ? (
+                      <ProtocolDrugSelect
+                        value={v.value}
+                        onChange={(ids) => setConfig(idx, "value", ids)}
+                      />
+                    ) : v.field === ProtocolVariableFieldEnum.ID_DEPARTMENT ? (
+                      <ProtocolDepartmentSelect
+                        value={v.value}
+                        onChange={(ids) => setConfig(idx, "value", ids)}
+                      />
+                    ) : v.field === ProtocolVariableFieldEnum.ID_SEGMENT ? (
+                      <ProtocolSegmentSelect
+                        value={v.value}
+                        onChange={(ids) => setConfig(idx, "value", ids)}
+                      />
+                    ) : v.field === ProtocolVariableFieldEnum.ID_ICD ? (
+                      <ProtocolIcdSelect
+                        value={v.value}
+                        onChange={(ids) => setConfig(idx, "value", ids)}
+                      />
+                    ) : v.field === ProtocolVariableFieldEnum.ROUTE ? (
+                      <ProtocolRouteSelect
+                        value={v.value}
+                        onChange={(ids) => setConfig(idx, "value", ids)}
+                      />
+                    ) : v.operator === "IN" || v.operator === "NOTIN" ? (
                       <Select
                         value={v.value}
                         mode="tags"
@@ -520,27 +594,17 @@ export function VariableTab() {
                     {v.field === ProtocolVariableFieldEnum.AGE &&
                       v.operator !== "IN" &&
                       v.operator !== "NOTIN" && (
-                        <div className="form-info">Informe um número inteiro. Ex: 18</div>
+                        <div className="form-info">
+                          Informe um número inteiro. Ex: 18
+                        </div>
                       )}
                   </div>
                 </div>
               </>
             )}
-
-            <div className="form-row">
-              <Button
-                block
-                danger
-                icon={<DeleteOutlined />}
-                onClick={() => removeVariable(v.name)}
-              >
-                Remover Variável
-              </Button>
-            </div>
           </VariableContainer>
-          <Divider />
-        </React.Fragment>
-      ))}
+        ))}
+      </VariableGrid>
       <Button
         block
         icon={<PlusOutlined />}

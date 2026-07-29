@@ -4,7 +4,7 @@ import { TextAreaRef } from "antd/es/input/TextArea";
 
 import { Textarea } from "components/Inputs";
 import Button from "components/Button";
-import { IProtocolFormBaseFields } from "./ProtocolForm";
+import { IProtocolFormBaseFields } from "./types";
 
 export function TriggerTab() {
   const textRef = useRef<TextAreaRef>(null);

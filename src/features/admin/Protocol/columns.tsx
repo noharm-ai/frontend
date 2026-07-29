@@ -6,8 +6,7 @@ import Tooltip from "components/Tooltip";
 import { formatDateTime } from "src/utils/date";
 
 const columns = (
-  setProtocol: (data: any) => void,
-  dispatch: (data: any) => void,
+  navigate: (path: string) => void,
   t: any
 ): TableProps<any>["columns"] => {
   return [
@@ -65,7 +64,7 @@ const columns = (
             <Button
               type="primary"
               icon={<EditOutlined />}
-              onClick={() => dispatch(setProtocol(record))}
+              onClick={() => navigate(`/admin/protocolos/${record.id}`)}
             ></Button>
           </Tooltip>
         );

@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 
 import api from "services/admin/api";
-import { IProtocolFormBaseFields } from "./Form/ProtocolForm";
+import { IProtocolFormBaseFields } from "./Form/types";
 
 interface IProtocolSlice {
   list: any[];
