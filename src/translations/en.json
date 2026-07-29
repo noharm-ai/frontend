@@ -377,6 +377,16 @@
     "search": "Search",
     "explainProtocols": "Explain evaluation"
   },
+  "helpText": {
+    "title": "Help",
+    "empty": "No help has been added for this item yet.",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "loadError": "Error loading help text.",
+    "saveError": "Error saving help text."
+  },
   "prescriptionDrugTags": {
     "checked": "Checked previously",
     "recommendation": "Has medical observation",

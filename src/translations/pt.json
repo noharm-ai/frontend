@@ -377,6 +377,16 @@
     "search": "Pesquisar",
     "explainProtocols": "Detalhar protocolos"
   },
+  "helpText": {
+    "title": "Ajuda",
+    "empty": "Nenhuma ajuda cadastrada para este item ainda.",
+    "edit": "Editar",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "close": "Fechar",
+    "loadError": "Erro ao carregar o texto de ajuda.",
+    "saveError": "Erro ao salvar o texto de ajuda."
+  },
   "prescriptionDrugTags": {
     "checked": "Checado anteriormente",
     "recommendation": "Possui observação médica",

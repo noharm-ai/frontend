@@ -40,6 +40,7 @@ const endpoints = {
   reports: "/reports",
   substance: "/substance",
   memory: "/memory",
+  helpText: "/help-text",
   user: "/user",
   users: "/users",
   clinicalNotes: "/notes",
@@ -485,6 +486,16 @@ api.memoryRecords.putRecord = ({ id, ...params }) => {
 
   return instance.put(`${endpoints.memory}`, params, setHeaders());
 };
+
+api.helpText = {};
+
+api.helpText.getHelpText = (key) =>
+  instance.get(`${endpoints.helpText}/${key}`, {
+    ...setHeaders(),
+  });
+
+api.helpText.updateHelpText = (key, content) =>
+  instance.put(`${endpoints.helpText}/${key}`, { content }, setHeaders());
 
 /**
  * User.

@@ -31,6 +31,7 @@ import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
 import { FeatureService } from "src/services/FeatureService";
 import Feature from "src/models/Feature";
+import { HelpTextIcon } from "src/components/HelpTextIcon/HelpTextIcon";
 
 import { Form } from "styles/Form.style";
 
@@ -220,8 +221,9 @@ export default function FilterFields({
         >
           <Form>
             <div className="form-row">
-              <div className="form-label">
-                <label>{t("screeningList.labelDepartment")}:</label>
+              <div className="form-label-actions">
+                <label>{t("screeningList.labelDepartment")}:</label>{" "}
+                <HelpTextIcon pageKey="priorizacao-setores" />
               </div>
               <div className="form-input">
                 <Spin spinning={departmentsStatus === "loading"}>
