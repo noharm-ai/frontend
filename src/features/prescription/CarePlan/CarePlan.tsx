@@ -72,6 +72,7 @@ export function CarePlan({
     (state: any) => state.user.account.signature,
   );
   const editorRef = useRef<EditorHandle | null>(null);
+  const savingRef = useRef(false);
   const [searchQuery, setSearchQuery] = React.useState("");
   const [activeTab, setActiveTab] = React.useState("texts");
 
@@ -119,6 +120,11 @@ export function CarePlan({
   }, []);
 
   const handleSave = useCallback(async () => {
+    // Guard against duplicate submissions: a synchronous ref blocks re-entry
+    // even before Redux `isSaving` re-renders the button (e.g. rapid clicks
+    // on slow connections).
+    if (savingRef.current) return;
+
     const text = editorRef.current?.getText() ?? "";
 
     if (!text.trim()) {
@@ -149,17 +155,22 @@ export function CarePlan({
       tplName: "Plano de Cuidado",
     };
 
-    const result = await dispatch((createCarePlan as any)(params));
+    savingRef.current = true;
+    try {
+      const result = await dispatch((createCarePlan as any)(params));
 
-    if (result.error) {
-      notification.error({
-        message: getErrorMessage(result, t),
-      });
-      return;
+      if (result.error) {
+        notification.error({
+          message: getErrorMessage(result, t),
+        });
+        return;
+      }
+
+      notification.success({ message: t("carePlan.saveSuccess") });
+      handleClose();
+    } finally {
+      savingRef.current = false;
     }
-
-    notification.success({ message: t("carePlan.saveSuccess") });
-    handleClose();
   }, [idPrescription, admissionNumber, handleClose, t, dispatch]);
 
   const filteredCategories = snippetCategories
