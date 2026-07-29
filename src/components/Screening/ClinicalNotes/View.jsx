@@ -23,6 +23,7 @@ import Alert from "components/Alert";
 import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
 import { getMemory } from "features/lists/ListsSlice";
+import { clearDraft } from "utils/clinicalNotesEditDraft";
 import { NavigationSoapNote } from "features/clinicalNotes/NavigationSoapNote/NavigationSoapNote";
 import { openNavigationSoapNote } from "features/clinicalNotes/NavigationSoapNote/NavigationSoapNoteSlice";
 
@@ -67,6 +68,7 @@ export default function View({
 
   if (saveStatus.success && !prevSaveStatus.success) {
     setPrevSaveStatus(saveStatus);
+    if (selected?.id) clearDraft(selected.id);
     setEdit(false);
   }
 
@@ -412,7 +414,10 @@ export default function View({
                     type="primary"
                     className="gtm-clinicalnote-edit"
                     ghost={edit}
-                    onClick={() => setEdit(!edit)}
+                    onClick={() => {
+                      if (edit && selected?.id) clearDraft(selected.id);
+                      setEdit(!edit);
+                    }}
                   >
                     {edit ? "Cancelar" : "Editar"}
                   </Button>
@@ -438,59 +443,59 @@ export default function View({
         </div>
       </PaperHeader>
       <PaperContainer ref={paperContainerRef} className={edit ? "edit" : ""}>
-        {saveStatus.isSaving ? (
+        {edit ? (
+          <Paper $t={t} style={{ position: "relative" }}>
+            {saveStatus.isSaving && (
+              <LoadBox $absolute={true} style={{ zIndex: 10 }} />
+            )}
+            <Edit
+              clinicalNote={selected}
+              update={update}
+              setEdit={setEdit}
+              isSaving={saveStatus.isSaving}
+            />
+          </Paper>
+        ) : saveStatus.isSaving ? (
           <LoadContainer>
             <LoadBox $absolute={true} />
           </LoadContainer>
         ) : (
           <>
-            {edit ? (
-              <Paper $t={t}>
-                <Edit
-                  clinicalNote={selected}
-                  update={update}
-                  setEdit={setEdit}
-                />
-              </Paper>
-            ) : (
+            {selected.text && (
               <>
-                {selected.text && (
-                  <>
-                    {selected.source === "prescription" && (
-                      <Alert
-                        type="info"
-                        message={t("clinicalNotesView.prescriptionSourceAlert", {
-                          idPrescription: selected.idPrescription,
-                        })}
-                        style={{ marginBottom: "12px" }}
-                        showIcon
-                      />
-                    )}
-                    <Paper
-                      $t={t}
-                      $selectedIndicators={selectedIndicators}
-                      dangerouslySetInnerHTML={{
-                        __html: html,
-                      }}
-                      onMouseUp={(e) => selectionChange(e)}
-                      onClick={(e) => removeAnnotation(e)}
-                      className={`${"annotation-enabled"}`}
-                    />
-                  </>
-                )}
-                {!selected.text && selected.template && (
-                  <CustomFormView
-                    template={selected.template}
-                    values={selected.form}
+                {selected.source === "prescription" && (
+                  <Alert
+                    type="info"
+                    message={t("clinicalNotesView.prescriptionSourceAlert", {
+                      idPrescription: selected.idPrescription,
+                    })}
+                    style={{ marginBottom: "12px" }}
+                    showIcon
                   />
                 )}
-                {!selected.text && !selected.template && (
-                  <Empty
-                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                    description="Nenhum registro encontrado."
-                  />
-                )}
+                <Paper
+                  $t={t}
+                  $selectedIndicators={selectedIndicators}
+                  dangerouslySetInnerHTML={{
+                    __html: html,
+                  }}
+                  onMouseUp={(e) => selectionChange(e)}
+                  onClick={(e) => removeAnnotation(e)}
+                  className={`${"annotation-enabled"}`}
+                />
               </>
+            )}
+            {!selected.text && selected.template && (
+              <CustomFormView
+                template={selected.template}
+                values={selected.form}
+              />
+            )}
+            {!selected.text && !selected.template && (
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description="Nenhum registro encontrado."
+              />
             )}
           </>
         )}
