@@ -49,8 +49,8 @@ export default function View({
   admissionNumber,
   disableSelection = false,
   selectedIndicators,
-  edit,
-  setEdit,
+  edit = false,
+  setEdit = () => {},
 }) {
   const dispatch = useDispatch();
   const paperContainerRef = useRef(null);
@@ -365,7 +365,7 @@ export default function View({
                               template: selected.template,
                               form: selected.form,
                             },
-                          })
+                          }),
                         )
                       }
                     />
