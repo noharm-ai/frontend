@@ -1057,6 +1057,13 @@
     "validationEmpty": "O plano de cuidado não pode estar vazio.",
     "documentType": "Tipo de documento",
     "documentTypePlaceholder": "Selecione o tipo de documento",
+    "btnHistory": "Histórico",
+    "historyHint": "Restaurar rascunhos salvos automaticamente",
+    "historyTitle": "Histórico de rascunhos",
+    "historyEmpty": "Nenhum rascunho salvo.",
+    "historyAdmission": "Atendimento",
+    "btnRestore": "Restaurar",
+    "draftRestored": "Rascunho restaurado!",
     "saveSuccess": "Plano de cuidado salvo com sucesso!",
     "saveError": "Erro ao salvar o plano de cuidado."
   },

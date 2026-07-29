@@ -1047,6 +1047,13 @@
     "validationEmpty": "The care plan cannot be empty.",
     "documentType": "Document type",
     "documentTypePlaceholder": "Select the document type",
+    "btnHistory": "History",
+    "historyHint": "Restore auto-saved drafts",
+    "historyTitle": "Draft history",
+    "historyEmpty": "No drafts saved.",
+    "historyAdmission": "Admission",
+    "btnRestore": "Restore",
+    "draftRestored": "Draft restored!",
     "saveSuccess": "Care plan saved successfully!",
     "saveError": "Error saving the care plan."
   },
