@@ -1059,7 +1059,11 @@
     "generateError": "Unable to generate the note.",
     "sourceTitle": "Source text",
     "generatedTitle": "Generated note",
-    "sourceEmpty": "No source text available."
+    "sourceEmpty": "No source text available.",
+    "snippetsTitle": "Available texts",
+    "searchPlaceholder": "Search texts...",
+    "insertHint": "Click to insert into text",
+    "noResults": "No texts found."
   },
   "trainingCentral": {
     "title": "Training Central",

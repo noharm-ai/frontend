@@ -54,3 +54,67 @@ export const EditorWrapper = styled.div`
     max-height: none;
   }
 `;
+
+export const SnippetsPanel = styled.div`
+  width: 280px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  border: 1px solid var(--nh-border-color, #d9d9d9);
+  border-radius: 6px;
+  overflow: hidden;
+
+  .panel-scroll {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .ant-collapse {
+    border-radius: 0;
+    border: none;
+    border-bottom: none;
+  }
+
+  .ant-collapse-item {
+    border-bottom: 1px solid var(--nh-border-color, #d9d9d9);
+  }
+
+  .ant-collapse-header {
+    font-weight: 500;
+    font-size: 13px;
+  }
+
+  .ant-collapse-content-box {
+    padding: 4px 0;
+  }
+`;
+
+export const SearchWrapper = styled.div`
+  padding: 8px;
+  border-bottom: 1px solid var(--nh-border-color, #d9d9d9);
+`;
+
+export const SnippetButton = styled.button`
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  padding: 6px 16px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--nh-text-color);
+  line-height: 1.4;
+
+  &:hover {
+    background: #f0f5ff;
+    color: var(--nh-primary-color, #1890ff);
+  }
+
+  &::before {
+    content: "+ ";
+    opacity: 0.5;
+  }
+`;

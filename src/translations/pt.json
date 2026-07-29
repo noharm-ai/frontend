@@ -1069,7 +1069,11 @@
     "generateError": "Não foi possível gerar a evolução.",
     "sourceTitle": "Texto de origem",
     "generatedTitle": "Evolução gerada",
-    "sourceEmpty": "Nenhum texto de origem disponível."
+    "sourceEmpty": "Nenhum texto de origem disponível.",
+    "snippetsTitle": "Textos disponíveis",
+    "searchPlaceholder": "Buscar textos...",
+    "insertHint": "Clique para inserir no texto",
+    "noResults": "Nenhum texto encontrado."
   },
   "trainingCentral": {
     "title": "Central de Treinamento",

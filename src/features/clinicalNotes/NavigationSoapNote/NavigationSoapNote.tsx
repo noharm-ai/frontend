@@ -1,26 +1,36 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useRef, useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Alert, Empty, Spin } from "antd";
+import { Alert, Collapse, Empty, Input, Spin } from "antd";
 import { ReloadOutlined } from "@ant-design/icons";
 import DOMPurify from "dompurify";
 
 import DefaultModal from "components/Modal";
 import Button from "components/Button";
+import Tooltip from "components/Tooltip";
 import notification from "components/notification";
 import EditorBase from "components/Editor";
 import CustomFormView from "components/Forms/CustomForm/View";
 import { getErrorMessage } from "src/utils/errorHandler";
+import { fetchDraft } from "features/memory/MemoryDraft/MemoryDraftSlice";
+import type { SnippetCategory } from "features/prescription/CarePlan/types";
 import { fetchClinicalNotesListThunk } from "store/ducks/clinicalNotes/thunk";
 import {
   closeNavigationSoapNote,
   generateNavigationSoapNote,
   saveNavigationSoapNote,
 } from "./NavigationSoapNoteSlice";
-import { SourceBox, EditorWrapper } from "./NavigationSoapNote.style";
+import {
+  SourceBox,
+  EditorWrapper,
+  SnippetsPanel,
+  SearchWrapper,
+  SnippetButton,
+} from "./NavigationSoapNote.style";
 
 const Editor = EditorBase as any;
 const SOAP_TPL_NAME = "Evolução Farmacêutica - SOAP";
+const SNIPPETS_MEMORY_TYPE = "tpl-care-plan";
 
 interface EditorHandle {
   insertContent: (html: string) => void;
@@ -40,7 +50,54 @@ export function NavigationSoapNote() {
   const isSaving = useSelector(
     (state: any) => state.navigationSoapNote.save.status === "loading",
   );
+  const snippetsMemory = useSelector(
+    (state: any) => state.memoryDraft?.[SNIPPETS_MEMORY_TYPE],
+  );
   const editorRef = useRef<EditorHandle | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const snippetCategories: SnippetCategory[] =
+    snippetsMemory?.data?.[0]?.value?.data?.snippets ?? [];
+  const snippetsLoading = snippetsMemory?.status === "loading";
+
+  useEffect(() => {
+    if (note) {
+      dispatch((fetchDraft as any)(SNIPPETS_MEMORY_TYPE));
+    }
+  }, [note, dispatch]);
+
+  const insertSnippet = useCallback((text: string) => {
+    editorRef.current?.insertContent(text);
+  }, []);
+
+  const filteredCategories = snippetCategories
+    .map((cat) => ({
+      ...cat,
+      items: cat.items.filter((item) =>
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()),
+      ),
+    }))
+    .filter((cat) => cat.items.length > 0);
+
+  const collapseItems = filteredCategories.map((cat) => ({
+    key: cat.category,
+    label: cat.category,
+    children: (
+      <>
+        {cat.items.map((item) => (
+          <Tooltip
+            key={item.title}
+            title={t("navigationSoapNote.insertHint")}
+            placement="left"
+          >
+            <SnippetButton type="button" onClick={() => insertSnippet(item.text)}>
+              {item.title}
+            </SnippetButton>
+          </Tooltip>
+        ))}
+      </>
+    ),
+  }));
 
   const generateNote = useCallback(
     (id: string) => {
@@ -63,6 +120,7 @@ export function NavigationSoapNote() {
 
   const handleClose = () => {
     dispatch(closeNavigationSoapNote());
+    setSearchQuery("");
   };
 
   const handleSave = async () => {
@@ -110,7 +168,7 @@ export function NavigationSoapNote() {
       title={t("navigationSoapNote.title")}
       open={!!note}
       onCancel={handleClose}
-      width="70vw"
+      width="85vw"
       centered
       destroyOnHidden
       maskClosable={false}
@@ -240,6 +298,55 @@ export function NavigationSoapNote() {
             </EditorWrapper>
           )}
         </div>
+
+        {generate.status === "succeeded" && (
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              minHeight: 0,
+              flex: "0 0 auto",
+            }}
+          >
+            <h4 style={{ marginTop: 0, marginBottom: 12 }}>
+              {t("navigationSoapNote.snippetsTitle")}
+            </h4>
+            <SnippetsPanel>
+              <SearchWrapper>
+                <Input
+                  placeholder={t("navigationSoapNote.searchPlaceholder")}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  allowClear
+                  size="small"
+                />
+              </SearchWrapper>
+              <div className="panel-scroll">
+                {snippetsLoading ? (
+                  <div style={{ textAlign: "center", padding: "24px 0" }}>
+                    <Spin />
+                  </div>
+                ) : collapseItems.length > 0 ? (
+                  <Collapse
+                    items={collapseItems}
+                    defaultActiveKey={[snippetCategories[0]?.category]}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      padding: "16px",
+                      fontSize: 13,
+                      opacity: 0.5,
+                      textAlign: "center",
+                    }}
+                  >
+                    {t("navigationSoapNote.noResults")}
+                  </div>
+                )}
+              </div>
+            </SnippetsPanel>
+          </div>
+        )}
       </div>
     </DefaultModal>
   );
