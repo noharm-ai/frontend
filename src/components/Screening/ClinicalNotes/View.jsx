@@ -48,13 +48,14 @@ export default function View({
   admissionNumber,
   disableSelection = false,
   selectedIndicators,
+  edit,
+  setEdit,
 }) {
   const dispatch = useDispatch();
   const paperContainerRef = useRef(null);
   const menuRef = useRef(null);
   const selectionRangeRef = useRef(null);
   const modalRef = useRef(null);
-  const [edit, setEdit] = useState(false);
   const [prevSelected, setPrevSelected] = useState(selected);
   const [prevSaveStatus, setPrevSaveStatus] = useState(saveStatus);
   const { t } = useTranslation();

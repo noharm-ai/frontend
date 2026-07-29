@@ -299,6 +299,16 @@ export const List = styled.div`
         color: #1890ff;
       }
 
+      &.disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+
+        &:hover {
+          background: none;
+          color: inherit;
+        }
+      }
+
       .time {
         margin-left: 8px;
         margin-right: 10px;

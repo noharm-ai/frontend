@@ -16,6 +16,7 @@ import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import Tag from "components/Tag";
 import Dropdown from "components/Dropdown";
+import notification from "components/notification";
 import { getFirstAndLastName } from "utils";
 import { intersection } from "utils/lodash";
 import FeatureService from "services/features";
@@ -51,7 +52,19 @@ export default function ClinicalNotes({
   );
   const [filteredList, setFilteredList] = useState([]);
   const [autoFetchedDates, setAutoFetchedDates] = useState(new Set());
+  const [edit, setEdit] = useState(false);
   const { t } = useTranslation();
+
+  const handleSelect = (clinicalNote) => {
+    if (edit) {
+      notification.warning({
+        message: t("clinicalNotesView.editInProgressTitle"),
+        description: t("clinicalNotesView.editInProgressDescription"),
+      });
+      return;
+    }
+    select(clinicalNote);
+  };
   const filterList = useCallback(
     (stateList, selectFirst, positionsArray, indicatorsArray) => {
       const filteredGroup = [];
@@ -223,6 +236,8 @@ export default function ClinicalNotes({
             popup={popup}
             admissionNumber={localAdmissionNumber}
             selectedIndicators={selectedIndicators}
+            edit={edit}
+            setEdit={setEdit}
           />
         </Col>
         <Col md={13} xl={9} className="list-panel">
@@ -350,9 +365,9 @@ export default function ClinicalNotes({
                           <div
                             className={`line ${
                               selected && c.id === selected.id ? "active" : ""
-                            }`}
+                            } ${edit ? "disabled" : ""}`}
                             key={i}
-                            onClick={() => select(c)}
+                            onClick={() => handleSelect(c)}
                             aria-hidden="true"
                           >
                             <div className="time">

@@ -556,7 +556,9 @@
   },
 
   "clinicalNotesView": {
-    "prescriptionSourceAlert": "Esta evolução foi registrada dentro do NoHarm e está relacionada à prescrição {{idPrescription}}. Clientes com integração de retorno podem visualizá-la em duplicidade: exibimos tanto a versão criada no NoHarm quanto a versão enviada ao sistema de origem."
+    "prescriptionSourceAlert": "Esta evolução foi registrada dentro do NoHarm e está relacionada à prescrição {{idPrescription}}. Clientes com integração de retorno podem visualizá-la em duplicidade: exibimos tanto a versão criada no NoHarm quanto a versão enviada ao sistema de origem.",
+    "editInProgressTitle": "Edição em andamento",
+    "editInProgressDescription": "Salve ou cancele a edição atual antes de selecionar outra evolução."
   },
 
   "clinicalNotesIndicator": {
