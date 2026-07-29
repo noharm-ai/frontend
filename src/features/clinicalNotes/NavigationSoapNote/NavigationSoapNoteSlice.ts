@@ -16,8 +16,9 @@ export interface INavigationSoapNoteSource {
 
 export interface INavigationSoapNoteSaveParams {
   admissionNumber: number;
-  notes: string;
   tplName: string;
+  template: any;
+  formValues: any;
 }
 
 interface INavigationSoapNoteSlice {
@@ -74,7 +75,10 @@ const navigationSoapNoteSlice = createSlice({
   name: "navigationSoapNote",
   initialState,
   reducers: {
-    openNavigationSoapNote(state, action: PayloadAction<INavigationSoapNoteSource>) {
+    openNavigationSoapNote(
+      state,
+      action: PayloadAction<INavigationSoapNoteSource>,
+    ) {
       state.note = action.payload;
       state.generate = { ...initialState.generate };
       state.save = { ...initialState.save };
@@ -114,5 +118,6 @@ const navigationSoapNoteSlice = createSlice({
   },
 });
 
-export const { openNavigationSoapNote, closeNavigationSoapNote } = navigationSoapNoteSlice.actions;
+export const { openNavigationSoapNote, closeNavigationSoapNote } =
+  navigationSoapNoteSlice.actions;
 export const navigationSoapNoteReducer = navigationSoapNoteSlice.reducer;

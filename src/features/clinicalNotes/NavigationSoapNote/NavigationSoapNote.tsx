@@ -12,7 +12,11 @@ import EditorBase from "components/Editor";
 import CustomFormView from "components/Forms/CustomForm/View";
 import { getErrorMessage } from "src/utils/errorHandler";
 import { fetchClinicalNotesListThunk } from "store/ducks/clinicalNotes/thunk";
-import { closeNavigationSoapNote, generateNavigationSoapNote, saveNavigationSoapNote } from "./NavigationSoapNoteSlice";
+import {
+  closeNavigationSoapNote,
+  generateNavigationSoapNote,
+  saveNavigationSoapNote,
+} from "./NavigationSoapNoteSlice";
 import { SourceBox, EditorWrapper } from "./NavigationSoapNote.style";
 
 const Editor = EditorBase as any;
@@ -30,7 +34,9 @@ export function NavigationSoapNote() {
   const { t } = useTranslation();
   const note = useSelector((state: any) => state.navigationSoapNote.note);
   const sourceContent = note?.sourceContent;
-  const generate = useSelector((state: any) => state.navigationSoapNote.generate);
+  const generate = useSelector(
+    (state: any) => state.navigationSoapNote.generate,
+  );
   const isSaving = useSelector(
     (state: any) => state.navigationSoapNote.save.status === "loading",
   );
@@ -38,11 +44,13 @@ export function NavigationSoapNote() {
 
   const generateNote = useCallback(
     (id: string) => {
-      dispatch(generateNavigationSoapNote({ id }) as any).then((result: any) => {
-        if (result.error) {
-          notification.error({ message: getErrorMessage(result, t) });
-        }
-      });
+      dispatch(generateNavigationSoapNote({ id }) as any).then(
+        (result: any) => {
+          if (result.error) {
+            notification.error({ message: getErrorMessage(result, t) });
+          }
+        },
+      );
     },
     [dispatch, t],
   );
@@ -65,10 +73,24 @@ export function NavigationSoapNote() {
       return;
     }
 
+    const fixedTemplate = [
+      {
+        group: "Plano de Cuidado",
+        questions: [
+          {
+            id: "care-plan-soap",
+            label: "",
+            type: "text",
+          },
+        ],
+      },
+    ];
+
     const params = {
       admissionNumber: note.admissionNumber,
-      notes: editorRef.current?.getHTML() ?? "",
       tplName: SOAP_TPL_NAME,
+      template: fixedTemplate,
+      formValues: { "care-plan-soap": editorRef.current?.getHTML() ?? "" },
     };
 
     const result: any = await dispatch(saveNavigationSoapNote(params) as any);
@@ -111,7 +133,9 @@ export function NavigationSoapNote() {
               {t("navigationSoapNote.btnRegenerate")}
             </Button>
           )}
-          <Button onClick={handleClose}>{t("navigationSoapNote.btnCancel")}</Button>
+          <Button onClick={handleClose}>
+            {t("navigationSoapNote.btnCancel")}
+          </Button>
           <Button
             type="primary"
             onClick={handleSave}
