@@ -1045,6 +1045,8 @@
     "templateApplied": "Template applied!",
     "noResults": "No texts found.",
     "validationEmpty": "The care plan cannot be empty.",
+    "documentType": "Document type",
+    "documentTypePlaceholder": "Select the document type",
     "saveSuccess": "Care plan saved successfully!",
     "saveError": "Error saving the care plan."
   },

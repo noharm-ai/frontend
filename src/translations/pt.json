@@ -1055,6 +1055,8 @@
     "templateApplied": "Modelo aplicado!",
     "noResults": "Nenhum texto encontrado.",
     "validationEmpty": "O plano de cuidado não pode estar vazio.",
+    "documentType": "Tipo de documento",
+    "documentTypePlaceholder": "Selecione o tipo de documento",
     "saveSuccess": "Plano de cuidado salvo com sucesso!",
     "saveError": "Erro ao salvar o plano de cuidado."
   },
