@@ -950,6 +950,9 @@ api.userAdmin.upsertUser = (params = {}) =>
 api.userAdmin.getUsers = (params = {}) =>
   instance.get(endpoints.users, { params, ...setHeaders() });
 
+api.userAdmin.getUserManagers = (params = {}) =>
+  instance.get(`/user-admin/manager-list`, { params, ...setHeaders() });
+
 /**
  * Segment namespace
  */

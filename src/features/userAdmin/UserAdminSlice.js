@@ -10,6 +10,11 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  managers: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
 };
 
 export const fetchUsers = createAsyncThunk(
@@ -17,6 +22,19 @@ export const fetchUsers = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.userAdmin.getUsers(params);
+
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const fetchUserManagers = createAsyncThunk(
+  "user-admin/fetch-managers",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.userAdmin.getUserManagers(params);
 
       return response;
     } catch (err) {
@@ -60,6 +78,17 @@ const userAdminSlice = createSlice({
       .addCase(fetchUsers.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
+      })
+      .addCase(fetchUserManagers.pending, (state, action) => {
+        state.managers.status = "loading";
+      })
+      .addCase(fetchUserManagers.fulfilled, (state, action) => {
+        state.managers.status = "succeeded";
+        state.managers.list = action.payload.data.data;
+      })
+      .addCase(fetchUserManagers.rejected, (state, action) => {
+        state.managers.status = "failed";
+        state.managers.error = action.error.message;
       })
       .addCase(upsertUser.pending, (state, action) => {
         state.single.status = "loading";

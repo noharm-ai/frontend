@@ -187,7 +187,8 @@ export default function Menu({ segments }) {
           label: t("menu.user-administration"),
           icon: <UsergroupAddOutlined />,
           id: "gtm-lnk-user-administration",
-          permission: [Permission.READ_USERS],
+          // without READ_USERS the page shows the user managers contact list
+          permission: [Permission.READ_USERS, Permission.READ_BASIC_FEATURES],
         },
         {
           key: "/admin/exames",
