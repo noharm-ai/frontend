@@ -1,12 +1,21 @@
 import { Divider } from "antd";
+import { useTranslation } from "react-i18next";
 
 import { formatDateTime } from "src/utils/date";
 import { MainTab } from "./MainTab";
 import { VariableTab } from "./VariableTab";
 import { TriggerTab } from "./TriggerTab";
-import { EditorLayout, SidePanel, FormSection } from "../Protocol.style";
+import { TargetTestPanel } from "../Test/TargetTestPanel";
+import {
+  EditorLayout,
+  SidePanel,
+  SidePanelStack,
+  FormSection,
+} from "../Protocol.style";
 
 export function BaseForm({ formData }: { formData: any }) {
+  const { t } = useTranslation();
+
   return (
     <>
       <EditorLayout>
@@ -30,10 +39,17 @@ export function BaseForm({ formData }: { formData: any }) {
             </>
           )}
         </div>
-        <SidePanel>
-          <h3 className="side-panel-title">Gatilho</h3>
-          <TriggerTab />
-        </SidePanel>
+        <SidePanelStack>
+          <SidePanel>
+            <h3 className="side-panel-title">Gatilho</h3>
+            <TriggerTab />
+          </SidePanel>
+
+          <SidePanel>
+            <h3 className="side-panel-title">{t("titles.protocolTest")}</h3>
+            <TargetTestPanel />
+          </SidePanel>
+        </SidePanelStack>
       </EditorLayout>
     </>
   );

@@ -1021,6 +1021,16 @@ api.protocols.tracePrescription = (params = {}) =>
     ...setHeaders(),
   });
 
+api.protocols.testSample = (params = {}) =>
+  instance.post(`protocol/test/sample`, params, {
+    ...setHeaders(),
+  });
+
+api.protocols.testConfig = (params = {}) =>
+  instance.post(`protocol/test`, params, {
+    ...setHeaders(),
+  });
+
 /**
  * AUTH
  */

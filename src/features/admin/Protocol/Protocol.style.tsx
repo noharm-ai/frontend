@@ -84,11 +84,10 @@ export const FormSection = styled.div`
   }
 `;
 
-export const SidePanel = styled.div`
-  padding: 1rem 1.5rem;
-  background: #fff;
-  border: 1px solid #f0f0f0;
-  border-radius: 8px;
+export const SidePanelStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
   position: sticky;
   top: 6rem;
   align-self: start;
@@ -100,6 +99,13 @@ export const SidePanel = styled.div`
     max-height: none;
     overflow-y: visible;
   }
+`;
+
+export const SidePanel = styled.div`
+  padding: 1rem 1.5rem;
+  background: #fff;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
 
   .side-panel-title {
     margin: 0 0 1rem;

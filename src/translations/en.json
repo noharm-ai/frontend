@@ -354,11 +354,27 @@
     "hasEconomy": "Has economy",
     "selectAll": "Select all",
     "protocols": "Protocols",
-    "protocolAlerts": "Protocol alerts"
+    "protocolAlerts": "Protocol alerts",
+    "segment": "Segment",
+    "allSegments": "All segments",
+    "situation": "Status",
+    "error": "Error",
+    "summary": "Summary",
+    "activated": "Activated",
+    "notActivated": "Not activated",
+    "typeMismatch": "This protocol type does not apply to this prescription",
+    "sampleSize": "Sample size",
+    "operationCancelled": "Operation cancelled",
+    "protocolTestIds": "Prescriptions to test",
+    "protocolTestAddId": "Type the prescription ID and press Enter",
+    "protocolTestRun": "Run test",
+    "protocolTestEmptySample": "No prescriptions found to test",
+    "protocolTestRequirements": "Fill in the type, variables and trigger before testing the protocol"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit",
-    "protocolTrace": "Protocol evaluation explanation"
+    "protocolTrace": "Protocol evaluation explanation",
+    "protocolTest": "Test protocol"
   },
   "transcriptionLabels": {
     "idDrug": "Drug",
@@ -375,7 +391,9 @@
   },
   "buttons": {
     "search": "Search",
-    "explainProtocols": "Explain evaluation"
+    "explainProtocols": "Explain evaluation",
+    "testProtocol": "Test",
+    "viewDetails": "View details"
   },
   "helpText": {
     "title": "Help",
