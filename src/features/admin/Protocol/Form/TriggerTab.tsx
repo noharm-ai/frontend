@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { useFormikContext } from "formik";
-import { Segmented } from "antd";
+import { Tabs } from "antd";
 
 import { IProtocolFormBaseFields } from "./types";
 import { parseTriggerExpression } from "./TriggerBuilder/expressionTree";
@@ -41,27 +41,28 @@ export function TriggerTab() {
   }, []);
 
   return (
-    <>
-      <div style={{ marginBottom: "12px" }}>
-        <Segmented
-          size="small"
-          value={mode}
-          options={[
-            { label: "Visual", value: "builder" },
-            { label: "Avançado", value: "advanced" },
-          ]}
-          onChange={(value) => handleModeChange(value as TriggerMode)}
-        />
-      </div>
-
-      {mode === "builder" ? (
-        <TriggerBuilder onParseFailure={handleParseFailure} />
-      ) : (
-        <TriggerAdvanced
-          parseError={parseError}
-          onTextChange={() => setParseError(null)}
-        />
-      )}
-    </>
+    <Tabs
+      className="side-panel-tabs"
+      activeKey={mode}
+      destroyOnHidden
+      onChange={(key) => handleModeChange(key as TriggerMode)}
+      items={[
+        {
+          key: "builder",
+          label: "Visual",
+          children: <TriggerBuilder onParseFailure={handleParseFailure} />,
+        },
+        {
+          key: "advanced",
+          label: "Avançado",
+          children: (
+            <TriggerAdvanced
+              parseError={parseError}
+              onTextChange={() => setParseError(null)}
+            />
+          ),
+        },
+      ]}
+    />
   );
 }
