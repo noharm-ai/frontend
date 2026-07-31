@@ -6,6 +6,7 @@ import { MainTab } from "./MainTab";
 import { VariableTab } from "./VariableTab";
 import { TriggerTab } from "./TriggerTab";
 import { TargetTestPanel } from "../Test/TargetTestPanel";
+import { BatchTestPanel } from "../Test/BatchTestPanel";
 import {
   EditorLayout,
   SidePanel,
@@ -48,6 +49,13 @@ export function BaseForm({ formData }: { formData: any }) {
           <SidePanel>
             <h3 className="side-panel-title">{t("titles.protocolTest")}</h3>
             <TargetTestPanel />
+          </SidePanel>
+
+          <SidePanel>
+            <h3 className="side-panel-title">
+              {t("titles.protocolBatchTest")}
+            </h3>
+            <BatchTestPanel />
           </SidePanel>
         </SidePanelStack>
       </EditorLayout>

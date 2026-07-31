@@ -18,7 +18,6 @@ import {
 } from "../ProtocolSlice";
 import { BaseForm } from "./Base";
 import { IProtocolFormBaseFields, emptyProtocol } from "./types";
-import { ProtocolTestModal } from "../Test/ProtocolTestModal";
 import { StickyPageHeader } from "../Protocol.style";
 
 const LIST_PATH = "/admin/protocolos";
@@ -39,7 +38,6 @@ export function ProtocolEditorPage() {
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [isStuck, setIsStuck] = useState(false);
-  const [testOpen, setTestOpen] = useState(false);
 
   useEffect(() => {
     if (!isNew) {
@@ -145,25 +143,6 @@ export function ProtocolEditorPage() {
               <div className="page-header-legend">Protocolos</div>
             </div>
             <div className="page-header-actions">
-              <Button
-                onClick={() => {
-                  if (
-                    !values.protocolType ||
-                    !values.config?.trigger ||
-                    !values.config?.variables?.length
-                  ) {
-                    notification.warning({
-                      message: t("validation.requiredField"),
-                      description: t("labels.protocolTestRequirements"),
-                    });
-                    return;
-                  }
-                  setTestOpen(true);
-                }}
-                disabled={isSaving || isLoading || notFound}
-              >
-                {t("buttons.testProtocol")}
-              </Button>
               <Button onClick={onCancel} disabled={isSaving}>
                 {t("actions.cancel")}
               </Button>
@@ -185,12 +164,6 @@ export function ProtocolEditorPage() {
               <BaseForm formData={values} />
             </Form>
           )}
-
-          <ProtocolTestModal
-            open={testOpen}
-            onClose={() => setTestOpen(false)}
-            protocol={values}
-          />
         </>
       )}
     </Formik>

@@ -104,14 +104,20 @@ test("tests a protocol against a sample of prescriptions in chunks", async ({
   });
 
   await page.goto("/admin/protocolos/1");
-  await page.getByRole("button", { name: "Testar", exact: true }).click();
 
-  const modal = page.getByRole("dialog");
-  await modal.getByRole("button", { name: "Executar teste" }).click();
+  // the batch test card shows a form; running it replaces the form with
+  // progress and then a totals summary
+  await page.locator("#protocol-batch-run").click();
+  const main = page.getByRole("main");
+  await expect(main.getByText("Ativado: 6", { exact: true })).toBeVisible();
+  await expect(main.getByText("Não ativado: 6")).toBeVisible();
 
-  // all 12 sampled prescriptions land in the results table
+  // full results live in a modal
+  await main.getByRole("button", { name: "Ver resultados" }).click();
+  const modal = page
+    .getByRole("dialog")
+    .filter({ hasText: "Resultados do teste" });
   await expect(modal.getByText("Ativado: 6", { exact: true })).toBeVisible();
-  await expect(modal.getByText("Não ativado: 6")).toBeVisible();
 
   // the batch was split into ceil(12/5) = 3 requests of at most 5 ids
   const chunkCalls = mockApi.requests.filter(
@@ -146,6 +152,14 @@ test("tests a protocol against a sample of prescriptions in chunks", async ({
   const detailBody = JSON.parse(detailCall?.postData ?? "{}");
   expect(detailBody.detailed).toBe(true);
   expect(detailBody.idPrescriptionList).toEqual(["100"]);
+
+  // "test again" returns the card to the form state
+  await traceModal.locator(".ant-modal-close").click();
+  await expect(traceModal).toBeHidden();
+  await modal.locator(".ant-modal-close").click();
+  await expect(modal).toBeHidden();
+  await main.getByRole("button", { name: "Testar novamente" }).click();
+  await expect(page.locator("#protocol-batch-run")).toBeVisible();
 });
 
 test("tests a protocol against target prescriptions from the trigger panel", async ({
@@ -221,7 +235,7 @@ test("tests a protocol against target prescriptions from the trigger panel", asy
   await idsInput.fill("200");
   await idsInput.press("Enter");
 
-  await panel.getByRole("button", { name: "Executar teste" }).click();
+  await page.locator("#protocol-test-run").click();
 
   // compact rows: id + activation status only
   await expect(panel.getByRole("link", { name: "199" })).toBeVisible();

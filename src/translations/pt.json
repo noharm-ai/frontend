@@ -374,7 +374,9 @@
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida",
     "protocolTrace": "Explicação da avaliação de protocolos",
-    "protocolTest": "Testar protocolo"
+    "protocolTest": "Testar protocolo",
+    "protocolBatchTest": "Testar amostra do dia",
+    "protocolTestResults": "Resultados do teste"
   },
   "transcriptionLabels": {
     "idDrug": "Medicamento",
@@ -392,8 +394,9 @@
   "buttons": {
     "search": "Pesquisar",
     "explainProtocols": "Detalhar protocolos",
-    "testProtocol": "Testar",
-    "viewDetails": "Ver detalhes"
+    "viewDetails": "Ver detalhes",
+    "viewResults": "Ver resultados",
+    "newTest": "Testar novamente"
   },
   "helpText": {
     "title": "Ajuda",

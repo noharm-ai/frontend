@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
-import { List, Tag, Tooltip } from "antd";
+import { Flex, Space, Tag, Tooltip } from "antd";
 import { FileSearchOutlined, PlayCircleOutlined } from "@ant-design/icons";
 
 import api from "services/api";
@@ -88,6 +88,7 @@ export function TargetTestPanel() {
 
       <div className="form-row">
         <Button
+          id="protocol-test-run"
           type="primary"
           icon={<PlayCircleOutlined />}
           onClick={runTest}
@@ -100,49 +101,52 @@ export function TargetTestPanel() {
       </div>
 
       {results.length > 0 && (
-        <List
-          size="small"
-          dataSource={results}
-          renderItem={(row) => (
-            <List.Item
-              actions={
-                row.error
-                  ? undefined
-                  : [
-                      <Tooltip title={t("buttons.viewDetails")} key="details">
-                        <Button
-                          size="small"
-                          icon={<FileSearchOutlined />}
-                          loading={detailId === row.idPrescription}
-                          disabled={
-                            detailId !== null &&
-                            detailId !== row.idPrescription
-                          }
-                          onClick={() => openDetail(row)}
-                        />
-                      </Tooltip>,
-                    ]
-              }
+        <ul style={{ listStyle: "none", margin: 0, padding: 0 }}>
+          {results.map((row) => (
+            <li
+              key={row.idPrescription}
+              style={{
+                padding: "8px 0",
+                borderBottom: "1px solid #f0f0f0",
+              }}
             >
-              <a
-                href={`/prescricao/${row.idPrescription}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {row.idPrescription}
-              </a>
-              {row.error ? (
-                <Tooltip title={row.error}>
-                  <Tag color="red">{t("labels.error")}</Tag>
-                </Tooltip>
-              ) : row.activated ? (
-                <Tag color="green">{t("labels.activated")}</Tag>
-              ) : (
-                <Tag>{t("labels.notActivated")}</Tag>
-              )}
-            </List.Item>
-          )}
-        />
+              <Flex justify="space-between" align="center">
+                <a
+                  href={`/prescricao/${row.idPrescription}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {row.idPrescription}
+                </a>
+                <Space>
+                  {row.error ? (
+                    <Tooltip title={row.error}>
+                      <Tag color="red">{t("labels.error")}</Tag>
+                    </Tooltip>
+                  ) : row.activated ? (
+                    <Tag color="green">{t("labels.activated")}</Tag>
+                  ) : (
+                    <Tag>{t("labels.notActivated")}</Tag>
+                  )}
+                  {!row.error && (
+                    <Tooltip title={t("buttons.viewDetails")}>
+                      <Button
+                        size="small"
+                        icon={<FileSearchOutlined />}
+                        loading={detailId === row.idPrescription}
+                        disabled={
+                          detailId !== null &&
+                          detailId !== row.idPrescription
+                        }
+                        onClick={() => openDetail(row)}
+                      />
+                    </Tooltip>
+                  )}
+                </Space>
+              </Flex>
+            </li>
+          ))}
+        </ul>
       )}
 
       <TestDetailModal trace={detailTrace} onClose={closeDetail} />

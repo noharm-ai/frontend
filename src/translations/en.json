@@ -374,7 +374,9 @@
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit",
     "protocolTrace": "Protocol evaluation explanation",
-    "protocolTest": "Test protocol"
+    "protocolTest": "Test protocol",
+    "protocolBatchTest": "Test today's sample",
+    "protocolTestResults": "Test results"
   },
   "transcriptionLabels": {
     "idDrug": "Drug",
@@ -392,8 +394,9 @@
   "buttons": {
     "search": "Search",
     "explainProtocols": "Explain evaluation",
-    "testProtocol": "Test",
-    "viewDetails": "View details"
+    "viewDetails": "View details",
+    "viewResults": "View results",
+    "newTest": "Test again"
   },
   "helpText": {
     "title": "Help",
