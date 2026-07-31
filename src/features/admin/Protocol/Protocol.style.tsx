@@ -112,4 +112,10 @@ export const SidePanel = styled.div`
     font-size: 1rem;
     font-weight: 600;
   }
+
+  .side-panel-tabs {
+    .ant-tabs-nav {
+      margin-bottom: 1rem;
+    }
+  }
 `;

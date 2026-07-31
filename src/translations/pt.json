@@ -369,13 +369,14 @@
     "protocolTestAddId": "Digite o nº da prescrição e pressione Enter",
     "protocolTestRun": "Executar teste",
     "protocolTestEmptySample": "Nenhuma prescrição encontrada para o teste",
-    "protocolTestRequirements": "Preencha o tipo, as variáveis e o gatilho antes de testar o protocolo"
+    "protocolTestRequirements": "Preencha o tipo, as variáveis e o gatilho antes de testar o protocolo",
+    "protocolTargetTest": "Direcionado",
+    "protocolSampleTest": "Amostra do dia"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida",
     "protocolTrace": "Explicação da avaliação de protocolos",
     "protocolTest": "Testar protocolo",
-    "protocolBatchTest": "Testar amostra do dia",
     "protocolTestResults": "Resultados do teste"
   },
   "transcriptionLabels": {

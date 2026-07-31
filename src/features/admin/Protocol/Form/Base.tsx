@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Divider } from "antd";
+import { Divider, Tabs } from "antd";
 import { useTranslation } from "react-i18next";
 
 import { formatDateTime } from "src/utils/date";
@@ -57,14 +57,22 @@ export function BaseForm({
 
           <SidePanel>
             <h3 className="side-panel-title">{t("titles.protocolTest")}</h3>
-            <TargetTestPanel />
-          </SidePanel>
-
-          <SidePanel>
-            <h3 className="side-panel-title">
-              {t("titles.protocolBatchTest")}
-            </h3>
-            <BatchTestPanel />
+            <Tabs
+              className="side-panel-tabs"
+              defaultActiveKey="target"
+              items={[
+                {
+                  key: "target",
+                  label: t("labels.protocolTargetTest"),
+                  children: <TargetTestPanel />,
+                },
+                {
+                  key: "sample",
+                  label: t("labels.protocolSampleTest"),
+                  children: <BatchTestPanel />,
+                },
+              ]}
+            />
           </SidePanel>
         </SidePanelStack>
       </EditorLayout>

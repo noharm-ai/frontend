@@ -369,13 +369,14 @@
     "protocolTestAddId": "Type the prescription ID and press Enter",
     "protocolTestRun": "Run test",
     "protocolTestEmptySample": "No prescriptions found to test",
-    "protocolTestRequirements": "Fill in the type, variables and trigger before testing the protocol"
+    "protocolTestRequirements": "Fill in the type, variables and trigger before testing the protocol",
+    "protocolTargetTest": "Targeted",
+    "protocolSampleTest": "Today's sample"
   },
   "titles": {
     "addDrugMeasureUnit": "Add Drug Unit",
     "protocolTrace": "Protocol evaluation explanation",
     "protocolTest": "Test protocol",
-    "protocolBatchTest": "Test today's sample",
     "protocolTestResults": "Test results"
   },
   "transcriptionLabels": {
