@@ -14,7 +14,7 @@ import {
   appendChildAtPath,
 } from "./expressionTree";
 import { ExpressionGroup } from "./ExpressionGroup";
-import { TriggerPreview } from "./TriggerBuilder.style";
+import { ExpressionSentence } from "./ExpressionSentence";
 
 const MAX_TRIGGER_LENGTH = 500;
 
@@ -90,16 +90,7 @@ export function TriggerBuilder({ onParseFailure }: ITriggerBuilderProps) {
         onAddGroup={handleAddGroup}
       />
 
-      <TriggerPreview>
-        <code>{trigger || "(expressão vazia)"}</code>
-        <div
-          className={`preview-counter ${
-            trigger.length > MAX_TRIGGER_LENGTH ? "is-over" : ""
-          }`}
-        >
-          {trigger.length}/{MAX_TRIGGER_LENGTH}
-        </div>
-      </TriggerPreview>
+      <ExpressionSentence tree={tree} variables={variables} />
 
       {trigger.length > MAX_TRIGGER_LENGTH && (
         <Alert

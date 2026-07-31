@@ -183,31 +183,52 @@ export const ConditionError = styled.div`
   color: #ff4d4f;
 `;
 
-export const TriggerPreview = styled.div`
+export const SentenceBox = styled.div`
   margin-top: 12px;
+  padding: 8px 12px;
+  font-size: 13px;
+  line-height: 2;
+  color: #595959;
+  background: #f6f7f9;
+  border: 1px solid #f0f0f0;
+  border-radius: 6px;
 
-  code {
-    display: block;
-    padding: 8px 10px;
-    font-family: monospace;
-    font-size: 12px;
-    color: #666;
-    word-break: break-word;
-    white-space: pre-wrap;
-    background: #f6f7f9;
-    border: 1px solid #f0f0f0;
-    border-radius: 6px;
-  }
+  .sentence-var {
+    padding: 1px 6px;
+    color: #434343;
+    white-space: nowrap;
+    background: #fff;
+    border: 1px solid #e4e4e4;
+    border-radius: 4px;
 
-  .preview-counter {
-    margin-top: 2px;
-    font-size: 11px;
-    color: #999;
-    text-align: right;
-
-    &.is-over {
-      color: #ff4d4f;
-      font-weight: 600;
+    &.is-dangling {
+      color: #cf1322;
+      background: #fff1f0;
+      border-color: #ffa39e;
     }
   }
+
+  .sentence-and {
+    color: #2f54eb;
+    font-weight: 600;
+  }
+
+  .sentence-or {
+    color: #d46b08;
+    font-weight: 600;
+  }
+
+  .sentence-not {
+    color: #cf1322;
+    font-weight: 600;
+  }
+
+  .sentence-paren {
+    color: #bfbfbf;
+  }
+
+  .sentence-block {
+    margin-left: 20px;
+  }
 `;
+
