@@ -254,21 +254,21 @@ export default function Menu({ segments }) {
           icon: <LayoutOutlined />,
           id: "gtm-lnk-admin",
         },
-        {
-          key: "curadoria-medicamentos",
-          label: "Curadoria medicamentos",
-          icon: <TableOutlined />,
-          id: "gtm-lnk-attr-drugs",
-          children: [
-            {
-              key: "/admin/curadoria-medicamentos",
-              link: "/admin/curadoria-medicamentos",
-              label: "Geral",
-              icon: <TableOutlined />,
-              id: "gtm-lnk-attr-drugs",
-            },
-          ],
-        },
+        // {
+        //   key: "curadoria-medicamentos",
+        //   label: "Curadoria medicamentos",
+        //   icon: <TableOutlined />,
+        //   id: "gtm-lnk-attr-drugs",
+        //   children: [
+        //     {
+        //       key: "/admin/curadoria-medicamentos",
+        //       link: "/admin/curadoria-medicamentos",
+        //       label: "Geral",
+        //       icon: <TableOutlined />,
+        //       id: "gtm-lnk-attr-drugs",
+        //     },
+        //   ],
+        // },
 
         {
           key: "/admin/horarios",
