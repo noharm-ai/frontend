@@ -1,12 +1,11 @@
 import { Dropdown } from "antd";
 import { DeleteOutlined, DownOutlined } from "@ant-design/icons";
 
-import { Checkbox } from "components/Inputs";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import { getVariableSummary } from "../variableSummary";
 import { ITriggerVarNode, TriggerNode } from "./expressionTree";
-import { ConditionRow, ConditionError } from "./TriggerBuilder.style";
+import { ConditionRow, ConditionError, NotChip } from "./TriggerBuilder.style";
 
 interface IExpressionConditionProps {
   node: ITriggerVarNode;
@@ -50,14 +49,16 @@ export function ExpressionCondition({
   return (
     <div>
       <ConditionRow>
-        <Checkbox
-          checked={node.negated}
-          onChange={({ target }: any) =>
-            onUpdate(path, (n) => ({ ...n, negated: target.checked }))
+        <NotChip
+          type="button"
+          $active={node.negated}
+          onClick={() =>
+            onUpdate(path, (n) => ({ ...n, negated: !n.negated }))
           }
+          title={node.negated ? "Remover negação" : "Negar condição"}
         >
           NÃO
-        </Checkbox>
+        </NotChip>
         <Dropdown
           trigger={["click"]}
           menu={{
@@ -80,7 +81,7 @@ export function ExpressionCondition({
         </Dropdown>
         <div className="condition-spacer" />
         <Button
-          danger
+          className="row-delete"
           type="text"
           icon={<DeleteOutlined />}
           onClick={() => onRemove(path)}

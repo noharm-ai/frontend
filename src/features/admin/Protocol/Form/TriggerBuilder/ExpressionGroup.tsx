@@ -1,5 +1,4 @@
-import { Fragment, useState } from "react";
-import { Segmented } from "antd";
+import { useState } from "react";
 import {
   CaretDownOutlined,
   CaretRightOutlined,
@@ -7,16 +6,19 @@ import {
   PlusOutlined,
 } from "@ant-design/icons";
 
-import { Checkbox } from "components/Inputs";
 import Button from "components/Button";
 import {
   ITriggerGroupNode,
-  TriggerConnector,
   TriggerNode,
   serializeTriggerNode,
 } from "./expressionTree";
 import { ExpressionCondition } from "./ExpressionCondition";
-import { GroupCard, ConnectorChip } from "./TriggerBuilder.style";
+import {
+  GroupCard,
+  BuilderRow,
+  ConnectorToggle,
+  NotChip,
+} from "./TriggerBuilder.style";
 
 interface IExpressionGroupProps {
   node: ITriggerGroupNode;
@@ -42,6 +44,13 @@ export function ExpressionGroup({
   const isRoot = path.length === 0;
   const connectorLabel = node.connector === "and" ? "e" : "ou";
 
+  const toggleConnector = () =>
+    onUpdate(path, (n) =>
+      n.kind === "group"
+        ? { ...n, connector: n.connector === "and" ? "or" : "and" }
+        : n
+    );
+
   return (
     <GroupCard $depth={path.length}>
       <div className="group-header">
@@ -52,32 +61,30 @@ export function ExpressionGroup({
           onClick={() => setCollapsed(!collapsed)}
           title={collapsed ? "Expandir grupo" : "Recolher grupo"}
         />
-        <Segmented
-          size="small"
-          value={node.connector}
-          options={[
-            { label: "E", value: "and" },
-            { label: "OU", value: "or" },
-          ]}
-          onChange={(value) =>
-            onUpdate(path, (n) => ({
-              ...n,
-              connector: value as TriggerConnector,
-            }))
+        <NotChip
+          type="button"
+          $active={node.negated}
+          onClick={() =>
+            onUpdate(path, (n) => ({ ...n, negated: !n.negated }))
           }
-        />
-        <Checkbox
-          checked={node.negated}
-          onChange={({ target }: any) =>
-            onUpdate(path, (n) => ({ ...n, negated: target.checked }))
-          }
+          title={node.negated ? "Remover negação do grupo" : "Negar grupo"}
         >
           NÃO
-        </Checkbox>
-        <div className="group-header-spacer" />
+        </NotChip>
+        {collapsed ? (
+          <div
+            className="group-summary"
+            onClick={() => setCollapsed(false)}
+            title="Expandir grupo"
+          >
+            <code>{serializeTriggerNode(node) || "(grupo vazio)"}</code>
+          </div>
+        ) : (
+          <div className="group-header-spacer" />
+        )}
         {!isRoot && (
           <Button
-            danger
+            className="row-delete"
             type="text"
             icon={<DeleteOutlined />}
             onClick={() => onRemove(path)}
@@ -85,16 +92,6 @@ export function ExpressionGroup({
           />
         )}
       </div>
-
-      {collapsed && (
-        <div
-          className="group-summary"
-          onClick={() => setCollapsed(false)}
-          title="Expandir grupo"
-        >
-          <code>{serializeTriggerNode(node) || "(grupo vazio)"}</code>
-        </div>
-      )}
 
       {!collapsed && (
         <>
@@ -105,35 +102,48 @@ export function ExpressionGroup({
               </div>
             )}
             {node.children.map((child, index) => (
-              <Fragment key={index}>
-                {index > 0 && <ConnectorChip>{connectorLabel}</ConnectorChip>}
-                {child.kind === "var" ? (
-                  <ExpressionCondition
-                    node={child}
-                    path={[...path, index]}
-                    variables={variables}
-                    onUpdate={onUpdate}
-                    onRemove={onRemove}
-                  />
-                ) : (
-                  <ExpressionGroup
-                    node={child}
-                    path={[...path, index]}
-                    variables={variables}
-                    onUpdate={onUpdate}
-                    onRemove={onRemove}
-                    onAddCondition={onAddCondition}
-                    onAddGroup={onAddGroup}
-                  />
-                )}
-              </Fragment>
+              <BuilderRow key={index}>
+                <div className="row-gutter">
+                  {index > 0 && (
+                    <ConnectorToggle
+                      type="button"
+                      $connector={node.connector}
+                      onClick={toggleConnector}
+                      title="Alternar entre E e OU"
+                    >
+                      {connectorLabel}
+                    </ConnectorToggle>
+                  )}
+                </div>
+                <div className="row-content">
+                  {child.kind === "var" ? (
+                    <ExpressionCondition
+                      node={child}
+                      path={[...path, index]}
+                      variables={variables}
+                      onUpdate={onUpdate}
+                      onRemove={onRemove}
+                    />
+                  ) : (
+                    <ExpressionGroup
+                      node={child}
+                      path={[...path, index]}
+                      variables={variables}
+                      onUpdate={onUpdate}
+                      onRemove={onRemove}
+                      onAddCondition={onAddCondition}
+                      onAddGroup={onAddGroup}
+                    />
+                  )}
+                </div>
+              </BuilderRow>
             ))}
           </div>
 
           <div className="group-footer">
             <Button
               size="small"
-              type="dashed"
+              type="text"
               icon={<PlusOutlined />}
               onClick={() => onAddCondition(path)}
             >
@@ -141,7 +151,7 @@ export function ExpressionGroup({
             </Button>
             <Button
               size="small"
-              type="dashed"
+              type="text"
               icon={<PlusOutlined />}
               onClick={() => onAddGroup(path)}
             >
