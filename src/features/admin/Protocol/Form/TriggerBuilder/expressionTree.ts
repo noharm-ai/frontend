@@ -208,6 +208,10 @@ export function serializeTriggerExpression(root: ITriggerGroupNode): string {
   return serializeNode(root, true);
 }
 
+export function serializeTriggerNode(node: TriggerNode): string {
+  return serializeNode(node, true);
+}
+
 function updateChildren(
   group: ITriggerGroupNode,
   index: number,

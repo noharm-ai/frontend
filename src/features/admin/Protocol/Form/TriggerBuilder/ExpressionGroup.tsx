@@ -1,6 +1,11 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { Segmented } from "antd";
-import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import {
+  CaretDownOutlined,
+  CaretRightOutlined,
+  DeleteOutlined,
+  PlusOutlined,
+} from "@ant-design/icons";
 
 import { Checkbox } from "components/Inputs";
 import Button from "components/Button";
@@ -8,6 +13,7 @@ import {
   ITriggerGroupNode,
   TriggerConnector,
   TriggerNode,
+  serializeTriggerNode,
 } from "./expressionTree";
 import { ExpressionCondition } from "./ExpressionCondition";
 import { GroupCard, ConnectorChip } from "./TriggerBuilder.style";
@@ -31,12 +37,21 @@ export function ExpressionGroup({
   onAddCondition,
   onAddGroup,
 }: IExpressionGroupProps) {
+  const [collapsed, setCollapsed] = useState(false);
+
   const isRoot = path.length === 0;
   const connectorLabel = node.connector === "and" ? "e" : "ou";
 
   return (
     <GroupCard $depth={path.length}>
       <div className="group-header">
+        <Button
+          size="small"
+          type="text"
+          icon={collapsed ? <CaretRightOutlined /> : <CaretDownOutlined />}
+          onClick={() => setCollapsed(!collapsed)}
+          title={collapsed ? "Expandir grupo" : "Recolher grupo"}
+        />
         <Segmented
           size="small"
           value={node.connector}
@@ -71,56 +86,70 @@ export function ExpressionGroup({
         )}
       </div>
 
-      <div className="group-children">
-        {node.children.length === 0 && (
-          <div className="group-empty">
-            Nenhuma condição. Utilize os botões abaixo para adicionar.
-          </div>
-        )}
-        {node.children.map((child, index) => (
-          <Fragment key={index}>
-            {index > 0 && <ConnectorChip>{connectorLabel}</ConnectorChip>}
-            {child.kind === "var" ? (
-              <ExpressionCondition
-                node={child}
-                path={[...path, index]}
-                variables={variables}
-                onUpdate={onUpdate}
-                onRemove={onRemove}
-              />
-            ) : (
-              <ExpressionGroup
-                node={child}
-                path={[...path, index]}
-                variables={variables}
-                onUpdate={onUpdate}
-                onRemove={onRemove}
-                onAddCondition={onAddCondition}
-                onAddGroup={onAddGroup}
-              />
-            )}
-          </Fragment>
-        ))}
-      </div>
+      {collapsed && (
+        <div
+          className="group-summary"
+          onClick={() => setCollapsed(false)}
+          title="Expandir grupo"
+        >
+          <code>{serializeTriggerNode(node) || "(grupo vazio)"}</code>
+        </div>
+      )}
 
-      <div className="group-footer">
-        <Button
-          size="small"
-          type="dashed"
-          icon={<PlusOutlined />}
-          onClick={() => onAddCondition(path)}
-        >
-          condição
-        </Button>
-        <Button
-          size="small"
-          type="dashed"
-          icon={<PlusOutlined />}
-          onClick={() => onAddGroup(path)}
-        >
-          grupo
-        </Button>
-      </div>
+      {!collapsed && (
+        <>
+          <div className="group-children">
+            {node.children.length === 0 && (
+              <div className="group-empty">
+                Nenhuma condição. Utilize os botões abaixo para adicionar.
+              </div>
+            )}
+            {node.children.map((child, index) => (
+              <Fragment key={index}>
+                {index > 0 && <ConnectorChip>{connectorLabel}</ConnectorChip>}
+                {child.kind === "var" ? (
+                  <ExpressionCondition
+                    node={child}
+                    path={[...path, index]}
+                    variables={variables}
+                    onUpdate={onUpdate}
+                    onRemove={onRemove}
+                  />
+                ) : (
+                  <ExpressionGroup
+                    node={child}
+                    path={[...path, index]}
+                    variables={variables}
+                    onUpdate={onUpdate}
+                    onRemove={onRemove}
+                    onAddCondition={onAddCondition}
+                    onAddGroup={onAddGroup}
+                  />
+                )}
+              </Fragment>
+            ))}
+          </div>
+
+          <div className="group-footer">
+            <Button
+              size="small"
+              type="dashed"
+              icon={<PlusOutlined />}
+              onClick={() => onAddCondition(path)}
+            >
+              condição
+            </Button>
+            <Button
+              size="small"
+              type="dashed"
+              icon={<PlusOutlined />}
+              onClick={() => onAddGroup(path)}
+            >
+              grupo
+            </Button>
+          </div>
+        </>
+      )}
     </GroupCard>
   );
 }

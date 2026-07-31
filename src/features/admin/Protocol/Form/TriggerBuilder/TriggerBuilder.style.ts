@@ -37,6 +37,24 @@ export const GroupCard = styled.div<{ $depth: number }>`
     font-size: 12px;
     color: #999;
   }
+
+  .group-summary {
+    cursor: pointer;
+
+    code {
+      display: block;
+      overflow: hidden;
+      font-family: monospace;
+      font-size: 12px;
+      color: #999;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    &:hover code {
+      color: #666;
+    }
+  }
 `;
 
 export const ConnectorChip = styled.div`
