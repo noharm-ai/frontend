@@ -44,10 +44,23 @@ export const VariableContainer = styled.div`
     border-bottom: 1px solid #f0f0f0;
   }
 
+  .variable-heading {
+    min-width: 0;
+  }
+
   .variable-title {
     margin: 0;
     font-size: 1rem;
     font-weight: 600;
+  }
+
+  .variable-summary {
+    display: block;
+    overflow: hidden;
+    font-size: 12px;
+    color: #999;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 `;
 
@@ -65,9 +78,13 @@ export const VariableGrid = styled.div`
 
 export const EditorLayout = styled.div`
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 420px;
+  grid-template-columns: minmax(0, 1fr) 520px;
   gap: 2rem;
   align-items: start;
+
+  @media (max-width: 1200px) {
+    grid-template-columns: minmax(0, 1fr) 440px;
+  }
 
   @media (max-width: 992px) {
     grid-template-columns: 1fr;
