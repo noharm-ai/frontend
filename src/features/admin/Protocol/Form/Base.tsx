@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { Divider } from "antd";
 import { useTranslation } from "react-i18next";
 
@@ -14,13 +15,21 @@ import {
   FormSection,
 } from "../Protocol.style";
 
-export function BaseForm({ formData }: { formData: any }) {
+export function BaseForm({
+  formData,
+  header,
+}: {
+  formData: any;
+  header?: ReactNode;
+}) {
   const { t } = useTranslation();
 
   return (
     <>
       <EditorLayout>
         <div>
+          {header}
+
           <FormSection>
             <h3 className="form-section-title">Geral</h3>
             <MainTab />

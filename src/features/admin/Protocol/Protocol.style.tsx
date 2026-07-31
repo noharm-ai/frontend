@@ -19,7 +19,7 @@ export const StickyPageHeader = styled(PageHeader)`
   }
 
   &.is-stuck {
-    padding: 8px 24px;
+    padding: 8px 5px;
     box-shadow: 0 4px 12px rgba(46, 60, 90, 0.12);
 
     .page-header-title {
@@ -89,9 +89,9 @@ export const SidePanelStack = styled.div`
   flex-direction: column;
   gap: 1.5rem;
   position: sticky;
-  top: 6rem;
+  top: 0;
   align-self: start;
-  max-height: calc(100vh - 7.5rem);
+  max-height: calc(100vh - 1rem);
   overflow-y: auto;
 
   @media (max-width: 992px) {
