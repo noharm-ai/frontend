@@ -1,12 +1,8 @@
 import { Fragment, ReactNode } from "react";
 
-import Tooltip from "components/Tooltip";
-import { getVariableSummary } from "../variableSummary";
-import {
-  ITriggerGroupNode,
-  ITriggerVarNode,
-  TriggerNode,
-} from "./expressionTree";
+import { ITriggerGroupNode, TriggerNode } from "./expressionTree";
+import { SentenceCondition } from "./SentenceCondition";
+import { LabelLookup, useItemLabels } from "./useItemLabels";
 import { SentenceBox } from "./TriggerBuilder.style";
 
 interface IExpressionSentenceProps {
@@ -14,42 +10,54 @@ interface IExpressionSentenceProps {
   variables: any[];
 }
 
-function renderVar(node: ITriggerVarNode, variables: any[]): ReactNode {
-  const variable = variables.find((v: any) => v.name === node.name);
-  const summary = variable ? getVariableSummary(variable) : null;
-  const label =
-    summary && summary !== "(incompleta)" ? summary : node.name;
+const connectorWord = (connector: string, negated: boolean) => {
+  if (connector === "and") {
+    return negated ? "e também" : "e";
+  }
 
-  return (
-    <>
-      {node.negated && <span className="sentence-not">não </span>}
-      <Tooltip title={variable ? node.name : "Variável removida"}>
-        <span className={`sentence-var ${variable ? "" : "is-dangling"}`}>
-          {label}
-        </span>
-      </Tooltip>
-    </>
-  );
+  return negated ? "ou então" : "ou";
+};
+
+function groupHeadline(node: ITriggerGroupNode, count: number): string | null {
+  if (count < 2) {
+    return node.negated ? "nenhuma das condições abaixo se confirma" : null;
+  }
+
+  if (node.negated) {
+    return node.connector === "and"
+      ? "as condições abaixo não são todas atendidas"
+      : "nenhuma das condições abaixo é atendida";
+  }
+
+  return node.connector === "and"
+    ? "todas as condições abaixo são atendidas"
+    : "pelo menos uma das condições abaixo é atendida";
 }
 
 function renderNode(
   node: TriggerNode,
   variables: any[],
-  isRoot: boolean
+  getLabel: LabelLookup,
+  depth: number
 ): ReactNode | null {
   if (node.kind === "var") {
     if (!node.name) {
       return null;
     }
 
-    return renderVar(node, variables);
+    return (
+      <SentenceCondition
+        node={node}
+        variables={variables}
+        getLabel={getLabel}
+      />
+    );
   }
 
   const parts = node.children
     .map((child, index) => ({
       key: index,
-      kind: child.kind,
-      content: renderNode(child, variables, false),
+      content: renderNode(child, variables, getLabel, depth + 1),
     }))
     .filter((part) => part.content !== null);
 
@@ -57,60 +65,33 @@ function renderNode(
     return null;
   }
 
-  const connectorWord = node.connector === "and" ? "e" : "ou";
-  const connectorClass =
-    node.connector === "and" ? "sentence-and" : "sentence-or";
-
-  // Groups that contain other groups break into one line per child,
-  // indented, so nesting reads like an outline.
-  const isBlock = parts.some((part) => part.kind === "group");
-
-  if (!isBlock) {
-    const joined = parts.map((part, index) => (
-      <Fragment key={part.key}>
-        {index > 0 && (
-          <span className={connectorClass}> {connectorWord} </span>
-        )}
-        {part.content}
-      </Fragment>
-    ));
-
-    const needsParens = node.negated || (!isRoot && parts.length > 1);
-
-    if (!needsParens) {
-      return <>{joined}</>;
-    }
-
-    return (
-      <>
-        {node.negated && <span className="sentence-not">não </span>}
-        <span className="sentence-paren">(</span>
-        {joined}
-        <span className="sentence-paren">)</span>
-      </>
-    );
-  }
-
-  const lines = parts.map((part, index) => (
-    <div className="sentence-line" key={part.key}>
-      {index > 0 && (
-        <span className={connectorClass}>{connectorWord} </span>
-      )}
-      {part.content}
-    </div>
-  ));
-
-  if (isRoot && !node.negated) {
-    return <div className="sentence-block">{lines}</div>;
-  }
+  const headline = groupHeadline(node, parts.length);
+  const word = connectorWord(node.connector, node.negated);
 
   return (
-    <>
-      {node.negated && <span className="sentence-not">não </span>}
-      <span className="sentence-paren">(</span>
-      <div className="sentence-block">{lines}</div>
-      <span className="sentence-paren">)</span>
-    </>
+    <div
+      className={`sentence-group ${node.negated ? "is-negated" : ""}`}
+      data-depth={depth}
+    >
+      {headline && (
+        <div className="group-headline">
+          {node.negated && <span className="group-not">NÃO</span>}
+          {headline}:
+        </div>
+      )}
+      <div className="group-items">
+        {parts.map((part, index) => (
+          <Fragment key={part.key}>
+            {index > 0 && (
+              <div className="sentence-connector">
+                <span className={`connector-${node.connector}`}>{word}</span>
+              </div>
+            )}
+            {part.content}
+          </Fragment>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -118,7 +99,8 @@ export function ExpressionSentence({
   tree,
   variables,
 }: IExpressionSentenceProps) {
-  const content = renderNode(tree, variables, true);
+  const { getLabel, resolving } = useItemLabels(variables);
+  const content = renderNode(tree, variables, getLabel, 0);
 
   if (!content) {
     return null;
@@ -126,7 +108,13 @@ export function ExpressionSentence({
 
   return (
     <SentenceBox className="expression-sentence">
-      O protocolo dispara quando {content}
+      <div className="sentence-title">
+        O protocolo dispara quando
+        {resolving && (
+          <span className="sentence-loading">resolvendo descrições…</span>
+        )}
+      </div>
+      {content}
     </SentenceBox>
   );
 }

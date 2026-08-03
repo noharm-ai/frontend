@@ -18,6 +18,10 @@ import { ProtocolDepartmentSelect } from "./ProtocolDepartmentSelect/ProtocolDep
 import { ProtocolSegmentSelect } from "./ProtocolSegmentSelect/ProtocolSegmentSelect";
 import { ProtocolIcdSelect } from "./ProtocolIcdSelect/ProtocolIcdSelect";
 import { ProtocolRouteSelect } from "./ProtocolRouteSelect/ProtocolRouteSelect";
+import {
+  DRUG_ATTRIBUTE_OPTIONS,
+  SEGMENT_TYPE_OPTIONS,
+} from "./protocolOptions";
 
 import { VariableContainer, VariableGrid } from "../Protocol.style";
 
@@ -88,10 +92,7 @@ export function VariableTab() {
   const getFieldOptions = (field: string) => {
     switch (field) {
       case ProtocolVariableFieldEnum.SEGMENT_TYPE:
-        return [
-          { value: 1, label: "ADULTO" },
-          { value: 2, label: "PEDIÁTRICO" },
-        ];
+        return SEGMENT_TYPE_OPTIONS;
 
       default:
         return [];
@@ -305,15 +306,7 @@ export function VariableTab() {
                       allowClear
                       mode="multiple"
                       optionFilterProp="label"
-                      options={[
-                        { value: "mav", label: "Alta Vigilância" },
-                        { value: "antimicro", label: "Antimicrobiano" },
-                        { value: "controlled", label: "Controlado" },
-                        { value: "dialyzable", label: "Dializavel" },
-                        { value: "elderly", label: "Inapropriado para idosos" },
-                        { value: "notdefault", label: "Não Padronizado" },
-                        { value: "chemo", label: "Quimioterápico" },
-                      ]}
+                      options={DRUG_ATTRIBUTE_OPTIONS}
                       onChange={(value) =>
                         setConfig(idx, "drugAttribute", value)
                       }

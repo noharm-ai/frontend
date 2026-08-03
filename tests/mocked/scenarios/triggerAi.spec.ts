@@ -57,7 +57,13 @@ test("generates and reviews the trigger with the AI assistant", async ({
 
   // the assistant lives in its own tab
   await main.getByRole("tab", { name: "Assistente IA" }).click();
-  await expect(sentence).toContainText("O protocolo dispara quando Idade > 60");
+  await expect(sentence.locator(".sentence-title")).toContainText(
+    "O protocolo dispara quando"
+  );
+  await expect(sentence.locator(".condition-subject")).toHaveText(
+    "a idade do paciente"
+  );
+  await expect(sentence.locator(".criterion-text")).toHaveText("60 anos");
 
   // generate: describe the rule; the returned expression is applied and
   // reflected in the sentence
@@ -67,7 +73,10 @@ test("generates and reviews the trigger with the AI assistant", async ({
     main.getByText("Expressão gerada e aplicada ao construtor.")
   ).toBeVisible();
   await expect(main.getByText("Dispara quando o paciente não é idoso.")).toBeVisible();
-  await expect(sentence).toContainText("não Idade > 60");
+  await expect(sentence.locator(".condition-not")).toHaveText("NÃO");
+  await expect(sentence.locator(".condition-subject")).toHaveText(
+    "a idade do paciente"
+  );
 
   // the request carries the hint, the variable summaries and the previous trigger
   const genCall = mockApi.requests.find(
@@ -126,7 +135,7 @@ test("shows the explanation when the rule cannot be expressed", async ({
   ).toBeVisible();
 
   // the previous expression stays untouched
-  await expect(main.locator(".expression-sentence")).toContainText(
-    "O protocolo dispara quando Idade > 60"
-  );
+  await expect(
+    main.locator(".expression-sentence .condition-subject")
+  ).toHaveText("a idade do paciente");
 });
