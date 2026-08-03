@@ -262,6 +262,23 @@ export const PatientBox = styled.div`
               text-decoration: underline;
             }
 
+            /* the message opens the plain-language description of the trigger */
+            .protocol-describe {
+              padding: 0;
+              font: inherit;
+              color: inherit;
+              text-align: left;
+              white-space: break-spaces;
+              cursor: pointer;
+              background: none;
+              border: none;
+
+              &:hover,
+              &:focus-visible {
+                text-decoration: underline;
+              }
+            }
+
             .protocol-variable {
               color: var(--nh-text-color);
               font-size: 13px;

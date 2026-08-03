@@ -11,7 +11,7 @@ import {
   ITriggerGroupNode,
   TriggerNode,
   serializeTriggerNode,
-} from "./expressionTree";
+} from "components/ProtocolDescription/expressionTree";
 import { ExpressionCondition } from "./ExpressionCondition";
 import {
   GroupCard,

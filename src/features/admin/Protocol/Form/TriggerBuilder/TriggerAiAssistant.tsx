@@ -14,7 +14,7 @@ import { IProtocolFormBaseFields } from "../types";
 import {
   parseTriggerExpression,
   serializeTriggerExpression,
-} from "./expressionTree";
+} from "components/ProtocolDescription/expressionTree";
 import { ExpressionSentence } from "./ExpressionSentence";
 import { AiAssistant } from "./TriggerBuilder.style";
 

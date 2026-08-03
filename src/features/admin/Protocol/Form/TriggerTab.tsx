@@ -3,7 +3,7 @@ import { useFormikContext } from "formik";
 import { Tabs } from "antd";
 
 import { IProtocolFormBaseFields } from "./types";
-import { parseTriggerExpression } from "./TriggerBuilder/expressionTree";
+import { parseTriggerExpression } from "components/ProtocolDescription/expressionTree";
 import { TriggerBuilder } from "./TriggerBuilder/TriggerBuilder";
 import { TriggerAiAssistant } from "./TriggerBuilder/TriggerAiAssistant";
 import { TriggerAdvanced } from "./TriggerBuilder/TriggerAdvanced";

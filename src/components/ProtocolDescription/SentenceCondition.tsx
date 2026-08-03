@@ -3,13 +3,13 @@ import { useTranslation } from "react-i18next";
 
 import Tooltip from "components/Tooltip";
 import { ITriggerVarNode } from "./expressionTree";
-import { LabelLookup } from "./useItemLabels";
+import { LabelLookup } from "./labels";
 import {
   IDescriptionCriterion,
   IDescriptionItem,
   buildVariableDescription,
 } from "./variableDescription";
-import { ConditionCard } from "./TriggerBuilder.style";
+import { ConditionCard } from "./ProtocolDescription.style";
 
 // Beyond this the list is folded behind a "+N" toggle so a variable with a
 // hundred substances cannot bury the rest of the sentence.
@@ -19,6 +19,7 @@ interface ISentenceConditionProps {
   node: ITriggerVarNode;
   variables: any[];
   getLabel: LabelLookup;
+  showVariableNames?: boolean;
 }
 
 function ItemList({ items }: { items: IDescriptionItem[] }) {
@@ -69,11 +70,19 @@ export function SentenceCondition({
   node,
   variables,
   getLabel,
+  showVariableNames = false,
 }: ISentenceConditionProps) {
   const { t } = useTranslation();
   const variable = variables.find((v: any) => v.name === node.name);
 
   if (!variable) {
+    // While editing, a missing variable is an error the author must fix. For a
+    // saved protocol it would only confuse the reader, so the condition is
+    // dropped from the sentence instead.
+    if (!showVariableNames) {
+      return null;
+    }
+
     return (
       <ConditionCard className="is-dangling">
         <div className="condition-header">
@@ -97,9 +106,11 @@ export function SentenceCondition({
           </Tooltip>
         )}
         <span className="condition-subject">{description.subject}</span>
-        <Tooltip title={`Variável ${node.name}`}>
-          <span className="condition-varname">{node.name}</span>
-        </Tooltip>
+        {showVariableNames && (
+          <Tooltip title={`Variável ${node.name}`}>
+            <span className="condition-varname">{node.name}</span>
+          </Tooltip>
+        )}
       </div>
 
       {description.criteria.map((criterion, index) => (

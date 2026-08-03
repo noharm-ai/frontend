@@ -374,6 +374,7 @@
     "protocolSampleTest": "Today's sample"
   },
   "titles": {
+    "protocolDescription": "How this protocol is triggered",
     "addDrugMeasureUnit": "Add Drug Unit",
     "protocolTrace": "Protocol evaluation explanation",
     "protocolTest": "Test protocol",
@@ -388,6 +389,7 @@
     "interval": "Time"
   },
   "tooltips": {
+    "protocolDescription": "See how this protocol is triggered",
     "relationsList": "List of Drugs with Interactions, Incompatibilities or Duplicity",
     "cantEditBeingUsed": "You can't edit this item because it is already referenced",
     "recentExams": "Main exams of the last 5 days. For all exams, click on See More."
@@ -624,6 +626,7 @@
   },
 
   "messages": {
+    "protocolDescriptionUnavailable": "The description of this protocol is not available.",
     "draftApplied": "Draft applied"
   },
 

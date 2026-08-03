@@ -12,7 +12,7 @@ import {
   updateNodeAtPath,
   removeNodeAtPath,
   appendChildAtPath,
-} from "./expressionTree";
+} from "components/ProtocolDescription/expressionTree";
 import { ExpressionGroup } from "./ExpressionGroup";
 import { ExpressionSentence } from "./ExpressionSentence";
 

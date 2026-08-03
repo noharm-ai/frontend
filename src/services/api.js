@@ -1015,6 +1015,11 @@ api.protocols.getProtocols = (params = {}) =>
     ...setHeaders(),
   });
 
+api.protocols.getProtocolDescription = (idProtocol) =>
+  instance.get(`protocol/${idProtocol}/description`, {
+    ...setHeaders(),
+  });
+
 api.protocols.tracePrescription = (params = {}) =>
   instance.get(`protocol/prescription-trace`, {
     params,

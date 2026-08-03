@@ -4,7 +4,7 @@ import { DeleteOutlined, DownOutlined } from "@ant-design/icons";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import { getVariableSummary } from "../variableSummary";
-import { ITriggerVarNode, TriggerNode } from "./expressionTree";
+import { ITriggerVarNode, TriggerNode } from "components/ProtocolDescription/expressionTree";
 import { ConditionRow, ConditionError, NotChip } from "./TriggerBuilder.style";
 
 interface IExpressionConditionProps {

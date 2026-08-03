@@ -6,8 +6,8 @@ import {
   SEGMENT_TYPE_OPTIONS,
   ST_CONCILIA_OPTIONS,
   findOptionLabel,
-} from "../protocolOptions";
-import { LabelKind, LabelLookup, fieldLabelKind } from "./useItemLabels";
+} from "./protocolOptions";
+import { LabelKind, LabelLookup, fieldLabelKind } from "./labels";
 
 export interface IDescriptionItem {
   id: string;
@@ -35,8 +35,8 @@ export interface IVariableDescription {
 }
 
 const OPERATOR_PHRASES: Record<string, string> = {
-  IN: "está entre",
-  NOTIN: "não está entre",
+  IN: "está contida na lista",
+  NOTIN: "não está contida na lista",
   CONTAINS: "contém",
   ">": "é maior que",
   ">=": "é maior ou igual a",
@@ -57,8 +57,7 @@ const CRITERION_PHRASES: Record<string, string> = {
 };
 
 const SUBJECTS: Record<string, string> = {
-  [ProtocolVariableFieldEnum.SUBSTANCE]:
-    "a substância de algum item prescrito",
+  [ProtocolVariableFieldEnum.SUBSTANCE]: "a substância de algum item prescrito",
   [ProtocolVariableFieldEnum.ID_DRUG]: "algum medicamento prescrito",
   [ProtocolVariableFieldEnum.DRUG_CLASS]:
     "a classe de algum medicamento prescrito",
@@ -83,7 +82,7 @@ const UNITS: Record<string, string> = {
 };
 
 const FIELD_LABELS: Record<string, string> = Object.fromEntries(
-  ProtocolVariableFieldEnum.getList().map((f: any) => [f.value, f.label])
+  ProtocolVariableFieldEnum.getList().map((f: any) => [f.value, f.label]),
 );
 
 const MISSING_VALUE = "(não informado)";
@@ -97,7 +96,7 @@ const isFilled = (value: any) =>
 const toItems = (
   values: Array<string | number>,
   kind: LabelKind | undefined,
-  getLabel: LabelLookup
+  getLabel: LabelLookup,
 ): IDescriptionItem[] =>
   values.map((value) => {
     const id = String(value);
@@ -119,7 +118,7 @@ const listCriterion = (
   values: Array<string | number>,
   kind: LabelKind | undefined,
   getLabel: LabelLookup,
-  phrase = "está entre"
+  phrase = "está contida na lista",
 ): IDescriptionCriterion | null => {
   if (!values.length) return null;
 
@@ -134,20 +133,20 @@ const comparisonCriterion = (
   label: string,
   operator: any,
   value: any,
-  unit?: string
+  unit?: string,
 ): IDescriptionCriterion | null => {
   if (!isFilled(value)) return null;
 
   return {
     label,
-    phrase: operator ? CRITERION_PHRASES[operator] ?? String(operator) : "é",
+    phrase: operator ? (CRITERION_PHRASES[operator] ?? String(operator)) : "é",
     text: unit ? `${value} ${unit}` : String(value),
   };
 };
 
 function combinationDescription(
   variable: any,
-  getLabel: LabelLookup
+  getLabel: LabelLookup,
 ): IVariableDescription {
   const criteria: IDescriptionCriterion[] = [];
   const push = (criterion: IDescriptionCriterion | null) => {
@@ -159,8 +158,8 @@ function combinationDescription(
       "Substância",
       asList(variable.substance),
       "substance",
-      getLabel
-    )
+      getLabel,
+    ),
   );
   push(listCriterion("Classe", asList(variable.class), "class", getLabel));
   push(listCriterion("Medicamento", asList(variable.drug), "drug", getLabel));
@@ -169,7 +168,7 @@ function combinationDescription(
   if (attributes.length) {
     criteria.push({
       label: "Atributo",
-      phrase: "está entre",
+      phrase: "está contido na lista",
       items: attributes.map((value) => {
         const label = findOptionLabel(DRUG_ATTRIBUTE_OPTIONS, value);
 
@@ -207,18 +206,18 @@ function combinationDescription(
       "Dose",
       variable.doseOperator,
       variable.dose,
-      variable.defaultMeasureUnit || undefined
-    )
+      variable.defaultMeasureUnit || undefined,
+    ),
   );
   push(
     comparisonCriterion(
       "Frequência diária",
       variable.frequencydayOperator,
-      variable.frequencyday
-    )
+      variable.frequencyday,
+    ),
   );
   push(
-    comparisonCriterion("Período", variable.periodOperator, variable.period)
+    comparisonCriterion("Período", variable.periodOperator, variable.period),
   );
 
   const notes: string[] = [];
@@ -247,7 +246,7 @@ function combinationDescription(
 export function buildVariableDescription(
   variable: any,
   getLabel: LabelLookup,
-  translate: (key: string) => string
+  translate: (key: string) => string,
 ): IVariableDescription {
   if (!variable?.field) {
     return {
@@ -271,26 +270,26 @@ export function buildVariableDescription(
 
   if (field === ProtocolVariableFieldEnum.EXAM) {
     const examLabel = variable.examType
-      ? getLabel("exam", variable.examType) ?? variable.examType
+      ? (getLabel("exam", variable.examType) ?? variable.examType)
       : MISSING_VALUE;
     subject = `o último resultado do exame ${examLabel}`;
 
     if (isFilled(variable.examPeriod)) {
       notes.push(
-        `Considera apenas exames com até ${variable.examPeriod} dia(s).`
+        `Considera apenas exames com até ${variable.examPeriod} dia(s).`,
       );
     }
   }
 
   if (field === ProtocolVariableFieldEnum.EXAM_REF) {
     const examLabel = variable.examRefType
-      ? getLabel("examRef", variable.examRefType) ?? variable.examRefType
+      ? (getLabel("examRef", variable.examRefType) ?? variable.examRefType)
       : MISSING_VALUE;
     subject = `o último resultado do exame padrão NoHarm ${examLabel}`;
 
     if (isFilled(variable.examRefPeriod)) {
       notes.push(
-        `Considera apenas exames com até ${variable.examRefPeriod} dia(s).`
+        `Considera apenas exames com até ${variable.examRefPeriod} dia(s).`,
       );
     }
   }
@@ -305,11 +304,10 @@ export function buildVariableDescription(
   }
 
   const phrase = variable.operator
-    ? OPERATOR_PHRASES[variable.operator] ?? String(variable.operator)
+    ? (OPERATOR_PHRASES[variable.operator] ?? String(variable.operator))
     : "?";
 
-  const isList =
-    variable.operator === "IN" || variable.operator === "NOTIN";
+  const isList = variable.operator === "IN" || variable.operator === "NOTIN";
 
   if (isList) {
     const values = asList(variable.value);
@@ -352,7 +350,7 @@ export function buildVariableDescription(
 // endpoint.
 function staticItems(
   field: string,
-  values: Array<string | number>
+  values: Array<string | number>,
 ): IDescriptionItem[] {
   if (field === ProtocolVariableFieldEnum.SEGMENT_TYPE) {
     return values.map((value) => {

@@ -374,6 +374,7 @@
     "protocolSampleTest": "Amostra do dia"
   },
   "titles": {
+    "protocolDescription": "Como este protocolo é disparado",
     "addDrugMeasureUnit": "Adicionar Unidade de Medida",
     "protocolTrace": "Explicação da avaliação de protocolos",
     "protocolTest": "Testar protocolo",
@@ -388,6 +389,7 @@
     "interval": "Horário"
   },
   "tooltips": {
+    "protocolDescription": "Ver como este protocolo é disparado",
     "relationsList": "Lista de medicamentos com Interações, Incompatibilidades ou Duplicidade",
     "cantEditBeingUsed": "Este campo não pode ser alterado, pois já foi utilizado",
     "recentExams": "Principais exames dos últimos 5 dias. Para ver mais, clique em \"Ver Todos\". Para configurar os exames, acesse o menu Configurações - Exames."
@@ -645,6 +647,7 @@
   },
 
   "messages": {
+    "protocolDescriptionUnavailable": "A descrição deste protocolo não está disponível.",
     "draftApplied": "Rascunho aplicado"
   },
 

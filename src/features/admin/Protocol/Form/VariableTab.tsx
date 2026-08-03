@@ -21,7 +21,7 @@ import { ProtocolRouteSelect } from "./ProtocolRouteSelect/ProtocolRouteSelect";
 import {
   DRUG_ATTRIBUTE_OPTIONS,
   SEGMENT_TYPE_OPTIONS,
-} from "./protocolOptions";
+} from "components/ProtocolDescription/protocolOptions";
 
 import { VariableContainer, VariableGrid } from "../Protocol.style";
 
