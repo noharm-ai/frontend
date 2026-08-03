@@ -232,3 +232,23 @@ export const SentenceBox = styled.div`
   }
 `;
 
+export const AiAssistant = styled.div`
+  .expression-sentence {
+    margin-top: 0;
+    margin-bottom: 12px;
+  }
+
+  .ai-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .ai-results {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+  }
+`;
+

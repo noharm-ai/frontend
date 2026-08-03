@@ -1031,6 +1031,16 @@ api.protocols.testConfig = (params = {}) =>
     ...setHeaders(),
   });
 
+api.protocols.aiGenerateTrigger = (params = {}) =>
+  instance.post(`protocol/ai/generate-trigger`, params, {
+    ...setHeaders(),
+  });
+
+api.protocols.aiReviewTrigger = (params = {}) =>
+  instance.post(`protocol/ai/review-trigger`, params, {
+    ...setHeaders(),
+  });
+
 /**
  * AUTH
  */

@@ -5,9 +5,10 @@ import { Tabs } from "antd";
 import { IProtocolFormBaseFields } from "./types";
 import { parseTriggerExpression } from "./TriggerBuilder/expressionTree";
 import { TriggerBuilder } from "./TriggerBuilder/TriggerBuilder";
+import { TriggerAiAssistant } from "./TriggerBuilder/TriggerAiAssistant";
 import { TriggerAdvanced } from "./TriggerBuilder/TriggerAdvanced";
 
-type TriggerMode = "builder" | "advanced";
+type TriggerMode = "builder" | "ai" | "advanced";
 
 export function TriggerTab() {
   const { values } = useFormikContext<IProtocolFormBaseFields>();
@@ -51,6 +52,11 @@ export function TriggerTab() {
           key: "builder",
           label: "Visual",
           children: <TriggerBuilder onParseFailure={handleParseFailure} />,
+        },
+        {
+          key: "ai",
+          label: "Assistente IA",
+          children: <TriggerAiAssistant />,
         },
         {
           key: "advanced",
