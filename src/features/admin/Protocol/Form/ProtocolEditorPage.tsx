@@ -132,40 +132,45 @@ export function ProtocolEditorPage() {
       }: {
         handleSubmit: () => void;
         values: any;
-      }) => (
-        <>
-          <div ref={sentinelRef} />
-          <StickyPageHeader className={isStuck ? "is-stuck" : ""}>
-            <div>
-              <h1 className="page-header-title">
-                {isNew ? "Novo Protocolo" : values.name || "Editar Protocolo"}
-              </h1>
-              <div className="page-header-legend">Protocolos</div>
-            </div>
-            <div className="page-header-actions">
-              <Button onClick={onCancel} disabled={isSaving}>
-                {t("actions.cancel")}
-              </Button>
-              <Button
-                type="primary"
-                onClick={handleSubmit}
-                loading={isSaving}
-                disabled={isSaving || isLoading || notFound}
-              >
-                {t("actions.save")}
-              </Button>
-            </div>
-          </StickyPageHeader>
+      }) => {
+        const header = (
+          <>
+            <div ref={sentinelRef} />
+            <StickyPageHeader className={isStuck ? "is-stuck" : ""}>
+              <div>
+                <h1 className="page-header-title">
+                  {isNew ? "Novo Protocolo" : values.name || "Editar Protocolo"}
+                </h1>
+                <div className="page-header-legend">Protocolos</div>
+              </div>
+              <div className="page-header-actions">
+                <Button onClick={onCancel} disabled={isSaving}>
+                  {t("actions.cancel")}
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={handleSubmit}
+                  loading={isSaving}
+                  disabled={isSaving || isLoading || notFound}
+                >
+                  {t("actions.save")}
+                </Button>
+              </div>
+            </StickyPageHeader>
+          </>
+        );
 
-          {notFound ? (
+        return notFound ? (
+          <>
+            {header}
             <p>Protocolo não encontrado.</p>
-          ) : (
-            <Form onSubmit={handleSubmit}>
-              <BaseForm formData={values} />
-            </Form>
-          )}
-        </>
-      )}
+          </>
+        ) : (
+          <Form onSubmit={handleSubmit}>
+            <BaseForm formData={values} header={header} />
+          </Form>
+        );
+      }}
     </Formik>
   );
 }

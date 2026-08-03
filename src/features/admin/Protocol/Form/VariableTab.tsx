@@ -4,7 +4,9 @@ import { useTranslation } from "react-i18next";
 
 import { Input, Select, Radio } from "components/Inputs";
 import Button from "components/Button";
+import DefaultModal from "components/Modal";
 import { IProtocolFormBaseFields } from "./types";
+import { getVariableSummary } from "./variableSummary";
 import { ProtocolVariableFieldEnum } from "src/models/ProtocolVariableFieldEnum";
 import clinicalNotesIndicator from "src/components/Screening/ClinicalNotes/ClinicalNotesIndicator";
 import { ProtocolSubstanceClassSelect } from "./ProtocolSubstanceClassSelect/ProtocolSubstanceClassSelect";
@@ -38,22 +40,43 @@ export function VariableTab() {
   };
 
   const addVariable = () => {
-    if (!values.config?.variables) {
-      setFieldValue("config.variables", [{ name: "var_1" }]);
-      return;
-    }
+    const variables = values.config?.variables ?? [];
+    const maxIndex = variables.reduce((max: number, v: any) => {
+      const match = /^var_(\d+)$/.exec(v?.name ?? "");
+      return match ? Math.max(max, parseInt(match[1], 10)) : max;
+    }, 0);
 
     setFieldValue("config.variables", [
-      ...values.config.variables,
-      { name: `var_${values.config.variables.length + 1}` },
+      ...variables,
+      { name: `var_${maxIndex + 1}` },
     ]);
   };
 
   const removeVariable = (varName: string) => {
-    setFieldValue(
-      "config.variables",
-      (values.config.variables ?? []).filter((v: any) => v.name !== varName),
+    const remove = () => {
+      setFieldValue(
+        "config.variables",
+        (values.config.variables ?? []).filter((v: any) => v.name !== varName),
+      );
+    };
+
+    const isReferenced = (values.config?.trigger ?? "").includes(
+      `{{${varName}}}`,
     );
+
+    if (isReferenced) {
+      DefaultModal.confirm({
+        title: "Remover variável em uso",
+        content: `A variável ${varName} é usada na expressão gatilho e ficará inválida. Remover mesmo assim?`,
+        okText: "Remover",
+        cancelText: "Cancelar",
+        okButtonProps: { danger: true },
+        onOk: remove,
+      });
+      return;
+    }
+
+    remove();
   };
 
   const yesNoOptions = [
@@ -120,7 +143,12 @@ export function VariableTab() {
         {(values.config?.variables ?? []).map((v: any, idx: number) => (
           <VariableContainer key={v.name}>
             <div className="variable-header">
-              <h4 className="variable-title">{v.name}</h4>
+              <div className="variable-heading">
+                <h4 className="variable-title">{v.name}</h4>
+                <span className="variable-summary">
+                  {getVariableSummary(v)}
+                </span>
+              </div>
               <Button
                 danger
                 type="text"

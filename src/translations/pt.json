@@ -354,11 +354,30 @@
     "hasEconomy": "Possui economia",
     "selectAll": "Selecionar todos",
     "protocols": "Protocolos",
-    "protocolAlerts": "Alertas de protocolo"
+    "protocolAlerts": "Alertas de protocolo",
+    "segment": "Segmento",
+    "allSegments": "Todos os segmentos",
+    "situation": "Situação",
+    "error": "Erro",
+    "summary": "Resumo",
+    "activated": "Ativado",
+    "notActivated": "Não ativado",
+    "typeMismatch": "O tipo deste protocolo não se aplica a esta prescrição",
+    "sampleSize": "Tamanho da amostra",
+    "operationCancelled": "Operação cancelada",
+    "protocolTestIds": "Prescrições para teste",
+    "protocolTestAddId": "Digite o nº da prescrição e pressione Enter",
+    "protocolTestRun": "Executar teste",
+    "protocolTestEmptySample": "Nenhuma prescrição encontrada para o teste",
+    "protocolTestRequirements": "Preencha o tipo, as variáveis e o gatilho antes de testar o protocolo",
+    "protocolTargetTest": "Direcionado",
+    "protocolSampleTest": "Amostra do dia"
   },
   "titles": {
     "addDrugMeasureUnit": "Adicionar Unidade de Medida",
-    "protocolTrace": "Explicação da avaliação de protocolos"
+    "protocolTrace": "Explicação da avaliação de protocolos",
+    "protocolTest": "Testar protocolo",
+    "protocolTestResults": "Resultados do teste"
   },
   "transcriptionLabels": {
     "idDrug": "Medicamento",
@@ -375,7 +394,10 @@
   },
   "buttons": {
     "search": "Pesquisar",
-    "explainProtocols": "Detalhar protocolos"
+    "explainProtocols": "Detalhar protocolos",
+    "viewDetails": "Ver detalhes",
+    "viewResults": "Ver resultados",
+    "newTest": "Testar novamente"
   },
   "helpText": {
     "title": "Ajuda",
