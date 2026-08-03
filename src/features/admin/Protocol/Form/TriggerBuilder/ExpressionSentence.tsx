@@ -125,7 +125,7 @@ export function ExpressionSentence({
   }
 
   return (
-    <SentenceBox>
+    <SentenceBox className="expression-sentence">
       O protocolo dispara quando {content}
     </SentenceBox>
   );

@@ -27,24 +27,21 @@ test("trigger builder round-trip and advanced mode", async ({
   await page.goto("/admin/protocolos/1");
 
   const main = page.getByRole("main");
+  const sentence = main.locator(".expression-sentence");
 
-  // builder opens by default with the parsed expression
+  // builder opens by default with the parsed expression as a sentence
   await expect(main.getByRole("button", { name: "v1" }).first()).toBeVisible();
-  await expect(main.locator("code", { hasText: "{{v1}}" })).toBeVisible();
+  await expect(sentence).toContainText("O protocolo dispara quando Idade > 60");
 
   // add a second condition and pick the variable from the dropdown
   await main.getByRole("button", { name: "condição" }).click();
   await main.getByRole("button", { name: "selecionar variável" }).click();
   await page.getByRole("menuitem", { name: "v1 · Idade > 60" }).click();
-  await expect(
-    main.locator("code", { hasText: "{{v1}} and {{v1}}" })
-  ).toBeVisible();
+  await expect(sentence).toContainText("Idade > 60 e Idade > 60");
 
-  // negate the whole group
-  await main.getByRole("checkbox", { name: "NÃO" }).first().check();
-  await expect(
-    main.locator("code", { hasText: "not ({{v1}} and {{v1}})" })
-  ).toBeVisible();
+  // negate the whole group via the header chip
+  await main.getByRole("button", { name: "NÃO" }).first().click();
+  await expect(sentence).toContainText("não (Idade > 60 e Idade > 60)");
 
   // switch to advanced mode: textarea carries the generated expression
   await main.getByText("Avançado").click();
@@ -59,12 +56,13 @@ test("trigger builder round-trip and advanced mode", async ({
   ).toBeVisible();
   await expect(textarea).toHaveValue("banana");
 
-  // valid expression parses back into the builder
+  // valid expression parses back into the builder; nested groups render
+  // as an indented sentence
   await textarea.fill("{{v1}} or ({{v1}} and not {{v1}})");
   await main.getByText("Visual", { exact: true }).click();
-  await expect(
-    main.locator("code", { hasText: "{{v1}} or ({{v1}} and not {{v1}})" })
-  ).toBeVisible();
+  // block layout: each root child renders on its own indented line
+  await expect(sentence).toContainText("O protocolo dispara quando Idade > 60");
+  await expect(sentence).toContainText("ou (Idade > 60 e não Idade > 60)");
 
   // deleting a referenced variable asks for confirmation
   await main.getByRole("button", { name: "delete" }).first().click();

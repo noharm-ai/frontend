@@ -105,10 +105,11 @@ test("tests a protocol against a sample of prescriptions in chunks", async ({
 
   await page.goto("/admin/protocolos/1");
 
-  // the batch test card shows a form; running it replaces the form with
-  // progress and then a totals summary
-  await page.locator("#protocol-batch-run").click();
+  // the batch test panel lives in the "Amostra do dia" tab; running it
+  // replaces the form with progress and then a totals summary
   const main = page.getByRole("main");
+  await main.getByRole("tab", { name: "Amostra do dia" }).click();
+  await page.locator("#protocol-batch-run").click();
   await expect(main.getByText("Ativado: 6", { exact: true })).toBeVisible();
   await expect(main.getByText("Não ativado: 6")).toBeVisible();
 
