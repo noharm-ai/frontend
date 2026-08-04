@@ -154,7 +154,7 @@ export const StepsCard = styled.div`
 
 export const TriggerLayout = styled.div`
   display: grid;
-  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 1.5rem;
   align-items: start;
 
