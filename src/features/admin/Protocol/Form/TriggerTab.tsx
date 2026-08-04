@@ -1,13 +1,31 @@
 import { useCallback, useState } from "react";
 import { useFormikContext } from "formik";
-import { Tabs } from "antd";
+import { Alert, Tabs } from "antd";
 
 import { IProtocolFormBaseFields } from "./types";
 import { parseTriggerExpression } from "components/ProtocolDescription/expressionTree";
 import { TriggerBuilder } from "./TriggerBuilder/TriggerBuilder";
 import { TriggerAdvanced } from "./TriggerBuilder/TriggerAdvanced";
+import { ExpressionSentence } from "./TriggerBuilder/ExpressionSentence";
 
-type TriggerMode = "builder" | "advanced";
+type TriggerMode = "builder" | "advanced" | "result";
+
+function TriggerResult() {
+  const { values } = useFormikContext<IProtocolFormBaseFields>();
+
+  const result = parseTriggerExpression(values.config?.trigger ?? "");
+
+  if (!result.tree) {
+    return <Alert type="warning" showIcon message={result.error} />;
+  }
+
+  return (
+    <ExpressionSentence
+      tree={result.tree}
+      variables={values.config?.variables ?? []}
+    />
+  );
+}
 
 export function TriggerTab() {
   const { values } = useFormikContext<IProtocolFormBaseFields>();
@@ -61,6 +79,11 @@ export function TriggerTab() {
               onTextChange={() => setParseError(null)}
             />
           ),
+        },
+        {
+          key: "result",
+          label: "Resultado",
+          children: <TriggerResult />,
         },
       ]}
     />
