@@ -1046,6 +1046,11 @@ api.protocols.aiReviewTrigger = (params = {}) =>
     ...setHeaders(),
   });
 
+api.protocols.aiAgentChat = (params = {}) =>
+  instance.post(`protocol/ai/agent-chat`, params, {
+    ...setHeaders(),
+  });
+
 /**
  * AUTH
  */

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { RobotOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import Button from "components/Button";
@@ -17,6 +18,7 @@ import {
   reset,
 } from "../ProtocolSlice";
 import { BaseForm } from "./Base";
+import { AgentChatDrawer } from "./AgentChat/AgentChatDrawer";
 import { IProtocolFormBaseFields, emptyProtocol } from "./types";
 import { StickyPageHeader } from "../Protocol.style";
 
@@ -38,6 +40,7 @@ export function ProtocolEditorPage() {
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [isStuck, setIsStuck] = useState(false);
+  const [copilotOpen, setCopilotOpen] = useState(false);
 
   useEffect(() => {
     if (!isNew) {
@@ -144,6 +147,14 @@ export function ProtocolEditorPage() {
                 <div className="page-header-legend">Protocolos</div>
               </div>
               <div className="page-header-actions">
+                <Button
+                  id="protocol-copilot-open"
+                  icon={<RobotOutlined />}
+                  onClick={() => setCopilotOpen(true)}
+                  disabled={isSaving || isLoading || notFound}
+                >
+                  Copiloto IA
+                </Button>
                 <Button onClick={onCancel} disabled={isSaving}>
                   {t("actions.cancel")}
                 </Button>
@@ -168,6 +179,10 @@ export function ProtocolEditorPage() {
         ) : (
           <Form onSubmit={handleSubmit}>
             <BaseForm formData={values} header={header} />
+            <AgentChatDrawer
+              open={copilotOpen}
+              onClose={() => setCopilotOpen(false)}
+            />
           </Form>
         );
       }}
