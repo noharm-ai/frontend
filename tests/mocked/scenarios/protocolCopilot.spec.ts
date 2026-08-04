@@ -48,8 +48,8 @@ test("interviews, proposes and applies a protocol draft", async ({
   page,
   mockApi,
 }) => {
-  mockApi.override("POST /admin/protocol/list", {
-    json: { status: "success", data: [emptyResultProtocol] },
+  mockApi.override("GET /admin/protocol/:id", {
+    json: { status: "success", data: emptyResultProtocol },
   });
   // proposal preview resolves substance ids to names
   mockApi.override("GET /substance/resolve", {
@@ -136,9 +136,15 @@ test("interviews, proposes and applies a protocol draft", async ({
     page.getByText("Proposta aplicada ao formulário. Revise antes de salvar.")
   ).toBeVisible();
 
-  // the form now reflects the proposal: two variables and the new trigger
+  // the form now reflects the proposal: two variables (in the "Variáveis"
+  // step) and the new trigger (in the "Gatilho" step)
   await drawer.locator(".ant-drawer-close").click();
+  await main
+    .locator(".ant-steps-item")
+    .filter({ hasText: "Variáveis" })
+    .click();
   await expect(main.getByText("var_2").first()).toBeVisible();
+  await main.locator(".ant-steps-item").filter({ hasText: "Gatilho" }).click();
   const sentence = main.locator(".expression-sentence").first();
   await expect(sentence.locator(".condition-subject").first()).toHaveText(
     "a idade do paciente"
@@ -149,8 +155,8 @@ test("shows validation errors when the proposal is rejected", async ({
   page,
   mockApi,
 }) => {
-  mockApi.override("POST /admin/protocol/list", {
-    json: { status: "success", data: [emptyResultProtocol] },
+  mockApi.override("GET /admin/protocol/:id", {
+    json: { status: "success", data: emptyResultProtocol },
   });
   mockApi.override("POST /protocol/ai/agent-chat", {
     json: {
