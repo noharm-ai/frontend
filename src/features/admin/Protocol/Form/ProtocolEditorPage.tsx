@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { Alert } from "antd";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import Button from "components/Button";
@@ -13,11 +14,13 @@ import { Form } from "styles/Form.style";
 import {
   setProtocol,
   upsertProtocol,
-  fetchProtocols,
+  fetchProtocol,
   reset,
 } from "../ProtocolSlice";
 import { BaseForm } from "./Base";
 import { IProtocolFormBaseFields, emptyProtocol } from "./types";
+import { findUnfilledClearedAttributes } from "./copyProtocol";
+import { IProtocolEditorLocationState } from "./navigationState";
 import { StickyPageHeader } from "../Protocol.style";
 
 const LIST_PATH = "/admin/protocolos";
@@ -25,11 +28,16 @@ const LIST_PATH = "/admin/protocolos";
 export function ProtocolEditorPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
-  const list = useAppSelector((state) => state.admin.protocol.list);
-  const listStatus = useAppSelector((state) => state.admin.protocol.status);
+  const storedRecord = useAppSelector(
+    (state) => state.admin.protocol.record.data
+  );
+  const recordStatus = useAppSelector(
+    (state) => state.admin.protocol.record.status
+  );
   const saveStatus = useAppSelector(
     (state) => state.admin.protocol.single.status
   );
@@ -40,14 +48,18 @@ export function ProtocolEditorPage() {
   const [isStuck, setIsStuck] = useState(false);
 
   useEffect(() => {
-    if (!isNew) {
-      dispatch(fetchProtocols({}));
+    // the editor is opened from the (usually scrolled) listing, and the
+    // browser keeps the scroll position across the navigation
+    window.scrollTo({ top: 0 });
+
+    if (!isNew && id) {
+      dispatch(fetchProtocol({ id }));
     }
 
     return () => {
       dispatch(reset());
     };
-  }, [dispatch, isNew]);
+  }, [dispatch, isNew, id]);
 
   useEffect(() => {
     const el = sentinelRef.current;
@@ -86,15 +98,38 @@ export function ProtocolEditorPage() {
     }),
   });
 
-  const record = isNew
-    ? null
-    : list.find((p: any) => String(p.id) === id) ?? null;
+  // never render a record other than the one the url asks for (switching to
+  // "new" or to another id keeps this component mounted)
+  const record =
+    !isNew && String(storedRecord?.id) === id ? storedRecord : null;
 
-  const initialValues: IProtocolFormBaseFields = record
-    ? { ...record }
-    : emptyProtocol();
+  const protocolCopy =
+    (isNew &&
+      (location.state as IProtocolEditorLocationState | null)?.protocolCopy) ||
+    null;
+
+  const initialValues: IProtocolFormBaseFields = useMemo(() => {
+    if (record) return { ...record };
+    if (protocolCopy) return protocolCopy.values;
+
+    return emptyProtocol();
+  }, [record, protocolCopy]);
 
   const onSave = (params: IProtocolFormBaseFields) => {
+    const unfilled = protocolCopy
+      ? findUnfilledClearedAttributes(params, protocolCopy.clearedAttributes)
+      : [];
+
+    if (unfilled.length) {
+      notification.error({
+        message: "Preencha os campos limpos na cópia",
+        description: unfilled
+          .map((item) => `${item.variableName}: ${item.label}`)
+          .join(" · "),
+      });
+      return;
+    }
+
     dispatch(upsertProtocol(params)).then((response: any) => {
       if (response.error) {
         notification.error({
@@ -114,8 +149,55 @@ export function ProtocolEditorPage() {
     navigate(LIST_PATH);
   };
 
-  const isLoading = !isNew && listStatus === "loading";
-  const notFound = !isNew && listStatus === "succeeded" && !record;
+  const isLoading =
+    !isNew && (recordStatus === "loading" || recordStatus === "idle");
+  const notFound =
+    !isNew &&
+    ((recordStatus === "succeeded" && !record) || recordStatus === "failed");
+
+  const copyNotice = protocolCopy ? (
+    <Alert
+      type={protocolCopy.clearedAttributes.length ? "warning" : "info"}
+      showIcon
+      style={{ marginBottom: "20px" }}
+      message={`Cópia de "${protocolCopy.sourceName}"${
+        protocolCopy.sourceSchema ? ` (${protocolCopy.sourceSchema})` : ""
+      }`}
+      description={
+        protocolCopy.clearedAttributes.length ? (
+          <>
+            <p>
+              As variáveis abaixo usam dados específicos do schema de origem e
+              foram limpas. Preencha-as com os valores deste schema antes de
+              salvar:
+            </p>
+            <ul>
+              {protocolCopy.clearedAttributes.map((item) => (
+                <li key={`${item.variableName}-${item.attribute}`}>
+                  <strong>{item.variableName}</strong>: {item.label}
+                </li>
+              ))}
+            </ul>
+          </>
+        ) : (
+          "A cópia começa como Inativa. Revise os dados e ajuste a situação antes de salvar."
+        )
+      }
+    />
+  ) : null;
+
+  // A global protocol is shared by every schema: editing it here changes the
+  // behaviour of all of them, so say it out loud.
+  const globalNotice =
+    record && !record.schema ? (
+      <Alert
+        type="warning"
+        showIcon
+        style={{ marginBottom: "20px" }}
+        message="Protocolo global (Todos os schemas)"
+        description="As alterações valem para todos os schemas, não apenas para o seu."
+      />
+    ) : null;
 
   return (
     <Formik
@@ -139,7 +221,11 @@ export function ProtocolEditorPage() {
             <StickyPageHeader className={isStuck ? "is-stuck" : ""}>
               <div>
                 <h1 className="page-header-title">
-                  {isNew ? "Novo Protocolo" : values.name || "Editar Protocolo"}
+                  {isNew
+                    ? protocolCopy
+                      ? "Copiar Protocolo"
+                      : "Novo Protocolo"
+                    : values.name || "Editar Protocolo"}
                 </h1>
                 <div className="page-header-legend">Protocolos</div>
               </div>
@@ -167,7 +253,11 @@ export function ProtocolEditorPage() {
           </>
         ) : (
           <Form onSubmit={handleSubmit}>
-            <BaseForm formData={values} header={header} />
+            <BaseForm
+              formData={values}
+              header={header}
+              notice={copyNotice ?? globalNotice}
+            />
           </Form>
         );
       }}

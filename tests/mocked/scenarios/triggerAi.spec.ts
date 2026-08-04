@@ -25,8 +25,8 @@ test("generates and reviews the trigger with the AI assistant", async ({
   page,
   mockApi,
 }) => {
-  mockApi.override("POST /admin/protocol/list", {
-    json: { status: "success", data: [protocolFixture] },
+  mockApi.override("GET /admin/protocol/:id", {
+    json: { status: "success", data: protocolFixture },
   });
   mockApi.override("POST /protocol/ai/generate-trigger", {
     json: {
@@ -106,8 +106,8 @@ test("shows the explanation when the rule cannot be expressed", async ({
   page,
   mockApi,
 }) => {
-  mockApi.override("POST /admin/protocol/list", {
-    json: { status: "success", data: [protocolFixture] },
+  mockApi.override("GET /admin/protocol/:id", {
+    json: { status: "success", data: protocolFixture },
   });
   mockApi.override("POST /protocol/ai/generate-trigger", {
     json: {

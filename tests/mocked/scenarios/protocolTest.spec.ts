@@ -37,8 +37,8 @@ test("tests a protocol against a sample of prescriptions in chunks", async ({
   page,
   mockApi,
 }) => {
-  mockApi.override("POST /admin/protocol/list", {
-    json: { status: "success", data: [protocolFixture] },
+  mockApi.override("GET /admin/protocol/:id", {
+    json: { status: "success", data: protocolFixture },
   });
   mockApi.override("POST /protocol/test/sample", {
     json: {
@@ -167,8 +167,8 @@ test("tests a protocol against target prescriptions from the trigger panel", asy
   page,
   mockApi,
 }) => {
-  mockApi.override("POST /admin/protocol/list", {
-    json: { status: "success", data: [protocolFixture] },
+  mockApi.override("GET /admin/protocol/:id", {
+    json: { status: "success", data: protocolFixture },
   });
   mockApi.override("POST /protocol/test", async (route) => {
     const body = JSON.parse(route.request().postData() ?? "{}");

@@ -18,9 +18,11 @@ import {
 export function BaseForm({
   formData,
   header,
+  notice,
 }: {
   formData: any;
   header?: ReactNode;
+  notice?: ReactNode;
 }) {
   const { t } = useTranslation();
 
@@ -29,6 +31,8 @@ export function BaseForm({
       <EditorLayout>
         <div>
           {header}
+
+          {notice}
 
           <FormSection>
             <h3 className="form-section-title">Geral</h3>
