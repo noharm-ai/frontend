@@ -36,7 +36,7 @@ export function TriggerTab() {
   const [mode, setMode] = useState<TriggerMode>(() =>
     parseTriggerExpression(values.config?.trigger ?? "").tree
       ? "builder"
-      : "advanced"
+      : "advanced",
   );
 
   const handleModeChange = (nextMode: TriggerMode) => {
@@ -85,10 +85,8 @@ export function TriggerTab() {
             },
           ]}
         />
-        <div className="trigger-result">
-          <h4 className="trigger-result-title">Resultado</h4>
-          <TriggerResult />
-        </div>
+
+        <TriggerResult />
       </TriggerLayout>
     </Card>
   );
