@@ -2,13 +2,15 @@ import { useCallback, useState } from "react";
 import { useFormikContext } from "formik";
 import { Alert, Tabs } from "antd";
 
+import Card from "components/Card";
 import { IProtocolFormBaseFields } from "./types";
 import { parseTriggerExpression } from "components/ProtocolDescription/expressionTree";
 import { TriggerBuilder } from "./TriggerBuilder/TriggerBuilder";
 import { TriggerAdvanced } from "./TriggerBuilder/TriggerAdvanced";
 import { ExpressionSentence } from "./TriggerBuilder/ExpressionSentence";
+import { TriggerLayout } from "../Protocol.style";
 
-type TriggerMode = "builder" | "advanced" | "result";
+type TriggerMode = "builder" | "advanced";
 
 function TriggerResult() {
   const { values } = useFormikContext<IProtocolFormBaseFields>();
@@ -59,33 +61,35 @@ export function TriggerTab() {
   }, []);
 
   return (
-    <Tabs
-      className="side-panel-tabs"
-      activeKey={mode}
-      destroyOnHidden
-      onChange={(key) => handleModeChange(key as TriggerMode)}
-      items={[
-        {
-          key: "builder",
-          label: "Visual",
-          children: <TriggerBuilder onParseFailure={handleParseFailure} />,
-        },
-        {
-          key: "advanced",
-          label: "Avançado",
-          children: (
-            <TriggerAdvanced
-              parseError={parseError}
-              onTextChange={() => setParseError(null)}
-            />
-          ),
-        },
-        {
-          key: "result",
-          label: "Resultado",
-          children: <TriggerResult />,
-        },
-      ]}
-    />
+    <Card>
+      <TriggerLayout>
+        <Tabs
+          activeKey={mode}
+          destroyOnHidden
+          onChange={(key) => handleModeChange(key as TriggerMode)}
+          items={[
+            {
+              key: "builder",
+              label: "Visual",
+              children: <TriggerBuilder onParseFailure={handleParseFailure} />,
+            },
+            {
+              key: "advanced",
+              label: "Avançado",
+              children: (
+                <TriggerAdvanced
+                  parseError={parseError}
+                  onTextChange={() => setParseError(null)}
+                />
+              ),
+            },
+          ]}
+        />
+        <div className="trigger-result">
+          <h4 className="trigger-result-title">Resultado</h4>
+          <TriggerResult />
+        </div>
+      </TriggerLayout>
+    </Card>
   );
 }
