@@ -50,8 +50,8 @@ test("trigger builder round-trip and advanced mode", async ({
   page,
   mockApi,
 }) => {
-  mockApi.override("POST /admin/protocol/list", {
-    json: { status: "success", data: [protocolFixture] },
+  mockApi.override("GET /admin/protocol/:id", {
+    json: { status: "success", data: protocolFixture },
   });
 
   await page.goto("/admin/protocolos/1");
@@ -126,8 +126,8 @@ test("sentence describes every item behind the stored ids", async ({
   page,
   mockApi,
 }) => {
-  mockApi.override("POST /admin/protocol/list", {
-    json: { status: "success", data: [listProtocolFixture] },
+  mockApi.override("GET /admin/protocol/:id", {
+    json: { status: "success", data: listProtocolFixture },
   });
   mockApi.override("GET /substance/resolve", {
     json: {

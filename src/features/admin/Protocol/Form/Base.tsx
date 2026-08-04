@@ -28,9 +28,11 @@ import {
 export function BaseForm({
   formData,
   header,
+  notice,
 }: {
   formData: any;
   header?: ReactNode;
+  notice?: ReactNode;
 }) {
   const { t } = useTranslation();
   const { errors } = useFormikContext<IProtocolFormBaseFields>();
@@ -97,6 +99,8 @@ export function BaseForm({
       <EditorLayout>
         <div>
           {header}
+
+          {notice}
 
           <StepsCard>
             <Steps current={step} onChange={setStep} items={stepItems} />

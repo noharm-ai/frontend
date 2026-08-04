@@ -12,7 +12,7 @@ import MainFilters from "./MainFilters";
 export default function Filter() {
   const dispatch = useAppDispatch();
   const isFetching =
-    useAppSelector((state) => state.admin.tag.status) === "loading";
+    useAppSelector((state) => state.admin.protocol.status) === "loading";
 
   const { t } = useTranslation();
   const errorMessage = {
@@ -21,6 +21,8 @@ export default function Filter() {
   };
   const initialValues = {
     statusType: null,
+    term: "",
+    allSchemas: false,
   };
 
   useEffect(() => {
