@@ -9,7 +9,7 @@ export const StickyPageHeader = styled(PageHeader)`
   margin-bottom: 20px;
   padding: 16px 0;
   background: #eff1f4;
-  border-bottom: 1px solid #e0e3e9;
+
   transition:
     padding 0.2s ease,
     box-shadow 0.2s ease;
