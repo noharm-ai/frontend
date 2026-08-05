@@ -1036,13 +1036,8 @@ api.protocols.testConfig = (params = {}) =>
     ...setHeaders(),
   });
 
-api.protocols.aiGenerateTrigger = (params = {}) =>
-  instance.post(`protocol/ai/generate-trigger`, params, {
-    ...setHeaders(),
-  });
-
-api.protocols.aiReviewTrigger = (params = {}) =>
-  instance.post(`protocol/ai/review-trigger`, params, {
+api.protocols.aiAgentChat = (params = {}) =>
+  instance.post(`protocol/ai/agent-chat`, params, {
     ...setHeaders(),
   });
 

@@ -1,14 +1,33 @@
 import { useCallback, useState } from "react";
 import { useFormikContext } from "formik";
-import { Tabs } from "antd";
+import { Alert, Tabs } from "antd";
 
+import Card from "components/Card";
 import { IProtocolFormBaseFields } from "./types";
 import { parseTriggerExpression } from "components/ProtocolDescription/expressionTree";
 import { TriggerBuilder } from "./TriggerBuilder/TriggerBuilder";
-import { TriggerAiAssistant } from "./TriggerBuilder/TriggerAiAssistant";
 import { TriggerAdvanced } from "./TriggerBuilder/TriggerAdvanced";
+import { ExpressionSentence } from "./TriggerBuilder/ExpressionSentence";
+import { TriggerLayout } from "../Protocol.style";
 
-type TriggerMode = "builder" | "ai" | "advanced";
+type TriggerMode = "builder" | "advanced";
+
+function TriggerResult() {
+  const { values } = useFormikContext<IProtocolFormBaseFields>();
+
+  const result = parseTriggerExpression(values.config?.trigger ?? "");
+
+  if (!result.tree) {
+    return <Alert type="warning" showIcon message={result.error} />;
+  }
+
+  return (
+    <ExpressionSentence
+      tree={result.tree}
+      variables={values.config?.variables ?? []}
+    />
+  );
+}
 
 export function TriggerTab() {
   const { values } = useFormikContext<IProtocolFormBaseFields>();
@@ -17,7 +36,7 @@ export function TriggerTab() {
   const [mode, setMode] = useState<TriggerMode>(() =>
     parseTriggerExpression(values.config?.trigger ?? "").tree
       ? "builder"
-      : "advanced"
+      : "advanced",
   );
 
   const handleModeChange = (nextMode: TriggerMode) => {
@@ -42,33 +61,33 @@ export function TriggerTab() {
   }, []);
 
   return (
-    <Tabs
-      className="side-panel-tabs"
-      activeKey={mode}
-      destroyOnHidden
-      onChange={(key) => handleModeChange(key as TriggerMode)}
-      items={[
-        {
-          key: "builder",
-          label: "Visual",
-          children: <TriggerBuilder onParseFailure={handleParseFailure} />,
-        },
-        {
-          key: "ai",
-          label: "Assistente IA",
-          children: <TriggerAiAssistant />,
-        },
-        {
-          key: "advanced",
-          label: "Avançado",
-          children: (
-            <TriggerAdvanced
-              parseError={parseError}
-              onTextChange={() => setParseError(null)}
-            />
-          ),
-        },
-      ]}
-    />
+    <Card>
+      <TriggerLayout>
+        <Tabs
+          activeKey={mode}
+          destroyOnHidden
+          onChange={(key) => handleModeChange(key as TriggerMode)}
+          items={[
+            {
+              key: "builder",
+              label: "Visual",
+              children: <TriggerBuilder onParseFailure={handleParseFailure} />,
+            },
+            {
+              key: "advanced",
+              label: "Avançado",
+              children: (
+                <TriggerAdvanced
+                  parseError={parseError}
+                  onTextChange={() => setParseError(null)}
+                />
+              ),
+            },
+          ]}
+        />
+
+        <TriggerResult />
+      </TriggerLayout>
+    </Card>
   );
 }

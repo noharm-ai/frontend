@@ -152,7 +152,7 @@ const STRATEGIES: Record<Exclude<LabelKind, "segment">, IStrategy> = {
   },
 };
 
-// Module-level so switching between the "Visual" and "Assistente IA" tabs
+// Module-level so switching between the "Visual" and "Avançado" tabs
 // (which destroy the panel) does not re-request everything.
 const cache: Partial<Record<LabelKind, LabelMap>> = {};
 const requested: Partial<Record<LabelKind, Set<string>>> = {};

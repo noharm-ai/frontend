@@ -14,7 +14,6 @@ import {
   appendChildAtPath,
 } from "components/ProtocolDescription/expressionTree";
 import { ExpressionGroup } from "./ExpressionGroup";
-import { ExpressionSentence } from "./ExpressionSentence";
 
 const MAX_TRIGGER_LENGTH = 500;
 
@@ -89,8 +88,6 @@ export function TriggerBuilder({ onParseFailure }: ITriggerBuilderProps) {
         onAddCondition={handleAddCondition}
         onAddGroup={handleAddGroup}
       />
-
-      <ExpressionSentence tree={tree} variables={variables} />
 
       {trigger.length > MAX_TRIGGER_LENGTH && (
         <Alert

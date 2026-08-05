@@ -59,7 +59,10 @@ test("trigger builder round-trip and advanced mode", async ({
   const main = page.getByRole("main");
   const sentence = main.locator(".expression-sentence");
 
-  // builder opens by default with the parsed expression described in prose
+  // the builder lives in the "Gatilho" step
+  await main.locator(".ant-steps-item").filter({ hasText: "Gatilho" }).click();
+
+  // builder opens with the parsed expression described in prose
   await expect(main.getByRole("button", { name: "v1" }).first()).toBeVisible();
   await expect(sentence.locator(".sentence-title")).toContainText(
     "O protocolo dispara quando"
@@ -112,13 +115,19 @@ test("trigger builder round-trip and advanced mode", async ({
   await expect(sentence.locator(".sentence-connector")).toHaveText(["ou", "e"]);
   await expect(sentence.locator(".condition-not")).toHaveText("NÃO");
 
-  // deleting a referenced variable asks for confirmation
+  // deleting a referenced variable (in the "Variáveis" step) asks for
+  // confirmation
+  await main
+    .locator(".ant-steps-item")
+    .filter({ hasText: "Variáveis" })
+    .click();
   await main.getByRole("button", { name: "delete" }).first().click();
   const confirm = page
     .getByRole("dialog")
     .filter({ hasText: "Remover variável em uso" });
   await expect(confirm).toBeVisible();
   await confirm.getByRole("button", { name: "Cancelar" }).click();
+  await main.locator(".ant-steps-item").filter({ hasText: "Gatilho" }).click();
   await expect(main.getByRole("button", { name: "v1" }).first()).toBeVisible();
 });
 
@@ -148,6 +157,8 @@ test("sentence describes every item behind the stored ids", async ({
   await page.goto("/admin/protocolos/1");
 
   const main = page.getByRole("main");
+  await main.locator(".ant-steps-item").filter({ hasText: "Gatilho" }).click();
+
   const sentence = main.locator(".expression-sentence");
   const substanceCard = sentence
     .locator(".condition-criterion")
