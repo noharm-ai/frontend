@@ -64,6 +64,7 @@ const SUBJECTS: Record<string, string> = {
   [ProtocolVariableFieldEnum.ROUTE]: "a via de algum item prescrito",
   [ProtocolVariableFieldEnum.AGE]: "a idade do paciente",
   [ProtocolVariableFieldEnum.WEIGHT]: "o peso do paciente",
+  [ProtocolVariableFieldEnum.IMC]: "o IMC do paciente",
   [ProtocolVariableFieldEnum.ID_DEPARTMENT]: "o setor da prescrição",
   [ProtocolVariableFieldEnum.ID_SEGMENT]: "o segmento da prescrição",
   [ProtocolVariableFieldEnum.ADMISSION_TIME]:
@@ -78,6 +79,7 @@ const SUBJECTS: Record<string, string> = {
 const UNITS: Record<string, string> = {
   [ProtocolVariableFieldEnum.AGE]: "anos",
   [ProtocolVariableFieldEnum.WEIGHT]: "kg",
+  [ProtocolVariableFieldEnum.IMC]: "kg/m²",
   [ProtocolVariableFieldEnum.ADMISSION_TIME]: "horas",
 };
 

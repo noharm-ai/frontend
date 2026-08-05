@@ -116,6 +116,8 @@ export function VariableTab() {
       "Compara a idade do paciente (em anos) com o valor informado.",
     [ProtocolVariableFieldEnum.WEIGHT]:
       "Compara o peso do paciente (em kg) com o valor informado.",
+    [ProtocolVariableFieldEnum.IMC]:
+      "Compara o IMC do paciente (índice de massa corporal, em kg/m²) com o valor informado. O IMC é calculado automaticamente a partir do peso e da altura do paciente: peso / (altura / 100)². Se o paciente não possuir peso ou altura registrados, a variável é avaliada como falsa.",
     [ProtocolVariableFieldEnum.ID_DEPARTMENT]:
       "Verifica se o setor (fksetor) da prescrição está (IN) ou não está (NOTIN) na lista informada.",
     [ProtocolVariableFieldEnum.ID_SEGMENT]:
@@ -582,7 +584,8 @@ export function VariableTab() {
                           const isDecimalField =
                             v.field === ProtocolVariableFieldEnum.EXAM_REF ||
                             v.field === "exam" ||
-                            v.field === ProtocolVariableFieldEnum.WEIGHT;
+                            v.field === ProtocolVariableFieldEnum.WEIGHT ||
+                            v.field === ProtocolVariableFieldEnum.IMC;
                           const isIntegerField =
                             v.field === ProtocolVariableFieldEnum.AGE;
                           if (
@@ -605,7 +608,8 @@ export function VariableTab() {
                     )}
                     {(v.field === ProtocolVariableFieldEnum.EXAM_REF ||
                       v.field === "exam" ||
-                      v.field === ProtocolVariableFieldEnum.WEIGHT) &&
+                      v.field === ProtocolVariableFieldEnum.WEIGHT ||
+                      v.field === ProtocolVariableFieldEnum.IMC) &&
                       v.operator !== "IN" &&
                       v.operator !== "NOTIN" && (
                         <div className="form-info">
