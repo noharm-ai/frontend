@@ -27,9 +27,43 @@ export const ChatBubble = styled.div<{ $role: "user" | "assistant" }>`
   background: ${({ $role }) => ($role === "user" ? "#e6f4ff" : "#f5f5f5")};
   border-radius: 8px;
   padding: 0.5rem 0.75rem;
-  white-space: pre-wrap;
+  /* user messages are plain text from a textarea and keep their line breaks;
+     assistant messages are HTML and bring their own block layout */
+  white-space: ${({ $role }) => ($role === "user" ? "pre-wrap" : "normal")};
   word-break: break-word;
   font-size: 0.9rem;
+
+  .bubble-content {
+    p,
+    ul,
+    ol {
+      margin: 0 0 0.5rem;
+    }
+
+    ul,
+    ol {
+      padding-left: 1.25rem;
+    }
+
+    li {
+      margin-bottom: 0.15rem;
+    }
+
+    code {
+      background: rgba(0, 0, 0, 0.06);
+      border-radius: 4px;
+      padding: 0.05rem 0.25rem;
+      font-size: 0.85em;
+    }
+
+    > *:first-child {
+      margin-top: 0;
+    }
+
+    > *:last-child {
+      margin-bottom: 0;
+    }
+  }
 
   .bubble-extras {
     margin-top: 0.5rem;

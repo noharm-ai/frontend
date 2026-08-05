@@ -58,12 +58,14 @@ test("interviews, proposes and applies a protocol draft", async ({
       data: [{ sctid: "111111", name: "VANCOMICINA" }],
     },
   });
-  // turn 1: the agent answers with a clarifying question only
+  // turn 1: the agent answers with a clarifying question only.
+  // the agent replies in simple HTML, which the chat bubble renders as markup
   mockApi.override("POST /protocol/ai/agent-chat", {
     json: {
       status: "success",
       data: {
-        message: "Qual exame deve ser considerado para função renal?",
+        message:
+          "<p>Qual exame deve ser considerado para <strong>função renal</strong>?</p>",
         proposal: null,
         proposalErrors: [],
       },
@@ -81,9 +83,13 @@ test("interviews, proposes and applies a protocol draft", async ({
     .fill("protocolo para vancomicina em idosos");
   await drawer.locator("#protocol-copilot-send").click();
 
+  const answer = drawer.getByTestId("chat-assistant");
   await expect(
-    drawer.getByText("Qual exame deve ser considerado para função renal?")
+    answer.getByText("Qual exame deve ser considerado para função renal?")
   ).toBeVisible();
+  // the HTML comes through as real markup, never as escaped tags
+  await expect(answer.locator("strong")).toHaveText("função renal");
+  await expect(answer).not.toContainText("<p>");
 
   // first request carries an empty transcript, the draft and the message
   const firstCall = mockApi.requests.find(
@@ -116,7 +122,7 @@ test("interviews, proposes and applies a protocol draft", async ({
     proposalCard.getByText("Idoso em uso de vancomicina")
   ).toBeVisible();
 
-  // second request replays the transcript
+  // second request replays the transcript, assistant turns kept as sent
   const chatCalls = mockApi.requests.filter(
     (r) => r.path === "/protocol/ai/agent-chat"
   );
@@ -125,7 +131,8 @@ test("interviews, proposes and applies a protocol draft", async ({
     { role: "user", content: "protocolo para vancomicina em idosos" },
     {
       role: "assistant",
-      content: "Qual exame deve ser considerado para função renal?",
+      content:
+        "<p>Qual exame deve ser considerado para <strong>função renal</strong>?</p>",
     },
   ]);
 
