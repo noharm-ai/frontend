@@ -3,6 +3,7 @@ import clinicalNotesIndicator from "src/components/Screening/ClinicalNotes/Clini
 
 import {
   DRUG_ATTRIBUTE_OPTIONS,
+  DRUG_ALERT_LIMIT_OPTIONS,
   SEGMENT_TYPE_OPTIONS,
   ST_CONCILIA_OPTIONS,
   findOptionLabel,
@@ -173,6 +174,23 @@ function combinationDescription(
       phrase: "está contido na lista",
       items: attributes.map((value) => {
         const label = findOptionLabel(DRUG_ATTRIBUTE_OPTIONS, value);
+
+        return {
+          id: String(value),
+          label: label ?? String(value),
+          resolved: !!label,
+        };
+      }),
+    });
+  }
+
+  const alertLimits = asList(variable.drugAlertLimit);
+  if (alertLimits.length) {
+    criteria.push({
+      label: "Valor limite nefrotóxico/hepático",
+      phrase: "está contido na lista",
+      items: alertLimits.map((value) => {
+        const label = findOptionLabel(DRUG_ALERT_LIMIT_OPTIONS, value);
 
         return {
           id: String(value),

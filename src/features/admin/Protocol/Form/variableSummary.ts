@@ -37,6 +37,7 @@ const combinationSummary = (variable: any): string => {
   addList("classe", variable.class);
   addList("medicamento", variable.drug);
   addList("atributo", variable.drugAttribute);
+  addList("valor limite", variable.drugAlertLimit);
   addList("via", variable.route);
 
   if (variable.intravenous === true) parts.push("intravenosa");

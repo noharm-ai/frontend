@@ -20,6 +20,7 @@ import { ProtocolIcdSelect } from "./ProtocolIcdSelect/ProtocolIcdSelect";
 import { ProtocolRouteSelect } from "./ProtocolRouteSelect/ProtocolRouteSelect";
 import {
   DRUG_ATTRIBUTE_OPTIONS,
+  DRUG_ALERT_LIMIT_OPTIONS,
   SEGMENT_TYPE_OPTIONS,
 } from "components/ProtocolDescription/protocolOptions";
 
@@ -313,6 +314,32 @@ export function VariableTab() {
                         setConfig(idx, "drugAttribute", value)
                       }
                     />
+                  </div>
+                </div>
+
+                <div className={`form-row`}>
+                  <div className="form-label">
+                    <label>Valor limite nefrotóxico/hepático:</label>
+                  </div>
+                  <div className="form-input">
+                    <Select
+                      value={v.drugAlertLimit}
+                      allowClear
+                      mode="multiple"
+                      optionFilterProp="label"
+                      options={DRUG_ALERT_LIMIT_OPTIONS}
+                      onChange={(value) =>
+                        setConfig(idx, "drugAlertLimit", value)
+                      }
+                    />
+                    <div className="form-info">
+                      Verifica se o medicamento possui valor limite de
+                      nefrotoxicidade (renal) e/ou hepatotoxicidade (hepático)
+                      cadastrado nos atributos do medicamento. Um valor em
+                      branco ou zero conta como "não possui". Selecionando mais
+                      de uma opção, o item atende ao critério se satisfizer
+                      qualquer uma delas.
+                    </div>
                   </div>
                 </div>
 

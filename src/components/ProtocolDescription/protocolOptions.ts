@@ -17,6 +17,16 @@ export const DRUG_ATTRIBUTE_OPTIONS: IProtocolOption[] = [
   { value: "chemo", label: "Quimioterápico" },
 ];
 
+// Whether the drug has a nephro/hepatotoxicity alert threshold configured
+// (medatributos.renal / medatributos.hepatico). A blank or zero threshold counts
+// as "não possui", matching how the renal/hepatic alerts read these columns.
+export const DRUG_ALERT_LIMIT_OPTIONS: IProtocolOption[] = [
+  { value: "kidney", label: "Possui valor limite nefrotóxico" },
+  { value: "liver", label: "Possui valor limite hepático" },
+  { value: "not_kidney", label: "Não possui valor limite nefrotóxico" },
+  { value: "not_liver", label: "Não possui valor limite hepático" },
+];
+
 export const SEGMENT_TYPE_OPTIONS: IProtocolOption[] = [
   { value: 1, label: "ADULTO" },
   { value: 2, label: "PEDIÁTRICO" },
