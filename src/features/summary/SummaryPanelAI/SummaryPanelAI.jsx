@@ -36,13 +36,14 @@ function SummaryPanelAI({ payload, position, admissionNumber }) {
   const original = useSelector(
     (state) => state.summary.blocks[position]?.original,
   );
-  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [edit, setEdit] = useState(false);
   const [editText, setEditText] = useState("");
   const [error, setError] = useState(false);
   const [modalConfig, setModalConfig] = useState(false);
   const [modalAudit, setModalAudit] = useState(false);
   const [aiPrompt, setAIPrompt] = useState(payload?.prompt);
+  const loading = refreshing || result == null;
   const reload = useCallback(
     (forcePayload) => {
       if (!forcePayload && !payload?.audit?.length) {
@@ -56,7 +57,7 @@ function SummaryPanelAI({ payload, position, admissionNumber }) {
         return;
       }
 
-      setLoading(true);
+      setRefreshing(true);
       setError(false);
 
       if (forcePayload) {
@@ -65,7 +66,7 @@ function SummaryPanelAI({ payload, position, admissionNumber }) {
 
       dispatch(promptSummaryBlock(forcePayload || aiPrompt)).then(
         (response) => {
-          setLoading(false);
+          setRefreshing(false);
 
           if (response.error) {
             setError(true);
@@ -74,7 +75,7 @@ function SummaryPanelAI({ payload, position, admissionNumber }) {
             dispatch(
               setBlock({
                 id: position,
-                data: response.payload.data?.answer,
+                data: response.payload.data?.answer ?? "",
                 original: response.payload.data?.answer,
               }),
             );
@@ -99,15 +100,11 @@ function SummaryPanelAI({ payload, position, admissionNumber }) {
             id: position,
             data: msg,
           }),
-        ).then(() => {
-          setLoading(false);
-        });
+        );
         return;
       }
 
       dispatch(promptSummaryBlock(aiPrompt)).then((response) => {
-        setLoading(false);
-
         if (response.error) {
           setError(true);
           console.error(response.error);
@@ -115,7 +112,7 @@ function SummaryPanelAI({ payload, position, admissionNumber }) {
           dispatch(
             setBlock({
               id: position,
-              data: response.payload.data?.answer,
+              data: response.payload.data?.answer ?? "",
               original: response.payload.data?.answer,
             }),
           );
