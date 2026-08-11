@@ -28,6 +28,7 @@ export default function Modal({
       footer={null}
       style={{ top: "10px", height: "100vh" }}
       styles={{ body: { padding: 0 } }}
+      maskClosable={false}
     >
       <ClinicalNotes visibleState={visible} />
     </DefaultModal>

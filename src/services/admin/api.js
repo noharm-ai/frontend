@@ -239,11 +239,23 @@ api.protocols = {};
 api.protocols.getProtocols = (params = {}) =>
   instance.post(`/admin/protocol/list`, params, setHeaders());
 
+api.protocols.getProtocol = (id, params = {}) =>
+  instance.get(`/admin/protocol/${id}`, {
+    params,
+    ...setHeaders(),
+  });
+
 api.protocols.upsertProtocol = (params = {}) => {
   return instance.post(`/admin/protocol/upsert`, params, {
     ...setHeaders(),
   });
 };
+
+api.protocols.getDepartments = (params = {}) =>
+  instance.get(`/admin/protocol/department/list`, {
+    params,
+    ...setHeaders(),
+  });
 
 /**
  * REPORTS

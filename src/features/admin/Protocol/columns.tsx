@@ -1,14 +1,20 @@
-import { EditOutlined } from "@ant-design/icons";
-import { TableProps } from "antd";
+import { CopyOutlined, EditOutlined } from "@ant-design/icons";
+import { Space, TableProps } from "antd";
 
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import { formatDateTime } from "src/utils/date";
 
+interface ColumnsOptions {
+  currentSchema: string;
+  onCopy: (record: any) => void;
+  copyingId: number | null;
+}
+
 const columns = (
-  setProtocol: (data: any) => void,
-  dispatch: (data: any) => void,
-  t: any
+  navigate: (path: string) => void,
+  t: any,
+  { currentSchema, onCopy, copyingId }: ColumnsOptions,
 ): TableProps<any>["columns"] => {
   return [
     {
@@ -57,17 +63,41 @@ const columns = (
     {
       title: t("tableHeader.action"),
       key: "operations",
-      width: 70,
+      width: 110,
       align: "center",
       render: (_, record) => {
+        // Global protocols ("Todos", schema NULL) are maintained from any
+        // schema; schema-owned ones only by their owner. The rest can only be
+        // used as a copy source, since the upsert rejects them.
+        const isEditable = !record.schema || record.schema === currentSchema;
+
         return (
-          <Tooltip title="Editar protocolo">
-            <Button
-              type="primary"
-              icon={<EditOutlined />}
-              onClick={() => dispatch(setProtocol(record))}
-            ></Button>
-          </Tooltip>
+          <Space>
+            <Tooltip
+              title={
+                isEditable
+                  ? "Editar protocolo"
+                  : "Protocolo de outro schema: só pode ser copiado"
+              }
+            >
+              <Button
+                type="primary"
+                aria-label="Editar protocolo"
+                icon={<EditOutlined />}
+                disabled={!isEditable}
+                onClick={() => navigate(`/admin/protocolos/${record.id}`)}
+              ></Button>
+            </Tooltip>
+            <Tooltip title="Copiar protocolo">
+              <Button
+                aria-label="Copiar protocolo"
+                icon={<CopyOutlined />}
+                loading={copyingId === record.id}
+                disabled={copyingId !== null}
+                onClick={() => onCopy(record)}
+              ></Button>
+            </Tooltip>
+          </Space>
         );
       },
     },

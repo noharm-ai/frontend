@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import { useFormikContext } from "formik";
-import { Button, Space } from "antd";
+import { Button } from "antd";
 import { QuestionOutlined } from "@ant-design/icons";
 
-import MemoryText from "containers/MemoryText";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
 
@@ -49,18 +48,7 @@ export default function Base({ item, horizontal, onChange }) {
                     )}
                   </Heading>
                 </div>
-                <div>
-                  <Space>
-                    {question.type === "text" && (
-                      <MemoryText
-                        storeId={`cf-text-${question.id}`}
-                        memoryType={`cf-text-${question.id}`}
-                        content={values[question.id]}
-                        onLoad={(value) => setValue(question.id, value)}
-                      />
-                    )}
-                  </Space>
-                </div>
+                <div></div>
               </div>
 
               <Field

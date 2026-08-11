@@ -31,6 +31,7 @@ import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
 import { FeatureService } from "src/services/FeatureService";
 import Feature from "src/models/Feature";
+import { HelpTextIcon } from "src/components/HelpTextIcon/HelpTextIcon";
 
 import { Form } from "styles/Form.style";
 
@@ -220,8 +221,9 @@ export default function FilterFields({
         >
           <Form>
             <div className="form-row">
-              <div className="form-label">
-                <label>{t("screeningList.labelDepartment")}:</label>
+              <div className="form-label-actions">
+                <label>{t("screeningList.labelDepartment")}:</label>{" "}
+                <HelpTextIcon pageKey="priorizacao-setores" />
               </div>
               <div className="form-input">
                 <Spin spinning={departmentsStatus === "loading"}>
@@ -273,8 +275,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label>{t("tableHeader.alerts")}:</label>
+                <div className="form-label-actions">
+                  <label>{t("tableHeader.alerts")}:</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-alertas" />
                 </div>
                 <div className="form-input">
                   <Select
@@ -301,12 +304,13 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
+                <div className="form-label-actions">
                   <label>
                     <Tooltip title="Maior nível de alerta presente" underline>
                       Nível do alerta:
                     </Tooltip>
-                  </label>
+                  </label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-nivel-alerta" />
                 </div>
                 <div className="form-input">
                   <Radio.Group
@@ -323,8 +327,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label>{t("labels.protocolAlerts")}:</label>
+                <div className="form-label-actions">
+                  <label>{t("labels.protocolAlerts")}:</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-alertas-protocolo" />
                 </div>
                 <div className="form-input">
                   <FieldProtocol
@@ -344,8 +349,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label>Convênio:</label>
+                <div className="form-label-actions">
+                  <label>Convênio:</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-convenio" />
                 </div>
                 <div className="form-input">
                   <Input
@@ -359,8 +365,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label>Leitos:</label>
+                <div className="form-label-actions">
+                  <label>Leitos:</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-leitos" />
                 </div>
                 <div className="form-input">
                   <Select
@@ -381,8 +388,9 @@ export default function FilterFields({
             {FeatureService.has(Feature.PRIORITIZATION_FIELD_SPECIALTY) && (
               <div className="form-row">
                 <div className="form-row">
-                  <div className="form-label">
-                    <label>Especialidades:</label>
+                  <div className="form-label-actions">
+                    <label>Especialidades:</label>{" "}
+                    <HelpTextIcon pageKey="priorizacao-especialidades" />
                   </div>
                   <div className="form-input">
                     <Select
@@ -408,8 +416,9 @@ export default function FilterFields({
             ) && (
               <div className="form-row">
                 <div className="form-row">
-                  <div className="form-label">
-                    <label>Médico Responsável:</label>
+                  <div className="form-label-actions">
+                    <label>Médico Responsável:</label>{" "}
+                    <HelpTextIcon pageKey="priorizacao-medico-responsavel" />
                   </div>
                   <div className="form-input">
                     <Select
@@ -436,8 +445,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label>Possui evolução:</label>
+                <div className="form-label-actions">
+                  <label>Possui evolução:</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-possui-evolucao" />
                 </div>
                 <div className="form-input">
                   <Radio.Group
@@ -454,8 +464,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label>Possui diferentes:</label>
+                <div className="form-label-actions">
+                  <label>Possui diferentes:</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-possui-diferentes" />
                 </div>
                 <div className="form-input">
                   <Radio.Group
@@ -472,8 +483,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label>Possui intervenções pendentes:</label>
+                <div className="form-label-actions">
+                  <label>Possui intervenções pendentes:</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-intervencoes-pendentes" />
                 </div>
                 <div className="form-input">
                   <Radio.Group
@@ -490,8 +502,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label>Escore global:</label>
+                <div className="form-label-actions">
+                  <label>Escore global:</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-escore-global" />
                 </div>
                 <div className="form-input">
                   <InputNumber
@@ -521,13 +534,14 @@ export default function FilterFields({
               prioritizationType === "prescription") && (
               <div className="form-row">
                 <div className="form-row">
-                  <div className="form-label">
+                  <div className="form-label-actions">
                     <label>
                       {prioritizationType === "conciliation"
                         ? t("labels.responsible")
                         : t("labels.prescriber")}
                       :
-                    </label>
+                    </label>{" "}
+                    <HelpTextIcon pageKey="priorizacao-prescritor" />
                   </div>
                   <div className="form-input">
                     <Input
@@ -544,8 +558,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label>{t("screeningList.labelPendingPrescription")}</label>
+                <div className="form-label-actions">
+                  <label>{t("screeningList.labelPendingPrescription")}</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-prescricoes-pendentes" />
                 </div>
                 <div className="form-input">
                   <Switch
@@ -569,8 +584,9 @@ export default function FilterFields({
         >
           <Form>
             <div className="form-row">
-              <div className="form-label">
-                <label>{t("screeningList.labelDrug")}:</label>
+              <div className="form-label-actions">
+                <label>{t("screeningList.labelDrug")}:</label>{" "}
+                <HelpTextIcon pageKey="priorizacao-medicamentos" />
               </div>
               <div className="form-input">
                 <Select
@@ -615,8 +631,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label> {t("labels.drugAttributes")}:</label>
+                <div className="form-label-actions">
+                  <label> {t("labels.drugAttributes")}:</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-atributos-medicamento" />
                 </div>
                 <div className="form-input">
                   <Select
@@ -641,8 +658,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label>{t("labels.frequencies")}:</label>
+                <div className="form-label-actions">
+                  <label>{t("labels.frequencies")}:</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-frequencias" />
                 </div>
                 <div className="form-input">
                   <Select
@@ -673,8 +691,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label>Horários:</label>
+                <div className="form-label-actions">
+                  <label>Horários:</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-horarios" />
                 </div>
                 <div className="form-input">
                   <Select
@@ -701,10 +720,11 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
+                <div className="form-label-actions">
                   <label>
                     Primeiro horário de administração do medicamento:
-                  </label>
+                  </label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-primeiro-horario-administracao" />
                 </div>
                 <div className="form-input">
                   <Select
@@ -737,8 +757,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label>{t("labels.substance")}:</label>
+                <div className="form-label-actions">
+                  <label>{t("labels.substance")}:</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-substancia" />
                 </div>
                 <div className="form-input">
                   <FieldSubstanceAutocomplete
@@ -754,8 +775,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label>{t("labels.substanceClass")}:</label>
+                <div className="form-label-actions">
+                  <label>{t("labels.substanceClass")}:</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-classe-substancia" />
                 </div>
                 <div className="form-input">
                   <FieldSubstanceClassAutocomplete
@@ -787,10 +809,11 @@ export default function FilterFields({
                 prioritizationType === "cards") && (
                 <div className="form-row">
                   <div className="form-row">
-                    <div className="form-label">
+                    <div className="form-label-actions">
                       <label>
                         {t("screeningList.labelPatientReviewType")}:
-                      </label>
+                      </label>{" "}
+                      <HelpTextIcon pageKey="priorizacao-tipo-revisao-paciente" />
                     </div>
                     <div className="form-input">
                       <Select
@@ -826,8 +849,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label>{t("tableHeader.patientStatus")}:</label>
+                <div className="form-label-actions">
+                  <label>{t("tableHeader.patientStatus")}:</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-status-paciente" />
                 </div>
                 <div className="form-input">
                   <Select
@@ -857,8 +881,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label>ID Paciente:</label>
+                <div className="form-label-actions">
+                  <label>ID Paciente:</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-id-paciente" />
                 </div>
                 <div className="form-input">
                   <Select
@@ -880,8 +905,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label>Prontuário:</label>
+                <div className="form-label-actions">
+                  <label>Prontuário:</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-prontuario" />
                 </div>
                 <div className="form-input">
                   <InputNumber
@@ -898,8 +924,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label>Lista de Prontuários:</label>
+                <div className="form-label-actions">
+                  <label>Lista de Prontuários:</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-lista-prontuarios" />
                 </div>
                 <div className="form-input">
                   <Select
@@ -928,8 +955,9 @@ export default function FilterFields({
               <>
                 <div className="form-row">
                   <div className="form-row">
-                    <div className="form-label">
-                      <label>Nome Paciente:</label>
+                    <div className="form-label-actions">
+                      <label>Nome Paciente:</label>{" "}
+                      <HelpTextIcon pageKey="priorizacao-nome-paciente" />
                     </div>
                     <div className="form-input">
                       <FieldNameAutocomplete
@@ -941,8 +969,9 @@ export default function FilterFields({
                   </div>
                 </div>
                 <div className="form-row">
-                  <div className="form-label">
-                    <label>CID:</label>
+                  <div className="form-label-actions">
+                    <label>CID:</label>{" "}
+                    <HelpTextIcon pageKey="priorizacao-cid" />
                   </div>
                   <div className="form-input">
                     <FieldIcd
@@ -954,8 +983,9 @@ export default function FilterFields({
                   </div>
                 </div>
                 <div className="form-row">
-                  <div className="form-label">
-                    <label>Grupos de CID:</label>
+                  <div className="form-label-actions">
+                    <label>Grupos de CID:</label>{" "}
+                    <HelpTextIcon pageKey="priorizacao-grupos-cid" />
                   </div>
                   <div className="form-input">
                     <Select
@@ -978,8 +1008,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label>Marcadores:</label>
+                <div className="form-label-actions">
+                  <label>Marcadores:</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-marcadores" />
                 </div>
                 <div className="form-input">
                   <FieldTag
@@ -998,8 +1029,9 @@ export default function FilterFields({
                 prioritizationType === "cards") && (
                 <div className="form-row">
                   <div className="form-row">
-                    <div className="form-label">
-                      <label>Possui conciliação:</label>
+                    <div className="form-label-actions">
+                      <label>Possui conciliação:</label>{" "}
+                      <HelpTextIcon pageKey="priorizacao-possui-conciliacao" />
                     </div>
                     <div className="form-input">
                       <Radio.Group
@@ -1017,8 +1049,9 @@ export default function FilterFields({
 
             <div className="form-row">
               <div className="form-row">
-                <div className="form-label">
-                  <label>Idade:</label>
+                <div className="form-label-actions">
+                  <label>Idade:</label>{" "}
+                  <HelpTextIcon pageKey="priorizacao-idade" />
                 </div>
                 <div className="form-input">
                   <InputNumber
@@ -1047,8 +1080,9 @@ export default function FilterFields({
             {PermissionService().has(Permission.READ_NAV) && (
               <div className="form-row">
                 <div className="form-row">
-                  <div className="form-label">
-                    <label>Cidade:</label>
+                  <div className="form-label-actions">
+                    <label>Cidade:</label>{" "}
+                    <HelpTextIcon pageKey="priorizacao-cidade" />
                   </div>
                   <div className="form-input">
                     <Input

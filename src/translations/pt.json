@@ -354,11 +354,31 @@
     "hasEconomy": "Possui economia",
     "selectAll": "Selecionar todos",
     "protocols": "Protocolos",
-    "protocolAlerts": "Alertas de protocolo"
+    "protocolAlerts": "Alertas de protocolo",
+    "segment": "Segmento",
+    "allSegments": "Todos os segmentos",
+    "situation": "Situação",
+    "error": "Erro",
+    "summary": "Resumo",
+    "activated": "Ativado",
+    "notActivated": "Não ativado",
+    "typeMismatch": "O tipo deste protocolo não se aplica a esta prescrição",
+    "sampleSize": "Tamanho da amostra",
+    "operationCancelled": "Operação cancelada",
+    "protocolTestIds": "Prescrições para teste",
+    "protocolTestAddId": "Digite o nº da prescrição e pressione Enter",
+    "protocolTestRun": "Executar teste",
+    "protocolTestEmptySample": "Nenhuma prescrição encontrada para o teste",
+    "protocolTestRequirements": "Preencha o tipo, as variáveis e o gatilho antes de testar o protocolo",
+    "protocolTargetTest": "Direcionado",
+    "protocolSampleTest": "Amostra do dia"
   },
   "titles": {
+    "protocolDescription": "Como este protocolo é disparado",
     "addDrugMeasureUnit": "Adicionar Unidade de Medida",
-    "protocolTrace": "Explicação da avaliação de protocolos"
+    "protocolTrace": "Explicação da avaliação de protocolos",
+    "protocolTest": "Testar protocolo",
+    "protocolTestResults": "Resultados do teste"
   },
   "transcriptionLabels": {
     "idDrug": "Medicamento",
@@ -369,13 +389,27 @@
     "interval": "Horário"
   },
   "tooltips": {
+    "protocolDescription": "Ver como este protocolo é disparado",
     "relationsList": "Lista de medicamentos com Interações, Incompatibilidades ou Duplicidade",
     "cantEditBeingUsed": "Este campo não pode ser alterado, pois já foi utilizado",
     "recentExams": "Principais exames dos últimos 5 dias. Para ver mais, clique em \"Ver Todos\". Para configurar os exames, acesse o menu Configurações - Exames."
   },
   "buttons": {
     "search": "Pesquisar",
-    "explainProtocols": "Detalhar protocolos"
+    "explainProtocols": "Detalhar protocolos",
+    "viewDetails": "Ver detalhes",
+    "viewResults": "Ver resultados",
+    "newTest": "Testar novamente"
+  },
+  "helpText": {
+    "title": "Ajuda",
+    "empty": "Nenhuma ajuda cadastrada para este item ainda.",
+    "edit": "Editar",
+    "save": "Salvar",
+    "cancel": "Cancelar",
+    "close": "Fechar",
+    "loadError": "Erro ao carregar o texto de ajuda.",
+    "saveError": "Erro ao salvar o texto de ajuda."
   },
   "prescriptionDrugTags": {
     "checked": "Checado anteriormente",
@@ -556,7 +590,9 @@
   },
 
   "clinicalNotesView": {
-    "prescriptionSourceAlert": "Esta evolução foi registrada dentro do NoHarm e está relacionada à prescrição {{idPrescription}}. Clientes com integração de retorno podem visualizá-la em duplicidade: exibimos tanto a versão criada no NoHarm quanto a versão enviada ao sistema de origem."
+    "prescriptionSourceAlert": "Esta evolução foi registrada dentro do NoHarm e está relacionada à prescrição {{idPrescription}}. Clientes com integração de retorno podem visualizá-la em duplicidade: exibimos tanto a versão criada no NoHarm quanto a versão enviada ao sistema de origem.",
+    "editInProgressTitle": "Edição em andamento",
+    "editInProgressDescription": "Salve ou cancele a edição atual antes de selecionar outra evolução."
   },
 
   "clinicalNotesIndicator": {
@@ -611,6 +647,7 @@
   },
 
   "messages": {
+    "protocolDescriptionUnavailable": "A descrição deste protocolo não está disponível.",
     "draftApplied": "Rascunho aplicado"
   },
 
@@ -618,6 +655,7 @@
     "generic": "Ocorreu um erro inesperado",
     "invalidUser": "Usuário inválido",
     "unauthorizedUser": "Usuário não autorizado",
+    "serviceUnavailable": "Serviço de IA indisponível. Tente novamente em instantes.",
     "nameExists": "Já existe um usuário com este nome!",
     "emailExists": "Já existe um usuário com este email!",
     "empty": "Nenhum registro encontrado"
@@ -1052,8 +1090,36 @@
     "templateApplied": "Modelo aplicado!",
     "noResults": "Nenhum texto encontrado.",
     "validationEmpty": "O plano de cuidado não pode estar vazio.",
+    "documentType": "Tipo de documento",
+    "documentTypePlaceholder": "Selecione o tipo de documento",
+    "btnHistory": "Histórico",
+    "historyHint": "Restaurar rascunhos salvos automaticamente",
+    "historyTitle": "Histórico de rascunhos",
+    "historyEmpty": "Nenhum rascunho salvo.",
+    "historyAdmission": "Atendimento",
+    "btnRestore": "Restaurar",
+    "draftRestored": "Rascunho restaurado!",
     "saveSuccess": "Plano de cuidado salvo com sucesso!",
     "saveError": "Erro ao salvar o plano de cuidado."
+  },
+  "navigationSoapNote": {
+    "btnGenerate": "Gerar evolução SOAP",
+    "title": "Evolução Farmacêutica - SOAP",
+    "generating": "Gerando evolução com IA. Isso pode levar até 30 segundos...",
+    "editHint": "Revise e edite o texto antes de salvar. Uma nova evolução será criada.",
+    "btnSave": "Salvar evolução",
+    "btnCancel": "Cancelar",
+    "btnRegenerate": "Gerar novamente",
+    "validationEmpty": "A evolução não pode estar vazia.",
+    "saveSuccess": "Evolução salva com sucesso!",
+    "generateError": "Não foi possível gerar a evolução.",
+    "sourceTitle": "Texto de origem",
+    "generatedTitle": "Evolução gerada",
+    "sourceEmpty": "Nenhum texto de origem disponível.",
+    "snippetsTitle": "Textos disponíveis",
+    "searchPlaceholder": "Buscar textos...",
+    "insertHint": "Clique para inserir no texto",
+    "noResults": "Nenhum texto encontrado."
   },
   "trainingCentral": {
     "title": "Central de Treinamento",

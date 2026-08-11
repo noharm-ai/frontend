@@ -2,6 +2,7 @@ import axios from "axios";
 
 import { store } from "store/index";
 import { getStorageItem } from "utils/storage";
+import { ensureFreshToken } from "store/refreshTokenManager";
 
 /**
  * AXIOS instance.
@@ -39,6 +40,7 @@ const endpoints = {
   reports: "/reports",
   substance: "/substance",
   memory: "/memory",
+  helpText: "/help-text",
   user: "/user",
   users: "/users",
   clinicalNotes: "/notes",
@@ -68,6 +70,46 @@ export const setHeaders = () => {
         },
       };
 };
+
+/**
+ * Proactive token refresh for every request through `instance`.
+ *
+ * The `autoRefreshToken` Redux middleware only guards thunk dispatches; direct
+ * `api.*()` calls from components bypass it. This interceptor runs the same
+ * proactive refresh (sharing the single in-flight promise in Redux, so no
+ * duplicate refreshes) so a stale access token is refreshed before the request
+ * leaves. Auth endpoints are skipped to avoid recursion.
+ */
+const AUTH_ENDPOINTS = [
+  endpoints.refreshToken,
+  endpoints.authentication,
+  endpoints.oauth,
+];
+
+instance.interceptors.request.use(async (config) => {
+  const url = config.url || "";
+
+  if (AUTH_ENDPOINTS.some((endpoint) => url.startsWith(endpoint))) {
+    return config;
+  }
+
+  const refreshed = await ensureFreshToken();
+
+  if (refreshed) {
+    const ac1 = getStorageItem("ac1");
+    const ac2 = getStorageItem("ac2");
+
+    // setHeaders() already built the Authorization header synchronously with
+    // the OLD token, so refreshing storage alone is not enough — overwrite the
+    // header here, but only when a token header was actually attached (never
+    // inject one onto intentionally unauthenticated calls).
+    if (ac1 && ac2 && config.headers && config.headers.Authorization) {
+      config.headers.Authorization = `Bearer ${ac1 + ac2}`;
+    }
+  }
+
+  return config;
+});
 
 /**
  * Authentication.
@@ -445,6 +487,16 @@ api.memoryRecords.putRecord = ({ id, ...params }) => {
   return instance.put(`${endpoints.memory}`, params, setHeaders());
 };
 
+api.helpText = {};
+
+api.helpText.getHelpText = (key) =>
+  instance.get(`${endpoints.helpText}/${key}`, {
+    ...setHeaders(),
+  });
+
+api.helpText.updateHelpText = (key, content) =>
+  instance.put(`${endpoints.helpText}/${key}`, { content }, setHeaders());
+
 /**
  * User.
  *
@@ -608,10 +660,26 @@ api.substance.findSubstances = (term) =>
     ...setHeaders(),
   });
 
+api.substance.resolveSubstances = (ids) =>
+  instance.get(`${endpoints.substance}/resolve`, {
+    params: {
+      ids: (ids ?? []).join(","),
+    },
+    ...setHeaders(),
+  });
+
 api.substance.findSubstanceClasses = (term) =>
   instance.get(`${endpoints.substance}/class/find`, {
     params: {
       term,
+    },
+    ...setHeaders(),
+  });
+
+api.substance.resolveSubstanceClasses = (ids) =>
+  instance.get(`${endpoints.substance}/class/resolve`, {
+    params: {
+      ids: (ids ?? []).join(","),
     },
     ...setHeaders(),
   });
@@ -626,6 +694,22 @@ api.substance.getHandling = (params) =>
  * drugs namespace
  */
 api.drugs = {};
+api.drugs.findDrugs = (term) =>
+  instance.get(`/drugs/find`, {
+    params: {
+      term,
+    },
+    ...setHeaders(),
+  });
+
+api.drugs.resolveDrugs = (ids) =>
+  instance.get(`/drugs/resolve`, {
+    params: {
+      ids: (ids ?? []).join(","),
+    },
+    ...setHeaders(),
+  });
+
 api.drugs.getDrugAttributes = (idSegment, idDrug) =>
   instance.get(`/drugs/attributes/${idSegment}/${idDrug}`, {
     ...setHeaders(),
@@ -845,6 +929,9 @@ api.clinicalNotes.getUserLastList = (params) =>
 api.clinicalNotes.createClinicalNote = (params = {}) =>
   instance.post(`${endpoints.clinicalNotes}`, params, setHeaders());
 
+api.clinicalNotes.generateSoap = (params = {}) =>
+  instance.post(`${endpoints.clinicalNotes}/soap`, params, setHeaders());
+
 api.clinicalNotes.listByPrescription = (idPrescription) =>
   instance.get(`/prescription-clinical-note/${idPrescription}`, {
     ...setHeaders(),
@@ -862,6 +949,9 @@ api.userAdmin.upsertUser = (params = {}) =>
 
 api.userAdmin.getUsers = (params = {}) =>
   instance.get(endpoints.users, { params, ...setHeaders() });
+
+api.userAdmin.getUserManagers = (params = {}) =>
+  instance.get(`/user-admin/manager-list`, { params, ...setHeaders() });
 
 /**
  * Segment namespace
@@ -893,6 +983,28 @@ api.lists.getIcds = (params = {}) =>
     ...setHeaders(),
   });
 
+api.lists.getRoutes = (params = {}) =>
+  instance.get(`lists/routes`, {
+    params,
+    ...setHeaders(),
+  });
+
+api.lists.findIcds = (term) =>
+  instance.get(`lists/icds/find`, {
+    params: {
+      term,
+    },
+    ...setHeaders(),
+  });
+
+api.lists.resolveIcds = (ids) =>
+  instance.get(`lists/icds/resolve`, {
+    params: {
+      ids: (ids ?? []).join(","),
+    },
+    ...setHeaders(),
+  });
+
 /**
  * PROTOCOLS
  */
@@ -903,9 +1015,29 @@ api.protocols.getProtocols = (params = {}) =>
     ...setHeaders(),
   });
 
+api.protocols.getProtocolDescription = (idProtocol) =>
+  instance.get(`protocol/${idProtocol}/description`, {
+    ...setHeaders(),
+  });
+
 api.protocols.tracePrescription = (params = {}) =>
   instance.get(`protocol/prescription-trace`, {
     params,
+    ...setHeaders(),
+  });
+
+api.protocols.testSample = (params = {}) =>
+  instance.post(`protocol/test/sample`, params, {
+    ...setHeaders(),
+  });
+
+api.protocols.testConfig = (params = {}) =>
+  instance.post(`protocol/test`, params, {
+    ...setHeaders(),
+  });
+
+api.protocols.aiAgentChat = (params = {}) =>
+  instance.post(`protocol/ai/agent-chat`, params, {
     ...setHeaders(),
   });
 

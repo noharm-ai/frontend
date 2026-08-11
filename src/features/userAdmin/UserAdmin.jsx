@@ -15,10 +15,13 @@ import { toDataSource } from "utils";
 import { getErrorMessage } from "utils/errorHandler";
 import Role from "models/Role";
 import Feature from "models/Feature";
+import Permission from "models/Permission";
 import { FeatureService } from "services/FeatureService";
+import PermissionService from "services/PermissionService";
 import columns from "./columns";
 import { fetchUsers, reset, setUser } from "./UserAdminSlice";
 import UserAdminForm from "./Form/UserAdminForm";
+import { UserManagerList } from "./UserManagerList/UserManagerList";
 
 import { PageHeader } from "styles/PageHeader.style";
 import { PageCard } from "styles/Utils.style";
@@ -47,6 +50,16 @@ const filterList = (ds, filter) => {
 };
 
 export default function UserAdmin() {
+  // without READ_USERS the user cannot see the full list, but still needs to
+  // know who can create users and change access settings for them
+  if (!PermissionService().has(Permission.READ_USERS)) {
+    return <UserManagerList />;
+  }
+
+  return <UserAdminList />;
+}
+
+function UserAdminList() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
 

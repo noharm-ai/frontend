@@ -354,11 +354,31 @@
     "hasEconomy": "Has economy",
     "selectAll": "Select all",
     "protocols": "Protocols",
-    "protocolAlerts": "Protocol alerts"
+    "protocolAlerts": "Protocol alerts",
+    "segment": "Segment",
+    "allSegments": "All segments",
+    "situation": "Status",
+    "error": "Error",
+    "summary": "Summary",
+    "activated": "Activated",
+    "notActivated": "Not activated",
+    "typeMismatch": "This protocol type does not apply to this prescription",
+    "sampleSize": "Sample size",
+    "operationCancelled": "Operation cancelled",
+    "protocolTestIds": "Prescriptions to test",
+    "protocolTestAddId": "Type the prescription ID and press Enter",
+    "protocolTestRun": "Run test",
+    "protocolTestEmptySample": "No prescriptions found to test",
+    "protocolTestRequirements": "Fill in the type, variables and trigger before testing the protocol",
+    "protocolTargetTest": "Targeted",
+    "protocolSampleTest": "Today's sample"
   },
   "titles": {
+    "protocolDescription": "How this protocol is triggered",
     "addDrugMeasureUnit": "Add Drug Unit",
-    "protocolTrace": "Protocol evaluation explanation"
+    "protocolTrace": "Protocol evaluation explanation",
+    "protocolTest": "Test protocol",
+    "protocolTestResults": "Test results"
   },
   "transcriptionLabels": {
     "idDrug": "Drug",
@@ -369,13 +389,27 @@
     "interval": "Time"
   },
   "tooltips": {
+    "protocolDescription": "See how this protocol is triggered",
     "relationsList": "List of Drugs with Interactions, Incompatibilities or Duplicity",
     "cantEditBeingUsed": "You can't edit this item because it is already referenced",
     "recentExams": "Main exams of the last 5 days. For all exams, click on See More."
   },
   "buttons": {
     "search": "Search",
-    "explainProtocols": "Explain evaluation"
+    "explainProtocols": "Explain evaluation",
+    "viewDetails": "View details",
+    "viewResults": "View results",
+    "newTest": "Test again"
+  },
+  "helpText": {
+    "title": "Help",
+    "empty": "No help has been added for this item yet.",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "close": "Close",
+    "loadError": "Error loading help text.",
+    "saveError": "Error saving help text."
   },
   "prescriptionDrugTags": {
     "checked": "Checked previously",
@@ -552,7 +586,9 @@
   },
 
   "clinicalNotesView": {
-    "prescriptionSourceAlert": "This clinical note was registered inside NoHarm and is related to prescription {{idPrescription}}. Customers with return integration may see it duplicated: we display both the version created in NoHarm and the version sent to the source system."
+    "prescriptionSourceAlert": "This clinical note was registered inside NoHarm and is related to prescription {{idPrescription}}. Customers with return integration may see it duplicated: we display both the version created in NoHarm and the version sent to the source system.",
+    "editInProgressTitle": "Edit in progress",
+    "editInProgressDescription": "Save or cancel the current edit before selecting another clinical note."
   },
 
   "clinicalNotesIndicator": {
@@ -590,6 +626,7 @@
   },
 
   "messages": {
+    "protocolDescriptionUnavailable": "The description of this protocol is not available.",
     "draftApplied": "Draft applied"
   },
 
@@ -614,6 +651,7 @@
     "generic": "Unexpected error",
     "invalidUser": "Non-existent user",
     "unauthorizedUser": "Unauthorized user",
+    "serviceUnavailable": "AI service unavailable. Please try again shortly.",
     "nameExists": "There is already a user with this name!",
     "emailExists": "There is already a user with this email!",
     "empty": "No records found"
@@ -1042,8 +1080,36 @@
     "templateApplied": "Template applied!",
     "noResults": "No texts found.",
     "validationEmpty": "The care plan cannot be empty.",
+    "documentType": "Document type",
+    "documentTypePlaceholder": "Select the document type",
+    "btnHistory": "History",
+    "historyHint": "Restore auto-saved drafts",
+    "historyTitle": "Draft history",
+    "historyEmpty": "No drafts saved.",
+    "historyAdmission": "Admission",
+    "btnRestore": "Restore",
+    "draftRestored": "Draft restored!",
     "saveSuccess": "Care plan saved successfully!",
     "saveError": "Error saving the care plan."
+  },
+  "navigationSoapNote": {
+    "btnGenerate": "Generate SOAP note",
+    "title": "Pharmaceutical Note - NoHarm Teleconsultation",
+    "generating": "Generating note with AI. This may take up to 30 seconds...",
+    "editHint": "Review and edit the text before saving. A new clinical note will be created.",
+    "btnSave": "Save note",
+    "btnCancel": "Cancel",
+    "btnRegenerate": "Generate again",
+    "validationEmpty": "The note cannot be empty.",
+    "saveSuccess": "Note saved successfully!",
+    "generateError": "Unable to generate the note.",
+    "sourceTitle": "Source text",
+    "generatedTitle": "Generated note",
+    "sourceEmpty": "No source text available.",
+    "snippetsTitle": "Available texts",
+    "searchPlaceholder": "Search texts...",
+    "insertHint": "Click to insert into text",
+    "noResults": "No texts found."
   },
   "trainingCentral": {
     "title": "Training Central",

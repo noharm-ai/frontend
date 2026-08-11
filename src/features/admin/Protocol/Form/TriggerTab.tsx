@@ -1,102 +1,93 @@
-import { useRef } from "react";
+import { useCallback, useState } from "react";
 import { useFormikContext } from "formik";
-import { TextAreaRef } from "antd/es/input/TextArea";
+import { Alert, Tabs } from "antd";
 
-import { Textarea } from "components/Inputs";
-import Button from "components/Button";
-import { IProtocolFormBaseFields } from "./ProtocolForm";
+import Card from "components/Card";
+import { IProtocolFormBaseFields } from "./types";
+import { parseTriggerExpression } from "components/ProtocolDescription/expressionTree";
+import { TriggerBuilder } from "./TriggerBuilder/TriggerBuilder";
+import { TriggerAdvanced } from "./TriggerBuilder/TriggerAdvanced";
+import { ExpressionSentence } from "./TriggerBuilder/ExpressionSentence";
+import { TriggerLayout } from "../Protocol.style";
 
-export function TriggerTab() {
-  const textRef = useRef<TextAreaRef>(null);
-  const { values, errors, setFieldValue } =
-    useFormikContext<IProtocolFormBaseFields>();
+type TriggerMode = "builder" | "advanced";
 
-  const addVariable = (variable: string) => {
-    let value = values.config?.trigger ?? "";
+function TriggerResult() {
+  const { values } = useFormikContext<IProtocolFormBaseFields>();
 
-    value += variable;
+  const result = parseTriggerExpression(values.config?.trigger ?? "");
 
-    setFieldValue("config.trigger", value);
-  };
+  if (!result.tree) {
+    return <Alert type="warning" showIcon message={result.error} />;
+  }
 
   return (
-    <>
-      <div className={`form-row`}>
-        <div className="form-label">
-          <label>Expressão gatilho:</label>
-        </div>
-        <div className="form-input">
-          <Textarea
-            ref={textRef}
-            onChange={({ target }) =>
-              setFieldValue("config.trigger", target.value)
-            }
-            value={values.config?.trigger}
-          />
-        </div>
-        {errors.config?.trigger && (
-          <div className="form-error">{errors.config?.trigger}</div>
-        )}
-      </div>
+    <ExpressionSentence
+      tree={result.tree}
+      variables={values.config?.variables ?? []}
+    />
+  );
+}
 
-      <div className={`form-row`}>
-        <div className="form-label">
-          <label>Variáveis disponíveis:</label>
-        </div>
-        <div className="form-input">
-          {(values.config?.variables ?? []).map((v: any) => (
-            <Button
-              key={v.name}
-              onClick={() => addVariable(`{{${v.name}}}`)}
-              style={{ marginRight: "10px" }}
-              type="primary"
-            >
-              {v.name}
-            </Button>
-          ))}
-        </div>
-      </div>
+export function TriggerTab() {
+  const { values } = useFormikContext<IProtocolFormBaseFields>();
 
-      <div className={`form-row`}>
-        <div className="form-label">
-          <label>Operadores:</label>
-        </div>
-        <div className="form-input">
-          <Button
-            onClick={() => addVariable(` and `)}
-            style={{ marginRight: "10px" }}
-          >
-            AND
-          </Button>
+  const [parseError, setParseError] = useState<string | null>(null);
+  const [mode, setMode] = useState<TriggerMode>(() =>
+    parseTriggerExpression(values.config?.trigger ?? "").tree
+      ? "builder"
+      : "advanced",
+  );
 
-          <Button
-            onClick={() => addVariable(` or `)}
-            style={{ marginRight: "10px" }}
-          >
-            OR
-          </Button>
+  const handleModeChange = (nextMode: TriggerMode) => {
+    if (nextMode === mode) return;
 
-          <Button
-            onClick={() => addVariable(` not `)}
-            style={{ marginRight: "10px" }}
-          >
-            NOT
-          </Button>
+    if (nextMode === "builder") {
+      const result = parseTriggerExpression(values.config?.trigger ?? "");
 
-          <Button
-            onClick={() => addVariable(` ( `)}
-            style={{ marginRight: "10px" }}
-          >
-            {"("}
-          </Button>
-          <Button
-            onClick={() => addVariable(` ) `)}
-            style={{ marginRight: "10px" }}
-          >
-            {")"}
-          </Button>
-        </div>
-      </div>
-    </>
+      if (result.error) {
+        setParseError(result.error);
+        return;
+      }
+    }
+
+    setParseError(null);
+    setMode(nextMode);
+  };
+
+  const handleParseFailure = useCallback((error: string) => {
+    setParseError(error);
+    setMode("advanced");
+  }, []);
+
+  return (
+    <Card>
+      <TriggerLayout>
+        <Tabs
+          activeKey={mode}
+          destroyOnHidden
+          onChange={(key) => handleModeChange(key as TriggerMode)}
+          items={[
+            {
+              key: "builder",
+              label: "Visual",
+              children: <TriggerBuilder onParseFailure={handleParseFailure} />,
+            },
+            {
+              key: "advanced",
+              label: "Avançado",
+              children: (
+                <TriggerAdvanced
+                  parseError={parseError}
+                  onTextChange={() => setParseError(null)}
+                />
+              ),
+            },
+          ]}
+        />
+
+        <TriggerResult />
+      </TriggerLayout>
+    </Card>
   );
 }

@@ -18,12 +18,17 @@ function getSchema(): string {
   return getStorageItem("schema") ?? "default";
 }
 
-function getStorageKey(): string {
-  return `clinicalNotes_formHistory_${getSchema()}`;
+// `scope` isolates a feature's drafts into their own storage key so unrelated
+// forms don't pollute each other's history or collide on the
+// `admissionNumber + tplName` dedup key. Omitting it preserves the original
+// (shared) key used by the clinical-notes custom forms.
+function getStorageKey(scope?: string): string {
+  const base = `clinicalNotes_formHistory_${getSchema()}`;
+  return scope ? `${base}_${scope}` : base;
 }
 
-function load(): HistoryEntry[] {
-  const raw = getStorageItem(getStorageKey());
+function load(scope?: string): HistoryEntry[] {
+  const raw = getStorageItem(getStorageKey(scope));
   try {
     return raw ? (JSON.parse(raw) as HistoryEntry[]) : [];
   } catch {
@@ -31,12 +36,16 @@ function load(): HistoryEntry[] {
   }
 }
 
-function persist(entries: HistoryEntry[]): void {
-  setStorageItem(getStorageKey(), JSON.stringify(entries));
+function persist(entries: HistoryEntry[], scope?: string): void {
+  setStorageItem(getStorageKey(scope), JSON.stringify(entries));
 }
 
-export function saveEntry(entry: NewHistoryEntry): void {
-  const existing = load();
+export function saveEntry(
+  entry: NewHistoryEntry,
+  scope?: string,
+  maxEntries: number = MAX_ENTRIES,
+): void {
+  const existing = load(scope);
   const matchIdx = existing.findIndex(
     (e) =>
       e.admissionNumber === entry.admissionNumber &&
@@ -50,14 +59,14 @@ export function saveEntry(entry: NewHistoryEntry): void {
   const updated =
     matchIdx !== -1
       ? existing.map((e, i) => (i === matchIdx ? newEntry : e))
-      : [newEntry, ...existing].slice(0, MAX_ENTRIES);
-  persist(updated);
+      : [newEntry, ...existing].slice(0, maxEntries);
+  persist(updated, scope);
 }
 
-export function getEntries(): HistoryEntry[] {
-  return load();
+export function getEntries(scope?: string): HistoryEntry[] {
+  return load(scope);
 }
 
-export function clearEntries(): void {
-  removeStorageItem(getStorageKey());
+export function clearEntries(scope?: string): void {
+  removeStorageItem(getStorageKey(scope));
 }

@@ -2,12 +2,19 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 
 import api from "services/admin/api";
-import { IProtocolFormBaseFields } from "./Form/ProtocolForm";
+import { IProtocolFormBaseFields } from "./Form/types";
 
 interface IProtocolSlice {
   list: any[];
   status: string;
   error: string | null;
+  /** Protocol being edited, loaded by id. */
+  record: {
+    data: any | null;
+    status: string;
+    error: string | null;
+  };
+  /** Save operation. */
   single: {
     data: any | null;
     status: string;
@@ -19,6 +26,11 @@ const initialState: IProtocolSlice = {
   list: [],
   status: "idle",
   error: null,
+  record: {
+    data: null,
+    status: "idle",
+    error: null,
+  },
   single: {
     data: null,
     status: "idle",
@@ -33,6 +45,25 @@ export const fetchProtocols = createAsyncThunk(
       const response = await api.protocols.getProtocols(params);
 
       return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  }
+);
+
+export const fetchProtocol = createAsyncThunk(
+  "admin-protocol/fetch-one",
+  async (
+    { id, allSchemas }: { id: string | number; allSchemas?: boolean },
+    thunkAPI
+  ) => {
+    try {
+      const response = await api.protocols.getProtocol(
+        id,
+        allSchemas ? { allSchemas: true } : {}
+      );
+
+      return response.data.data;
     } catch (err) {
       return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
     }
@@ -75,6 +106,18 @@ const protocolSlice = createSlice({
       .addCase(fetchProtocols.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message ?? null;
+      })
+      .addCase(fetchProtocol.pending, (state) => {
+        state.record.status = "loading";
+      })
+      .addCase(fetchProtocol.fulfilled, (state, action) => {
+        state.record.status = "succeeded";
+        state.record.data = action.payload;
+      })
+      .addCase(fetchProtocol.rejected, (state, action) => {
+        state.record.status = "failed";
+        state.record.data = null;
+        state.record.error = action.error.message ?? null;
       })
       .addCase(upsertProtocol.pending, (state) => {
         state.single.status = "loading";

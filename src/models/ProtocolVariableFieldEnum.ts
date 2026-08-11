@@ -7,6 +7,7 @@ export class ProtocolVariableFieldEnum {
   static EXAM_REF = "exam_ref";
   static AGE = "age";
   static WEIGHT = "weight";
+  static IMC = "imc";
   static ID_DEPARTMENT = "idDepartment";
   static ID_SEGMENT = "idSegment";
   static COMBINATION = "combination";
@@ -51,6 +52,10 @@ export class ProtocolVariableFieldEnum {
       {
         value: ProtocolVariableFieldEnum.WEIGHT,
         label: "Peso (kg)",
+      },
+      {
+        value: ProtocolVariableFieldEnum.IMC,
+        label: "IMC (kg/m²)",
       },
       {
         value: ProtocolVariableFieldEnum.ID_DEPARTMENT,
@@ -100,6 +105,7 @@ export class ProtocolVariableFieldEnum {
     const fixedValueOperators = [
       ProtocolVariableFieldEnum.AGE,
       ProtocolVariableFieldEnum.WEIGHT,
+      ProtocolVariableFieldEnum.IMC,
       ProtocolVariableFieldEnum.EXAM,
       ProtocolVariableFieldEnum.EXAM_REF,
       ProtocolVariableFieldEnum.ADMISSION_TIME,

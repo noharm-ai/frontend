@@ -14,6 +14,8 @@ import { useAppDispatch } from "store/index";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
 
+import { ProtocolTriggerDescription } from "components/ProtocolDescription/ProtocolTriggerDescription";
+
 import { ProtocolTrace } from "./ProtocolTrace/ProtocolTrace";
 import type { IPrescriptionTrace } from "./ProtocolTrace/types";
 
@@ -38,6 +40,7 @@ export function ProtocolsTab({
   const dispatch = useAppDispatch();
   const [traceLoading, setTraceLoading] = useState(false);
   const [trace, setTrace] = useState<IPrescriptionTrace | null>(null);
+  const [described, setDescribed] = useState<IProtocolResult | null>(null);
 
   const items: CollapseProps["items"] = [];
   const protocolGroups = Object.keys(protocolAlerts)
@@ -70,7 +73,7 @@ export function ProtocolsTab({
           <>
             {getSortedProtocols(g).map((pa: IProtocolResult) => (
               <div key={pa.id} className="protocol-message">
-                <Protocol protocolResult={pa} />
+                <Protocol protocolResult={pa} onDescribe={setDescribed} />
               </div>
             ))}
           </>
@@ -149,11 +152,30 @@ export function ProtocolsTab({
       >
         {trace && <ProtocolTrace trace={trace} />}
       </DefaultModal>
+
+      <DefaultModal
+        title={t("titles.protocolDescription")}
+        destroyOnHidden
+        open={described != null}
+        onCancel={() => setDescribed(null)}
+        width="min(700px, 96vw)"
+        footer={null}
+      >
+        {described && <ProtocolTriggerDescription idProtocol={described.id} />}
+      </DefaultModal>
     </div>
   );
 }
 
-function Protocol({ protocolResult }: { protocolResult: IProtocolResult }) {
+function Protocol({
+  protocolResult,
+  onDescribe,
+}: {
+  protocolResult: IProtocolResult;
+  onDescribe: (protocolResult: IProtocolResult) => void;
+}) {
+  const { t } = useTranslation();
+
   const getIconColor = (level: string) => {
     switch (level) {
       case "high":
@@ -176,11 +198,23 @@ function Protocol({ protocolResult }: { protocolResult: IProtocolResult }) {
             style={{ marginRight: "0.5rem" }}
           />
 
-          <div style={{ whiteSpace: "break-spaces" }}>
-            <Tooltip title={protocolResult.description}>
+          <Tooltip
+            title={
+              <>
+                <div className="protocol-describe-hint">
+                  {t("tooltips.protocolDescription")}
+                </div>
+              </>
+            }
+          >
+            <button
+              type="button"
+              className="protocol-describe"
+              onClick={() => onDescribe(protocolResult)}
+            >
               {protocolResult.message}
-            </Tooltip>
-          </div>
+            </button>
+          </Tooltip>
         </Flex>
       </div>
       {protocolResult.variableMessages && (

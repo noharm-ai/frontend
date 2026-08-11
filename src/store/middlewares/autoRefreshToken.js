@@ -1,100 +1,26 @@
-import { toDate, isPast, subSeconds } from "date-fns";
+import { ensureFreshToken } from "../refreshTokenManager";
 
-import api from "services/api";
-import { tokenDecode } from "utils";
-import notification from "components/notification";
-import { getStorageItem, setStorageItem, removeStorageItem } from "utils/storage";
+const errorHandler = (e) => ({
+  error: e.response ? e.response.data : "error",
+  status: e.response ? e.response.status : e.code,
+  data: {},
+});
 
-import { Creators as AuthCreators } from "../ducks/auth";
-import { Creators as UserCreators } from "../ducks/user";
-
-const { authSetRefreshTokenPromise, authDelIdentify } = AuthCreators;
-const { userLogout } = UserCreators;
-
-const autoRefreshToken =
-  ({ dispatch, getState }) =>
-  (next) =>
-  async (action) => {
-    if (typeof action !== "function") {
-      return next(action);
-    }
-
-    const ac1 = getStorageItem("ac1");
-    const ac2 = getStorageItem("ac2");
-    const access_token = ac1 && ac2 ? ac1 + ac2 : null;
-    const { auth } = getState();
-
-    if (access_token) {
-      let expireDate = null;
-      try {
-        const { exp } = tokenDecode(access_token);
-        expireDate = subSeconds(toDate(exp * 1000), 60);
-      } catch {
-        // corrupt/partial token -> treat as expired, force refresh below
-      }
-      const errorHandler = (e) => {
-        return {
-          error: e.response ? e.response.data : "error",
-          status: e.response ? e.response.status : e.code,
-          data: {},
-        };
-      };
-
-      if (expireDate && !isPast(expireDate)) {
-        return next(action);
-      }
-
-      if (!auth.refreshTokenPromise) {
-        return refreshToken(dispatch)
-          .then(() => next(action))
-          .catch((e) => {
-            removeStorageItem("ac1");
-            removeStorageItem("ac2");
-
-            // remove after transition
-            // removeStorageItem("rt1");
-            // removeStorageItem("rt2");
-
-            notification.warning({
-              message: "Sessão expirada.",
-              description: "Faça login novamente para continuar.",
-            });
-
-            dispatch(authDelIdentify());
-            dispatch(userLogout());
-
-            return errorHandler(e);
-          });
-      } else {
-        return getState().auth.refreshTokenPromise.then(() => next(action));
-      }
-    }
+const autoRefreshToken = () => (next) => (action) => {
+  // Only thunks (function actions) need the async refresh gate. Plain actions
+  // pass straight through synchronously so dispatch keeps returning the action
+  // object (not a Promise).
+  if (typeof action !== "function") {
     return next(action);
-  };
+  }
 
-const refreshToken = (dispatch) => {
-  const refreshTokenPromise = api
-    .refreshToken()
-    .then((response) => {
-      setStorageItem("ac1", response.data.access_token.substring(0, 10));
-      setStorageItem("ac2", response.data.access_token.substring(10));
-
-      dispatch(authSetRefreshTokenPromise(null));
-
-      return response.data
-        ? Promise.resolve(response.data)
-        : Promise.reject({
-            message: "could not refresh token",
-          });
-    })
-    .catch((e) => {
-      dispatch(authSetRefreshTokenPromise(null));
-      return Promise.reject(e);
-    });
-
-  dispatch(authSetRefreshTokenPromise(refreshTokenPromise));
-
-  return refreshTokenPromise;
+  // Two-arg then: errorHandler runs ONLY when the refresh itself fails. The
+  // thunk's own rejection (from next(action)) must propagate untouched, as it
+  // did before this refactor.
+  return ensureFreshToken().then(
+    () => next(action),
+    (e) => errorHandler(e),
+  );
 };
 
 export default autoRefreshToken;

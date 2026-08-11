@@ -12,6 +12,8 @@ import { useAppDispatch, useAppSelector, IRootState } from "store/index";
 import { cleanCacheThunk } from "store/ducks/patients/thunk";
 import { clearCache as cleanPatientCache } from "utils/patientCache";
 import { Creators as AppCreators } from "store/ducks/app/index";
+import { FeatureService } from "src/services/FeatureService";
+import Feature from "models/Feature";
 
 import { Signature } from "./Signature/Signature";
 import { ChangePassword } from "./ChangePassword/ChangePassword";
@@ -51,7 +53,11 @@ export function UserProfile() {
     });
   };
 
-  const initials = userName ? userName.charAt(0).toUpperCase() : undefined;
+  const hideNames = FeatureService.has(Feature.HIDE_NAMES);
+  const displayName = hideNames ? "****** ******" : userName;
+  const displayEmail = hideNames ? "******" : email;
+  const initials =
+    !hideNames && userName ? userName.charAt(0).toUpperCase() : undefined;
   const translatedRoles = roles.filter((role) => i18n.exists(`roles.${role}`));
 
   return (
@@ -88,10 +94,10 @@ export function UserProfile() {
                 lineHeight: "1.3",
               }}
             >
-              {userName}
+              {displayName}
             </div>
             <div style={{ color: "#696766", fontSize: 14, marginTop: 2 }}>
-              {email}
+              {displayEmail}
             </div>
             {translatedRoles.length > 0 && (
               <Flex wrap gap={6} style={{ marginTop: 10 }}>

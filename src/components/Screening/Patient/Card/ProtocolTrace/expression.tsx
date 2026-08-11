@@ -4,9 +4,15 @@ import { ExpressionLineRow, ExpressionToken } from "./ProtocolTrace.style";
 import { variableTone } from "./formatters";
 import type { IVariableTrace } from "./types";
 
-type ExpressionTokenType = "open" | "close" | "and" | "or" | "not" | "var";
+export type ExpressionTokenType =
+  | "open"
+  | "close"
+  | "and"
+  | "or"
+  | "not"
+  | "var";
 
-interface IExpressionToken {
+export interface IExpressionToken {
   type: ExpressionTokenType;
   raw: string;
 }
@@ -18,9 +24,11 @@ interface IExpressionLine {
 
 const INDENT_PX = 18;
 
-function tokenizeExpression(expression: string): IExpressionToken[] {
-  const matches =
-    expression.match(/\{\{[^}]+\}\}|\(|\)|\band\b|\bor\b|\bnot\b/g) || [];
+export const EXPRESSION_TOKEN_REGEX =
+  /\{\{[^}]+\}\}|\(|\)|\band\b|\bor\b|\bnot\b/g;
+
+export function tokenizeExpression(expression: string): IExpressionToken[] {
+  const matches = expression.match(EXPRESSION_TOKEN_REGEX) || [];
 
   return matches.map((raw) => {
     if (raw === "(") return { type: "open" as const, raw };
