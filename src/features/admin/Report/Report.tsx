@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined } from "@ant-design/icons";
+import { Alert } from "antd";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import Table from "components/Table";
@@ -63,6 +64,13 @@ export function Report() {
           </Button>
         </div>
       </PageHeader>
+
+      <Alert
+        style={{ marginBottom: 20 }}
+        type="warning"
+        showIcon
+        description="Esta funcionalidade foi migrada para o Admin"
+      ></Alert>
 
       <PaginationContainer>
         {(ds || []).length} registros encontrados
