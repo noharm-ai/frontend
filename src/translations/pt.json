@@ -1121,6 +1121,24 @@
     "insertHint": "Clique para inserir no texto",
     "noResults": "Nenhum texto encontrado."
   },
+  "onboarding": {
+    "welcome": {
+      "eyebrow": "Primeiros passos",
+      "title": "Boas-vindas, {{name}}!",
+      "titleNoName": "Boas-vindas à NoHarm!",
+      "lead": "Estamos muito felizes em ter você com a gente. Para aproveitar o melhor da plataforma, preparamos um <strong>treinamento rápido</strong> com o essencial para o seu dia a dia.",
+      "imageAlt": "Boas-vindas à NoHarm",
+      "trainingTitle": "Central de Treinamento",
+      "trainingSubtitle": "Aprenda o essencial em poucos minutos",
+      "highlightModules": "Módulos <strong>curtos e objetivos</strong>, no seu ritmo",
+      "highlightProgress": "Progresso salvo automaticamente",
+      "highlightBadges": "Conquistas desbloqueadas ao concluir os módulos",
+      "supportNotice": "Os módulos obrigatórios precisam ser concluídos para que seja possível abrir chamados de suporte.",
+      "primaryAction": "Começar treinamento",
+      "secondaryAction": "Explorar o sistema",
+      "menuHint": "Você pode acessar o treinamento a qualquer momento pelo menu lateral, em \"Treinamento\"."
+    }
+  },
   "trainingCentral": {
     "title": "Central de Treinamento",
     "subtitle": "Conclua os módulos no seu ritmo. Progresso salvo automaticamente.",
