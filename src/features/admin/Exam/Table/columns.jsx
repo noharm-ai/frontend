@@ -1,15 +1,17 @@
 import React from "react";
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined } from "@ant-design/icons";
 
 import Tag from "components/Tag";
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import { formatDateTime } from "utils/date";
+import { canWriteExamConfig } from "../examPermissions";
 
 const sortDirections = ["descend", "ascend"];
 
 const columns = () => {
   const columns = [];
+  const canWrite = canWriteExamConfig();
 
   return [
     ...columns,
@@ -75,12 +77,12 @@ const columns = () => {
       align: "center",
       render: (text, record) => {
         return (
-          <Tooltip title="Alterar exame">
+          <Tooltip title={canWrite ? "Alterar exame" : "Visualizar exame"}>
             <Button
               type="primary"
               className="gtm-bt-view-exam"
               onClick={() => record.showModal(record)}
-              icon={<EditOutlined />}
+              icon={canWrite ? <EditOutlined /> : <EyeOutlined />}
             ></Button>
           </Tooltip>
         );

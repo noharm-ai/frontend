@@ -194,7 +194,8 @@ export default function Menu({ segments }) {
           label: t("menu.exams"),
           icon: <ExperimentOutlined />,
           id: "gtm-lnk-exames",
-          permission: [Permission.ADMIN_EXAMS],
+          // ADMIN_EXAMS is the deprecated fallback, remove after backend release
+          permission: [Permission.READ_CONFIG_EXAMS, Permission.ADMIN_EXAMS],
         },
         {
           key: "/configuracoes/forms-personalizados",
