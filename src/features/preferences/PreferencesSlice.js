@@ -15,9 +15,6 @@ const initialState = {
   app: {
     initialPage: "/priorizacao/pacientes/cards",
   },
-  onboarding: {
-    welcomeSeenAt: null,
-  },
 };
 
 export const savePreferences = createAsyncThunk(
@@ -58,12 +55,6 @@ const preferencesSlice = createSlice({
     setInitialPage(state, action) {
       state.app.initialPage = action.payload;
     },
-    setWelcomeOnboardingSeen(state, action) {
-      if (!state.onboarding) {
-        state.onboarding = {};
-      }
-      state.onboarding.welcomeSeenAt = action.payload;
-    },
     setSavedPreferences(state, action) {
       return {
         ...initialState,
@@ -83,7 +74,6 @@ export const {
   setPrescriptionListOrder,
   setPrescriptionDrugOrder,
   setInitialPage,
-  setWelcomeOnboardingSeen,
 } = preferencesSlice.actions;
 
 const persist = {
