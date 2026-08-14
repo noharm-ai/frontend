@@ -7,6 +7,7 @@ import { Input, Select } from "components/Inputs";
 import { TagTypeEnum } from "models/TagTypeEnum";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
+import { canCreateTags, canWriteTag, canWriteTags } from "../tagPermissions";
 
 function BaseForm({ open }) {
   const { t } = useTranslation();
@@ -23,11 +24,22 @@ function BaseForm({ open }) {
     }
   }, [open, inputRef]);
 
+  const canWrite = values.new ? canCreateTags() : canWriteTag(values.tagType);
+
+  // a navigation-only writer (WRITE_PATIENT_TAGS without WRITE_TAGS) may only
+  // create navigation tags, so don't offer a type upsert_tag would reject.
+  // Existing tags keep both options so the select can render its current label.
+  const hidePatientOption = values.new && !canWriteTags();
+
   const tagTypeOptions = [
-    {
-      value: TagTypeEnum.PATIENT,
-      label: "Marcador do paciente",
-    },
+    ...(hidePatientOption
+      ? []
+      : [
+          {
+            value: TagTypeEnum.PATIENT,
+            label: "Marcador do paciente",
+          },
+        ]),
     ...(PermissionService().has(Permission.READ_NAV)
       ? [
           {
@@ -50,7 +62,7 @@ function BaseForm({ open }) {
             value={values.name}
             ref={inputRef}
             style={{ width: "100%" }}
-            disabled={!values.new}
+            disabled={!canWrite || !values.new}
           />
         </div>
         {errors.name && <div className="form-error">{errors.name}</div>}
@@ -69,7 +81,7 @@ function BaseForm({ open }) {
             onChange={(value) => setFieldValue("tagType", value)}
             allowClear
             options={tagTypeOptions}
-            disabled={!values.new}
+            disabled={!canWrite || !values.new}
           />
         </div>
         {errors.tagType && <div className="form-error">{errors.tagType}</div>}
@@ -89,6 +101,7 @@ function BaseForm({ open }) {
             status={errors.active && touched.active ? "error" : null}
             checkedChildren={t("labels.yes")}
             unCheckedChildren={t("labels.no")}
+            disabled={!canWrite}
           />
         </div>
         {errors.active && touched.active && (

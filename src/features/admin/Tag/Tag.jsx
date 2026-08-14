@@ -14,6 +14,7 @@ import { PageHeader } from "styles/PageHeader.style";
 import Filter from "./Filter/Filter";
 import { setTag } from "./TagSlice";
 import { TagForm } from "./Form/TagForm";
+import { canCreateTags } from "./tagPermissions";
 
 import { PageContainer } from "styles/Utils.style";
 
@@ -39,13 +40,15 @@ export function Tag() {
           <h1 className="page-header-title">{t("menu.tag")}</h1>
         </div>
         <div className="page-header-actions">
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => dispatch(setTag({ new: true, active: true }))}
-          >
-            Adicionar marcador
-          </Button>
+          {canCreateTags() && (
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => dispatch(setTag({ new: true, active: true }))}
+            >
+              Adicionar marcador
+            </Button>
+          )}
         </div>
       </PageHeader>
       <Filter />

@@ -219,7 +219,7 @@ export default function Menu({ segments }) {
           label: t("menu.tag"),
           icon: <TagsOutlined />,
           id: "gtm-lnk-tags",
-          permission: [Permission.WRITE_TAGS],
+          permission: [Permission.READ_TAGS, Permission.WRITE_TAGS],
         },
         {
           key: "/painel-medicamentos",
