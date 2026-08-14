@@ -109,7 +109,16 @@ const getById = async (route: Route) => {
 /** Lookups the variable selects hit to resolve the labels of stored ids. */
 const lookupHandlers = {
   "GET /admin/protocol/department/list": {
-    json: { status: "success", data: [{ idDepartment: "7", name: "UTI" }] },
+    json: {
+      status: "success",
+      data: [
+        {
+          idDepartment: "7",
+          name: "UTI",
+          segments: [{ id: "1", name: "Segmento UTI" }],
+        },
+      ],
+    },
   },
   "GET /exams/types/list": {
     json: { status: "success", data: [{ examType: "cr", name: "Creatinina" }] },
