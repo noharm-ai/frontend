@@ -506,6 +506,10 @@ const updatePassword = (bearerToken, { ...params }) => {
   return instance.put(`${endpoints.user}`, params, setHeaders(bearerToken));
 };
 
+const completeOnboarding = () => {
+  return instance.post(`${endpoints.user}/complete-onboarding`, {}, setHeaders());
+};
+
 const resetPassword = (token, password) => {
   return instance.post(
     `${endpoints.user}/reset`,
@@ -1108,6 +1112,7 @@ const methods = {
   putMemory,
   putMemoryUnique,
   updatePassword,
+  completeOnboarding,
   forgotPassword,
   resetPassword,
   getClinicalNotes,

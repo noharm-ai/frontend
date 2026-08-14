@@ -1111,6 +1111,24 @@
     "insertHint": "Click to insert into text",
     "noResults": "No texts found."
   },
+  "onboarding": {
+    "welcome": {
+      "eyebrow": "Getting started",
+      "title": "Welcome, {{name}}!",
+      "titleNoName": "Welcome to NoHarm!",
+      "lead": "We're glad to have you with us. To get the most out of the platform, we've prepared a <strong>quick training</strong> covering the essentials for your daily routine.",
+      "imageAlt": "Welcome to NoHarm",
+      "trainingTitle": "Training Central",
+      "trainingSubtitle": "Learn the essentials in a few minutes",
+      "highlightModules": "<strong>Short, focused</strong> modules at your own pace",
+      "highlightProgress": "Progress saved automatically",
+      "highlightBadges": "Unlock achievements as you complete the modules",
+      "supportNotice": "Mandatory modules must be completed before support tickets can be opened.",
+      "primaryAction": "Start training",
+      "secondaryAction": "Explore the system",
+      "menuHint": "You can access the training anytime from the side menu, under \"Training\"."
+    }
+  },
   "trainingCentral": {
     "title": "Training Central",
     "subtitle": "Complete the modules at your own pace. Progress is saved automatically.",

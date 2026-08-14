@@ -36,6 +36,7 @@ import { setPendingTickets } from "features/support/SupportSlice";
 import Box from "./Box";
 import Menu from "./Menu";
 import { InfoAlert } from "features/notifications/InfoAlert/InfoAlert";
+import { WelcomeOnboarding } from "features/onboarding/WelcomeOnboarding/WelcomeOnboarding";
 import SearchPrescription from "./SearchPrescription";
 import {
   Wrapper as Main,
@@ -406,6 +407,8 @@ export default function Layout({
         </Content>
         <Footer>{appInfo.copyright}</Footer>
       </Main>
+
+      <WelcomeOnboarding />
     </Main>
   );
 }
