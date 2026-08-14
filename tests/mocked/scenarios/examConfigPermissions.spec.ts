@@ -33,6 +33,10 @@ const installExamHandlers = (mockApi: {
   mockApi.override("POST /admin/exam/get", ok(segmentExam));
   mockApi.override("GET /admin/exam/types", ok(["creatinina", "hb"]));
   mockApi.override("GET /admin/exam/list-global", ok([]));
+  mockApi.override(
+    "GET /user-admin/contact-list",
+    ok([{ id: 9, name: "Ana Gestora", email: "ana@example.com" }]),
+  );
 };
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -77,6 +81,22 @@ test("READ_CONFIG_EXAMS alone shows the config read-only", async ({
 
   const activeRow = modal.locator(".form-row").filter({ hasText: "Ativo:" });
   await expect(activeRow.locator("button.ant-switch")).toBeDisabled();
+  await modal.getByRole("button", { name: "Fechar" }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+
+  // the alert links to the config managers to ask for a change
+  await expect(
+    page.getByText("Você não possui permissão para criar ou alterar exames"),
+  ).toBeVisible();
+  await page.getByTestId("config-manager-link").click();
+
+  const contacts = page.getByRole("dialog");
+  await expect(
+    contacts.getByRole("cell", { name: "Ana Gestora" }),
+  ).toBeVisible();
+  await expect(
+    contacts.getByRole("link", { name: "ana@example.com" }),
+  ).toHaveAttribute("href", "mailto:ana@example.com");
 });
 
 test("WRITE_CONFIG_EXAMS enables the write actions", async ({
@@ -98,6 +118,7 @@ test("WRITE_CONFIG_EXAMS enables the write actions", async ({
   await expect(
     page.getByRole("button", { name: "Card de Exames" }),
   ).toBeVisible();
+  await expect(page.getByTestId("config-manager-link")).toHaveCount(0);
 
   await page.locator(".gtm-bt-view-exam").click();
 

@@ -957,6 +957,9 @@ api.userAdmin.getUsers = (params = {}) =>
 api.userAdmin.getUserManagers = (params = {}) =>
   instance.get(`/user-admin/manager-list`, { params, ...setHeaders() });
 
+api.userAdmin.getContactList = (params = {}) =>
+  instance.get(`/user-admin/contact-list`, { params, ...setHeaders() });
+
 /**
  * Segment namespace
  */

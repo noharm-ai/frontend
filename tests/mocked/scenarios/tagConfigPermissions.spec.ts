@@ -33,6 +33,12 @@ const installTagHandlers = (mockApi: {
   mockApi.override("POST /admin/tag/list", {
     json: { status: "success", data: tags },
   });
+  mockApi.override("GET /user-admin/contact-list", {
+    json: {
+      status: "success",
+      data: [{ id: 9, name: "Ana Gestora", email: "ana@example.com" }],
+    },
+  });
 };
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -72,6 +78,19 @@ test("READ_TAGS alone shows the tags read-only", async ({ page, mockApi }) => {
 
   const activeRow = modal.locator(".form-row").filter({ hasText: "Ativo:" });
   await expect(activeRow.locator("button.ant-switch")).toBeDisabled();
+  await modal.getByRole("button", { name: "Fechar" }).click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
+
+  // the alert links to the config managers to ask for a change
+  await expect(
+    page.getByText(
+      "Você não possui permissão para criar ou alterar marcadores",
+    ),
+  ).toBeVisible();
+  await page.getByTestId("config-manager-link").click();
+  await expect(
+    page.getByRole("dialog").getByRole("cell", { name: "Ana Gestora" }),
+  ).toBeVisible();
 });
 
 // WRITE_PATIENT_TAGS + READ_NAV (NAVIGATOR) may write navigation tags only,
@@ -93,6 +112,7 @@ test("WRITE_PATIENT_TAGS writes navigation tags only", async ({
   await expect(
     page.getByRole("button", { name: "Adicionar marcador" }),
   ).toBeVisible();
+  await expect(page.getByTestId("config-manager-link")).toHaveCount(0);
 
   const patientRow = page.getByRole("row", { name: /ALTO RISCO/ });
   await expect(
@@ -152,6 +172,7 @@ test("WRITE_PATIENT_TAGS without READ_NAV stays read-only", async ({
   await expect(
     page.getByRole("button", { name: "Editar marcador" }),
   ).toHaveCount(0);
+  await expect(page.getByTestId("config-manager-link")).toBeVisible();
 });
 
 test("WRITE_TAGS enables the write actions", async ({ page, mockApi }) => {

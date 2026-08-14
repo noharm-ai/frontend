@@ -15,6 +15,7 @@ import Filter from "./Filter/Filter";
 import { setTag } from "./TagSlice";
 import { TagForm } from "./Form/TagForm";
 import { canCreateTags } from "./tagPermissions";
+import { ConfigManagerContact } from "features/admin/ConfigManagerContact/ConfigManagerContact";
 
 import { PageContainer } from "styles/Utils.style";
 
@@ -51,6 +52,9 @@ export function Tag() {
           )}
         </div>
       </PageHeader>
+      {!canCreateTags() && (
+        <ConfigManagerContact action="criar ou alterar marcadores" />
+      )}
       <Filter />
       <PaginationContainer>
         {(ds || []).length} registros encontrados

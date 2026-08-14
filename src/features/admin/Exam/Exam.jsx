@@ -26,6 +26,7 @@ import examColumns from "./Table/columns";
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
 import { canWriteExamConfig } from "./examPermissions";
+import { ConfigManagerContact } from "features/admin/ConfigManagerContact/ConfigManagerContact";
 
 const emptyText = (
   <Empty
@@ -67,29 +68,30 @@ export default function Exams() {
           <div className="page-header-legend">Configuração de exames</div>
         </div>
         <div className="page-header-actions">
-          {canWrite && PermissionService().has(Permission.ADMIN_EXAMS__COPY) && (
-            <>
-              <Tooltip title="Clique para mais informações">
-                <Button
-                  type="primary"
-                  icon={<RetweetOutlined />}
-                  onClick={() => setCopyExamsVisible(true)}
-                >
-                  Copiar Exames
-                </Button>
-              </Tooltip>
+          {canWrite &&
+            PermissionService().has(Permission.ADMIN_EXAMS__COPY) && (
+              <>
+                <Tooltip title="Clique para mais informações">
+                  <Button
+                    type="primary"
+                    icon={<RetweetOutlined />}
+                    onClick={() => setCopyExamsVisible(true)}
+                  >
+                    Copiar Exames
+                  </Button>
+                </Tooltip>
 
-              <Tooltip title="Clique para mais informações">
-                <Button
-                  type="primary"
-                  icon={<OrderedListOutlined />}
-                  onClick={() => setMostFrequentModalVisible(true)}
-                >
-                  Exames Mais Frequentes
-                </Button>
-              </Tooltip>
-            </>
-          )}
+                <Tooltip title="Clique para mais informações">
+                  <Button
+                    type="primary"
+                    icon={<OrderedListOutlined />}
+                    onClick={() => setMostFrequentModalVisible(true)}
+                  >
+                    Exames Mais Frequentes
+                  </Button>
+                </Tooltip>
+              </>
+            )}
           {canWrite && (
             <>
               <Button
@@ -112,6 +114,8 @@ export default function Exams() {
           )}
         </div>
       </PageHeader>
+
+      {!canWrite && <ConfigManagerContact action="criar ou alterar exames" />}
 
       <Filter />
 
