@@ -23,6 +23,7 @@ const mapStateToProps = ({ prescriptions, user, intervention }) => ({
   admissionNumber: prescriptions.single.data.admissionNumber,
   uniqueDrugs: prescriptions.single.data.uniqueDrugs,
   currentPrescription: prescriptions.single.data.conciliaList,
+  status: prescriptions.single.data.status,
   features: user.account.features,
   interventions: prescriptions.single.intervention.list,
   isSavingIntervention: intervention.maybeCreateOrUpdate.isSaving,

@@ -7,6 +7,7 @@ import { uniq } from "utils/lodash";
 import LoadBox from "components/LoadBox";
 import Table from "components/Table";
 import Empty from "components/Empty";
+import Alert from "components/Alert";
 import notification from "components/notification";
 import DefaultModal from "components/Modal";
 import { filterInterventionByPrescriptionDrug } from "utils/transformers/intervention";
@@ -39,6 +40,7 @@ export default function ConciliationDrugList({
   interventions,
   updateInterventionData,
   features,
+  status,
 }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -49,6 +51,7 @@ export default function ConciliationDrugList({
     (state) => state.prescriptionv2.selectedRows.active
   );
   const featureService = FeatureService(features);
+  const conciliationChecked = status === "s";
 
   if (isFetching) {
     return <LoadBox />;
@@ -179,6 +182,7 @@ export default function ConciliationDrugList({
     selectAllRows,
     isAllSelected: isAllSelected(),
     featureService,
+    conciliationChecked,
   };
 
   const filteredDataSource = () => {
@@ -193,6 +197,18 @@ export default function ConciliationDrugList({
 
   return (
     <BoxWrapper>
+      {conciliationChecked && (
+        <Alert
+          type="warning"
+          showIcon
+          style={{ marginBottom: "10px" }}
+          message="Conciliação checada"
+          description={
+            'A coluna "Prescrição vigente" mostra a prescrição que estava vigente no momento da checagem e não é atualizada. ' +
+            "Para visualizar a prescrição vigente atual, desfaça a checagem desta conciliação."
+          }
+        />
+      )}
       <Filters
         showFilter={false}
         showPerspective={false}
