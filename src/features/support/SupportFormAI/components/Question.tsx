@@ -37,7 +37,6 @@ export function Question({ mode }: QuestionInteface) {
   const askAgent = (params: any) => {
     dispatch(setAIFormQuestion(params.question));
 
-    // @ts-expect-error ts 2554 (legacy code)
     dispatch(fetchN0Response(params)).then((response: any) => {
       if (mode === "default") {
         if (response.error) {
@@ -69,7 +68,6 @@ export function Question({ mode }: QuestionInteface) {
     });
 
     if (mode === "default") {
-      // @ts-expect-error ts 2554 (legacy code)
       dispatch(fetchN0Form(params)).then((response: any) => {
         if (response.error) {
           console.error(response.error);
@@ -77,7 +75,6 @@ export function Question({ mode }: QuestionInteface) {
       });
     }
 
-    // @ts-expect-error ts 2554 (legacy code)
     dispatch(fetchRelatedArticles(params)).then((response: any) => {
       if (response.error) {
         console.error(response.error);
