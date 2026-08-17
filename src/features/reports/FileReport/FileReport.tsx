@@ -254,6 +254,7 @@ export function FileReport() {
       dateGrouping: "none",
       showTitle: true,
       colorPalette: "default",
+      colorMode: "palette",
       stacked: false,
       filters: [],
       ...chart,
