@@ -19,6 +19,9 @@ import {
   addAttachment,
 } from "../../SupportSlice";
 import SupportFormLegacy from "../../SupportForm/SupportForm";
+import { PendingTrainingNotice } from "../../PendingTrainingNotice/PendingTrainingNotice";
+import { useTicketCreationBlock } from "../../useTicketCreationBlock";
+import { handlePendingTrainingError } from "../../pendingTrainingError";
 
 import { Form } from "src/styles/Form.style";
 import { ChatContainer, ChatBubble } from "../SupportFormAI.style";
@@ -37,6 +40,7 @@ export function SupportForm() {
     (state) => (state.app as any).config.integrationStatus
   );
   const [loading, setLoading] = useState<boolean>(false);
+  const { blocked, requiresUrgent } = useTicketCreationBlock();
 
   const goToSupportCenter = () => {
     dispatch(setSupportOpen(false));
@@ -90,6 +94,16 @@ export function SupportForm() {
 
     if (response.error) {
       setLoading(false);
+
+      if (
+        handlePendingTrainingError(response, () => {
+          dispatch(setSupportOpen(false));
+          navigate("/treinamento");
+        })
+      ) {
+        return;
+      }
+
       notification.error({
         message: getErrorMessage(response, t),
       });
@@ -289,31 +303,38 @@ export function SupportForm() {
                       </div>
                     ))}
 
-                  <div className={`form-row`}>
-                    <div className="form-action-bottom">
-                      <Space>
-                        <Popconfirm
-                          title="Cancelar chamado"
-                          description="Confirma o cancelamento da abertura do chamado?"
-                          okText="Sim"
-                          cancelText="Não"
-                          onConfirm={() => cancel()}
-                          zIndex={9999}
-                        >
-                          <Button>Cancelar</Button>
-                        </Popconfirm>
-                        <Button
-                          type="primary"
-                          onClick={() => handleSubmit()}
-                          icon={<SendOutlined />}
-                          loading={loading}
-                          size="large"
-                        >
-                          Abrir chamado
-                        </Button>
-                      </Space>
+                  {blocked ? (
+                    // the urgent override lives in the standard form, so a
+                    // bypass-capable user is pointed there rather than
+                    // duplicating the confirmation here
+                    <PendingTrainingNotice canOpenUrgent={requiresUrgent} />
+                  ) : (
+                    <div className={`form-row`}>
+                      <div className="form-action-bottom">
+                        <Space>
+                          <Popconfirm
+                            title="Cancelar chamado"
+                            description="Confirma o cancelamento da abertura do chamado?"
+                            okText="Sim"
+                            cancelText="Não"
+                            onConfirm={() => cancel()}
+                            zIndex={9999}
+                          >
+                            <Button>Cancelar</Button>
+                          </Popconfirm>
+                          <Button
+                            type="primary"
+                            onClick={() => handleSubmit()}
+                            icon={<SendOutlined />}
+                            loading={loading}
+                            size="large"
+                          >
+                            Abrir chamado
+                          </Button>
+                        </Space>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </Form>
               )}
             </Formik>

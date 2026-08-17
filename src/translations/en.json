@@ -656,6 +656,7 @@
     "invalidUser": "Non-existent user",
     "unauthorizedUser": "Unauthorized user",
     "serviceUnavailable": "AI service unavailable. Please try again shortly.",
+    "pendingMandatoryTraining": "Complete the mandatory training modules to open support tickets.",
     "nameExists": "There is already a user with this name!",
     "emailExists": "There is already a user with this email!",
     "empty": "No records found"

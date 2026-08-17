@@ -2,20 +2,24 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
-import { Upload, notification, Space } from "antd";
+import { Upload, notification, Space, Checkbox } from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 
 import { Select, Input } from "components/Inputs";
+import Alert from "components/Alert";
 import Editor from "components/Editor";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import IntegrationStatus from "models/IntegrationStatus";
+
+import { useTicketCreationBlock } from "../useTicketCreationBlock";
 
 function BaseForm() {
   const { t } = useTranslation();
   const integrationStatus = useSelector(
     (state) => state.app.config.integrationStatus
   );
+  const { requiresUrgent } = useTicketCreationBlock();
   const { values, errors, touched, setFieldValue } = useFormikContext();
 
   const uploadProps = {
@@ -42,6 +46,41 @@ function BaseForm() {
 
   return (
     <>
+      {requiresUrgent && (
+        <div
+          className={`form-row ${
+            errors.urgent && touched.urgent ? "error" : ""
+          }`}
+        >
+          <Alert
+            type="warning"
+            showIcon
+            message="Treinamento obrigatório pendente"
+            description={
+              <>
+                <p style={{ marginTop: 0 }}>
+                  Conclua os módulos obrigatórios da Central de Treinamento. Por
+                  ter permissão de administração do suporte, você pode abrir
+                  este chamado agora se ele for urgente — o chamado será
+                  registrado como aberto com treinamento pendente.
+                </p>
+                <Checkbox
+                  checked={values.urgent === true}
+                  onChange={({ target }) =>
+                    setFieldValue("urgent", target.checked)
+                  }
+                >
+                  Este chamado é urgente e não pode aguardar
+                </Checkbox>
+              </>
+            }
+          />
+          {errors.urgent && touched.urgent && (
+            <div className="form-error">{errors.urgent}</div>
+          )}
+        </div>
+      )}
+
       <div
         className={`form-row ${
           errors.category && touched.category ? "error" : ""
