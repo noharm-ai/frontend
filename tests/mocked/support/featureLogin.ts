@@ -37,7 +37,13 @@ export async function loginWithPermissions(
   return loginWithAuth(page, mockApi, { permissions });
 }
 
-async function loginWithAuth(
+/**
+ * Logs in with arbitrary overrides merged into the /authenticate payload, for
+ * fields that are neither features nor permissions (onboardingStatus, training,
+ * ...). Combine them freely in a single call; an `undefined` value omits the key
+ * entirely, since the payload is serialized with JSON.stringify.
+ */
+export async function loginWithAuth(
   page: Page,
   mockApi: MockApi,
   overrides: Record<string, unknown>,

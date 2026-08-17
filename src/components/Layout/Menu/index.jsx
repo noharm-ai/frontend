@@ -308,7 +308,7 @@ export default function Menu({ segments }) {
       label: t("menu.training"),
       icon: <ReadOutlined />,
       id: "gtm-lnk-training",
-      permission: [Permission.ADMIN_NZERO],
+      feature: Feature.USER_ONBOARDING,
     },
     {
       key: "help",

@@ -106,6 +106,7 @@ export const setUser = (userData, keepMeLogged, dispatch) => {
     integrationStatus,
     signature,
     onboardingStatus,
+    training,
     ...identify
   } = userData;
   const user = {
@@ -123,6 +124,7 @@ export const setUser = (userData, keepMeLogged, dispatch) => {
     permissions,
     signature,
     onboardingStatus,
+    training,
   };
 
   setStorageItem("schema", schema);

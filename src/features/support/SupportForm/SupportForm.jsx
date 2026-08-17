@@ -11,6 +11,8 @@ import Button from "components/Button";
 import DefaultModal from "components/Modal";
 import { getErrorMessage } from "utils/errorHandler";
 import { createTicket, setSupportOpen, resetAIForm } from "../SupportSlice";
+import { useTicketCreationBlock } from "../useTicketCreationBlock";
+import { handlePendingTrainingError } from "../pendingTrainingError";
 import Base from "./Base";
 
 import { Form } from "styles/Form.style";
@@ -22,8 +24,16 @@ export default function SupportForm() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const status = useSelector((state) => state.support.form.status);
+  const { requiresUrgent } = useTicketCreationBlock();
 
   const validationSchema = Yup.object().shape({
+    // pending mandatory training: an ADMIN_SUPPORT holder must confirm urgency
+    urgent: requiresUrgent
+      ? Yup.boolean().oneOf(
+          [true],
+          "Confirme que o chamado é urgente para abrir com treinamento pendente",
+        )
+      : Yup.boolean().nullable(),
     title: Yup.string().nullable().required(t("validation.requiredField")),
     category: Yup.string().nullable().required(t("validation.requiredField")),
     description: Yup.string()
@@ -52,11 +62,17 @@ export default function SupportForm() {
     fileList: [],
     admissionNumberExamples: null,
     prescriptionNumberExamples: null,
+    urgent: false,
   };
 
   const goToSupportCenter = () => {
     dispatch(setSupportOpen(false));
     navigate("/suporte");
+  };
+
+  const goToTraining = () => {
+    dispatch(setSupportOpen(false));
+    navigate("/treinamento");
   };
 
   const onSave = (params, formikBag) => {
@@ -80,6 +96,10 @@ export default function SupportForm() {
 
     dispatch(createTicket(payload)).then((response) => {
       if (response.error) {
+        if (handlePendingTrainingError(response, goToTraining)) {
+          return;
+        }
+
         notification.error({
           message: getErrorMessage(response, t),
         });

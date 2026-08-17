@@ -17,7 +17,11 @@
     "iptSearch": "Buscar por nº de atendimento ou prescrição",
     "notifications": "Notificações",
     "unreadNotifications": "Notificações não lidas ({{count}})",
-    "markAsRead": "Marcar como lida"
+    "markAsRead": "Marcar como lida",
+    "pendingTraining": "Treinamento pendente",
+    "pendingTrainingTooltip_one": "Você ainda tem {{count}} módulo obrigatório para concluir. Clique para acessar a Central de Treinamento.",
+    "pendingTrainingTooltip_other": "Você ainda tem {{count}} módulos obrigatórios para concluir. Clique para acessar a Central de Treinamento.",
+    "trainingCompleted": "Treinamento obrigatório concluído"
   },
   "error": {
     "title": "Ops! Algo de errado aconteceu.",
@@ -656,6 +660,7 @@
     "invalidUser": "Usuário inválido",
     "unauthorizedUser": "Usuário não autorizado",
     "serviceUnavailable": "Serviço de IA indisponível. Tente novamente em instantes.",
+    "pendingMandatoryTraining": "Conclua os treinamentos obrigatórios para abrir chamados de suporte.",
     "nameExists": "Já existe um usuário com este nome!",
     "emailExists": "Já existe um usuário com este email!",
     "empty": "Nenhum registro encontrado"
