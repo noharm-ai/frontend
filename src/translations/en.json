@@ -17,7 +17,11 @@
     "iptSearch": "Search by prescription or admission number",
     "notifications": "Notifications",
     "unreadNotifications": "Unread notifications ({{count}})",
-    "markAsRead": "Mark as read"
+    "markAsRead": "Mark as read",
+    "pendingTraining": "Pending training",
+    "pendingTrainingTooltip_one": "You still have {{count}} mandatory module to complete. Click to open the Training Center.",
+    "pendingTrainingTooltip_other": "You still have {{count}} mandatory modules to complete. Click to open the Training Center.",
+    "trainingCompleted": "Mandatory training completed"
   },
   "error": {
     "title": "Oops! Something wrong happened.",

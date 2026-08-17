@@ -35,5 +35,6 @@
   "integrationStatus": 1,
   "signature": "",
   "preferences": null,
-  "onboardingStatus": null
+  "onboardingStatus": null,
+  "training": { "mandatoryTotal": 0, "mandatoryFinished": 0 }
 }
