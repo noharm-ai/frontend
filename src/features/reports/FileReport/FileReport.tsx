@@ -174,10 +174,11 @@ export function FileReport() {
     field: string,
     value: any,
     mode?: "list" | "text",
+    exclude?: boolean,
   ) => {
     const updatedFilters = filters.map((f) => {
       if (f.id === id) {
-        return { ...f, field, value, mode: mode || f.mode || "list" };
+        return { ...f, field, value, mode: mode || f.mode || "list", exclude };
       }
       return f;
     });
@@ -338,6 +339,7 @@ export function FileReport() {
                   field={filter.field}
                   value={filter.value}
                   mode={filter.mode}
+                  exclude={filter.exclude}
                   schema={schema}
                   onChange={updateFilter}
                   onRemove={removeFilter}
