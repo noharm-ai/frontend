@@ -118,28 +118,3 @@ export const ModuleText = styled.div`
     margin-top: 2px;
   }
 `;
-
-export const BadgesPanel = styled.div`
-  background: ${colors.commonLighter};
-  border-radius: 8px;
-  padding: 24px 20px;
-  text-align: center;
-
-  .anticon {
-    font-size: 28px;
-    color: ${colors.fifth};
-    margin-bottom: 10px;
-  }
-
-  h3 {
-    color: ${colors.primary};
-    font-size: 1rem;
-    margin: 0 0 6px 0;
-  }
-
-  p {
-    color: ${colors.text};
-    font-size: 0.875rem;
-    margin: 0;
-  }
-`;

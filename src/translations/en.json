@@ -1147,9 +1147,7 @@
     "progressMandatory": "Mandatory modules",
     "progressOptional": "Optional modules",
     "mandatoryExplanation": "Mandatory modules cover the basics of using NoHarm. Until they are all completed, you won't be able to open support tickets.",
-    "mandatoryTag": "Mandatory",
-    "badgesTitle": "Achievements",
-    "badgesEmpty": "Complete modules to unlock achievements."
+    "mandatoryTag": "Mandatory"
   },
   "trainingPlayer": {
     "previous": "Previous",

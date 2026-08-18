@@ -1157,9 +1157,7 @@
     "progressMandatory": "Módulos obrigatórios",
     "progressOptional": "Módulos opcionais",
     "mandatoryExplanation": "Os módulos obrigatórios são a base para o uso do NoHarm. Enquanto não forem concluídos, não será possível abrir chamados de suporte.",
-    "mandatoryTag": "Obrigatório",
-    "badgesTitle": "Conquistas",
-    "badgesEmpty": "Complete módulos para desbloquear conquistas."
+    "mandatoryTag": "Obrigatório"
   },
   "trainingPlayer": {
     "previous": "Anterior",

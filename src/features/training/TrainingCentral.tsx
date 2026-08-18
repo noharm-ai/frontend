@@ -12,7 +12,6 @@ import { getErrorMessage } from "utils/errorHandler";
 import { fetchTrainingList, ITrainingModule } from "./TrainingCentralSlice";
 import { isModuleFinished } from "./trainingUtils";
 import { TrainingModuleRow } from "./TrainingModuleRow";
-import { TrainingBadges } from "./TrainingBadges";
 import {
   ModuleList,
   SideColumn,
@@ -169,8 +168,6 @@ export function TrainingCentral() {
                 )}
               </ProgressPanel>
             )}
-
-            <TrainingBadges />
           </SideColumn>
         </Col>
       </Row>
