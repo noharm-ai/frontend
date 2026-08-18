@@ -258,22 +258,6 @@ api.protocols.getDepartments = (params = {}) =>
   });
 
 /**
- * REPORTS
- */
-api.reports = {};
-api.reports.getReports = (params = {}) =>
-  instance.get(`/admin/report/list`, {
-    params,
-    ...setHeaders(),
-  });
-
-api.reports.upsertReport = (params = {}) => {
-  return instance.post(`/admin/report`, params, {
-    ...setHeaders(),
-  });
-};
-
-/**
  * GLOBAL MEMORY
  */
 api.globalMemory = {};

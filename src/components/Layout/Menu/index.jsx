@@ -292,14 +292,6 @@ export default function Menu({ segments }) {
           id: "gtm-lnk-protocols",
           permission: [Permission.READ_PROTOCOLS],
         },
-        // {
-        //   key: "/admin/relatorios-customizados",
-        //   link: "/admin/relatorios-customizados",
-        //   label: "Relatórios Customizados",
-        //   icon: <PieChartOutlined />,
-        //   id: "gtm-lnk-relatorios-custom",
-        //   permission: [Permission.READ_CUSTOM_REPORTS],
-        // },
       ],
     },
     {
