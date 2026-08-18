@@ -54,7 +54,12 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
       - name: Run Playwright tests
-        run: npx playwright test
+        # --workers=1: the specs share the seeded data (check.spec checks
+        # prescription 199 while intervention.spec and clinicalNotes.spec are
+        # working on it, and a checked prescription renders a different UI), so
+        # they cannot run in parallel against one database.
+        # The mocked suite has its own workflow (e2e-mock.yml).
+        run: npx playwright test --project=setup --project=chromium --workers=1
         env:
           VITE_APP_API_URL: http://localhost:5000
           VITE_APP_SITE_TITLE: ${{ secrets.REACT_APP_SITE_TITLE_TEST }}

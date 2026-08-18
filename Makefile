@@ -50,8 +50,12 @@ e2e-db-reset:
 # playwright-test.yml / e2e-mock.yml CI workflows)
 
 ## Run e2e tests (headless) — resets DB first
+# --workers=1: the specs share the seeded data (check.spec checks prescription
+# 199 while intervention.spec and clinicalNotes.spec are working on it, and a
+# checked prescription renders a different UI), so they cannot run in parallel
+# against one database. The mocked suite mocks the backend and stays parallel.
 e2e: e2e-db-reset
-	VITE_APP_API_URL=http://localhost:5001 npx playwright test --project=setup --project=chromium
+	VITE_APP_API_URL=http://localhost:5001 npx playwright test --project=setup --project=chromium --workers=1
 
 ## Run e2e tests in interactive UI mode (no auto-reset)
 e2e-ui:
