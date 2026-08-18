@@ -14,6 +14,11 @@ export interface Filter {
   field: string;
   value: any;
   mode?: "list" | "text";
+  /**
+   * For the "list" selection mode: when true the selected values are EXCLUDED
+   * (NOT IN) instead of the default include (IN). Ignored in "text" mode.
+   */
+  exclude?: boolean;
 }
 
 const isDate = (value: any): boolean => {
@@ -92,7 +97,8 @@ export const applyFilters = (
             .includes(String(filter.value || "").toLowerCase());
         }
         if (Array.isArray(filter.value) && filter.value.length > 0) {
-          return filter.value.includes(String(value));
+          const isIn = filter.value.includes(String(value));
+          return filter.exclude ? !isIn : isIn;
         }
         return true;
       }

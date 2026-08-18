@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import { Button, Flex, Input, InputNumber, Radio, Select, Tooltip } from "antd";
+import { Button, Flex, Input, InputNumber, Radio, Segmented, Select, Tooltip } from "antd";
 import {
   DeleteOutlined,
   FontSizeOutlined,
@@ -13,7 +13,13 @@ interface FilterRowItemProps {
   filter: Filter;
   schema: ColumnSchema[];
   readOnly?: boolean;
-  onChange: (id: string, field: string, value: any, mode?: "list" | "text") => void;
+  onChange: (
+    id: string,
+    field: string,
+    value: any,
+    mode?: "list" | "text",
+    exclude?: boolean,
+  ) => void;
   onRemove: (id: string) => void;
 }
 
@@ -21,18 +27,23 @@ function FilterRowItem({ filter, schema, readOnly, onChange, onRemove }: FilterR
   const col = schema.find((s) => s.key === filter.field);
 
   const handleFieldChange = (newField: string) => {
-    onChange(filter.id, newField, null, "list");
+    onChange(filter.id, newField, null, "list", false);
   };
 
   const handleValueChange = (newValue: any) => {
-    onChange(filter.id, filter.field, newValue, filter.mode);
+    onChange(filter.id, filter.field, newValue, filter.mode, filter.exclude);
   };
 
   const handleModeChange = (e: any) => {
-    onChange(filter.id, filter.field, null, e.target.value);
+    onChange(filter.id, filter.field, null, e.target.value, filter.exclude);
+  };
+
+  const handleExcludeChange = (exclude: boolean) => {
+    onChange(filter.id, filter.field, filter.value, filter.mode, exclude);
   };
 
   const isString = col?.type === "string";
+  const isList = (filter.mode ?? "list") === "list";
 
   // String filters: the list/text toggle stays on the top row (beside the
   // field select); the value input/select drops to a full-width row below.
@@ -54,6 +65,22 @@ function FilterRowItem({ filter, schema, readOnly, onChange, onRemove }: FilterR
     </Radio.Group>
   );
 
+  // Include (IN) vs exclude (NOT IN) for the list selection.
+  const excludeToggle = (
+    <Tooltip title="Incluir mantém apenas os valores marcados; Excluir remove-os">
+      <Segmented
+        size="small"
+        disabled={readOnly}
+        value={filter.exclude ? "out" : "in"}
+        onChange={(v) => handleExcludeChange(v === "out")}
+        options={[
+          { label: "Incluir", value: "in" },
+          { label: "Excluir", value: "out" },
+        ]}
+      />
+    </Tooltip>
+  );
+
   const stringValueField =
     filter.mode === "text" ? (
       <Input
@@ -66,7 +93,7 @@ function FilterRowItem({ filter, schema, readOnly, onChange, onRemove }: FilterR
     ) : (
       <SelectCustom
         mode="multiple"
-        placeholder="Selecione os valores"
+        placeholder={filter.exclude ? "Selecione os valores a excluir" : "Selecione os valores"}
         value={filter.value}
         onChange={handleValueChange}
         disabled={readOnly}
@@ -148,7 +175,10 @@ function FilterRowItem({ filter, schema, readOnly, onChange, onRemove }: FilterR
         />
         {col &&
           (isString ? (
-            modeToggle
+            <Flex gap={8} align="center" wrap="wrap">
+              {modeToggle}
+              {isList && excludeToggle}
+            </Flex>
           ) : (
             <Flex gap={8} align="center" style={{ flex: 1, minWidth: 0 }}>
               {renderInlineValue()}
@@ -180,8 +210,16 @@ export function ChartFilterPanel({ filters, schema, readOnly, onChange }: ChartF
     ]);
   };
 
-  const updateFilter = (id: string, field: string, value: any, mode?: "list" | "text") => {
-    onChange(filters.map((f) => (f.id === id ? { ...f, field, value, mode } : f)));
+  const updateFilter = (
+    id: string,
+    field: string,
+    value: any,
+    mode?: "list" | "text",
+    exclude?: boolean,
+  ) => {
+    onChange(
+      filters.map((f) => (f.id === id ? { ...f, field, value, mode, exclude } : f)),
+    );
   };
 
   const removeFilter = (id: string) => {

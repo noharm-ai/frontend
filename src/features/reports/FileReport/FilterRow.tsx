@@ -4,7 +4,7 @@ import {
   UnorderedListOutlined,
   FontSizeOutlined,
 } from "@ant-design/icons";
-import { Select, Radio, Tooltip } from "antd";
+import { Select, Radio, Segmented, Tooltip } from "antd";
 import {
   InputNumber,
   RangeDatePicker,
@@ -21,12 +21,14 @@ interface FilterRowProps {
   field: string;
   value: any;
   mode?: "list" | "text";
+  exclude?: boolean;
   schema: ColumnSchema[];
   onChange: (
     id: string,
     field: string,
     value: any,
     mode?: "list" | "text",
+    exclude?: boolean,
   ) => void;
   onRemove: (id: string) => void;
 }
@@ -36,6 +38,7 @@ export const FilterRow: React.FC<FilterRowProps> = ({
   field,
   value,
   mode = "list",
+  exclude = false,
   schema,
   onChange,
   onRemove,
@@ -43,16 +46,20 @@ export const FilterRow: React.FC<FilterRowProps> = ({
   const selectedColumn = schema.find((c) => c.key === field);
 
   const handleFieldChange = (newField: string) => {
-    onChange(id, newField, null, "list");
+    onChange(id, newField, null, "list", false);
   };
 
   const handleValueChange = (newValue: any) => {
-    onChange(id, field, newValue, mode);
+    onChange(id, field, newValue, mode, exclude);
   };
 
   const handleModeChange = (e: any) => {
     const newMode = e.target.value;
-    onChange(id, field, null, newMode);
+    onChange(id, field, null, newMode, exclude);
+  };
+
+  const handleExcludeChange = (newExclude: boolean) => {
+    onChange(id, field, value, mode, newExclude);
   };
 
   const renderValueInput = () => {
@@ -80,6 +87,18 @@ export const FilterRow: React.FC<FilterRowProps> = ({
                 </Radio.Button>
               </Tooltip>
             </Radio.Group>
+            {mode !== "text" && (
+              <Tooltip title="Incluir mantém apenas os valores marcados; Excluir remove-os">
+                <Segmented
+                  value={exclude ? "out" : "in"}
+                  onChange={(v) => handleExcludeChange(v === "out")}
+                  options={[
+                    { label: "Incluir", value: "in" },
+                    { label: "Excluir", value: "out" },
+                  ]}
+                />
+              </Tooltip>
+            )}
             {mode === "text" ? (
               <Input
                 placeholder="Digite para buscar..."
@@ -93,7 +112,9 @@ export const FilterRow: React.FC<FilterRowProps> = ({
               <SelectCustom
                 mode="multiple"
                 style={{ width: "100%" }}
-                placeholder="Selecione os valores"
+                placeholder={
+                  exclude ? "Selecione os valores a excluir" : "Selecione os valores"
+                }
                 value={value}
                 onChange={handleValueChange}
                 showSearch
