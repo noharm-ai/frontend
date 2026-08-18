@@ -58,10 +58,12 @@ export const memoryFetchReasonTextThunk =
 
     if (!isEmpty(error)) {
       dispatch(memoryFetchReasonTextError(error));
-      return;
+      return null;
     }
 
     dispatch(memoryFetchReasonTextSuccess(data.data));
+
+    return data.data;
   };
 
 export const memorySaveReasonTextThunk =

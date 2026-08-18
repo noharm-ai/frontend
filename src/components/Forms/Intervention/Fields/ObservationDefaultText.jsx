@@ -22,8 +22,9 @@ import { useSlashMenu } from "components/SlashMenu/SlashMenu";
 
 export function ObservationDefaultText({
   open,
-  setOpen,
+  onClose,
   initialContent,
+  reasonLabel,
   saveDefaultText,
 }) {
   const { t } = useTranslation();
@@ -104,7 +105,7 @@ export function ObservationDefaultText({
   const save = () => {
     if (content) {
       saveDefaultText(content);
-      setOpen(false);
+      onClose();
     }
   };
 
@@ -112,9 +113,8 @@ export function ObservationDefaultText({
     <Modal
       open={open}
       width={"700px"}
-      onCancel={() => {
-        setOpen(false);
-      }}
+      title={reasonLabel ? `Texto padrão: ${reasonLabel}` : null}
+      onCancel={onClose}
       onOk={save}
       okButtonProps={{ disabled: !content }}
       okText="Salvar"

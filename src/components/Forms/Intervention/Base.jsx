@@ -433,6 +433,7 @@ export default function Base({
           fetchMemory={memoryFetchReasonText}
           saveMemory={memorySaveReasonText}
           currentReason={idInterventionReason}
+          reasons={reasons.list}
           drugData={drugData}
           interactions={values.interactions}
           interactionsList={values.interactionsList}
