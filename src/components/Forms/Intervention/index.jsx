@@ -17,6 +17,7 @@ import InterventionReasonRelationType from "models/InterventionReasonRelationTyp
 import interventionStatus from "models/InterventionStatus";
 import FeaturesService from "services/features";
 import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
+import { startMultipleOutcome } from "features/intervention/MultipleOutcome/MultipleOutcomeSlice";
 import { setSelectedRowsActive } from "features/prescription/PrescriptionSlice";
 import { getErrorMessageFromException } from "utils/errorHandler";
 import {
@@ -252,13 +253,25 @@ export default function Intervention({
           intvList &&
           intvList.length
         ) {
-          dispatch(
-            setSelectedInterventionOutcome({
-              idIntervention: intvList[0].idIntervention,
-              outcome: params.status,
-              open: true,
-            }),
-          );
+          if (item.idPrescriptionDrugList && intvList.length > 1) {
+            dispatch(
+              startMultipleOutcome({
+                idInterventionList: intvList.map(
+                  (intv) => intv.idIntervention,
+                ),
+                outcome: params.status,
+                skipConfirm: true,
+              }),
+            );
+          } else {
+            dispatch(
+              setSelectedInterventionOutcome({
+                idIntervention: intvList[0].idIntervention,
+                outcome: params.status,
+                open: true,
+              }),
+            );
+          }
         }
       })
       .catch((err) => {
@@ -278,22 +291,18 @@ export default function Intervention({
       {
         label: "Salvar e marcar como Aceita",
         key: "a",
-        disabled: item.idPrescriptionDrugList,
       },
       {
         label: "Salvar e marcar como Não Aceita",
         key: "n",
-        disabled: item.idPrescriptionDrugList,
       },
       {
         label: "Salvar e marcar como Não Aceita com Justificativa",
         key: "j",
-        disabled: item.idPrescriptionDrugList,
       },
       {
         label: "Salvar e marcar como Não se Aplica",
         key: "x",
-        disabled: item.idPrescriptionDrugList,
       },
     ];
 

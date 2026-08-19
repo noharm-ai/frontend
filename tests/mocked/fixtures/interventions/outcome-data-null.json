@@ -1,0 +1,31 @@
+{
+  "status": "success",
+  "data": {
+    "idIntervention": 301,
+    "header": {
+      "patient": false,
+      "status": "s",
+      "readonly": false,
+      "date": "__DATE_NOW__",
+      "originDrug": "Dipirona 500mg",
+      "destinyDrug": null,
+      "destinyDrugSubstance": null,
+      "destinyDrugId": null,
+      "idSegment": 1,
+      "economyDayValue": null,
+      "economyDayValueManual": false,
+      "economyDayAmount": null,
+      "economyDayAmountManual": false,
+      "economyType": null,
+      "updatedAt": null,
+      "outcomeAt": null,
+      "outcomeUser": null,
+      "economyIniDate": null,
+      "economyEndDate": null,
+      "interventionReason": ["Ajuste de Dose"],
+      "notes": "",
+      "isCpoe": false,
+      "invalidSegment": false
+    }
+  }
+}

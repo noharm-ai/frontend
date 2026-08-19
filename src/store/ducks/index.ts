@@ -26,6 +26,7 @@ import preferencesSlice from "features/preferences/PreferencesSlice";
 import drugAttributesFormSlice from "features/drugs/DrugAttributesForm/DrugAttributesFormSlice";
 import supportSlice from "features/support/SupportSlice";
 import interventionOutcomeSlice from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
+import multipleOutcomeSlice from "features/intervention/MultipleOutcome/MultipleOutcomeSlice";
 import userAdminSlice from "features/userAdmin/UserAdminSlice";
 import examModalSlice from "features/exams/ExamModal/ExamModalSlice";
 import examFormSlice from "features/exams/ExamForm/ExamFormSlice";
@@ -150,6 +151,7 @@ const rootReducer = combineReducers({
   drugAttributesForm: drugAttributesFormSlice,
   support: supportSlice,
   interventionOutcome: interventionOutcomeSlice,
+  multipleInterventionOutcome: multipleOutcomeSlice,
   userAdmin: userAdminSlice,
   examsModal: examModalSlice,
   examsForm: examFormSlice,

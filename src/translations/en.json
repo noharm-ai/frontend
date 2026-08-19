@@ -685,6 +685,34 @@
     "s": "Undo outcome"
   },
 
+  "multipleIntervention": {
+    "title": "Bulk outcome",
+    "selectMultiple": "Select multiple",
+    "selected": "{{count}} selected",
+    "applyOutcome": "Apply outcome",
+    "selectAllPending": "Select all pending",
+    "clearSelection": "Clear selection",
+    "confirmList": "{{count}} interventions will be marked as",
+    "confirmNote": "Interventions with Substitution or Custom economy require individual review. They will be presented next for confirmation.",
+    "apply": "Apply outcomes",
+    "applying": "Applying outcomes...",
+    "review": "Review {{current}} of {{total}}",
+    "confirmNext": "Confirm & next",
+    "skip": "Skip",
+    "cancelRemaining": "Cancel remaining",
+    "manualRequired": "Since there is no substitute prescription, fill in the economy manually (check the Manual options)",
+    "finished": "Outcomes applied successfully!",
+    "finishedWithErrors": "Some outcomes could not be applied.",
+    "finishedSummary": "Applied: {{applied}} | Skipped: {{skipped}} | Errors: {{errors}}",
+    "applied": "Applied",
+    "skipped": "Skipped",
+    "intervention": "Intervention",
+    "reasonClosed": "Already has an outcome",
+    "reasonArchived": "Archived",
+    "reasonUser": "Skipped by user",
+    "reasonCanceled": "Canceled"
+  },
+
   "roles": {
     "admin": "Admin",
     "concilia": "Conciliation",

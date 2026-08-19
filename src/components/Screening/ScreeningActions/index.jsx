@@ -13,6 +13,7 @@ import DefaultModal from "components/Modal";
 import FormPatientModal from "containers/Forms/Patient";
 import { shouldUpdatePrescription } from "features/serverActions/ServerActionsSlice";
 import InterventionOutcome from "features/intervention/InterventionOutcome/InterventionOutcome";
+import { MultipleOutcome } from "features/intervention/MultipleOutcome/MultipleOutcome";
 import CheckSummary from "features/prescription/CheckSummary/CheckSummary";
 import SingleClinicalNotesModal from "features/prescription/ClinicalNotes/SingleClinicalNotesModal/SingleClinicalNotesModal";
 import FeaturesService from "services/features";
@@ -133,6 +134,7 @@ export default function ScreeningActions({
         afterSavePatient={afterSavePatient}
       />
       <InterventionOutcome />
+      <MultipleOutcome />
 
       <CheckSummary
         hasCpoe={prescription?.isCpoe}
