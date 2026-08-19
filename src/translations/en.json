@@ -687,8 +687,9 @@
 
   "multipleIntervention": {
     "title": "Bulk outcome",
-    "selectMultiple": "Select multiple",
+    "selectMultiple": "Enable multiple selection",
     "selected": "{{count}} selected",
+    "removeSelection": "Remove selection",
     "noPending": "There are no pending interventions to set an outcome for",
     "maxSelected": "A maximum of {{max}} interventions can be selected at a time",
     "applyOutcome": "Apply outcome",

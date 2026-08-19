@@ -691,8 +691,9 @@
 
   "multipleIntervention": {
     "title": "Desfecho múltiplo",
-    "selectMultiple": "Selecionar múltiplas",
+    "selectMultiple": "Ativar seleção múltipla",
     "selected": "{{count}} selecionadas",
+    "removeSelection": "Remover seleção",
     "noPending": "Não há intervenções pendentes para aplicar desfecho",
     "maxSelected": "Máximo de {{max}} intervenções selecionadas por vez",
     "applyOutcome": "Aplicar desfecho",

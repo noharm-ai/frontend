@@ -1,9 +1,7 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { CaretDownOutlined } from "@ant-design/icons";
 
-import Button from "components/Button";
 import Dropdown from "components/Dropdown";
 import Tooltip from "components/Tooltip";
 import notification from "components/notification";
@@ -51,7 +49,8 @@ export function MultipleOutcomeToolbar({ pendingIds, style }) {
         },
         {
           key: "cancel",
-          label: t("actions.cancel"),
+          label: t("multipleIntervention.removeSelection"),
+          disabled: !selectedRows.active,
         },
       ],
       onClick: ({ key }) => {
@@ -68,6 +67,7 @@ export function MultipleOutcomeToolbar({ pendingIds, style }) {
             );
             break;
           case "selectAll":
+            dispatch(setSelectedRowsActive(true));
             dispatch(
               setSelectedRows(pendingIds.slice(0, MAX_SELECTED_INTERVENTIONS)),
             );
@@ -93,6 +93,12 @@ export function MultipleOutcomeToolbar({ pendingIds, style }) {
     };
   };
 
+  const toggleMultipleSelection = () => {
+    if (!selectedRows.active) {
+      dispatch(setSelectedRowsActive(true));
+    }
+  };
+
   return (
     <div
       style={{
@@ -105,27 +111,25 @@ export function MultipleOutcomeToolbar({ pendingIds, style }) {
       {pendingIds.length === 0 ? (
         <Tooltip title={t("multipleIntervention.noPending")}>
           <span>
-            <Button disabled>
+            <Dropdown.Button disabled menu={{ items: [] }}>
               {t("multipleIntervention.selectMultiple")}
-            </Button>
+            </Dropdown.Button>
           </span>
         </Tooltip>
-      ) : selectedRows.active ? (
-        <Dropdown
-          menu={multipleActionsMenu()}
-          placement="bottomRight"
-          trigger={["click"]}
-        >
-          <Button type="primary" icon={<CaretDownOutlined />}>
-            {t("multipleIntervention.selected", {
-              count: selectedRows.list.length,
-            })}
-          </Button>
-        </Dropdown>
       ) : (
-        <Button onClick={() => dispatch(setSelectedRowsActive(true))}>
-          {t("multipleIntervention.selectMultiple")}
-        </Button>
+        <span className="bulk-outcome-actions">
+          <Dropdown.Button
+            menu={multipleActionsMenu()}
+            type={selectedRows.active ? "primary" : "default"}
+            onClick={toggleMultipleSelection}
+          >
+            {selectedRows.active
+              ? t("multipleIntervention.selected", {
+                  count: selectedRows.list.length,
+                })
+              : t("multipleIntervention.selectMultiple")}
+          </Dropdown.Button>
+        </span>
       )}
     </div>
   );

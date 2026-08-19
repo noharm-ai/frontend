@@ -79,18 +79,19 @@ async function openInterventionsTab(page: Page) {
   await page.getByRole("tab", { name: /Intervenções/ }).click();
 }
 
+/** The three-dot trigger on the right side of the bulk Dropdown.Button. */
+const openBulkMenu = (page: Page) =>
+  page.locator(".bulk-outcome-actions .ant-dropdown-trigger").click();
+
 async function selectAllPending(page: Page) {
-  await page
-    .getByRole("button", { name: "Selecionar múltiplas" })
-    .click();
-  await page.getByRole("button", { name: /selecionadas/ }).click();
+  await openBulkMenu(page);
   await page
     .getByRole("menuitem", { name: "Selecionar todas pendentes" })
     .click();
 }
 
 async function applyOutcome(page: Page, outcomeLabel: string) {
-  await page.getByRole("button", { name: /selecionadas/ }).click();
+  await openBulkMenu(page);
   await page.getByRole("menuitem", { name: outcomeLabel, exact: true }).click();
 
   // confirm stage of the bulk modal
@@ -390,7 +391,7 @@ test("applies a bulk outcome from the interventions list page", async ({
 
   // nothing pending anymore: the bulk button stays visible but disabled
   const bulkButton = page.getByRole("button", {
-    name: "Selecionar múltiplas",
+    name: "Ativar seleção múltipla",
   });
   await expect(bulkButton).toBeVisible();
   await expect(bulkButton).toBeDisabled();
