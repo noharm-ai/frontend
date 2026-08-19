@@ -8,6 +8,7 @@ import {
   FullscreenOutlined,
   PrinterOutlined,
   FileTextOutlined,
+  EyeInvisibleOutlined,
 } from "@ant-design/icons";
 import DOMPurify from "dompurify";
 
@@ -54,8 +55,10 @@ export default function View({
 }) {
   const dispatch = useDispatch();
   const paperContainerRef = useRef(null);
+  const paperRef = useRef(null);
   const menuRef = useRef(null);
   const selectionRangeRef = useRef(null);
+  const selectionElementRef = useRef(null);
   const modalRef = useRef(null);
   const [prevSelected, setPrevSelected] = useState(selected);
   const [prevSaveStatus, setPrevSaveStatus] = useState(saveStatus);
@@ -91,7 +94,13 @@ export default function View({
     window.open(helpLink);
   };
 
+  // evoluções originadas de prescrição não podem ser anotadas
+  const isPrescriptionSource = () => selected?.source === "prescription";
+  const canAnnotate = () => !disableSelection && !isPrescriptionSource();
+
   const annotate = (option) => {
+    if (!canAnnotate()) return;
+
     const range = selectionRangeRef.current;
     const elm = document.createElement("span");
     const close = document.createElement("a");
@@ -112,7 +121,41 @@ export default function View({
 
     update({
       id: selected.id,
-      text: paperContainerRef.current.firstChild.innerHTML,
+      text: paperRef.current.innerHTML,
+    });
+  };
+
+  const redact = () => {
+    if (!update || !canAnnotate()) return;
+
+    const elm = selectionElementRef.current;
+    if (!elm) return;
+
+    DefaultModal.confirm({
+      title: "Remover informação sensível",
+      content: (
+        <>
+          <p>
+            O texto <strong>{elm.innerText}</strong> será substituído por{" "}
+            <strong>***</strong> nesta evolução.
+          </p>
+          <p>Esta ação não pode ser desfeita. Deseja continuar?</p>
+        </>
+      ),
+      okText: "Sim, remover",
+      okButtonProps: { danger: true },
+      cancelText: "Cancelar",
+      onOk: () => {
+        elm.replaceWith(document.createTextNode("***"));
+        selectionElementRef.current = null;
+
+        modalRef.current?.destroy();
+
+        update({
+          id: selected.id,
+          text: paperRef.current.innerHTML,
+        });
+      },
     });
   };
 
@@ -131,7 +174,7 @@ export default function View({
       el.replaceWith(document.createTextNode(el.innerText));
       update({
         id: selected.id,
-        text: paperContainerRef.current.firstChild.innerHTML,
+        text: paperRef.current.innerHTML,
       });
     }
   };
@@ -168,7 +211,7 @@ export default function View({
   };
 
   const selectionChange = () => {
-    if (isValidSelection() && !disableSelection) {
+    if (canAnnotate() && isValidSelection()) {
       const selection = window.getSelection();
       const range = selection.getRangeAt(0);
 
@@ -181,6 +224,7 @@ export default function View({
       range.insertNode(elm);
 
       selectionRangeRef.current = range;
+      selectionElementRef.current = elm;
 
       const modal = DefaultModal.info({
         title: "Anotar evolução",
@@ -199,6 +243,19 @@ export default function View({
             <div>Texto anotado: {selection.toString()}</div>
             <div>Informe a categoria desta anotação:</div>
             <div>{menu()}</div>
+            {update && (
+              <div style={{ marginTop: "1rem" }}>
+                <div>Ou remova esta informação da evolução:</div>
+                <Button
+                  danger
+                  icon={<EyeInvisibleOutlined />}
+                  style={{ marginTop: "0.5rem" }}
+                  onClick={redact}
+                >
+                  Substituir por ***
+                </Button>
+              </div>
+            )}
           </>
         ),
       });
@@ -474,12 +531,17 @@ export default function View({
                   />
                 )}
                 <Paper
+                  ref={paperRef}
                   $t={t}
                   $selectedIndicators={selectedIndicators}
                   dangerouslySetInnerHTML={{
                     __html: html,
                   }}
-                  onMouseUp={(e) => selectionChange(e)}
+                  onMouseUp={
+                    isPrescriptionSource()
+                      ? undefined
+                      : (e) => selectionChange(e)
+                  }
                   onClick={(e) => removeAnnotation(e)}
                   className={`${"annotation-enabled"}`}
                 />

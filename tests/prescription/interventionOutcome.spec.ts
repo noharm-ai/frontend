@@ -1,4 +1,11 @@
 import { test, expect } from "@playwright/test";
+import {
+  interventionReasonSelect,
+  openDrugIntervention,
+  openPatientIntervention,
+  saveInterventionAs,
+  selectOption,
+} from "../support/prescription";
 
 test("outcome: suspension", async ({ page }) => {
   await page.goto("/prescricao/198");
@@ -9,25 +16,19 @@ test("outcome: suspension", async ({ page }) => {
   await page
     .getByText("Paciente 99")
     .waitFor({ state: "visible", timeout: 30000 });
-  await page
-    .locator(".ant-table-tbody tr")
-    .nth(0)
-    .getByRole("button")
-    .nth(1)
-    .click();
 
-  await page
-    .locator(".ant-select.ant-select-loading")
-    .waitFor({ state: "detached" });
-  await page.locator(".ant-select").click();
+  await openDrugIntervention(page, 0);
+
+  const reasons = await interventionReasonSelect(page);
+
+  await reasons.click();
   await page.locator(".rc-virtual-list-holder-inner").hover();
   await page.mouse.wheel(0, 1000);
 
-  await page.getByText("Suspensão da terapia").waitFor({ state: "visible" });
-  await page.getByText("Suspensão da terapia").click();
+  await selectOption(page, "Suspensão da terapia").click();
 
   // // close dropdown
-  await page.locator(".ant-select").click();
+  await reasons.click();
 
   await expect(page.getByText("Tipo economia: Suspensão")).toBeVisible({
     timeout: 30000,
@@ -35,10 +36,7 @@ test("outcome: suspension", async ({ page }) => {
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
-  await page
-    .locator("#btn-interv-save-action button.ant-dropdown-trigger")
-    .hover();
-  await page.getByText("Salvar e marcar como Aceita").click();
+  await saveInterventionAs(page, "Salvar e marcar como Aceita");
 
   await page.locator(".btn-calc-details-origin").click();
   await expect(
@@ -105,25 +103,18 @@ test("outcome: substitution", async ({ page }) => {
   await page
     .getByText("Paciente 99")
     .waitFor({ state: "visible", timeout: 30000 });
-  await page
-    .locator(".ant-table-tbody tr")
-    .nth(1)
-    .getByRole("button")
-    .nth(1)
-    .click();
+  await openDrugIntervention(page, 1);
 
-  await page
-    .locator(".ant-select.ant-select-loading")
-    .waitFor({ state: "detached" });
-  await page.locator(".ant-select").click();
+  const reasons = await interventionReasonSelect(page);
+
+  await reasons.click();
   await page.locator(".rc-virtual-list-holder-inner").hover();
   await page.mouse.wheel(0, 1000);
 
-  await page.getByText("Substituição").waitFor({ state: "visible" });
-  await page.getByText("Substituição").click();
+  await selectOption(page, "Substituição").click();
 
   // // close dropdown
-  await page.locator(".ant-select").nth(0).click();
+  await reasons.click();
 
   await expect(page.getByText("Tipo economia: Substituição")).toBeVisible({
     timeout: 30000,
@@ -131,10 +122,7 @@ test("outcome: substitution", async ({ page }) => {
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
-  await page
-    .locator("#btn-interv-save-action button.ant-dropdown-trigger")
-    .hover();
-  await page.getByText("Salvar e marcar como Aceita").click();
+  await saveInterventionAs(page, "Salvar e marcar como Aceita");
 
   // price origin
   await expect(page.locator("#origin-price-per-day").first()).toHaveValue(
@@ -195,22 +183,19 @@ test("outcome: custom", async ({ page }) => {
     .getByText("Paciente 99")
     .waitFor({ state: "visible", timeout: 30000 });
 
-  await page.locator(".gtm-bt-patient-intervention").first().click();
-  await page
-    .locator(".ant-select.ant-select-loading")
-    .waitFor({ state: "detached" });
-  await page.locator(".ant-select").click();
-  await page.getByText("Alta antecipada").click();
+  await openPatientIntervention(page);
+
+  const reasons = await interventionReasonSelect(page);
+
+  await reasons.click();
+  await selectOption(page, "Alta antecipada").click();
 
   // // close dropdown
-  await page.locator(".ant-select").click();
+  await reasons.click();
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste paciente");
-  await page
-    .locator("#btn-interv-save-action button.ant-dropdown-trigger")
-    .hover();
-  await page.getByText("Salvar e marcar como Aceita").click();
+  await saveInterventionAs(page, "Salvar e marcar como Aceita");
 
   await page.getByRole("button", { name: "Aceitar Intervenção" }).click();
   await expect(page.getByText("Quantidade de Dias de")).toBeVisible({
@@ -249,25 +234,18 @@ test("outcome: suspension (not accepted)", async ({ page }) => {
   await page
     .getByText("Paciente 99")
     .waitFor({ state: "visible", timeout: 30000 });
-  await page
-    .locator(".ant-table-tbody tr")
-    .nth(2)
-    .getByRole("button")
-    .nth(1)
-    .click();
+  await openDrugIntervention(page, 2);
 
-  await page
-    .locator(".ant-select.ant-select-loading")
-    .waitFor({ state: "detached" });
-  await page.locator(".ant-select").click();
+  const reasons = await interventionReasonSelect(page);
+
+  await reasons.click();
   await page.locator(".rc-virtual-list-holder-inner").hover();
   await page.mouse.wheel(0, 1000);
 
-  await page.getByText("Suspensão da terapia").waitFor({ state: "visible" });
-  await page.getByText("Suspensão da terapia").click();
+  await selectOption(page, "Suspensão da terapia").click();
 
   // // close dropdown
-  await page.locator(".ant-select").click();
+  await reasons.click();
 
   await expect(page.getByText("Tipo economia: Suspensão")).toBeVisible({
     timeout: 30000,
@@ -275,10 +253,7 @@ test("outcome: suspension (not accepted)", async ({ page }) => {
 
   await page.getByRole("textbox").click();
   await page.getByRole("textbox").fill("teste");
-  await page
-    .locator("#btn-interv-save-action button.ant-dropdown-trigger")
-    .hover();
-  await page.getByText("Salvar e marcar como Não Aceita").nth(0).click();
+  await saveInterventionAs(page, "Salvar e marcar como Não Aceita");
 
   await expect(
     page

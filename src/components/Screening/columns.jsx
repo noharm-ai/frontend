@@ -1150,7 +1150,13 @@ const alertsColumn = (bag) => ({
 });
 
 const relationColumn = (bag) => ({
-  title: "Prescrição vigente",
+  title: bag.conciliationChecked ? (
+    <Tooltip title="Conciliação checada: esta coluna mostra a prescrição que estava vigente no momento da checagem. Para ver a prescrição vigente atual, desfaça a checagem.">
+      Prescrição vigente na checagem <InfoIcon />
+    </Tooltip>
+  ) : (
+    "Prescrição vigente"
+  ),
   width: "45%",
   render: (text, prescription) => {
     return (

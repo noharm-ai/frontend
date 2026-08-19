@@ -22,8 +22,34 @@ export async function loginWithFeatures(
   mockApi: MockApi,
   features: string[],
 ) {
+  return loginWithAuth(page, mockApi, { features });
+}
+
+/**
+ * Same as loginWithFeatures, but customizes the permission list
+ * (user.account.permissions, read by services/PermissionService.js).
+ */
+export async function loginWithPermissions(
+  page: Page,
+  mockApi: MockApi,
+  permissions: string[],
+) {
+  return loginWithAuth(page, mockApi, { permissions });
+}
+
+/**
+ * Logs in with arbitrary overrides merged into the /authenticate payload, for
+ * fields that are neither features nor permissions (onboardingStatus, training,
+ * ...). Combine them freely in a single call; an `undefined` value omits the key
+ * entirely, since the payload is serialized with JSON.stringify.
+ */
+export async function loginWithAuth(
+  page: Page,
+  mockApi: MockApi,
+  overrides: Record<string, unknown>,
+) {
   const auth = loadFixture<Record<string, unknown>>("auth/authenticate.json");
-  mockApi.override("POST /authenticate", { json: { ...auth, features } });
+  mockApi.override("POST /authenticate", { json: { ...auth, ...overrides } });
 
   await page.goto("/login");
   await page.getByPlaceholder("Email").fill("e2e@noharm.ai");

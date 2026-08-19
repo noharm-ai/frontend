@@ -1,9 +1,10 @@
 import React from "react";
-import { EditOutlined } from "@ant-design/icons";
+import { EditOutlined, EyeOutlined } from "@ant-design/icons";
 import { Tag } from "antd";
 
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
+import { canWriteTag } from "./tagPermissions";
 
 const columns = (setTag, dispatch, t) => {
   return [
@@ -42,11 +43,20 @@ const columns = (setTag, dispatch, t) => {
       width: 70,
       align: "center",
       render: (text, record) => {
+        // write access depends on the tag type: WRITE_PATIENT_TAGS covers
+        // navigation tags only
+        const label = canWriteTag(record.tagType)
+          ? "Editar marcador"
+          : "Visualizar marcador";
+
         return (
-          <Tooltip title="Editar marcador">
+          <Tooltip title={label}>
             <Button
               type="primary"
-              icon={<EditOutlined />}
+              aria-label={label}
+              icon={
+                canWriteTag(record.tagType) ? <EditOutlined /> : <EyeOutlined />
+              }
               onClick={() => dispatch(setTag(record))}
             ></Button>
           </Tooltip>

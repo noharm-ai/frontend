@@ -11,6 +11,8 @@ export interface ITrainingModule {
   position: number;
   totalLessons: number;
   totalLessonsFinished: number;
+  // effective for the logged user: the backend resolves the module's schema
+  // scope and audience before flagging it
   mandatory: boolean;
 }
 

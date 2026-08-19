@@ -46,7 +46,6 @@ import adminSubstanceForm from "features/admin/Substance/SubstanceFormSlice";
 import adminDrugReferenceDrawer from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
 import adminTag from "features/admin/Tag/TagSlice";
 import adminProtocol from "features/admin/Protocol/ProtocolSlice";
-import adminReport from "features/admin/Report/ReportSlice";
 import adminGlobalMemory from "features/admin/GlobalMemory/GlobalMemorySlice";
 import adminExamForm from "features/admin/Exam/ExamForm/ExamFormSlice";
 
@@ -90,7 +89,6 @@ const adminReducers = combineReducers({
   drugReferenceDrawer: adminDrugReferenceDrawer,
   tag: adminTag,
   protocol: adminProtocol,
-  report: adminReport,
   globalMemory: adminGlobalMemory,
 });
 

@@ -150,7 +150,13 @@ test("sentence describes every item behind the stored ids", async ({
   mockApi.override("GET /admin/protocol/department/list", {
     json: {
       status: "success",
-      data: [{ idDepartment: "7", name: "UTI Adulto" }],
+      data: [
+        {
+          idDepartment: "7",
+          name: "UTI Adulto",
+          segments: [{ id: "1", name: "Segmento UTI" }],
+        },
+      ],
     },
   });
 

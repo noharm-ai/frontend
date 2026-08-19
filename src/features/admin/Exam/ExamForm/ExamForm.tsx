@@ -10,6 +10,7 @@ import { getErrorMessage } from "utils/errorHandler";
 import { setExam, saveExam, fetchExam } from "./ExamFormSlice";
 import { ExamFormBase } from "./ExamFormBase";
 import { Form } from "styles/Form.style";
+import { canWriteExamConfig } from "../examPermissions";
 
 interface Props {
   onAfterSave?: () => void;
@@ -20,6 +21,7 @@ export function ExamForm({ onAfterSave }: Props) {
   const dispatch = useAppDispatch();
   const data = useAppSelector((state) => state.admin.examForm.single.data);
   const status = useAppSelector((state) => state.admin.examForm.single.status);
+  const canWrite = canWriteExamConfig();
 
   const validationSchema = Yup.object().shape({
     idSegment: Yup.string().required(t("validation.requiredField")),
@@ -75,11 +77,13 @@ export function ExamForm({ onAfterSave }: Props) {
           confirmLoading={status === "loading"}
           okButtonProps={{
             disabled: status === "loading",
+            style: canWrite ? undefined : { display: "none" },
           }}
           okText="Salvar"
           cancelButtonProps={{
             disabled: status === "loading",
           }}
+          cancelText={canWrite ? undefined : t("actions.close")}
           maskClosable={false}
         >
           <header>

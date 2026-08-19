@@ -20,6 +20,12 @@ export type ColorPalette =
   | "pastel"
   | "contrast";
 
+/** "palette" = automatic colors; "custom" = colors picked by the user. */
+export type ColorMode = "palette" | "custom";
+
+/** What a manual color is attached to. See `getColorScope`. */
+export type ColorScope = "series" | "category";
+
 export interface ReferenceLine {
   value: number;
   label?: string;
@@ -56,6 +62,20 @@ export interface ChartConfig {
   referenceLine?: ReferenceLine;
   showTitle?: boolean;
   colorPalette?: ColorPalette;
+  /** Defaults to "palette" (automatic) when unset, as on charts saved before this field. */
+  colorMode?: ColorMode;
+  /**
+   * Manual color per value series, keyed by series key (column name, series id
+   * or "__count__"). Only applied when `colorMode` is "custom" and the chart is
+   * colored per series. Series left out keep the automatic color.
+   */
+  seriesColors?: Record<string, string>;
+  /**
+   * Manual color per X category (bar/slice), keyed by the category label.
+   * Only applied when `colorMode` is "custom" and the chart is colored per
+   * category. Categories left out keep the automatic color.
+   */
+  categoryColors?: Record<string, string>;
   stacked?: boolean;
   /** Upper bound of the gauge dial; auto-computed from the value when unset. */
   gaugeMax?: number;

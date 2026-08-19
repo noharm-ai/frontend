@@ -58,6 +58,8 @@ export const Wrapper = styled(Layout)`
   }
 `;
 
+const trainedGreen = "#70bdc4";
+
 export const UserDataContainer = styled.div`
   display: flex;
   cursor: pointer;
@@ -69,9 +71,34 @@ export const UserDataContainer = styled.div`
   }
 
   .user-avatar {
-    margin-right: 10px;
     background: rgb(169, 145, 214);
     transition: background 0.5s ${timingFunctions("easeOutQuint")};
+  }
+`;
+
+/* mandatory training completed: green ring around the avatar with a check
+   sitting at the bottom of the ring */
+export const AvatarBadge = styled.div`
+  position: relative;
+  display: inline-flex;
+  margin-right: 14px;
+
+  &.trained .user-avatar {
+    box-shadow:
+      0 0 0 2px #fff,
+      0 0 0 4px ${trainedGreen};
+  }
+
+  .training-badge {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    color: ${trainedGreen};
+    font-size: 18px;
+    line-height: 1;
+    background: #fff;
+    border: 2px solid #fff;
+    border-radius: 50%;
   }
 `;
 

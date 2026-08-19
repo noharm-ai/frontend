@@ -24,6 +24,8 @@ import { trackSupportAction, TrackedSupportAction } from "utils/tracker";
 
 import { ChatHeader } from "src/features/support/SupportFormAI/SupportFormAI.style";
 import { SupportInfo } from "./SupportInfo/SupportInfo";
+import { PendingTrainingNotice } from "./PendingTrainingNotice/PendingTrainingNotice";
+import { useTicketCreationBlock } from "./useTicketCreationBlock";
 import { SupportKnowledgeBase } from "./SupportKnowledgeBase/SupportKnowledgeBase";
 import { SupportFormAI } from "./SupportFormAI/SupportFormAI";
 import { KnowledgeBasePathEnum } from "src/models/KnowledgeBasePathEnum";
@@ -44,6 +46,9 @@ export function SupportDrawer() {
   const kbList = useAppSelector((state) => state.support.knowledgeBase.list);
   const [showForm, setShowForm] = useState(false);
   const [aiModalOpen, setAiModalOpen] = useState(false);
+  const { blocked, requiresUrgent } = useTicketCreationBlock();
+  // pending training with no ADMIN_SUPPORT: no ticket path at all
+  const ticketBlocked = blocked && !requiresUrgent;
 
   useEffect(() => {
     if (supportDrawerOpen) {
@@ -115,10 +120,12 @@ export function SupportDrawer() {
           >
             Voltar
           </Button>
-          {PermissionService().has(Permission.WRITE_SUPPORT) ? (
-            <SupportForm />
-          ) : (
+          {!PermissionService().has(Permission.WRITE_SUPPORT) ? (
             <SupportInfo />
+          ) : ticketBlocked ? (
+            <PendingTrainingNotice />
+          ) : (
+            <SupportForm />
           )}
         </>
       )}
@@ -140,7 +147,7 @@ export function SupportDrawer() {
             </Text>
           )}
           <Row gutter={12}>
-            <Col span={12}>
+            <Col span={ticketBlocked ? 24 : 12}>
               <Card
                 hoverable
                 onClick={() => handleOpenSupportAI()}
@@ -162,29 +169,41 @@ export function SupportDrawer() {
                 </Text>
               </Card>
             </Col>
-            <Col span={12}>
-              <Card
-                hoverable
-                onClick={() => handleOpenSupportForm()}
-                style={{
-                  cursor: "pointer",
-                  textAlign: "center",
-                  borderRadius: 8,
-                }}
-                styles={{ body: { padding: "16px 12px" } }}
-              >
-                <CustomerServiceOutlined
-                  style={{ fontSize: 28, color: "#2e3c5a", marginBottom: 8 }}
-                />
-                <div style={{ fontWeight: 600, marginBottom: 4 }}>
-                  Abrir chamado
-                </div>
-                <Text type="secondary" style={{ fontSize: 12 }}>
-                  Falar com nossa equipe
-                </Text>
-              </Card>
-            </Col>
+            {!ticketBlocked && (
+              <Col span={12}>
+                <Card
+                  hoverable
+                  onClick={() => handleOpenSupportForm()}
+                  style={{
+                    cursor: "pointer",
+                    textAlign: "center",
+                    borderRadius: 8,
+                  }}
+                  styles={{ body: { padding: "16px 12px" } }}
+                >
+                  <CustomerServiceOutlined
+                    style={{ fontSize: 28, color: "#2e3c5a", marginBottom: 8 }}
+                  />
+                  <div style={{ fontWeight: 600, marginBottom: 4 }}>
+                    {requiresUrgent ? "Abrir chamado urgente" : "Abrir chamado"}
+                  </div>
+                  <Text type="secondary" style={{ fontSize: 12 }}>
+                    {requiresUrgent
+                      ? "Treinamento pendente — apenas urgências"
+                      : "Falar com nossa equipe"}
+                  </Text>
+                </Card>
+              </Col>
+            )}
           </Row>
+
+          {/* the AI assistant and the knowledge base stay available: a blocked
+              user may still get the help they came for without a ticket */}
+          {blocked && (
+            <div style={{ marginTop: 12 }}>
+              <PendingTrainingNotice canOpenUrgent={requiresUrgent} />
+            </div>
+          )}
           <div style={{ textAlign: "center", marginTop: 12 }}>
             <Button
               type="link"

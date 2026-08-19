@@ -73,6 +73,9 @@ const makeDefaultDraft = (): ChartConfig => ({
   referenceLine: undefined,
   showTitle: true,
   colorPalette: "default",
+  colorMode: "palette",
+  seriesColors: {},
+  categoryColors: {},
   stacked: false,
   filters: [],
 });
@@ -137,7 +140,7 @@ export function ChartWizard({
   const patchDraft = (patch: Partial<ChartConfig>) =>
     setDraft((prev) => ({ ...prev, ...patch }));
 
-  const stepProps = { draft, patchDraft, keys, schema };
+  const stepProps = { draft, patchDraft, keys, schema, data };
 
   const steps = useMemo(() => {
     const list: { key: string; title: string; content: React.ReactNode; valid: boolean }[] = [];
@@ -168,7 +171,7 @@ export function ChartWizard({
     );
     return list;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isEditing, openToAgent, draft, schema, keys, onGenerateCharts]);
+  }, [isEditing, openToAgent, draft, schema, keys, data, onGenerateCharts]);
 
   const current = steps[Math.min(stepIndex, steps.length - 1)];
   const isLast = stepIndex === steps.length - 1;

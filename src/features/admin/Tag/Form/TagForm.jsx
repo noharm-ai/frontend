@@ -12,6 +12,7 @@ import { getErrorMessage } from "utils/errorHandler";
 import { Form } from "styles/Form.style";
 
 import { setTag, upsertTag } from "../TagSlice";
+import { canCreateTags, canWriteTag } from "../tagPermissions";
 import Base from "./Base";
 
 export function TagForm({ ...props }) {
@@ -20,6 +21,9 @@ export function TagForm({ ...props }) {
   const formData = useSelector((state) => state.admin.tag.single.data);
   const status = useSelector((state) => state.admin.tag.single.status);
   const isSaving = status === "loading";
+  const canWrite = formData?.new
+    ? canCreateTags()
+    : canWriteTag(formData?.tagType);
 
   const validationSchema = Yup.object().shape({
     name: Yup.string().nullable().required(t("validation.requiredField")),
@@ -66,10 +70,11 @@ export function TagForm({ ...props }) {
           onCancel={onCancel}
           onOk={handleSubmit}
           okText={t("actions.save")}
-          cancelText={t("actions.cancel")}
+          cancelText={canWrite ? t("actions.cancel") : t("actions.close")}
           confirmLoading={isSaving}
           okButtonProps={{
             disabled: isSaving,
+            style: canWrite ? undefined : { display: "none" },
           }}
           cancelButtonProps={{
             disabled: isSaving,

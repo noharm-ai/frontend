@@ -25,6 +25,7 @@ export const getCustomClinicalNote = (
     ...prescription.data.prescriptionRaw,
     ...prescription.data.solutionRaw,
     ...prescription.data.proceduresRaw,
+    ...prescription.data.dietRaw,
   ];
   const interventions = getInterventionList(prescription, t);
   const myInterventions = getMyInterventionList(

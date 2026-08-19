@@ -8,6 +8,7 @@ import Button from "components/Button";
 import Tag from "components/Tag";
 import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
+import { canWriteExamConfig } from "features/admin/Exam/examPermissions";
 
 import ValuedExams from "./ValuedExams";
 import TextualExams from "./TextualExams";
@@ -79,7 +80,7 @@ const columns = (t, sortedInfo) => {
     },
   ];
 
-  if (PermissionService().has(Permission.ADMIN_EXAMS)) {
+  if (canWriteExamConfig()) {
     cols.push({
       title: "Ações",
       key: "operations",

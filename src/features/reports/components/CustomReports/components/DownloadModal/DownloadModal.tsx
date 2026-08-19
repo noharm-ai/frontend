@@ -8,7 +8,7 @@ import {
   BarChartOutlined,
   EyeOutlined,
 } from "@ant-design/icons";
-import { List, Avatar, MenuProps, Alert } from "antd";
+import { List, Avatar, MenuProps, Alert, Typography } from "antd";
 import { useTranslation } from "react-i18next";
 
 import { useAppDispatch, useAppSelector } from "src/store";
@@ -262,6 +262,21 @@ export function DownloadModal() {
               position: "bottom",
             }}
           />
+
+          {data.processed_at && (
+            <div style={{ marginTop: "1rem", lineHeight: 1.4 }}>
+              <Typography.Text
+                type="secondary"
+                style={{ fontSize: 12, display: "block" }}
+              >
+                Último processamento
+                {data.processed_by_name
+                  ? ` por ${data.processed_by_name}`
+                  : ""}{" "}
+                em {formatDateTime(data.processed_at)}
+              </Typography.Text>
+            </div>
+          )}
         </>
       )}
     </Modal>

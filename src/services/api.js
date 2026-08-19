@@ -506,6 +506,10 @@ const updatePassword = (bearerToken, { ...params }) => {
   return instance.put(`${endpoints.user}`, params, setHeaders(bearerToken));
 };
 
+const completeOnboarding = () => {
+  return instance.post(`${endpoints.user}/complete-onboarding`, {}, setHeaders());
+};
+
 const resetPassword = (token, password) => {
   return instance.post(
     `${endpoints.user}/reset`,
@@ -953,6 +957,9 @@ api.userAdmin.getUsers = (params = {}) =>
 api.userAdmin.getUserManagers = (params = {}) =>
   instance.get(`/user-admin/manager-list`, { params, ...setHeaders() });
 
+api.userAdmin.getContactList = (params = {}) =>
+  instance.get(`/user-admin/contact-list`, { params, ...setHeaders() });
+
 /**
  * Segment namespace
  */
@@ -1108,6 +1115,7 @@ const methods = {
   putMemory,
   putMemoryUnique,
   updatePassword,
+  completeOnboarding,
   forgotPassword,
   resetPassword,
   getClinicalNotes,

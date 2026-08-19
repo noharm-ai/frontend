@@ -1,5 +1,11 @@
-import { AggregationType, ChartConfig, DateGrouping } from "./types";
+import { AggregationType, ChartConfig, ColorScope, DateGrouping } from "./types";
 import { compileExpr, evalCompiled, type ExprNode } from "./expression/exprEngine";
+import {
+  autoColorAt,
+  getColorScope,
+  getCustomColors,
+  getPaletteColors,
+} from "./palettes";
 
 const AGGREGATION_LABEL: Record<AggregationType, string> = {
   none: "",
@@ -110,18 +116,6 @@ function niceCeil(v: number): number {
   return Math.ceil(v / mag) * mag;
 }
 
-// --- Color palettes ---
-
-const COLOR_PALETTES: Record<string, string[]> = {
-  default:  [],
-  noharm:   ["#2e3c5a", "#7ebe9a", "#70bdc3", "#e46666", "#f2b530", "#696766"],
-  blues:    ["#1a237e", "#1565c0", "#1976d2", "#42a5f5", "#90caf9", "#bbdefb"],
-  greens:   ["#1b5e20", "#388e3c", "#66bb6a", "#a5d6a7", "#c8e6c9", "#43a047"],
-  warm:     ["#bf360c", "#e64a19", "#ff7043", "#ffa726", "#ffca28", "#ffee58"],
-  pastel:   ["#b39ddb", "#90caf9", "#80cbc4", "#a5d6a7", "#ffcc80", "#f48fb1"],
-  contrast: ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"],
-};
-
 // --- Value-series abstraction ---
 
 interface ValueSeries {
@@ -131,15 +125,31 @@ interface ValueSeries {
 
 // --- Gauge (single scalar over the whole filtered dataset) ---
 
+/** The gauge's single value series — also the key manual colors are stored under. */
+function gaugeValueSeries(config: ChartConfig): ValueSeries {
+  if (config.series && config.series.length > 0) {
+    const s = config.series[0];
+    return { key: s.id, name: s.label?.trim() || s.expr };
+  }
+  const agg =
+    config.aggregation && config.aggregation !== "none" ? config.aggregation : "count";
+  if (agg === "count" || agg === "count_pct") {
+    return { key: "__count__", name: AGGREGATION_LABEL.count };
+  }
+  const yKey = config.yKeys.find((k) => k !== "__count__");
+  return {
+    key: yKey ?? "__count__",
+    name: yKey ? `${AGGREGATION_LABEL[agg]} de ${yKey}` : AGGREGATION_LABEL[agg],
+  };
+}
+
 function getGaugeOption(data: any[], config: ChartConfig) {
   const useExpression = !!config.series && config.series.length > 0;
+  const { key, name } = gaugeValueSeries(config);
   let value = 0;
-  let name = "";
 
   if (useExpression) {
-    const s = config.series![0];
-    name = s.label?.trim() || s.expr;
-    const { ast } = compileExpr(s.expr);
+    const { ast } = compileExpr(config.series![0].expr);
     if (ast) {
       try {
         value = evalCompiled(ast as ExprNode, data);
@@ -152,21 +162,17 @@ function getGaugeOption(data: any[], config: ChartConfig) {
       config.aggregation && config.aggregation !== "none" ? config.aggregation : "count";
     if (agg === "count" || agg === "count_pct") {
       value = data.length;
-      name = AGGREGATION_LABEL.count;
     } else {
       const yKey = config.yKeys.find((k) => k !== "__count__");
-      const vals = yKey
-        ? data.map((i) => Number(i[yKey])).filter((v) => !isNaN(v))
-        : [];
+      const vals = yKey ? data.map((i) => Number(i[yKey])).filter((v) => !isNaN(v)) : [];
       value = aggregateVals(agg, vals);
-      name = yKey ? `${AGGREGATION_LABEL[agg]} de ${yKey}` : AGGREGATION_LABEL[agg];
     }
   }
 
   const rounded = Number.isFinite(value) ? Math.round(value * 100) / 100 : 0;
   const max = config.gaugeMax && config.gaugeMax > 0 ? config.gaugeMax : niceCeil(rounded);
-  const colors = COLOR_PALETTES[config.colorPalette ?? "default"] ?? [];
-  const accent = colors[0];
+  const colors = getPaletteColors(config.colorPalette);
+  const accent = getCustomColors(config, "series")?.[key] ?? colors[0];
   const hasTitle = config.showTitle !== false;
 
   return {
@@ -200,11 +206,20 @@ function getGaugeOption(data: any[], config: ChartConfig) {
   };
 }
 
-// --- Main ---
+// --- Data preparation ---
 
-export const getChartOption = (data: any[], config: ChartConfig) => {
-  if (config.type === "gauge") return getGaugeOption(data, config);
+interface PreparedChart {
+  processedData: any[];
+  valueSeries: ValueSeries[];
+  isCountPct: boolean;
+}
 
+/**
+ * Turns raw rows into the sorted, trimmed rows the chart plots plus the list of
+ * value series. Shared by the renderer and by `getColorTargets`, so the color
+ * pickers always list exactly the series/categories that end up on screen.
+ */
+function prepareChart(data: any[], config: ChartConfig): PreparedChart {
   const dateGrouping: DateGrouping = config.dateGrouping ?? "none";
   const useExpression = !!config.series && config.series.length > 0;
 
@@ -289,7 +304,6 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
   }
 
   const primaryKey = valueSeries[0]?.key;
-  const primaryName = valueSeries[0]?.name ?? "";
 
   // Sort by value
   const sortOrder = config.sortOrder ?? "none";
@@ -332,9 +346,105 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
     }));
   }
 
+  return { processedData, valueSeries, isCountPct };
+}
+
+// --- Manual colors ---
+
+export interface ColorTarget {
+  /** Key the manual color is stored under (series key or category label). */
+  key: string;
+  label: string;
+  /** Color the chart uses for this target when no manual color is set. */
+  autoColor: string;
+}
+
+/**
+ * The series or categories of `config` that can be individually colored, in the
+ * order they are drawn. `autoColor` is what the chart shows today, so a picker
+ * seeded with it produces no visual change until the user edits it.
+ */
+export function getColorTargets(
+  data: any[],
+  config: ChartConfig,
+): { scope: ColorScope; targets: ColorTarget[] } {
+  if (config.type === "gauge") {
+    const { key, name } = gaugeValueSeries(config);
+    return {
+      scope: "series",
+      targets: [{ key, label: name || "Valor", autoColor: autoColorAt(config.colorPalette, 0) }],
+    };
+  }
+
+  const { processedData, valueSeries } = prepareChart(data, config);
+  const scope = getColorScope(config, valueSeries.length);
+
+  if (scope === "series") {
+    return {
+      scope,
+      targets: valueSeries.map((vs, i) => ({
+        key: vs.key,
+        label: vs.name,
+        autoColor: autoColorAt(config.colorPalette, i),
+      })),
+    };
+  }
+
+  // Pie and funnel give each slice its own automatic color; a single-series bar
+  // chart draws every bar in the series color, so they all start out equal.
+  const perCategoryAuto = config.type === "pie" || config.type === "funnel";
+  const seen = new Set<string>();
+  const targets: ColorTarget[] = [];
+  processedData.forEach((item) => {
+    const label = String(item.__xKey__ ?? "");
+    if (seen.has(label)) return;
+    seen.add(label);
+    targets.push({
+      key: label,
+      label,
+      autoColor: autoColorAt(config.colorPalette, perCategoryAuto ? targets.length : 0),
+    });
+  });
+
+  return { scope, targets };
+}
+
+/** Wraps a raw data point so a manual color can be attached to it. */
+function withItemColor(point: any, color: string | undefined) {
+  if (!color) return point;
+  const base =
+    point !== null && typeof point === "object" ? point : { value: point };
+  return { ...base, itemStyle: { ...(base.itemStyle ?? {}), color } };
+}
+
+// --- Main ---
+
+export const getChartOption = (data: any[], config: ChartConfig) => {
+  if (config.type === "gauge") return getGaugeOption(data, config);
+
+  const { processedData, isCountPct, valueSeries } = prepareChart(data, config);
+  const primaryKey = valueSeries[0]?.key;
+  const primaryName = valueSeries[0]?.name ?? "";
+
+  const colorScope = getColorScope(config, valueSeries.length);
+  const customColors = getCustomColors(config, colorScope);
+  const categoryColor = (label: any): string | undefined =>
+    colorScope === "category" ? customColors?.[String(label ?? "")] : undefined;
+
   const xData = processedData.map((item) => item.__xKey__);
   const showLabels = config.showLabels ?? false;
-  const colors = COLOR_PALETTES[config.colorPalette ?? "default"] ?? [];
+  const colors = getPaletteColors(config.colorPalette);
+  // When colors are assigned per series, resolve each series' color (custom or
+  // automatic) and drive the chart-level `color` from it, so the LEGEND matches
+  // the chosen colors — ECharts colors legend items from this array by index.
+  // Category scope keeps the raw palette (its per-item overrides also color the
+  // pie/funnel legend entries).
+  const legendColorList =
+    colorScope === "series"
+      ? valueSeries.map(
+          (vs, i) => customColors?.[vs.key] ?? autoColorAt(config.colorPalette, i),
+        )
+      : colors;
   const hasTitle = config.showTitle !== false;
   const titleOption = hasTitle
     ? { title: { text: config.title, left: "center", top: 10 } }
@@ -342,7 +452,7 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
   const legendTop = hasTitle ? 50 : 20;
 
   if (config.type === "pie") {
-    const pieData = isCountPct
+    const pieData = (isCountPct
       ? processedData.map((item) => ({
           name: item.__xKey__,
           value: item.__count__,
@@ -351,7 +461,8 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
       : processedData.map((item) => ({
           name: item.__xKey__,
           value: item[primaryKey],
-        }));
+        }))
+    ).map((point) => withItemColor(point, categoryColor(point.name)));
 
     const seriesName = primaryName || "Valor";
 
@@ -393,13 +504,14 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
   }
 
   if (config.type === "funnel") {
-    const funnelData = isCountPct
+    const funnelData = (isCountPct
       ? processedData.map((item) => ({
           name: item.__xKey__,
           value: item.__count__,
           rawCount: item.__raw_count__,
         }))
-      : processedData.map((item) => ({ name: item.__xKey__, value: item[primaryKey] }));
+      : processedData.map((item) => ({ name: item.__xKey__, value: item[primaryKey] }))
+    ).map((point) => withItemColor(point, categoryColor(point.name)));
 
     return {
       ...titleOption,
@@ -449,14 +561,20 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
       return { name: String(axisName), max: niceCeil(perAxisMax) };
     });
 
-    const radarData = valueSeries.map((vs) => ({
-      name: vs.name,
-      value: processedData.map((item) => Number(item[vs.key]) || 0),
-    }));
+    // A radar chart is a single series whose data entries are the metrics, so
+    // manual colors go on each entry (line included) rather than on the series.
+    const radarData = valueSeries.map((vs) => {
+      const color = customColors?.[vs.key];
+      return {
+        name: vs.name,
+        value: processedData.map((item) => Number(item[vs.key]) || 0),
+        ...(color ? { itemStyle: { color }, lineStyle: { color } } : {}),
+      };
+    });
 
     return {
       ...titleOption,
-      ...(colors.length ? { color: colors } : {}),
+      ...(legendColorList.length ? { color: legendColorList } : {}),
       tooltip: { trigger: "item" },
       toolbox: { feature: { saveAsImage: { title: "Salvar como Imagem" } } },
       legend: { data: valueSeries.map((vs) => vs.name), top: legendTop },
@@ -545,29 +663,32 @@ export const getChartOption = (data: any[], config: ChartConfig) => {
 
   const echartsType = isHBar ? "bar" : config.type;
 
-  const series = valueSeries.map((vs, idx) => ({
-    name: vs.name,
-    data: processedData.map((item, i) => {
-      if (isCountPct) {
-        return { value: item[vs.key], rawCount: item.__raw_count__ };
-      }
-      if (stackTotals) {
-        return { value: Number(item[vs.key]) || 0, total: stackTotals[i] };
-      }
-      return item[vs.key];
-    }),
-    type: echartsType,
-    label,
-    // Only attach markLine to the first series to avoid duplication
-    ...(idx === 0 && markLine ? { markLine } : {}),
-    ...(isStacked ? { stack: "total" } : {}),
-  }));
+  const series = valueSeries.map((vs, idx) => {
+    const seriesCustomColor = colorScope === "series" ? customColors?.[vs.key] : undefined;
+    return {
+      name: vs.name,
+      data: processedData.map((item, i) => {
+        const point = isCountPct
+          ? { value: item[vs.key], rawCount: item.__raw_count__ }
+          : stackTotals
+            ? { value: Number(item[vs.key]) || 0, total: stackTotals[i] }
+            : item[vs.key];
+        return withItemColor(point, categoryColor(item.__xKey__));
+      }),
+      type: echartsType,
+      label,
+      ...(seriesCustomColor ? { itemStyle: { color: seriesCustomColor } } : {}),
+      // Only attach markLine to the first series to avoid duplication
+      ...(idx === 0 && markLine ? { markLine } : {}),
+      ...(isStacked ? { stack: "total" } : {}),
+    };
+  });
 
   const legendData = valueSeries.map((vs) => vs.name);
 
   return {
     ...titleOption,
-    ...(colors.length ? { color: colors } : {}),
+    ...(legendColorList.length ? { color: legendColorList } : {}),
     grid: {
       left: "3%",
       right: "10%",

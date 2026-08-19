@@ -25,6 +25,8 @@ import Filter from "./Filter/Filter";
 import examColumns from "./Table/columns";
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
+import { canWriteExamConfig } from "./examPermissions";
+import { ConfigManagerContact } from "features/admin/ConfigManagerContact/ConfigManagerContact";
 
 const emptyText = (
   <Empty
@@ -44,6 +46,7 @@ export default function Exams() {
   const [mostFrequentModalVisible, setMostFrequentModalVisible] =
     useState(false);
   const [examsOrderVisible, setExamsOrderVisible] = useState(false);
+  const canWrite = canWriteExamConfig();
 
   const onShowExamModal = (data) => {
     dispatch(setExam({ idSegment: data.idSegment, type: data.type }));
@@ -65,47 +68,54 @@ export default function Exams() {
           <div className="page-header-legend">Configuração de exames</div>
         </div>
         <div className="page-header-actions">
-          {PermissionService().has(Permission.ADMIN_EXAMS__COPY) && (
-            <>
-              <Tooltip title="Clique para mais informações">
-                <Button
-                  type="primary"
-                  icon={<RetweetOutlined />}
-                  onClick={() => setCopyExamsVisible(true)}
-                >
-                  Copiar Exames
-                </Button>
-              </Tooltip>
+          {canWrite &&
+            PermissionService().has(Permission.ADMIN_EXAMS__COPY) && (
+              <>
+                <Tooltip title="Clique para mais informações">
+                  <Button
+                    type="primary"
+                    icon={<RetweetOutlined />}
+                    onClick={() => setCopyExamsVisible(true)}
+                  >
+                    Copiar Exames
+                  </Button>
+                </Tooltip>
 
-              <Tooltip title="Clique para mais informações">
-                <Button
-                  type="primary"
-                  icon={<OrderedListOutlined />}
-                  onClick={() => setMostFrequentModalVisible(true)}
-                >
-                  Exames Mais Frequentes
-                </Button>
-              </Tooltip>
+                <Tooltip title="Clique para mais informações">
+                  <Button
+                    type="primary"
+                    icon={<OrderedListOutlined />}
+                    onClick={() => setMostFrequentModalVisible(true)}
+                  >
+                    Exames Mais Frequentes
+                  </Button>
+                </Tooltip>
+              </>
+            )}
+          {canWrite && (
+            <>
+              <Button
+                type="primary"
+                className="gtm-bt-add-exam"
+                onClick={addExamModal}
+                icon={<PlusOutlined />}
+              >
+                Adicionar Exame
+              </Button>
+
+              <Button
+                type="primary"
+                onClick={() => setExamsOrderVisible(true)}
+                icon={<AppstoreOutlined />}
+              >
+                Card de Exames
+              </Button>
             </>
           )}
-          <Button
-            type="primary"
-            className="gtm-bt-add-exam"
-            onClick={addExamModal}
-            icon={<PlusOutlined />}
-          >
-            Adicionar Exame
-          </Button>
-
-          <Button
-            type="primary"
-            onClick={() => setExamsOrderVisible(true)}
-            icon={<AppstoreOutlined />}
-          >
-            Card de Exames
-          </Button>
         </div>
       </PageHeader>
+
+      {!canWrite && <ConfigManagerContact action="criar ou alterar exames" />}
 
       <Filter />
 

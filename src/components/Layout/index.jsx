@@ -10,6 +10,7 @@ import {
   SwapOutlined,
   WifiOutlined,
   LayoutOutlined,
+  CheckCircleFilled,
 } from "@ant-design/icons";
 import { ErrorBoundary } from "react-error-boundary";
 import { Alert, Dropdown, List, Space } from "antd";
@@ -36,12 +37,16 @@ import { setPendingTickets } from "features/support/SupportSlice";
 import Box from "./Box";
 import Menu from "./Menu";
 import { InfoAlert } from "features/notifications/InfoAlert/InfoAlert";
+import { WelcomeOnboarding } from "features/onboarding/WelcomeOnboarding/WelcomeOnboarding";
+import { TrainingStatusIndicator } from "features/training/TrainingStatusIndicator/TrainingStatusIndicator";
+import { useTrainingStatus } from "features/training/useTrainingStatus";
 import SearchPrescription from "./SearchPrescription";
 import {
   Wrapper as Main,
   Brand,
   UserName,
   UserDataContainer,
+  AvatarBadge,
   HeaderContainer,
 } from "./Layout.style";
 import "styles/base.css";
@@ -63,6 +68,7 @@ const Me = ({ user, t, doLogout, logoutUrl, integrationStatus }) => {
   const navigate = useNavigate();
 
   const showAlert = location.pathname.indexOf("priorizacao") !== -1;
+  const { isCompleted: trainingCompleted } = useTrainingStatus();
 
   const openHelp = () => {
     dispatch(setSupportOpen(true));
@@ -182,6 +188,8 @@ const Me = ({ user, t, doLogout, logoutUrl, integrationStatus }) => {
         />
       </div>
 
+      <TrainingStatusIndicator />
+
       {showAlert && <InfoAlert />}
 
       <Tooltip title="Clique para abrir o menu" placement="left">
@@ -194,11 +202,19 @@ const Me = ({ user, t, doLogout, logoutUrl, integrationStatus }) => {
             trigger={["click"]}
           >
             <UserDataContainer>
-              <Avatar
-                size={44}
-                icon={<UserOutlined />}
-                className="user-avatar"
-              />
+              <AvatarBadge
+                className={trainingCompleted ? "trained" : ""}
+                title={trainingCompleted ? t("layout.trainingCompleted") : ""}
+              >
+                <Avatar
+                  size={44}
+                  icon={<UserOutlined />}
+                  className="user-avatar"
+                />
+                {trainingCompleted && (
+                  <CheckCircleFilled className="training-badge" />
+                )}
+              </AvatarBadge>
 
               {FeatureService.has(Feature.HIDE_NAMES) ? (
                 <UserName>
@@ -406,6 +422,8 @@ export default function Layout({
         </Content>
         <Footer>{appInfo.copyright}</Footer>
       </Main>
+
+      <WelcomeOnboarding />
     </Main>
   );
 }

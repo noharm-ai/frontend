@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { isEmpty } from "lodash";
 import { useTranslation } from "react-i18next";
 import { Button as AntButton } from "antd";
 import {
@@ -35,21 +34,30 @@ export default function Observations({
   fetchMemory,
   saveMemory,
   currentReason,
+  reasons,
   drugData,
   interactions,
   interactionsList,
   uniqueDrugList,
 }) {
   const { t } = useTranslation();
-  const [saveTextModal, setSaveTextModal] = useState(false);
+  const [saveTextModal, setSaveTextModal] = useState(null);
   const textareaRef = useRef(null);
-  const isMemoryDisabled = currentReason == null || currentReason.length !== 1;
 
-  useEffect(() => {
-    if (!isMemoryDisabled) {
-      fetchMemory(`reasonsDefaultText-${currentReason[0]}`);
-    }
-  }, [fetchMemory, currentReason, isMemoryDisabled]);
+  const reasonOptions = (currentReason ?? []).map((id) => {
+    const reason = (reasons ?? []).find((r) => r.id === id);
+
+    return {
+      id,
+      label: reason
+        ? reason.parentName
+          ? `${reason.parentName} - ${reason.name}`
+          : reason.name
+        : `${id}`,
+    };
+  });
+  const isMemoryDisabled = reasonOptions.length === 0;
+  const hasMultipleReasons = reasonOptions.length > 1;
 
   useEffect(() => {
     if (memory.save.success) {
@@ -228,14 +236,43 @@ export default function Observations({
     return newText;
   };
 
+  /**
+   * Fetches the stored default text of a single reason.
+   * Returns the memory record, null when the reason has no stored text
+   * and undefined when the request failed.
+   */
+  const fetchReasonText = async (idReason) => {
+    const list = await fetchMemory(`reasonsDefaultText-${idReason}`);
+
+    if (!Array.isArray(list)) {
+      notification.error({ message: t("error.title") });
+      return undefined;
+    }
+
+    return list.length > 0 ? list[0] : null;
+  };
+
+  const openSaveModal = async (idReason) => {
+    const record = await fetchReasonText(idReason);
+
+    if (record === undefined) return;
+
+    setSaveTextModal({
+      idReason,
+      memoryKey: record?.key ?? null,
+      content: record?.value?.text ?? "",
+    });
+  };
+
   const saveDefaultText = (value) => {
+    const { idReason, memoryKey } = saveTextModal;
     const payload = {
-      type: `reasonsDefaultText-${currentReason[0]}`,
+      type: `reasonsDefaultText-${idReason}`,
       value: { text: value },
     };
 
-    if (!isEmpty(memory.list)) {
-      payload.id = memory.list[0].key;
+    if (memoryKey) {
+      payload.id = memoryKey;
     }
     saveMemory(payload);
 
@@ -245,8 +282,17 @@ export default function Observations({
     trackInterventionAction(TrackedInterventionAction.SAVE_DEFAULT_TEXT);
   };
 
-  const loadDefaultText = () => {
-    setFieldValue("observation", applyVariables(memory.list[0].value.text));
+  const loadDefaultText = async (idReason) => {
+    const record = await fetchReasonText(idReason);
+
+    if (record === undefined) return;
+
+    if (record === null) {
+      notification.warning({ message: t("interventionForm.btnModelEmpty") });
+      return;
+    }
+
+    setFieldValue("observation", applyVariables(record.value.text));
     notification.success({ message: t("success.applyDefaultObservation") });
 
     trackInterventionAction(TrackedInterventionAction.LOAD_DEFAULT_TEXT);
@@ -257,19 +303,6 @@ export default function Observations({
   };
 
   const getMemoryTooltip = () => {
-    const config = {
-      save: t("interventionForm.btnModelSave"),
-      apply: t("interventionForm.btnModelApply"),
-    };
-
-    if (currentReason && currentReason.length > 1) {
-      const msg = t("interventionForm.btnModelInvalid");
-      return {
-        save: msg,
-        apply: msg,
-      };
-    }
-
     if (isMemoryDisabled) {
       const msg = t("interventionForm.btnModelDisabled");
       return {
@@ -278,19 +311,43 @@ export default function Observations({
       };
     }
 
-    if (isEmpty(memory.list) || !content) {
+    if (hasMultipleReasons) {
       return {
-        save: content ? config.save : t("interventionForm.btnModelSaveHint"),
-        apply: !isEmpty(memory.list)
-          ? config.apply
-          : t("interventionForm.btnModelEmpty"),
+        save: t("interventionForm.btnModelSaveMultiple"),
+        apply: t("interventionForm.btnModelApplyMultiple"),
       };
     }
 
-    return config;
+    return {
+      save: content
+        ? t("interventionForm.btnModelSave")
+        : t("interventionForm.btnModelSaveHint"),
+      apply: t("interventionForm.btnModelApply"),
+    };
   };
 
   const memoryTooltip = getMemoryTooltip();
+
+  const reasonMenu = (onPick) => ({
+    items: reasonOptions.map((r) => ({ key: `${r.id}`, label: r.label })),
+    onClick: ({ key }) => {
+      const reason = reasonOptions.find((r) => `${r.id}` === key);
+      onPick(reason.id);
+    },
+  });
+
+  /**
+   * When more than one reason is selected, the action is deferred to a menu
+   * where the user picks which reason the default text belongs to.
+   */
+  const withReasonPicker = (button, onPick) =>
+    hasMultipleReasons ? (
+      <Dropdown menu={reasonMenu(onPick)} trigger={["click"]}>
+        {button}
+      </Dropdown>
+    ) : (
+      button
+    );
 
   return (
     <>
@@ -302,30 +359,42 @@ export default function Observations({
       <Col xs={8}>
         <div style={{ textAlign: "right" }}>
           <Tooltip title={memoryTooltip.save}>
-            <Button
-              shape="circle"
-              icon={<SaveOutlined />}
-              loading={memory.isFetching || memory.save.isSaving}
-              onClick={() => setSaveTextModal(true)}
-              disabled={isMemoryDisabled}
-              style={{ marginRight: "5px" }}
-              type="primary"
-              className="gtm-bt-interv-mem-save"
-            />
+            {withReasonPicker(
+              <Button
+                shape="circle"
+                icon={<SaveOutlined />}
+                loading={memory.isFetching || memory.save.isSaving}
+                onClick={
+                  hasMultipleReasons
+                    ? undefined
+                    : () => openSaveModal(reasonOptions[0].id)
+                }
+                disabled={isMemoryDisabled}
+                style={{ marginRight: "5px" }}
+                type="primary"
+                className="gtm-bt-interv-mem-save"
+              />,
+              openSaveModal,
+            )}
           </Tooltip>
           <Tooltip title={memoryTooltip.apply}>
-            <Button
-              shape="circle"
-              icon={<DownloadOutlined />}
-              loading={memory.isFetching || memory.save.isSaving}
-              onClick={loadDefaultText}
-              disabled={isMemoryDisabled || isEmpty(memory.list)}
-              style={{ marginRight: "5px" }}
-              className={
-                !isEmpty(memory.list) ? "primary gtm-bt-interv-mem-apply" : ""
-              }
-              type="primary"
-            />
+            {withReasonPicker(
+              <Button
+                shape="circle"
+                icon={<DownloadOutlined />}
+                loading={memory.isFetching || memory.save.isSaving}
+                onClick={
+                  hasMultipleReasons
+                    ? undefined
+                    : () => loadDefaultText(reasonOptions[0].id)
+                }
+                disabled={isMemoryDisabled}
+                style={{ marginRight: "5px" }}
+                className="primary gtm-bt-interv-mem-apply"
+                type="primary"
+              />,
+              loadDefaultText,
+            )}
           </Tooltip>
           <Tooltip title={t("interventionForm.btnInsertVariable")}>
             <Dropdown
@@ -362,11 +431,15 @@ export default function Observations({
       </Col>
 
       <ObservationDefaultText
-        open={saveTextModal}
-        setOpen={setSaveTextModal}
-        initialContent={
-          memory.list && memory.list.length > 0 ? memory.list[0].value.text : ""
+        key={saveTextModal?.idReason}
+        open={saveTextModal !== null}
+        onClose={() => setSaveTextModal(null)}
+        reasonLabel={
+          hasMultipleReasons && saveTextModal
+            ? reasonOptions.find((r) => r.id === saveTextModal.idReason)?.label
+            : null
         }
+        initialContent={saveTextModal?.content ?? ""}
         saveDefaultText={saveDefaultText}
       />
     </>

@@ -82,6 +82,11 @@ const initialState = {
     status: "idle",
     error: null,
   },
+  getContactList: {
+    list: [],
+    status: "idle",
+    error: null,
+  },
   regulation: {
     types: {
       list: [],
@@ -115,6 +120,19 @@ export const getIcds = createAsyncThunk(
       return thunkAPI.rejectWithValue(err.response.data);
     }
   }
+);
+
+export const getContactList = createAsyncThunk(
+  "lists/get-contact-list",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.userAdmin.getContactList(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  },
 );
 
 export const getProtocols = createAsyncThunk(
@@ -496,6 +514,17 @@ const listsSlice = createSlice({
       .addCase(getRegulationTypes.rejected, (state, action) => {
         state.regulation.types.status = "failed";
         state.regulation.types.error = action.error.message;
+      })
+      .addCase(getContactList.pending, (state, action) => {
+        state.getContactList.status = "loading";
+      })
+      .addCase(getContactList.fulfilled, (state, action) => {
+        state.getContactList.status = "succeeded";
+        state.getContactList.list = action.payload.data;
+      })
+      .addCase(getContactList.rejected, (state, action) => {
+        state.getContactList.status = "failed";
+        state.getContactList.error = action.error.message;
       })
       .addCase(searchNames.pending, (state, action) => {
         state.searchNames.status = "loading";

@@ -950,24 +950,28 @@ export default function FilterFields({
               </div>
             </div>
 
-            {(featureService.hasPEC() ||
-              PermissionService().has(Permission.READ_NAV)) && (
-              <>
+            {featureService.hasPEC() && (
+              <div className="form-row">
                 <div className="form-row">
-                  <div className="form-row">
-                    <div className="form-label-actions">
-                      <label>Nome Paciente:</label>{" "}
-                      <HelpTextIcon pageKey="priorizacao-nome-paciente" />
-                    </div>
-                    <div className="form-input">
-                      <FieldNameAutocomplete
-                        onChange={(val) =>
-                          setScreeningListFilter({ idPatientByNameList: val })
-                        }
-                      />
-                    </div>
+                  <div className="form-label-actions">
+                    <label>Nome Paciente:</label>{" "}
+                    <HelpTextIcon pageKey="priorizacao-nome-paciente" />
+                  </div>
+                  <div className="form-input">
+                    <FieldNameAutocomplete
+                      onChange={(val) =>
+                        setScreeningListFilter({ idPatientByNameList: val })
+                      }
+                    />
                   </div>
                 </div>
+              </div>
+            )}
+
+            {(featureService.hasPEC() ||
+              PermissionService().has(Permission.READ_NAV) ||
+              FeatureService.has(Feature.PRIORITIZATION_FIELD_CID)) && (
+              <>
                 <div className="form-row">
                   <div className="form-label-actions">
                     <label>CID:</label>{" "}

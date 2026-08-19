@@ -17,7 +17,11 @@
     "iptSearch": "Buscar por nº de atendimento ou prescrição",
     "notifications": "Notificações",
     "unreadNotifications": "Notificações não lidas ({{count}})",
-    "markAsRead": "Marcar como lida"
+    "markAsRead": "Marcar como lida",
+    "pendingTraining": "Treinamento pendente",
+    "pendingTrainingTooltip_one": "Você ainda tem {{count}} módulo obrigatório para concluir. Clique para acessar a Central de Treinamento.",
+    "pendingTrainingTooltip_other": "Você ainda tem {{count}} módulos obrigatórios para concluir. Clique para acessar a Central de Treinamento.",
+    "trainingCompleted": "Treinamento obrigatório concluído"
   },
   "error": {
     "title": "Ops! Algo de errado aconteceu.",
@@ -544,7 +548,8 @@
     "btnModelSave": "Salvar observação modelo",
     "btnModelSaveHint": "Salvar texto padrão",
     "btnModelApply": "Aplicar observação modelo",
-    "btnModelInvalid": "Modelos: Esta funcionalidade é desabilitada quando múltiplos motivos são selecionados",
+    "btnModelSaveMultiple": "Escolha o motivo para salvar a observação modelo",
+    "btnModelApplyMultiple": "Escolha o motivo para aplicar a observação modelo",
     "btnModelDisabled": "Modelos: Selecione um motivo para liberar esta funcionalidade",
     "btnInsertVariable": "Inserir texto na observação",
     "slashMenuHint": "Digite / para inserir variáveis na observação",
@@ -656,6 +661,7 @@
     "invalidUser": "Usuário inválido",
     "unauthorizedUser": "Usuário não autorizado",
     "serviceUnavailable": "Serviço de IA indisponível. Tente novamente em instantes.",
+    "pendingMandatoryTraining": "Conclua os treinamentos obrigatórios para abrir chamados de suporte.",
     "nameExists": "Já existe um usuário com este nome!",
     "emailExists": "Já existe um usuário com este email!",
     "empty": "Nenhum registro encontrado"
@@ -1121,6 +1127,24 @@
     "insertHint": "Clique para inserir no texto",
     "noResults": "Nenhum texto encontrado."
   },
+  "onboarding": {
+    "welcome": {
+      "eyebrow": "Primeiros passos",
+      "title": "Boas-vindas, {{name}}!",
+      "titleNoName": "Boas-vindas à NoHarm!",
+      "lead": "Estamos muito felizes em ter você com a gente. Para aproveitar o melhor da plataforma, preparamos um <strong>treinamento rápido</strong> com o essencial para o seu dia a dia.",
+      "imageAlt": "Boas-vindas à NoHarm",
+      "trainingTitle": "Central de Treinamento",
+      "trainingSubtitle": "Aprenda o essencial em poucos minutos",
+      "highlightModules": "Módulos <strong>curtos e objetivos</strong>, no seu ritmo",
+      "highlightProgress": "Progresso salvo automaticamente",
+      "highlightBadges": "Conquistas desbloqueadas ao concluir os módulos",
+      "supportNotice": "Os módulos obrigatórios precisam ser concluídos para que seja possível abrir chamados de suporte.",
+      "primaryAction": "Começar treinamento",
+      "secondaryAction": "Explorar o sistema",
+      "menuHint": "Você pode acessar o treinamento a qualquer momento pelo menu lateral, em \"Treinamento\"."
+    }
+  },
   "trainingCentral": {
     "title": "Central de Treinamento",
     "subtitle": "Conclua os módulos no seu ritmo. Progresso salvo automaticamente.",
@@ -1133,9 +1157,7 @@
     "progressMandatory": "Módulos obrigatórios",
     "progressOptional": "Módulos opcionais",
     "mandatoryExplanation": "Os módulos obrigatórios são a base para o uso do NoHarm. Enquanto não forem concluídos, não será possível abrir chamados de suporte.",
-    "mandatoryTag": "Obrigatório",
-    "badgesTitle": "Conquistas",
-    "badgesEmpty": "Complete módulos para desbloquear conquistas."
+    "mandatoryTag": "Obrigatório"
   },
   "trainingPlayer": {
     "previous": "Anterior",

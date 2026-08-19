@@ -1,9 +1,9 @@
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Table, Tag, Flex, Empty } from "antd";
+import { Table, Tag, Flex, Empty, Typography } from "antd";
 
 import DefaultModal from "components/Modal";
-import { Input } from "components/Inputs";
+import { Input, Select } from "components/Inputs";
 
 import { DepartmentOption, formatDepartmentLabel } from "./helpers";
 
@@ -26,6 +26,7 @@ export function ProtocolDepartmentModal({
 }: ProtocolDepartmentModalProps) {
   const { t } = useTranslation();
   const [term, setTerm] = useState("");
+  const [segmentFilter, setSegmentFilter] = useState<string[]>([]);
   const [selectedKeys, setSelectedKeys] = useState<string[]>(() =>
     (selectedIds ?? []).map(String),
   );
@@ -40,19 +41,40 @@ export function ProtocolDepartmentModal({
     if (open) {
       setSelectedKeys((selectedIds ?? []).map(String));
       setTerm("");
+      setSegmentFilter([]);
     }
   }
 
-  // The full list is already loaded, so filter it client-side by name or id.
+  // The full list is already loaded, so filter it client-side by name or id
+  // and by the segments each department belongs to.
   const rows = useMemo(() => {
     const query = term.trim().toLowerCase();
-    if (!query) return departments;
-    return departments.filter(
-      (d) =>
+    if (!query && segmentFilter.length === 0) return departments;
+
+    return departments.filter((d) => {
+      const matchesTerm =
+        !query ||
         d.name.toLowerCase().includes(query) ||
-        String(d.id).toLowerCase().includes(query),
-    );
-  }, [term, departments]);
+        String(d.id).toLowerCase().includes(query);
+
+      const matchesSegment =
+        segmentFilter.length === 0 ||
+        d.segments.some((s) => segmentFilter.includes(s.id));
+
+      return matchesTerm && matchesSegment;
+    });
+  }, [term, segmentFilter, departments]);
+
+  // Segment options come from the loaded departments; no extra request needed.
+  const segmentOptions = useMemo(() => {
+    const map = new Map<string, string>();
+    departments.forEach((d) => {
+      d.segments.forEach((s) => map.set(s.id, s.name));
+    });
+    return [...map.entries()]
+      .map(([value, label]) => ({ value, label }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  }, [departments]);
 
   const labelById = useMemo(() => {
     const map: Record<string, string> = {};
@@ -100,6 +122,26 @@ export function ProtocolDepartmentModal({
       dataIndex: "name",
       key: "name",
     },
+    {
+      title: "Segmento",
+      dataIndex: "segments",
+      key: "segments",
+      render: (segments: DepartmentOption["segments"]) => {
+        if (!segments || segments.length === 0) {
+          return <Typography.Text type="secondary">—</Typography.Text>;
+        }
+
+        return (
+          <Flex wrap gap={4}>
+            {segments.map((s) => (
+              <Tag key={s.id} color="purple" style={{ marginInlineEnd: 0 }}>
+                {s.name}
+              </Tag>
+            ))}
+          </Flex>
+        );
+      },
+    },
   ];
 
   return (
@@ -118,14 +160,32 @@ export function ProtocolDepartmentModal({
         <h2 className="modal-title">Selecionar setores</h2>
       </header>
 
-      <div style={{ marginBottom: "1rem" }}>
-        <Input.Search
-          allowClear
-          value={term}
-          placeholder="Digite para filtrar por nome ou fksetor"
-          onChange={({ target }) => setTerm(target.value)}
-        />
-      </div>
+      <Flex gap={8} style={{ marginBottom: "1rem" }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <Input.Search
+            allowClear
+            value={term}
+            placeholder="Digite para filtrar por nome ou fksetor"
+            onChange={({ target }) => setTerm(target.value)}
+          />
+        </div>
+        {/* Hidden when nothing maps to a segment (older API, or no mapping
+            seeded), so the filter never opens onto an empty list. */}
+        {segmentOptions.length > 0 && (
+          <Select
+            mode="multiple"
+            allowClear
+            showSearch
+            optionFilterProp="label"
+            value={segmentFilter}
+            options={segmentOptions}
+            onChange={(value) => setSegmentFilter(value as string[])}
+            placeholder="Filtrar por segmento"
+            maxTagCount="responsive"
+            style={{ width: "280px", flexShrink: 0 }}
+          />
+        )}
+      </Flex>
 
       <Table
         rowKey="id"

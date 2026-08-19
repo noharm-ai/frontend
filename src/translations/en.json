@@ -17,7 +17,11 @@
     "iptSearch": "Search by prescription or admission number",
     "notifications": "Notifications",
     "unreadNotifications": "Unread notifications ({{count}})",
-    "markAsRead": "Mark as read"
+    "markAsRead": "Mark as read",
+    "pendingTraining": "Pending training",
+    "pendingTrainingTooltip_one": "You still have {{count}} mandatory module to complete. Click to open the Training Center.",
+    "pendingTrainingTooltip_other": "You still have {{count}} mandatory modules to complete. Click to open the Training Center.",
+    "trainingCompleted": "Mandatory training completed"
   },
   "error": {
     "title": "Oops! Something wrong happened.",
@@ -541,7 +545,8 @@
     "btnModelSave": "Save observation",
     "btnModelSaveHint": "Fill the observation to save and reuse later",
     "btnModelApply": "Apply saved observation",
-    "btnModelInvalid": "Models: Disabled when multiple reasons selected",
+    "btnModelSaveMultiple": "Choose the reason to save the observation",
+    "btnModelApplyMultiple": "Choose the reason to apply the saved observation",
     "btnModelDisabled": "Models: Select a reason",
     "btnInsertVariable": "Insert variable into observation",
     "slashMenuHint": "Type / to insert variables into the observation",
@@ -652,6 +657,7 @@
     "invalidUser": "Non-existent user",
     "unauthorizedUser": "Unauthorized user",
     "serviceUnavailable": "AI service unavailable. Please try again shortly.",
+    "pendingMandatoryTraining": "Complete the mandatory training modules to open support tickets.",
     "nameExists": "There is already a user with this name!",
     "emailExists": "There is already a user with this email!",
     "empty": "No records found"
@@ -1111,6 +1117,24 @@
     "insertHint": "Click to insert into text",
     "noResults": "No texts found."
   },
+  "onboarding": {
+    "welcome": {
+      "eyebrow": "Getting started",
+      "title": "Welcome, {{name}}!",
+      "titleNoName": "Welcome to NoHarm!",
+      "lead": "We're glad to have you with us. To get the most out of the platform, we've prepared a <strong>quick training</strong> covering the essentials for your daily routine.",
+      "imageAlt": "Welcome to NoHarm",
+      "trainingTitle": "Training Central",
+      "trainingSubtitle": "Learn the essentials in a few minutes",
+      "highlightModules": "<strong>Short, focused</strong> modules at your own pace",
+      "highlightProgress": "Progress saved automatically",
+      "highlightBadges": "Unlock achievements as you complete the modules",
+      "supportNotice": "Mandatory modules must be completed before support tickets can be opened.",
+      "primaryAction": "Start training",
+      "secondaryAction": "Explore the system",
+      "menuHint": "You can access the training anytime from the side menu, under \"Training\"."
+    }
+  },
   "trainingCentral": {
     "title": "Training Central",
     "subtitle": "Complete the modules at your own pace. Progress is saved automatically.",
@@ -1123,9 +1147,7 @@
     "progressMandatory": "Mandatory modules",
     "progressOptional": "Optional modules",
     "mandatoryExplanation": "Mandatory modules cover the basics of using NoHarm. Until they are all completed, you won't be able to open support tickets.",
-    "mandatoryTag": "Mandatory",
-    "badgesTitle": "Achievements",
-    "badgesEmpty": "Complete modules to unlock achievements."
+    "mandatoryTag": "Mandatory"
   },
   "trainingPlayer": {
     "previous": "Previous",

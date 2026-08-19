@@ -34,5 +34,7 @@
   "logoutUrl": null,
   "integrationStatus": 1,
   "signature": "",
-  "preferences": null
+  "preferences": null,
+  "onboardingStatus": null,
+  "training": { "mandatoryTotal": 0, "mandatoryFinished": 0 }
 }

@@ -10,8 +10,8 @@ import Empty from "components/Empty";
 import { getErrorMessage } from "utils/errorHandler";
 
 import { fetchTrainingList, ITrainingModule } from "./TrainingCentralSlice";
+import { isModuleFinished } from "./trainingUtils";
 import { TrainingModuleRow } from "./TrainingModuleRow";
-import { TrainingBadges } from "./TrainingBadges";
 import {
   ModuleList,
   SideColumn,
@@ -23,10 +23,6 @@ import {
 import { PageHeader } from "styles/PageHeader.style";
 
 type TrainingModuleStatus = "completed" | "current";
-
-const isModuleFinished = (module: ITrainingModule) =>
-  module.totalLessons > 0 &&
-  module.totalLessonsFinished === module.totalLessons;
 
 const getModuleStatus = (module: ITrainingModule): TrainingModuleStatus =>
   isModuleFinished(module) ? "completed" : "current";
@@ -172,8 +168,6 @@ export function TrainingCentral() {
                 )}
               </ProgressPanel>
             )}
-
-            <TrainingBadges />
           </SideColumn>
         </Col>
       </Row>

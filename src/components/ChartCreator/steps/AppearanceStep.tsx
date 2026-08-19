@@ -1,15 +1,19 @@
+import { useMemo } from "react";
 import { InputNumber, Flex, Input, Segmented, Switch, Row, Col } from "antd";
 import {
   MinusOutlined,
   SortAscendingOutlined,
   SortDescendingOutlined,
 } from "@ant-design/icons";
-import { labelStyle, PALETTE_OPTIONS } from "./fieldStyles";
-import type { ColorPalette, SortOrder } from "../types";
+import { applyFilters } from "src/utils/dataFilters";
+import { labelStyle } from "./fieldStyles";
+import { CustomColorsField } from "./CustomColorsField";
+import { ECHARTS_DEFAULT_COLORS, PALETTE_OPTIONS } from "../palettes";
+import type { ColorMode, ColorPalette, SortOrder } from "../types";
 import type { WizardStepProps } from "./StepProps";
 
 // Sample colors shown for the "Padrão" (echarts default) palette preview.
-const DEFAULT_SAMPLE = ["#5470c6", "#91cc75", "#fac858", "#ee6666", "#73c0de"];
+const DEFAULT_SAMPLE = ECHARTS_DEFAULT_COLORS.slice(0, 5);
 
 // NoHarm brand green (styles/colors accent) for the active palette highlight.
 const NOHARM_GREEN = "#7ebe9a";
@@ -31,7 +35,7 @@ function PaletteToggle({
     <Flex gap={8} wrap="wrap">
       {PALETTE_OPTIONS.map(({ label, value: pv, colors }) => {
         const selected = value === pv;
-        const swatches = colors.length ? colors : DEFAULT_SAMPLE;
+        const swatches = (colors.length ? colors : DEFAULT_SAMPLE).slice(0, 5);
         return (
           <button
             key={pv}
@@ -64,7 +68,51 @@ function PaletteToggle({
   );
 }
 
-export function AppearanceStep({ draft, patchDraft }: WizardStepProps) {
+const COLOR_MODE_OPTIONS = [
+  { value: "palette" as ColorMode, label: "Paleta automática" },
+  { value: "custom" as ColorMode, label: "Escolher cores" },
+];
+
+/**
+ * Color controls: an automatic palette, optionally refined with a color per
+ * metric or per category. The palette stays in effect under "Escolher cores" —
+ * it is the fallback for every item the user leaves untouched.
+ */
+function ColorSection({ draft, patchDraft, schema, data }: WizardStepProps) {
+  const colorMode: ColorMode = draft.colorMode ?? "palette";
+
+  // The color pickers must list the same categories the chart ends up drawing,
+  // so apply the chart's own filters first (the Filters step comes after this).
+  const filteredData = useMemo(
+    () => applyFilters(data, draft.filters ?? [], schema),
+    [data, draft.filters, schema],
+  );
+
+  return (
+    <Flex vertical gap={8}>
+      <div>
+        <label style={labelStyle}>Cores</label>
+        <Segmented
+          value={colorMode}
+          options={COLOR_MODE_OPTIONS}
+          onChange={(v) => patchDraft({ colorMode: v as ColorMode })}
+        />
+      </div>
+
+      <PaletteToggle
+        value={draft.colorPalette ?? "default"}
+        onChange={(v) => patchDraft({ colorPalette: v })}
+      />
+
+      {colorMode === "custom" && (
+        <CustomColorsField draft={draft} patchDraft={patchDraft} data={filteredData} />
+      )}
+    </Flex>
+  );
+}
+
+export function AppearanceStep(props: WizardStepProps) {
+  const { draft, patchDraft } = props;
   const type = draft.type;
   const referenceLine = draft.referenceLine;
   const isAxisChart = type === "bar" || type === "hbar" || type === "line";
@@ -73,13 +121,7 @@ export function AppearanceStep({ draft, patchDraft }: WizardStepProps) {
   if (type === "gauge") {
     return (
       <Flex vertical gap="middle">
-        <div>
-          <label style={labelStyle}>Paleta de cores</label>
-          <PaletteToggle
-            value={draft.colorPalette ?? "default"}
-            onChange={(v) => patchDraft({ colorPalette: v })}
-          />
-        </div>
+        <ColorSection {...props} />
         <Row gutter={16}>
           <Col span={12}>
             <label style={labelStyle}>Valor máximo do medidor</label>
@@ -109,13 +151,7 @@ export function AppearanceStep({ draft, patchDraft }: WizardStepProps) {
 
   return (
     <Flex vertical gap="middle">
-      <div>
-        <label style={labelStyle}>Paleta de cores</label>
-        <PaletteToggle
-          value={draft.colorPalette ?? "default"}
-          onChange={(v) => patchDraft({ colorPalette: v })}
-        />
-      </div>
+      <ColorSection {...props} />
 
       <Row gutter={16}>
         <Col span={12}>

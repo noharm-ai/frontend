@@ -50,6 +50,8 @@ export function SwitchSchema() {
     schema: getStorageItem("schema"),
     getname: false,
     runAsBasicUser: false,
+    hideNames: false,
+    runAsTraining: false,
     extraFeatures: [],
   };
 
@@ -110,6 +112,24 @@ export function SwitchSchema() {
               />
             </div>
           </div>
+
+          <div className={`form-row`}>
+            <div className="form-label">
+              <label>Modo treinamento:</label>
+            </div>
+            <div className="form-input">
+              <Switch
+                onChange={(value) => {
+                  setFieldValue("runAsTraining", value);
+                }}
+                checked={values.runAsTraining}
+              />
+            </div>
+            <div className="form-info">
+              Acessa com o papel TRAINING (somente leitura, nomes ocultos).
+              Indicado para apresentações e gravações.
+            </div>
+          </div>
         </>
       ),
     },
@@ -129,6 +149,7 @@ export function SwitchSchema() {
       ...params,
       schema: params.schema,
       extraFeatures: features,
+      runAsRole: params.runAsTraining ? "TRAINING" : null,
     };
 
     dispatch(switchToSchema(payload)).then((response: any) => {

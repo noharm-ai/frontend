@@ -11,6 +11,7 @@ import Tooltip from "components/Tooltip";
 import { FeatureService } from "services/FeatureService";
 import Feature from "models/Feature";
 import { fetchExamTypes, fetchGlobalExams } from "./ExamFormSlice";
+import { canWriteExamConfig } from "../examPermissions";
 
 export function ExamFormBase() {
   const dispatch = useAppDispatch();
@@ -33,8 +34,9 @@ export function ExamFormBase() {
 
   const { type, name, initials, min, max, ref, active } = values;
 
+  const canWrite = canWriteExamConfig();
   const canAddExams =
-    values.new && FeatureService.has(Feature.ADD_EXAMS);
+    canWrite && values.new && FeatureService.has(Feature.ADD_EXAMS);
 
   useEffect(() => {
     if (values.new) {
@@ -102,7 +104,7 @@ export function ExamFormBase() {
             onChange={(value) => setFieldValue("idSegment", value)}
             value={values.idSegment}
             loading={examTypesStatus === "loading"}
-            disabled={!values.new || !!values.idSegment}
+            disabled={!canWrite || !values.new || !!values.idSegment}
           >
             {segments.map((item: any) => (
               <Select.Option key={item.id} value={item.id}>
@@ -148,7 +150,7 @@ export function ExamFormBase() {
               onChange={(value) => setFieldValue("type", value)}
               value={type}
               loading={examTypesStatus === "loading"}
-              disabled={!values.new || !!values.type}
+              disabled={!canWrite || !values.new || !!values.type}
             >
               {examTypes.map((item: string) => (
                 <Select.Option key={item} value={item}>
@@ -174,6 +176,7 @@ export function ExamFormBase() {
               placeholder="Selecione o exame correspondente..."
               onChange={(value) => setFieldValue("tpExamRef", value)}
               loading={globalExamsStatus === "loading"}
+              disabled={!canWrite}
               getPopupContainer={() =>
                 document.getElementById("exam-ref-container") || document.body
               }
@@ -185,16 +188,18 @@ export function ExamFormBase() {
                   </Select.Option>
                 ))}
             </Select>
-            <Tooltip title="Copiar da referência">
-              <Dropdown menu={copyOptions()}>
-                <Button
-                  shape="circle"
-                  icon={<CopyOutlined />}
-                  type="primary"
-                  style={{ marginLeft: "5px" }}
-                />
-              </Dropdown>
-            </Tooltip>
+            {canWrite && (
+              <Tooltip title="Copiar da referência">
+                <Dropdown menu={copyOptions()}>
+                  <Button
+                    shape="circle"
+                    icon={<CopyOutlined />}
+                    type="primary"
+                    style={{ marginLeft: "5px" }}
+                  />
+                </Dropdown>
+              </Tooltip>
+            )}
           </div>
         </div>
       </div>
@@ -210,6 +215,7 @@ export function ExamFormBase() {
               setFieldValue("name", target.value)
             }
             maxLength={250}
+            disabled={!canWrite}
           />
         </div>
         {errors.name && <div className="form-error">{String(errors.name)}</div>}
@@ -226,6 +232,7 @@ export function ExamFormBase() {
               setFieldValue("initials", target.value)
             }
             maxLength={50}
+            disabled={!canWrite}
           />
         </div>
         {errors.initials && (
@@ -244,6 +251,7 @@ export function ExamFormBase() {
               setFieldValue("ref", target.value)
             }
             maxLength={250}
+            disabled={!canWrite}
           />
         </div>
         {errors.ref && <div className="form-error">{String(errors.ref)}</div>}
@@ -260,6 +268,7 @@ export function ExamFormBase() {
             max={999999}
             value={min}
             onChange={(value: number) => setFieldValue("min", value)}
+            disabled={!canWrite}
           />
         </div>
         {errors.min && <div className="form-error">{String(errors.min)}</div>}
@@ -276,6 +285,7 @@ export function ExamFormBase() {
             max={999999}
             value={max}
             onChange={(value: number) => setFieldValue("max", value)}
+            disabled={!canWrite}
           />
         </div>
         {errors.max && <div className="form-error">{String(errors.max)}</div>}
@@ -289,6 +299,7 @@ export function ExamFormBase() {
           <Switch
             onChange={(value: boolean) => setFieldValue("active", value)}
             checked={active}
+            disabled={!canWrite}
           />
         </div>
         {errors.active && (

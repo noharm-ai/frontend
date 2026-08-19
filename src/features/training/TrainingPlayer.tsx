@@ -15,6 +15,7 @@ import {
 } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
+import { Creators as UserCreators } from "store/ducks/user";
 import notification from "components/notification";
 import Button from "components/Button";
 import Progress from "components/Progress";
@@ -136,6 +137,21 @@ export function TrainingPlayer() {
       }
 
       setLocallyFinishedIds((prev) => ({ ...prev, [currentItem.id]: true }));
+
+      // the header reads these counts; the authentication payload that seeds
+      // them is only refreshed on the next login
+      if (response.payload?.data?.training) {
+        dispatch(
+          UserCreators.userSetAccountField({
+            training: response.payload.data.training,
+          }),
+        );
+      }
+
+      if (response.payload?.data?.moduleFinished) {
+        // keeps the Training Central progress panel in sync
+        dispatch(fetchTrainingList({}));
+      }
 
       if (isLastStep) {
         if (response.payload?.data?.moduleFinished) {

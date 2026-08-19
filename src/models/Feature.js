@@ -28,7 +28,12 @@ export default class Feature {
   static PRIORITIZATION_FIELD_SPECIALTY = "PRIORITIZATION_FIELD_SPECIALTY";
   static PRIORITIZATION_FIELD_RESPONSIBLE_PHYSICIAN =
     "PRIORITIZATION_FIELD_RESPONSIBLE_PHYSICIAN";
+  static PRIORITIZATION_FIELD_CID = "PRIORITIZATION_FIELD_CID";
   static MULTI_CLINICAL_NOTES = "MULTI_CLINICAL_NOTES";
+
+  // driven by the backend FEATURE_USER_ONBOARDING env var, not schema config,
+  // so it is intentionally absent from getFeatures() / the admin toggles
+  static USER_ONBOARDING = "USER_ONBOARDING";
 
   // user features
   static DISABLE_GETNAME = "DISABLE_GETNAME";
@@ -189,6 +194,12 @@ export default class Feature {
         label: "Campo de priorização: Médico Responsável",
         description:
           "Habilita o campo Médico Responsável no filtro de priorização.",
+      },
+      {
+        id: Feature.PRIORITIZATION_FIELD_CID,
+        label: "Campo de priorização: CID",
+        description:
+          "Habilita os campos CID e Grupos de CID no filtro de priorização.",
       },
     ];
   }

@@ -45,7 +45,6 @@ import AdminSegment from "pages/Admin/Segment";
 import AdminExam from "pages/Admin/Exam";
 import AdminProtocol from "pages/Admin/Protocol";
 import AdminProtocolEditor from "pages/Admin/Protocol/ProtocolEditor";
-import AdminReport from "pages/Admin/Report";
 import AdminGlobalMemoryNZero from "pages/Admin/GlobalMemory/GlobalMemoryNZero";
 
 import PatientDayReport from "pages/Reports/PatientDayReport";
@@ -363,11 +362,6 @@ const routes = [
     exact: true,
     path: "/admin/protocolos/:id",
     element: <WithAuth component={AdminProtocolEditor} />,
-  },
-  {
-    exact: true,
-    path: "/admin/relatorios-customizados",
-    element: <WithAuth component={AdminReport} />,
   },
   {
     exact: true,
