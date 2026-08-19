@@ -318,6 +318,118 @@ test("skipping a review item reports it without posting", async ({
   expect(setOutcomeCalls(mockApi)).toHaveLength(0);
 });
 
+test("applies a bulk outcome from the interventions list page", async ({
+  page,
+  mockApi,
+}) => {
+  const editParams: (string | null)[] = [];
+
+  const listRow = (idIntervention: number, drugName: string, status = "s") => ({
+    ...interventionRow(idIntervention, drugName, status),
+    user: "Usuário Teste",
+    prescriber: "Dr. Prescritor",
+    department: "UTI",
+    idInterventionReason: [1],
+  });
+
+  mockApi.override("POST /intervention/search", {
+    json: {
+      status: "success",
+      data: [
+        listRow(301, "Dipirona 500mg"),
+        listRow(302, "Omeprazol 20mg"),
+        listRow(306, "Paracetamol 750mg", "a"), // closed: not selectable
+      ],
+    },
+  });
+  mockApi.override("GET /intervention/reasons", {
+    json: { status: "success", data: [] },
+  });
+  mockApi.override(
+    "GET /intervention/outcome-data",
+    outcomeDataHandler(
+      {
+        "301": "interventions/outcome-data-null.json",
+        "302": "interventions/outcome-data-suspension.json",
+      },
+      editParams,
+    ),
+  );
+  mockApi.override("POST /intervention/set-outcome", {
+    json: { status: "success", data: true },
+  });
+
+  await page.goto("/intervencoes");
+  await expect(page.getByText("Dipirona 500mg")).toBeVisible();
+
+  await selectAllPending(page);
+  await expect(
+    page.getByRole("button", { name: "2 selecionadas" }),
+  ).toBeVisible();
+
+  const modal = await applyOutcome(page, "Não aceita");
+
+  await expect(
+    modal.getByText("Desfechos aplicados com sucesso!"),
+  ).toBeVisible();
+  await expect(
+    modal.getByText("Aplicados: 2 | Ignorados: 0 | Erros: 0"),
+  ).toBeVisible();
+
+  const calls = setOutcomeCalls(mockApi);
+  expect(calls).toHaveLength(2);
+  expect(calls.map((c) => c.idIntervention).sort()).toEqual([301, 302]);
+  expect(editParams).toEqual([null, null]);
+
+  await modal.getByRole("button", { name: "Fechar" }).click();
+
+  // list status synced: the two rows now show "Não aceita" status tags
+  await expect(
+    page.locator(".ant-table").getByText("Não aceita", { exact: true }),
+  ).toHaveCount(2);
+
+  // nothing pending anymore: the bulk button stays visible but disabled
+  const bulkButton = page.getByRole("button", {
+    name: "Selecionar múltiplas",
+  });
+  await expect(bulkButton).toBeVisible();
+  await expect(bulkButton).toBeDisabled();
+  await bulkButton.hover({ force: true });
+  await expect(
+    page.getByText("Não há intervenções pendentes para aplicar desfecho"),
+  ).toBeVisible();
+});
+
+test("selection is capped at 30 interventions", async ({ page, mockApi }) => {
+  const rows = Array.from({ length: 35 }, (_, i) =>
+    interventionRow(400 + i, `Medicamento ${400 + i}`),
+  );
+
+  mockApi.override(
+    "GET /prescriptions/:id",
+    prescriptionWithInterventions(rows),
+  );
+
+  await openInterventionsTab(page);
+  await selectAllPending(page);
+
+  await expect(
+    page.getByText("Máximo de 30 intervenções selecionadas por vez"),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "30 selecionadas" }),
+  ).toBeVisible();
+
+  // individual toggles beyond the cap are blocked too
+  await page
+    .locator("tr", { hasText: "Medicamento 434" })
+    .locator(".anticon-border")
+    .click();
+  await expect(
+    page.getByRole("button", { name: "30 selecionadas" }),
+  ).toBeVisible();
+});
+
 test("saving a multiple intervention with an outcome runs the bulk flow", async ({
   page,
   mockApi,

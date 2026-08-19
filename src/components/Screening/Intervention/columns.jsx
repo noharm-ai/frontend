@@ -20,7 +20,11 @@ import RichTextView from "components/RichTextView";
 import { isEmpty } from "lodash";
 import InterventionStatus from "models/InterventionStatus";
 import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
-import { toggleSelectedRows } from "features/intervention/MultipleOutcome/MultipleOutcomeSlice";
+import {
+  toggleSelectedRows,
+  MAX_SELECTED_INTERVENTIONS,
+} from "features/intervention/MultipleOutcome/MultipleOutcomeSlice";
+import notification from "components/notification";
 import {
   trackPrescriptionAction,
   TrackedPrescriptionAction,
@@ -345,6 +349,7 @@ const Action = ({ record }) => {
 };
 
 const SelectionToggle = ({ record, selectedList }) => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
 
   if (record.status !== "s") {
@@ -363,11 +368,24 @@ const SelectionToggle = ({ record, selectedList }) => {
 
   const selected = selectedList.indexOf(record.idIntervention) !== -1;
 
+  const toggle = () => {
+    if (!selected && selectedList.length >= MAX_SELECTED_INTERVENTIONS) {
+      notification.info({
+        message: t("multipleIntervention.maxSelected", {
+          max: MAX_SELECTED_INTERVENTIONS,
+        }),
+      });
+      return;
+    }
+
+    dispatch(toggleSelectedRows(record.idIntervention));
+  };
+
   return (
     <Tooltip title={selected ? null : "Selecionar"}>
       <Button
         type={selected ? "primary" : "default"}
-        onClick={() => dispatch(toggleSelectedRows(record.idIntervention))}
+        onClick={toggle}
         icon={
           selected ? (
             <CheckSquareOutlined style={{ fontSize: 16 }} />

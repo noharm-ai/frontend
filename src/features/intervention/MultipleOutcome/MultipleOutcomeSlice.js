@@ -10,6 +10,8 @@ import {
   OUTCOME_CLASSIFICATION,
 } from "../InterventionOutcome/outcomeValues";
 
+export const MAX_SELECTED_INTERVENTIONS = 30;
+
 const initialState = {
   open: false,
   stage: "idle", // idle | confirm | processing | review | finished
@@ -106,13 +108,18 @@ const multipleOutcomeSlice = createSlice({
       }
     },
     setSelectedRows(state, action) {
-      state.selectedRows.list = action.payload;
+      state.selectedRows.list = action.payload.slice(
+        0,
+        MAX_SELECTED_INTERVENTIONS,
+      );
     },
     toggleSelectedRows(state, action) {
       const index = state.selectedRows.list.indexOf(action.payload);
 
       if (index === -1) {
-        state.selectedRows.list.push(action.payload);
+        if (state.selectedRows.list.length < MAX_SELECTED_INTERVENTIONS) {
+          state.selectedRows.list.push(action.payload);
+        }
       } else {
         state.selectedRows.list.splice(index, 1);
       }

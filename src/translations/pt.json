@@ -693,6 +693,8 @@
     "title": "Desfecho múltiplo",
     "selectMultiple": "Selecionar múltiplas",
     "selected": "{{count}} selecionadas",
+    "noPending": "Não há intervenções pendentes para aplicar desfecho",
+    "maxSelected": "Máximo de {{max}} intervenções selecionadas por vez",
     "applyOutcome": "Aplicar desfecho",
     "selectAllPending": "Selecionar todas pendentes",
     "clearSelection": "Limpar seleção",
