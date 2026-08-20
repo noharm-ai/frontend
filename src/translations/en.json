@@ -1100,6 +1100,7 @@
   },
   "navigationSoapNote": {
     "btnGenerate": "Generate SOAP note",
+    "btnGenerateDisabled": "Only available for \"Consulta 1\" notes",
     "title": "Pharmaceutical Note - NoHarm Teleconsultation",
     "generating": "Generating note with AI. This may take up to 30 seconds...",
     "editHint": "Review and edit the text before saving. A new clinical note will be created.",
