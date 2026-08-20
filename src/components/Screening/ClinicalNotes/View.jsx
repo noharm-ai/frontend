@@ -385,7 +385,7 @@ export default function View({
     FORBID_TAGS: ["font", "img"],
   });
 
-  const canGenerateSoap = (selected.position || "").includes("Consulta 1");
+  const canGenerateSoap = (selected.position || "").includes("Consulta");
 
   return (
     <>
