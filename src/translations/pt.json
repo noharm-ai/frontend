@@ -1125,7 +1125,8 @@
     "snippetsTitle": "Textos disponíveis",
     "searchPlaceholder": "Buscar textos...",
     "insertHint": "Clique para inserir no texto",
-    "noResults": "Nenhum texto encontrado."
+    "noResults": "Nenhum texto encontrado.",
+    "promptVersionHint": "Escolha o formato da evolução gerada"
   },
   "onboarding": {
     "welcome": {
