@@ -182,43 +182,17 @@ export function NavigationSoapNote() {
       }}
       footer={
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
-          <div
-            style={{
-              marginRight: "auto",
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-            }}
-          >
-            {generate.promptOptions.length > 1 && (
-              <Tooltip title={t("navigationSoapNote.promptVersionHint")}>
-                <Segmented
-                  size="small"
-                  value={generate.selectedPromptKey}
-                  options={generate.promptOptions.map(
-                    (option: { key: string; label: string }) => ({
-                      label: option.label,
-                      value: option.key,
-                    }),
-                  )}
-                  disabled={generate.status === "loading" || isSaving}
-                  onChange={(value) =>
-                    note && generateNote(note.id, value as string)
-                  }
-                />
-              </Tooltip>
-            )}
-            {generate.status === "succeeded" && (
-              <Button
-                icon={<ReloadOutlined />}
-                onClick={() =>
-                  note && generateNote(note.id, generate.selectedPromptKey)
-                }
-              >
-                {t("navigationSoapNote.btnRegenerate")}
-              </Button>
-            )}
-          </div>
+          {generate.status === "succeeded" && (
+            <Button
+              icon={<ReloadOutlined />}
+              onClick={() =>
+                note && generateNote(note.id, generate.selectedPromptKey)
+              }
+              style={{ marginRight: "auto" }}
+            >
+              {t("navigationSoapNote.btnRegenerate")}
+            </Button>
+          )}
           <Button onClick={handleClose}>
             {t("navigationSoapNote.btnCancel")}
           </Button>
@@ -285,9 +259,37 @@ export function NavigationSoapNote() {
             flexDirection: "column",
           }}
         >
-          <h4 style={{ marginTop: 0, marginBottom: 12 }}>
-            {t("navigationSoapNote.generatedTitle")}
-          </h4>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 8,
+              marginBottom: 12,
+            }}
+          >
+            <h4 style={{ margin: 0 }}>
+              {t("navigationSoapNote.generatedTitle")}
+            </h4>
+            {generate.promptOptions.length > 1 && (
+              <Tooltip title={t("navigationSoapNote.promptVersionHint")}>
+                <Segmented
+                  size="small"
+                  value={generate.selectedPromptKey}
+                  options={generate.promptOptions.map(
+                    (option: { key: string; label: string }) => ({
+                      label: option.label,
+                      value: option.key,
+                    }),
+                  )}
+                  disabled={generate.status === "loading" || isSaving}
+                  onChange={(value) =>
+                    note && generateNote(note.id, value as string)
+                  }
+                />
+              </Tooltip>
+            )}
+          </div>
 
           {generate.status === "loading" && (
             <div style={{ textAlign: "center", padding: "48px 0" }}>
