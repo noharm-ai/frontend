@@ -22,7 +22,7 @@ function BaseForm() {
   const dispatch = useDispatch();
   const features = useSelector((state) => state.user.account.features);
   const segments = useSelector((state) => state.segments.list);
-  const { values, errors, setFieldValue } = useFormikContext();
+  const { values, errors, setFieldValue, initialValues } = useFormikContext();
   const [pwLoading, setPWLoading] = useState(false);
   const featureService = FeaturesService(features);
 
@@ -49,8 +49,8 @@ function BaseForm() {
               link={`${
                 import.meta.env.VITE_APP_URL || window.location.origin
               }/reset/${response.payload.data}`}
-              name={values.name}
-              email={values.email}
+              name={initialValues.name}
+              email={initialValues.email}
             />
           ),
           icon: null,
