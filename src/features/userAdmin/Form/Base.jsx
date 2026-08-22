@@ -4,7 +4,7 @@ import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 import { Flex, Tabs } from "antd";
 
-import { Input, Select, Textarea, Checkbox } from "components/Inputs";
+import { Input, Select, Checkbox } from "components/Inputs";
 import Switch from "components/Switch";
 import Button from "components/Button";
 import Role from "models/Role";
@@ -14,6 +14,7 @@ import notification from "components/notification";
 import { getUserResetToken } from "features/serverActions/ServerActionsSlice";
 import { getErrorMessage } from "utils/errorHandler";
 import Permission from "models/Permission";
+import { ResetPasswordLink } from "features/userAdmin/ResetPasswordLink/ResetPasswordLink";
 import PermissionService from "services/PermissionService";
 
 function BaseForm() {
@@ -25,11 +26,6 @@ function BaseForm() {
   const [pwLoading, setPWLoading] = useState(false);
   const featureService = FeaturesService(features);
 
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    notification.success({ message: "Link copiado!" });
-  };
-
   const generateResetToken = () => {
     setPWLoading(true);
 
@@ -40,30 +36,22 @@ function BaseForm() {
         notification.error({
           message: getErrorMessage(response, t),
         });
+      } else if (!response.payload.data) {
+        notification.error({
+          message:
+            "Não foi possível gerar o link. Verifique se o usuário está ativo.",
+        });
       } else {
         DefaultModal.info({
           title: "Link para Reset de Senha",
           content: (
-            <>
-              <p>
-                Cuidado ao disponibilizar este link. Confira se o usuário é
-                legítimo. Encaminhe este link somente para o email do usuário
-                que irá utilizá-lo.
-              </p>
-              <Textarea
-                onClick={() =>
-                  copyToClipboard(
-                    `${import.meta.env.VITE_APP_URL}/reset/${
-                      response.payload.data
-                    }`,
-                  )
-                }
-                style={{ minHeight: "300px" }}
-                value={`${import.meta.env.VITE_APP_URL}/reset/${
-                  response.payload.data
-                }`}
-              ></Textarea>
-            </>
+            <ResetPasswordLink
+              link={`${
+                import.meta.env.VITE_APP_URL || window.location.origin
+              }/reset/${response.payload.data}`}
+              name={values.name}
+              email={values.email}
+            />
           ),
           icon: null,
           width: 500,
