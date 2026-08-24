@@ -26,6 +26,7 @@ import { reset as prescriptionv2Reset } from "features/prescription/Prescription
 import { reset as drugAttributesFormReset } from "features/drugs/DrugAttributesForm/DrugAttributesFormSlice";
 import { reset as supportReset } from "features/support/SupportSlice";
 import { reset as interventionOutcomeReset } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
+import { reset as multipleInterventionOutcomeReset } from "features/intervention/MultipleOutcome/MultipleOutcomeSlice";
 import { reset as userAdminReset } from "features/userAdmin/UserAdminSlice";
 import { reset as examsModalReset } from "features/exams/ExamModal/ExamModalSlice";
 import { reset as examsFormReset } from "features/exams/ExamForm/ExamFormSlice";
@@ -88,6 +89,7 @@ export const resetReduxState = (dispatch) => {
   dispatch(drugAttributesFormReset());
   dispatch(supportReset());
   dispatch(interventionOutcomeReset());
+  dispatch(multipleInterventionOutcomeReset());
   dispatch(userAdminReset());
   dispatch(examsModalReset());
   dispatch(examsFormReset());

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useSelector } from "react-redux";
 import { isEmpty } from "lodash";
 import styled from "styled-components";
 import { useTranslation } from "react-i18next";
@@ -22,6 +23,8 @@ import Filter from "./filters/Filter";
 import { PageCard } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
 import InterventionOutcome from "features/intervention/InterventionOutcome/InterventionOutcome";
+import { MultipleOutcome } from "features/intervention/MultipleOutcome/MultipleOutcome";
+import { MultipleOutcomeToolbar } from "features/intervention/MultipleOutcome/MultipleOutcomeToolbar";
 
 const TableInfo = styled.div`
   .filter-field {
@@ -58,6 +61,9 @@ export default function InterventionList({
 }) {
   const { t } = useTranslation();
   const [visible, setVisibility] = useState(false);
+  const selectedRows = useSelector(
+    (state) => state.multipleInterventionOutcome.selectedRows,
+  );
   const prescriberList = useMemo(
     () =>
       list ? uniqBy(list, "prescriber").map((i) => i.prescriber).sort() : [],
@@ -193,13 +199,23 @@ export default function InterventionList({
       });
   };
 
-  const dsInterventions = toDataSource(filterList(filter), null, {
+  const filteredList = filterList(filter);
+  const dsInterventions = toDataSource(filteredList, null, {
     isSaving,
     saveIntervention,
     onShowModal,
     futurePrescription,
     fetchFuturePrescription,
   });
+
+  // rows offered by "select all pending" honor the local filters, including
+  // the status filter applied by the table column (filteredInfo)
+  const pendingIds =
+    filter.status == null || filter.status.indexOf("s") !== -1
+      ? filteredList
+          .filter((i) => i.status === "s")
+          .map((i) => i.idIntervention)
+      : [];
   const listCount = {
     all: list ? list.length : 0,
     pending: 0,
@@ -373,8 +389,16 @@ export default function InterventionList({
       <BackTop />
 
       <PageCard>
+        <MultipleOutcomeToolbar pendingIds={pendingIds} />
+
         <ExpandableTable
-          columns={interventionColumns(filter, true, false, t)}
+          columns={interventionColumns(
+            filter,
+            true,
+            false,
+            t,
+            selectedRows.active ? selectedRows : null,
+          )}
           pagination={{
             pageSize: 50,
             position: ["topRight", "bottomRight"],
@@ -401,6 +425,7 @@ export default function InterventionList({
         disableUndoIntervention
       />
       <InterventionOutcome />
+      <MultipleOutcome />
     </>
   );
 }
