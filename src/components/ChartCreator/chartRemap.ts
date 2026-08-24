@@ -262,9 +262,10 @@ export function remapChart(
   remapped.xKeys = mapKeys(chart.xKeys ?? [], mapping);
   remapped.yKeys = mapKeys(chart.yKeys ?? [], mapping);
 
-  // Without an X axis there is nothing to plot; a chart with no value series
-  // falls back to counting rows, which stays valid.
-  if (remapped.xKeys.length === 0) return null;
+  // The gauge is a single scalar and has no X axis; for every other type an
+  // empty one leaves nothing to plot. A chart with no value series falls back
+  // to counting rows, which stays valid.
+  if (remapped.type !== "gauge" && remapped.xKeys.length === 0) return null;
 
   remapped.filters = mapFilters(chart.filters ?? [], mapping, targetSchema);
 
