@@ -13,9 +13,10 @@ import {
   SaveOutlined,
   TableOutlined,
   BarChartOutlined,
+  CopyOutlined,
 } from "@ant-design/icons";
 
-import { useAppDispatch } from "src/store";
+import { useAppDispatch, useAppSelector } from "src/store";
 import { DataViewer } from "src/components/DataViewer/DataViewer";
 import { formatDate } from "src/utils/date";
 import { getFileReport } from "../ReportsSlice";
@@ -54,6 +55,8 @@ import {
 } from "./FileReport.utils";
 import { FilterRow } from "./FilterRow";
 import { ErrorBoundary } from "react-error-boundary";
+import { withChartDefaults } from "src/components/ChartCreator/chartRemap";
+import { CopyCharts, CopySummary } from "./CopyCharts/CopyCharts";
 
 const ChartCreatorFallback = ({
   resetErrorBoundary,
@@ -90,7 +93,11 @@ export function FileReport() {
   const [initialCharts, setInitialCharts] = useState<ChartConfig[]>([]);
   const [currentCharts, setCurrentCharts] = useState<ChartConfig[]>([]);
   const [isSavingCharts, setIsSavingCharts] = useState(false);
+  const [showCopyCharts, setShowCopyCharts] = useState(false);
   const chartCreatorRef = useRef<ChartCreatorHandle>(null);
+  const currentSchema = useAppSelector(
+    (state: any) => state.user.account.schema,
+  );
   const canWriteGraphs = PermissionService().has(
     Permission.WRITE_CUSTOM_REPORTS_GRAPHS,
   );
@@ -207,8 +214,7 @@ export function FileReport() {
 
   // Core suggestion request, reused by both the bulk button and the wizard's
   // per-chart "Gerar com agente" step. Returns normalized ChartConfigs (or
-  // throws on error). Defaults are applied first so a backend-provided `series`
-  // (expression charts) is preserved by the trailing `...chart` spread.
+  // throws on error).
   const requestChartSuggestions = async (
     hint: string,
   ): Promise<ChartConfig[]> => {
@@ -244,28 +250,15 @@ export function FileReport() {
     }
 
     const suggestions: ChartConfig[] = response.payload.data.data ?? [];
-    return suggestions.map((chart) => ({
-      aggregation: "none",
-      sortOrder: "none",
-      xSortOrder: "none",
-      xLabelRotate: 0,
-      topN: 0,
-      showLabels: false,
-      height: 400,
-      dateGrouping: "none",
-      showTitle: true,
-      colorPalette: "default",
-      colorMode: "palette",
-      stacked: false,
-      filters: [],
-      ...chart,
-      id: generateId(),
-      // The agent may return expression series without ids; the builder and
-      // renderer key each series by id, so ensure every one has a stable one.
-      ...(chart.series
-        ? { series: chart.series.map((s) => ({ ...s, id: s.id || generateId() })) }
-        : {}),
-    }));
+    return suggestions.map(withChartDefaults);
+  };
+
+  const handleCopiedCharts = (charts: ChartConfig[], summary: CopySummary) => {
+    chartCreatorRef.current?.appendCharts(charts);
+    trackCustomReportAction(TrackedCustomReportAction.COPY_CHARTS, summary);
+    notification.success({
+      message: `${charts.length} gráfico(s) copiados. Salve para gravar as alterações.`,
+    });
   };
 
   const executeDownloadWithFormat = (
@@ -391,6 +384,15 @@ export function FileReport() {
                               onChartsChange={setCurrentCharts}
                               readOnly={!canWriteGraphs}
                               onGenerateCharts={requestChartSuggestions}
+                              extraActions={
+                                <Button
+                                  icon={<CopyOutlined />}
+                                  onClick={() => setShowCopyCharts(true)}
+                                  disabled={schema.length === 0}
+                                >
+                                  Copiar de outro relatório
+                                </Button>
+                              }
                             />
 
                             {canWriteGraphs && (
@@ -525,6 +527,16 @@ export function FileReport() {
             onClick={handleSaveCharts}
           />
         </>
+      )}
+      {canWriteGraphs && (
+        <CopyCharts
+          open={showCopyCharts}
+          onClose={() => setShowCopyCharts(false)}
+          targetSchema={schema}
+          existingTitles={currentCharts.map((chart) => chart.title)}
+          currentSchemaName={currentSchema}
+          onImport={handleCopiedCharts}
+        />
       )}
       <FloatButton.BackTop
         style={{ right: 80, bottom: 25 }}
