@@ -1,0 +1,38 @@
+{
+  "status": "success",
+  "data": {
+    "idIntervention": 304,
+    "header": {
+      "patient": true,
+      "status": "s",
+      "readonly": false,
+      "date": "__DATE_NOW__",
+      "originDrug": "Intervenção no paciente",
+      "destinyDrug": null,
+      "destinyDrugSubstance": null,
+      "destinyDrugId": null,
+      "idSegment": 1,
+      "economyDayValue": 15.5,
+      "economyDayValueManual": true,
+      "economyDayAmount": null,
+      "economyDayAmountManual": true,
+      "economyType": 3,
+      "updatedAt": null,
+      "outcomeAt": null,
+      "outcomeUser": null,
+      "economyIniDate": "__DATE_NOW__",
+      "economyEndDate": null,
+      "interventionReason": ["Economia Customizada"],
+      "notes": "",
+      "isCpoe": false,
+      "invalidSegment": false
+    },
+    "origin": {
+      "item": {
+        "idPrescription": "199",
+        "idPrescriptionAgg": null,
+        "prescriptionDate": "__DATE_NOW__"
+      }
+    }
+  }
+}

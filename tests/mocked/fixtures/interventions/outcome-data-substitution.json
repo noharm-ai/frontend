@@ -1,0 +1,157 @@
+{
+  "status": "success",
+  "data": {
+    "idIntervention": 303,
+    "header": {
+      "patient": false,
+      "status": "s",
+      "readonly": false,
+      "date": "__DATE_NOW__",
+      "originDrug": "BISACODIL 10 mg CP",
+      "destinyDrug": "BISACODIL 5 mg CP",
+      "destinyDrugSubstance": 10,
+      "destinyDrugId": 4,
+      "idSegment": 1,
+      "economyDayValue": 22.6,
+      "economyDayValueManual": false,
+      "economyDayAmount": null,
+      "economyDayAmountManual": false,
+      "economyType": 2,
+      "updatedAt": null,
+      "outcomeAt": null,
+      "outcomeUser": null,
+      "economyIniDate": "__DATE_NOW__",
+      "economyEndDate": null,
+      "interventionReason": ["Substituição"],
+      "notes": "",
+      "isCpoe": false,
+      "invalidSegment": false
+    },
+    "origin": {
+      "item": {
+        "beforeConversion": {
+          "dose": "10.0",
+          "idMeasureUnit": "1",
+          "idMeasureUnitPrice": "1",
+          "price": "4.52"
+        },
+        "concilia": false,
+        "conversion": { "doseFactor": "1", "priceFactor": "1" },
+        "dose": "10.0",
+        "drugNpName": null,
+        "frequencyDay": 2.0,
+        "frequencyDescription": "12h/12h",
+        "idDrug": 3,
+        "idFrequency": "2",
+        "idMeasureUnit": "1",
+        "idPrescription": "198",
+        "idPrescriptionAggregate": null,
+        "idPrescriptionDrug": "54",
+        "kit": { "list": [], "price": 0 },
+        "measureUnitDescription": "mg",
+        "name": "BISACODIL 10 mg CP",
+        "prescriptionDate": "__DATE_NOW__",
+        "price": "4.52",
+        "priceKit": 0,
+        "pricePerDose": "45.2",
+        "route": "VO"
+      }
+    },
+    "destiny": [
+      {
+        "item": {
+          "beforeConversion": {
+            "dose": "5.0",
+            "idMeasureUnit": "1",
+            "idMeasureUnitPrice": "1",
+            "price": "4.52"
+          },
+          "concilia": false,
+          "conversion": { "doseFactor": "1", "priceFactor": "1" },
+          "dose": "5.0",
+          "drugNpName": null,
+          "frequencyDay": 2.0,
+          "frequencyDescription": "12h/12h",
+          "idDrug": 4,
+          "idFrequency": "2",
+          "idMeasureUnit": "1",
+          "idPrescription": "199",
+          "idPrescriptionAggregate": null,
+          "idPrescriptionDrug": "48",
+          "kit": { "list": [], "price": 0 },
+          "measureUnitDescription": "mg",
+          "name": "BISACODIL 5 mg CP",
+          "prescriptionDate": "__DATE_NOW__",
+          "price": "4.52",
+          "priceKit": 0,
+          "pricePerDose": "22.6",
+          "route": "VO"
+        }
+      }
+    ],
+    "original": {
+      "origin": {
+        "item": {
+          "beforeConversion": {
+            "dose": "10.0",
+            "idMeasureUnit": "1",
+            "idMeasureUnitPrice": "1",
+            "price": "4.52"
+          },
+          "concilia": false,
+          "conversion": { "doseFactor": "1", "priceFactor": "1" },
+          "dose": "10.0",
+          "drugNpName": null,
+          "frequencyDay": 2.0,
+          "frequencyDescription": "12h/12h",
+          "idDrug": 3,
+          "idFrequency": "2",
+          "idMeasureUnit": "1",
+          "idPrescription": "198",
+          "idPrescriptionAggregate": null,
+          "idPrescriptionDrug": "54",
+          "kit": { "list": [], "price": 0 },
+          "measureUnitDescription": "mg",
+          "name": "BISACODIL 10 mg CP",
+          "prescriptionDate": "__DATE_NOW__",
+          "price": "4.52",
+          "priceKit": 0,
+          "pricePerDose": "45.2",
+          "route": "VO"
+        }
+      },
+      "destiny": [
+        {
+          "item": {
+            "beforeConversion": {
+              "dose": "5.0",
+              "idMeasureUnit": "1",
+              "idMeasureUnitPrice": "1",
+              "price": "4.52"
+            },
+            "concilia": false,
+            "conversion": { "doseFactor": "1", "priceFactor": "1" },
+            "dose": "5.0",
+            "drugNpName": null,
+            "frequencyDay": 2.0,
+            "frequencyDescription": "12h/12h",
+            "idDrug": 4,
+            "idFrequency": "2",
+            "idMeasureUnit": "1",
+            "idPrescription": "199",
+            "idPrescriptionAggregate": null,
+            "idPrescriptionDrug": "48",
+            "kit": { "list": [], "price": 0 },
+            "measureUnitDescription": "mg",
+            "name": "BISACODIL 5 mg CP",
+            "prescriptionDate": "__DATE_NOW__",
+            "price": "4.52",
+            "priceKit": 0,
+            "pricePerDose": "22.6",
+            "route": "VO"
+          }
+        }
+      ]
+    }
+  }
+}

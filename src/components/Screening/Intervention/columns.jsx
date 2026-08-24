@@ -7,6 +7,8 @@ import {
   WarningOutlined,
   RollbackOutlined,
   CaretDownOutlined,
+  CheckSquareOutlined,
+  BorderOutlined,
 } from "@ant-design/icons";
 
 import Button, { Link } from "components/Button";
@@ -18,6 +20,11 @@ import RichTextView from "components/RichTextView";
 import { isEmpty } from "lodash";
 import InterventionStatus from "models/InterventionStatus";
 import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
+import {
+  toggleSelectedRows,
+  MAX_SELECTED_INTERVENTIONS,
+} from "features/intervention/MultipleOutcome/MultipleOutcomeSlice";
+import notification from "components/notification";
 import {
   trackPrescriptionAction,
   TrackedPrescriptionAction,
@@ -341,7 +348,63 @@ const Action = ({ record }) => {
   );
 };
 
-const columns = (filteredInfo, name = false, admissionNumber = false, t) => {
+const SelectionToggle = ({ record, selectedList }) => {
+  const { t } = useTranslation();
+  const dispatch = useDispatch();
+
+  if (record.status !== "s") {
+    return (
+      <Tooltip
+        title="Esta intervenção já possui desfecho"
+        placement="left"
+      >
+        <Button
+          disabled
+          icon={<BorderOutlined style={{ fontSize: 16 }} />}
+        ></Button>
+      </Tooltip>
+    );
+  }
+
+  const selected = selectedList.indexOf(record.idIntervention) !== -1;
+
+  const toggle = () => {
+    if (!selected && selectedList.length >= MAX_SELECTED_INTERVENTIONS) {
+      notification.info({
+        message: t("multipleIntervention.maxSelected", {
+          max: MAX_SELECTED_INTERVENTIONS,
+        }),
+      });
+      return;
+    }
+
+    dispatch(toggleSelectedRows(record.idIntervention));
+  };
+
+  return (
+    <Tooltip title={selected ? null : "Selecionar"}>
+      <Button
+        type={selected ? "primary" : "default"}
+        onClick={toggle}
+        icon={
+          selected ? (
+            <CheckSquareOutlined style={{ fontSize: 16 }} />
+          ) : (
+            <BorderOutlined style={{ fontSize: 16 }} />
+          )
+        }
+      ></Button>
+    </Tooltip>
+  );
+};
+
+const columns = (
+  filteredInfo,
+  name = false,
+  admissionNumber = false,
+  t,
+  selection = null,
+) => {
   const columnsArray = [
     {
       title: t("tableHeader.date"),
@@ -433,6 +496,12 @@ const columns = (filteredInfo, name = false, admissionNumber = false, t) => {
       align: "center",
       width: 100,
       render: (text, record) => {
+        if (selection?.active) {
+          return (
+            <SelectionToggle record={record} selectedList={selection.list} />
+          );
+        }
+
         return <Action record={record} />;
       },
     },

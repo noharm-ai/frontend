@@ -34,11 +34,20 @@ import RichTextView from "components/RichTextView";
 
 const INPUT_PRECISION = 6;
 
-export default function InterventionOutcomeForm() {
+export default function InterventionOutcomeForm({
+  outcomeData: outcomeDataProp,
+  loadStatus: loadStatusProp,
+}) {
   const { t } = useTranslation();
   const { values, setFieldValue, errors, touched } = useFormikContext();
-  const outcomeData = useSelector((state) => state.interventionOutcome.data);
-  const loadStatus = useSelector((state) => state.interventionOutcome.status);
+  const outcomeDataStore = useSelector(
+    (state) => state.interventionOutcome.data,
+  );
+  const loadStatusStore = useSelector(
+    (state) => state.interventionOutcome.status,
+  );
+  const outcomeData = outcomeDataProp ?? outcomeDataStore;
+  const loadStatus = loadStatusProp ?? loadStatusStore;
   const [details, setDetails] = useState(false);
 
   const costPerDayHint =
