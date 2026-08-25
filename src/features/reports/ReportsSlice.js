@@ -98,6 +98,35 @@ export const suggestReportGraphs = createAsyncThunk(
   },
 );
 
+export const getCopySourceReports = createAsyncThunk(
+  "reports/custom/copy-source-list",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.custom.getCopySourceReports(
+        params.sourceSchema,
+      );
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  },
+);
+
+export const getCopySourceGraphs = createAsyncThunk(
+  "reports/custom/copy-source-graphs",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.custom.getCopySourceGraphs(
+        params.idReport,
+        params.sourceSchema,
+      );
+      return response;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  },
+);
+
 export const getFileReport = createAsyncThunk(
   "reports/file-report",
   async (params, thunkAPI) => {

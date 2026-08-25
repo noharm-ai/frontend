@@ -89,6 +89,19 @@ api.custom.updateReportGraphs = (idReport, graphs) =>
 api.custom.suggestReportGraphs = (params = {}) =>
   instance.post(`/reports/custom/suggest-graphs`, params, setHeaders());
 
+// sourceSchema is optional: when omitted the sources come from the current schema
+api.custom.getCopySourceReports = (sourceSchema) =>
+  instance.get(`/admin/report/copy-source/list`, {
+    params: { sourceSchema },
+    ...setHeaders(),
+  });
+
+api.custom.getCopySourceGraphs = (idReport, sourceSchema) =>
+  instance.get(`/admin/report/copy-source/${idReport}/graphs`, {
+    params: { sourceSchema },
+    ...setHeaders(),
+  });
+
 // REGULATION
 api.regulation = {};
 api.regulation.getIndicatorsPanel = (params = {}) =>
