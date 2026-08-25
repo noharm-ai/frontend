@@ -18,9 +18,7 @@ export const SearchBox = styled.div`
     border-bottom-right-radius: 0;
 
     .filters {
-      /* Generous cap so tall filters (many multi-select chips) are never
-         clipped at the bottom while the expand animation is preserved. */
-      max-height: 6000px;
+      max-height: 2000px;
       padding: 15px 0;
       margin-top: 20px;
       opacity: 1;

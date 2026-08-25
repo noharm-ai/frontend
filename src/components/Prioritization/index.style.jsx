@@ -148,7 +148,7 @@ export const ResultActions = styled.div`
             background-color: #70bdc4;
           }
 
-          .ant-select-content-has-value {
+          .ant-select-content-value {
             color: #fff;
             font-weight: 500;
           }

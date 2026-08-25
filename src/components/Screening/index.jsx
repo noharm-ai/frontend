@@ -72,7 +72,7 @@ export default function Screening({
   useEffect(() => {
     const getNextSibling = (elm) => {
       const allRows = document.querySelectorAll(
-        ".ant-tabs-content:not(.ant-tabs-content-hidden) .ant-table-tbody tr[data-row-key]:not(.summary-row):not(.divider-row)"
+        ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr[data-row-key]:not(.summary-row):not(.divider-row)"
       );
 
       let currentIndex = -1;
@@ -93,7 +93,7 @@ export default function Screening({
 
     const getPreviousSibling = (elm) => {
       const allRows = document.querySelectorAll(
-        ".ant-tabs-content:not(.ant-tabs-content-hidden) .ant-table-tbody tr[data-row-key]:not(.summary-row):not(.divider-row)"
+        ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr[data-row-key]:not(.summary-row):not(.divider-row)"
       );
 
       let currentIndex = -1;
@@ -142,11 +142,11 @@ export default function Screening({
 
       if (e.ctrlKey || e.metaKey) {
         let activeRow = document.querySelectorAll(
-          ".ant-tabs-content:not(.ant-tabs-content-hidden) .ant-table-tbody tr.highlight"
+          ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr.highlight"
         )[0];
         if (!activeRow) {
           activeRow = document.querySelectorAll(
-            ".ant-tabs-content:not(.ant-tabs-content-hidden) .ant-table-tbody tr"
+            ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr"
           )[0];
 
           activeRow?.classList.add("highlight");
@@ -220,7 +220,7 @@ export default function Screening({
             e.preventDefault();
             activeRow.classList.remove("highlight");
             const first = document.querySelectorAll(
-              ".ant-tabs-content:not(.ant-tabs-content-hidden) .ant-table-tbody tr"
+              ".ant-tabs-tabpane:not(.ant-tabs-tabpane-hidden) .ant-table-tbody tr"
             )[0];
             first.classList.add("highlight");
             scrollIntoView(first);

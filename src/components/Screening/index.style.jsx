@@ -46,7 +46,7 @@ export const ScreeningTabs = styled(Tabs)`
     margin-bottom: 0;
   }
 
-  .ant-tabs-body {
+  .ant-tabs-content {
     background: #fff;
     border-radius: 4px;
     min-height: 100px;

@@ -15,7 +15,7 @@ export const Container = styled(PageCard) <{ $height: number }>`
     flex: 1;
     overflow: hidden;
 
-    .ant-spin,
+    .ant-spin-nested-loading,
     .ant-spin-container {
       height: 100%;
     }
