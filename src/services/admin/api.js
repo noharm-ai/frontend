@@ -211,6 +211,10 @@ api.user.sendResetPasswordEmail = (params) =>
   instance.post(`/user-admin/send-reset-email`, params, {
     ...setHeaders(),
   });
+api.user.getResetPasswordHistory = (idUser) =>
+  instance.get(`/user-admin/reset-history/${idUser}`, {
+    ...setHeaders(),
+  });
 
 /**
  * SUBSTANCE
