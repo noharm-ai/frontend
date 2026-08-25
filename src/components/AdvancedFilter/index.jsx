@@ -201,7 +201,9 @@ export default function AdvancedFilter({
             </Col>
           </Row>
           {secondaryFilters && (
-            <div className="filters">{secondaryFilters}</div>
+            <div className="filters">
+              <div className="filters-inner">{secondaryFilters}</div>
+            </div>
           )}
         </AdvancedFilterContext.Provider>
       </SearchBox>

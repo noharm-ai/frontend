@@ -18,7 +18,7 @@ export const SearchBox = styled.div`
     border-bottom-right-radius: 0;
 
     .filters {
-      max-height: 2000px;
+      grid-template-rows: 1fr;
       padding: 15px 0;
       margin-top: 20px;
       opacity: 1;
@@ -26,11 +26,18 @@ export const SearchBox = styled.div`
   }
 
   .filters {
-    max-height: 0;
+    /* grid-template-rows 0fr -> 1fr animates the expansion to any content
+       height, so tall filters are never clipped by a max-height cap */
+    display: grid;
+    grid-template-rows: 0fr;
     padding: 0;
-    overflow: hidden;
     opacity: 0;
     transition: all 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+
+    > .filters-inner {
+      overflow: hidden;
+      min-height: 0;
+    }
   }
 
   .ant-btn-link {
