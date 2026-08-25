@@ -255,6 +255,41 @@ const ResetStyled = createGlobalStyle`
       width: 100%;
     }
   }
+
+  /* antd >= 6.3 sets font-size/line-height on the Spin wrapper element
+     (previously the unstyled .ant-spin-nested-loading), which our nested
+     page content would inherit instead of the app's own typography. */
+  .ant-spin.ant-spin:has(> .ant-spin-container) {
+    font-size: inherit;
+    line-height: inherit;
+  }
+
+  /* antd >= 6.3 lays the collapsed sider menu items out with flexbox, which
+     centers each icon 1px lower than the previous inline layout. */
+  .ant-menu-inline-collapsed > .ant-menu-item .ant-menu-item-icon,
+  .ant-menu-inline-collapsed
+    > .ant-menu-submenu
+    > .ant-menu-submenu-title
+    .ant-menu-item-icon {
+    position: relative;
+    top: -1px;
+  }
+
+  /* antd >= 6.3 renders button icons as centered inline-flex and inserts an
+     \\00a0 ::before strut inside the icon, which redefines the icon baseline
+     and nudges every in-button icon glyph a few pixels. Restore the previous
+     rendering. */
+  .ant-btn .ant-btn-icon.ant-btn-icon {
+    display: inline;
+
+    .anticon {
+      vertical-align: -0.125em;
+
+      &::before {
+        display: none;
+      }
+    }
+  }
 `;
 
 export default ResetStyled;

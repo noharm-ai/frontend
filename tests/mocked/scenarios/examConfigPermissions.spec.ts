@@ -74,14 +74,19 @@ test("READ_CONFIG_EXAMS alone shows the config read-only", async ({
   const modal = page.getByRole("dialog");
   await expect(modal).toBeVisible();
   await expect(modal.getByRole("button", { name: "Salvar" })).toHaveCount(0);
-  await expect(modal.getByRole("button", { name: "Fechar" })).toBeVisible();
+  await expect(
+    modal.locator(".ant-modal-footer").getByRole("button", { name: "Fechar" }),
+  ).toBeVisible();
 
   const nameRow = modal.locator(".form-row").filter({ hasText: "Nome:" });
   await expect(nameRow.locator("input")).toBeDisabled();
 
   const activeRow = modal.locator(".form-row").filter({ hasText: "Ativo:" });
   await expect(activeRow.locator("button.ant-switch")).toBeDisabled();
-  await modal.getByRole("button", { name: "Fechar" }).click();
+  await modal
+    .locator(".ant-modal-footer")
+    .getByRole("button", { name: "Fechar" })
+    .click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
 
   // the alert links to the config managers to ask for a change
