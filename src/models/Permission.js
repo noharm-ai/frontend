@@ -22,6 +22,7 @@ export default class Permission {
   static WRITE_NAME = "WRITE_NAME";
 
   static ADMIN_USERS = "ADMIN_USERS";
+  static SEND_RESET_PASSWORD_EMAIL = "SEND_RESET_PASSWORD_EMAIL";
 
   static ADMIN_INTEGRATION_REMOTE = "ADMIN_INTEGRATION_REMOTE";
 

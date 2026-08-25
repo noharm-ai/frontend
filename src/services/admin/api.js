@@ -207,6 +207,10 @@ api.user.getResetToken = (params) =>
   instance.post(`/user/reset-token`, params, {
     ...setHeaders(),
   });
+api.user.sendResetPasswordEmail = (params) =>
+  instance.post(`/user-admin/send-reset-email`, params, {
+    ...setHeaders(),
+  });
 
 /**
  * SUBSTANCE

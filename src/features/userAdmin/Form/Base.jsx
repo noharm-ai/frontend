@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
-import { Flex, Tabs } from "antd";
+import { Flex, Popconfirm, Tabs } from "antd";
 
 import { Input, Select, Textarea, Checkbox } from "components/Inputs";
 import Switch from "components/Switch";
@@ -11,7 +11,10 @@ import Role from "models/Role";
 import FeaturesService from "services/features";
 import DefaultModal from "components/Modal";
 import notification from "components/notification";
-import { getUserResetToken } from "features/serverActions/ServerActionsSlice";
+import {
+  getUserResetToken,
+  sendUserResetPasswordEmail,
+} from "features/serverActions/ServerActionsSlice";
 import { getErrorMessage } from "utils/errorHandler";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
@@ -23,6 +26,7 @@ function BaseForm() {
   const segments = useSelector((state) => state.segments.list);
   const { values, errors, setFieldValue } = useFormikContext();
   const [pwLoading, setPWLoading] = useState(false);
+  const [resetEmailLoading, setResetEmailLoading] = useState(false);
   const featureService = FeaturesService(features);
 
   const copyToClipboard = (text) => {
@@ -74,6 +78,26 @@ function BaseForm() {
         });
       }
     });
+  };
+
+  const sendResetPasswordEmail = () => {
+    setResetEmailLoading(true);
+
+    dispatch(sendUserResetPasswordEmail({ idUser: values.id })).then(
+      (response) => {
+        setResetEmailLoading(false);
+
+        if (response.error) {
+          notification.error({
+            message: getErrorMessage(response, t),
+          });
+        } else {
+          notification.success({
+            message: `Email com o link de reset de senha enviado para ${response.payload.data.email}`,
+          });
+        }
+      },
+    );
   };
 
   const reportOptions = [
@@ -286,17 +310,40 @@ function BaseForm() {
                 )}
               </div>
 
-              {PermissionService().has(Permission.ADMIN_USERS) && values.id && (
-                <div className={`form-row`}>
-                  <Button
-                    danger
-                    onClick={() => generateResetToken()}
-                    loading={pwLoading}
-                  >
-                    Gerar link para reset de senha
-                  </Button>
-                </div>
-              )}
+              {PermissionService().hasAny([
+                Permission.SEND_RESET_PASSWORD_EMAIL,
+                Permission.ADMIN_USERS,
+              ]) &&
+                values.id && (
+                  <div className={`form-row`}>
+                    <Flex gap={8} wrap>
+                      {PermissionService().has(
+                        Permission.SEND_RESET_PASSWORD_EMAIL,
+                      ) && (
+                        <Popconfirm
+                          title="Reset de senha"
+                          description={`Enviar o email com o link de reset de senha para ${values.email}?`}
+                          onConfirm={() => sendResetPasswordEmail()}
+                          okText="Enviar"
+                          cancelText="Cancelar"
+                        >
+                          <Button type="primary" loading={resetEmailLoading}>
+                            Enviar email de reset de senha
+                          </Button>
+                        </Popconfirm>
+                      )}
+                      {PermissionService().has(Permission.ADMIN_USERS) && (
+                        <Button
+                          danger
+                          onClick={() => generateResetToken()}
+                          loading={pwLoading}
+                        >
+                          Gerar link para reset de senha
+                        </Button>
+                      )}
+                    </Flex>
+                  </div>
+                )}
             </>
           ),
         },

@@ -85,6 +85,19 @@ export const getUserResetToken = createAsyncThunk(
   }
 );
 
+export const sendUserResetPasswordEmail = createAsyncThunk(
+  "serverActions/user-send-reset-password-email",
+  async (params, thunkAPI) => {
+    try {
+      const response = await adminAPI.user.sendResetPasswordEmail(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  }
+);
+
 export const getUserLastClinicalNotes = createAsyncThunk(
   "serverActions/get-last-clinical-notes",
   async (params, thunkAPI) => {
