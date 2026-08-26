@@ -28,7 +28,7 @@ import { canManageResetPassword } from "./canManageResetPassword";
 const CONFIRM_WORD = "confirmar";
 
 const ORIGIN_LABELS = {
-  email: "Email",
+  email: "ODOO",
   link: "Link manual",
   self: "Esqueci a senha",
 };
@@ -240,7 +240,7 @@ export function ResetPassword() {
         onClick={() => sendResetPasswordEmail()}
         loading={emailLoading}
       >
-        Enviar email
+        Enviar email através do ODOO
       </Button>
 
       {emailResult && (
