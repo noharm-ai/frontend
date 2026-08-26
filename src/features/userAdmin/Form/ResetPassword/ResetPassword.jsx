@@ -161,7 +161,7 @@ export function ResetPassword() {
         });
       } else {
         setResetLink(
-          `${import.meta.env.VITE_APP_URL}/reset/${response.payload.data}`,
+          `${import.meta.env.VITE_MAIL_TEMPLATE_HOST}/reset/${response.payload.data}`,
         );
 
         if (canReadHistory) {
