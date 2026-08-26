@@ -1,7 +1,7 @@
 import { useEffect, useRef, useCallback, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Alert, Collapse, Empty, Input, Spin } from "antd";
+import { Alert, Collapse, Empty, Input, Segmented, Spin } from "antd";
 import { ReloadOutlined } from "@ant-design/icons";
 import DOMPurify from "dompurify";
 
@@ -100,8 +100,8 @@ export function NavigationSoapNote() {
   }));
 
   const generateNote = useCallback(
-    (id: string) => {
-      dispatch(generateNavigationSoapNote({ id }) as any).then(
+    (id: string, promptKey?: string | null) => {
+      dispatch(generateNavigationSoapNote({ id, promptKey }) as any).then(
         (result: any) => {
           if (result.error) {
             notification.error({ message: getErrorMessage(result, t) });
@@ -185,7 +185,9 @@ export function NavigationSoapNote() {
           {generate.status === "succeeded" && (
             <Button
               icon={<ReloadOutlined />}
-              onClick={() => note && generateNote(note.id)}
+              onClick={() =>
+                note && generateNote(note.id, generate.selectedPromptKey)
+              }
               style={{ marginRight: "auto" }}
             >
               {t("navigationSoapNote.btnRegenerate")}
@@ -257,9 +259,37 @@ export function NavigationSoapNote() {
             flexDirection: "column",
           }}
         >
-          <h4 style={{ marginTop: 0, marginBottom: 12 }}>
-            {t("navigationSoapNote.generatedTitle")}
-          </h4>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 8,
+              marginBottom: 12,
+            }}
+          >
+            <h4 style={{ margin: 0 }}>
+              {t("navigationSoapNote.generatedTitle")}
+            </h4>
+            {generate.promptOptions.length > 1 && (
+              <Tooltip title={t("navigationSoapNote.promptVersionHint")}>
+                <Segmented
+                  size="small"
+                  value={generate.selectedPromptKey}
+                  options={generate.promptOptions.map(
+                    (option: { key: string; label: string }) => ({
+                      label: option.label,
+                      value: option.key,
+                    }),
+                  )}
+                  disabled={generate.status === "loading" || isSaving}
+                  onChange={(value) =>
+                    note && generateNote(note.id, value as string)
+                  }
+                />
+              </Tooltip>
+            )}
+          </div>
 
           {generate.status === "loading" && (
             <div style={{ textAlign: "center", padding: "48px 0" }}>
@@ -279,7 +309,9 @@ export function NavigationSoapNote() {
                 <Button
                   danger
                   icon={<ReloadOutlined />}
-                  onClick={() => note && generateNote(note.id)}
+                  onClick={() =>
+                    note && generateNote(note.id, generate.selectedPromptKey)
+                  }
                 >
                   {t("navigationSoapNote.btnRegenerate")}
                 </Button>

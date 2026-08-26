@@ -385,6 +385,8 @@ export default function View({
     FORBID_TAGS: ["font", "img"],
   });
 
+  const canGenerateSoap = (selected.position || "").includes("Consulta");
+
   return (
     <>
       <PaperHeader>
@@ -398,12 +400,19 @@ export default function View({
               {!edit &&
                 selected.source !== "prescription" &&
                 PermissionService().has(Permission.READ_NAV) && (
-                  <Tooltip title={t("navigationSoapNote.btnGenerate")}>
+                  <Tooltip
+                    title={
+                      canGenerateSoap
+                        ? t("navigationSoapNote.btnGenerate")
+                        : t("navigationSoapNote.btnGenerateDisabled")
+                    }
+                  >
                     <Button
                       type="primary"
                       ghost
                       shape="circle"
                       className="gtm-bt-soap-generate"
+                      disabled={!canGenerateSoap}
                       icon={<FileTextOutlined />}
                       style={{
                         width: "28px",

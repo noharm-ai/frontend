@@ -451,18 +451,20 @@ export default function Filter({
         </Row>
 
         <div className="filters">
-          <FilterFields
-            featureService={featureService}
-            prioritizationType={prioritizationType}
-            setScreeningListFilter={setScreeningListFilter}
-            fetchFrequencies={fetchFrequencies}
-            frequencies={frequencies}
-            filter={filter}
-            drugs={drugs}
-            segments={segments}
-            searchDrugs={searchDrugs}
-            open={open}
-          />
+          <div className="filters-inner">
+            <FilterFields
+              featureService={featureService}
+              prioritizationType={prioritizationType}
+              setScreeningListFilter={setScreeningListFilter}
+              fetchFrequencies={fetchFrequencies}
+              frequencies={frequencies}
+              filter={filter}
+              drugs={drugs}
+              segments={segments}
+              searchDrugs={searchDrugs}
+              open={open}
+            />
+          </div>
         </div>
       </SearchBox>
     </FilterCard>

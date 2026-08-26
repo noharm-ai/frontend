@@ -689,6 +689,37 @@
     "s": "Desfazer desfecho"
   },
 
+  "multipleIntervention": {
+    "title": "Desfecho múltiplo",
+    "selectMultiple": "Ativar seleção múltipla",
+    "selected": "{{count}} selecionadas",
+    "removeSelection": "Remover seleção",
+    "noPending": "Não há intervenções pendentes para aplicar desfecho",
+    "maxSelected": "Máximo de {{max}} intervenções selecionadas por vez",
+    "applyOutcome": "Aplicar desfecho",
+    "selectAllPending": "Selecionar todas pendentes",
+    "clearSelection": "Limpar seleção",
+    "confirmList": "{{count}} intervenções serão marcadas como",
+    "confirmNote": "Intervenções que geram economia do tipo Substituição ou Customizada exigem revisão individual. Elas serão apresentadas na sequência para confirmação.",
+    "apply": "Aplicar desfechos",
+    "applying": "Aplicando desfechos...",
+    "review": "Revisão {{current}} de {{total}}",
+    "confirmNext": "Confirmar e próximo",
+    "skip": "Pular",
+    "cancelRemaining": "Cancelar restantes",
+    "manualRequired": "Como não há prescrição substituta, preencha a economia manualmente (marque as opções Manual)",
+    "finished": "Desfechos aplicados com sucesso!",
+    "finishedWithErrors": "Alguns desfechos não puderam ser aplicados.",
+    "finishedSummary": "Aplicados: {{applied}} | Ignorados: {{skipped}} | Erros: {{errors}}",
+    "applied": "Aplicados",
+    "skipped": "Ignorados",
+    "intervention": "Intervenção",
+    "reasonClosed": "Já possui desfecho",
+    "reasonArchived": "Arquivada",
+    "reasonUser": "Pulada pelo usuário",
+    "reasonCanceled": "Cancelada"
+  },
+
   "roles": {
     "admin": "Administrador",
     "concilia": "Conciliação",
@@ -1110,6 +1141,7 @@
   },
   "navigationSoapNote": {
     "btnGenerate": "Gerar evolução SOAP",
+    "btnGenerateDisabled": "Disponível somente em evoluções de \"Consulta 1\"",
     "title": "Evolução Farmacêutica - SOAP",
     "generating": "Gerando evolução com IA. Isso pode levar até 30 segundos...",
     "editHint": "Revise e edite o texto antes de salvar. Uma nova evolução será criada.",
@@ -1125,7 +1157,8 @@
     "snippetsTitle": "Textos disponíveis",
     "searchPlaceholder": "Buscar textos...",
     "insertHint": "Clique para inserir no texto",
-    "noResults": "Nenhum texto encontrado."
+    "noResults": "Nenhum texto encontrado.",
+    "promptVersionHint": "Escolha o formato da evolução gerada"
   },
   "onboarding": {
     "welcome": {

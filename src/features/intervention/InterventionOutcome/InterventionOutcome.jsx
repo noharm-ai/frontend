@@ -25,6 +25,7 @@ import {
 import { updateInterventionStatusThunk } from "store/ducks/prescriptions/thunk";
 import { updateInterventionListStatusThunk } from "store/ducks/intervention/thunk";
 import InterventionOutcomeForm from "./Form/InterventionOutcomeForm";
+import { buildOutcomeInitialValues } from "./outcomeValues";
 import { getErrorMessage } from "utils/errorHandler";
 
 import { Form } from "styles/Form.style";
@@ -71,53 +72,10 @@ export default function InterventionOutcome({ ...props }) {
     t,
   ]);
 
-  const getDefaultValues = () => {
-    if (outcomeData.header?.readonly) {
-      return {
-        economyDayValueManual: outcomeData.header?.economyDayValueManual,
-        economyDayValue: outcomeData.header?.economyDayValue,
-        economyDayAmountManual: outcomeData.header?.economyDayAmountManual,
-        economyDayAmount: outcomeData.header?.economyDayAmount,
-      };
-    }
-
-    if (outcomeData.header?.economyType === 3) {
-      return {
-        economyDayValueManual: true,
-        economyDayValue: outcomeData.header?.economyDayValue,
-        economyDayAmountManual: true,
-        economyDayAmount: null,
-      };
-    }
-
-    if (selectedIntervention.outcome === "a") {
-      return {
-        economyDayValueManual: false,
-        economyDayValue: outcomeData.header?.economyDayValue,
-        economyDayAmountManual: false,
-        economyDayAmount: null,
-      };
-    }
-
-    return {
-      economyDayValueManual: true,
-      economyDayValue: "0",
-      economyDayAmountManual: true,
-      economyDayAmount: 1,
-    };
-  };
-
-  const initialValues = {
-    idIntervention: outcomeData.idIntervention,
-    outcome: selectedIntervention.outcome,
-    origin: outcomeData.origin?.item || {},
-    idPrescriptionDrugDestiny:
-      outcomeData.destiny?.length > 0
-        ? outcomeData.destiny[0].item.idPrescriptionDrug
-        : null,
-    destiny: outcomeData.destiny?.length > 0 ? outcomeData.destiny[0].item : {},
-    ...getDefaultValues(),
-  };
+  const initialValues = buildOutcomeInitialValues(
+    outcomeData,
+    selectedIntervention.outcome,
+  );
 
   const validationSchema = Yup.object().shape({
     idIntervention: Yup.number()

@@ -1,80 +1,24 @@
-import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 import { Flex, Tabs } from "antd";
 
-import { Input, Select, Textarea, Checkbox } from "components/Inputs";
+import { Input, Select, Checkbox } from "components/Inputs";
 import Switch from "components/Switch";
-import Button from "components/Button";
 import Role from "models/Role";
 import FeaturesService from "services/features";
-import DefaultModal from "components/Modal";
-import notification from "components/notification";
-import { getUserResetToken } from "features/serverActions/ServerActionsSlice";
-import { getErrorMessage } from "utils/errorHandler";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
+import { ResetPassword } from "./ResetPassword/ResetPassword";
+import { canManageResetPassword } from "./ResetPassword/canManageResetPassword";
 
 function BaseForm() {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
   const features = useSelector((state) => state.user.account.features);
   const segments = useSelector((state) => state.segments.list);
   const { values, errors, setFieldValue } = useFormikContext();
-  const [pwLoading, setPWLoading] = useState(false);
   const featureService = FeaturesService(features);
-
-  const copyToClipboard = (text) => {
-    navigator.clipboard.writeText(text);
-    notification.success({ message: "Link copiado!" });
-  };
-
-  const generateResetToken = () => {
-    setPWLoading(true);
-
-    dispatch(getUserResetToken({ idUser: values.id })).then((response) => {
-      setPWLoading(false);
-
-      if (response.error) {
-        notification.error({
-          message: getErrorMessage(response, t),
-        });
-      } else {
-        DefaultModal.info({
-          title: "Link para Reset de Senha",
-          content: (
-            <>
-              <p>
-                Cuidado ao disponibilizar este link. Confira se o usuário é
-                legítimo. Encaminhe este link somente para o email do usuário
-                que irá utilizá-lo.
-              </p>
-              <Textarea
-                onClick={() =>
-                  copyToClipboard(
-                    `${import.meta.env.VITE_APP_URL}/reset/${
-                      response.payload.data
-                    }`,
-                  )
-                }
-                style={{ minHeight: "300px" }}
-                value={`${import.meta.env.VITE_APP_URL}/reset/${
-                  response.payload.data
-                }`}
-              ></Textarea>
-            </>
-          ),
-          icon: null,
-          width: 500,
-          okText: "Fechar",
-          okButtonProps: { type: "default" },
-          wrapClassName: "default-modal",
-          mask: { blur: false },
-        });
-      }
-    });
-  };
 
   const reportOptions = [
     {
@@ -286,17 +230,6 @@ function BaseForm() {
                 )}
               </div>
 
-              {PermissionService().has(Permission.ADMIN_USERS) && values.id && (
-                <div className={`form-row`}>
-                  <Button
-                    danger
-                    onClick={() => generateResetToken()}
-                    loading={pwLoading}
-                  >
-                    Gerar link para reset de senha
-                  </Button>
-                </div>
-              )}
             </>
           ),
         },
@@ -332,6 +265,15 @@ function BaseForm() {
             </>
           ),
         },
+        ...(canManageResetPassword(values)
+          ? [
+              {
+                label: "Senha",
+                key: "password",
+                children: <ResetPassword />,
+              },
+            ]
+          : []),
       ]}
     />
   );

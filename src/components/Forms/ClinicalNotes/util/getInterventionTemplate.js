@@ -26,12 +26,12 @@ const getInterventions = (prescription, pending = false) => {
   flatItems.push({ idPrescription: prescription.data.idPrescription }); // Include prescription itself
 
   return interventions
-    .filter((i) => (pending ? i.status === "s" : true))
+    .filter((i) => (pending ? i.status === "s" : i.status !== "0"))
     .filter((i) => {
       return flatItems.find(
         (item) =>
           item.idPrescriptionDrug === i.id ||
-          i.idPrescription === prescription.data.idPrescription
+          i.idPrescription === prescription.data.idPrescription,
       );
     });
 };
@@ -53,7 +53,7 @@ const getInterventionTemplate = (
   prescription,
   account,
   signature,
-  conciliationType
+  conciliationType,
 ) => {
   if (prescription.data.concilia) {
     const interventions = getInterventions(prescription, true);
@@ -63,12 +63,12 @@ const getInterventionTemplate = (
       prescription,
       tplInterventions.join(""),
       signatureTemplate(signature, account),
-      conciliationType
+      conciliationType,
     );
   }
 
   const interventions = groupByPrescription(
-    getInterventions(prescription, true)
+    getInterventions(prescription, true),
   );
 
   const tpl = Object.keys(interventions).map((k) => {
@@ -84,7 +84,7 @@ const getInterventionTemplate = (
   return layoutTemplate(
     prescription.data,
     tpl.join(""),
-    signatureTemplate(signature, account)
+    signatureTemplate(signature, account),
   );
 };
 
@@ -101,7 +101,7 @@ export const getInterventionList = (prescription, t) => {
 
 export const getMyInterventionList = (prescription, t, userName) => {
   const interventions = getInterventions(prescription).filter(
-    (i) => i.user === userName
+    (i) => i.user === userName,
   );
 
   const tpl = interventions.map((i) => {

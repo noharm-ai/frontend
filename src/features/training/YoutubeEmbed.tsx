@@ -14,10 +14,26 @@ import {
 const YOUTUBE_ID_PATTERN =
   /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
 
+// keeps playback controls (pause/seek are needed in training), but strips
+// everything else the player offers: branding, annotations and related videos
+const PLAYER_PARAMS = {
+  autoplay: "1",
+  modestbranding: "1",
+  rel: "0",
+  iv_load_policy: "3",
+  playsinline: "1",
+};
+
 const getEmbedUrl = (url: string): string => {
   const match = url.match(YOUTUBE_ID_PATTERN);
 
-  return match ? `https://www.youtube.com/embed/${match[1]}` : url;
+  if (!match) {
+    return url;
+  }
+
+  const params = new URLSearchParams(PLAYER_PARAMS);
+
+  return `https://www.youtube-nocookie.com/embed/${match[1]}?${params}`;
 };
 
 interface YoutubeEmbedProps {
@@ -61,13 +77,10 @@ export function YoutubeEmbed({ url, title, moduleName }: YoutubeEmbedProps) {
     );
   }
 
-  const embedUrl = getEmbedUrl(url);
-  const autoplayUrl = `${embedUrl}${embedUrl.includes("?") ? "&" : "?"}autoplay=1`;
-
   return (
     <VideoWrapper>
       <iframe
-        src={autoplayUrl}
+        src={getEmbedUrl(url)}
         title={title}
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen

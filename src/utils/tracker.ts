@@ -179,6 +179,7 @@ export enum TrackedInterventionAction {
 }
 
 export enum TrackedInterventionOutcomeAction {
+  MULTIPLE_SELECTION_ACTIVATE = "ativar-selecao-multipla",
   CLICK_INTERVENTION_DETAILS = "ver-detalhes-intervencao",
   CLICK_PRESCRIPTION = "abrir-prescricao",
   CLICK_VALUE_DETAILS = "abrir-detalhes-custo",
@@ -191,6 +192,7 @@ export enum TrackedCustomReportAction {
   ADD_FILTER = "add-filter",
   REMOVE_FILTER = "remove-filter",
   CLEAR_FILTERS = "clear-filters",
+  COPY_CHARTS = "copy-charts",
 }
 
 export enum TrackedPrescriptionPrioritizationAction {

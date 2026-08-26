@@ -685,6 +685,37 @@
     "s": "Undo outcome"
   },
 
+  "multipleIntervention": {
+    "title": "Bulk outcome",
+    "selectMultiple": "Enable multiple selection",
+    "selected": "{{count}} selected",
+    "removeSelection": "Remove selection",
+    "noPending": "There are no pending interventions to set an outcome for",
+    "maxSelected": "A maximum of {{max}} interventions can be selected at a time",
+    "applyOutcome": "Apply outcome",
+    "selectAllPending": "Select all pending",
+    "clearSelection": "Clear selection",
+    "confirmList": "{{count}} interventions will be marked as",
+    "confirmNote": "Interventions with Substitution or Custom economy require individual review. They will be presented next for confirmation.",
+    "apply": "Apply outcomes",
+    "applying": "Applying outcomes...",
+    "review": "Review {{current}} of {{total}}",
+    "confirmNext": "Confirm & next",
+    "skip": "Skip",
+    "cancelRemaining": "Cancel remaining",
+    "manualRequired": "Since there is no substitute prescription, fill in the economy manually (check the Manual options)",
+    "finished": "Outcomes applied successfully!",
+    "finishedWithErrors": "Some outcomes could not be applied.",
+    "finishedSummary": "Applied: {{applied}} | Skipped: {{skipped}} | Errors: {{errors}}",
+    "applied": "Applied",
+    "skipped": "Skipped",
+    "intervention": "Intervention",
+    "reasonClosed": "Already has an outcome",
+    "reasonArchived": "Archived",
+    "reasonUser": "Skipped by user",
+    "reasonCanceled": "Canceled"
+  },
+
   "roles": {
     "admin": "Admin",
     "concilia": "Conciliation",
@@ -1100,6 +1131,7 @@
   },
   "navigationSoapNote": {
     "btnGenerate": "Generate SOAP note",
+    "btnGenerateDisabled": "Only available for \"Consulta 1\" notes",
     "title": "Pharmaceutical Note - NoHarm Teleconsultation",
     "generating": "Generating note with AI. This may take up to 30 seconds...",
     "editHint": "Review and edit the text before saving. A new clinical note will be created.",
@@ -1115,7 +1147,8 @@
     "snippetsTitle": "Available texts",
     "searchPlaceholder": "Search texts...",
     "insertHint": "Click to insert into text",
-    "noResults": "No texts found."
+    "noResults": "No texts found.",
+    "promptVersionHint": "Choose the generated note format"
   },
   "onboarding": {
     "welcome": {

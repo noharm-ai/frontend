@@ -21,12 +21,19 @@ export interface INavigationSoapNoteSaveParams {
   formValues: any;
 }
 
+export interface INavigationSoapNotePromptOption {
+  key: string;
+  label: string;
+}
+
 interface INavigationSoapNoteSlice {
   note: INavigationSoapNoteSource | null;
   generate: {
     status: "idle" | "loading" | "succeeded" | "failed";
     error: string | null;
     text: string;
+    promptOptions: INavigationSoapNotePromptOption[];
+    selectedPromptKey: string | null;
   };
   save: {
     status: "idle" | "loading" | "succeeded" | "failed";
@@ -40,6 +47,8 @@ const initialState: INavigationSoapNoteSlice = {
     status: "idle",
     error: null,
     text: "",
+    promptOptions: [],
+    selectedPromptKey: null,
   },
   save: {
     status: "idle",
@@ -49,9 +58,12 @@ const initialState: INavigationSoapNoteSlice = {
 
 export const generateNavigationSoapNote = createAsyncThunk(
   "navigationSoapNote/generate",
-  async (params: { id: string }, thunkAPI) => {
+  async (params: { id: string; promptKey?: string | null }, thunkAPI) => {
     try {
-      const response = await api.clinicalNotes.generateSoap(params);
+      const response = await api.clinicalNotes.generateSoap({
+        id: params.id,
+        prompt_key: params.promptKey ?? undefined,
+      });
       return response.data;
     } catch (err: any) {
       return thunkAPI.rejectWithValue(err?.response?.data);
@@ -97,6 +109,10 @@ const navigationSoapNoteSlice = createSlice({
       .addCase(generateNavigationSoapNote.fulfilled, (state, action) => {
         state.generate.status = "succeeded";
         state.generate.text = action.payload?.data?.text ?? "";
+        state.generate.promptOptions =
+          action.payload?.data?.prompt_options ?? [];
+        state.generate.selectedPromptKey =
+          action.payload?.data?.prompt_key ?? null;
       })
       .addCase(generateNavigationSoapNote.rejected, (state, action) => {
         state.generate.status = "failed";
