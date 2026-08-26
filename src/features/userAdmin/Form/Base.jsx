@@ -11,6 +11,7 @@ import FeaturesService from "services/features";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
 import { ResetPassword } from "./ResetPassword/ResetPassword";
+import { canManageResetPassword } from "./ResetPassword/canManageResetPassword";
 
 function BaseForm() {
   const { t } = useTranslation();
@@ -229,7 +230,6 @@ function BaseForm() {
                 )}
               </div>
 
-              <ResetPassword />
             </>
           ),
         },
@@ -265,6 +265,15 @@ function BaseForm() {
             </>
           ),
         },
+        ...(canManageResetPassword(values)
+          ? [
+              {
+                label: "Senha",
+                key: "password",
+                children: <ResetPassword />,
+              },
+            ]
+          : []),
       ]}
     />
   );

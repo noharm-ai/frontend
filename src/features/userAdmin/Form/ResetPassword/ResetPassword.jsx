@@ -1,11 +1,12 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
-import { Alert, Flex, Popconfirm, Space, Tag } from "antd";
+import { Alert, Flex, Tag } from "antd";
 
 import { Input, Textarea } from "components/Inputs";
 import Button from "components/Button";
+import Card from "components/Card";
 import DefaultModal from "components/Modal";
 import Table from "components/Table";
 import notification from "components/notification";
@@ -18,6 +19,7 @@ import { getErrorMessage } from "utils/errorHandler";
 import { formatDateTime } from "utils/date";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
+import { canManageResetPassword } from "./canManageResetPassword";
 
 const ORIGIN_LABELS = {
   email: "Email",
@@ -29,16 +31,65 @@ export function ResetPassword() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { values } = useFormikContext();
+  const [flowOpen, setFlowOpen] = useState(false);
+  const [emailResult, setEmailResult] = useState(null);
+  const [resetLink, setResetLink] = useState(null);
+  const [confirmEmail, setConfirmEmail] = useState("");
   const [emailLoading, setEmailLoading] = useState(false);
   const [linkLoading, setLinkLoading] = useState(false);
-  const [linkConfirmOpen, setLinkConfirmOpen] = useState(false);
-  const [confirmEmail, setConfirmEmail] = useState("");
   const [historyLoading, setHistoryLoading] = useState(false);
-  const [history, setHistory] = useState(null);
+  const [resetHistory, setResetHistory] = useState(null);
+
+  const canSendEmail = PermissionService().has(
+    Permission.SEND_RESET_PASSWORD_EMAIL,
+  );
+  const canGenerateLink = PermissionService().hasAny([
+    Permission.GENERATE_RESET_PASSWORD_LINK,
+    Permission.ADMIN_USERS,
+  ]);
+  const canReadHistory = PermissionService().has(
+    Permission.READ_RESET_PASSWORD_HISTORY,
+  );
 
   const registeredEmail = (values.email || "").trim();
   const emailMatches =
+    !!registeredEmail &&
     confirmEmail.trim().toLowerCase() === registeredEmail.toLowerCase();
+
+  const loadHistory = useCallback(() => {
+    setHistoryLoading(true);
+
+    dispatch(getUserResetPasswordHistory({ idUser: values.id })).then(
+      (response) => {
+        setHistoryLoading(false);
+
+        if (response.error) {
+          notification.error({
+            message: getErrorMessage(response, t),
+          });
+        } else {
+          setResetHistory(response.payload.data);
+        }
+      },
+    );
+  }, [dispatch, values.id, t]);
+
+  useEffect(() => {
+    if (values.id && canReadHistory) {
+      loadHistory();
+    }
+  }, [values.id, canReadHistory, loadHistory]);
+
+  const openFlow = () => {
+    setEmailResult(null);
+    setResetLink(null);
+    setConfirmEmail("");
+    setFlowOpen(true);
+  };
+
+  const closeFlow = () => {
+    setFlowOpen(false);
+  };
 
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
@@ -56,47 +107,17 @@ export function ResetPassword() {
           notification.error({
             message: getErrorMessage(response, t),
           });
-        } else if (response.payload.data.delivered) {
-          notification.success({
-            message: `Email com o link de reset de senha enviado para ${response.payload.data.email}`,
-          });
-        } else {
-          notification.warning({
-            message: `O email para ${response.payload.data.email} não pôde ser entregue`,
-            description:
-              "Tente novamente mais tarde ou utilize o link manual como alternativa.",
-          });
+
+          return;
+        }
+
+        setEmailResult(response.payload.data);
+
+        if (canReadHistory) {
+          loadHistory();
         }
       },
     );
-  };
-
-  const showResetLink = (token) => {
-    const link = `${import.meta.env.VITE_APP_URL}/reset/${token}`;
-
-    DefaultModal.info({
-      title: "Link para Reset de Senha",
-      content: (
-        <>
-          <p>
-            Cuidado ao disponibilizar este link. Confira se o usuário é
-            legítimo. Encaminhe este link somente para o email do usuário que
-            irá utilizá-lo: <strong>{registeredEmail}</strong>.
-          </p>
-          <Textarea
-            onClick={() => copyToClipboard(link)}
-            style={{ minHeight: "300px" }}
-            value={link}
-          ></Textarea>
-        </>
-      ),
-      icon: null,
-      width: 500,
-      okText: "Fechar",
-      okButtonProps: { type: "default" },
-      wrapClassName: "default-modal",
-      mask: { blur: false },
-    });
   };
 
   const generateResetToken = () => {
@@ -110,33 +131,15 @@ export function ResetPassword() {
           message: getErrorMessage(response, t),
         });
       } else {
-        closeLinkConfirm();
-        showResetLink(response.payload.data);
+        setResetLink(
+          `${import.meta.env.VITE_APP_URL}/reset/${response.payload.data}`,
+        );
+
+        if (canReadHistory) {
+          loadHistory();
+        }
       }
     });
-  };
-
-  const closeLinkConfirm = () => {
-    setLinkConfirmOpen(false);
-    setConfirmEmail("");
-  };
-
-  const openHistory = () => {
-    setHistoryLoading(true);
-
-    dispatch(getUserResetPasswordHistory({ idUser: values.id })).then(
-      (response) => {
-        setHistoryLoading(false);
-
-        if (response.error) {
-          notification.error({
-            message: getErrorMessage(response, t),
-          });
-        } else {
-          setHistory(response.payload.data);
-        }
-      },
-    );
   };
 
   const historyColumns = [
@@ -153,14 +156,7 @@ export function ResetPassword() {
     {
       title: "Método",
       dataIndex: "origin",
-      render: (value, record) => (
-        <Space size={4}>
-          {ORIGIN_LABELS[value] || "-"}
-          {value === "email" && record.delivered === false && (
-            <Tag color="red">Não entregue</Tag>
-          )}
-        </Space>
-      ),
+      render: (value) => ORIGIN_LABELS[value] || "-",
     },
     {
       title: "Situação",
@@ -174,101 +170,246 @@ export function ResetPassword() {
     },
   ];
 
-  if (
-    !values.id ||
-    !PermissionService().hasAny([
-      Permission.SEND_RESET_PASSWORD_EMAIL,
-      Permission.ADMIN_USERS,
-      Permission.READ_RESET_PASSWORD_HISTORY,
-    ])
-  ) {
+  // when the admin cannot generate the link there is no second option to point
+  // at: send them to an administrator instead of to a card with no action.
+  const fallbackHint = canGenerateLink
+    ? "Se o email não chegar, utilize o link manual ao lado."
+    : "Se o email não chegar, solicite a um administrador que gere o link manual.";
+
+  const emailOption = (
+    <Card
+      size="small"
+      style={{ height: "100%" }}
+      title={
+        <Flex gap={8} align="center">
+          <span>Enviar email de reset</span>
+          <Tag color="green">Recomendado</Tag>
+        </Flex>
+      }
+    >
+      <p style={{ marginTop: 0 }}>
+        O link é enviado por email para <strong>{registeredEmail}</strong>.
+      </p>
+      <p>
+        Este envio usa um canal diferente do <strong>Esqueci a senha</strong> da
+        tela de login, então a chance de o email chegar à caixa de entrada do
+        usuário é maior. Comece por aqui.
+      </p>
+
+      <Button
+        type="primary"
+        onClick={() => sendResetPasswordEmail()}
+        loading={emailLoading}
+      >
+        Enviar email
+      </Button>
+
+      {emailResult && (
+        <div style={{ marginTop: "16px" }}>
+          {emailResult.delivered ? (
+            <Alert
+              type="success"
+              showIcon
+              title={`Email enviado para ${emailResult.email}`}
+              description={`Peça para o usuário verificar a caixa de entrada e o spam. ${fallbackHint}`}
+            />
+          ) : (
+            <Alert
+              type="error"
+              showIcon
+              title={`O email para ${emailResult.email} não pôde ser entregue`}
+              description={`A tentativa foi registrada no histórico. Tente novamente. ${fallbackHint}`}
+            />
+          )}
+        </div>
+      )}
+    </Card>
+  );
+
+  const linkOption = (
+    <Card
+      size="small"
+      style={{ height: "100%" }}
+      title={
+        <Flex gap={8} align="center">
+          <span>Gerar link manual</span>
+          <Tag>Alternativa</Tag>
+        </Flex>
+      }
+    >
+      <p style={{ marginTop: 0 }}>
+        Use esta opção quando o email não chegar ao usuário. O link gerado aqui
+        é o mesmo que seria enviado por email, e cabe a você encaminhá-lo ao
+        usuário.
+      </p>
+
+      {!canGenerateLink ? (
+        <Alert
+          type="warning"
+          showIcon
+          title="Link manual indisponível"
+          description="Você não tem permissão para gerar o link manual. Solicite a um administrador."
+        />
+      ) : resetLink ? (
+        <>
+          <p>
+            Cuidado ao disponibilizar este link. Confira se o usuário é
+            legítimo. Encaminhe este link somente para o email do usuário que
+            irá utilizá-lo: <strong>{registeredEmail}</strong>.
+          </p>
+          <Textarea
+            onClick={() => copyToClipboard(resetLink)}
+            style={{ minHeight: "80px" }}
+            value={resetLink}
+            readOnly
+          ></Textarea>
+          <Flex
+            justify="space-between"
+            align="center"
+            gap={8}
+            wrap
+            style={{ marginTop: "8px" }}
+          >
+            <div className="form-info">Clique no link para copiá-lo.</div>
+            <Button
+              size="small"
+              onClick={() => {
+                // re-arms the retype-the-email gate instead of handing out a
+                // second link on a confirmation made for the previous one
+                setResetLink(null);
+                setConfirmEmail("");
+              }}
+            >
+              Gerar novo link
+            </Button>
+          </Flex>
+        </>
+      ) : (
+        <>
+          <Alert
+            type="warning"
+            showIcon
+            title="Este link dá acesso à conta do usuário"
+            description={
+              <>
+                O link deve ser encaminhado <strong>exclusivamente</strong> para
+                o email cadastrado do usuário:{" "}
+                <strong>{registeredEmail}</strong>. Nunca envie para outro
+                destinatário.
+              </>
+            }
+          />
+          <p style={{ marginTop: "16px" }}>
+            Para confirmar, digite o email cadastrado do usuário:
+          </p>
+          <Input
+            value={confirmEmail}
+            onChange={({ target }) => setConfirmEmail(target.value)}
+            placeholder={registeredEmail}
+          />
+          <Button
+            danger
+            onClick={() => generateResetToken()}
+            disabled={!emailMatches}
+            loading={linkLoading}
+            style={{ marginTop: "16px" }}
+          >
+            Gerar link
+          </Button>
+        </>
+      )}
+    </Card>
+  );
+
+  if (!canManageResetPassword(values)) {
     return null;
   }
 
   return (
-    <div className={`form-row`}>
-      <Flex gap={8} wrap>
-        {PermissionService().has(Permission.SEND_RESET_PASSWORD_EMAIL) && (
-          <Popconfirm
+    <>
+      {(canSendEmail || canGenerateLink) && (
+        <div className={`form-row`}>
+          <Alert
+            type="info"
+            showIcon
             title="Reset de senha"
-            description={`Enviar o email com o link de reset de senha para ${registeredEmail}?`}
-            onConfirm={() => sendResetPasswordEmail()}
-            okText="Enviar"
-            cancelText="Cancelar"
-          >
-            <Button type="primary" loading={emailLoading}>
-              Enviar email de reset de senha
+            description={
+              <>
+                <p style={{ marginTop: 0 }}>
+                  O usuário recebe um link para cadastrar uma nova senha. O link
+                  vale por 6 horas, só pode ser utilizado uma vez e toda
+                  solicitação fica registrada no histórico abaixo.
+                </p>
+                <Button type="primary" onClick={() => openFlow()}>
+                  Resetar senha do usuário
+                </Button>
+              </>
+            }
+          />
+        </div>
+      )}
+
+      {canReadHistory && (
+        <div className={`form-row`}>
+          <Flex justify="space-between" align="center" gap={8} wrap>
+            <div className="form-label">
+              <label>Histórico de reset de senha:</label>
+            </div>
+            <Button
+              size="small"
+              onClick={() => loadHistory()}
+              loading={historyLoading}
+            >
+              Atualizar
             </Button>
-          </Popconfirm>
-        )}
+          </Flex>
 
-        {PermissionService().has(Permission.ADMIN_USERS) && (
-          <Button danger onClick={() => setLinkConfirmOpen(true)}>
-            Gerar link para reset de senha
-          </Button>
-        )}
+          <div className="form-info" style={{ margin: "4px 0 8px" }}>
+            Último acesso do usuário:{" "}
+            <strong>
+              {resetHistory?.lastLogin
+                ? formatDateTime(resetHistory.lastLogin)
+                : "Sem registro"}
+            </strong>
+          </div>
 
-        {PermissionService().has(Permission.READ_RESET_PASSWORD_HISTORY) && (
-          <Button onClick={() => openHistory()} loading={historyLoading}>
-            Histórico de reset de senha
-          </Button>
-        )}
-      </Flex>
-
-      <DefaultModal
-        open={linkConfirmOpen}
-        title="Gerar link para reset de senha"
-        onCancel={() => closeLinkConfirm()}
-        onOk={() => generateResetToken()}
-        okText="Gerar link"
-        cancelText="Cancelar"
-        okButtonProps={{ disabled: !emailMatches, loading: linkLoading }}
-        width={500}
-      >
-        <Alert
-          type="warning"
-          showIcon
-          message="Este link dá acesso à conta do usuário"
-          description={
-            <>
-              Utilize o link manual somente se o envio por email falhar. O link
-              deve ser encaminhado <strong>exclusivamente</strong> para o email
-              cadastrado do usuário: <strong>{registeredEmail}</strong>. Nunca
-              envie para outro destinatário.
-            </>
-          }
-        />
-        <p style={{ marginTop: "16px" }}>
-          Para confirmar, digite o email cadastrado do usuário:
-        </p>
-        <Input
-          value={confirmEmail}
-          onChange={({ target }) => setConfirmEmail(target.value)}
-          placeholder={registeredEmail}
-        />
-      </DefaultModal>
+          <Table
+            columns={historyColumns}
+            dataSource={(resetHistory?.history || []).map((item, index) => ({
+              ...item,
+              key: index,
+            }))}
+            pagination={{ pageSize: 5, size: "small", hideOnSinglePage: true }}
+            size="small"
+            loading={historyLoading}
+            scroll={{ x: "max-content" }}
+            locale={{ emptyText: "Nenhuma solicitação de reset de senha" }}
+          />
+        </div>
+      )}
 
       <DefaultModal
-        open={history !== null}
-        title="Histórico de reset de senha"
-        onCancel={() => setHistory(null)}
-        onOk={() => setHistory(null)}
-        okText="Fechar"
-        okButtonProps={{ type: "default" }}
-        cancelButtonProps={{ style: { display: "none" } }}
-        width={700}
+        open={flowOpen}
+        title="Reset de senha"
+        onCancel={() => closeFlow()}
+        footer={<Button onClick={() => closeFlow()}>Fechar</Button>}
+        width={canSendEmail ? 900 : 600}
+        destroyOnHidden
       >
-        <Table
-          columns={historyColumns}
-          dataSource={(history || []).map((item, index) => ({
-            ...item,
-            key: index,
-          }))}
-          pagination={false}
-          size="small"
-          locale={{ emptyText: "Nenhuma solicitação de reset de senha" }}
-        />
+        {canSendEmail && (
+          <p style={{ marginTop: 0 }}>
+            Existem duas formas de entregar o link ao usuário. Comece pelo
+            email; use o link manual apenas se o email não chegar.
+          </p>
+        )}
+
+        <Flex gap={16} align="stretch" wrap>
+          {canSendEmail && (
+            <div style={{ flex: "1 1 380px", minWidth: 0 }}>{emailOption}</div>
+          )}
+          <div style={{ flex: "1 1 380px", minWidth: 0 }}>{linkOption}</div>
+        </Flex>
       </DefaultModal>
-    </div>
+    </>
   );
 }
