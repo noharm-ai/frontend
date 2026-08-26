@@ -36,6 +36,7 @@ jobs:
           VITE_APP_ODOO_LINK: ${{ secrets.REACT_APP_ODOO_LINK }}
           VITE_APP_ADMIN_LINK: ${{ secrets.REACT_APP_ADMIN_LINK }}
           VITE_APP_URL: ${{ secrets.REACT_APP_URL_PROD }}
+          VITE_MAIL_TEMPLATE_HOST: ${{ secrets.VITE_MAIL_TEMPLATE_HOST }}
           VITE_APP_VERSION: ${{ steps.package-version.outputs.current-version}}
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4

@@ -70,6 +70,7 @@ jobs:
           VITE_APP_ADMIN_LINK: ${{ secrets.REACT_APP_ADMIN_LINK }}
           VITE_APP_VERSION: ${{ steps.package-version.outputs.current-version}}
           VITE_APP_URL: http://localhost:3000
+          VITE_MAIL_TEMPLATE_HOST: http://localhost:3000
           TEST_USER: e2e@e2e.com
           TEST_USER_PASSWORD: e2etest
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
