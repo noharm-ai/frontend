@@ -17,7 +17,7 @@ import {
   sendUserResetPasswordEmail,
 } from "features/serverActions/ServerActionsSlice";
 import { getErrorMessage } from "utils/errorHandler";
-import { formatDateTime } from "utils/date";
+import { formatDateTime, getMinutesDiffFromServerDate } from "utils/date";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
 import { canManageResetPassword } from "./canManageResetPassword";
@@ -26,6 +26,13 @@ import { canManageResetPassword } from "./canManageResetPassword";
 // deliberate; the registered email is shown right above it instead of being
 // retyped, so the admin still reads who the link belongs to
 const CONFIRM_WORD = "confirmar";
+
+// the backend already has a notion of "a reset attempt just happened": within
+// one hour of the previous request it treats a new one as a retry and escalates
+// delivery to ODOO (get_reset_token). Once the request came from ODOO there is
+// no further channel to escalate to, so inside the same window we stop offering
+// the resend and send the admin to the manual link instead.
+const RECENT_EMAIL_WINDOW_MINUTES = 60;
 
 const ORIGIN_LABELS = {
   email: "ODOO",
@@ -63,6 +70,23 @@ export function ResetPassword() {
   const confirmed =
     !!registeredEmail && confirmWord.trim().toLowerCase() === CONFIRM_WORD;
 
+  // an already used link means the email did reach the user, so it says nothing
+  // about delivery and must not block a new request. The backend returns the
+  // history newest first, but the reduce keeps this correct either way.
+  const lastEmailRequest = (resetHistory?.history || [])
+    .filter((item) => item.origin === "email" && item.requestedAt && !item.used)
+    .reduce(
+      (latest, item) =>
+        !latest || item.requestedAt > latest.requestedAt ? item : latest,
+      null,
+    );
+  const recentEmailRequest =
+    lastEmailRequest &&
+    getMinutesDiffFromServerDate(lastEmailRequest.requestedAt) <
+      RECENT_EMAIL_WINDOW_MINUTES
+      ? lastEmailRequest
+      : null;
+
   const loadHistory = useCallback(() => {
     setHistoryLoading(true);
 
@@ -92,6 +116,13 @@ export function ResetPassword() {
     setResetLink(null);
     setConfirmWord("");
     setFlowOpen(true);
+
+    // the history may have been loaded long before the modal is opened, and the
+    // previous ODOO attempt may have come from another admin or another tab.
+    // Without this refresh the resend block would silently not apply.
+    if (values.id && canReadHistory) {
+      loadHistory();
+    }
   };
 
   const closeFlow = () => {
@@ -215,6 +246,10 @@ export function ResetPassword() {
     ? "Se o email não chegar, utilize o link manual ao lado."
     : "Se o email não chegar, solicite a um administrador que gere o link manual.";
 
+  const manualLinkHint = canGenerateLink
+    ? "Utilize o link manual ao lado para entregar o link ao usuário."
+    : "Solicite a um administrador que gere o link manual para este usuário.";
+
   const emailOption = (
     <Card
       size="small"
@@ -222,7 +257,11 @@ export function ResetPassword() {
       title={
         <Flex gap={8} align="center">
           <span>Enviar email de reset</span>
-          <Tag color="green">Recomendado</Tag>
+          {recentEmailRequest ? (
+            <Tag>Indisponível agora</Tag>
+          ) : (
+            <Tag color="green">Recomendado</Tag>
+          )}
         </Flex>
       }
     >
@@ -232,35 +271,58 @@ export function ResetPassword() {
       <p>
         Este envio usa um canal diferente do <strong>Esqueci a senha</strong> da
         tela de login, então a chance de o email chegar à caixa de entrada do
-        usuário é maior. Comece por aqui.
+        usuário é maior.{!recentEmailRequest && " Comece por aqui."}
       </p>
 
-      <Button
-        type="primary"
-        onClick={() => sendResetPasswordEmail()}
-        loading={emailLoading}
-      >
-        Enviar email através do ODOO
-      </Button>
-
-      {emailResult && (
-        <div style={{ marginTop: "16px" }}>
-          {emailResult.delivered ? (
-            <Alert
-              type="success"
-              showIcon
-              title={`Email enviado para ${emailResult.email}`}
-              description={`Peça para o usuário verificar a caixa de entrada e o spam. ${fallbackHint}`}
-            />
-          ) : (
-            <Alert
-              type="error"
-              showIcon
-              title={`O email para ${emailResult.email} não pôde ser entregue`}
-              description={`A tentativa foi registrada no histórico. Tente novamente. ${fallbackHint}`}
-            />
-          )}
-        </div>
+      {emailResult ? (
+        emailResult.delivered ? (
+          <Alert
+            type="success"
+            showIcon
+            title={`Email enviado para ${emailResult.email}`}
+            description={`Peça para o usuário verificar a caixa de entrada e o spam. ${fallbackHint}`}
+          />
+        ) : (
+          <Alert
+            type="error"
+            showIcon
+            title={`O email para ${emailResult.email} não pôde ser entregue`}
+            description={`A tentativa foi registrada no histórico. Um novo envio pelo ODOO seguiria o mesmo caminho. ${manualLinkHint}`}
+          />
+        )
+      ) : recentEmailRequest ? (
+        <Alert
+          type="warning"
+          showIcon
+          title="Um email já foi enviado recentemente"
+          description={
+            <>
+              <p style={{ marginTop: 0 }}>
+                O envio pelo ODOO foi registrado em{" "}
+                <strong>
+                  {formatDateTime(recentEmailRequest.requestedAt)}
+                </strong>
+                {recentEmailRequest.requestedBy
+                  ? ` por ${recentEmailRequest.requestedBy}`
+                  : ""}
+                , e o link enviado continua válido.
+              </p>
+              <p style={{ marginBottom: 0 }}>
+                Reenviar agora produziria o mesmo email pelo mesmo canal: se o
+                primeiro não chegou, o segundo também não chegará.{" "}
+                {manualLinkHint}
+              </p>
+            </>
+          }
+        />
+      ) : (
+        <Button
+          type="primary"
+          onClick={() => sendResetPasswordEmail()}
+          loading={emailLoading}
+        >
+          Enviar email através do ODOO
+        </Button>
       )}
     </Card>
   );
@@ -272,7 +334,11 @@ export function ResetPassword() {
       title={
         <Flex gap={8} align="center">
           <span>Gerar link manual</span>
-          <Tag>Alternativa</Tag>
+          {recentEmailRequest ? (
+            <Tag color="green">Recomendado</Tag>
+          ) : (
+            <Tag>Alternativa</Tag>
+          )}
         </Flex>
       }
     >
@@ -454,8 +520,9 @@ export function ResetPassword() {
       >
         {canSendEmail && (
           <p style={{ marginTop: 0 }}>
-            Existem duas formas de entregar o link ao usuário. Comece pelo
-            email; use o link manual apenas se o email não chegar.
+            {recentEmailRequest
+              ? "O envio por email já foi tentado há pouco e o link enviado ainda é válido. Entregue o link manual ao usuário."
+              : "Existem duas formas de entregar o link ao usuário. Comece pelo email; use o link manual apenas se o email não chegar."}
           </p>
         )}
 
