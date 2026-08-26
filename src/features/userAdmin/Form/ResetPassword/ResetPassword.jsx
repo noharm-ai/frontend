@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 import { Alert, Flex, Tag } from "antd";
+import { MailOutlined } from "@ant-design/icons";
 
 import { Input, Textarea } from "components/Inputs";
 import Button from "components/Button";
@@ -94,6 +95,34 @@ export function ResetPassword() {
   const copyToClipboard = (text) => {
     navigator.clipboard.writeText(text);
     notification.success({ message: "Link copiado!" });
+  };
+
+  const openGmailCompose = (link) => {
+    // same subject the backend uses in send_reset_password_email, so the user
+    // sees one consistent email whichever path delivered the link
+    const subject = "NoHarm: Redefinição de senha";
+    const userName = (values.name || "").trim();
+    const body = [
+      userName ? `Olá, ${userName},` : "Olá,",
+      "",
+      "Para cadastrar uma nova senha no NoHarm, acesse o link abaixo:",
+      "",
+      link,
+      "",
+      "O link é válido por 6 horas e pode ser utilizado uma única vez.",
+      "",
+      "Se você não solicitou a redefinição de senha, ignore este email.",
+    ].join("\n");
+
+    // the recipient is prefilled with the registered address, which makes the
+    // safe path the default one
+    const url =
+      "https://mail.google.com/mail/?view=cm&fs=1" +
+      `&to=${encodeURIComponent(registeredEmail)}` +
+      `&su=${encodeURIComponent(subject)}` +
+      `&body=${encodeURIComponent(body)}`;
+
+    window.open(url, "_blank", "noopener,noreferrer");
   };
 
   const sendResetPasswordEmail = () => {
@@ -263,16 +292,19 @@ export function ResetPassword() {
             value={resetLink}
             readOnly
           ></Textarea>
-          <Flex
-            justify="space-between"
-            align="center"
-            gap={8}
-            wrap
-            style={{ marginTop: "8px" }}
-          >
-            <div className="form-info">Clique no link para copiá-lo.</div>
+          <div className="form-info" style={{ marginTop: "8px" }}>
+            Clique no link para copiá-lo.
+          </div>
+
+          <Flex gap={8} wrap style={{ marginTop: "12px" }}>
             <Button
-              size="small"
+              type="primary"
+              icon={<MailOutlined />}
+              onClick={() => openGmailCompose(resetLink)}
+            >
+              Enviar pelo Gmail
+            </Button>
+            <Button
               onClick={() => {
                 // re-arms the retype-the-email gate instead of handing out a
                 // second link on a confirmation made for the previous one
@@ -283,6 +315,11 @@ export function ResetPassword() {
               Gerar novo link
             </Button>
           </Flex>
+
+          <div className="form-info" style={{ marginTop: "8px" }}>
+            O Gmail abre com a mensagem pronta e o destinatário já preenchido
+            com o email cadastrado. Confira o destinatário antes de enviar.
+          </div>
         </>
       ) : (
         <>
