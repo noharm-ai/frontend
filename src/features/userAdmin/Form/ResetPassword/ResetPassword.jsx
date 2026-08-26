@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 import { Alert, Flex, Tag } from "antd";
@@ -22,6 +22,11 @@ import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
 import { canManageResetPassword } from "./canManageResetPassword";
 
+// typing a fixed word is enough of a speed bump to make the action
+// deliberate; the registered email is shown right above it instead of being
+// retyped, so the admin still reads who the link belongs to
+const CONFIRM_WORD = "confirmar";
+
 const ORIGIN_LABELS = {
   email: "Email",
   link: "Link manual",
@@ -32,10 +37,11 @@ export function ResetPassword() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { values } = useFormikContext();
+  const accountEmail = useSelector((state) => state.user.account.email);
   const [flowOpen, setFlowOpen] = useState(false);
   const [emailResult, setEmailResult] = useState(null);
   const [resetLink, setResetLink] = useState(null);
-  const [confirmEmail, setConfirmEmail] = useState("");
+  const [confirmWord, setConfirmWord] = useState("");
   const [emailLoading, setEmailLoading] = useState(false);
   const [linkLoading, setLinkLoading] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
@@ -53,9 +59,9 @@ export function ResetPassword() {
   );
 
   const registeredEmail = (values.email || "").trim();
-  const emailMatches =
-    !!registeredEmail &&
-    confirmEmail.trim().toLowerCase() === registeredEmail.toLowerCase();
+  const senderEmail = (accountEmail || "").trim();
+  const confirmed =
+    !!registeredEmail && confirmWord.trim().toLowerCase() === CONFIRM_WORD;
 
   const loadHistory = useCallback(() => {
     setHistoryLoading(true);
@@ -84,7 +90,7 @@ export function ResetPassword() {
   const openFlow = () => {
     setEmailResult(null);
     setResetLink(null);
-    setConfirmEmail("");
+    setConfirmWord("");
     setFlowOpen(true);
   };
 
@@ -115,9 +121,13 @@ export function ResetPassword() {
     ].join("\n");
 
     // the recipient is prefilled with the registered address, which makes the
-    // safe path the default one
+    // safe path the default one. authuser pins the compose window to the
+    // logged-in account: without it Gmail uses the browser's default account,
+    // so an admin with several accounts signed in could send the link from the
+    // wrong mailbox
     const url =
       "https://mail.google.com/mail/?view=cm&fs=1" +
+      (senderEmail ? `&authuser=${encodeURIComponent(senderEmail)}` : "") +
       `&to=${encodeURIComponent(registeredEmail)}` +
       `&su=${encodeURIComponent(subject)}` +
       `&body=${encodeURIComponent(body)}`;
@@ -306,10 +316,10 @@ export function ResetPassword() {
             </Button>
             <Button
               onClick={() => {
-                // re-arms the retype-the-email gate instead of handing out a
+                // re-arms the confirmation gate instead of handing out a
                 // second link on a confirmation made for the previous one
                 setResetLink(null);
-                setConfirmEmail("");
+                setConfirmWord("");
               }}
             >
               Gerar novo link
@@ -318,7 +328,15 @@ export function ResetPassword() {
 
           <div className="form-info" style={{ marginTop: "8px" }}>
             O Gmail abre com a mensagem pronta e o destinatário já preenchido
-            com o email cadastrado. Confira o destinatário antes de enviar.
+            com o email cadastrado.{" "}
+            {senderEmail ? (
+              <>
+                A mensagem é aberta na sua conta <strong>{senderEmail}</strong>;
+                confira o remetente e o destinatário antes de enviar.
+              </>
+            ) : (
+              "Confira o destinatário antes de enviar."
+            )}
           </div>
         </>
       ) : (
@@ -337,17 +355,18 @@ export function ResetPassword() {
             }
           />
           <p style={{ marginTop: "16px" }}>
-            Para confirmar, digite o email cadastrado do usuário:
+            Para confirmar, digite <strong>{CONFIRM_WORD}</strong> no campo
+            abaixo:
           </p>
           <Input
-            value={confirmEmail}
-            onChange={({ target }) => setConfirmEmail(target.value)}
-            placeholder={registeredEmail}
+            value={confirmWord}
+            onChange={({ target }) => setConfirmWord(target.value)}
+            placeholder={CONFIRM_WORD}
           />
           <Button
             danger
             onClick={() => generateResetToken()}
-            disabled={!emailMatches}
+            disabled={!confirmed}
             loading={linkLoading}
             style={{ marginTop: "16px" }}
           >
