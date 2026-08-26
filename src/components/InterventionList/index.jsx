@@ -389,7 +389,10 @@ export default function InterventionList({
       <BackTop />
 
       <PageCard>
-        <MultipleOutcomeToolbar pendingIds={pendingIds} />
+        <MultipleOutcomeToolbar
+          pendingIds={pendingIds}
+          origin="lista-intervencoes"
+        />
 
         <ExpandableTable
           columns={interventionColumns(

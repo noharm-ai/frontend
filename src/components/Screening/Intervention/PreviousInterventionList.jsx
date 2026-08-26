@@ -33,6 +33,7 @@ export default function PreviousInterventionList({
     <>
       <MultipleOutcomeToolbar
         pendingIds={pendingIds}
+        origin="prescricao"
         style={{ marginRight: "15px" }}
       />
 

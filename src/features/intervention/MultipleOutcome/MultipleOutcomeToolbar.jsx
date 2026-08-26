@@ -7,13 +7,17 @@ import Tooltip from "components/Tooltip";
 import notification from "components/notification";
 import InterventionStatus from "models/InterventionStatus";
 import {
+  trackInterventionOutcomeAction,
+  TrackedInterventionOutcomeAction,
+} from "utils/tracker";
+import {
   startMultipleOutcome,
   setSelectedRows,
   setSelectedRowsActive,
   MAX_SELECTED_INTERVENTIONS,
 } from "./MultipleOutcomeSlice";
 
-export function MultipleOutcomeToolbar({ pendingIds, style }) {
+export function MultipleOutcomeToolbar({ pendingIds, origin, style }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const selectedRows = useSelector(
@@ -67,7 +71,7 @@ export function MultipleOutcomeToolbar({ pendingIds, style }) {
             );
             break;
           case "selectAll":
-            dispatch(setSelectedRowsActive(true));
+            activateMultipleSelection();
             dispatch(
               setSelectedRows(pendingIds.slice(0, MAX_SELECTED_INTERVENTIONS)),
             );
@@ -93,10 +97,15 @@ export function MultipleOutcomeToolbar({ pendingIds, style }) {
     };
   };
 
-  const toggleMultipleSelection = () => {
-    if (!selectedRows.active) {
-      dispatch(setSelectedRowsActive(true));
-    }
+  const activateMultipleSelection = () => {
+    if (selectedRows.active) return;
+
+    dispatch(setSelectedRowsActive(true));
+
+    trackInterventionOutcomeAction(
+      TrackedInterventionOutcomeAction.MULTIPLE_SELECTION_ACTIVATE,
+      { origin },
+    );
   };
 
   return (
@@ -121,7 +130,7 @@ export function MultipleOutcomeToolbar({ pendingIds, style }) {
           <Dropdown.Button
             menu={multipleActionsMenu()}
             type={selectedRows.active ? "primary" : "default"}
-            onClick={toggleMultipleSelection}
+            onClick={activateMultipleSelection}
           >
             {selectedRows.active
               ? t("multipleIntervention.selected", {
