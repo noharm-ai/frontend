@@ -442,16 +442,22 @@ export const alertsTemplate = (prescription, type, level) => {
     }
   });
 
-  // Global dedup: each unique alert text appears only once across all drugs
+  // Global dedup (interaction-like types only): each unique alert text
+  // appears only once across all drugs; other types dedup per drug
+  const GLOBAL_DEDUP_TYPES = ["dm", "dt", "iy", "it", "ira", "sl", "rx"];
   const seenAlerts = new Set();
   const normalizeText = (text) => stripHtml(text).replace(/\s+/g, " ").trim();
 
   const alerts = [];
   for (const [drugName, drugAlerts] of drugMap) {
+    const seenDrugAlerts = new Set();
     const uniqueAlerts = drugAlerts.filter((a) => {
       const key = normalizeText(a.text);
-      if (seenAlerts.has(key)) return false;
-      seenAlerts.add(key);
+      const seen = GLOBAL_DEDUP_TYPES.includes(a.type)
+        ? seenAlerts
+        : seenDrugAlerts;
+      if (seen.has(key)) return false;
+      seen.add(key);
       return true;
     });
 
