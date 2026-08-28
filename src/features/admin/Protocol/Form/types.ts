@@ -11,8 +11,6 @@ export interface IProtocolFormBaseFields {
       message: string;
       description: string;
     };
-    // Protocols saved before this flag existed have no key stored (reads as false).
-    onlyLatestExpireDate?: boolean;
   };
   createdAt?: string;
 }
@@ -29,6 +27,5 @@ export const emptyProtocol = (): IProtocolFormBaseFields => ({
       message: "",
       description: "",
     },
-    onlyLatestExpireDate: false,
   },
 });

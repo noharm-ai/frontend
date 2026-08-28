@@ -2,7 +2,6 @@ import { useFormikContext } from "formik";
 
 import Card from "components/Card";
 import { Input, Select, Textarea } from "components/Inputs";
-import Switch from "components/Switch";
 import { IProtocolFormBaseFields } from "./types";
 import { ProtocolTypeEnum } from "src/models/ProtocolTypeEnum";
 import { ProtocolStatusTypeEnum } from "src/models/ProtocolStatusTypeEnum";
@@ -74,34 +73,6 @@ export function MainTab() {
           <div className="form-error">{errors.protocolType}</div>
         )}
       </div>
-
-      {(values.protocolType === ProtocolTypeEnum.PRESCRIPTION_AGG ||
-        values.protocolType === ProtocolTypeEnum.PRESCRIPTION_ALL ||
-        values.protocolType === ProtocolTypeEnum.PRESCRIPTION_ITEM) && (
-        <div className="form-row">
-          <div className="form-label">
-            <label>Avaliar apenas a data de vigência mais recente:</label>
-          </div>
-          <div className="form-input">
-            <Switch
-              checked={values.config?.onlyLatestExpireDate ?? false}
-              onChange={(checked: boolean) =>
-                setFieldValue("config.onlyLatestExpireDate", checked)
-              }
-            />
-            <div style={{ opacity: 0.7, marginTop: "5px" }}>
-              {values.protocolType === ProtocolTypeEnum.PRESCRIPTION_ITEM
-                ? "Quando ativado, na prescrição agregada o alerta do item é " +
-                  "gerado uma única vez, contra o grupo de medicamentos com a " +
-                  "vigência mais recente, em vez de uma vez por grupo " +
-                  "vigência."
-                : "Quando ativado, na prescrição agregada o protocolo é " +
-                  "avaliado somente contra o grupo de medicamentos com a data " +
-                  "de vigência mais recente, em vez de cada grupo de data."}
-            </div>
-          </div>
-        </div>
-      )}
 
       <div
         className={`form-row ${

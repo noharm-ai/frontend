@@ -28,7 +28,6 @@ interface IProtocolDescriptionPayload {
   trigger: string | null;
   variables: any[];
   labels: Partial<Record<LabelKind, Record<string, string>>>;
-  onlyLatestExpireDate?: boolean;
 }
 
 /**
@@ -109,7 +108,7 @@ export function ProtocolTriggerDescription({
   // Conditions whose variable no longer exists are skipped, so an expression
   // that references nothing describable would render as an empty sentence.
   const describable = collectVariableNames(tree).some((name) =>
-    variables.some((variable: any) => variable?.name === name),
+    variables.some((variable: any) => variable?.name === name)
   );
 
   if (!describable) {
@@ -117,19 +116,11 @@ export function ProtocolTriggerDescription({
   }
 
   return (
-    <>
-      <ProtocolDescription
-        tree={tree}
-        variables={variables}
-        getLabel={labelLookupFromMap(data.labels)}
-        title={`${data.name} dispara quando`}
-      />
-      {data.onlyLatestExpireDate && (
-        <div style={{ opacity: 0.7, marginTop: "5px" }}>
-          Avaliado somente contra o grupo de medicamentos com a data de vigência
-          mais recente da prescrição.
-        </div>
-      )}
-    </>
+    <ProtocolDescription
+      tree={tree}
+      variables={variables}
+      getLabel={labelLookupFromMap(data.labels)}
+      title={`${data.name} dispara quando`}
+    />
   );
 }
