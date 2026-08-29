@@ -74,11 +74,11 @@ test("READ_TAGS alone shows the tags read-only", async ({ page, mockApi }) => {
   const modal = page.getByRole("dialog");
   await expect(modal).toBeVisible();
   await expect(modal.getByRole("button", { name: "Salvar" })).toHaveCount(0);
-  await expect(modal.getByRole("button", { name: "Fechar" })).toBeVisible();
+  await expect(modal.locator("button").filter({ hasText: "Fechar" })).toBeVisible();
 
   const activeRow = modal.locator(".form-row").filter({ hasText: "Ativo:" });
   await expect(activeRow.locator("button.ant-switch")).toBeDisabled();
-  await modal.getByRole("button", { name: "Fechar" }).click();
+  await modal.locator("button").filter({ hasText: "Fechar" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
 
   // the alert links to the config managers to ask for a change
@@ -128,7 +128,7 @@ test("WRITE_PATIENT_TAGS writes navigation tags only", async ({
   await patientRow.getByRole("button", { name: "Visualizar marcador" }).click();
   let modal = page.getByRole("dialog");
   await expect(modal.getByRole("button", { name: "Salvar" })).toHaveCount(0);
-  await modal.getByRole("button", { name: "Fechar" }).click();
+  await modal.locator("button").filter({ hasText: "Fechar" }).click();
 
   await navRow.getByRole("button", { name: "Editar marcador" }).click();
   modal = page.getByRole("dialog");
