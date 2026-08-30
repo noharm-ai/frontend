@@ -8,12 +8,14 @@ import type { Locator, Page } from "@playwright/test";
 
 /**
  * Opens the (first) antd Select inside `scope`. The click goes to
- * `.ant-select-content` — the box antd binds the toggle to — because once the
- * Select holds a value, the rendered value (a Tag, in most of our filters)
- * covers the inner combobox input.
+ * `.ant-select-content` — the box antd binds the toggle to — and not to the
+ * inner combobox input: once the Select holds a value, the rendered value (a
+ * Tag, in most of our filters) sits on top of that input, and a click aimed at
+ * the input is blocked by it. The value renders *inside* the content box, so
+ * clicking the box is a real user click, actionability checks included.
  */
 export async function openSelect(scope: Locator) {
-  await scope.locator(".ant-select-content").first().click({ force: true });
+  await scope.locator(".ant-select-content").first().click();
 }
 
 /** Opens the antd Select carrying `id`. */
