@@ -22,6 +22,7 @@ import PrescriptionDrugForm from "containers/Forms/PrescriptionDrug";
 import DrugFormStatus from "features/drugs/DrugFormStatus/DrugFormStatus";
 import ScreeningActions from "containers/Screening/ScreeningActions";
 import EvaluationWarning from "features/prescription/EvaluationWarning/EvaluationWarning";
+import { IntegrationErrorAlert } from "features/prescription/IntegrationErrorAlert/IntegrationErrorAlert";
 import FormIntervention from "containers/Forms/Intervention";
 import Permission from "models/Permission";
 import {
@@ -436,6 +437,7 @@ export default function Screening({
     <>
       <EvaluationWarning />
       <PageHeader />
+      <IntegrationErrorAlert />
       <Skeleton title paragraph={false} loading={isFetching} active />
 
       {isFetching ? (
