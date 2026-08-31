@@ -4,6 +4,7 @@ import { CheckOutlined, PlayCircleFilled } from "@ant-design/icons";
 import Button from "components/Button";
 
 import { ITrainingModule } from "./TrainingCentralSlice";
+import { TrainingCertificate } from "./TrainingCertificate/TrainingCertificate";
 import { ModuleRow, ModuleIconCircle, ModuleText } from "./TrainingCentral.style";
 
 type TrainingModuleStatus = "completed" | "current";
@@ -41,6 +42,8 @@ export function TrainingModuleRow({
         </strong>
         <span>{module.description}</span>
       </ModuleText>
+
+      {status === "completed" && <TrainingCertificate idTraining={module.id} />}
 
       <Button
         type={status === "current" ? "primary" : "default"}
