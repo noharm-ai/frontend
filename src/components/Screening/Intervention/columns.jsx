@@ -53,7 +53,7 @@ const interventionMenu = (
   idIntervention,
   setSelectedInterventionOutcome,
   dispatch,
-  onShowModal
+  onShowModal,
 ) => {
   const items = [
     {
@@ -91,7 +91,7 @@ const interventionMenu = (
     onClick: ({ key }) => {
       trackPrescriptionAction(
         TrackedPrescriptionAction.CLICK_INTERVENTION_OUTCOME,
-        { title: key }
+        { title: key },
       );
 
       dispatch(
@@ -99,7 +99,7 @@ const interventionMenu = (
           idIntervention: idIntervention,
           outcome: key,
           open: true,
-        })
+        }),
       );
     },
   };
@@ -125,11 +125,11 @@ export const InterventionView = ({
   return (
     <Descriptions bordered>
       {status}
-      <Descriptions.Item label={`${t("tableHeader.prescription")}:`} span={3}>
+      <Descriptions.Item label={`${t("tableHeader.prescription")}:`} span={4}>
         <PrescriptionInline intervention={intervention} />
       </Descriptions.Item>
       {intervention.fetchFuturePrescription && (
-        <Descriptions.Item label={`${t("labels.nextPrescription")}:`} span={3}>
+        <Descriptions.Item label={`${t("labels.nextPrescription")}:`} span={4}>
           {isEmpty(intervention.future) && (
             <Link
               onClick={() =>
@@ -146,21 +146,21 @@ export const InterventionView = ({
       )}
 
       {showDate && (
-        <Descriptions.Item label={t("tableHeader.date")} span={3}>
+        <Descriptions.Item label={t("tableHeader.date")} span={4}>
           {format(new Date(intervention.date), "dd/MM/yyyy HH:mm")}
         </Descriptions.Item>
       )}
       <Descriptions.Item
         label={`${t("labels.potentialPrescriptionError")}:`}
-        span={3}
+        span={4}
       >
         {intervention.error ? t("labels.yes") : t("labels.no")}
       </Descriptions.Item>
-      <Descriptions.Item label={`${t("labels.reducesCost")}:`} span={3}>
+      <Descriptions.Item label={`${t("labels.reducesCost")}:`} span={4}>
         {intervention.cost ? t("labels.yes") : t("labels.no")}
       </Descriptions.Item>
       {showReasons && (
-        <Descriptions.Item label={`${t("labels.reasons")}:`} span={3}>
+        <Descriptions.Item label={`${t("labels.reasons")}:`} span={4}>
           {intervention.reasonDescription}
         </Descriptions.Item>
       )}
@@ -171,31 +171,31 @@ export const InterventionView = ({
             {t("labels.relations")}:
           </Tooltip>
         }
-        span={3}
+        span={4}
       >
         {!isEmpty(intervention.interactionsList) &&
           intervention.interactionsList.map((item) => item.name).join(", ")}
       </Descriptions.Item>
-      <Descriptions.Item label={`${t("labels.responsible")}:`} span={3}>
+      <Descriptions.Item label={`${t("labels.responsible")}:`} span={4}>
         {intervention.user}
       </Descriptions.Item>
       <Descriptions.Item
         label={`${t("interventionForm.labelEconomyDays")}:`}
-        span={3}
+        span={4}
       >
         {intervention.economyDays ? intervention.economyDays : "--"}
       </Descriptions.Item>
       <Descriptions.Item
         label={`${t("interventionForm.labelExpendedDose")}:`}
-        span={3}
+        span={4}
       >
         {intervention.expendedDose ? intervention.expendedDose : "--"}
       </Descriptions.Item>
-      <Descriptions.Item label={`${t("labels.observation")}:`} span={3}>
+      <Descriptions.Item label={`${t("labels.observation")}:`} span={4}>
         <RichTextView text={intervention.observation} />
       </Descriptions.Item>
       {intervention.transcription && (
-        <Descriptions.Item label={`${t("labels.transcription")}:`} span={3}>
+        <Descriptions.Item label={`${t("labels.transcription")}:`} span={4}>
           <TranscriptionView transcription={intervention.transcription} />
         </Descriptions.Item>
       )}
@@ -232,7 +232,7 @@ const TranscriptionView = ({ transcription }) => {
         <Descriptions.Item
           key={key}
           label={t(`transcriptionLabels.${key}`)}
-          span={3}
+          span={4}
         >
           {config[key].render(transcription)}
         </Descriptions.Item>
@@ -286,7 +286,7 @@ const Action = ({ record }) => {
                   idIntervention: data.idIntervention,
                   outcome: "s",
                   open: true,
-                })
+                }),
               )
             }
             loading={isSaving}
@@ -300,7 +300,7 @@ const Action = ({ record }) => {
             data.idIntervention,
             setSelectedInterventionOutcome,
             dispatch,
-            onShowModal
+            onShowModal,
           )}
           placement="bottomRight"
           trigger={["click"]}
@@ -354,10 +354,7 @@ const SelectionToggle = ({ record, selectedList }) => {
 
   if (record.status !== "s") {
     return (
-      <Tooltip
-        title="Esta intervenção já possui desfecho"
-        placement="left"
-      >
+      <Tooltip title="Esta intervenção já possui desfecho" placement="left">
         <Button
           disabled
           icon={<BorderOutlined style={{ fontSize: 16 }} />}
