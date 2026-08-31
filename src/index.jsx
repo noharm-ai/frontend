@@ -68,6 +68,14 @@ root.render(
         <PersistGate loading={null} persistor={persistor}>
           <ConfigProvider
             locale={i18next.language === "en" ? localeEnUs : localePtBr}
+            theme={{
+              token: {
+                // antd >= 6.3 darkened this shadow (used by cards/popups);
+                // keep the previous look
+                boxShadowTertiary:
+                  "0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02)",
+              },
+            }}
             modal={{
               mask: {
                 blur: false,

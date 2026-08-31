@@ -17,10 +17,10 @@ const expandedRowRender = (record) => {
   return (
     <NestedTableContainer>
       <Descriptions bordered size="small">
-        <Descriptions.Item label="Responsável:" span={3}>
+        <Descriptions.Item label="Responsável:" span={4}>
           <RichTextView text={record.partner_name} />
         </Descriptions.Item>
-        <Descriptions.Item label="Descrição:" span={3}>
+        <Descriptions.Item label="Descrição:" span={4}>
           <RichTextView text={record.description} />
         </Descriptions.Item>
       </Descriptions>

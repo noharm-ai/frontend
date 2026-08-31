@@ -170,7 +170,10 @@ test("applies a negative outcome in bulk and skips already-closed interventions"
   await expect(modal.getByText("Paracetamol 750mg")).toBeVisible();
   await expect(modal.getByText("Já possui desfecho")).toBeVisible();
 
-  await modal.getByRole("button", { name: "Fechar" }).click();
+  await modal
+    .locator(".ant-modal-footer")
+    .getByRole("button", { name: "Fechar" })
+    .click();
   await expect(modal).not.toBeVisible();
 
   // list status was synced: the applied rows now show "Não aceita"
@@ -382,7 +385,10 @@ test("applies a bulk outcome from the interventions list page", async ({
   expect(calls.map((c) => c.idIntervention).sort()).toEqual([301, 302]);
   expect(editParams).toEqual([null, null]);
 
-  await modal.getByRole("button", { name: "Fechar" }).click();
+  await modal
+    .locator(".ant-modal-footer")
+    .getByRole("button", { name: "Fechar" })
+    .click();
 
   // list status synced: the two rows now show "Não aceita" status tags
   await expect(

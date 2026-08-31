@@ -20,7 +20,7 @@ const expandedRowRender = (record) => {
   return (
     <NestedTableContainer>
       <Descriptions bordered size="small">
-        <Descriptions.Item label="Dose máxima:" span={3}>
+        <Descriptions.Item label="Dose máxima:" span={4}>
           <EditMaxDose
             idDrug={record.idDrug}
             idSegment={record.idSegment}
