@@ -6,10 +6,14 @@ import { expect, Locator, Page } from "@playwright/test";
  * Scoped on purpose: `.ant-table` matches every table on the page, so an
  * unscoped row index depends on which tables happen to be mounted at that
  * moment. Filtering by the intervention button also skips group/expanded rows.
+ *
+ * antd 6 renamed the tab pane element: `.ant-tabs-tabpane` became
+ * `.ant-tabs-content` (the old `.ant-tabs-content` wrapper is now
+ * `.ant-tabs-body`), so the active pane is `.ant-tabs-content-active`.
  */
 const drugRows = (page: Page): Locator =>
   page
-    .locator(".ant-tabs-tabpane-active .ant-table-tbody tr")
+    .locator(".ant-tabs-content-active .ant-table-tbody tr")
     .filter({ has: page.locator(".gtm-bt-interv") });
 
 /** Opens the intervention modal of a drug row (0-based). */
