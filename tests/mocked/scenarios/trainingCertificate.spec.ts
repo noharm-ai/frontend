@@ -3,13 +3,21 @@ import { loginWithAuth } from "../support/featureLogin";
 
 /**
  * Certificate generation for finished training modules. The Training Central
- * shows a "Certificado" button only on completed rows; clicking it fetches the
- * certificate data (the backend refuses unfinished modules) and opens the
- * browser print flow — the print dialog itself is outside what the mocked
- * suite can assert, so these tests pin the gating and the request.
+ * shows a "Certificado" button on rows whose `certificateAvailable` flag is
+ * set — the backend derives it from the completion record, so it stays true
+ * when new lessons reopen the module. Clicking it fetches the certificate
+ * data and opens the browser print flow — the print dialog itself is outside
+ * what the mocked suite can assert, so these tests pin the gating and the
+ * request.
  */
 
-const trainingList = (finished: boolean) => ({
+const trainingList = ({
+  finished,
+  certificateAvailable,
+}: {
+  finished: boolean;
+  certificateAvailable: boolean;
+}) => ({
   status: "success",
   data: [
     {
@@ -22,6 +30,7 @@ const trainingList = (finished: boolean) => ({
       totalLessons: 2,
       totalLessonsFinished: finished ? 2 : 1,
       finished,
+      certificateAvailable,
     },
   ],
 });
@@ -45,7 +54,9 @@ test("a completed module offers the certificate and fetches its data", async ({
 }) => {
   await loginWithAuth(page, mockApi, { features: ["USER_ONBOARDING"] });
 
-  mockApi.override("GET /training/list", { json: trainingList(true) });
+  mockApi.override("GET /training/list", {
+    json: trainingList({ finished: true, certificateAvailable: true }),
+  });
   mockApi.override("GET /training/:id/certificate", { json: certificate });
 
   await page.getByRole("menuitem", { name: "Treinamento" }).click();
@@ -62,13 +73,15 @@ test("a completed module offers the certificate and fetches its data", async ({
     .toHaveLength(1);
 });
 
-test("an unfinished module offers no certificate button", async ({
+test("a never-completed module offers no certificate button", async ({
   page,
   mockApi,
 }) => {
   await loginWithAuth(page, mockApi, { features: ["USER_ONBOARDING"] });
 
-  mockApi.override("GET /training/list", { json: trainingList(false) });
+  mockApi.override("GET /training/list", {
+    json: trainingList({ finished: false, certificateAvailable: false }),
+  });
 
   await page.getByRole("menuitem", { name: "Treinamento" }).click();
   await expect(
@@ -81,13 +94,43 @@ test("an unfinished module offers no certificate button", async ({
   );
 });
 
+test("a module reopened by new lessons keeps its certificate button", async ({
+  page,
+  mockApi,
+}) => {
+  await loginWithAuth(page, mockApi, { features: ["USER_ONBOARDING"] });
+
+  // finished counts say "in progress", but the completion record stands
+  mockApi.override("GET /training/list", {
+    json: trainingList({ finished: false, certificateAvailable: true }),
+  });
+  mockApi.override("GET /training/:id/certificate", { json: certificate });
+
+  await page.getByRole("menuitem", { name: "Treinamento" }).click();
+  await expect(
+    page.getByRole("heading", { name: "Central de Treinamento" }),
+  ).toBeVisible();
+
+  // the row is back to "continue" mode, yet the certificate stays offered
+  await expect(page.getByRole("button", { name: "Continuar" })).toBeVisible();
+  await page.getByRole("button", { name: "Certificado" }).click();
+
+  await expect
+    .poll(() =>
+      mockApi.requests.filter((r) => r.path === "/training/1/certificate"),
+    )
+    .toHaveLength(1);
+});
+
 test("a backend refusal surfaces the translated error", async ({
   page,
   mockApi,
 }) => {
   await loginWithAuth(page, mockApi, { features: ["USER_ONBOARDING"] });
 
-  mockApi.override("GET /training/list", { json: trainingList(true) });
+  mockApi.override("GET /training/list", {
+    json: trainingList({ finished: true, certificateAvailable: true }),
+  });
   mockApi.override("GET /training/:id/certificate", {
     status: 400,
     json: {

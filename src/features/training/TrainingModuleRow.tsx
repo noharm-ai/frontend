@@ -43,7 +43,9 @@ export function TrainingModuleRow({
         <span>{module.description}</span>
       </ModuleText>
 
-      {status === "completed" && <TrainingCertificate idTraining={module.id} />}
+      {module.certificateAvailable && (
+        <TrainingCertificate idTraining={module.id} />
+      )}
 
       <Button
         type={status === "current" ? "primary" : "default"}
