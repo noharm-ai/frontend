@@ -1181,7 +1181,52 @@
     "progressMandatory": "Mandatory modules",
     "progressOptional": "Optional modules",
     "mandatoryExplanation": "Mandatory modules cover the basics of using NoHarm. Until they are all completed, you won't be able to open support tickets.",
-    "mandatoryTag": "Mandatory"
+    "mandatoryTag": "Mandatory",
+    "tabMyTraining": "My training",
+    "tabTeam": "My team"
+  },
+  "trainingOverview": {
+    "empty": "No users found.",
+    "mandatoryHint": "While mandatory modules are pending, the user cannot open support tickets.",
+    "moduleProgressTitle": "Progress by module",
+    "moduleUsersFinished": "{{done}} of {{total}} completed",
+    "moduleUsersNotStarted_one": "{{count}} not started",
+    "moduleUsersNotStarted_other": "{{count}} not started",
+
+    "columns": {
+      "user": "User",
+      "userStatus": "User status",
+      "mandatory": "Mandatory",
+      "optional": "Optional",
+      "lessons": "Lessons",
+      "lastActivity": "Last activity",
+      "status": "Training status"
+    },
+
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Name or e-mail",
+      "active": "Active",
+      "inactive": "Inactive",
+      "all": "All",
+      "userActive": "Active",
+      "userInactive": "Inactive",
+      "statusPlaceholder": "Filter by status"
+    },
+
+    "summary": {
+      "users": "Users",
+      "pendingMandatory": "With mandatory modules pending",
+      "notStarted": "Not started",
+      "completed": "Completed every module"
+    },
+
+    "status": {
+      "notStarted": "Not started",
+      "inProgress": "In progress",
+      "completed": "Completed",
+      "reopened": "Reopened"
+    }
   },
   "trainingCertificate": {
     "button": "Certificate",

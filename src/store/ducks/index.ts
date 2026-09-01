@@ -53,6 +53,7 @@ import adminExamForm from "features/admin/Exam/ExamForm/ExamFormSlice";
 import { outpatientPrioritizationReducer } from "features/outpatient/OutpatientPrioritization/OutpatientPrioritizationSlice";
 import notificationsSlice from "features/notifications/NotificationsSlice";
 import trainingCentralSlice from "features/training/TrainingCentralSlice";
+import trainingOverviewSlice from "features/training/TrainingOverviewSlice";
 import trainingPlayerSlice from "features/training/TrainingPlayerSlice";
 import clinicalNotesMultiSlice from "features/clinicalNotes/ClinicalNotesSlice";
 import { navigationSoapNoteReducer } from "features/clinicalNotes/NavigationSoapNote/NavigationSoapNoteSlice";
@@ -165,6 +166,7 @@ const rootReducer = combineReducers({
   userProfile: userProfileReducer,
   notifications: notificationsSlice,
   trainingCentral: trainingCentralSlice,
+  trainingOverview: trainingOverviewSlice,
   trainingPlayer: trainingPlayerSlice,
 });
 

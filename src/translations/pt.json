@@ -1191,7 +1191,52 @@
     "progressMandatory": "Módulos obrigatórios",
     "progressOptional": "Módulos opcionais",
     "mandatoryExplanation": "Os módulos obrigatórios são a base para o uso do NoHarm. Enquanto não forem concluídos, não será possível abrir chamados de suporte.",
-    "mandatoryTag": "Obrigatório"
+    "mandatoryTag": "Obrigatório",
+    "tabMyTraining": "Meu treinamento",
+    "tabTeam": "Minha equipe"
+  },
+  "trainingOverview": {
+    "empty": "Nenhum usuário encontrado.",
+    "mandatoryHint": "Enquanto houver módulos obrigatórios pendentes, o usuário não consegue abrir chamados de suporte.",
+    "moduleProgressTitle": "Progresso por módulo",
+    "moduleUsersFinished": "{{done}} de {{total}} concluíram",
+    "moduleUsersNotStarted_one": "{{count}} não iniciou",
+    "moduleUsersNotStarted_other": "{{count}} não iniciaram",
+
+    "columns": {
+      "user": "Usuário",
+      "userStatus": "Situação do usuário",
+      "mandatory": "Obrigatórios",
+      "optional": "Opcionais",
+      "lessons": "Aulas",
+      "lastActivity": "Última atividade",
+      "status": "Situação do treinamento"
+    },
+
+    "filters": {
+      "search": "Buscar",
+      "searchPlaceholder": "Nome ou e-mail",
+      "active": "Ativos",
+      "inactive": "Inativos",
+      "all": "Todos",
+      "userActive": "Ativo",
+      "userInactive": "Inativo",
+      "statusPlaceholder": "Filtrar por situação"
+    },
+
+    "summary": {
+      "users": "Usuários",
+      "pendingMandatory": "Com obrigatórios pendentes",
+      "notStarted": "Não iniciaram",
+      "completed": "Concluíram todos os módulos"
+    },
+
+    "status": {
+      "notStarted": "Não iniciado",
+      "inProgress": "Em andamento",
+      "completed": "Concluído",
+      "reopened": "Reaberto"
+    }
   },
   "trainingCertificate": {
     "button": "Certificado",

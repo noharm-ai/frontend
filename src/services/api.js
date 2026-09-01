@@ -851,6 +851,8 @@ api.support.fetchKnowledgeBaseArticles = (params) =>
 api.training = {};
 api.training.getList = (params = {}) =>
   instance.get(`/training/list`, { params, ...setHeaders() });
+api.training.getOverview = (params = {}) =>
+  instance.get(`/training/overview`, { params, ...setHeaders() });
 api.training.getItems = (idTraining) =>
   instance.get(`/training/${idTraining}/items`, { ...setHeaders() });
 api.training.finishItem = (idTrainingItem, params = {}) =>
