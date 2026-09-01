@@ -1161,6 +1161,21 @@
     "noResults": "Nenhum texto encontrado.",
     "promptVersionHint": "Escolha o formato da evolução gerada"
   },
+  "digitalSignature": {
+    "btnTooltip": "Assinar digitalmente",
+    "title": "Assinatura digital",
+    "description": "Envie esta evolução para assinatura digital. O signatário receberá um e-mail com o link para assinar o documento.",
+    "signerName": "Nome do signatário",
+    "signerEmail": "E-mail do signatário",
+    "btnSend": "Enviar para assinatura",
+    "btnClose": "Fechar",
+    "validationSigner": "Informe o nome e um e-mail válido para o signatário.",
+    "successMessage": "Solicitação de assinatura criada com sucesso. O signatário receberá um e-mail com o link para assinar.",
+    "linkLabel": "Link direto para assinatura:",
+    "btnCopyLink": "Copiar link",
+    "btnOpenLink": "Abrir link",
+    "linkCopied": "Link copiado!"
+  },
   "onboarding": {
     "welcome": {
       "eyebrow": "Primeiros passos",

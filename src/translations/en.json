@@ -1151,6 +1151,21 @@
     "noResults": "No texts found.",
     "promptVersionHint": "Choose the generated note format"
   },
+  "digitalSignature": {
+    "btnTooltip": "Sign digitally",
+    "title": "Digital signature",
+    "description": "Send this clinical note for digital signature. The signer will receive an e-mail with the link to sign the document.",
+    "signerName": "Signer name",
+    "signerEmail": "Signer e-mail",
+    "btnSend": "Send for signature",
+    "btnClose": "Close",
+    "validationSigner": "Provide the signer's name and a valid e-mail.",
+    "successMessage": "Signature request created successfully. The signer will receive an e-mail with the signing link.",
+    "linkLabel": "Direct signing link:",
+    "btnCopyLink": "Copy link",
+    "btnOpenLink": "Open link",
+    "linkCopied": "Link copied!"
+  },
   "onboarding": {
     "welcome": {
       "eyebrow": "Getting started",
