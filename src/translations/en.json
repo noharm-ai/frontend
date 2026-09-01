@@ -658,6 +658,7 @@
     "unauthorizedUser": "Unauthorized user",
     "serviceUnavailable": "AI service unavailable. Please try again shortly.",
     "pendingMandatoryTraining": "Complete the mandatory training modules to open support tickets.",
+    "trainingNotFinished": "Complete every lesson of the module to get the certificate.",
     "nameExists": "There is already a user with this name!",
     "emailExists": "There is already a user with this email!",
     "empty": "No records found"
@@ -1181,6 +1182,16 @@
     "progressOptional": "Optional modules",
     "mandatoryExplanation": "Mandatory modules cover the basics of using NoHarm. Until they are all completed, you won't be able to open support tickets.",
     "mandatoryTag": "Mandatory"
+  },
+  "trainingCertificate": {
+    "button": "Certificate",
+    "download": "Get certificate",
+    "title": "Certificate of Completion",
+    "certify": "This certifies that",
+    "completedModule": "has completed the training module",
+    "summary_one": "Completed on {{date}}, after finishing {{count}} lesson.",
+    "summary_other": "Completed on {{date}}, after finishing {{count}} lessons.",
+    "footer": "Issued by the NoHarm platform · noharm.ai"
   },
   "trainingPlayer": {
     "previous": "Previous",

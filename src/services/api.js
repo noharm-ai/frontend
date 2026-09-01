@@ -857,6 +857,8 @@ api.training.finishItem = (idTrainingItem, params = {}) =>
   instance.post(`/training/item/${idTrainingItem}/finish`, params, {
     ...setHeaders(),
   });
+api.training.getCertificate = (idTraining) =>
+  instance.get(`/training/${idTraining}/certificate`, { ...setHeaders() });
 
 /**
  * Summary namespace

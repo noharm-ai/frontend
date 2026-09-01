@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import { Row, Col } from "antd";
+import { Row, Col, Space } from "antd";
 import DOMPurify from "dompurify";
 import {
   LeftOutlined,
@@ -27,6 +27,7 @@ import colors from "styles/colors";
 
 import { fetchTrainingItems, finishTrainingItem } from "./TrainingPlayerSlice";
 import { fetchTrainingList } from "./TrainingCentralSlice";
+import { TrainingCertificate } from "./TrainingCertificate/TrainingCertificate";
 import { TrainingItemQuiz } from "./TrainingItemQuiz";
 import { YoutubeEmbed } from "./YoutubeEmbed";
 import {
@@ -362,9 +363,15 @@ export function TrainingPlayer() {
           <p>
             {t("trainingPlayer.moduleCompletedMessage", { module: moduleName })}
           </p>
-          <Button type="primary" onClick={() => navigate("/treinamento")}>
-            {t("trainingPlayer.backToCentral")}
-          </Button>
+          <Space>
+            <TrainingCertificate
+              idTraining={Number(params.id)}
+              label={t("trainingCertificate.download")}
+            />
+            <Button type="primary" onClick={() => navigate("/treinamento")}>
+              {t("trainingPlayer.backToCentral")}
+            </Button>
+          </Space>
         </CompletionModalContent>
       </DefaultModal>
 
