@@ -35,7 +35,7 @@ export default function SupportForm() {
         )
       : Yup.boolean().nullable(),
     title: Yup.string().nullable().required(t("validation.requiredField")),
-    category: Yup.string().nullable().required(t("validation.requiredField")),
+    category: Yup.number().nullable().required(t("validation.requiredField")),
     description: Yup.string()
       .nullable()
       .required(t("validation.requiredField")),
