@@ -1199,6 +1199,8 @@
     "title": "Certificado de Conclusão",
     "certify": "Certificamos que",
     "completedModule": "concluiu o módulo de treinamento",
+    "workload_one": "Carga horária total: {{count}} hora",
+    "workload_other": "Carga horária total: {{count}} horas",
     "summary_one": "Concluído em {{date}}, após completar {{count}} lição.",
     "summary_other": "Concluído em {{date}}, após completar {{count}} lições.",
     "footer": "Emitido pela plataforma NoHarm · noharm.ai"

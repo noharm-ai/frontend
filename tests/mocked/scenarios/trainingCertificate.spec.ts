@@ -41,6 +41,7 @@ const certificate = {
     userName: "E2E Test",
     trainingId: 1,
     trainingTitle: "Módulo básico",
+    totalHours: 8,
     totalLessons: 2,
     completedAt: "2026-08-31T10:00:00",
   },

@@ -17,6 +17,8 @@ interface ITrainingCertificate {
   userName: string;
   trainingId: number;
   trainingTitle: string;
+  // whole hours; 0 means the module declares no workload
+  totalHours: number;
   totalLessons: number;
   completedAt: string;
 }
@@ -101,6 +103,14 @@ export function TrainingCertificate({
             <p className="certificate-module">
               &ldquo;{certificate.trainingTitle}&rdquo;
             </p>
+
+            {certificate.totalHours > 0 && (
+              <p className="certificate-workload">
+                {t("trainingCertificate.workload", {
+                  count: certificate.totalHours,
+                })}
+              </p>
+            )}
 
             <p className="certificate-summary">
               {t("trainingCertificate.summary", {

@@ -83,8 +83,15 @@ export const CertificatePage = styled.div`
     font-weight: 600;
   }
 
+  .certificate-workload {
+    margin: 6mm 0 0;
+    color: ${colors.text};
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
   .certificate-summary {
-    margin: 10mm 0 0;
+    margin: 8mm 0 0;
     color: ${colors.text};
     font-size: 1rem;
   }
