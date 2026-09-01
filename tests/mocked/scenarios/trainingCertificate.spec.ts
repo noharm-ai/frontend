@@ -44,6 +44,7 @@ const certificate = {
     totalHours: 8,
     totalLessons: 2,
     completedAt: "2026-08-31T10:00:00",
+    validationCode: "ABCD-EFGH-JKMN",
   },
 };
 

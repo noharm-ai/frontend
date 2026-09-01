@@ -35,7 +35,10 @@ export const CertificatePage = styled.div`
     justify-content: center;
     height: 100%;
     box-sizing: border-box;
-    padding: 12mm 25mm;
+    /* the bottom band is reserved for the absolutely positioned footer, so
+       justify-content: center centres the body in what is left rather than
+       running underneath it */
+    padding: 12mm 25mm 30mm;
     text-align: center;
     border: 3px solid ${colors.accentSecondary};
     outline: 1px solid ${colors.primary};
@@ -103,5 +106,18 @@ export const CertificatePage = styled.div`
     left: 0;
     color: ${colors.text};
     font-size: 0.85rem;
+  }
+
+  .certificate-validation-code {
+    margin-top: 2mm;
+    font-size: 0.95rem;
+    /* the code is read off paper character by character, so keep them apart */
+    letter-spacing: 1.5px;
+  }
+
+  .certificate-validation-url {
+    margin-top: 1mm;
+    font-size: 0.7rem;
+    opacity: 0.75;
   }
 `;

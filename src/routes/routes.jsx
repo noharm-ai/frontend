@@ -30,6 +30,7 @@ import CustomFormEditorPage from "pages/CustomForms/CustomFormEditorPage";
 import MemoryListPage from "pages/Memory/MemoryListPage";
 import MemoryEditorPage from "pages/Memory/MemoryEditorPage";
 import TrainingCentral from "pages/TrainingCentral";
+import { CertificateValidationPage } from "pages/CertificateValidation/CertificateValidationPage";
 import TrainingPlayer from "pages/TrainingPlayer";
 
 import AdminTag from "pages/Admin/Tag";
@@ -88,6 +89,23 @@ const routes = [
     exact: true,
     path: "/login-callback/:schema",
     element: <WithAuth component={LoginCallback} isLoginPage={true} />,
+  },
+
+  // public: printed on every training certificate, so this path is frozen -
+  // renaming it strands the certificates already issued
+  {
+    exact: true,
+    path: "/validar-certificado",
+    element: (
+      <WithAuth component={CertificateValidationPage} isPublicPage={true} />
+    ),
+  },
+  {
+    exact: true,
+    path: "/validar-certificado/:code",
+    element: (
+      <WithAuth component={CertificateValidationPage} isPublicPage={true} />
+    ),
   },
   {
     exact: true,

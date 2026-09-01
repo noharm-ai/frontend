@@ -859,6 +859,15 @@ api.training.finishItem = (idTrainingItem, params = {}) =>
   });
 api.training.getCertificate = (idTraining) =>
   instance.get(`/training/${idTraining}/certificate`, { ...setHeaders() });
+// public endpoint: setHeaders() reads the api key from Redux and the bearer
+// from storage, both empty for an anonymous visitor, so the key comes from the
+// env var here - same as forgotPassword / resetPassword
+api.training.validateCertificate = (code) =>
+  instance.get(`/public/certificate/${code}`, {
+    headers: {
+      "x-api-key": import.meta.env.VITE_APP_API_KEY,
+    },
+  });
 
 /**
  * Summary namespace

@@ -21,6 +21,8 @@ interface ITrainingCertificate {
   totalHours: number;
   totalLessons: number;
   completedAt: string;
+  // already grouped as XXXX-XXXX-XXXX by the backend
+  validationCode: string;
 }
 
 interface TrainingCertificateProps {
@@ -120,7 +122,15 @@ export function TrainingCertificate({
             </p>
 
             <div className="certificate-footer">
-              {t("trainingCertificate.footer")}
+              <div>{t("trainingCertificate.footer")}</div>
+              <div className="certificate-validation-code">
+                {t("trainingCertificate.validationCode")}{" "}
+                <strong>{certificate.validationCode}</strong>
+              </div>
+              <div className="certificate-validation-url">
+                {t("trainingCertificate.validationHint")}{" "}
+                {`${window.location.origin}/validar-certificado`}
+              </div>
             </div>
           </div>
         )}
