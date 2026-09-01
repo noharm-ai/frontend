@@ -1,11 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import Alert from "components/Alert";
 import Button from "components/Button";
 import DefaultModal from "components/Modal";
 import { formatDateTime } from "utils/date";
-import { useAppSelector } from "src/store";
+import { useAppDispatch, useAppSelector } from "src/store";
 
+import { getIntegrationErrors } from "../PrescriptionSlice";
 import { IntegrationErrorList } from "./IntegrationErrorAlert.style";
 
 interface IntegrationError {
@@ -18,16 +19,50 @@ interface IntegrationError {
 /**
  * Warns that the checked prescription was not confirmed by the origin system.
  *
+ * The release is only sent after a check, so the errors are only fetched once
+ * the prescription is checked. Checking again re-sends the release: the status
+ * is part of the effect key so the alert never lingers after a new check.
+ *
+ * An aggregated prescription is released one internal prescription at a time,
+ * so the ids already listed in `headers` are sent along and inspected together.
+ *
  * The backend only reports errors that are still pending: an error followed by
  * a new check was already retried and is not listed.
  */
 export function IntegrationErrorAlert() {
+  const dispatch = useAppDispatch();
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const idPrescription = useAppSelector(
+    (state: any) => state.prescriptions.single.data?.idPrescription,
+  );
+  const status = useAppSelector(
+    (state: any) => state.prescriptions.single.data?.status,
+  );
+  const headers = useAppSelector(
+    (state: any) => state.prescriptions.single.data?.headers,
+  );
   const errors: IntegrationError[] = useAppSelector(
-    (state: any) => state.prescriptions.single.data?.integrationErrors ?? [],
+    (state: any) => state.prescriptionv2.integrationErrors.list,
   );
 
-  if (errors.length === 0) {
+  // headers is an object keyed by id on agg prescriptions, an empty array otherwise
+  const aggIds = Object.keys(headers ?? {});
+  const idPrescriptionList = aggIds.join(",");
+  // re-checking a single prescription from the agg page re-sends its release
+  // without moving the agg status, so the internal ones invalidate the list too
+  const aggStatuses = aggIds.map((id) => headers[id]?.status).join(",");
+
+  useEffect(() => {
+    if (!idPrescription || status !== "s") {
+      return;
+    }
+
+    dispatch(
+      (getIntegrationErrors as any)({ idPrescription, idPrescriptionList }),
+    );
+  }, [dispatch, idPrescription, status, idPrescriptionList, aggStatuses]);
+
+  if (status !== "s" || errors.length === 0) {
     return null;
   }
 

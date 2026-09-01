@@ -38,6 +38,10 @@ const initialState = {
     open: false,
     status: "idle",
   },
+  integrationErrors: {
+    status: "idle",
+    list: [],
+  },
 };
 
 export const getSingleClinicalNotes = createAsyncThunk(
@@ -114,6 +118,19 @@ export const getConciliationList = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.conciliation.getAvailableConciliations(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  },
+);
+
+export const getIntegrationErrors = createAsyncThunk(
+  "prescription/get-integration-errors",
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.prescription.getIntegrationErrors(params);
 
       return response.data;
     } catch (err) {
@@ -225,6 +242,19 @@ const prescriptionSlice = createSlice({
       })
       .addCase(createCarePlan.rejected, (state) => {
         state.carePlan.status = "failed";
+      })
+      .addCase(getIntegrationErrors.pending, (state) => {
+        state.integrationErrors.status = "loading";
+        // discard the previous prescription errors while the new ones load
+        state.integrationErrors.list = [];
+      })
+      .addCase(getIntegrationErrors.fulfilled, (state, action) => {
+        state.integrationErrors.status = "succeeded";
+        state.integrationErrors.list = action.payload.data;
+      })
+      .addCase(getIntegrationErrors.rejected, (state) => {
+        state.integrationErrors.status = "failed";
+        state.integrationErrors.list = [];
       });
   },
 });

@@ -632,6 +632,16 @@ api.prescription.getPepLink = (params) =>
     ...setHeaders(),
   });
 
+// idPrescriptionList: comma separated ids of the prescriptions inside an agg one
+api.prescription.getIntegrationErrors = ({
+  idPrescription,
+  idPrescriptionList,
+}) =>
+  instance.get(`/prescriptions/${idPrescription}/integration-errors`, {
+    params: { idPrescriptionList },
+    ...setHeaders(),
+  });
+
 /**
  * Conciliation
  */

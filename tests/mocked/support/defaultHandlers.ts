@@ -72,6 +72,8 @@ export function defaultHandlers(): Record<string, Handler> {
       json: { status: "success", data: null },
     },
     "GET /prescriptions/:id/update": { json: { status: "success", data: {} } },
+    // fetched by the screening page whenever the prescription is checked
+    "GET /prescriptions/:id/integration-errors": emptyList,
 
     // async job polling: always terminal so the UI never polls forever
     "GET /queue/status/:id": {

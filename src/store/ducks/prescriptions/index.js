@@ -348,8 +348,6 @@ const checkSuccess = (state = INITIAL_STATE, { success }) => {
         status: prescriptionStatus,
         user: success.user,
         userId: success.userId,
-        // the release is sent again on every check: previous errors are stale
-        integrationErrors: [],
       },
     },
   };
