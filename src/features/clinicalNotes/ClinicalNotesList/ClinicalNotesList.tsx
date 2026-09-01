@@ -1,9 +1,20 @@
 import { useEffect, useState } from "react";
 import { Alert, Button, Empty, List, Modal, Space, Spin, Tag, Tooltip } from "antd";
-import { CheckCircleOutlined, EditOutlined, PlusOutlined, WarningOutlined } from "@ant-design/icons";
+import {
+  CheckCircleOutlined,
+  EditOutlined,
+  PlusOutlined,
+  PrinterOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
+import { escape as escapeHtml } from "lodash";
 
 import { useAppSelector, useAppDispatch } from "src/store";
 import DefaultModal from "components/Modal";
+import notification from "components/notification";
+import PermissionService from "services/PermissionService";
+import Permission from "models/Permission";
+import { getMemory } from "features/lists/ListsSlice";
 import { formatDate } from "utils/date";
 
 import {
@@ -53,6 +64,52 @@ export function ClinicalNotesList({ afterSave }: IClinicalNotesListProps) {
 
   const handleEditNote = (item: IClinicalNoteItem) => {
     dispatch(setFormModalOpen({ selectedNote: item }));
+  };
+
+  const printNote = (item: IClinicalNoteItem) => {
+    const printWindow = window.open("", "_blank", "width=800,height=600");
+    if (!printWindow) {
+      notification.error({ message: "Desative o bloqueador de popups" });
+      return;
+    }
+
+    dispatch((getMemory as any)({ type: "nav-header" })).then((result: any) => {
+      const navHeaderText = result.payload?.data?.[0]?.value?.header ?? "";
+      const noteHeader = escapeHtml(
+        `${formatDate(item.updatedAt, "DD/MM/YYYY HH:mm")} — ${item.createdByName ?? item.userName ?? ""}`,
+      );
+
+      printWindow.document.write(`<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Evolução — ${noteHeader}</title>
+    <style>
+      @page { margin: 24px; }
+      body { padding: 24px; font-family: sans-serif; }
+      .print-institution-header {
+        display: flex; flex-direction: column; align-items: center;
+        text-align: center; border-bottom: 1px solid #ccc;
+        padding-bottom: 12px; margin-bottom: 12px;
+      }
+      .print-institution-header p { margin: 0; font-size: 13px; }
+      .print-note-header { font-size: 14px; font-weight: bold; margin-bottom: 12px; margin-top: 30px; }
+      .print-note-content { font-size: 13px; white-space: pre-wrap; }
+      p { orphans: 3; widows: 3; }
+    </style>
+  </head>
+  <body>
+    <div class="print-institution-header">
+      <img src="/logo512.png" style="width:30px;margin-bottom:8px" alt="NoHarm.ai" />
+      ${navHeaderText}
+    </div>
+    <div class="print-note-header">${noteHeader}</div>
+    <div class="print-note-content">${escapeHtml(item.notes ?? "")}</div>
+    <script>window.onload = function() { window.print(); window.close(); }</script>
+  </body>
+</html>`);
+      printWindow.document.close();
+    });
   };
 
   const handleFormCancel = () => {
@@ -114,6 +171,18 @@ export function ClinicalNotesList({ afterSave }: IClinicalNotesListProps) {
             <List.Item
               key={item.id}
               actions={[
+                ...(PermissionService().has(Permission.READ_NAV)
+                  ? [
+                      <Tooltip title="Imprimir" key="print">
+                        <Button
+                          icon={<PrinterOutlined />}
+                          onClick={() => printNote(item)}
+                        >
+                          Imprimir
+                        </Button>
+                      </Tooltip>,
+                    ]
+                  : []),
                 <Button
                   icon={<EditOutlined />}
                   key="edit"
