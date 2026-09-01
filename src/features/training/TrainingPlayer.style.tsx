@@ -1,7 +1,8 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
 
 import colors from "styles/colors";
 import { Radio } from "components/Inputs";
+import Modal from "components/Modal";
 
 export const StepsPanel = styled.div`
   height: 100%;
@@ -370,23 +371,267 @@ export const QuizHint = styled.div`
   font-size: 0.8125rem;
 `;
 
-export const CompletionModalContent = styled.div`
-  text-align: center;
-  padding: 12px 0 4px;
+export const CompletionModal = styled(Modal)`
+  .ant-modal-content {
+    overflow: hidden;
+    border-radius: 16px;
+  }
 
-  .anticon {
-    font-size: 48px;
-    color: ${colors.accentSecondary};
-    margin-bottom: 16px;
+  .ant-modal-close {
+    top: 12px;
+    inset-inline-end: 12px;
+    color: ${colors.text};
+
+    &:hover {
+      color: ${colors.primary};
+    }
+  }
+`;
+
+const badgePop = keyframes`
+  0% {
+    opacity: 0;
+    transform: scale(0.4) rotate(-25deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.12) rotate(6deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+`;
+
+const ringPulse = keyframes`
+  0% {
+    opacity: 0.55;
+    transform: scale(0.85);
+  }
+  70% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+`;
+
+const confettiFall = keyframes`
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -24px, 0) rotate(0deg);
+  }
+  12% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate3d(var(--drift, 0px), 250px, 0) rotate(540deg);
+  }
+`;
+
+const riseIn = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+`;
+
+export const CompletionHero = styled.div`
+  position: relative;
+  overflow: hidden;
+  padding: 34px 24px 30px;
+  background: linear-gradient(135deg, #eef6f5 0%, #f7faf9 100%);
+  text-align: center;
+
+  /* same corner shape as the video cover */
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 40%;
+    height: 70%;
+    border-radius: 0 0 100% 0;
+    background: linear-gradient(
+      135deg,
+      ${colors.accentSecondary},
+      ${colors.accent}
+    );
+    pointer-events: none;
+  }
+
+  .completion-confetti {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+
+  .completion-confetti i {
+    position: absolute;
+    top: 0;
+    display: block;
+    opacity: 0;
+    animation: ${confettiFall} var(--duration) ease-in var(--delay) forwards;
+  }
+
+  .completion-badge {
+    position: relative;
+    z-index: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 82px;
+    height: 82px;
+    border-radius: 50%;
+    background: ${colors.commonLighter};
+    box-shadow: 0 8px 22px rgba(46, 60, 90, 0.18);
+    animation: ${badgePop} 620ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      inset: -6px;
+      border-radius: 50%;
+      border: 2px solid rgba(126, 190, 154, 0.8);
+      animation: ${ringPulse} 2s ease-out 500ms infinite;
+    }
+
+    &::after {
+      animation-delay: 1.2s;
+    }
+
+    .anticon {
+      font-size: 40px;
+      color: ${colors.accent};
+    }
+  }
+
+  .completion-eyebrow {
+    position: relative;
+    z-index: 1;
+    display: block;
+    margin-top: 18px;
+    color: #4f9b7a;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    animation: ${riseIn} 480ms ease-out 260ms both;
   }
 
   h2 {
+    position: relative;
+    z-index: 1;
+    margin: 6px 0 0;
     color: ${colors.primary};
-    margin-bottom: 8px;
+    font-size: 1.75rem;
+    font-weight: 600;
+    letter-spacing: -0.4px;
+    animation: ${riseIn} 480ms ease-out 340ms both;
   }
 
-  p {
-    color: ${colors.text};
-    margin-bottom: 24px;
+  @media (prefers-reduced-motion: reduce) {
+    .completion-confetti {
+      display: none;
+    }
+
+    .completion-badge,
+    .completion-badge::before,
+    .completion-badge::after,
+    .completion-eyebrow,
+    h2 {
+      animation: none;
+    }
+
+    .completion-badge::before,
+    .completion-badge::after {
+      opacity: 0.4;
+      transform: none;
+    }
   }
+`;
+
+export const CompletionBody = styled.div`
+  padding: 26px 32px 30px;
+  text-align: center;
+  animation: ${riseIn} 480ms ease-out 420ms both;
+
+  .completion-message {
+    margin: 0 auto;
+    max-width: 420px;
+    color: ${colors.text};
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    text-wrap: pretty;
+
+    strong {
+      color: ${colors.primary};
+      font-weight: 600;
+    }
+  }
+
+  @media (max-width: 480px) {
+    padding: 22px 20px 26px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+`;
+
+export const CompletionStats = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 22px 0 24px;
+
+  .completion-stat {
+    flex: 0 1 150px;
+    padding: 12px 14px;
+    border: 1px solid ${colors.detail};
+    border-radius: 10px;
+    background: #f7fafb;
+
+    strong {
+      display: block;
+      color: ${colors.primary};
+      font-size: 1.375rem;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    span {
+      display: block;
+      margin-top: 2px;
+      color: ${colors.text};
+      font-size: 0.75rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    flex-direction: column;
+    align-items: stretch;
+
+    .completion-stat {
+      flex: 1 1 auto;
+    }
+  }
+`;
+
+export const CompletionActions = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
 `;

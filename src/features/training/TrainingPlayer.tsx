@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import { Row, Col, Space } from "antd";
+import { Row, Col } from "antd";
 import DOMPurify from "dompurify";
 import {
   LeftOutlined,
@@ -10,6 +10,7 @@ import {
   FileTextOutlined,
   QuestionCircleOutlined,
   CheckCircleFilled,
+  TrophyFilled,
   ClockCircleOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
@@ -47,10 +48,29 @@ import {
   LessonTitle,
   PendingBadge,
   BackRow,
-  CompletionModalContent,
+  CompletionModal,
+  CompletionHero,
+  CompletionBody,
+  CompletionStats,
+  CompletionActions,
   QuizHint,
   ImagePreview,
 } from "./TrainingPlayer.style";
+
+const CONFETTI_COLORS = ["#7ebe9a", "#70bdc3", "#f5c451", "#e46666", "#2e3c5a"];
+
+// deterministic so the burst is identical on every replay
+const CONFETTI_PIECES = Array.from({ length: 20 }, (_, i) => ({
+  key: i,
+  left: (i * 17 + 7) % 100,
+  width: 5 + (i % 4) * 2,
+  height: 8 + (i % 3) * 3,
+  drift: ((i % 5) - 2) * 18,
+  delay: ((i * 13) % 16) / 10,
+  duration: 2.4 + ((i * 7) % 10) / 10,
+  color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+  radius: i % 3 === 0 ? "50%" : "2px",
+}));
 
 export function TrainingPlayer() {
   const { t } = useTranslation();
@@ -350,20 +370,68 @@ export function TrainingPlayer() {
         </Col>
       </Row>
 
-      <DefaultModal
+      <CompletionModal
         open={showCompletionModal}
         footer={null}
         centered
         destroyOnHidden
+        width={520}
+        styles={{
+          container: { padding: 0, overflow: "hidden", borderRadius: 16 },
+          body: { padding: 0 },
+        }}
         onCancel={() => navigate("/treinamento")}
       >
-        <CompletionModalContent>
-          <CheckCircleFilled />
+        <CompletionHero>
+          <div className="completion-confetti" aria-hidden="true">
+            {CONFETTI_PIECES.map((piece) => (
+              <i
+                key={piece.key}
+                style={
+                  {
+                    left: `${piece.left}%`,
+                    width: piece.width,
+                    height: piece.height,
+                    background: piece.color,
+                    borderRadius: piece.radius,
+                    "--drift": `${piece.drift}px`,
+                    "--delay": `${piece.delay}s`,
+                    "--duration": `${piece.duration}s`,
+                  } as React.CSSProperties
+                }
+              />
+            ))}
+          </div>
+          <span className="completion-badge">
+            <TrophyFilled />
+          </span>
+          <span className="completion-eyebrow">
+            {t("trainingPlayer.moduleCompletedEyebrow")}
+          </span>
           <h2>{t("trainingPlayer.moduleCompletedTitle")}</h2>
-          <p>
+        </CompletionHero>
+
+        <CompletionBody>
+          <p className="completion-message">
             {t("trainingPlayer.moduleCompletedMessage", { module: moduleName })}
           </p>
-          <Space>
+
+          <CompletionStats>
+            <div className="completion-stat">
+              <strong>{sortedItems.length}</strong>
+              <span>
+                {t("trainingPlayer.moduleCompletedLessonsStat", {
+                  count: sortedItems.length,
+                })}
+              </span>
+            </div>
+            <div className="completion-stat">
+              <strong>100%</strong>
+              <span>{t("trainingPlayer.moduleCompletedProgressStat")}</span>
+            </div>
+          </CompletionStats>
+
+          <CompletionActions>
             <TrainingCertificate
               idTraining={Number(params.id)}
               label={t("trainingCertificate.download")}
@@ -371,9 +439,9 @@ export function TrainingPlayer() {
             <Button type="primary" onClick={() => navigate("/treinamento")}>
               {t("trainingPlayer.backToCentral")}
             </Button>
-          </Space>
-        </CompletionModalContent>
-      </DefaultModal>
+          </CompletionActions>
+        </CompletionBody>
+      </CompletionModal>
 
       <DefaultModal
         open={Boolean(previewImageSrc)}

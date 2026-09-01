@@ -1230,6 +1230,10 @@
     "videoCoverOrg": "NoHarm.ai",
     "videoCoverTitle": "Treinamento",
     "videoCoverModule": "Módulo {{module}}",
+    "moduleCompletedEyebrow": "Módulo concluído",
+    "moduleCompletedLessonsStat_one": "Aula concluída",
+    "moduleCompletedLessonsStat_other": "Aulas concluídas",
+    "moduleCompletedProgressStat": "Progresso",
     "moduleCompletedTitle": "Parabéns!",
     "moduleCompletedMessage": "Você concluiu o módulo de treinamento \"{{module}}\"."
   }
