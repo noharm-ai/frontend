@@ -500,28 +500,6 @@ export default function FilterFields({
               </div>
             </div>
 
-            {(prioritizationType === "patient" ||
-              prioritizationType === "cards") && (
-              <div className="form-row">
-                <div className="form-row">
-                  <div className="form-label-actions">
-                    <label>Possui próxima prescrição:</label>{" "}
-                    <HelpTextIcon pageKey="priorizacao-possui-proxima-prescricao" />
-                  </div>
-                  <div className="form-input">
-                    <Radio.Group
-                      options={yesNoOptionsNullable}
-                      optionType="button"
-                      onChange={({ target: { value } }) =>
-                        setScreeningListFilter({ hasNextPrescription: value })
-                      }
-                      value={filter.hasNextPrescription}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-
             <div className="form-row">
               <div className="form-row">
                 <div className="form-label-actions">

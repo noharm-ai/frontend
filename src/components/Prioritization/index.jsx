@@ -23,6 +23,7 @@ import {
 
 import Filter from "./Filter";
 import PrioritizationCard from "./Card";
+import { PrescriptionDatesFilter } from "./PrescriptionDatesFilter/PrescriptionDatesFilter";
 import { reducer, initState } from "./Store";
 import {
   sortList,
@@ -106,6 +107,17 @@ export default function Prioritization({
     trackPrescriptionPrioritizationAction(
       TrackedPrescriptionPrioritizationAction.CHANGE_PAGE,
     );
+  };
+
+  const onChangePrescriptionDates = (value) => {
+    dispatch({
+      type: "set_filter",
+      payload: {
+        prescriptionDates: value,
+      },
+    });
+
+    stopLoading();
   };
 
   const onChangeStatus = (value) => {
@@ -300,6 +312,20 @@ export default function Prioritization({
                   </Select>
                 </div>
               </div>
+
+              {prioritizationType !== "conciliation" && (
+                <div className="filters-item">
+                  <div className="filters-item-label">
+                    {t("screeningList.prescriptionDatesLabel")}:
+                  </div>
+                  <div className="filters-item-value">
+                    <PrescriptionDatesFilter
+                      value={state.filter.prescriptionDates}
+                      onChange={onChangePrescriptionDates}
+                    />
+                  </div>
+                </div>
+              )}
 
               <div className="filters-item">
                 <div className="filters-item-label">

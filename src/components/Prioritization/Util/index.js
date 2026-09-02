@@ -136,10 +136,58 @@ export const getListStats = (list) => {
   return listStats;
 };
 
+export const PRESCRIPTION_DATES_FILTER = {
+  ALL: "all",
+  NEXT: "next",
+  RANGE: "range",
+};
+
+// keeps agg prescriptions having at least one inner prescription date that
+// matches the filter: "next" = at or after the user's machine time,
+// "range" = inside the chosen [start, end] interval
+export const filterByPrescriptionDates = (list, config, now = new Date()) => {
+  if (
+    !config ||
+    !config.mode ||
+    config.mode === PRESCRIPTION_DATES_FILTER.ALL
+  ) {
+    return list;
+  }
+
+  let start = null;
+  let end = null;
+
+  if (config.mode === PRESCRIPTION_DATES_FILTER.NEXT) {
+    start = now.getTime();
+  } else if (config.mode === PRESCRIPTION_DATES_FILTER.RANGE) {
+    if (!config.range || (!config.range[0] && !config.range[1])) {
+      return list;
+    }
+
+    start = config.range[0] ? Date.parse(config.range[0]) : null;
+    end = config.range[1] ? Date.parse(config.range[1]) : null;
+  }
+
+  return list.filter((i) =>
+    (i.prescriptionDates || []).some((d) => {
+      const time = Date.parse(d);
+      if (Number.isNaN(time)) {
+        return false;
+      }
+
+      return (start === null || time >= start) && (end === null || time <= end);
+    }),
+  );
+};
+
 export const filterList = (list, filter) => {
   let newList = [...list];
   if (filter.status) {
     newList = newList.filter((i) => i.status === filter.status);
+  }
+
+  if (filter.prescriptionDates) {
+    newList = filterByPrescriptionDates(newList, filter.prescriptionDates);
   }
 
   if (filter.searchKey) {

@@ -46,6 +46,8 @@ import { toDataSource } from "utils";
 
 import columnsTable, { expandedRowRender } from "./columns";
 import Filter from "../Prioritization/Filter";
+import { filterByPrescriptionDates } from "../Prioritization/Util";
+import { PrescriptionDatesFilter } from "../Prioritization/PrescriptionDatesFilter/PrescriptionDatesFilter";
 import { PageCard } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
 
@@ -128,6 +130,7 @@ export default function ScreeningList({
     order: null,
     columnKey: null,
   });
+  const [prescriptionDatesFilter, setPrescriptionDatesFilter] = useState(null);
   const [filter, setFilter] = useState({
     status: null,
     searchKey: null,
@@ -321,7 +324,13 @@ export default function ScreeningList({
     selectAllRows,
     isAllSelected: isAllSelected(),
   };
-  const dataSource = toDataSource(list, null, bag);
+  const dataSource = toDataSource(
+    prioritizationType === "patient"
+      ? filterByPrescriptionDates(list || [], prescriptionDatesFilter)
+      : list,
+    null,
+    bag,
+  );
 
   // error message when fetch has error.
   const errorMessage = {
@@ -658,6 +667,14 @@ export default function ScreeningList({
               )}
             </Select>
           </div>
+
+          {prioritizationType === "patient" && (
+            <PrescriptionDatesFilter
+              value={prescriptionDatesFilter}
+              onChange={setPrescriptionDatesFilter}
+              style={{ marginLeft: "10px" }}
+            />
+          )}
 
           {sortOrder.columnKey && (
             <div>

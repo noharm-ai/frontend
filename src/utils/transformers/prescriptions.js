@@ -200,6 +200,31 @@ export const sourceToStoreType = (source) => {
   }
 };
 
+// inner (individual) prescription dates of an agg prescription: the backend
+// sends the sorted ISO list, next/last are derived from the user's clock
+export const getPrescriptionDatesInfo = (
+  prescriptionDates,
+  now = new Date(),
+) => {
+  const dates = (prescriptionDates || [])
+    .map((d) => new Date(d))
+    .filter((d) => !Number.isNaN(d.getTime()))
+    .sort((a, b) => a - b);
+
+  const lastDate = dates.length ? dates[dates.length - 1] : null;
+  const nextDate = dates.find((d) => d >= now) || null;
+  const formatDate = (d) => (d ? format(d, "dd/MM/yyyy HH:mm") : "-");
+
+  return {
+    prescriptionDates: dates.map((d) => d.toISOString()),
+    prescriptionDatesFormated: dates.map(formatDate),
+    lastPrescriptionDate: lastDate ? lastDate.toISOString() : null,
+    lastPrescriptionDateFormated: formatDate(lastDate),
+    nextPrescriptionDate: nextDate ? nextDate.toISOString() : null,
+    nextPrescriptionDateFormated: formatDate(nextDate),
+  };
+};
+
 export const transformPrescription = (
   {
     daysAgo,
@@ -380,16 +405,7 @@ export const transformPrescription = (
     dateOnlyFormated: format(new Date(date), "dd/MM/yyyy"),
     expire,
     expireFormated: expire ? format(new Date(expire), "dd/MM/yyyy HH:mm") : "",
-    // inner (individual) prescription dates of an agg prescription
-    prescriptionDatesFormated: (item.prescriptionDates || []).map((d) =>
-      format(new Date(d), "dd/MM/yyyy HH:mm"),
-    ),
-    lastPrescriptionDateFormated: item.lastPrescriptionDate
-      ? format(new Date(item.lastPrescriptionDate), "dd/MM/yyyy HH:mm")
-      : "-",
-    nextPrescriptionDateFormated: item.nextPrescriptionDate
-      ? format(new Date(item.nextPrescriptionDate), "dd/MM/yyyy HH:mm")
-      : "-",
+    ...getPrescriptionDatesInfo(item.prescriptionDates),
     admissionDate: admissionDate
       ? format(new Date(admissionDate), "dd/MM/yyyy HH:mm")
       : "",
