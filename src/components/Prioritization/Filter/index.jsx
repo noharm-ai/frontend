@@ -120,6 +120,10 @@ export default function Filter({
           prioritizationType === "patient" || prioritizationType === "cards"
             ? filter.hasConciliation
             : null,
+        hasNextPrescription:
+          prioritizationType === "patient" || prioritizationType === "cards"
+            ? filter.hasNextPrescription
+            : null,
       };
       const mixedParams = { ...params, ...forceParams };
       const finalParams = {};
@@ -182,6 +186,7 @@ export default function Filter({
       filter.ageMax,
       filter.pendingInterventions,
       filter.hasConciliation,
+      filter.hasNextPrescription,
       filter.alertLevel,
       filter.tags,
       filter.protocols,
@@ -293,6 +298,7 @@ export default function Filter({
       ageMax: null,
       pendingInterventions: null,
       hasConciliation: null,
+      hasNextPrescription: null,
       alertLevel: null,
       tags: [],
       protocols: [],

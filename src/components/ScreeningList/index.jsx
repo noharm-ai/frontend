@@ -485,8 +485,9 @@ export default function ScreeningList({
   };
 
   const handleTableChange = (pagination, filters, sorter) => {
-    // the "class" column drives the "date"/"firstAdministrationHour" custom
-    // sort buttons (see orderByDate/orderByAdministration); antd reports its
+    // the "class" column drives the "date"/"firstAdministrationHour"/
+    // "nextPrescriptionDate"/"lastPrescriptionDate" custom sort buttons
+    // (see the "Priorizar por" select); antd reports its
     // real key ("class") on every onChange, including pagination-only
     // changes, so ignore it here to avoid clobbering the tracked sortOrder.
     if (sorter.columnKey === "class") {
@@ -624,7 +625,8 @@ export default function ScreeningList({
         </div>
       </div>
 
-      {prioritizationType === "prescription" && (
+      {(prioritizationType === "prescription" ||
+        prioritizationType === "patient") && (
         <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <div>
             <Select
@@ -634,12 +636,26 @@ export default function ScreeningList({
               value={sortOrder.columnKey || undefined}
               onChange={handleSortColumnChange}
             >
-              <Select.Option value="date">
-                {t("screeningList.orderByDate")}
-              </Select.Option>
-              <Select.Option value="firstAdministrationHour">
-                {t("screeningList.orderByAdministration")}
-              </Select.Option>
+              {prioritizationType === "prescription" && (
+                <>
+                  <Select.Option value="date">
+                    {t("screeningList.orderByDate")}
+                  </Select.Option>
+                  <Select.Option value="firstAdministrationHour">
+                    {t("screeningList.orderByAdministration")}
+                  </Select.Option>
+                </>
+              )}
+              {prioritizationType === "patient" && (
+                <>
+                  <Select.Option value="nextPrescriptionDate">
+                    {t("screeningList.orderByNextPrescription")}
+                  </Select.Option>
+                  <Select.Option value="lastPrescriptionDate">
+                    {t("screeningList.orderByLastPrescription")}
+                  </Select.Option>
+                </>
+              )}
             </Select>
           </div>
 

@@ -104,6 +104,18 @@ export const ORDER_OPTIONS = [
     formattedKey: "filled",
     type: "filled",
   },
+  {
+    label: "Próxima prescrição",
+    key: "nextPrescriptionDate",
+    formattedKey: "nextPrescriptionDateFormated",
+    type: "date",
+  },
+  {
+    label: "Última prescrição",
+    key: "lastPrescriptionDate",
+    formattedKey: "lastPrescriptionDateFormated",
+    type: "date",
+  },
 ].sort((a, b) => a.label.localeCompare(b.label));
 
 export const getListStats = (list) => {
@@ -173,12 +185,35 @@ export const sortList = (list, orderBy, orderDirection) => {
     return sortString(a1, b1);
   };
 
+  const sortDate = (a, b) => {
+    const compare = Date.parse(a[orderBy]) - Date.parse(b[orderBy]);
+    if (compare === 0) {
+      return a["globalScore"] - b["globalScore"];
+    }
+
+    return compare;
+  };
+
   if (orderConfig.type === "filled") {
     if (orderDirection === "desc") {
       return list.sort((a, b) => sortFilled(b, a));
     }
 
     return list.sort((a, b) => sortFilled(a, b));
+  }
+
+  if (orderConfig.type === "date") {
+    // records without the date always go last, regardless of direction
+    const withDate = list.filter((i) => i[orderBy]);
+    const withoutDate = list
+      .filter((i) => !i[orderBy])
+      .sort((a, b) => b["globalScore"] - a["globalScore"]);
+
+    if (orderDirection === "desc") {
+      return [...withDate.sort((a, b) => sortDate(b, a)), ...withoutDate];
+    }
+
+    return [...withDate.sort((a, b) => sortDate(a, b)), ...withoutDate];
   }
 
   if (orderConfig.type === "number") {

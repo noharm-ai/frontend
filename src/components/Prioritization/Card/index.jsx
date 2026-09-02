@@ -130,6 +130,42 @@ const TabContent = ({ tab, prescription, featureService }) => {
             </div>
           </div>
         </div>
+        {prescription.agg && (
+          <div className="attributes">
+            <div className="attributes-item col-4">
+              <div className="attributes-item-label">
+                {t("patientCard.innerPrescriptions")}
+              </div>
+              <div className="attributes-item-value">
+                <Tooltip
+                  title={
+                    prescription.prescriptionDatesFormated?.length
+                      ? prescription.prescriptionDatesFormated.join(", ")
+                      : null
+                  }
+                >
+                  {prescription.prescriptionDatesFormated?.length || "-"}
+                </Tooltip>
+              </div>
+            </div>
+            <div className="attributes-item col-4">
+              <div className="attributes-item-label">
+                {t("patientCard.lastPrescriptionDate")}
+              </div>
+              <div className="attributes-item-value">
+                {prescription.lastPrescriptionDateFormated || "-"}
+              </div>
+            </div>
+            <div className="attributes-item col-4">
+              <div className="attributes-item-label">
+                {t("patientCard.nextPrescriptionDate")}
+              </div>
+              <div className="attributes-item-value">
+                {prescription.nextPrescriptionDateFormated || "-"}
+              </div>
+            </div>
+          </div>
+        )}
         {PermissionService().has(Permission.READ_NAV) && (
           <div className="attributes">
             <div className="attributes-item col-4">

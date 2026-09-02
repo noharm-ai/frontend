@@ -380,6 +380,16 @@ export const transformPrescription = (
     dateOnlyFormated: format(new Date(date), "dd/MM/yyyy"),
     expire,
     expireFormated: expire ? format(new Date(expire), "dd/MM/yyyy HH:mm") : "",
+    // inner (individual) prescription dates of an agg prescription
+    prescriptionDatesFormated: (item.prescriptionDates || []).map((d) =>
+      format(new Date(d), "dd/MM/yyyy HH:mm"),
+    ),
+    lastPrescriptionDateFormated: item.lastPrescriptionDate
+      ? format(new Date(item.lastPrescriptionDate), "dd/MM/yyyy HH:mm")
+      : "-",
+    nextPrescriptionDateFormated: item.nextPrescriptionDate
+      ? format(new Date(item.nextPrescriptionDate), "dd/MM/yyyy HH:mm")
+      : "-",
     admissionDate: admissionDate
       ? format(new Date(admissionDate), "dd/MM/yyyy HH:mm")
       : "",

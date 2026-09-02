@@ -91,6 +91,8 @@
     "allHintLimit": "500 records limit reached",
     "orderByAdministration": "Prioritize by administration",
     "orderByDate": "Prioritize by date",
+    "orderByNextPrescription": "Prioritize by next prescription",
+    "orderByLastPrescription": "Prioritize by last prescription",
     "orderByPlaceholder": "Prioritize by",
     "patientRisk": "Patient risk",
     "prescriptionRisk": "Prescription risk",
@@ -156,6 +158,8 @@
     "clExAdmissionNumber": "# Admission number",
     "clExPrescription": "# Prescription",
     "clExIntervals": "First administration hour",
+    "clExLastPrescription": "Last prescription",
+    "clExNextPrescription": "Next prescription",
 
     "btnCheck": "Check prescription",
     "btnChecked": "Checked prescription",
@@ -182,6 +186,9 @@
     "btnReviewed": "Reviewed"
   },
   "patientCard": {
+    "innerPrescriptions": "Prescriptions",
+    "lastPrescriptionDate": "Last prescription",
+    "nextPrescriptionDate": "Next prescription",
     "patientData": "Patient data",
     "admissionData": "Admission data",
     "prescription": "Prescription",
