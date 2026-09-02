@@ -1169,7 +1169,7 @@
     "signerEmail": "E-mail do signatário",
     "btnSend": "Enviar para assinatura",
     "btnClose": "Fechar",
-    "validationSigner": "Informe o nome e um e-mail válido para o signatário.",
+    "validationSigner": "Não foi possível identificar o nome e o e-mail do seu usuário. Entre em contato com o suporte.",
     "successMessage": "Solicitação de assinatura criada com sucesso. O signatário receberá um e-mail com o link para assinar.",
     "linkLabel": "Link direto para assinatura:",
     "btnCopyLink": "Copiar link",

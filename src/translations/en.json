@@ -1159,7 +1159,7 @@
     "signerEmail": "Signer e-mail",
     "btnSend": "Send for signature",
     "btnClose": "Close",
-    "validationSigner": "Provide the signer's name and a valid e-mail.",
+    "validationSigner": "We could not identify your user's name and e-mail. Please contact support.",
     "successMessage": "Signature request created successfully. The signer will receive an e-mail with the signing link.",
     "linkLabel": "Direct signing link:",
     "btnCopyLink": "Copy link",

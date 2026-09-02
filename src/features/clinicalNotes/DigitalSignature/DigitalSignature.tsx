@@ -1,7 +1,6 @@
-import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Alert, Input, Spin, Typography } from "antd";
+import { Alert, Spin, Typography } from "antd";
 import { CopyOutlined, LinkOutlined } from "@ant-design/icons";
 
 import DefaultModal from "components/Modal";
@@ -21,29 +20,22 @@ export function DigitalSignature() {
   const note = useSelector((state: any) => state.digitalSignature.note);
   const request = useSelector((state: any) => state.digitalSignature.request);
   const account = useSelector((state: any) => state.user.account);
-  const [signerName, setSignerName] = useState("");
-  const [signerEmail, setSignerEmail] = useState("");
-  const [prevNote, setPrevNote] = useState(note);
 
   const isLoading = request.status === "loading";
   const isDone = request.status === "succeeded";
   const result = request.result;
 
-  // prefill the signer with the logged user when the modal opens
-  if (note !== prevNote) {
-    setPrevNote(note);
-    if (note) {
-      setSignerName(account?.userName ?? "");
-      setSignerEmail(account?.email ?? "");
-    }
-  }
+  // the signer is always the logged user and cannot be changed
+  const signerName = (account?.userName ?? "").trim();
+  const signerEmail = (account?.email ?? "").trim();
+  const hasValidSigner = !!signerName && EMAIL_REGEX.test(signerEmail);
 
   const handleClose = () => {
     dispatch(closeDigitalSignature());
   };
 
   const handleSend = async () => {
-    if (!signerName.trim() || !EMAIL_REGEX.test(signerEmail.trim())) {
+    if (!hasValidSigner) {
       notification.error({ message: t("digitalSignature.validationSigner") });
       return;
     }
@@ -51,8 +43,8 @@ export function DigitalSignature() {
     const actionResult: any = await dispatch(
       requestDigitalSignature({
         id: note.id,
-        signerName: signerName.trim(),
-        signerEmail: signerEmail.trim(),
+        signerName,
+        signerEmail,
       }) as any,
     );
 
@@ -90,7 +82,7 @@ export function DigitalSignature() {
               type="primary"
               onClick={handleSend}
               loading={isLoading}
-              disabled={isLoading}
+              disabled={isLoading || !hasValidSigner}
             >
               {t("digitalSignature.btnSend")}
             </Button>
@@ -102,23 +94,41 @@ export function DigitalSignature() {
         {!isDone && (
           <>
             <p>{t("digitalSignature.description")}</p>
-            <div style={{ marginBottom: "12px" }}>
-              <label>{t("digitalSignature.signerName")}</label>
-              <Input
-                value={signerName}
-                onChange={(e) => setSignerName(e.target.value)}
-                maxLength={250}
+            {hasValidSigner ? (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 8,
+                  padding: "12px 16px",
+                  background: "#f5f5f5",
+                  borderRadius: 6,
+                }}
+              >
+                <div>
+                  <Typography.Text type="secondary">
+                    {t("digitalSignature.signerName")}
+                  </Typography.Text>
+                  <div>
+                    <Typography.Text strong>{signerName}</Typography.Text>
+                  </div>
+                </div>
+                <div>
+                  <Typography.Text type="secondary">
+                    {t("digitalSignature.signerEmail")}
+                  </Typography.Text>
+                  <div>
+                    <Typography.Text strong>{signerEmail}</Typography.Text>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Alert
+                type="warning"
+                showIcon
+                message={t("digitalSignature.validationSigner")}
               />
-            </div>
-            <div>
-              <label>{t("digitalSignature.signerEmail")}</label>
-              <Input
-                type="email"
-                value={signerEmail}
-                onChange={(e) => setSignerEmail(e.target.value)}
-                maxLength={254}
-              />
-            </div>
+            )}
           </>
         )}
         {isDone && (
