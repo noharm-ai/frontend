@@ -4,12 +4,16 @@ import api from "services/api";
 
 export interface IDigitalSignatureNote {
   id: number | string;
+  // ODOO sign request already generated for this note, when there is one
+  idSignRequest?: number | null;
 }
 
 export interface IDigitalSignatureParams {
   id: number | string;
   signerName: string;
   signerEmail: string;
+  // "sign again": creates a new request even when one is already stored
+  force?: boolean;
 }
 
 export interface IDigitalSignatureResult {
@@ -17,6 +21,7 @@ export interface IDigitalSignatureResult {
   link: string | null;
   signerName: string | null;
   signerEmail: string | null;
+  reused?: boolean;
 }
 
 interface IDigitalSignatureSlice {
@@ -45,6 +50,7 @@ export const requestDigitalSignature = createAsyncThunk(
         id: params.id,
         signer_name: params.signerName,
         signer_email: params.signerEmail,
+        force: params.force ?? false,
       });
       return response.data;
     } catch (err: any) {

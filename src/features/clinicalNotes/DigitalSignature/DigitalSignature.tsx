@@ -7,6 +7,7 @@ import DefaultModal from "components/Modal";
 import Button from "components/Button";
 import notification from "components/notification";
 import { getErrorMessage } from "src/utils/errorHandler";
+import { Creators as ClinicalNotesCreators } from "store/ducks/clinicalNotes";
 import {
   closeDigitalSignature,
   requestDigitalSignature,
@@ -30,11 +31,14 @@ export function DigitalSignature() {
   const signerEmail = (account?.email ?? "").trim();
   const hasValidSigner = !!signerName && EMAIL_REGEX.test(signerEmail);
 
+  // the note was already sent for signature in a previous request
+  const hasExisting = !!note?.idSignRequest;
+
   const handleClose = () => {
     dispatch(closeDigitalSignature());
   };
 
-  const handleSend = async () => {
+  const handleSend = async (force: boolean) => {
     if (!hasValidSigner) {
       notification.error({ message: t("digitalSignature.validationSigner") });
       return;
@@ -45,6 +49,7 @@ export function DigitalSignature() {
         id: note.id,
         signerName,
         signerEmail,
+        force,
       }) as any,
     );
 
@@ -53,7 +58,33 @@ export function DigitalSignature() {
       return;
     }
 
-    notification.success({ message: t("digitalSignature.successMessage") });
+    const idSignRequest = actionResult.payload?.data?.idSignRequest;
+    if (idSignRequest) {
+      // keep the note in sync so re-opening the modal sees it without a refetch
+      dispatch(
+        ClinicalNotesCreators.clinicalNotesUpdate({
+          id: note.id,
+          idSignRequest,
+        }),
+      );
+    }
+
+    notification.success({
+      message: actionResult.payload?.data?.reused
+        ? t("digitalSignature.reusedMessage")
+        : t("digitalSignature.successMessage"),
+    });
+  };
+
+  const confirmSignAgain = () => {
+    DefaultModal.confirm({
+      title: t("digitalSignature.signAgainConfirmTitle"),
+      content: t("digitalSignature.signAgainConfirmContent"),
+      okText: t("digitalSignature.signAgainConfirmOk"),
+      okButtonProps: { danger: true },
+      cancelText: t("digitalSignature.btnCancel"),
+      onOk: () => handleSend(true),
+    });
   };
 
   const copyLink = () => {
@@ -62,6 +93,79 @@ export function DigitalSignature() {
       notification.success({ message: t("digitalSignature.linkCopied") });
     }
   };
+
+  const renderFooter = () => {
+    if (isDone) {
+      return (
+        <Button onClick={handleClose}>{t("digitalSignature.btnClose")}</Button>
+      );
+    }
+
+    if (hasExisting) {
+      return (
+        <>
+          <Button onClick={handleClose}>
+            {t("digitalSignature.btnClose")}
+          </Button>
+          <Button danger onClick={confirmSignAgain} disabled={isLoading}>
+            {t("digitalSignature.btnSignAgain")}
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => handleSend(false)}
+            loading={isLoading}
+            disabled={isLoading || !hasValidSigner}
+          >
+            {t("digitalSignature.btnOpenExisting")}
+          </Button>
+        </>
+      );
+    }
+
+    return (
+      <>
+        <Button onClick={handleClose}>{t("digitalSignature.btnClose")}</Button>
+        <Button
+          type="primary"
+          onClick={() => handleSend(false)}
+          loading={isLoading}
+          disabled={isLoading || !hasValidSigner}
+        >
+          {t("digitalSignature.btnSend")}
+        </Button>
+      </>
+    );
+  };
+
+  const renderSigner = () => (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 8,
+        padding: "12px 16px",
+        background: "#f5f5f5",
+        borderRadius: 6,
+      }}
+    >
+      <div>
+        <Typography.Text type="secondary">
+          {t("digitalSignature.signerName")}
+        </Typography.Text>
+        <div>
+          <Typography.Text strong>{signerName}</Typography.Text>
+        </div>
+      </div>
+      <div>
+        <Typography.Text type="secondary">
+          {t("digitalSignature.signerEmail")}
+        </Typography.Text>
+        <div>
+          <Typography.Text strong>{signerEmail}</Typography.Text>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <DefaultModal
@@ -74,54 +178,36 @@ export function DigitalSignature() {
       maskClosable={false}
       footer={
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
-          <Button onClick={handleClose}>
-            {t("digitalSignature.btnClose")}
-          </Button>
-          {!isDone && (
-            <Button
-              type="primary"
-              onClick={handleSend}
-              loading={isLoading}
-              disabled={isLoading || !hasValidSigner}
-            >
-              {t("digitalSignature.btnSend")}
-            </Button>
-          )}
+          {renderFooter()}
         </div>
       }
     >
       <Spin spinning={isLoading}>
-        {!isDone && (
+        {!isDone && hasExisting && (
+          <>
+            <Alert
+              type="info"
+              showIcon
+              message={t("digitalSignature.alreadyRequested")}
+              description={t("digitalSignature.alreadyRequestedDescription")}
+              style={{ marginBottom: "16px" }}
+            />
+            {hasValidSigner ? (
+              renderSigner()
+            ) : (
+              <Alert
+                type="warning"
+                showIcon
+                message={t("digitalSignature.validationSigner")}
+              />
+            )}
+          </>
+        )}
+        {!isDone && !hasExisting && (
           <>
             <p>{t("digitalSignature.description")}</p>
             {hasValidSigner ? (
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 8,
-                  padding: "12px 16px",
-                  background: "#f5f5f5",
-                  borderRadius: 6,
-                }}
-              >
-                <div>
-                  <Typography.Text type="secondary">
-                    {t("digitalSignature.signerName")}
-                  </Typography.Text>
-                  <div>
-                    <Typography.Text strong>{signerName}</Typography.Text>
-                  </div>
-                </div>
-                <div>
-                  <Typography.Text type="secondary">
-                    {t("digitalSignature.signerEmail")}
-                  </Typography.Text>
-                  <div>
-                    <Typography.Text strong>{signerEmail}</Typography.Text>
-                  </div>
-                </div>
-              </div>
+              renderSigner()
             ) : (
               <Alert
                 type="warning"
@@ -136,7 +222,11 @@ export function DigitalSignature() {
             <Alert
               type="success"
               showIcon
-              message={t("digitalSignature.successMessage")}
+              message={
+                result?.reused
+                  ? t("digitalSignature.reusedMessage")
+                  : t("digitalSignature.successMessage")
+              }
               style={{ marginBottom: "16px" }}
             />
             {result?.link && (

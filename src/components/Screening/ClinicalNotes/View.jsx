@@ -460,6 +460,7 @@ export default function View({
                   </Tooltip>
                 )}
               {!edit &&
+                selected.source !== "prescription" &&
                 (selected.text || selected.template) &&
                 PermissionService().has(Permission.READ_NAV) && (
                   <Tooltip title={t("digitalSignature.btnTooltip")}>
@@ -475,7 +476,12 @@ export default function View({
                         marginRight: "10px",
                       }}
                       onClick={() =>
-                        dispatch(openDigitalSignature({ id: selected.id }))
+                        dispatch(
+                          openDigitalSignature({
+                            id: selected.id,
+                            idSignRequest: selected.idSignRequest ?? null,
+                          }),
+                        )
                       }
                     />
                   </Tooltip>
