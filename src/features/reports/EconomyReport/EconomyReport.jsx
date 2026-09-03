@@ -20,6 +20,8 @@ import { filtersToDescription } from "utils/report";
 import HelpModal from "./Help/Help";
 import { setHelpModal } from "./EconomyReportSlice";
 import Tooltip from "components/Tooltip";
+import { FeatureService } from "services/FeatureService";
+import Feature from "models/Feature";
 import { formatCurrency } from "utils/number";
 import EconomyList from "./EconomyList/EconomyList";
 //import ChartResponsibles from "./Charts/ChartResponsibles";
@@ -39,6 +41,7 @@ export default function EconomyReport() {
   const filters = useSelector((state) => state.reportsArea.economy.filters);
   const printRef = useRef(null);
   const isLoading = status === "loading" || filteredStatus === "loading";
+  const hideNames = FeatureService.has(Feature.HIDE_NAMES);
   const filtersConfig = {
     dateRange: {
       label: "Período",
@@ -47,6 +50,7 @@ export default function EconomyReport() {
     responsibleList: {
       label: "Responsável",
       type: "list",
+      mask: hideNames,
     },
     departmentList: {
       label: "Setor",

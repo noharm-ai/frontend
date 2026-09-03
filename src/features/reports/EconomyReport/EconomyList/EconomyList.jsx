@@ -10,6 +10,9 @@ import { formatDate } from "utils/date";
 import Button from "components/Button";
 import { CardTable } from "components/Table";
 import Tooltip from "components/Tooltip";
+import { FeatureService } from "services/FeatureService";
+import Feature from "models/Feature";
+import { HIDDEN_NAME } from "utils/report";
 
 export default function EconomyList() {
   const dispatch = useDispatch();
@@ -19,6 +22,7 @@ export default function EconomyList() {
   const reportUpdatedAt = useSelector(
     (state) => state.reportsArea.economy.updatedAt
   );
+  const hideNames = FeatureService.has(Feature.HIDE_NAMES);
 
   const columns = [
     {
@@ -131,25 +135,26 @@ export default function EconomyList() {
       title: "Responsável",
       width: 10,
       ellipsis: true,
-      render: (_, record) => record.responsible,
+      render: (_, record) => (hideNames ? HIDDEN_NAME : record.responsible),
     },
     {
       title: "Responsável Desfecho",
       width: 10,
       ellipsis: true,
-      render: (_, record) => record.outcomeResponsible,
+      render: (_, record) =>
+        hideNames ? HIDDEN_NAME : record.outcomeResponsible,
     },
     {
       title: "Segmento",
       width: 10,
       ellipsis: true,
-      render: (_, record) => record.segment,
+      render: (_, record) => (hideNames ? HIDDEN_NAME : record.segment),
     },
     {
       title: "Setor",
       width: 10,
       ellipsis: true,
-      render: (_, record) => record.department,
+      render: (_, record) => (hideNames ? HIDDEN_NAME : record.department),
     },
     {
       title: "Convênio",
