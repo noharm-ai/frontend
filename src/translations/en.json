@@ -661,6 +661,7 @@
     "trainingNotFinished": "Complete every lesson of the module to get the certificate.",
     "nameExists": "There is already a user with this name!",
     "emailExists": "There is already a user with this email!",
+    "signRequestNotFound": "The previous signature request no longer exists. Use \"Sign again\" to generate a new document.",
     "empty": "No records found"
   },
 
@@ -1150,6 +1151,30 @@
     "insertHint": "Click to insert into text",
     "noResults": "No texts found.",
     "promptVersionHint": "Choose the generated note format"
+  },
+  "digitalSignature": {
+    "btnTooltip": "Sign digitally",
+    "title": "Digital signature",
+    "description": "Send this clinical note for digital signature. The signer will receive an e-mail with the link to sign the document.",
+    "signerName": "Signer name",
+    "signerEmail": "Signer e-mail",
+    "btnSend": "Send for signature",
+    "btnClose": "Close",
+    "validationSigner": "We could not identify your user's name and e-mail. Please contact support.",
+    "successMessage": "Signature request created successfully. The signer will receive an e-mail with the signing link.",
+    "linkLabel": "Direct signing link:",
+    "btnCopyLink": "Copy link",
+    "btnOpenLink": "Open link",
+    "alreadyRequested": "This clinical note has already been sent for digital signature.",
+    "alreadyRequestedDescription": "You can open the previously generated document or request a new signature.",
+    "btnOpenExisting": "Open existing document",
+    "btnSignAgain": "Sign again",
+    "btnCancel": "Cancel",
+    "signAgainConfirmTitle": "Request a new signature?",
+    "signAgainConfirmContent": "A new document will be generated and a new e-mail will be sent to the signer. The previous document will no longer be referenced in this clinical note.",
+    "signAgainConfirmOk": "Yes, sign again",
+    "reusedMessage": "The existing signature document was reused. No new e-mail was sent.",
+    "linkCopied": "Link copied!"
   },
   "onboarding": {
     "welcome": {

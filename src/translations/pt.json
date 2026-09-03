@@ -665,6 +665,7 @@
     "trainingNotFinished": "Conclua todas as lições do módulo para emitir o certificado.",
     "nameExists": "Já existe um usuário com este nome!",
     "emailExists": "Já existe um usuário com este email!",
+    "signRequestNotFound": "A solicitação de assinatura anterior não existe mais. Use \"Assinar novamente\" para gerar um novo documento.",
     "empty": "Nenhum registro encontrado"
   },
 
@@ -1160,6 +1161,30 @@
     "insertHint": "Clique para inserir no texto",
     "noResults": "Nenhum texto encontrado.",
     "promptVersionHint": "Escolha o formato da evolução gerada"
+  },
+  "digitalSignature": {
+    "btnTooltip": "Assinar digitalmente",
+    "title": "Assinatura digital",
+    "description": "Envie esta evolução para assinatura digital. O signatário receberá um e-mail com o link para assinar o documento.",
+    "signerName": "Nome do signatário",
+    "signerEmail": "E-mail do signatário",
+    "btnSend": "Enviar para assinatura",
+    "btnClose": "Fechar",
+    "validationSigner": "Não foi possível identificar o nome e o e-mail do seu usuário. Entre em contato com o suporte.",
+    "successMessage": "Solicitação de assinatura criada com sucesso. O signatário receberá um e-mail com o link para assinar.",
+    "linkLabel": "Link direto para assinatura:",
+    "btnCopyLink": "Copiar link",
+    "btnOpenLink": "Abrir link",
+    "alreadyRequested": "Esta evolução já foi enviada para assinatura digital.",
+    "alreadyRequestedDescription": "Você pode abrir o documento gerado anteriormente ou solicitar uma nova assinatura.",
+    "btnOpenExisting": "Abrir documento existente",
+    "btnSignAgain": "Assinar novamente",
+    "btnCancel": "Cancelar",
+    "signAgainConfirmTitle": "Solicitar nova assinatura?",
+    "signAgainConfirmContent": "Um novo documento será gerado e um novo e-mail será enviado ao signatário. O documento anterior deixará de ser referenciado nesta evolução.",
+    "signAgainConfirmOk": "Sim, assinar novamente",
+    "reusedMessage": "Documento de assinatura existente reaproveitado. Nenhum novo e-mail foi enviado.",
+    "linkCopied": "Link copiado!"
   },
   "onboarding": {
     "welcome": {

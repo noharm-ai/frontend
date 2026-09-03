@@ -949,6 +949,13 @@ api.clinicalNotes.createClinicalNote = (params = {}) =>
 api.clinicalNotes.generateSoap = (params = {}) =>
   instance.post(`${endpoints.clinicalNotes}/soap`, params, setHeaders());
 
+api.clinicalNotes.requestDigitalSignature = (params = {}) =>
+  instance.post(
+    `${endpoints.clinicalNotes}/digital-signature`,
+    params,
+    setHeaders(),
+  );
+
 api.clinicalNotes.listByPrescription = (idPrescription) =>
   instance.get(`/prescription-clinical-note/${idPrescription}`, {
     ...setHeaders(),
