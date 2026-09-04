@@ -1,11 +1,16 @@
-import { getListStats } from "../Util";
+import { getListStats, getDefaultPrescriptionDatesFilter } from "../Util";
 
-export const initState = () => {
+export const initState = ({ prioritizationType } = {}) => {
   return {
     loading: false,
     affixed: false,
     currentPage: 1,
-    filter: {},
+    // conciliation has no prescription dates control on screen, so it must
+    // not start with the filter on
+    filter:
+      prioritizationType === "conciliation"
+        ? {}
+        : { prescriptionDates: getDefaultPrescriptionDatesFilter() },
     prioritization: "globalScore",
     prioritizationOrder: "desc",
     highlightPrioritization: false,

@@ -43,7 +43,10 @@ export default function Prioritization({
   features,
   ...restProps
 }) {
-  const [state, dispatch] = useReducer(reducer, initState());
+  const [state, dispatch] = useReducer(
+    reducer,
+    initState({ prioritizationType }),
+  );
   const { isFetching, list, error } = prescriptions;
   const { t } = useTranslation();
   const featureService = FeatureService(features);

@@ -46,7 +46,10 @@ import { toDataSource } from "utils";
 
 import columnsTable, { expandedRowRender } from "./columns";
 import Filter from "../Prioritization/Filter";
-import { filterByPrescriptionDates } from "../Prioritization/Util";
+import {
+  filterByPrescriptionDates,
+  getDefaultPrescriptionDatesFilter,
+} from "../Prioritization/Util";
 import { PrescriptionDatesFilter } from "../Prioritization/PrescriptionDatesFilter/PrescriptionDatesFilter";
 import { PageCard } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
@@ -130,7 +133,9 @@ export default function ScreeningList({
     order: null,
     columnKey: null,
   });
-  const [prescriptionDatesFilter, setPrescriptionDatesFilter] = useState(null);
+  const [prescriptionDatesFilter, setPrescriptionDatesFilter] = useState(
+    getDefaultPrescriptionDatesFilter,
+  );
   const [filter, setFilter] = useState({
     status: null,
     searchKey: null,

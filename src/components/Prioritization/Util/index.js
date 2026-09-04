@@ -136,48 +136,39 @@ export const getListStats = (list) => {
   return listStats;
 };
 
-export const PRESCRIPTION_DATES_FILTER = {
-  ALL: "all",
-  NEXT: "next",
-  RANGE: "range",
+// the time slider moves in 15 minute slots
+export const TIME_SLIDER_STEP = 15;
+
+// the point in time the user is looking from, defaulting to the machine clock
+// floored to the slider step
+export const getDefaultPrescriptionDatesFilter = (now = new Date()) => {
+  const datetime = new Date(now);
+  datetime.setMinutes(
+    Math.floor(datetime.getMinutes() / TIME_SLIDER_STEP) * TIME_SLIDER_STEP,
+    0,
+    0,
+  );
+
+  return { datetime: datetime.toISOString() };
 };
 
-// keeps agg prescriptions having at least one inner prescription date that
-// matches the filter: "next" = at or after the user's machine time,
-// "range" = inside the chosen [start, end] interval
-export const filterByPrescriptionDates = (list, config, now = new Date()) => {
-  if (
-    !config ||
-    !config.mode ||
-    config.mode === PRESCRIPTION_DATES_FILTER.ALL
-  ) {
+// keeps agg prescriptions having at least one inner prescription date at or
+// after the chosen instant. Prescriptions with no inner dates (not processed
+// yet, or a non-agg list) are kept — the filter only judges what it can see.
+export const filterByPrescriptionDates = (list, config) => {
+  const start = config?.datetime ? Date.parse(config.datetime) : NaN;
+
+  if (Number.isNaN(start)) {
     return list;
   }
 
-  let start = null;
-  let end = null;
+  return list.filter((i) => {
+    const dates = (i.prescriptionDates || [])
+      .map((d) => Date.parse(d))
+      .filter((time) => !Number.isNaN(time));
 
-  if (config.mode === PRESCRIPTION_DATES_FILTER.NEXT) {
-    start = now.getTime();
-  } else if (config.mode === PRESCRIPTION_DATES_FILTER.RANGE) {
-    if (!config.range || (!config.range[0] && !config.range[1])) {
-      return list;
-    }
-
-    start = config.range[0] ? Date.parse(config.range[0]) : null;
-    end = config.range[1] ? Date.parse(config.range[1]) : null;
-  }
-
-  return list.filter((i) =>
-    (i.prescriptionDates || []).some((d) => {
-      const time = Date.parse(d);
-      if (Number.isNaN(time)) {
-        return false;
-      }
-
-      return (start === null || time >= start) && (end === null || time <= end);
-    }),
-  );
+    return dates.length === 0 || dates.some((time) => time >= start);
+  });
 };
 
 export const filterList = (list, filter) => {
