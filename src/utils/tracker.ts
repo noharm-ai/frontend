@@ -106,6 +106,7 @@ export enum TrackedReport {
   INTERVENTIONS = "intervencoes",
   PRESCRIPTION_AUDIT = "auditoria-prescricoes",
   ECONOMY = "farmacoeconomia",
+  ECONOMY_YEARLY = "farmacoeconomia-anual",
   PEC_INDICATORS_PANEL = "pec-painel-indicadores",
 }
 

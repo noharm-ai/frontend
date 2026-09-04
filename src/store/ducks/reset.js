@@ -46,6 +46,7 @@ import { reset as examsRawSearchReset } from "features/reports/ExamsRawSearchRep
 import { reset as patientObservationReportReset } from "features/reports/PatientObservationReport/PatientObservationReportSlice";
 import { reset as patientDayConsolidatedReportReset } from "features/reports/PatientDayConsolidatedReport/PatientDayConsolidatedReportSlice";
 import { reset as prescriptionConsolidatedReportReset } from "features/reports/PrescriptionConsolidatedReport/PrescriptionConsolidatedReportSlice";
+import { reset as economyConsolidatedReportReset } from "features/reports/EconomyConsolidatedReport/EconomyConsolidatedReportSlice";
 
 import { reset as regulationPrioritizationReset } from "features/regulation/Prioritization/PrioritizationSlice";
 import { reset as regulationReset } from "features/regulation/Regulation/RegulationSlice";
@@ -109,6 +110,7 @@ export const resetReduxState = (dispatch) => {
   dispatch(patientObservationReportReset());
   dispatch(patientDayConsolidatedReportReset());
   dispatch(prescriptionConsolidatedReportReset());
+  dispatch(economyConsolidatedReportReset());
 
   dispatch(regulationPrioritizationReset());
   dispatch(regulationReset());

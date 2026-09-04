@@ -53,6 +53,7 @@ import PrescriptionReport from "pages/Reports/PrescriptionReport";
 import InterventionReport from "pages/Reports/InterventionReport";
 import PrescriptionAuditReport from "pages/Reports/PrescriptionAuditReport";
 import EconomyReport from "pages/Reports/EconomyReport";
+import EconomyConsolidatedReport from "pages/Reports/EconomyConsolidatedReport";
 import FileReport from "pages/Reports/FileReport";
 import PatientDayConsolidatedReport from "pages/Reports/PatientDayConsolidatedReport";
 import PrescriptionConsolidatedReport from "pages/Reports/PrescriptionConsolidatedReport";
@@ -420,6 +421,11 @@ const routes = [
     exact: true,
     path: "/relatorios/economia",
     element: <WithAuth component={EconomyReport} />,
+  },
+  {
+    exact: true,
+    path: "/relatorios/consolidado/economia",
+    element: <WithAuth component={EconomyConsolidatedReport} />,
   },
 
   {

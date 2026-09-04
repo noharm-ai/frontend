@@ -1,5 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
 import { FloatButton, Spin } from "antd";
@@ -9,6 +10,7 @@ import {
   DownloadOutlined,
   QuestionCircleOutlined,
   HistoryOutlined,
+  LineChartOutlined,
 } from "@ant-design/icons";
 import { useReactToPrint } from "react-to-print";
 
@@ -36,10 +38,12 @@ import {
 import useFetchReport from "hooks/useFetchReport";
 import HistoryModal from "features/reports/components/HistoryModal/HistoryModal";
 import HistoryAlert from "features/reports/components/HistoryAlert/HistoryAlert";
+import { trackReport, TrackedReport } from "src/utils/tracker";
 
 export default function Filter({ printRef }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const isFetching =
     useSelector((state) => state.reportsArea.economy.status) === "loading";
   const datasource = useSelector((state) => state.reportsArea.economy.list);
@@ -126,6 +130,11 @@ export default function Filter({ printRef }) {
     dispatch(setHelpModal(true));
   };
 
+  const openYearlyReport = () => {
+    trackReport(TrackedReport.ECONOMY_YEARLY);
+    navigate("/relatorios/consolidado/economia");
+  };
+
   const search = async (params, forceDs) => {
     let ds = [];
     if (!forceDs) {
@@ -167,6 +176,7 @@ export default function Filter({ printRef }) {
               loadArchive={loadArchive}
               open={historyModalOpen}
               setOpen={setHistoryModal}
+              onOpenYearlyReport={openYearlyReport}
             />
           </>
         )}
@@ -195,6 +205,14 @@ export default function Filter({ printRef }) {
             onClick={exportList}
             tooltip={{
               title: "Exportar CSV",
+              placement: "left",
+            }}
+          />
+          <FloatButton
+            icon={<LineChartOutlined />}
+            onClick={() => openYearlyReport()}
+            tooltip={{
+              title: "Abrir relatório anual",
               placement: "left",
             }}
           />
