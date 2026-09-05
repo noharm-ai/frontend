@@ -1,0 +1,30 @@
+import AdvancedFilter from "components/AdvancedFilter";
+import { MainFilters } from "./MainFilters";
+import { SecondaryFilters } from "./SecondaryFilters";
+
+interface FilterProps {
+  onSearch: (filters: any) => void;
+  loading: boolean;
+  initialValues: any;
+}
+
+export function Filter({ onSearch, loading, initialValues }: FilterProps) {
+  return (
+    <AdvancedFilter
+      initialValues={initialValues}
+      mainFilters={<MainFilters />}
+      secondaryFilters={<SecondaryFilters />}
+      onSearch={onSearch}
+      loading={loading}
+      onChangeValues={() => {}}
+      skipFilterList={[
+        "dateRange",
+        "segment",
+        "department",
+        "start_date",
+        "end_date",
+      ]}
+      memoryType=""
+    />
+  );
+}

@@ -54,6 +54,7 @@ import InterventionReport from "pages/Reports/InterventionReport";
 import PrescriptionAuditReport from "pages/Reports/PrescriptionAuditReport";
 import EconomyReport from "pages/Reports/EconomyReport";
 import EconomyConsolidatedReport from "pages/Reports/EconomyConsolidatedReport";
+import { InterventionConsolidatedReportPage } from "pages/Reports/InterventionConsolidatedReport/InterventionConsolidatedReport";
 import FileReport from "pages/Reports/FileReport";
 import PatientDayConsolidatedReport from "pages/Reports/PatientDayConsolidatedReport";
 import PrescriptionConsolidatedReport from "pages/Reports/PrescriptionConsolidatedReport";
@@ -426,6 +427,11 @@ const routes = [
     exact: true,
     path: "/relatorios/consolidado/economia",
     element: <WithAuth component={EconomyConsolidatedReport} />,
+  },
+  {
+    exact: true,
+    path: "/relatorios/consolidado/intervencoes",
+    element: <WithAuth component={InterventionConsolidatedReportPage} />,
   },
 
   {

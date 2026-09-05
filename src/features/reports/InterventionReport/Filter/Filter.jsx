@@ -1,5 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import dayjs from "dayjs";
 import { FloatButton, Spin } from "antd";
@@ -9,6 +10,7 @@ import {
   DownloadOutlined,
   QuestionCircleOutlined,
   HistoryOutlined,
+  LineChartOutlined,
 } from "@ant-design/icons";
 import { useReactToPrint } from "react-to-print";
 
@@ -35,33 +37,35 @@ import {
 import useFetchReport from "hooks/useFetchReport";
 import HistoryModal from "features/reports/components/HistoryModal/HistoryModal";
 import HistoryAlert from "features/reports/components/HistoryAlert/HistoryAlert";
+import { trackReport, TrackedReport } from "src/utils/tracker";
 
 export default function Filter({ printRef }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const isFetching =
     useSelector((state) => state.reportsArea.intervention.status) === "loading";
   const currentFilters = useSelector(
-    (state) => state.reportsArea.intervention.filters
+    (state) => state.reportsArea.intervention.filters,
   );
   const datasource = useSelector(
-    (state) => state.reportsArea.intervention.list
+    (state) => state.reportsArea.intervention.list,
   );
   const reportDate = useSelector(
-    (state) => state.reportsArea.intervention.date
+    (state) => state.reportsArea.intervention.date,
   );
   const reportUpdatedAt = useSelector(
-    (state) => state.reportsArea.intervention.updatedAt
+    (state) => state.reportsArea.intervention.updatedAt,
   );
   const userId = useSelector((state) => state.user.account.userId);
   const activeReport = useSelector(
-    (state) => state.reportsArea.intervention.activeReport
+    (state) => state.reportsArea.intervention.activeReport,
   );
   const historyModalOpen = useSelector(
-    (state) => state.reportsArea.intervention.historyModal
+    (state) => state.reportsArea.intervention.historyModal,
   );
   const availableReports = useSelector(
-    (state) => state.reportsArea.intervention.availableReports
+    (state) => state.reportsArea.intervention.availableReports,
   );
   const handlePrint = useReactToPrint({
     contentRef: printRef,
@@ -105,7 +109,7 @@ export default function Filter({ printRef }) {
             dayjs(header.date).subtract(1, "day"),
           ],
         },
-        body
+        body,
       );
     },
   });
@@ -122,6 +126,11 @@ export default function Filter({ printRef }) {
 
   const showHelp = () => {
     dispatch(setHelpModal(true));
+  };
+
+  const openYearlyReport = () => {
+    trackReport(TrackedReport.INTERVENTIONS_YEARLY);
+    navigate("/relatorios/consolidado/intervencoes");
   };
 
   const search = async (params, forceDs) => {
@@ -165,6 +174,7 @@ export default function Filter({ printRef }) {
               loadArchive={loadArchive}
               open={historyModalOpen}
               setOpen={setHistoryModal}
+              onOpenYearlyReport={openYearlyReport}
             />
           </>
         )}
@@ -193,6 +203,14 @@ export default function Filter({ printRef }) {
             onClick={exportCSV}
             tooltip={{
               title: "Exportar CSV",
+              placement: "left",
+            }}
+          />
+          <FloatButton
+            icon={<LineChartOutlined />}
+            onClick={() => openYearlyReport()}
+            tooltip={{
+              title: "Abrir relatório anual",
               placement: "left",
             }}
           />

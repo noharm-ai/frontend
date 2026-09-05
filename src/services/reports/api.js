@@ -127,4 +127,7 @@ api.consolidated.getPrescriptionConsolidatedReport = (params = {}) =>
 api.consolidated.getEconomyConsolidatedReport = (params = {}) =>
   instance.post(`/reports/consolidated/economy`, params, setHeaders());
 
+api.consolidated.getInterventionConsolidatedReport = (params = {}) =>
+  instance.post(`/reports/consolidated/intervention`, params, setHeaders());
+
 export default api;
