@@ -58,7 +58,10 @@ const Editor = forwardRef(function Editor({
   const extensions = [];
 
   if (utilities.includes("basic")) {
-    extensions.push(StarterKit);
+    // StarterKit (v3) bundles the Link extension. We register Link separately
+    // below with custom validation, so disable the bundled one to avoid a
+    // duplicate-extension conflict.
+    extensions.push(StarterKit.configure({ link: false }));
   }
 
   if (utilities.includes("link")) {
