@@ -40,6 +40,10 @@ export default class Feature {
   static DISABLE_CPOE = "DISABLE_CPOE";
   static STAGING_ACCESS = "STAGING_ACCESS";
   static HIDE_NAMES = "HIDE_NAMES";
+  // prioritize agg prescriptions by their inner prescription dates; rolled
+  // out per user while it is being tested
+  static PRIORITIZATION_PRESCRIPTION_DATES =
+    "PRIORITIZATION_PRESCRIPTION_DATES";
 
   static getFeatures(t) {
     return [

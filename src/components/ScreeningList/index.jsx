@@ -44,6 +44,7 @@ import { FeatureService } from "services/FeatureService";
 
 import { toDataSource } from "utils";
 
+import Feature from "models/Feature";
 import columnsTable, { expandedRowRender } from "./columns";
 import Filter from "../Prioritization/Filter";
 import {
@@ -333,8 +334,13 @@ export default function ScreeningList({
   // the sort can also be changed from the column headers, which bypass
   // handleSortColumnChange, so the filter is applied only while the tracked
   // sort is still the next prescription one
-  const prescriptionDatesActive =
+  // agg prescriptions can be prioritized by their inner prescription dates,
+  // rolled out per user for now
+  const hasPrescriptionDates =
     prioritizationType === "patient" &&
+    featureService.hasFeature(Feature.PRIORITIZATION_PRESCRIPTION_DATES);
+  const prescriptionDatesActive =
+    hasPrescriptionDates &&
     isPrescriptionDatesPrioritization(sortOrder.columnKey);
   const dataSource = toDataSource(
     prescriptionDatesActive
@@ -654,8 +660,7 @@ export default function ScreeningList({
         </div>
       </div>
 
-      {(prioritizationType === "prescription" ||
-        prioritizationType === "patient") && (
+      {(prioritizationType === "prescription" || hasPrescriptionDates) && (
         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <div>
@@ -676,7 +681,7 @@ export default function ScreeningList({
                     </Select.Option>
                   </>
                 )}
-                {prioritizationType === "patient" && (
+                {hasPrescriptionDates && (
                   <>
                     <Select.Option value="nextPrescriptionDate">
                       {t("screeningList.orderByNextPrescription")}
@@ -761,7 +766,9 @@ export default function ScreeningList({
           }}
           loading={isFetching}
           locale={{ emptyText }}
-          expandedRowRender={expandedRowRender(t)}
+          expandedRowRender={expandedRowRender(t, {
+            showPrescriptionDates: hasPrescriptionDates,
+          })}
           dataSource={!isFetching ? dataSource : []}
           onChange={handleTableChange}
           showSorterTooltip={false}

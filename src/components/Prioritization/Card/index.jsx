@@ -22,6 +22,7 @@ import {
 } from "src/utils/tracker";
 import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
+import Feature from "models/Feature";
 import { Card, AlertContainer } from "./index.style";
 
 const TabContent = ({ tab, prescription, featureService }) => {
@@ -130,42 +131,45 @@ const TabContent = ({ tab, prescription, featureService }) => {
             </div>
           </div>
         </div>
-        {prescription.agg && (
-          <div className="attributes">
-            <div className="attributes-item col-4">
-              <div className="attributes-item-label">
-                {t("patientCard.innerPrescriptions")}
+        {prescription.agg &&
+          featureService.hasFeature(
+            Feature.PRIORITIZATION_PRESCRIPTION_DATES,
+          ) && (
+            <div className="attributes">
+              <div className="attributes-item col-4">
+                <div className="attributes-item-label">
+                  {t("patientCard.innerPrescriptions")}
+                </div>
+                <div className="attributes-item-value">
+                  <Tooltip
+                    title={
+                      prescription.prescriptionDatesFormated?.length
+                        ? prescription.prescriptionDatesFormated.join(", ")
+                        : null
+                    }
+                  >
+                    {prescription.prescriptionDatesFormated?.length || "-"}
+                  </Tooltip>
+                </div>
               </div>
-              <div className="attributes-item-value">
-                <Tooltip
-                  title={
-                    prescription.prescriptionDatesFormated?.length
-                      ? prescription.prescriptionDatesFormated.join(", ")
-                      : null
-                  }
-                >
-                  {prescription.prescriptionDatesFormated?.length || "-"}
-                </Tooltip>
+              <div className="attributes-item col-4">
+                <div className="attributes-item-label">
+                  {t("patientCard.lastPrescriptionDate")}
+                </div>
+                <div className="attributes-item-value">
+                  {prescription.lastPrescriptionDateFormated || "-"}
+                </div>
+              </div>
+              <div className="attributes-item col-4">
+                <div className="attributes-item-label">
+                  {t("patientCard.nextPrescriptionDate")}
+                </div>
+                <div className="attributes-item-value">
+                  {prescription.nextPrescriptionDateFormated || "-"}
+                </div>
               </div>
             </div>
-            <div className="attributes-item col-4">
-              <div className="attributes-item-label">
-                {t("patientCard.lastPrescriptionDate")}
-              </div>
-              <div className="attributes-item-value">
-                {prescription.lastPrescriptionDateFormated || "-"}
-              </div>
-            </div>
-            <div className="attributes-item col-4">
-              <div className="attributes-item-label">
-                {t("patientCard.nextPrescriptionDate")}
-              </div>
-              <div className="attributes-item-value">
-                {prescription.nextPrescriptionDateFormated || "-"}
-              </div>
-            </div>
-          </div>
-        )}
+          )}
         {PermissionService().has(Permission.READ_NAV) && (
           <div className="attributes">
             <div className="attributes-item col-4">

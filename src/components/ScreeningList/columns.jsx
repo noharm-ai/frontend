@@ -135,7 +135,10 @@ export const desktopAction = {
   ...defaultAction,
 };
 
-export const expandedRowRender = (t) => {
+export const expandedRowRender = (
+  t,
+  { showPrescriptionDates = false } = {},
+) => {
   return (record) => {
     const columns = setDataIndex([
       {
@@ -196,8 +199,9 @@ export const expandedRowRender = (t) => {
             : "-";
         },
       },
-      // inner prescription dates only exist on agg prescriptions
-      ...(record.agg
+      // inner prescription dates only exist on agg prescriptions and are
+      // being rolled out per user
+      ...(record.agg && showPrescriptionDates
         ? [
             {
               title: t("screeningList.clExLastPrescription"),

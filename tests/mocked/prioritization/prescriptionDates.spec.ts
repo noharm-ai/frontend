@@ -2,6 +2,7 @@ import type { Page } from "@playwright/test";
 
 import { test, expect } from "../support/mockApi";
 import { openSelect, pickOption } from "../support/antd";
+import { loginWithFeatures } from "../support/featureLogin";
 
 /**
  * The prescription dates filter keeps agg prescriptions having at least one
@@ -9,6 +10,10 @@ import { openSelect, pickOption } from "../support/antd";
  * only available while prioritizing by next prescription: picking that
  * prioritization turns it on from the current point in time, any other one
  * turns it off.
+ *
+ * The whole thing is behind the per-user PRIORITIZATION_PRESCRIPTION_DATES
+ * feature while it is tested with a few users, so every test logs in with an
+ * explicit feature list instead of the shared storage state.
  *
  * The clock is frozen at local noon of the current day so the "two hours ago"
  * and "in two hours" prescriptions below always land on the same day, whatever
@@ -89,6 +94,9 @@ const prescription = (
 
 const UPCOMING = "Paciente 99";
 const PAST = "Paciente 98";
+const FEATURE = "PRIORITIZATION_PRESCRIPTION_DATES";
+
+test.use({ storageState: { cookies: [], origins: [] } });
 
 test.beforeEach(async ({ page, mockApi }) => {
   await page.clock.setFixedTime(FIXED_NOW);
@@ -115,36 +123,67 @@ const search = async (page: Page) => {
   await page.getByRole("main").getByRole("button", { name: "search" }).click();
 };
 
+const openPrioritizationSelect = (page: Page) =>
+  openSelect(page.locator(".prioritization-select"));
+
+const dropdownOptions = (page: Page) =>
+  page
+    .locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)")
+    .locator(".ant-select-item-option");
+
 const datesFilter = (page: Page) => page.locator(".prescription-dates-filter");
 
 // the prioritization select is long enough to be virtualized: only the
 // options around the current scroll position exist in the DOM, so the list is
 // paged through until the wanted one shows up
-const prioritizeBy = async (page: Page, label: string) => {
-  await openSelect(page.locator(".prioritization-select"));
-
-  const dropdown = page.locator(
-    ".ant-select-dropdown:not(.ant-select-dropdown-hidden)",
+// scrolls the (virtualized) prioritization dropdown until the option is in
+// the DOM, or the whole list has been paged through
+const scrollToOption = async (page: Page, label: string) => {
+  const holder = page.locator(
+    ".ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-dropdown-list-holder",
   );
-  const holder = dropdown.locator(".ant-select-dropdown-list-holder");
   await holder.evaluate((el) => (el.scrollTop = 0));
 
   for (let i = 0; i < 10; i++) {
-    const option = dropdown
-      .locator(".ant-select-item-option")
-      .filter({ hasText: label });
-    if (await option.count()) {
-      break;
+    if (await dropdownOptions(page).filter({ hasText: label }).count()) {
+      return;
     }
     await holder.evaluate((el) => (el.scrollTop += el.clientHeight));
   }
+};
 
+const prioritizeBy = async (page: Page, label: string) => {
+  await openPrioritizationSelect(page);
+  await scrollToOption(page, label);
   await pickOption(page, label);
 };
 
+test("the prioritization is hidden from users without the feature", async ({
+  page,
+  mockApi,
+}) => {
+  await loginWithFeatures(page, mockApi, []);
+  await search(page);
+
+  await expect(page.getByText(UPCOMING)).toBeVisible();
+  await expect(page.getByText(PAST)).toBeVisible();
+
+  await openPrioritizationSelect(page);
+  await scrollToOption(page, "Próxima prescrição");
+  await expect(dropdownOptions(page).first()).toBeVisible();
+  await expect(
+    dropdownOptions(page).filter({ hasText: "Próxima prescrição" }),
+  ).toHaveCount(0);
+  await expect(
+    dropdownOptions(page).filter({ hasText: "Última prescrição" }),
+  ).toHaveCount(0);
+});
+
 test("is off until the user prioritizes by next prescription", async ({
   page,
+  mockApi,
 }) => {
+  await loginWithFeatures(page, mockApi, [FEATURE]);
   await search(page);
 
   await expect(page.getByText(UPCOMING)).toBeVisible();
@@ -154,7 +193,9 @@ test("is off until the user prioritizes by next prescription", async ({
 
 test("prioritizing by next prescription starts from the current point in time, hiding past prescriptions", async ({
   page,
+  mockApi,
 }) => {
+  await loginWithFeatures(page, mockApi, [FEATURE]);
   await search(page);
   await prioritizeBy(page, "Próxima prescrição");
 
@@ -165,7 +206,9 @@ test("prioritizing by next prescription starts from the current point in time, h
 
 test("switching to another prioritization turns the filter off", async ({
   page,
+  mockApi,
 }) => {
+  await loginWithFeatures(page, mockApi, [FEATURE]);
   await search(page);
   await prioritizeBy(page, "Próxima prescrição");
   await expect(page.getByText(PAST)).toBeHidden();
@@ -177,7 +220,11 @@ test("switching to another prioritization turns the filter off", async ({
   await expect(page.getByText(PAST)).toBeVisible();
 });
 
-test("clearing the date brings every prescription back", async ({ page }) => {
+test("clearing the date brings every prescription back", async ({
+  page,
+  mockApi,
+}) => {
+  await loginWithFeatures(page, mockApi, [FEATURE]);
   await search(page);
   await prioritizeBy(page, "Próxima prescrição");
   await expect(page.getByText(UPCOMING)).toBeVisible();
@@ -193,7 +240,9 @@ test("clearing the date brings every prescription back", async ({ page }) => {
 
 test("dragging the time slider back includes earlier prescriptions", async ({
   page,
+  mockApi,
 }) => {
+  await loginWithFeatures(page, mockApi, [FEATURE]);
   await search(page);
   await prioritizeBy(page, "Próxima prescrição");
   await expect(page.getByText(PAST)).toBeHidden();
@@ -209,7 +258,9 @@ test("dragging the time slider back includes earlier prescriptions", async ({
 
 test("moving to the next day hides prescriptions of the current day", async ({
   page,
+  mockApi,
 }) => {
+  await loginWithFeatures(page, mockApi, [FEATURE]);
   await search(page);
   await prioritizeBy(page, "Próxima prescrição");
   await expect(page.getByText(UPCOMING)).toBeVisible();
