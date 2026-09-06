@@ -138,8 +138,8 @@ tests/
     auth.setup.ts                  # login against mocked /authenticate
     support/                       # mockApi fixture, default handlers, recorder
     fixtures/                      # endpoint payloads (JSON)
-    prioritization/  prescription/  interventions/
-    userAdmin/  reports/  scenarios/
+    prioritization/  prescription/  interventions/  outpatient/
+    userAdmin/  customForms/  training/  reports/  scenarios/
 ```
 
 Tests run in Chromium only. Firefox/WebKit are commented out in `playwright.config.ts`.
