@@ -75,6 +75,7 @@ const SUBJECTS: Record<string, string> = {
   [ProtocolVariableFieldEnum.DISCHARGE_REASON]: "o motivo de alta do paciente",
   [ProtocolVariableFieldEnum.SEGMENT_TYPE]: "o tipo de segmento",
   [ProtocolVariableFieldEnum.INSURANCE]: "o convênio da prescrição",
+  [ProtocolVariableFieldEnum.TAGS]: "algum marcador do paciente",
 };
 
 const UNITS: Record<string, string> = {
