@@ -1,10 +1,14 @@
 import type { Page } from "@playwright/test";
 
 import { test, expect } from "../support/mockApi";
+import { openSelect, pickOption } from "../support/antd";
 
 /**
  * The prescription dates filter keeps agg prescriptions having at least one
- * inner prescription date at or after the point in time on the control.
+ * inner prescription date at or after the point in time on the control. It is
+ * only available while prioritizing by next prescription: picking that
+ * prioritization turns it on from the current point in time, any other one
+ * turns it off.
  *
  * The clock is frozen at local noon of the current day so the "two hours ago"
  * and "in two hours" prescriptions below always land on the same day, whatever
@@ -111,20 +115,71 @@ const search = async (page: Page) => {
   await page.getByRole("main").getByRole("button", { name: "search" }).click();
 };
 
-const datesFilter = (page: Page) =>
-  page.locator(".filters-item", { hasText: "Prescrições:" });
+const datesFilter = (page: Page) => page.locator(".prescription-dates-filter");
 
-test("starts from the current point in time, hiding past prescriptions", async ({
+// the prioritization select is long enough to be virtualized: only the
+// options around the current scroll position exist in the DOM, so the list is
+// paged through until the wanted one shows up
+const prioritizeBy = async (page: Page, label: string) => {
+  await openSelect(page.locator(".prioritization-select"));
+
+  const dropdown = page.locator(
+    ".ant-select-dropdown:not(.ant-select-dropdown-hidden)",
+  );
+  const holder = dropdown.locator(".ant-select-dropdown-list-holder");
+  await holder.evaluate((el) => (el.scrollTop = 0));
+
+  for (let i = 0; i < 10; i++) {
+    const option = dropdown
+      .locator(".ant-select-item-option")
+      .filter({ hasText: label });
+    if (await option.count()) {
+      break;
+    }
+    await holder.evaluate((el) => (el.scrollTop += el.clientHeight));
+  }
+
+  await pickOption(page, label);
+};
+
+test("is off until the user prioritizes by next prescription", async ({
   page,
 }) => {
   await search(page);
 
   await expect(page.getByText(UPCOMING)).toBeVisible();
+  await expect(page.getByText(PAST)).toBeVisible();
+  await expect(datesFilter(page)).toBeHidden();
+});
+
+test("prioritizing by next prescription starts from the current point in time, hiding past prescriptions", async ({
+  page,
+}) => {
+  await search(page);
+  await prioritizeBy(page, "Próxima prescrição");
+
+  await expect(datesFilter(page)).toBeVisible();
+  await expect(page.getByText(UPCOMING)).toBeVisible();
   await expect(page.getByText(PAST)).toBeHidden();
+});
+
+test("switching to another prioritization turns the filter off", async ({
+  page,
+}) => {
+  await search(page);
+  await prioritizeBy(page, "Próxima prescrição");
+  await expect(page.getByText(PAST)).toBeHidden();
+
+  await prioritizeBy(page, "Escore global");
+
+  await expect(datesFilter(page)).toBeHidden();
+  await expect(page.getByText(UPCOMING)).toBeVisible();
+  await expect(page.getByText(PAST)).toBeVisible();
 });
 
 test("clearing the date brings every prescription back", async ({ page }) => {
   await search(page);
+  await prioritizeBy(page, "Próxima prescrição");
   await expect(page.getByText(UPCOMING)).toBeVisible();
 
   const filter = datesFilter(page);
@@ -140,6 +195,7 @@ test("dragging the time slider back includes earlier prescriptions", async ({
   page,
 }) => {
   await search(page);
+  await prioritizeBy(page, "Próxima prescrição");
   await expect(page.getByText(PAST)).toBeHidden();
 
   const filter = datesFilter(page);
@@ -155,15 +211,18 @@ test("moving to the next day hides prescriptions of the current day", async ({
   page,
 }) => {
   await search(page);
+  await prioritizeBy(page, "Próxima prescrição");
   await expect(page.getByText(UPCOMING)).toBeVisible();
 
   const tomorrow = shiftHours(24);
   const filter = datesFilter(page);
-  await filter.locator(".ant-picker input").fill(
-    `${pad(tomorrow.getDate())}/${pad(
-      tomorrow.getMonth() + 1,
-    )}/${tomorrow.getFullYear()}`,
-  );
+  await filter
+    .locator(".ant-picker input")
+    .fill(
+      `${pad(tomorrow.getDate())}/${pad(
+        tomorrow.getMonth() + 1,
+      )}/${tomorrow.getFullYear()}`,
+    );
   await filter.locator(".ant-picker input").press("Enter");
 
   await expect(page.getByText(UPCOMING)).toBeHidden();

@@ -139,6 +139,11 @@ export const getListStats = (list) => {
 // the time slider moves in 15 minute slots
 export const TIME_SLIDER_STEP = 15;
 
+// the prescription dates filter is only available while prioritizing by the
+// next inner prescription
+export const isPrescriptionDatesPrioritization = (prioritization) =>
+  prioritization === "nextPrescriptionDate";
+
 // the point in time the user is looking from, defaulting to the machine clock
 // floored to the slider step
 export const getDefaultPrescriptionDatesFilter = (now = new Date()) => {

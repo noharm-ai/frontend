@@ -26,6 +26,7 @@ import PrioritizationCard from "./Card";
 import { PrescriptionDatesFilter } from "./PrescriptionDatesFilter/PrescriptionDatesFilter";
 import { reducer, initState } from "./Store";
 import {
+  isPrescriptionDatesPrioritization,
   sortList,
   filterList,
   getListStats,
@@ -43,10 +44,7 @@ export default function Prioritization({
   features,
   ...restProps
 }) {
-  const [state, dispatch] = useReducer(
-    reducer,
-    initState({ prioritizationType }),
-  );
+  const [state, dispatch] = useReducer(reducer, initState());
   const { isFetching, list, error } = prescriptions;
   const { t } = useTranslation();
   const featureService = FeatureService(features);
@@ -244,104 +242,99 @@ export default function Prioritization({
           }
         >
           <ResultActions className={state.affixed ? "affixed" : ""}>
-            <div className="filters">
-              <div className="filters-item">
-                <div className="filters-item-label">Priorizar por:</div>
-                <div className="filters-item-value flex">
-                  <Select
-                    className="prioritization-select"
-                    optionFilterProp="children"
-                    onChange={onChangePrioritization}
-                    onMouseEnter={() =>
-                      dispatch({
-                        type: "highlight_prioritization",
-                        payload: true,
-                      })
-                    }
-                    onMouseLeave={() =>
-                      dispatch({
-                        type: "highlight_prioritization",
-                        payload: false,
-                      })
-                    }
-                    value={state.prioritization}
-                    style={{ width: 200 }}
-                  >
-                    {ORDER_OPTIONS.map((o) => (
-                      <Select.Option value={o.key} key={o.key}>
-                        {o.label}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                  <div>
-                    <Tooltip title="Alterar ordem">
-                      <Button
-                        className={`gtm-btn-change-order ${
-                          state.prioritizationOrder === "desc"
-                            ? "order-desc"
-                            : "order-asc"
-                        }`}
-                        shape="circle"
-                        icon={<CaretUpOutlined />}
-                        onClick={toggleOrder}
-                        style={{ marginLeft: "5px" }}
-                      />
-                    </Tooltip>
+            <div className="filters-block">
+              <div className="filters">
+                <div className="filters-item">
+                  <div className="filters-item-label">Priorizar por:</div>
+                  <div className="filters-item-value flex">
+                    <Select
+                      className="prioritization-select"
+                      optionFilterProp="children"
+                      onChange={onChangePrioritization}
+                      onMouseEnter={() =>
+                        dispatch({
+                          type: "highlight_prioritization",
+                          payload: true,
+                        })
+                      }
+                      onMouseLeave={() =>
+                        dispatch({
+                          type: "highlight_prioritization",
+                          payload: false,
+                        })
+                      }
+                      value={state.prioritization}
+                      style={{ width: 200 }}
+                    >
+                      {ORDER_OPTIONS.map((o) => (
+                        <Select.Option value={o.key} key={o.key}>
+                          {o.label}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                    <div>
+                      <Tooltip title="Alterar ordem">
+                        <Button
+                          className={`gtm-btn-change-order ${
+                            state.prioritizationOrder === "desc"
+                              ? "order-desc"
+                              : "order-asc"
+                          }`}
+                          shape="circle"
+                          icon={<CaretUpOutlined />}
+                          onClick={toggleOrder}
+                          style={{ marginLeft: "5px" }}
+                        />
+                      </Tooltip>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="filters-item">
-                <div className="filters-item-label">Situação:</div>
-                <div className="filters-item-value">
-                  <Select
-                    placeholder="Situação"
-                    optionFilterProp="children"
-                    defaultValue="all"
-                    onChange={onChangeStatus}
-                    value={state.filter.status || "all"}
-                  >
-                    <Select.Option value="0" key="pending">
-                      Pendentes{" "}
-                      <Tag color="orange">{state.listStats.pending}</Tag>
-                    </Select.Option>
-                    <Select.Option value="s" key="checked">
-                      Checadas{" "}
-                      <Tag color="green">{state.listStats.checked}</Tag>
-                    </Select.Option>
-                    <Select.Option value="all" key="all">
-                      Todas <Tag>{state.listStats.all}</Tag>
-                    </Select.Option>
-                  </Select>
+                <div className="filters-item">
+                  <div className="filters-item-label">Situação:</div>
+                  <div className="filters-item-value">
+                    <Select
+                      placeholder="Situação"
+                      optionFilterProp="children"
+                      defaultValue="all"
+                      onChange={onChangeStatus}
+                      value={state.filter.status || "all"}
+                    >
+                      <Select.Option value="0" key="pending">
+                        Pendentes{" "}
+                        <Tag color="orange">{state.listStats.pending}</Tag>
+                      </Select.Option>
+                      <Select.Option value="s" key="checked">
+                        Checadas{" "}
+                        <Tag color="green">{state.listStats.checked}</Tag>
+                      </Select.Option>
+                      <Select.Option value="all" key="all">
+                        Todas <Tag>{state.listStats.all}</Tag>
+                      </Select.Option>
+                    </Select>
+                  </div>
                 </div>
-              </div>
 
-              {prioritizationType !== "conciliation" && (
                 <div className="filters-item">
                   <div className="filters-item-label">
-                    {t("screeningList.prescriptionDatesLabel")}:
+                    Buscar por atendimento/nome:
                   </div>
                   <div className="filters-item-value">
-                    <PrescriptionDatesFilter
-                      value={state.filter.prescriptionDates}
-                      onChange={onChangePrescriptionDates}
+                    <Input
+                      className="search-input"
+                      allowClear
+                      onChange={onClientSearch}
                     />
                   </div>
                 </div>
-              )}
-
-              <div className="filters-item">
-                <div className="filters-item-label">
-                  Buscar por atendimento/nome:
-                </div>
-                <div className="filters-item-value">
-                  <Input
-                    className="search-input"
-                    allowClear
-                    onChange={onClientSearch}
-                  />
-                </div>
               </div>
+              {isPrescriptionDatesPrioritization(state.prioritization) && (
+                <PrescriptionDatesFilter
+                  className="prescription-dates-filter"
+                  value={state.filter.prescriptionDates}
+                  onChange={onChangePrescriptionDates}
+                />
+              )}
             </div>
             <div className="pagination">
               <Pagination

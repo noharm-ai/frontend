@@ -92,7 +92,6 @@
     "orderByAdministration": "Prioritize by administration",
     "orderByDate": "Prioritize by date",
     "orderByNextPrescription": "Prioritize by next prescription",
-    "prescriptionDatesLabel": "Prescriptions",
     "prescriptionDatesPlaceholder": "All prescriptions",
     "prescriptionDatesFrom": "From",
     "prescriptionDatesHint": "Shows prescriptions from this point in time",

@@ -49,6 +49,7 @@ import Filter from "../Prioritization/Filter";
 import {
   filterByPrescriptionDates,
   getDefaultPrescriptionDatesFilter,
+  isPrescriptionDatesPrioritization,
 } from "../Prioritization/Util";
 import { PrescriptionDatesFilter } from "../Prioritization/PrescriptionDatesFilter/PrescriptionDatesFilter";
 import { PageCard } from "styles/Utils.style";
@@ -133,9 +134,9 @@ export default function ScreeningList({
     order: null,
     columnKey: null,
   });
-  const [prescriptionDatesFilter, setPrescriptionDatesFilter] = useState(
-    getDefaultPrescriptionDatesFilter,
-  );
+  // only meaningful while prioritizing by next prescription (see
+  // handleSortColumnChange)
+  const [prescriptionDatesFilter, setPrescriptionDatesFilter] = useState(null);
   const [filter, setFilter] = useState({
     status: null,
     searchKey: null,
@@ -329,8 +330,14 @@ export default function ScreeningList({
     selectAllRows,
     isAllSelected: isAllSelected(),
   };
+  // the sort can also be changed from the column headers, which bypass
+  // handleSortColumnChange, so the filter is applied only while the tracked
+  // sort is still the next prescription one
+  const prescriptionDatesActive =
+    prioritizationType === "patient" &&
+    isPrescriptionDatesPrioritization(sortOrder.columnKey);
   const dataSource = toDataSource(
-    prioritizationType === "patient"
+    prescriptionDatesActive
       ? filterByPrescriptionDates(list || [], prescriptionDatesFilter)
       : list,
     null,
@@ -557,6 +564,14 @@ export default function ScreeningList({
     } else {
       setSortOrder({ columnKey, order: "ascend" });
     }
+
+    // the prescription dates filter turns on (from now) when the user starts
+    // prioritizing by next prescription and off on any other prioritization
+    setPrescriptionDatesFilter(
+      isPrescriptionDatesPrioritization(columnKey)
+        ? getDefaultPrescriptionDatesFilter()
+        : null,
+    );
   };
 
   const toggleSortDirection = () => {
@@ -641,60 +656,62 @@ export default function ScreeningList({
 
       {(prioritizationType === "prescription" ||
         prioritizationType === "patient") && (
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div>
-            <Select
-              style={{ width: 320, marginLeft: "10px" }}
-              placeholder={t("screeningList.orderByPlaceholder")}
-              allowClear
-              value={sortOrder.columnKey || undefined}
-              onChange={handleSortColumnChange}
-            >
-              {prioritizationType === "prescription" && (
-                <>
-                  <Select.Option value="date">
-                    {t("screeningList.orderByDate")}
-                  </Select.Option>
-                  <Select.Option value="firstAdministrationHour">
-                    {t("screeningList.orderByAdministration")}
-                  </Select.Option>
-                </>
-              )}
-              {prioritizationType === "patient" && (
-                <>
-                  <Select.Option value="nextPrescriptionDate">
-                    {t("screeningList.orderByNextPrescription")}
-                  </Select.Option>
-                  <Select.Option value="lastPrescriptionDate">
-                    {t("screeningList.orderByLastPrescription")}
-                  </Select.Option>
-                </>
-              )}
-            </Select>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div>
+              <Select
+                style={{ width: 320, marginLeft: "10px" }}
+                placeholder={t("screeningList.orderByPlaceholder")}
+                allowClear
+                value={sortOrder.columnKey || undefined}
+                onChange={handleSortColumnChange}
+              >
+                {prioritizationType === "prescription" && (
+                  <>
+                    <Select.Option value="date">
+                      {t("screeningList.orderByDate")}
+                    </Select.Option>
+                    <Select.Option value="firstAdministrationHour">
+                      {t("screeningList.orderByAdministration")}
+                    </Select.Option>
+                  </>
+                )}
+                {prioritizationType === "patient" && (
+                  <>
+                    <Select.Option value="nextPrescriptionDate">
+                      {t("screeningList.orderByNextPrescription")}
+                    </Select.Option>
+                    <Select.Option value="lastPrescriptionDate">
+                      {t("screeningList.orderByLastPrescription")}
+                    </Select.Option>
+                  </>
+                )}
+              </Select>
+            </div>
+
+            {sortOrder.columnKey && (
+              <div>
+                <Button
+                  onClick={toggleSortDirection}
+                  shape="circle"
+                  icon={
+                    sortOrder.order === "ascend" ? (
+                      <CaretUpOutlined />
+                    ) : (
+                      <CaretDownOutlined />
+                    )
+                  }
+                />
+              </div>
+            )}
           </div>
 
-          {prioritizationType === "patient" && (
+          {prescriptionDatesActive && (
             <PrescriptionDatesFilter
               value={prescriptionDatesFilter}
               onChange={setPrescriptionDatesFilter}
               style={{ marginLeft: "10px" }}
             />
-          )}
-
-          {sortOrder.columnKey && (
-            <div>
-              <Button
-                onClick={toggleSortDirection}
-                shape="circle"
-                icon={
-                  sortOrder.order === "ascend" ? (
-                    <CaretUpOutlined />
-                  ) : (
-                    <CaretDownOutlined />
-                  )
-                }
-              />
-            </div>
           )}
         </div>
       )}

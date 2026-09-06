@@ -1,16 +1,15 @@
-import { getListStats, getDefaultPrescriptionDatesFilter } from "../Util";
+import {
+  getListStats,
+  getDefaultPrescriptionDatesFilter,
+  isPrescriptionDatesPrioritization,
+} from "../Util";
 
-export const initState = ({ prioritizationType } = {}) => {
+export const initState = () => {
   return {
     loading: false,
     affixed: false,
     currentPage: 1,
-    // conciliation has no prescription dates control on screen, so it must
-    // not start with the filter on
-    filter:
-      prioritizationType === "conciliation"
-        ? {}
-        : { prescriptionDates: getDefaultPrescriptionDatesFilter() },
+    filter: {},
     prioritization: "globalScore",
     prioritizationOrder: "desc",
     highlightPrioritization: false,
@@ -48,6 +47,15 @@ export const reducer = (state, action) => {
         loading: true,
         currentPage: 1,
         prioritization: action.payload,
+        // the prescription dates filter only makes sense while prioritizing
+        // by next prescription: it turns on (from now) when that
+        // prioritization is picked and off when any other one is
+        filter: {
+          ...state.filter,
+          prescriptionDates: isPrescriptionDatesPrioritization(action.payload)
+            ? getDefaultPrescriptionDatesFilter()
+            : null,
+        },
       };
 
     case "set_prioritization_order":

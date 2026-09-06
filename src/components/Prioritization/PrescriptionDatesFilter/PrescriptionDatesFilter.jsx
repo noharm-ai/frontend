@@ -22,7 +22,7 @@ const formatMinutes = (minutes) => {
   return `${hour}:${minute}`;
 };
 
-export function PrescriptionDatesFilter({ value, onChange, style }) {
+export function PrescriptionDatesFilter({ value, onChange, style, className }) {
   const { t } = useTranslation();
   const [dragMinutes, setDragMinutes] = useState(null);
   const datetime = value?.datetime ? dayjs(value.datetime) : null;
@@ -71,6 +71,7 @@ export function PrescriptionDatesFilter({ value, onChange, style }) {
 
   return (
     <div
+      className={className}
       style={{ display: "flex", alignItems: "center", gap: 8, ...style }}
       title={t("screeningList.prescriptionDatesHint")}
     >
