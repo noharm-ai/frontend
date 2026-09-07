@@ -42,6 +42,7 @@ const prescription = (
   idPatient: number,
   admissionNumber: number,
   prescriptionDates: string[],
+  globalScore = 12,
 ) => ({
   idPrescription,
   admissionNumber,
@@ -61,7 +62,7 @@ const prescription = (
   concilia: null,
   daysAgo: 5,
   lengthStay: 5,
-  globalScore: 12,
+  globalScore,
   prescriptionScore: 8,
   patientScore: 4,
   scoreVariation: null,
@@ -176,6 +177,109 @@ test("the prioritization is hidden from users without the feature", async ({
   ).toHaveCount(0);
 });
 
+test("the dates tab lists the inner prescription times grouped by day", async ({
+  page,
+  mockApi,
+}) => {
+  const tomorrow = shiftHours(24);
+  mockApi.override("GET /prescriptions", {
+    json: {
+      status: "success",
+      data: [
+        prescription(199, 99, 9999, [
+          naive(shiftHours(-2)),
+          naive(shiftHours(2)),
+          naive(tomorrow),
+        ]),
+      ],
+    },
+  });
+  mockApi.override("POST /names", {
+    json: [{ status: "success", idPatient: 99, name: UPCOMING }],
+  });
+
+  await loginWithFeatures(page, mockApi, [FEATURE]);
+  await search(page);
+
+  // the card is a styled anchor
+  const card = page.getByRole("link").filter({ hasText: UPCOMING });
+  await card.locator(".tab-prescription-dates").click();
+
+  const day = (d: Date) =>
+    `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
+  const today = card.locator(".prescription-dates-day", {
+    hasText: day(FIXED_NOW),
+  });
+  await expect(today.locator(".ant-tag")).toHaveText(["10:00", "14:00"]);
+  await expect(today.locator(".ant-tag.past")).toHaveText("10:00");
+  await expect(
+    card
+      .locator(".prescription-dates-day", { hasText: day(tomorrow) })
+      .locator(".ant-tag"),
+  ).toHaveText("12:00");
+});
+
+test("the dates tab is not offered to users without the feature", async ({
+  page,
+  mockApi,
+}) => {
+  await loginWithFeatures(page, mockApi, []);
+  await search(page);
+
+  await expect(page.getByText(UPCOMING)).toBeVisible();
+  await expect(page.locator(".tab-prescription-dates")).toHaveCount(0);
+});
+
+test("picking a prioritization applies its default order", async ({
+  page,
+  mockApi,
+}) => {
+  const soon = naive(shiftHours(2));
+  const later = naive(shiftHours(4));
+  mockApi.override("GET /prescriptions", {
+    json: {
+      status: "success",
+      data: [
+        prescription(197, 97, 7777, [later], 30),
+        prescription(196, 96, 6666, [soon], 5),
+        prescription(195, 95, 5555, [soon], 20),
+      ],
+    },
+  });
+  mockApi.override("POST /names", {
+    json: [
+      { status: "success", idPatient: 97, name: "Paciente 97" },
+      { status: "success", idPatient: 96, name: "Paciente 96" },
+      { status: "success", idPatient: 95, name: "Paciente 95" },
+    ],
+  });
+
+  await loginWithFeatures(page, mockApi, [FEATURE]);
+  await search(page);
+  // global score, desc: the highest score leads
+  await expect(page.getByRole("link").first()).toContainText("Paciente 97");
+
+  await prioritizeBy(page, "Próxima prescrição");
+
+  await expect(page.locator(".gtm-btn-change-order")).toHaveClass(/order-asc/);
+  // soonest first; same instant -> higher global score first
+  await expect(page.getByRole("link")).toContainText([
+    "Paciente 95",
+    "Paciente 96",
+    "Paciente 97",
+  ]);
+
+  // back to global score: desc again, whatever the order was
+  await prioritizeBy(page, "Escore global");
+
+  await expect(page.locator(".gtm-btn-change-order")).toHaveClass(/order-desc/);
+  await expect(page.getByRole("link")).toContainText([
+    "Paciente 97",
+    "Paciente 95",
+    "Paciente 96",
+  ]);
+});
+
 test("is off until the user prioritizes by next prescription", async ({
   page,
   mockApi,
@@ -251,6 +355,12 @@ test("dragging the time slider back includes earlier prescriptions", async ({
   await expect(filter.getByText("00:00")).toBeVisible();
   await expect(page.getByText(UPCOMING)).toBeVisible();
   await expect(page.getByText(PAST)).toBeVisible();
+
+  // "next prescription" follows the pointer: seen from midnight, the 10:00
+  // prescription of the past card is the next one
+  await expect(
+    page.getByRole("link").filter({ hasText: PAST }).locator(".stamp-value"),
+  ).toContainText("10:00");
 });
 
 test("moving to the next day hides prescriptions of the current day", async ({

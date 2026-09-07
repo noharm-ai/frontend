@@ -259,6 +259,41 @@ export const Card = styled.a`
           flex-wrap: wrap;
           gap: 0.5rem;
         }
+
+        /* inner prescription times, one row per day */
+        &.prescription-dates {
+          padding: 10px 15px 10px 5px;
+          display: flex;
+          flex-direction: column;
+          gap: 0.5rem;
+
+          .prescription-dates-day {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+          }
+
+          .prescription-dates-day-label {
+            flex: 0 0 5.5rem;
+            font-weight: 500;
+            color: #696766;
+            line-height: 22px;
+          }
+
+          .prescription-dates-times {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+
+            .ant-tag {
+              margin: 0;
+            }
+
+            .ant-tag.past {
+              color: #999;
+            }
+          }
+        }
       }
     }
   }

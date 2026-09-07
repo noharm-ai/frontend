@@ -215,9 +215,30 @@ export const getPrescriptionDatesInfo = (
   const nextDate = dates.find((d) => d >= now) || null;
   const formatDate = (d) => (d ? format(d, "dd/MM/yyyy HH:mm") : "-");
 
+  // times grouped by (local) day, in order, for the card's dates tab
+  const prescriptionDatesByDay = dates.reduce((groups, d) => {
+    const day = format(d, "dd/MM/yyyy");
+    const time = {
+      datetime: d.toISOString(),
+      time: format(d, "HH:mm"),
+      past: d < now,
+      next: d === nextDate,
+    };
+    const group = groups[groups.length - 1];
+
+    if (group && group.day === day) {
+      group.times.push(time);
+    } else {
+      groups.push({ day, times: [time] });
+    }
+
+    return groups;
+  }, []);
+
   return {
     prescriptionDates: dates.map((d) => d.toISOString()),
     prescriptionDatesFormated: dates.map(formatDate),
+    prescriptionDatesByDay,
     lastPrescriptionDate: lastDate ? lastDate.toISOString() : null,
     lastPrescriptionDateFormated: formatDate(lastDate),
     nextPrescriptionDate: nextDate ? nextDate.toISOString() : null,

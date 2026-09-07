@@ -48,6 +48,7 @@ import Feature from "models/Feature";
 import columnsTable, { expandedRowRender } from "./columns";
 import Filter from "../Prioritization/Filter";
 import {
+  applyPrescriptionDatesReference,
   filterByPrescriptionDates,
   getDefaultPrescriptionDatesFilter,
   isPrescriptionDatesPrioritization,
@@ -344,7 +345,10 @@ export default function ScreeningList({
     isPrescriptionDatesPrioritization(sortOrder.columnKey);
   const dataSource = toDataSource(
     prescriptionDatesActive
-      ? filterByPrescriptionDates(list || [], prescriptionDatesFilter)
+      ? filterByPrescriptionDates(
+          applyPrescriptionDatesReference(list, prescriptionDatesFilter),
+          prescriptionDatesFilter,
+        )
       : list,
     null,
     bag,

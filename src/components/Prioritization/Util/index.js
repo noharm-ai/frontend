@@ -1,5 +1,6 @@
 import * as patientCache from "utils/patientCache";
 import Feature from "models/Feature";
+import { getPrescriptionDatesInfo } from "utils/transformers/prescriptions";
 
 export const PAGE_SIZE = 24;
 export const ORDER_OPTIONS = [
@@ -146,6 +147,21 @@ export const TIME_SLIDER_STEP = 15;
 export const isPrescriptionDatesPrioritization = (prioritization) =>
   prioritization === "nextPrescriptionDate";
 
+// order applied when a prioritization is picked; null keeps the current one
+export const getDefaultPrioritizationOrder = (prioritization) => {
+  if (isPrescriptionDatesPrioritization(prioritization)) {
+    // the soonest prescription is the one to look at first
+    return "asc";
+  }
+
+  if (prioritization === "globalScore") {
+    // the riskiest patient is the one to look at first
+    return "desc";
+  }
+
+  return null;
+};
+
 // the point in time the user is looking from, defaulting to the machine clock
 // floored to the slider step
 export const getDefaultPrescriptionDatesFilter = (now = new Date()) => {
@@ -157,6 +173,27 @@ export const getDefaultPrescriptionDatesFilter = (now = new Date()) => {
   );
 
   return { datetime: datetime.toISOString() };
+};
+
+// the instant "next prescription" is measured from: the filter pointer while
+// it is set, the machine clock otherwise
+export const getPrescriptionDatesReference = (config) => {
+  const time = config?.datetime ? Date.parse(config.datetime) : NaN;
+
+  return Number.isNaN(time) ? new Date() : new Date(time);
+};
+
+// re-derives next prescription/grouped dates of every agg prescription from
+// the reference instant, so they follow the filter pointer instead of the
+// load-time clock used by the transformer
+export const applyPrescriptionDatesReference = (list, config) => {
+  const reference = getPrescriptionDatesReference(config);
+
+  return (list || []).map((i) =>
+    i.prescriptionDates?.length
+      ? { ...i, ...getPrescriptionDatesInfo(i.prescriptionDates, reference) }
+      : i,
+  );
 };
 
 // keeps agg prescriptions having at least one inner prescription date at or
@@ -231,13 +268,15 @@ export const sortList = (list, orderBy, orderDirection) => {
     return sortString(a1, b1);
   };
 
-  const sortDate = (a, b) => {
+  // ties on the date are always broken by global score desc, whatever the
+  // direction, so the riskiest patient comes first within the same instant
+  const sortDate = (direction) => (a, b) => {
     const compare = Date.parse(a[orderBy]) - Date.parse(b[orderBy]);
-    if (compare === 0) {
-      return a["globalScore"] - b["globalScore"];
+    if (compare !== 0) {
+      return direction === "desc" ? -compare : compare;
     }
 
-    return compare;
+    return b["globalScore"] - a["globalScore"];
   };
 
   if (orderConfig.type === "filled") {
@@ -255,11 +294,7 @@ export const sortList = (list, orderBy, orderDirection) => {
       .filter((i) => !i[orderBy])
       .sort((a, b) => b["globalScore"] - a["globalScore"]);
 
-    if (orderDirection === "desc") {
-      return [...withDate.sort((a, b) => sortDate(b, a)), ...withoutDate];
-    }
-
-    return [...withDate.sort((a, b) => sortDate(a, b)), ...withoutDate];
+    return [...withDate.sort(sortDate(orderDirection)), ...withoutDate];
   }
 
   if (orderConfig.type === "number") {

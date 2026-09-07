@@ -189,7 +189,7 @@
   },
   "patientCard": {
     "innerPrescriptions": "Prescrições",
-    "lastPrescriptionDate": "Última prescrição",
+    "prescriptionDates": "Datas das prescrições",
     "nextPrescriptionDate": "Próxima prescrição",
     "patientData": "Paciente",
     "admissionData": "Atendimento",

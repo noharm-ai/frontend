@@ -1,6 +1,7 @@
 import {
   getListStats,
   getDefaultPrescriptionDatesFilter,
+  getDefaultPrioritizationOrder,
   isPrescriptionDatesPrioritization,
 } from "../Util";
 
@@ -47,6 +48,9 @@ export const reducer = (state, action) => {
         loading: true,
         currentPage: 1,
         prioritization: action.payload,
+        prioritizationOrder:
+          getDefaultPrioritizationOrder(action.payload) ??
+          state.prioritizationOrder,
         // the prescription dates filter only makes sense while prioritizing
         // by next prescription: it turns on (from now) when that
         // prioritization is picked and off when any other one is

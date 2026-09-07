@@ -26,6 +26,7 @@ import PrioritizationCard from "./Card";
 import { PrescriptionDatesFilter } from "./PrescriptionDatesFilter/PrescriptionDatesFilter";
 import { reducer, initState } from "./Store";
 import {
+  applyPrescriptionDatesReference,
   isPrescriptionDatesPrioritization,
   sortList,
   filterList,
@@ -51,7 +52,10 @@ export default function Prioritization({
   const featureService = FeatureService(features);
 
   const filteredList = sortList(
-    filterList(list, state.filter),
+    filterList(
+      applyPrescriptionDatesReference(list, state.filter.prescriptionDates),
+      state.filter,
+    ),
     state.prioritization,
     state.prioritizationOrder,
   );
