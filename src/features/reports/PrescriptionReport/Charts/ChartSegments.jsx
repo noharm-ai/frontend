@@ -1,8 +1,12 @@
 import React from "react";
 
 import { EChartBase } from "components/EChartBase";
+import { maskedName } from "utils/report";
+import { FeatureService } from "services/FeatureService";
+import Feature from "models/Feature";
 
 export default function ChartSegments({ reportData, isLoading }) {
+  const hideNames = FeatureService.has(Feature.HIDE_NAMES);
   const chartOptions = {
     tooltip: {
       trigger: "item",
@@ -32,7 +36,11 @@ export default function ChartSegments({ reportData, isLoading }) {
         labelLine: {
           show: true,
         },
-        data: reportData?.segments ? reportData.segments : [],
+        data: reportData?.segments
+          ? reportData.segments.map((i, index) =>
+              hideNames ? { ...i, name: maskedName(index) } : i,
+            )
+          : [],
         color: ["#9789D9", "#F78B52", "#67DBDD", "#B8B4E8", "#EAD76F"],
       },
     ],

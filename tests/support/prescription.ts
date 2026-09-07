@@ -6,10 +6,14 @@ import { expect, Locator, Page } from "@playwright/test";
  * Scoped on purpose: `.ant-table` matches every table on the page, so an
  * unscoped row index depends on which tables happen to be mounted at that
  * moment. Filtering by the intervention button also skips group/expanded rows.
+ *
+ * antd 6 renamed the tab pane element: `.ant-tabs-tabpane` became
+ * `.ant-tabs-content` (the old `.ant-tabs-content` wrapper is now
+ * `.ant-tabs-body`), so the active pane is `.ant-tabs-content-active`.
  */
 const drugRows = (page: Page): Locator =>
   page
-    .locator(".ant-tabs-tabpane-active .ant-table-tbody tr")
+    .locator(".ant-tabs-content-active .ant-table-tbody tr")
     .filter({ has: page.locator(".gtm-bt-interv") });
 
 /** Opens the intervention modal of a drug row (0-based). */
@@ -38,15 +42,32 @@ export const interventionReasonSelect = async (page: Page): Promise<Locator> => 
   return select;
 };
 
+/** The select dropdown that is currently open. */
+const openSelectDropdown = (page: Page): Locator =>
+  page.locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)");
+
+/**
+ * Scrolls the open select dropdown so virtualized options below the fold get
+ * rendered into the DOM.
+ *
+ * antd 6 namespaces the virtual list: rc-select now passes its own prefix down
+ * to it, so the inner holder went from `.rc-virtual-list-holder-inner` to
+ * `.ant-select-dropdown-list-holder-inner`.
+ */
+export const scrollSelectDropdown = async (page: Page, deltaY = 1000) => {
+  await openSelectDropdown(page)
+    .locator(".ant-select-dropdown-list-holder-inner")
+    .hover();
+
+  await page.mouse.wheel(0, deltaY);
+};
+
 /** An option of the select dropdown that is currently open. */
 export const selectOption = (
   page: Page,
   label: string | RegExp,
   options?: { exact?: boolean },
-): Locator =>
-  page
-    .locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)")
-    .getByText(label, options);
+): Locator => openSelectDropdown(page).getByText(label, options);
 
 /**
  * Saves the intervention through one of the "Salvar" split-button menu items.

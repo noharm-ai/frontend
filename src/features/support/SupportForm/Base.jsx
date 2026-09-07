@@ -14,10 +14,28 @@ import IntegrationStatus from "models/IntegrationStatus";
 
 import { useTicketCreationBlock } from "../useTicketCreationBlock";
 
+const TicketType = {
+  DUVIDA: 4,
+  ERRO: 2,
+  INTEGRACAO_FORA_DO_AR: 6,
+  SOLICITACAO: 1,
+  SUGESTAO: 9,
+  VALIDACAO: 5,
+};
+
+const ticketTypeOptions = [
+  { value: TicketType.DUVIDA, label: "Dúvida" },
+  { value: TicketType.ERRO, label: "Erro" },
+  { value: TicketType.INTEGRACAO_FORA_DO_AR, label: "Integração fora do ar" },
+  { value: TicketType.SOLICITACAO, label: "Solicitação" },
+  { value: TicketType.SUGESTAO, label: "Sugestão" },
+  { value: TicketType.VALIDACAO, label: "Validação" },
+];
+
 function BaseForm() {
   const { t } = useTranslation();
   const integrationStatus = useSelector(
-    (state) => state.app.config.integrationStatus
+    (state) => state.app.config.integrationStatus,
   );
   const { requiresUrgent } = useTicketCreationBlock();
   const { values, errors, touched, setFieldValue } = useFormikContext();
@@ -102,37 +120,23 @@ function BaseForm() {
           <Select
             onChange={(value) => setFieldValue("category", value)}
             value={values.category}
-            optionFilterProp="children"
+            options={ticketTypeOptions.filter(
+              (o) =>
+                o.value !== TicketType.VALIDACAO ||
+                integrationStatus === IntegrationStatus.INTEGRATION,
+            )}
+            optionFilterProp="label"
             showSearch
             placeholder="Selecione"
             status={
-              values.category === "Integração fora do ar" ? "warning" : ""
+              values.category === TicketType.INTEGRACAO_FORA_DO_AR
+                ? "warning"
+                : ""
             }
-          >
-            <Select.Option key={0} value="Dúvida">
-              Dúvida
-            </Select.Option>
-            <Select.Option key={1} value="Erro">
-              Erro
-            </Select.Option>
-            <Select.Option key={2} value="Integração fora do ar">
-              Integração fora do ar
-            </Select.Option>
-            <Select.Option key={3} value="Solicitação">
-              Solicitação
-            </Select.Option>
-            <Select.Option key={4} value="Sugestão">
-              Sugestão
-            </Select.Option>
-            {integrationStatus === IntegrationStatus.INTEGRATION && (
-              <Select.Option key={5} value="Validação">
-                Validação
-              </Select.Option>
-            )}
-          </Select>
+          />
         </div>
         <div className="form-info">
-          {values.category === "Dúvida" && (
+          {values.category === TicketType.DUVIDA && (
             <>
               Dúvidas sobre uso ou configuração da plataforma, tanto na parte a
               nível de sistema, quanto na área de farmácia. Sempre consulte
@@ -141,7 +145,7 @@ function BaseForm() {
             </>
           )}
 
-          {values.category === "Erro" && (
+          {values.category === TicketType.ERRO && (
             <>
               Erro devido a algum comportamento inesperado da plataforma, como
               tela em branco, mensagem de erro ou outro problema na interface.
@@ -150,14 +154,14 @@ function BaseForm() {
             </>
           )}
 
-          {values.category === "Integração fora do ar" && (
+          {values.category === TicketType.INTEGRACAO_FORA_DO_AR && (
             <span style={{ color: "#c68609" }}>
               Nenhuma prescrição aparecendo na plataforma, acesso indisponível,
               ou problemas na integração de retorno.
             </span>
           )}
 
-          {values.category === "Solicitação" && (
+          {values.category === TicketType.SOLICITACAO && (
             <>
               Solicitação de ajustes na configuração ou inclusão de novos itens
               na plataforma, como setores, relatórios, documentos de evolução,
@@ -165,14 +169,14 @@ function BaseForm() {
             </>
           )}
 
-          {values.category === "Sugestão" && (
+          {values.category === TicketType.SUGESTAO && (
             <>
               Sugestão de melhorias ou ajustes na plataforma, como novas
               funcionalidades ou relatórios personalizados - para esse tipo, não
               temos prazo para atendimento da demanda (backlog).
             </>
           )}
-          {values.category === "Validação" && (
+          {values.category === TicketType.VALIDACAO && (
             <>
               Demandas referentes ao processo de validação dos dados de
               curadoria (Orientação de Validação), realizado durante a
@@ -226,8 +230,8 @@ function BaseForm() {
         )}
       </div>
 
-      {(values.category === "Integração fora do ar" ||
-        values.category === "Erro") && (
+      {(values.category === TicketType.INTEGRACAO_FORA_DO_AR ||
+        values.category === TicketType.ERRO) && (
         <div className={`form-row`}>
           <div className="form-label">
             <label>Exemplos:</label>

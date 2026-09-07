@@ -91,6 +91,10 @@
     "allHintLimit": "Limite de 500 registros atingido, reduza os setores para visualizar todas do dia.",
     "orderByAdministration": "Priorizar por horário da 1ª administração",
     "orderByDate": "Priorizar por data da prescrição",
+    "orderByNextPrescription": "Priorizar por próxima prescrição",
+    "prescriptionDatesPlaceholder": "Todas as prescrições",
+    "prescriptionDatesFrom": "A partir de",
+    "prescriptionDatesHint": "Mostra as prescrições a partir deste momento",
     "orderByPlaceholder": "Priorizar por",
     "patientRisk": "Risco do paciente",
     "prescriptionRisk": "Risco da prescrição",
@@ -156,6 +160,8 @@
     "clExAdmissionNumber": "# Atendimento",
     "clExPrescription": "# Prescrição",
     "clExIntervals": "Horário da 1ª administração",
+    "clExLastPrescription": "Última prescrição",
+    "clExNextPrescription": "Próxima prescrição",
 
     "btnCheck": "Checar prescrição",
     "btnChecked": "Prescrição checada",
@@ -182,6 +188,9 @@
     "btnReviewed": "Revisado"
   },
   "patientCard": {
+    "innerPrescriptions": "Prescrições",
+    "prescriptionDates": "Datas das prescrições",
+    "nextPrescriptionDate": "Próxima prescrição",
     "patientData": "Paciente",
     "admissionData": "Atendimento",
     "prescription": "Prescrição",
@@ -662,8 +671,10 @@
     "unauthorizedUser": "Usuário não autorizado",
     "serviceUnavailable": "Serviço de IA indisponível. Tente novamente em instantes.",
     "pendingMandatoryTraining": "Conclua os treinamentos obrigatórios para abrir chamados de suporte.",
+    "trainingNotFinished": "Conclua todas as lições do módulo para emitir o certificado.",
     "nameExists": "Já existe um usuário com este nome!",
     "emailExists": "Já existe um usuário com este email!",
+    "signRequestNotFound": "A solicitação de assinatura anterior não existe mais. Use \"Assinar novamente\" para gerar um novo documento.",
     "empty": "Nenhum registro encontrado"
   },
 
@@ -1160,6 +1171,30 @@
     "noResults": "Nenhum texto encontrado.",
     "promptVersionHint": "Escolha o formato da evolução gerada"
   },
+  "digitalSignature": {
+    "btnTooltip": "Assinar digitalmente",
+    "title": "Assinatura digital",
+    "description": "Envie esta evolução para assinatura digital. O signatário receberá um e-mail com o link para assinar o documento.",
+    "signerName": "Nome do signatário",
+    "signerEmail": "E-mail do signatário",
+    "btnSend": "Enviar para assinatura",
+    "btnClose": "Fechar",
+    "validationSigner": "Não foi possível identificar o nome e o e-mail do seu usuário. Entre em contato com o suporte.",
+    "successMessage": "Solicitação de assinatura criada com sucesso. O signatário receberá um e-mail com o link para assinar.",
+    "linkLabel": "Link direto para assinatura:",
+    "btnCopyLink": "Copiar link",
+    "btnOpenLink": "Abrir link",
+    "alreadyRequested": "Esta evolução já foi enviada para assinatura digital.",
+    "alreadyRequestedDescription": "Você pode abrir o documento gerado anteriormente ou solicitar uma nova assinatura.",
+    "btnOpenExisting": "Abrir documento existente",
+    "btnSignAgain": "Assinar novamente",
+    "btnCancel": "Cancelar",
+    "signAgainConfirmTitle": "Solicitar nova assinatura?",
+    "signAgainConfirmContent": "Um novo documento será gerado e um novo e-mail será enviado ao signatário. O documento anterior deixará de ser referenciado nesta evolução.",
+    "signAgainConfirmOk": "Sim, assinar novamente",
+    "reusedMessage": "Documento de assinatura existente reaproveitado. Nenhum novo e-mail foi enviado.",
+    "linkCopied": "Link copiado!"
+  },
   "onboarding": {
     "welcome": {
       "eyebrow": "Primeiros passos",
@@ -1190,7 +1225,91 @@
     "progressMandatory": "Módulos obrigatórios",
     "progressOptional": "Módulos opcionais",
     "mandatoryExplanation": "Os módulos obrigatórios são a base para o uso do NoHarm. Enquanto não forem concluídos, não será possível abrir chamados de suporte.",
-    "mandatoryTag": "Obrigatório"
+    "mandatoryTag": "Obrigatório",
+    "tabMyTraining": "Meu treinamento",
+    "tabTeam": "Minha equipe"
+  },
+  "trainingOverview": {
+    "empty": "Nenhum usuário encontrado.",
+    "mandatoryHint": "Enquanto houver módulos obrigatórios pendentes, o usuário não consegue abrir chamados de suporte.",
+    "moduleProgressTitle": "Progresso por módulo",
+    "moduleUsersFinished": "{{done}} de {{total}} concluíram",
+    "moduleUsersNotStarted_one": "{{count}} não iniciou",
+    "moduleUsersNotStarted_other": "{{count}} não iniciaram",
+
+    "columns": {
+      "user": "Usuário",
+      "userStatus": "Situação do usuário",
+      "mandatory": "Obrigatórios",
+      "optional": "Opcionais",
+      "lessons": "Aulas",
+      "lastActivity": "Última atividade",
+      "status": "Situação do treinamento"
+    },
+
+    "filters": {
+      "search": "Buscar",
+      "searchPlaceholder": "Nome ou e-mail",
+      "active": "Ativos",
+      "inactive": "Inativos",
+      "all": "Todos",
+      "userActive": "Ativo",
+      "userInactive": "Inativo",
+      "statusPlaceholder": "Filtrar por situação"
+    },
+
+    "summary": {
+      "users": "Usuários",
+      "pendingMandatory": "Com obrigatórios pendentes",
+      "notStarted": "Não iniciaram",
+      "completed": "Concluíram todos os módulos"
+    },
+
+    "status": {
+      "notStarted": "Não iniciado",
+      "inProgress": "Em andamento",
+      "completed": "Concluído",
+      "reopened": "Reaberto"
+    }
+  },
+  "trainingCertificate": {
+    "button": "Certificado",
+    "download": "Emitir certificado",
+    "title": "Certificado de Conclusão",
+    "certify": "Certificamos que",
+    "completedModule": "concluiu o módulo de treinamento",
+    "workload_one": "Carga horária total: {{count}} hora",
+    "workload_other": "Carga horária total: {{count}} horas",
+    "summary_one": "Concluído em {{date}}, após completar {{count}} lição.",
+    "summary_other": "Concluído em {{date}}, após completar {{count}} lições.",
+    "footer": "Emitido pela plataforma NoHarm · noharm.ai",
+    "validationCode": "Código de validação:",
+    "validationHint": "Valide este certificado em"
+  },
+  "certificateValidation": {
+    "pageTitle": "Validação de Certificado",
+    "subtitle": "Confirme a autenticidade de um certificado NoHarm.",
+    "codeLabel": "Código de validação",
+    "codePlaceholder": "XXXX-XXXX-XXXX",
+    "submit": "Validar",
+    "validating": "Validando...",
+    "validTitle": "Certificado válido",
+    "validSubtitle": "Este certificado foi emitido pela plataforma NoHarm.",
+    "holder": "Concluinte",
+    "module": "Módulo",
+    "workloadLabel": "Carga horária",
+    "workload_one": "{{count}} hora",
+    "workload_other": "{{count}} horas",
+    "lessonsLabel": "Lições concluídas",
+    "lessonsTaken": "Lições realizadas neste módulo:",
+    "completedAtLabel": "Data de conclusão",
+    "maskedNameHint": "O nome é exibido parcialmente por privacidade. Compare com o certificado apresentado.",
+    "invalidTitle": "Certificado não encontrado",
+    "invalidSubtitle": "Nenhum certificado corresponde a este código. Confira a digitação e tente novamente.",
+    "errorTitle": "Não foi possível validar",
+    "errorSubtitle": "Ocorreu um erro na consulta. Tente novamente em alguns instantes.",
+    "invalidFormat": "O código deve ter 12 caracteres.",
+    "close": "Fechar"
   },
   "trainingPlayer": {
     "previous": "Anterior",
@@ -1219,6 +1338,10 @@
     "videoCoverOrg": "NoHarm.ai",
     "videoCoverTitle": "Treinamento",
     "videoCoverModule": "Módulo {{module}}",
+    "moduleCompletedEyebrow": "Módulo concluído",
+    "moduleCompletedLessonsStat_one": "Aula concluída",
+    "moduleCompletedLessonsStat_other": "Aulas concluídas",
+    "moduleCompletedProgressStat": "Progresso",
     "moduleCompletedTitle": "Parabéns!",
     "moduleCompletedMessage": "Você concluiu o módulo de treinamento \"{{module}}\"."
   }

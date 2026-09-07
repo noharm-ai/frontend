@@ -4,6 +4,7 @@ import {
   openDrugIntervention,
   openPatientIntervention,
   saveInterventionAs,
+  scrollSelectDropdown,
   selectOption,
 } from "../support/prescription";
 
@@ -22,8 +23,7 @@ test("outcome: suspension", async ({ page }) => {
   const reasons = await interventionReasonSelect(page);
 
   await reasons.click();
-  await page.locator(".rc-virtual-list-holder-inner").hover();
-  await page.mouse.wheel(0, 1000);
+  await scrollSelectDropdown(page);
 
   await selectOption(page, "Suspensão da terapia").click();
 
@@ -108,8 +108,7 @@ test("outcome: substitution", async ({ page }) => {
   const reasons = await interventionReasonSelect(page);
 
   await reasons.click();
-  await page.locator(".rc-virtual-list-holder-inner").hover();
-  await page.mouse.wheel(0, 1000);
+  await scrollSelectDropdown(page);
 
   await selectOption(page, "Substituição").click();
 
@@ -239,8 +238,7 @@ test("outcome: suspension (not accepted)", async ({ page }) => {
   const reasons = await interventionReasonSelect(page);
 
   await reasons.click();
-  await page.locator(".rc-virtual-list-holder-inner").hover();
-  await page.mouse.wheel(0, 1000);
+  await scrollSelectDropdown(page);
 
   await selectOption(page, "Suspensão da terapia").click();
 

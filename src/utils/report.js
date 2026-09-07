@@ -47,6 +47,14 @@ export const getUniqDepartments = (datasource, attrDepartment, attrSegment) => {
   return departments;
 };
 
+export const HIDDEN_NAME = "***";
+
+// ECharts keys pie slices, colors and legend entries by name: repeating the same
+// masked label collapses the whole pie into one slice (verified: 4 slices/4 colors
+// become 1/1). The zero-width suffix makes each name a distinct key for that map
+// while the label still renders as "***" — it is load-bearing, not stray padding.
+export const maskedName = (index) => `${HIDDEN_NAME}${"\u200b".repeat(index)}`;
+
 export const filtersToDescription = (filters, filtersConfig) => {
   const dateFormat = "DD/MM/YY";
   return Object.keys(filters)
@@ -70,6 +78,10 @@ export const filtersToDescription = (filters, filtersConfig) => {
         return `<strong>${config.label}:</strong> ${
           filters[k] ? "Sim" : "Não"
         }`;
+      }
+
+      if (config?.mask) {
+        return `<strong>${config.label}:</strong> ${HIDDEN_NAME}`;
       }
 
       return `<strong>${config.label}:</strong> ${filters[k]}`;

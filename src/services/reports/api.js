@@ -124,4 +124,10 @@ api.consolidated.getPatientDayConsolidatedReport = (params = {}) =>
 api.consolidated.getPrescriptionConsolidatedReport = (params = {}) =>
   instance.post(`/reports/consolidated/prescription`, params, setHeaders());
 
+api.consolidated.getEconomyConsolidatedReport = (params = {}) =>
+  instance.post(`/reports/consolidated/economy`, params, setHeaders());
+
+api.consolidated.getInterventionConsolidatedReport = (params = {}) =>
+  instance.post(`/reports/consolidated/intervention`, params, setHeaders());
+
 export default api;

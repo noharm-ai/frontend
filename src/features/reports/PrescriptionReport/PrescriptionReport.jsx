@@ -28,6 +28,7 @@ import HelpModal from "./Help/Help";
 import { setHelpModal } from "./PrescriptionReportSlice";
 import Tooltip from "components/Tooltip";
 import { FeatureService } from "services/FeatureService";
+import Feature from "models/Feature";
 
 export default function PrescriptionReport() {
   const dispatch = useDispatch();
@@ -51,6 +52,7 @@ export default function PrescriptionReport() {
   );
   const printRef = useRef(null);
   const isLoading = status === "loading" || filteredStatus === "loading";
+  const hideNames = FeatureService.has(Feature.HIDE_NAMES);
   const filtersConfig = {
     dateRange: {
       label: "Período",
@@ -59,6 +61,7 @@ export default function PrescriptionReport() {
     responsibleList: {
       label: "Responsável",
       type: "list",
+      mask: hideNames,
     },
     departmentList: {
       label: "Setor",

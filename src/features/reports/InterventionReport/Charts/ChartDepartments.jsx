@@ -1,8 +1,12 @@
 import React from "react";
 
 import { EChartBase } from "components/EChartBase";
+import { HIDDEN_NAME } from "utils/report";
+import { FeatureService } from "services/FeatureService";
+import Feature from "models/Feature";
 
 export default function ChartDepartments({ reportData, isLoading }) {
+  const hideNames = FeatureService.has(Feature.HIDE_NAMES);
   const chartOptions = {
     tooltip: {
       trigger: "axis",
@@ -24,7 +28,9 @@ export default function ChartDepartments({ reportData, isLoading }) {
     yAxis: {
       type: "category",
       data: reportData?.departmentSummary
-        ? reportData?.departmentSummary.map((i) => i.name)
+        ? reportData?.departmentSummary.map((i) =>
+            hideNames ? HIDDEN_NAME : i.name,
+          )
         : [],
     },
     toolbox: {

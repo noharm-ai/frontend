@@ -112,7 +112,7 @@ const SolutionCalculator = ({
   const [lAmount, setAmount] = useState(amount);
   const [lTotalVol, setTotalVol] = useState(disableTotal ? 0 : totalVol);
   const [lSpeed, setSpeed] = useState(
-    validateInfusionUnit(speedUnit) ? speed : 0
+    validateInfusionUnit(speedUnit) ? speed : 0,
   );
   const [lVol, setVol] = useState(vol);
   const [lWeight, setWeight] = useState(weight);
@@ -259,24 +259,24 @@ const SolutionCalculator = ({
                 Resultados
               </Heading>
             }
-            span={3}
+            span={4}
           ></Descriptions.Item>
-          <Descriptions.Item label={formatValue(result)} span={3}>
+          <Descriptions.Item label={formatValue(result)} span={4}>
             {unit}/h
           </Descriptions.Item>
-          <Descriptions.Item label={formatValue(resultByMinute)} span={3}>
+          <Descriptions.Item label={formatValue(resultByMinute)} span={4}>
             {unit}/min
           </Descriptions.Item>
-          <Descriptions.Item label={formatValue(resultByWeightDay)} span={3}>
+          <Descriptions.Item label={formatValue(resultByWeightDay)} span={4}>
             {unit}/Kg/dia
           </Descriptions.Item>
-          <Descriptions.Item label={formatValue(resultByWeightHour)} span={3}>
+          <Descriptions.Item label={formatValue(resultByWeightHour)} span={4}>
             {unit}/Kg/h
           </Descriptions.Item>
-          <Descriptions.Item label={formatValue(resultByWeightMinute)} span={3}>
+          <Descriptions.Item label={formatValue(resultByWeightMinute)} span={4}>
             {unit}/Kg/min
           </Descriptions.Item>
-          <Descriptions.Item label={formatValue(solution)} span={3}>
+          <Descriptions.Item label={formatValue(solution)} span={4}>
             {unit}/ml (solução)
           </Descriptions.Item>
         </CalcDescriptions>

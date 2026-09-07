@@ -8,6 +8,7 @@ import {
   ArrowUpOutlined,
   ArrowDownOutlined,
   TagsOutlined,
+  CalendarOutlined,
 } from "@ant-design/icons";
 import DOMPurify from "dompurify";
 import { Badge } from "antd";
@@ -22,10 +23,24 @@ import {
 } from "src/utils/tracker";
 import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
+import Feature from "models/Feature";
 import { Card, AlertContainer } from "./index.style";
 
-const TabContent = ({ tab, prescription, featureService }) => {
+// the inner prescription dates of an agg prescription are being rolled out
+// per user, so their tab only exists for those users
+const hasPrescriptionDatesTab = (prescription, featureService) =>
+  !!prescription.agg &&
+  featureService.hasFeature(Feature.PRIORITIZATION_PRESCRIPTION_DATES);
+
+const TabContent = ({ tab: requestedTab, prescription, featureService }) => {
   const { t } = useTranslation();
+  // the active tab is shared by every card on the list, so a card without
+  // the dates tab falls back to the patient one
+  const tab =
+    requestedTab === "prescriptionDates" &&
+    !hasPrescriptionDatesTab(prescription, featureService)
+      ? "patient"
+      : requestedTab;
 
   if (tab === "patient") {
     const alerts = getAlerts(prescription.alertStats || {}, t).filter(
@@ -372,6 +387,44 @@ const TabContent = ({ tab, prescription, featureService }) => {
     );
   }
 
+  if (tab === "prescriptionDates") {
+    const days = prescription.prescriptionDatesByDay || [];
+
+    return (
+      <div className="attribute-container">
+        <div className="attributes">
+          <div className="attributes-item col-12">
+            <div className="attributes-item-label">
+              {t("patientCard.prescriptionDates")}
+            </div>
+            <div className="attributes-item-value prescription-dates">
+              {days.length
+                ? days.map((group) => (
+                    <div className="prescription-dates-day" key={group.day}>
+                      <div className="prescription-dates-day-label">
+                        {group.day}
+                      </div>
+                      <div className="prescription-dates-times">
+                        {group.times.map((item) => (
+                          <Tag
+                            key={item.datetime}
+                            color={item.next ? "blue" : undefined}
+                            className={item.past ? "past" : ""}
+                          >
+                            {item.time}
+                          </Tag>
+                        ))}
+                      </div>
+                    </div>
+                  ))
+                : "--"}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   if (tab === "tags") {
     return (
       <div className="attribute-container">
@@ -505,6 +558,19 @@ export default function PrioritizationCard({
             <MessageOutlined />
           </Badge>
         </div>
+
+        {hasPrescriptionDatesTab(prescription, featureService) && (
+          <div
+            className={`tab tab-prescription-dates ${
+              activeTab === "prescriptionDates" ? "active" : ""
+            }`}
+            onClick={(e) => tabClick("prescriptionDates", e)}
+          >
+            <Badge dot count={prescription.prescriptionDates?.length ? 1 : 0}>
+              <CalendarOutlined />
+            </Badge>
+          </div>
+        )}
 
         <div
           className={`tab ${activeTab === "tags" ? "active" : ""}`}

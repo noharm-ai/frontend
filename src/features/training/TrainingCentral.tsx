@@ -1,17 +1,20 @@
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import { Progress, Row, Col } from "antd";
+import { Progress, Row, Col, Tabs } from "antd";
 import { CheckCircleTwoTone } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import notification from "components/notification";
 import Empty from "components/Empty";
+import Permission from "models/Permission";
+import PermissionService from "services/PermissionService";
 import { getErrorMessage } from "utils/errorHandler";
 
 import { fetchTrainingList, ITrainingModule } from "./TrainingCentralSlice";
 import { isModuleFinished } from "./trainingUtils";
 import { TrainingModuleRow } from "./TrainingModuleRow";
+import { TrainingOverview } from "./TrainingOverview/TrainingOverview";
 import {
   ModuleList,
   SideColumn,
@@ -43,6 +46,47 @@ const formatProgress = (percent?: number) =>
   );
 
 export function TrainingCentral() {
+  const { t } = useTranslation();
+  // user managers also answer for their team's progress; everyone else sees the
+  // page exactly as before, with no tab bar at all
+  const canReadUsers = PermissionService().has(Permission.READ_USERS);
+
+  return (
+    <>
+      <PageHeader>
+        <div>
+          <h1 className="page-header-title">{t("trainingCentral.title")}</h1>
+          <h1 className="page-header-legend">
+            {t("trainingCentral.subtitle")}
+          </h1>
+        </div>
+      </PageHeader>
+
+      {canReadUsers ? (
+        <Tabs
+          defaultActiveKey="mine"
+          items={[
+            {
+              key: "mine",
+              label: t("trainingCentral.tabMyTraining"),
+              children: <MyTraining />,
+            },
+            {
+              key: "team",
+              // rendered (and fetched) only once the manager opens the tab
+              label: t("trainingCentral.tabTeam"),
+              children: <TrainingOverview />,
+            },
+          ]}
+        />
+      ) : (
+        <MyTraining />
+      )}
+    </>
+  );
+}
+
+function MyTraining() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -82,95 +126,84 @@ export function TrainingCentral() {
       : 0;
 
   return (
-    <>
-      <PageHeader>
-        <div>
-          <h1 className="page-header-title">{t("trainingCentral.title")}</h1>
-          <h1 className="page-header-legend">
-            {t("trainingCentral.subtitle")}
-          </h1>
-        </div>
-      </PageHeader>
+    <Row gutter={24}>
+      <Col xs={17}>
+        <ModuleList>
+          {status !== "loading" && !sortedList.length && (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description={t("trainingCentral.empty")}
+            />
+          )}
 
-      <Row gutter={24}>
-        <Col xs={17}>
-          <ModuleList>
-            {status !== "loading" && !sortedList.length && (
-              <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={t("trainingCentral.empty")}
-              />
-            )}
+          {sortedList.map((module) => (
+            <TrainingModuleRow
+              key={module.id}
+              module={module}
+              status={getModuleStatus(module)}
+              onContinue={() => navigate(`/treinamento/${module.id}`)}
+            />
+          ))}
+        </ModuleList>
+      </Col>
 
-            {sortedList.map((module) => (
-              <TrainingModuleRow
-                key={module.id}
-                module={module}
-                status={getModuleStatus(module)}
-                onContinue={() => navigate(`/treinamento/${module.id}`)}
-              />
-            ))}
-          </ModuleList>
-        </Col>
+      <Col xs={7}>
+        <SideColumn>
+          {total > 0 && (
+            <ProgressPanel>
+              <h3>{t("trainingCentral.progressTitle")}</h3>
 
-        <Col xs={7}>
-          <SideColumn>
-            {total > 0 && (
-              <ProgressPanel>
-                <h3>{t("trainingCentral.progressTitle")}</h3>
-
-                <ProgressRow>
-                  {mandatoryList.length > 0 && (
-                    <ProgressGroup>
-                      <span className="progress-label">
-                        {t("trainingCentral.progressMandatory")}
-                      </span>
-                      <Progress
-                        type="circle"
-                        percent={mandatoryPercent}
-                        size={72}
-                        format={formatProgress}
-                      />
-                      <span>
-                        {t("trainingCentral.completedCount", {
-                          done: mandatoryCompleted,
-                          total: mandatoryList.length,
-                        })}
-                      </span>
-                    </ProgressGroup>
-                  )}
-
-                  {optionalList.length > 0 && (
-                    <ProgressGroup>
-                      <span className="progress-label">
-                        {t("trainingCentral.progressOptional")}
-                      </span>
-                      <Progress
-                        type="circle"
-                        percent={optionalPercent}
-                        size={72}
-                        format={formatProgress}
-                      />
-                      <span>
-                        {t("trainingCentral.completedCount", {
-                          done: optionalCompleted,
-                          total: optionalList.length,
-                        })}
-                      </span>
-                    </ProgressGroup>
-                  )}
-                </ProgressRow>
-
+              <ProgressRow>
                 {mandatoryList.length > 0 && (
-                  <ProgressNote>
-                    {t("trainingCentral.mandatoryExplanation")}
-                  </ProgressNote>
+                  <ProgressGroup>
+                    <span className="progress-label">
+                      {t("trainingCentral.progressMandatory")}
+                    </span>
+                    <Progress
+                      type="circle"
+                      percent={mandatoryPercent}
+                      size={72}
+                      format={formatProgress}
+                    />
+                    <span>
+                      {t("trainingCentral.completedCount", {
+                        done: mandatoryCompleted,
+                        total: mandatoryList.length,
+                      })}
+                    </span>
+                  </ProgressGroup>
                 )}
-              </ProgressPanel>
-            )}
-          </SideColumn>
-        </Col>
-      </Row>
-    </>
+
+                {optionalList.length > 0 && (
+                  <ProgressGroup>
+                    <span className="progress-label">
+                      {t("trainingCentral.progressOptional")}
+                    </span>
+                    <Progress
+                      type="circle"
+                      percent={optionalPercent}
+                      size={72}
+                      format={formatProgress}
+                    />
+                    <span>
+                      {t("trainingCentral.completedCount", {
+                        done: optionalCompleted,
+                        total: optionalList.length,
+                      })}
+                    </span>
+                  </ProgressGroup>
+                )}
+              </ProgressRow>
+
+              {mandatoryList.length > 0 && (
+                <ProgressNote>
+                  {t("trainingCentral.mandatoryExplanation")}
+                </ProgressNote>
+              )}
+            </ProgressPanel>
+          )}
+        </SideColumn>
+      </Col>
+    </Row>
   );
 }

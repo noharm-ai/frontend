@@ -26,6 +26,7 @@ import HelpModal from "./Help/Help";
 import { setHelpModal } from "./PatientDayReportSlice";
 import Tooltip from "components/Tooltip";
 import { FeatureService } from "services/FeatureService";
+import Feature from "models/Feature";
 
 export default function PatientDayReport() {
   const navigate = useNavigate();
@@ -40,6 +41,7 @@ export default function PatientDayReport() {
   const filters = useSelector((state) => state.reportsArea.patientDay.filters);
   const printRef = useRef(null);
   const isLoading = status === "loading" || filteredStatus === "loading";
+  const hideNames = FeatureService.has(Feature.HIDE_NAMES);
   const filtersConfig = {
     dateRange: {
       label: "Período",
@@ -48,6 +50,7 @@ export default function PatientDayReport() {
     responsibleList: {
       label: "Responsável",
       type: "list",
+      mask: hideNames,
     },
     departmentList: {
       label: "Setor",

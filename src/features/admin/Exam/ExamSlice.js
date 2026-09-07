@@ -113,6 +113,41 @@ const examsSlice = createSlice({
     reset() {
       return initialState;
     },
+    upsertExamInList(state, action) {
+      const exam = action.payload;
+
+      if (!exam) return;
+
+      const index = state.exams.list.findIndex(
+        (item) => item.idSegment === exam.idSegment && item.type === exam.type
+      );
+
+      if (index !== -1) {
+        // keep the row where it is, so the user does not lose their place
+        state.exams.list[index] = exam;
+        return;
+      }
+
+      const filteredSegment = state.exams.lastParams?.idSegment;
+
+      if (
+        filteredSegment != null &&
+        Number(filteredSegment) !== Number(exam.idSegment)
+      ) {
+        return;
+      }
+
+      // new exam: insert following the name ordering used by the backend
+      const insertAt = state.exams.list.findIndex(
+        (item) => (item.name ?? "").localeCompare(exam.name ?? "") > 0
+      );
+
+      if (insertAt === -1) {
+        state.exams.list.push(exam);
+      } else {
+        state.exams.list.splice(insertAt, 0, exam);
+      }
+    },
   },
   extraReducers(builder) {
     builder
@@ -180,6 +215,6 @@ const examsSlice = createSlice({
   },
 });
 
-export const { reset } = examsSlice.actions;
+export const { reset, upsertExamInList } = examsSlice.actions;
 
 export default examsSlice.reducer;

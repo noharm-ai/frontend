@@ -31,3 +31,6 @@ DEVELOPMENT.md
 /playwright/.cache/
 /playwright/.auth
 /tests/mocked/fixtures/recorded/
+
+# machine-specific visual regression baselines (tests/mocked/visual.antd.spec.ts)
+tests/mocked/visual.antd.spec.ts-snapshots/

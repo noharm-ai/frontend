@@ -18,6 +18,7 @@ import { ProtocolDepartmentSelect } from "./ProtocolDepartmentSelect/ProtocolDep
 import { ProtocolSegmentSelect } from "./ProtocolSegmentSelect/ProtocolSegmentSelect";
 import { ProtocolIcdSelect } from "./ProtocolIcdSelect/ProtocolIcdSelect";
 import { ProtocolRouteSelect } from "./ProtocolRouteSelect/ProtocolRouteSelect";
+import { ProtocolTagSelect } from "./ProtocolTagSelect/ProtocolTagSelect";
 import {
   DRUG_ATTRIBUTE_OPTIONS,
   DRUG_ALERT_LIMIT_OPTIONS,
@@ -139,6 +140,8 @@ export function VariableTab() {
       "Compara o tipo de segmento (ADULTO ou PEDIÁTRICO) com o valor informado.",
     [ProtocolVariableFieldEnum.INSURANCE]:
       "Verifica se o convênio da prescrição contém o texto informado (comparação parcial, ignora maiúsculas/minúsculas).",
+    [ProtocolVariableFieldEnum.TAGS]:
+      "Verifica se algum dos marcadores do paciente está (IN) ou não está (NOTIN) na lista informada. Um paciente sem marcadores nunca atende ao IN e sempre atende ao NOTIN.",
   };
 
   return (
@@ -595,6 +598,11 @@ export function VariableTab() {
                       <ProtocolRouteSelect
                         value={v.value}
                         onChange={(ids) => setConfig(idx, "value", ids)}
+                      />
+                    ) : v.field === ProtocolVariableFieldEnum.TAGS ? (
+                      <ProtocolTagSelect
+                        value={v.value}
+                        onChange={(names) => setConfig(idx, "value", names)}
                       />
                     ) : v.operator === "IN" || v.operator === "NOTIN" ? (
                       <Select

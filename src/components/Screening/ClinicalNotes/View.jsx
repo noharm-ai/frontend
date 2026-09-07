@@ -9,6 +9,7 @@ import {
   PrinterOutlined,
   FileTextOutlined,
   EyeInvisibleOutlined,
+  SignatureOutlined,
 } from "@ant-design/icons";
 import DOMPurify from "dompurify";
 
@@ -27,6 +28,8 @@ import { getMemory } from "features/lists/ListsSlice";
 import { clearDraft } from "utils/clinicalNotesEditDraft";
 import { NavigationSoapNote } from "features/clinicalNotes/NavigationSoapNote/NavigationSoapNote";
 import { openNavigationSoapNote } from "features/clinicalNotes/NavigationSoapNote/NavigationSoapNoteSlice";
+import { DigitalSignature } from "features/clinicalNotes/DigitalSignature/DigitalSignature";
+import { openDigitalSignature } from "features/clinicalNotes/DigitalSignature/DigitalSignatureSlice";
 
 import Edit from "./Edit";
 import ClinicalNotesIndicator from "./ClinicalNotesIndicator";
@@ -456,6 +459,33 @@ export default function View({
                     />
                   </Tooltip>
                 )}
+              {!edit &&
+                selected.source !== "prescription" &&
+                (selected.text || selected.template) &&
+                PermissionService().has(Permission.READ_NAV) && (
+                  <Tooltip title={t("digitalSignature.btnTooltip")}>
+                    <Button
+                      type="primary"
+                      ghost
+                      shape="circle"
+                      icon={<SignatureOutlined />}
+                      style={{
+                        width: "28px",
+                        height: "28px",
+                        minWidth: "28px",
+                        marginRight: "10px",
+                      }}
+                      onClick={() =>
+                        dispatch(
+                          openDigitalSignature({
+                            id: selected.id,
+                            idSignRequest: selected.idSignRequest ?? null,
+                          }),
+                        )
+                      }
+                    />
+                  </Tooltip>
+                )}
               {!popup && admissionNumber && (
                 <Tooltip title="Abrir em nova janela">
                   <Button
@@ -584,6 +614,7 @@ export default function View({
         </>
       )}
       <NavigationSoapNote />
+      <DigitalSignature />
     </>
   );
 }

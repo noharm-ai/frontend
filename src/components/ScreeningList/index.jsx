@@ -44,8 +44,16 @@ import { FeatureService } from "services/FeatureService";
 
 import { toDataSource } from "utils";
 
+import Feature from "models/Feature";
 import columnsTable, { expandedRowRender } from "./columns";
 import Filter from "../Prioritization/Filter";
+import {
+  applyPrescriptionDatesReference,
+  filterByPrescriptionDates,
+  getDefaultPrescriptionDatesFilter,
+  isPrescriptionDatesPrioritization,
+} from "../Prioritization/Util";
+import { PrescriptionDatesFilter } from "../Prioritization/PrescriptionDatesFilter/PrescriptionDatesFilter";
 import { PageCard } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
 
@@ -128,6 +136,9 @@ export default function ScreeningList({
     order: null,
     columnKey: null,
   });
+  // only meaningful while prioritizing by next prescription (see
+  // handleSortColumnChange)
+  const [prescriptionDatesFilter, setPrescriptionDatesFilter] = useState(null);
   const [filter, setFilter] = useState({
     status: null,
     searchKey: null,
@@ -321,7 +332,27 @@ export default function ScreeningList({
     selectAllRows,
     isAllSelected: isAllSelected(),
   };
-  const dataSource = toDataSource(list, null, bag);
+  // the sort can also be changed from the column headers, which bypass
+  // handleSortColumnChange, so the filter is applied only while the tracked
+  // sort is still the next prescription one
+  // agg prescriptions can be prioritized by their inner prescription dates,
+  // rolled out per user for now
+  const hasPrescriptionDates =
+    prioritizationType === "patient" &&
+    featureService.hasFeature(Feature.PRIORITIZATION_PRESCRIPTION_DATES);
+  const prescriptionDatesActive =
+    hasPrescriptionDates &&
+    isPrescriptionDatesPrioritization(sortOrder.columnKey);
+  const dataSource = toDataSource(
+    prescriptionDatesActive
+      ? filterByPrescriptionDates(
+          applyPrescriptionDatesReference(list, prescriptionDatesFilter),
+          prescriptionDatesFilter,
+        )
+      : list,
+    null,
+    bag,
+  );
 
   // error message when fetch has error.
   const errorMessage = {
@@ -485,8 +516,9 @@ export default function ScreeningList({
   };
 
   const handleTableChange = (pagination, filters, sorter) => {
-    // the "class" column drives the "date"/"firstAdministrationHour" custom
-    // sort buttons (see orderByDate/orderByAdministration); antd reports its
+    // the "class" column drives the "date"/"firstAdministrationHour"/
+    // "nextPrescriptionDate" custom sort buttons (see the "Priorizar por"
+    // select); antd reports its
     // real key ("class") on every onChange, including pagination-only
     // changes, so ignore it here to avoid clobbering the tracked sortOrder.
     if (sorter.columnKey === "class") {
@@ -542,6 +574,14 @@ export default function ScreeningList({
     } else {
       setSortOrder({ columnKey, order: "ascend" });
     }
+
+    // the prescription dates filter turns on (from now) when the user starts
+    // prioritizing by next prescription and off on any other prioritization
+    setPrescriptionDatesFilter(
+      isPrescriptionDatesPrioritization(columnKey)
+        ? getDefaultPrescriptionDatesFilter()
+        : null,
+    );
   };
 
   const toggleSortDirection = () => {
@@ -624,39 +664,58 @@ export default function ScreeningList({
         </div>
       </div>
 
-      {prioritizationType === "prescription" && (
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <div>
-            <Select
-              style={{ width: 320, marginLeft: "10px" }}
-              placeholder={t("screeningList.orderByPlaceholder")}
-              allowClear
-              value={sortOrder.columnKey || undefined}
-              onChange={handleSortColumnChange}
-            >
-              <Select.Option value="date">
-                {t("screeningList.orderByDate")}
-              </Select.Option>
-              <Select.Option value="firstAdministrationHour">
-                {t("screeningList.orderByAdministration")}
-              </Select.Option>
-            </Select>
+      {(prioritizationType === "prescription" || hasPrescriptionDates) && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div>
+              <Select
+                style={{ width: 320, marginLeft: "10px" }}
+                placeholder={t("screeningList.orderByPlaceholder")}
+                allowClear
+                value={sortOrder.columnKey || undefined}
+                onChange={handleSortColumnChange}
+              >
+                {prioritizationType === "prescription" && (
+                  <>
+                    <Select.Option value="date">
+                      {t("screeningList.orderByDate")}
+                    </Select.Option>
+                    <Select.Option value="firstAdministrationHour">
+                      {t("screeningList.orderByAdministration")}
+                    </Select.Option>
+                  </>
+                )}
+                {hasPrescriptionDates && (
+                  <Select.Option value="nextPrescriptionDate">
+                    {t("screeningList.orderByNextPrescription")}
+                  </Select.Option>
+                )}
+              </Select>
+            </div>
+
+            {sortOrder.columnKey && (
+              <div>
+                <Button
+                  onClick={toggleSortDirection}
+                  shape="circle"
+                  icon={
+                    sortOrder.order === "ascend" ? (
+                      <CaretUpOutlined />
+                    ) : (
+                      <CaretDownOutlined />
+                    )
+                  }
+                />
+              </div>
+            )}
           </div>
 
-          {sortOrder.columnKey && (
-            <div>
-              <Button
-                onClick={toggleSortDirection}
-                shape="circle"
-                icon={
-                  sortOrder.order === "ascend" ? (
-                    <CaretUpOutlined />
-                  ) : (
-                    <CaretDownOutlined />
-                  )
-                }
-              />
-            </div>
+          {prescriptionDatesActive && (
+            <PrescriptionDatesFilter
+              value={prescriptionDatesFilter}
+              onChange={setPrescriptionDatesFilter}
+              style={{ marginLeft: "10px" }}
+            />
           )}
         </div>
       )}
@@ -706,7 +765,9 @@ export default function ScreeningList({
           }}
           loading={isFetching}
           locale={{ emptyText }}
-          expandedRowRender={expandedRowRender(t)}
+          expandedRowRender={expandedRowRender(t, {
+            showPrescriptionDates: hasPrescriptionDates,
+          })}
           dataSource={!isFetching ? dataSource : []}
           onChange={handleTableChange}
           showSorterTooltip={false}

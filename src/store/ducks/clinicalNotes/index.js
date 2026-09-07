@@ -98,25 +98,19 @@ const select = (state = INITIAL_STATE, { clinicalNote }) => ({
 });
 
 const update = (state = INITIAL_STATE, { clinicalNote }) => {
-  const list = flatClinicalNotes({ ...state.list });
-
-  const index = list.findIndex((item) => item.id === clinicalNote.id);
-  if (index !== -1) {
-    list[index] = { ...list[index], ...clinicalNote };
-  }
-
-  const groups = {};
-  Object.keys(state.dates).forEach((k) => {
-    groups[k] = [];
-  });
-
-  list.forEach((n) => {
-    groups[n.date.substr(0, 10)].push(n);
+  // state.list is { "YYYY-MM-DD": [note, ...] }; patch the note in place and keep
+  // every group as it was. Rebuilding it here used to empty every group, which made
+  // the list effect deselect the note and unmount the whole notes view.
+  const list = {};
+  Object.keys(state.list || {}).forEach((date) => {
+    list[date] = (state.list[date] || []).map((note) =>
+      note.id === clinicalNote.id ? { ...note, ...clinicalNote } : note
+    );
   });
 
   return {
     ...state,
-    list: groups,
+    list,
     single: {
       ...state.single,
       ...clinicalNote,

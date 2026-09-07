@@ -36,8 +36,9 @@ export default function ExamsModal({ idSegment }) {
   const status = useSelector((state) => state.examsModal.status);
 
   const [sortOrder, setSortOrder] = useState({
-    order: null,
-    columnKey: null,
+    order: "ascend",
+    columnKey: "name",
+    column: { dataIndex: "name" },
   });
   const [activeTab, setActiveTab] = useState("exams");
   const [showOnlyConfigured, setShowOnlyConfigured] = useState(true);

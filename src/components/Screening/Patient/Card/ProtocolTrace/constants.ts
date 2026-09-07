@@ -27,4 +27,5 @@ export const LIST_FIELDS = new Set([
   "segmentType",
   "idDepartment",
   "idSegment",
+  "tags",
 ]);

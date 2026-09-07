@@ -13,7 +13,7 @@ import { Form } from "styles/Form.style";
 import { canWriteExamConfig } from "../examPermissions";
 
 interface Props {
-  onAfterSave?: () => void;
+  onAfterSave?: (exam: any) => void;
 }
 
 export function ExamForm({ onAfterSave }: Props) {
@@ -51,7 +51,7 @@ export function ExamForm({ onAfterSave }: Props) {
         });
       } else {
         dispatch(setExam(null));
-        onAfterSave?.();
+        onAfterSave?.(response.payload?.data?.data);
         notification.success({
           message: t("success.generic"),
         });

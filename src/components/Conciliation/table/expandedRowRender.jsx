@@ -19,7 +19,7 @@ const expandedRowRender = (bag) => (record) => {
   return (
     <NestedTableContainer>
       <Descriptions bordered size="small">
-        <Descriptions.Item label={bag.t("tableHeader.observation")} span={3}>
+        <Descriptions.Item label={bag.t("tableHeader.observation")} span={4}>
           <RichTextView text={record.recommendation} />
         </Descriptions.Item>
       </Descriptions>

@@ -5,6 +5,9 @@ import { TimePicker } from "antd";
 import Heading from "components/Heading";
 import { Col, Row } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
+import { FeatureService } from "services/FeatureService";
+import Feature from "models/Feature";
+import { HIDDEN_NAME } from "utils/report";
 import {
   Select,
   Radio,
@@ -15,6 +18,7 @@ import {
 
 export default function SecondaryFilters() {
   const { values, setFieldValue } = useContext(AdvancedFilterContext);
+  const hideNames = FeatureService.has(Feature.HIDE_NAMES);
   const responsibles = useSelector(
     (state) => state.reportsArea.prescription.responsibles,
   );
@@ -142,7 +146,7 @@ export default function SecondaryFilters() {
         >
           {responsibles.map((i) => (
             <Select.Option key={i} value={i}>
-              {i}
+              {hideNames ? HIDDEN_NAME : i}
             </Select.Option>
           ))}
         </SelectCustom>

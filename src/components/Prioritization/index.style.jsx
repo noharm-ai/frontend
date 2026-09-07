@@ -108,6 +108,17 @@ export const ResultActions = styled.div`
     }
   }
 
+  /* stacks the filters row and the prescription dates row, so the latter
+     never widens the filter items */
+  .filters-block {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .prescription-dates-filter {
+    margin-bottom: 0.5rem;
+  }
+
   .filters {
     display: flex;
     flex-wrap: wrap;
@@ -148,7 +159,7 @@ export const ResultActions = styled.div`
             background-color: #70bdc4;
           }
 
-          .ant-select-content-value {
+          .ant-select-content-has-value {
             color: #fff;
             font-weight: 500;
           }

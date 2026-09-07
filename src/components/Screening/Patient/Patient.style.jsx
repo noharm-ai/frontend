@@ -430,14 +430,14 @@ export const PatientBox = styled.div`
         margin: 0;
       }
 
-      .ant-tabs-content {
+      .ant-tabs-body {
         flex: 1;
         height: 100%;
 
-        .ant-tabs-tabpane {
+        .ant-tabs-content {
           height: 100%;
 
-          &.ant-tabs-tabpane-inactive {
+          &.ant-tabs-content-hidden {
             height: 0;
           }
         }

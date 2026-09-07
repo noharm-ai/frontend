@@ -91,6 +91,10 @@
     "allHintLimit": "500 records limit reached",
     "orderByAdministration": "Prioritize by administration",
     "orderByDate": "Prioritize by date",
+    "orderByNextPrescription": "Prioritize by next prescription",
+    "prescriptionDatesPlaceholder": "All prescriptions",
+    "prescriptionDatesFrom": "From",
+    "prescriptionDatesHint": "Shows prescriptions from this point in time",
     "orderByPlaceholder": "Prioritize by",
     "patientRisk": "Patient risk",
     "prescriptionRisk": "Prescription risk",
@@ -156,6 +160,8 @@
     "clExAdmissionNumber": "# Admission number",
     "clExPrescription": "# Prescription",
     "clExIntervals": "First administration hour",
+    "clExLastPrescription": "Last prescription",
+    "clExNextPrescription": "Next prescription",
 
     "btnCheck": "Check prescription",
     "btnChecked": "Checked prescription",
@@ -182,6 +188,9 @@
     "btnReviewed": "Reviewed"
   },
   "patientCard": {
+    "innerPrescriptions": "Prescriptions",
+    "prescriptionDates": "Prescription dates",
+    "nextPrescriptionDate": "Next prescription",
     "patientData": "Patient data",
     "admissionData": "Admission data",
     "prescription": "Prescription",
@@ -658,8 +667,10 @@
     "unauthorizedUser": "Unauthorized user",
     "serviceUnavailable": "AI service unavailable. Please try again shortly.",
     "pendingMandatoryTraining": "Complete the mandatory training modules to open support tickets.",
+    "trainingNotFinished": "Complete every lesson of the module to get the certificate.",
     "nameExists": "There is already a user with this name!",
     "emailExists": "There is already a user with this email!",
+    "signRequestNotFound": "The previous signature request no longer exists. Use \"Sign again\" to generate a new document.",
     "empty": "No records found"
   },
 
@@ -1150,6 +1161,30 @@
     "noResults": "No texts found.",
     "promptVersionHint": "Choose the generated note format"
   },
+  "digitalSignature": {
+    "btnTooltip": "Sign digitally",
+    "title": "Digital signature",
+    "description": "Send this clinical note for digital signature. The signer will receive an e-mail with the link to sign the document.",
+    "signerName": "Signer name",
+    "signerEmail": "Signer e-mail",
+    "btnSend": "Send for signature",
+    "btnClose": "Close",
+    "validationSigner": "We could not identify your user's name and e-mail. Please contact support.",
+    "successMessage": "Signature request created successfully. The signer will receive an e-mail with the signing link.",
+    "linkLabel": "Direct signing link:",
+    "btnCopyLink": "Copy link",
+    "btnOpenLink": "Open link",
+    "alreadyRequested": "This clinical note has already been sent for digital signature.",
+    "alreadyRequestedDescription": "You can open the previously generated document or request a new signature.",
+    "btnOpenExisting": "Open existing document",
+    "btnSignAgain": "Sign again",
+    "btnCancel": "Cancel",
+    "signAgainConfirmTitle": "Request a new signature?",
+    "signAgainConfirmContent": "A new document will be generated and a new e-mail will be sent to the signer. The previous document will no longer be referenced in this clinical note.",
+    "signAgainConfirmOk": "Yes, sign again",
+    "reusedMessage": "The existing signature document was reused. No new e-mail was sent.",
+    "linkCopied": "Link copied!"
+  },
   "onboarding": {
     "welcome": {
       "eyebrow": "Getting started",
@@ -1180,7 +1215,91 @@
     "progressMandatory": "Mandatory modules",
     "progressOptional": "Optional modules",
     "mandatoryExplanation": "Mandatory modules cover the basics of using NoHarm. Until they are all completed, you won't be able to open support tickets.",
-    "mandatoryTag": "Mandatory"
+    "mandatoryTag": "Mandatory",
+    "tabMyTraining": "My training",
+    "tabTeam": "My team"
+  },
+  "trainingOverview": {
+    "empty": "No users found.",
+    "mandatoryHint": "While mandatory modules are pending, the user cannot open support tickets.",
+    "moduleProgressTitle": "Progress by module",
+    "moduleUsersFinished": "{{done}} of {{total}} completed",
+    "moduleUsersNotStarted_one": "{{count}} not started",
+    "moduleUsersNotStarted_other": "{{count}} not started",
+
+    "columns": {
+      "user": "User",
+      "userStatus": "User status",
+      "mandatory": "Mandatory",
+      "optional": "Optional",
+      "lessons": "Lessons",
+      "lastActivity": "Last activity",
+      "status": "Training status"
+    },
+
+    "filters": {
+      "search": "Search",
+      "searchPlaceholder": "Name or e-mail",
+      "active": "Active",
+      "inactive": "Inactive",
+      "all": "All",
+      "userActive": "Active",
+      "userInactive": "Inactive",
+      "statusPlaceholder": "Filter by status"
+    },
+
+    "summary": {
+      "users": "Users",
+      "pendingMandatory": "With mandatory modules pending",
+      "notStarted": "Not started",
+      "completed": "Completed every module"
+    },
+
+    "status": {
+      "notStarted": "Not started",
+      "inProgress": "In progress",
+      "completed": "Completed",
+      "reopened": "Reopened"
+    }
+  },
+  "trainingCertificate": {
+    "button": "Certificate",
+    "download": "Get certificate",
+    "title": "Certificate of Completion",
+    "certify": "This certifies that",
+    "completedModule": "has completed the training module",
+    "workload_one": "Total workload: {{count}} hour",
+    "workload_other": "Total workload: {{count}} hours",
+    "summary_one": "Completed on {{date}}, after finishing {{count}} lesson.",
+    "summary_other": "Completed on {{date}}, after finishing {{count}} lessons.",
+    "footer": "Issued by the NoHarm platform · noharm.ai",
+    "validationCode": "Validation code:",
+    "validationHint": "Validate this certificate at"
+  },
+  "certificateValidation": {
+    "pageTitle": "Certificate Validation",
+    "subtitle": "Confirm the authenticity of a NoHarm certificate.",
+    "codeLabel": "Validation code",
+    "codePlaceholder": "XXXX-XXXX-XXXX",
+    "submit": "Validate",
+    "validating": "Validating...",
+    "validTitle": "Valid certificate",
+    "validSubtitle": "This certificate was issued by the NoHarm platform.",
+    "holder": "Holder",
+    "module": "Module",
+    "workloadLabel": "Workload",
+    "workload_one": "{{count}} hour",
+    "workload_other": "{{count}} hours",
+    "lessonsLabel": "Lessons completed",
+    "lessonsTaken": "Lessons taken in this module:",
+    "completedAtLabel": "Completion date",
+    "maskedNameHint": "The name is partially hidden for privacy. Compare it with the certificate you were given.",
+    "invalidTitle": "Certificate not found",
+    "invalidSubtitle": "No certificate matches this code. Check the code and try again.",
+    "errorTitle": "Validation failed",
+    "errorSubtitle": "Something went wrong. Please try again shortly.",
+    "invalidFormat": "The code must have 12 characters.",
+    "close": "Close"
   },
   "trainingPlayer": {
     "previous": "Previous",
@@ -1209,6 +1328,10 @@
     "videoCoverOrg": "NoHarm.ai",
     "videoCoverTitle": "Training",
     "videoCoverModule": "Module {{module}}",
+    "moduleCompletedEyebrow": "Module completed",
+    "moduleCompletedLessonsStat_one": "Lesson completed",
+    "moduleCompletedLessonsStat_other": "Lessons completed",
+    "moduleCompletedProgressStat": "Progress",
     "moduleCompletedTitle": "Congratulations!",
     "moduleCompletedMessage": "You've completed the \"{{module}}\" training module."
   }

@@ -30,6 +30,7 @@ import CustomFormEditorPage from "pages/CustomForms/CustomFormEditorPage";
 import MemoryListPage from "pages/Memory/MemoryListPage";
 import MemoryEditorPage from "pages/Memory/MemoryEditorPage";
 import TrainingCentral from "pages/TrainingCentral";
+import { CertificateValidationPage } from "pages/CertificateValidation/CertificateValidationPage";
 import TrainingPlayer from "pages/TrainingPlayer";
 
 import AdminTag from "pages/Admin/Tag";
@@ -52,6 +53,8 @@ import PrescriptionReport from "pages/Reports/PrescriptionReport";
 import InterventionReport from "pages/Reports/InterventionReport";
 import PrescriptionAuditReport from "pages/Reports/PrescriptionAuditReport";
 import EconomyReport from "pages/Reports/EconomyReport";
+import EconomyConsolidatedReport from "pages/Reports/EconomyConsolidatedReport";
+import { InterventionConsolidatedReportPage } from "pages/Reports/InterventionConsolidatedReport/InterventionConsolidatedReport";
 import FileReport from "pages/Reports/FileReport";
 import PatientDayConsolidatedReport from "pages/Reports/PatientDayConsolidatedReport";
 import PrescriptionConsolidatedReport from "pages/Reports/PrescriptionConsolidatedReport";
@@ -88,6 +91,23 @@ const routes = [
     exact: true,
     path: "/login-callback/:schema",
     element: <WithAuth component={LoginCallback} isLoginPage={true} />,
+  },
+
+  // public: printed on every training certificate, so this path is frozen -
+  // renaming it strands the certificates already issued
+  {
+    exact: true,
+    path: "/validar-certificado",
+    element: (
+      <WithAuth component={CertificateValidationPage} isPublicPage={true} />
+    ),
+  },
+  {
+    exact: true,
+    path: "/validar-certificado/:code",
+    element: (
+      <WithAuth component={CertificateValidationPage} isPublicPage={true} />
+    ),
   },
   {
     exact: true,
@@ -402,6 +422,16 @@ const routes = [
     exact: true,
     path: "/relatorios/economia",
     element: <WithAuth component={EconomyReport} />,
+  },
+  {
+    exact: true,
+    path: "/relatorios/consolidado/economia",
+    element: <WithAuth component={EconomyConsolidatedReport} />,
+  },
+  {
+    exact: true,
+    path: "/relatorios/consolidado/intervencoes",
+    element: <WithAuth component={InterventionConsolidatedReportPage} />,
   },
 
   {

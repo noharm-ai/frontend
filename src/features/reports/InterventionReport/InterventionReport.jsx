@@ -25,6 +25,8 @@ import ChartDepartments from "./Charts/ChartDepartments";
 import HelpModal from "./Help/Help";
 import { setHelpModal } from "./InterventionReportSlice";
 import Tooltip from "components/Tooltip";
+import { FeatureService } from "services/FeatureService";
+import Feature from "models/Feature";
 
 export default function InterventionReport() {
   const dispatch = useDispatch();
@@ -41,6 +43,7 @@ export default function InterventionReport() {
   );
   const printRef = useRef(null);
   const isLoading = status === "loading" || filteredStatus === "loading";
+  const hideNames = FeatureService.has(Feature.HIDE_NAMES);
   const filtersConfig = {
     dateRange: {
       label: "Período",
@@ -49,10 +52,12 @@ export default function InterventionReport() {
     responsibleList: {
       label: "Responsável",
       type: "list",
+      mask: hideNames,
     },
     prescriberList: {
       label: "Prescritor",
       type: "list",
+      mask: hideNames,
     },
     departmentList: {
       label: "Setor",

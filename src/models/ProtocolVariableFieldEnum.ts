@@ -18,6 +18,7 @@ export class ProtocolVariableFieldEnum {
   static DISCHARGE_REASON = "dischargeReason";
   static SEGMENT_TYPE = "segmentType";
   static INSURANCE = "insurance";
+  static TAGS = "tags";
 
   static getList = () =>
     [
@@ -96,6 +97,10 @@ export class ProtocolVariableFieldEnum {
       {
         value: ProtocolVariableFieldEnum.INSURANCE,
         label: "Convênio",
+      },
+      {
+        value: ProtocolVariableFieldEnum.TAGS,
+        label: "Marcadores do paciente",
       },
     ].sort((a, b) => a.label.localeCompare(b.label));
 

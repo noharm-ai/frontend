@@ -53,9 +53,11 @@ import adminExamForm from "features/admin/Exam/ExamForm/ExamFormSlice";
 import { outpatientPrioritizationReducer } from "features/outpatient/OutpatientPrioritization/OutpatientPrioritizationSlice";
 import notificationsSlice from "features/notifications/NotificationsSlice";
 import trainingCentralSlice from "features/training/TrainingCentralSlice";
+import trainingOverviewSlice from "features/training/TrainingOverviewSlice";
 import trainingPlayerSlice from "features/training/TrainingPlayerSlice";
 import clinicalNotesMultiSlice from "features/clinicalNotes/ClinicalNotesSlice";
 import { navigationSoapNoteReducer } from "features/clinicalNotes/NavigationSoapNote/NavigationSoapNoteSlice";
+import { digitalSignatureReducer } from "features/clinicalNotes/DigitalSignature/DigitalSignatureSlice";
 
 import regulationPrioritizationSlice from "features/regulation/Prioritization/PrioritizationSlice";
 import regulationSlice from "features/regulation/Regulation/RegulationSlice";
@@ -71,6 +73,8 @@ import reportPrescriptionReport from "features/reports/PrescriptionReport/Prescr
 import reportInterventionReport from "features/reports/InterventionReport/InterventionReportSlice";
 import reportPrescriptionAuditReport from "features/reports/PrescriptionAuditReport/PrescriptionAuditReportSlice";
 import reportEconomyReport from "features/reports/EconomyReport/EconomyReportSlice";
+import reportEconomyConsolidatedReport from "features/reports/EconomyConsolidatedReport/EconomyConsolidatedReportSlice";
+import { interventionConsolidatedReportReducer } from "features/reports/InterventionConsolidatedReport/InterventionConsolidatedReportSlice";
 import reportCultureReport from "features/reports/CultureReport/CultureReportSlice";
 import reportDrugHistoryReport from "features/reports/DrugHistoryReport/DrugHistoryReportSlice";
 import reportPrescriptionHistoryReport from "features/reports/PrescriptionHistoryReport/PrescriptionHistoryReportSlice";
@@ -109,6 +113,8 @@ const reportReducers = combineReducers({
   intervention: reportInterventionReport,
   prescriptionAudit: reportPrescriptionAuditReport,
   economy: reportEconomyReport,
+  economyConsolidated: reportEconomyConsolidatedReport,
+  interventionConsolidated: interventionConsolidatedReportReducer,
   culture: reportCultureReport,
   drugHistory: reportDrugHistoryReport,
   prescriptionHistory: reportPrescriptionHistoryReport,
@@ -140,6 +146,7 @@ const rootReducer = combineReducers({
   clinicalNotes: clinicalNotesReducer,
   clinicalNotesMulti: clinicalNotesMultiSlice,
   navigationSoapNote: navigationSoapNoteReducer,
+  digitalSignature: digitalSignatureReducer,
   drugUnitConversion: drugUnitConversionSlice,
   drugFormStatus: drugFormStatus,
   lists: lists,
@@ -165,6 +172,7 @@ const rootReducer = combineReducers({
   userProfile: userProfileReducer,
   notifications: notificationsSlice,
   trainingCentral: trainingCentralSlice,
+  trainingOverview: trainingOverviewSlice,
   trainingPlayer: trainingPlayerSlice,
 });
 

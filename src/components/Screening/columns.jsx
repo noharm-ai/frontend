@@ -498,7 +498,7 @@ export const expandedRowRender = (bag) => (record) => {
         {!isEmpty(record.alertsComplete) && (
           <Descriptions.Item
             label={bag.t("prescriptionDrugList.exrAlert")}
-            span={3}
+            span={4}
           >
             <DrugAlerts
               alerts={record.alertsComplete}
@@ -509,7 +509,7 @@ export const expandedRowRender = (bag) => (record) => {
         {bag.featureService.hasPresmedForm() &&
           bag.permissionService.has(Permission.READ_DISPENSATION) &&
           bag.formTemplate && (
-            <Descriptions.Item label={bag.formTemplate.name} span={3}>
+            <Descriptions.Item label={bag.formTemplate.name} span={4}>
               <div>
                 <DrugForm
                   savePrescriptionDrugForm={bag.savePrescriptionDrugForm}
@@ -523,7 +523,7 @@ export const expandedRowRender = (bag) => (record) => {
         {record.drugInfoLink && bag.featureService.hasMicromedex() && (
           <Descriptions.Item
             label={bag.t("tableHeader.clinicalInfo") + ":"}
-            span={3}
+            span={4}
           >
             <Button
               onClick={() => {
@@ -543,7 +543,7 @@ export const expandedRowRender = (bag) => (record) => {
             <>
               <Descriptions.Item
                 label={bag.t("prescriptionDrugList.panelPrescription")}
-                span={3}
+                span={4}
               >
                 <Button
                   type="link"
@@ -555,13 +555,13 @@ export const expandedRowRender = (bag) => (record) => {
               </Descriptions.Item>
               <Descriptions.Item
                 label={bag.t("prescriptionDrugList.panelPrescriber")}
-                span={3}
+                span={4}
               >
                 {bag.headers[headerId].prescriber}
               </Descriptions.Item>
               <Descriptions.Item
                 label={bag.t("prescriptionDrugList.panelIssueDate")}
-                span={3}
+                span={4}
               >
                 {format(
                   new Date(bag.headers[headerId].date),
@@ -570,7 +570,7 @@ export const expandedRowRender = (bag) => (record) => {
               </Descriptions.Item>
               <Descriptions.Item
                 label={bag.t("prescriptionDrugList.panelValidUntil")}
-                span={3}
+                span={4}
               >
                 {bag.headers[headerId].expire
                   ? format(
@@ -582,7 +582,7 @@ export const expandedRowRender = (bag) => (record) => {
               {record.suspensionDate && (
                 <Descriptions.Item
                   label={bag.t("prescriptionDrugList.panelSuspensionDate")}
-                  span={3}
+                  span={4}
                 >
                   {format(new Date(record.suspensionDate), "dd/MM/yyyy HH:mm")}
                 </Descriptions.Item>
@@ -593,13 +593,13 @@ export const expandedRowRender = (bag) => (record) => {
           <>
             <Descriptions.Item
               label={bag.t("prescriptionDrugList.panelIssueDate")}
-              span={3}
+              span={4}
             >
               {format(new Date(record.prescriptionDate), "dd/MM/yyyy HH:mm")}
             </Descriptions.Item>
             <Descriptions.Item
               label={bag.t("prescriptionDrugList.panelValidUntil")}
-              span={3}
+              span={4}
             >
               {record.prescriptionExpire
                 ? format(
@@ -613,7 +613,7 @@ export const expandedRowRender = (bag) => (record) => {
         {(!isEmpty(record.period) || (record.cpoe && !record.whiteList)) && (
           <Descriptions.Item
             label={bag.t("prescriptionDrugList.exrPeriod")}
-            span={3}
+            span={4}
           >
             {isEmpty(record.periodDates) && (
               <Link
@@ -634,7 +634,7 @@ export const expandedRowRender = (bag) => (record) => {
           </Descriptions.Item>
         )}
         {record.schedule && record.schedule.length > 0 && (
-          <Descriptions.Item label={"Aprazamento"} span={3}>
+          <Descriptions.Item label={"Aprazamento"} span={4}>
             <PrescriptionSchedule schedule={record.schedule} />
           </Descriptions.Item>
         )}
@@ -642,22 +642,22 @@ export const expandedRowRender = (bag) => (record) => {
           <>
             <Descriptions.Item
               label={bag.t("prescriptionDrugList.exrTime")}
-              span={3}
+              span={4}
             >
               {record.time}
             </Descriptions.Item>
             {!isEmpty(record.frequency) && (
               <Descriptions.Item
                 label={bag.t("tableHeader.frequency")}
-                span={3}
+                span={4}
               >
                 {record.frequency.label}
               </Descriptions.Item>
             )}
-            <Descriptions.Item label={bag.t("tableHeader.stage")} span={3}>
+            <Descriptions.Item label={bag.t("tableHeader.stage")} span={4}>
               {record.stage}
             </Descriptions.Item>
-            <Descriptions.Item label={bag.t("tableHeader.infusion")} span={3}>
+            <Descriptions.Item label={bag.t("tableHeader.infusion")} span={4}>
               {record.infusion}
             </Descriptions.Item>
           </>
@@ -665,13 +665,13 @@ export const expandedRowRender = (bag) => (record) => {
         {record.doseWeight && (
           <Descriptions.Item
             label={bag.t("prescriptionDrugList.exrDoseKg")}
-            span={3}
+            span={4}
           >
             {record.doseWeight}
           </Descriptions.Item>
         )}
         {record.doseWeightDay && (
-          <Descriptions.Item label="Dose / Kg / Dia" span={3}>
+          <Descriptions.Item label="Dose / Kg / Dia" span={4}>
             {record.doseWeightDay}
           </Descriptions.Item>
         )}
@@ -680,13 +680,13 @@ export const expandedRowRender = (bag) => (record) => {
             {record.auc.auc_cg && (
               <Descriptions.Item
                 label="AUC calculada (CG) *Em validação"
-                span={3}
+                span={4}
               >
                 {formatNumber(record.auc.auc_cg, 2)} mg/mL * min
               </Descriptions.Item>
             )}
             {record.auc.missing_cg && (
-              <Descriptions.Item label="AUC calculada (CG)" span={3}>
+              <Descriptions.Item label="AUC calculada (CG)" span={4}>
                 Faltam dados para calcular a AUC:{" "}
                 {bag.t(`aucMissingData.${record.auc.missing_cg}`)}
               </Descriptions.Item>
@@ -694,13 +694,13 @@ export const expandedRowRender = (bag) => (record) => {
             {record.auc.auc_ckd && (
               <Descriptions.Item
                 label="AUC calculada (CKD21) *Em validação"
-                span={3}
+                span={4}
               >
                 {formatNumber(record.auc.auc_ckd, 2)} mg/mL * min
               </Descriptions.Item>
             )}
             {record.auc.missing_ckd && (
-              <Descriptions.Item label="AUC calculada (CKD21)" span={3}>
+              <Descriptions.Item label="AUC calculada (CKD21)" span={4}>
                 Faltam dados para calcular a AUC:{" "}
                 {bag.t(`aucMissingData.${record.auc.missing_ckd}`)}
               </Descriptions.Item>
@@ -710,20 +710,20 @@ export const expandedRowRender = (bag) => (record) => {
         {record.doseBodySurface && (
           <Descriptions.Item
             label={bag.t("prescriptionDrugList.exrDoseBodySurface")}
-            span={3}
+            span={4}
           >
             {record.doseBodySurface}
           </Descriptions.Item>
         )}
         {record.recommendation && (
-          <Descriptions.Item label={bag.t("tableHeader.observation")} span={3}>
+          <Descriptions.Item label={bag.t("tableHeader.observation")} span={4}>
             <RichTextView text={record.recommendation} />
           </Descriptions.Item>
         )}
         {record.prevNotes && (
           <Descriptions.Item
             label={bag.t("prescriptionDrugList.exrNotesPrevious")}
-            span={3}
+            span={4}
           >
             <RichTextView text={record.prevNotesUser} />
           </Descriptions.Item>
@@ -731,7 +731,7 @@ export const expandedRowRender = (bag) => (record) => {
         {record.notes && (
           <Descriptions.Item
             label={bag.t("prescriptionDrugList.exrNotes")}
-            span={3}
+            span={4}
           >
             <RichTextView text={record.notes} />
           </Descriptions.Item>
@@ -740,7 +740,7 @@ export const expandedRowRender = (bag) => (record) => {
         {!isEmpty(prevIntervention) && (
           <Descriptions.Item
             label={bag.t("prescriptionDrugList.exrPrevIntervention")}
-            span={3}
+            span={4}
           >
             <InterventionView
               intervention={prevIntervention}
@@ -749,7 +749,7 @@ export const expandedRowRender = (bag) => (record) => {
               status={
                 <Descriptions.Item
                   label={`${bag.t("labels.status")}:`}
-                  span={3}
+                  span={4}
                 >
                   <Tag color={config.color}>{config.label}</Tag>{" "}
                   <InterventionAction
@@ -764,7 +764,7 @@ export const expandedRowRender = (bag) => (record) => {
         {!isEmpty(diluents) && (
           <Descriptions.Item
             label={bag.t("prescriptionDrugList.exrDiluent")}
-            span={3}
+            span={4}
           >
             <SimpleList>
               {diluents.map((d, i) => (

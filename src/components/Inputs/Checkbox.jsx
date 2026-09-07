@@ -4,18 +4,14 @@ import styled from "styled-components";
 import { get } from "styles/utils";
 
 export const Checkbox = styled(AntCheckbox)`
-  &.ant-checkbox-wrapper:hover .ant-checkbox-inner,
-  .ant-checkbox:hover .ant-checkbox-inner,
-  .ant-checkbox-input:focus + .ant-checkbox-inner {
+  &.ant-checkbox-wrapper:hover .ant-checkbox,
+  .ant-checkbox:hover,
+  .ant-checkbox:has(.ant-checkbox-input:focus) {
     border-color: ${get("colors.accentSecondary")};
   }
 
-  .ant-checkbox-checked .ant-checkbox-inner {
+  .ant-checkbox-checked {
     background-color: ${get("colors.accentSecondary")};
-    border-color: ${get("colors.accentSecondary")};
-  }
-
-  .ant-checkbox-checked::after {
     border-color: ${get("colors.accentSecondary")};
   }
 `;

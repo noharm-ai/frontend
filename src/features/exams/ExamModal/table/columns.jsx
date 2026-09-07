@@ -19,7 +19,7 @@ const columns = (t, sortedInfo) => {
       title: t("tableHeader.exam"),
       dataIndex: "name",
       align: "left",
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: (a, b) => (a.name ?? "").localeCompare(b.name ?? ""),
       sortOrder: sortedInfo.column?.dataIndex === "name" && sortedInfo.order,
     },
     {
@@ -108,7 +108,7 @@ export const textualColumns = (t, sortedInfo) => {
       title: t("tableHeader.exam"),
       dataIndex: "name",
       align: "left",
-      sorter: (a, b) => a.name.localeCompare(b.name),
+      sorter: (a, b) => (a.name ?? "").localeCompare(b.name ?? ""),
       sortOrder: sortedInfo.column?.dataIndex === "name" && sortedInfo.order,
     },
     {

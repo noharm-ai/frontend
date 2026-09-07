@@ -851,11 +851,24 @@ api.support.fetchKnowledgeBaseArticles = (params) =>
 api.training = {};
 api.training.getList = (params = {}) =>
   instance.get(`/training/list`, { params, ...setHeaders() });
+api.training.getOverview = (params = {}) =>
+  instance.get(`/training/overview`, { params, ...setHeaders() });
 api.training.getItems = (idTraining) =>
   instance.get(`/training/${idTraining}/items`, { ...setHeaders() });
 api.training.finishItem = (idTrainingItem, params = {}) =>
   instance.post(`/training/item/${idTrainingItem}/finish`, params, {
     ...setHeaders(),
+  });
+api.training.getCertificate = (idTraining) =>
+  instance.get(`/training/${idTraining}/certificate`, { ...setHeaders() });
+// public endpoint: setHeaders() reads the api key from Redux and the bearer
+// from storage, both empty for an anonymous visitor, so the key comes from the
+// env var here - same as forgotPassword / resetPassword
+api.training.validateCertificate = (code) =>
+  instance.get(`/public/certificate/${code}`, {
+    headers: {
+      "x-api-key": import.meta.env.VITE_APP_API_KEY,
+    },
   });
 
 /**
@@ -935,6 +948,13 @@ api.clinicalNotes.createClinicalNote = (params = {}) =>
 
 api.clinicalNotes.generateSoap = (params = {}) =>
   instance.post(`${endpoints.clinicalNotes}/soap`, params, setHeaders());
+
+api.clinicalNotes.requestDigitalSignature = (params = {}) =>
+  instance.post(
+    `${endpoints.clinicalNotes}/digital-signature`,
+    params,
+    setHeaders(),
+  );
 
 api.clinicalNotes.listByPrescription = (idPrescription) =>
   instance.get(`/prescription-clinical-note/${idPrescription}`, {

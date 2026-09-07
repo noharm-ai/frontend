@@ -135,7 +135,10 @@ export const desktopAction = {
   ...defaultAction,
 };
 
-export const expandedRowRender = (t) => {
+export const expandedRowRender = (
+  t,
+  { showPrescriptionDates = false } = {},
+) => {
   return (record) => {
     const columns = setDataIndex([
       {
@@ -196,6 +199,32 @@ export const expandedRowRender = (t) => {
             : "-";
         },
       },
+      // inner prescription dates only exist on agg prescriptions and are
+      // being rolled out per user
+      ...(record.agg && showPrescriptionDates
+        ? [
+            {
+              title: t("screeningList.clExLastPrescription"),
+              width: 130,
+              render: (i) => i.lastPrescriptionDateFormated || "-",
+            },
+            {
+              title: t("screeningList.clExNextPrescription"),
+              width: 130,
+              render: (i) => (
+                <Tooltip
+                  title={
+                    i.prescriptionDatesFormated?.length
+                      ? i.prescriptionDatesFormated.join(", ")
+                      : null
+                  }
+                >
+                  {i.nextPrescriptionDateFormated || "-"}
+                </Tooltip>
+              ),
+            },
+          ]
+        : []),
     ]);
 
     return (
@@ -472,12 +501,37 @@ const columns = (sortedInfo, filteredInfo, t, bag) => {
           return sortOrder === "ascend" ? scoreDiff : -scoreDiff;
         }
 
+        if (sortedInfo.columnKey === "nextPrescriptionDate") {
+          const key = sortedInfo.columnKey;
+          const scoreDiff = b.globalScore - a.globalScore;
+          const aMissing = !a[key];
+          const bMissing = !b[key];
+
+          if (aMissing && bMissing) {
+            return sortOrder === "ascend" ? scoreDiff : -scoreDiff;
+          }
+
+          if (aMissing || bMissing) {
+            // records without the date always go last, regardless of
+            // sort direction (antd negates the result on "descend")
+            const missingLast = aMissing ? 1 : -1;
+            return sortOrder === "ascend" ? missingLast : -missingLast;
+          }
+
+          const dateDiff = Date.parse(a[key]) - Date.parse(b[key]);
+          if (dateDiff !== 0) {
+            return dateDiff;
+          }
+
+          return sortOrder === "ascend" ? scoreDiff : -scoreDiff;
+        }
+
         return Date.parse(a.date) - Date.parse(b.date);
       },
       sortOrder:
-        (sortedInfo.columnKey === "date" ||
-          sortedInfo.columnKey === "firstAdministrationHour") &&
-        sortedInfo.order,
+        ["date", "firstAdministrationHour", "nextPrescriptionDate"].includes(
+          sortedInfo.columnKey,
+        ) && sortedInfo.order,
     },
     {
       title: t("screeningList.patientRisk"),

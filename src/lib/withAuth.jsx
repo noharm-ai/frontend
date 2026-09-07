@@ -13,13 +13,14 @@ const AuthHandler = ({
   logout,
   isLoginPage,
   isLogoutPage,
+  isPublicPage,
   currentVersion,
   component: Component,
   ...props
 }) => {
   const isLogged = getStorageItem("ac1") != null;
 
-  if (!isLoginPage && !isLogoutPage && !isLogged) {
+  if (!isLoginPage && !isLogoutPage && !isPublicPage && !isLogged) {
     const schema = getStorageItem("schema");
     const oauth = getStorageItem("oauth");
     const maintainer = getStorageItem("maintainer");
