@@ -91,6 +91,10 @@
     "allHintLimit": "Limite de 500 registros atingido, reduza os setores para visualizar todas do dia.",
     "orderByAdministration": "Priorizar por horário da 1ª administração",
     "orderByDate": "Priorizar por data da prescrição",
+    "orderByNextPrescription": "Priorizar por próxima prescrição",
+    "prescriptionDatesPlaceholder": "Todas as prescrições",
+    "prescriptionDatesFrom": "A partir de",
+    "prescriptionDatesHint": "Mostra as prescrições a partir deste momento",
     "orderByPlaceholder": "Priorizar por",
     "patientRisk": "Risco do paciente",
     "prescriptionRisk": "Risco da prescrição",
@@ -156,6 +160,8 @@
     "clExAdmissionNumber": "# Atendimento",
     "clExPrescription": "# Prescrição",
     "clExIntervals": "Horário da 1ª administração",
+    "clExLastPrescription": "Última prescrição",
+    "clExNextPrescription": "Próxima prescrição",
 
     "btnCheck": "Checar prescrição",
     "btnChecked": "Prescrição checada",
@@ -182,6 +188,9 @@
     "btnReviewed": "Revisado"
   },
   "patientCard": {
+    "innerPrescriptions": "Prescrições",
+    "prescriptionDates": "Datas das prescrições",
+    "nextPrescriptionDate": "Próxima prescrição",
     "patientData": "Paciente",
     "admissionData": "Atendimento",
     "prescription": "Prescrição",
