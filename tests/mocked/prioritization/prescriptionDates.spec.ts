@@ -15,27 +15,81 @@ import { loginWithFeatures } from "../support/featureLogin";
  * feature while it is tested with a few users, so every test logs in with an
  * explicit feature list instead of the shared storage state.
  *
- * The clock is frozen at local noon of the current day so the "two hours ago"
- * and "in two hours" prescriptions below always land on the same day, whatever
- * the timezone of the machine running the suite.
+ * The clock is frozen at noon of the current day so the "two hours ago" and
+ * "in two hours" prescriptions below always land on the same day.
+ *
+ * The browser is pinned to TIMEZONE by playwright.config.ts while this file
+ * runs in the timezone of the machine (UTC in the CI), so every wall-clock
+ * value sent to or read from the page is expressed in TIMEZONE instead of the
+ * process' local time.
  */
-const FIXED_NOW = (() => {
-  const noon = new Date();
-  noon.setHours(12, 0, 0, 0);
+const TIMEZONE = "America/Sao_Paulo";
 
-  return noon;
+const pad = (value: number) => `${value}`.padStart(2, "0");
+
+// what the browser's clock reads at the given instant
+const wallClock = (date: Date) => {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: TIMEZONE,
+    hourCycle: "h23",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+  }).formatToParts(date);
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    Number(parts.find((part) => part.type === type)?.value);
+
+  return {
+    year: get("year"),
+    month: get("month"),
+    day: get("day"),
+    hour: get("hour"),
+    minute: get("minute"),
+  };
+};
+
+// the instant at which the browser's clock reads the given date and hour
+const atWallClock = (
+  year: number,
+  month: number,
+  day: number,
+  hour: number,
+) => {
+  const guess = Date.UTC(year, month - 1, day, hour);
+  const read = wallClock(new Date(guess));
+  const offset =
+    Date.UTC(read.year, read.month - 1, read.day, read.hour, read.minute) -
+    guess;
+
+  return new Date(guess - offset);
+};
+
+const FIXED_NOW = (() => {
+  const today = wallClock(new Date());
+
+  return atWallClock(today.year, today.month, today.day, 12);
 })();
 
 const shiftHours = (hours: number) =>
   new Date(FIXED_NOW.getTime() + hours * 60 * 60 * 1000);
 
-const pad = (value: number) => `${value}`.padStart(2, "0");
-
 // the backend sends naive (timezone-less) local timestamps
-const naive = (date: Date) =>
-  `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
-    date.getDate(),
-  )}T${pad(date.getHours())}:${pad(date.getMinutes())}:00`;
+const naive = (date: Date) => {
+  const w = wallClock(date);
+
+  return `${w.year}-${pad(w.month)}-${pad(w.day)}T${pad(w.hour)}:${pad(
+    w.minute,
+  )}:00`;
+};
+
+// the day as shown on the page
+const dayLabel = (date: Date) => {
+  const w = wallClock(date);
+
+  return `${pad(w.day)}/${pad(w.month)}/${w.year}`;
+};
 
 const prescription = (
   idPrescription: number,
@@ -205,16 +259,14 @@ test("the dates tab lists the inner prescription times grouped by day", async ({
   const card = page.getByRole("link").filter({ hasText: UPCOMING });
   await card.locator(".tab-prescription-dates").click();
 
-  const day = (d: Date) =>
-    `${pad(d.getDate())}/${pad(d.getMonth() + 1)}/${d.getFullYear()}`;
   const today = card.locator(".prescription-dates-day", {
-    hasText: day(FIXED_NOW),
+    hasText: dayLabel(FIXED_NOW),
   });
   await expect(today.locator(".ant-tag")).toHaveText(["10:00", "14:00"]);
   await expect(today.locator(".ant-tag.past")).toHaveText("10:00");
   await expect(
     card
-      .locator(".prescription-dates-day", { hasText: day(tomorrow) })
+      .locator(".prescription-dates-day", { hasText: dayLabel(tomorrow) })
       .locator(".ant-tag"),
   ).toHaveText("12:00");
 });
@@ -374,13 +426,7 @@ test("moving to the next day hides prescriptions of the current day", async ({
 
   const tomorrow = shiftHours(24);
   const filter = datesFilter(page);
-  await filter
-    .locator(".ant-picker input")
-    .fill(
-      `${pad(tomorrow.getDate())}/${pad(
-        tomorrow.getMonth() + 1,
-      )}/${tomorrow.getFullYear()}`,
-    );
+  await filter.locator(".ant-picker input").fill(dayLabel(tomorrow));
   await filter.locator(".ant-picker input").press("Enter");
 
   await expect(page.getByText(UPCOMING)).toBeHidden();
