@@ -112,13 +112,6 @@ export const ORDER_OPTIONS = [
     type: "date",
     feature: Feature.PRIORITIZATION_PRESCRIPTION_DATES,
   },
-  {
-    label: "Última prescrição",
-    key: "lastPrescriptionDate",
-    formattedKey: "lastPrescriptionDateFormated",
-    type: "date",
-    feature: Feature.PRIORITIZATION_PRESCRIPTION_DATES,
-  },
 ].sort((a, b) => a.label.localeCompare(b.label));
 
 // options the user can pick: the ones bound to a feature need it enabled

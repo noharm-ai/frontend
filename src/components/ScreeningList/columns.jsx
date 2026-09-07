@@ -501,10 +501,7 @@ const columns = (sortedInfo, filteredInfo, t, bag) => {
           return sortOrder === "ascend" ? scoreDiff : -scoreDiff;
         }
 
-        if (
-          sortedInfo.columnKey === "nextPrescriptionDate" ||
-          sortedInfo.columnKey === "lastPrescriptionDate"
-        ) {
+        if (sortedInfo.columnKey === "nextPrescriptionDate") {
           const key = sortedInfo.columnKey;
           const scoreDiff = b.globalScore - a.globalScore;
           const aMissing = !a[key];
@@ -532,12 +529,9 @@ const columns = (sortedInfo, filteredInfo, t, bag) => {
         return Date.parse(a.date) - Date.parse(b.date);
       },
       sortOrder:
-        [
-          "date",
-          "firstAdministrationHour",
-          "nextPrescriptionDate",
-          "lastPrescriptionDate",
-        ].includes(sortedInfo.columnKey) && sortedInfo.order,
+        ["date", "firstAdministrationHour", "nextPrescriptionDate"].includes(
+          sortedInfo.columnKey,
+        ) && sortedInfo.order,
     },
     {
       title: t("screeningList.patientRisk"),

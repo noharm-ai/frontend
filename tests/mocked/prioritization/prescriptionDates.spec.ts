@@ -174,9 +174,6 @@ test("the prioritization is hidden from users without the feature", async ({
   await expect(
     dropdownOptions(page).filter({ hasText: "Próxima prescrição" }),
   ).toHaveCount(0);
-  await expect(
-    dropdownOptions(page).filter({ hasText: "Última prescrição" }),
-  ).toHaveCount(0);
 });
 
 test("is off until the user prioritizes by next prescription", async ({

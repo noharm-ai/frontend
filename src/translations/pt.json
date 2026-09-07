@@ -95,7 +95,6 @@
     "prescriptionDatesPlaceholder": "Todas as prescrições",
     "prescriptionDatesFrom": "A partir de",
     "prescriptionDatesHint": "Mostra as prescrições a partir deste momento",
-    "orderByLastPrescription": "Priorizar por última prescrição",
     "orderByPlaceholder": "Priorizar por",
     "patientRisk": "Risco do paciente",
     "prescriptionRisk": "Risco da prescrição",

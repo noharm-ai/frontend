@@ -513,8 +513,8 @@ export default function ScreeningList({
 
   const handleTableChange = (pagination, filters, sorter) => {
     // the "class" column drives the "date"/"firstAdministrationHour"/
-    // "nextPrescriptionDate"/"lastPrescriptionDate" custom sort buttons
-    // (see the "Priorizar por" select); antd reports its
+    // "nextPrescriptionDate" custom sort buttons (see the "Priorizar por"
+    // select); antd reports its
     // real key ("class") on every onChange, including pagination-only
     // changes, so ignore it here to avoid clobbering the tracked sortOrder.
     if (sorter.columnKey === "class") {
@@ -682,14 +682,9 @@ export default function ScreeningList({
                   </>
                 )}
                 {hasPrescriptionDates && (
-                  <>
-                    <Select.Option value="nextPrescriptionDate">
-                      {t("screeningList.orderByNextPrescription")}
-                    </Select.Option>
-                    <Select.Option value="lastPrescriptionDate">
-                      {t("screeningList.orderByLastPrescription")}
-                    </Select.Option>
-                  </>
+                  <Select.Option value="nextPrescriptionDate">
+                    {t("screeningList.orderByNextPrescription")}
+                  </Select.Option>
                 )}
               </Select>
             </div>
