@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { isEmpty } from "lodash";
 import { BellOutlined } from "@ant-design/icons";
-import { Flex } from "antd";
+import { Flex, Segmented } from "antd";
 
 import ExamListItem from "./ExamListItem";
 import Tooltip from "components/Tooltip";
@@ -13,19 +13,30 @@ import Empty from "components/Empty";
 import Help from "components/Help";
 import { Carousel } from "components/Carousel";
 import { setExamsModalAdmissionNumber } from "features/exams/ExamModal/ExamModalSlice";
+import { CultureTab } from "features/culture/CultureTab/CultureTab";
 import {
   trackPrescriptionAction,
   TrackedPrescriptionAction,
 } from "src/utils/tracker";
 
+const TAB_EXAMS = "exams";
+const TAB_CULTURE = "culture";
+
 export default function ExamCard({
   exams,
+  cultures,
   siderCollapsed,
   count,
   admissionNumber,
 }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const [selectedTab, setSelectedTab] = useState(TAB_EXAMS);
+
+  // schemas without a culture pipeline never get the tab, and the selection
+  // falls back to Exames when the next patient has no cultures
+  const hasCultures = !isEmpty(cultures);
+  const tab = hasCultures ? selectedTab : TAB_EXAMS;
 
   const openModal = () => {
     dispatch(setExamsModalAdmissionNumber(admissionNumber));
@@ -36,13 +47,33 @@ export default function ExamCard({
     <PrescriptionCard className="full-height max-height">
       <div className="header">
         <h3 className="title">
-          {t("tableHeader.exams")}
-          <Help text={t("tooltips.recentExams")} />
+          {hasCultures ? (
+            <Segmented
+              size="small"
+              value={tab}
+              onChange={setSelectedTab}
+              options={[
+                { label: t("tableHeader.exams"), value: TAB_EXAMS },
+                { label: t("culture.tabTitle"), value: TAB_CULTURE },
+              ]}
+            />
+          ) : (
+            t("tableHeader.exams")
+          )}
+          <Help
+            text={
+              tab === TAB_CULTURE
+                ? t("culture.hint")
+                : t("tooltips.recentExams")
+            }
+          />
         </h3>
       </div>
       <div className="content">
         <Flex align="center" style={{ height: "100%" }}>
-          {exams && exams.length > 0 ? (
+          {tab === TAB_CULTURE ? (
+            <CultureTab cultures={cultures} />
+          ) : exams && exams.length > 0 ? (
             <div style={{ width: "100%" }}>
               <Carousel infinite={false}>
                 {[
@@ -74,7 +105,7 @@ export default function ExamCard({
           )}
         </Flex>
       </div>
-      {!isEmpty(exams) && (
+      {tab === TAB_EXAMS && !isEmpty(exams) && (
         <div className="footer">
           <div className="stats">
             {count > 0 && (

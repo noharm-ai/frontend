@@ -43,6 +43,7 @@ export default function Patient({
   const {
     alertExams,
     exams,
+    cultures,
     notesInfo,
     notesInfoId,
     notesInfoDate,
@@ -117,6 +118,7 @@ export default function Patient({
         <ExamCard
           admissionNumber={prescription.admissionNumber}
           exams={exams}
+          cultures={cultures}
           siderCollapsed={siderCollapsed}
           count={alertExams}
         />

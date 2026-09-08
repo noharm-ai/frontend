@@ -1344,5 +1344,19 @@
     "moduleCompletedProgressStat": "Progresso",
     "moduleCompletedTitle": "Parabéns!",
     "moduleCompletedMessage": "Você concluiu o módulo de treinamento \"{{module}}\"."
+  },
+  "culture": {
+    "tabTitle": "Cultura",
+    "hint": "Resultados de cultura e antibiograma do paciente, agrupados por medicamento. Enquanto o resultado laboratorial não é liberado, é exibida a predição gerada pela NoHarm, identificada pelo ícone de robô.",
+    "empty": "Nenhuma cultura encontrada",
+    "microorganism": "Microorganismo",
+    "material": "Material",
+    "result": "Resultado",
+    "collectionDate": "Data da coleta",
+    "predictionAccuracy": "Predição NoHarm, acurácia",
+    "prediction": {
+      "R": "Resistente",
+      "S": "Sensível"
+    }
   }
 }
