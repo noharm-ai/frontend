@@ -1349,6 +1349,11 @@
     "tabTitle": "Cultura",
     "hint": "Resultados de cultura e antibiograma do paciente, agrupados por medicamento. Enquanto o resultado laboratorial não é liberado, é exibida a predição gerada pela NoHarm, identificada pelo ícone de robô.",
     "empty": "Nenhuma cultura encontrada",
+    "groups": {
+      "resistant": "Resistentes",
+      "susceptible": "Sensíveis",
+      "prediction": "Predição NoHarm"
+    },
     "microorganism": "Microorganismo",
     "material": "Material",
     "result": "Resultado",

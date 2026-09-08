@@ -71,12 +71,20 @@ test("culture tab lists the drugs and flags predictions", async ({
   await page.locator(".ant-segmented-item-label", { hasText: "Cultura" }).click();
   await expect(page.getByRole("radio", { name: "Cultura" })).toBeChecked();
 
-  const released = page.locator(".culture-item", { hasText: "OXACILINA" });
-  await expect(released).toContainText("Resistente");
+  // released results sit in their own group, predictions in the last one
+  const resistant = page.locator(".culture-group-resistant");
+  await expect(resistant).toContainText("Resistentes");
+  await expect(resistant.locator(".culture-item")).toHaveText(["OXACILINA"]);
+
+  await expect(page.locator(".culture-group-susceptible")).toBeHidden();
 
   // the pending culture shows the prediction, not a lab result
-  const pending = page.locator(".culture-item", { hasText: "GENTAMICINA" });
-  await expect(pending).toContainText("Sensível");
+  const predicted = page.locator(".culture-group-prediction");
+  await expect(predicted).toContainText("Predição NoHarm");
+  const pending = predicted.locator(".culture-item", {
+    hasText: "GENTAMICINA",
+  });
+  await expect(pending).toContainText("S");
   await expect(pending.locator(".anticon-robot")).toBeVisible();
 });
 

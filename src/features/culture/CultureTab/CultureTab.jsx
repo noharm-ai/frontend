@@ -7,23 +7,79 @@ import moment from "moment";
 import Popover from "components/PopoverStyled";
 import Empty from "components/Empty";
 
-import { List, Item } from "./CultureTab.style";
+import { Container, Group, List, Item } from "./CultureTab.style";
 
-const isResistant = (result) =>
-  `${result}`
+const GROUP_RESISTANT = "resistant";
+const GROUP_SUSCEPTIBLE = "susceptible";
+const GROUP_PREDICTION = "prediction";
+
+const RESULT_RESISTANT = "resistant";
+const RESULT_SUSCEPTIBLE = "susceptible";
+const RESULT_OTHER = "other";
+
+const normalize = (text) =>
+  `${text}`
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
-    .startsWith("resist");
+    .trim();
+
+// the lab result is free text, so only the two unambiguous readings are
+// classified: anything else keeps its own wording on the card
+const classifyResult = (result) => {
+  const text = normalize(result);
+
+  if (text.startsWith("resist")) {
+    return RESULT_RESISTANT;
+  }
+
+  if (text.startsWith("sensi") || text.startsWith("suscep")) {
+    return RESULT_SUSCEPTIBLE;
+  }
+
+  return RESULT_OTHER;
+};
 
 // a pending culture is shown through the prediction, which must never be
 // presented as if it were the lab result
 const isPrediction = (item) => !item.result;
 
-const isAlert = (item) =>
-  isPrediction(item) ? item.prediction === "R" : isResistant(item.result);
-
 const formatDate = (date) => (date ? moment(date).format("DD/MM/YYYY") : "-");
+
+const byDrug = (a, b) => `${a.drug}`.localeCompare(`${b.drug}`);
+
+// inside the prediction group a predicted resistance is the one worth reading
+// first, the group header cannot say it for both
+const byPrediction = (a, b) => {
+  const rank = (drug) => (drug.items[0].prediction === "R" ? 0 : 1);
+
+  return rank(a) - rank(b) || byDrug(a, b);
+};
+
+const buildGroups = (cultures) => {
+  const resistant = [];
+  const susceptible = [];
+  const predictions = [];
+
+  cultures.forEach((drug) => {
+    // the most recent collection is the one shown on the card
+    const [current] = drug.items;
+
+    if (isPrediction(current)) {
+      predictions.push(drug);
+    } else if (classifyResult(current.result) === RESULT_RESISTANT) {
+      resistant.push(drug);
+    } else {
+      susceptible.push(drug);
+    }
+  });
+
+  return [
+    { key: GROUP_RESISTANT, drugs: resistant.sort(byDrug) },
+    { key: GROUP_SUSCEPTIBLE, drugs: susceptible.sort(byDrug) },
+    { key: GROUP_PREDICTION, drugs: predictions.sort(byPrediction) },
+  ].filter((group) => group.drugs.length > 0);
+};
 
 const CultureResult = ({ item, t }) => {
   if (!isPrediction(item)) {
@@ -64,8 +120,18 @@ const CultureDetails = ({ drug, t }) => (
 );
 
 const CultureListItem = ({ drug, t }) => {
-  // the most recent collection is the one shown on the card
   const [current] = drug.items;
+  const prediction = isPrediction(current);
+  const resultKind = prediction ? null : classifyResult(current.result);
+
+  // the group header already states the result, so the item only spells out
+  // what the header does not cover: the predicted S/R and any result whose
+  // wording is not a plain "sensível"
+  const marker = prediction
+    ? current.prediction
+    : resultKind === RESULT_OTHER
+      ? current.result
+      : null;
 
   return (
     <Popover
@@ -76,16 +142,16 @@ const CultureListItem = ({ drug, t }) => {
     >
       <Item
         className="culture-item"
-        $alert={isAlert(current)}
-        $prediction={isPrediction(current)}
+        $prediction={prediction}
+        $resistant={resultKind === RESULT_RESISTANT}
       >
         <div className="name">{drug.drug}</div>
-        <div className="result">
-          {isPrediction(current) && <RobotOutlined />}
-          <span>
-            <CultureResult item={current} t={t} />
-          </span>
-        </div>
+        {marker && (
+          <div className="marker">
+            {prediction && <RobotOutlined />}
+            <span>{marker}</span>
+          </div>
+        )}
       </Item>
     </Popover>
   );
@@ -106,10 +172,21 @@ export function CultureTab({ cultures }) {
   }
 
   return (
-    <List>
-      {cultures.map((drug) => (
-        <CultureListItem drug={drug} key={drug.drug} t={t} />
+    <Container>
+      {buildGroups(cultures).map((group) => (
+        <Group key={group.key} className={`culture-group-${group.key}`}>
+          <div className="group-title">
+            {group.key === GROUP_PREDICTION && <RobotOutlined />}
+            <span>{t(`culture.groups.${group.key}`)}</span>
+            <span className="count">({group.drugs.length})</span>
+          </div>
+          <List>
+            {group.drugs.map((drug) => (
+              <CultureListItem drug={drug} key={drug.drug} t={t} />
+            ))}
+          </List>
+        </Group>
       ))}
-    </List>
+    </Container>
   );
 }
