@@ -28,4 +28,5 @@ export const LIST_FIELDS = new Set([
   "idDepartment",
   "idSegment",
   "tags",
+  "admissionNumber",
 ]);

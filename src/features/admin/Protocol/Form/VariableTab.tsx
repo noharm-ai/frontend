@@ -142,6 +142,8 @@ export function VariableTab() {
       "Verifica se o convênio da prescrição contém o texto informado (comparação parcial, ignora maiúsculas/minúsculas).",
     [ProtocolVariableFieldEnum.TAGS]:
       "Verifica se algum dos marcadores do paciente está (IN) ou não está (NOTIN) na lista informada. Um paciente sem marcadores nunca atende ao IN e sempre atende ao NOTIN.",
+    [ProtocolVariableFieldEnum.ADMISSION_NUMBER]:
+      "Verifica se o número de atendimento do paciente (pessoa.nratendimento) está (IN) ou não está (NOTIN) na lista informada. Digite os números de atendimento e pressione Enter para adicionar cada um.",
   };
 
   return (
@@ -603,6 +605,25 @@ export function VariableTab() {
                       <ProtocolTagSelect
                         value={v.value}
                         onChange={(names) => setConfig(idx, "value", names)}
+                      />
+                    ) : v.field ===
+                      ProtocolVariableFieldEnum.ADMISSION_NUMBER ? (
+                      <Select
+                        value={v.value}
+                        mode="tags"
+                        tokenSeparators={[",", " ", ";"]}
+                        open={false}
+                        suffixIcon={null}
+                        placeholder="Digite o nratendimento e pressione Enter"
+                        onChange={(value) =>
+                          setConfig(
+                            idx,
+                            "value",
+                            ((value ?? []) as any[])
+                              .map((n) => String(n).trim())
+                              .filter((n) => /^\d+$/.test(n)),
+                          )
+                        }
                       />
                     ) : v.operator === "IN" || v.operator === "NOTIN" ? (
                       <Select
