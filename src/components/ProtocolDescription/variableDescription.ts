@@ -76,6 +76,8 @@ const SUBJECTS: Record<string, string> = {
   [ProtocolVariableFieldEnum.SEGMENT_TYPE]: "o tipo de segmento",
   [ProtocolVariableFieldEnum.INSURANCE]: "o convênio da prescrição",
   [ProtocolVariableFieldEnum.TAGS]: "algum marcador do paciente",
+  [ProtocolVariableFieldEnum.ADMISSION_NUMBER]:
+    "o número de atendimento do paciente",
 };
 
 const UNITS: Record<string, string> = {
