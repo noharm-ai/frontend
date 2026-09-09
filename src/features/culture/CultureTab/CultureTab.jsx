@@ -13,36 +13,16 @@ const GROUP_RESISTANT = "resistant";
 const GROUP_SUSCEPTIBLE = "susceptible";
 const GROUP_PREDICTION = "prediction";
 
-const RESULT_RESISTANT = "resistant";
-const RESULT_SUSCEPTIBLE = "susceptible";
-const RESULT_OTHER = "other";
-
-const normalize = (text) =>
-  `${text}`
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .trim();
-
-// the lab result is free text, so only the two unambiguous readings are
-// classified: anything else keeps its own wording on the card
-const classifyResult = (result) => {
-  const text = normalize(result);
-
-  if (text.startsWith("resist")) {
-    return RESULT_RESISTANT;
-  }
-
-  if (text.startsWith("sensi") || text.startsWith("suscep")) {
-    return RESULT_SUSCEPTIBLE;
-  }
-
-  return RESULT_OTHER;
-};
+// the backend classifies the free text of the antibiogram (culture_service
+// RESULT_TYPES) and predictions share the same alphabet
+const RESULT_RESISTANT = "R";
 
 // a pending culture is shown through the prediction, which must never be
 // presented as if it were the lab result
 const isPrediction = (item) => !item.result;
+
+const resultTypeOf = (item) =>
+  isPrediction(item) ? item.predictionType : item.resultType;
 
 const formatDate = (date) => (date ? moment(date).format("DD/MM/YYYY") : "-");
 
@@ -51,7 +31,8 @@ const byDrug = (a, b) => `${a.drug}`.localeCompare(`${b.drug}`);
 // inside the prediction group a predicted resistance is the one worth reading
 // first, the group header cannot say it for both
 const byPrediction = (a, b) => {
-  const rank = (drug) => (drug.items[0].prediction === "R" ? 0 : 1);
+  const rank = (drug) =>
+    resultTypeOf(drug.items[0]) === RESULT_RESISTANT ? 0 : 1;
 
   return rank(a) - rank(b) || byDrug(a, b);
 };
@@ -62,14 +43,18 @@ const buildGroups = (cultures) => {
   const predictions = [];
 
   cultures.forEach((drug) => {
-    // the most recent collection is the one shown on the card
+    // the item that represents the drug: the backend puts the released
+    // results first (culture_service._group_by_drug), so a drug that has an
+    // antibiogram is never grouped by a prediction of a pending collection
     const [current] = drug.items;
 
     if (isPrediction(current)) {
       predictions.push(drug);
-    } else if (classifyResult(current.result) === RESULT_RESISTANT) {
+    } else if (resultTypeOf(current) === RESULT_RESISTANT) {
       resistant.push(drug);
     } else {
+      // a result the backend could not read stays here, spelled out by
+      // resultDetail instead of being guessed into resistance
       susceptible.push(drug);
     }
   });
@@ -122,16 +107,11 @@ const CultureDetails = ({ drug, t }) => (
 const CultureListItem = ({ drug, t }) => {
   const [current] = drug.items;
   const prediction = isPrediction(current);
-  const resultKind = prediction ? null : classifyResult(current.result);
 
   // the group header already states the result, so the item only spells out
   // what the header does not cover: the predicted S/R and any result whose
-  // wording is not a plain "sensível"
-  const marker = prediction
-    ? current.prediction
-    : resultKind === RESULT_OTHER
-      ? current.result
-      : null;
+  // wording says more than the group itself
+  const marker = prediction ? current.prediction : current.resultDetail;
 
   return (
     <Popover
@@ -143,7 +123,7 @@ const CultureListItem = ({ drug, t }) => {
       <Item
         className="culture-item"
         $prediction={prediction}
-        $resistant={resultKind === RESULT_RESISTANT}
+        $resistant={resultTypeOf(current) === RESULT_RESISTANT}
       >
         <div className="name">{drug.drug}</div>
         {marker && (

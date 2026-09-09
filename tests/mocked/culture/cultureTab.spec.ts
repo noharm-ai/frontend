@@ -11,6 +11,27 @@ import { loadFixture } from "../support/defaultHandlers";
 
 const CULTURES = [
   {
+    drug: "AMICACINA",
+    items: [
+      {
+        key: "SANGUE TOTAL#MICROORGANISMO TESTE#AMICACINA",
+        idExamItem: 900001,
+        microorganism: "Microorganismo Teste",
+        material: "Sangue Total",
+        // the backend reads "intermediário" as susceptible, but keeps the
+        // wording in resultDetail because the group header does not say it
+        result: "intermediário",
+        resultType: "S",
+        resultDetail: "intermediário",
+        prediction: null,
+        predictionType: null,
+        probability: null,
+        collectionDate: "2024-03-01T12:17:03",
+        releaseDate: "2024-03-08T07:17:02",
+      },
+    ],
+  },
+  {
     drug: "GENTAMICINA",
     items: [
       {
@@ -19,10 +40,49 @@ const CULTURES = [
         microorganism: "Microorganismo Teste",
         material: "Sangue Total",
         result: null,
+        resultType: null,
+        resultDetail: null,
         prediction: "S",
+        predictionType: "S",
         probability: 0.65,
         collectionDate: "2024-03-01T12:17:03",
         releaseDate: "2024-03-08T07:17:02",
+      },
+    ],
+  },
+  {
+    // both a released result and a prediction of a newer, still pending
+    // collection: the backend hands the result over first and the card must
+    // read the drug by it, not by the prediction
+    drug: "CEFEPIME",
+    items: [
+      {
+        key: "SANGUE TOTAL#MICROORGANISMO TESTE#CEFEPIME#1",
+        idExamItem: 900001,
+        microorganism: "Microorganismo Teste",
+        material: "Sangue Total",
+        result: "Resistente",
+        resultType: "R",
+        resultDetail: null,
+        prediction: null,
+        predictionType: null,
+        probability: null,
+        collectionDate: "2024-03-01T12:17:03",
+        releaseDate: "2024-03-08T07:17:02",
+      },
+      {
+        key: "SANGUE TOTAL#MICROORGANISMO TESTE#CEFEPIME#2",
+        idExamItem: 900002,
+        microorganism: "Microorganismo Teste",
+        material: "Sangue Total",
+        result: null,
+        resultType: null,
+        resultDetail: null,
+        prediction: "S",
+        predictionType: "S",
+        probability: 0.71,
+        collectionDate: "2024-03-10T12:17:03",
+        releaseDate: null,
       },
     ],
   },
@@ -35,7 +95,10 @@ const CULTURES = [
         microorganism: "Microorganismo Teste",
         material: "Sangue Total",
         result: "Resistente",
+        resultType: "R",
+        resultDetail: null,
         prediction: null,
+        predictionType: null,
         probability: null,
         collectionDate: "2024-03-01T12:17:03",
         releaseDate: "2024-03-08T07:17:02",
@@ -83,13 +146,28 @@ test("culture tab lists the drugs and flags predictions", async ({
   // released results sit in their own group, predictions in the last one
   const resistant = page.locator(".culture-group-resistant");
   await expect(resistant).toContainText("Resistentes");
-  await expect(resistant.locator(".culture-item")).toHaveText(["OXACILINA"]);
+  await expect(resistant.locator(".culture-item")).toHaveText([
+    "CEFEPIME",
+    "OXACILINA",
+  ]);
 
-  await expect(page.locator(".culture-group-susceptible")).toBeHidden();
+  // a result that is susceptible but does not read as a plain "Sensível"
+  // keeps its own wording on the row
+  const susceptible = page.locator(".culture-group-susceptible");
+  await expect(susceptible).toContainText("Sensíveis");
+  const intermediate = susceptible.locator(".culture-item", {
+    hasText: "AMICACINA",
+  });
+  await expect(intermediate).toContainText("intermediário");
 
   // the pending culture shows the prediction, not a lab result
   const predicted = page.locator(".culture-group-prediction");
   await expect(predicted).toContainText("Predição NoHarm");
+  // a drug that already has an antibiogram never shows up here, even with a
+  // newer collection still pending
+  await expect(
+    predicted.locator(".culture-item", { hasText: "CEFEPIME" }),
+  ).toHaveCount(0);
   const pending = predicted.locator(".culture-item", {
     hasText: "GENTAMICINA",
   });
