@@ -983,6 +983,8 @@
     "lactating": "Lactante",
     "protocol": "Protocolo Item",
     "protocolGeneral": "Protocolo Geral",
+    "cultureResistant": "Cultura com resistência ao medicamento",
+    "cultureResistantClass": "Cultura com resistência na mesma classe",
 
     "high": "Alertas Nível Alto",
     "medium": "Alertas Nível Médio",
@@ -1010,7 +1012,9 @@
     "pregnant": "GES",
     "lactating": "LAC",
     "protocol": "PRO",
-    "protocolGeneral": "PRO"
+    "protocolGeneral": "PRO",
+    "cultureResistant": "CR",
+    "cultureResistantClass": "CRC"
   },
 
   "substanceTag": {

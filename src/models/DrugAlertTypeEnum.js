@@ -20,6 +20,8 @@ export default class DrugAlertTypeEnum {
   static LACTATING = "lactating";
   static PROTOCOL = "protocol";
   static PROTOCOL_GENERAL = "protocolGeneral";
+  static CULTURE_RESISTANT = "cultureResistant";
+  static CULTURE_RESISTANT_CLASS = "cultureResistantClass";
 
   static getAlertTypes = (t) => {
     const types = [
@@ -107,6 +109,14 @@ export default class DrugAlertTypeEnum {
       {
         id: DrugAlertTypeEnum.PROTOCOL_GENERAL,
         label: t(`drugAlertType.${DrugAlertTypeEnum.PROTOCOL_GENERAL}`),
+      },
+      {
+        id: DrugAlertTypeEnum.CULTURE_RESISTANT,
+        label: t(`drugAlertType.${DrugAlertTypeEnum.CULTURE_RESISTANT}`),
+      },
+      {
+        id: DrugAlertTypeEnum.CULTURE_RESISTANT_CLASS,
+        label: t(`drugAlertType.${DrugAlertTypeEnum.CULTURE_RESISTANT_CLASS}`),
       },
     ];
 

@@ -972,6 +972,8 @@
     "lactating": "Lactating",
     "protocol": "Protocol Item",
     "protocolGeneral": "General Protocol",
+    "cultureResistant": "Culture resistant to the drug",
+    "cultureResistantClass": "Culture resistant in the same class",
 
     "exams": "Lab results x Drugs",
     "duplicity": "Duplicity",
@@ -1002,7 +1004,9 @@
     "pregnant": "GES",
     "lactating": "LAC",
     "protocol": "PRO",
-    "protocolGeneral": "PRO"
+    "protocolGeneral": "PRO",
+    "cultureResistant": "CR",
+    "cultureResistantClass": "CRC"
   },
 
   "substanceTag": {
