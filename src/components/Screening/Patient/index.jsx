@@ -119,6 +119,7 @@ export default function Patient({
           admissionNumber={prescription.admissionNumber}
           exams={exams}
           cultures={cultures}
+          prescription={prescription}
           siderCollapsed={siderCollapsed}
           count={alertExams}
         />

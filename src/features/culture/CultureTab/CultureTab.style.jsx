@@ -3,8 +3,21 @@ import styled from "styled-components";
 import { get } from "styles/utils";
 
 export const Container = styled.div`
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  max-height: 205px;
+  /* the card centers its content for the exams carousel: the culture list
+     instead fills it, so the first group sits right under the tabs */
+  align-self: stretch;
+  height: 100%;
+  min-height: 0;
+  /* below the card's own max-height breakpoint nothing caps the list */
+  max-height: 222px;
+`;
+
+export const Scroll = styled.div`
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   padding-right: 5px;
 
@@ -30,10 +43,15 @@ export const Group = styled.div`
   }
 
   .group-title {
+    /* the list scrolls, the header must not leave its rows without context */
+    position: sticky;
+    top: 0;
+    z-index: 1;
     display: flex;
     align-items: center;
     gap: 5px;
-    margin-bottom: 5px;
+    padding-bottom: 5px;
+    background: #fff;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.04em;

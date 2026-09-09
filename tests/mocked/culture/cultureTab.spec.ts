@@ -15,6 +15,7 @@ const CULTURES = [
     items: [
       {
         key: "SANGUE TOTAL#MICROORGANISMO TESTE#GENTAMICINA",
+        idExamItem: 900001,
         microorganism: "Microorganismo Teste",
         material: "Sangue Total",
         result: null,
@@ -30,6 +31,7 @@ const CULTURES = [
     items: [
       {
         key: "SANGUE TOTAL#MICROORGANISMO TESTE#OXACILINA",
+        idExamItem: 900001,
         microorganism: "Microorganismo Teste",
         material: "Sangue Total",
         result: "Resistente",
@@ -68,8 +70,15 @@ test("culture tab lists the drugs and flags predictions", async ({
   await expect(page.getByRole("radio", { name: "Exames" })).toBeChecked();
 
   // antd Segmented keeps the radio input hidden behind its label
-  await page.locator(".ant-segmented-item-label", { hasText: "Cultura" }).click();
+  await page
+    .locator(".ant-segmented-item-label", { hasText: "Cultura" })
+    .click();
   await expect(page.getByRole("radio", { name: "Cultura" })).toBeChecked();
+
+  // the footer carries the newest release across every culture
+  await expect(page.locator(".culture-last-release")).toHaveText(
+    "liberação mais recente em 08/03/24 07:17",
+  );
 
   // released results sit in their own group, predictions in the last one
   const resistant = page.locator(".culture-group-resistant");
@@ -103,4 +112,34 @@ test("card keeps no tabs when the patient has no cultures", async ({
   ).toBeVisible();
   await expect(page.getByRole("radio", { name: "Cultura" })).toBeHidden();
   await expect(page.getByRole("heading", { name: "Exames" })).toBeVisible();
+});
+
+test("the footer link opens the full culture report", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override("GET /prescriptions/:id", {
+    json: prescriptionWith({ cultures: CULTURES }),
+  });
+  mockApi.override("GET /reports/culture", {
+    json: { status: "success", data: [] },
+  });
+
+  await page.goto("/prescricao/199");
+  await page
+    .locator(".ant-segmented-item-label", { hasText: "Cultura" })
+    .click();
+
+  const card = page
+    .locator(".ant-col", { has: page.getByRole("radio", { name: "Exames" }) })
+    .first();
+  await card.getByRole("button", { name: "Ver todos" }).click();
+
+  // the same report the patient card's Relatórios tab opens
+  await expect(
+    page.getByRole("heading", { name: "Relatório: Culturas" }).first(),
+  ).toBeVisible();
+  expect(
+    mockApi.requests.filter((r) => r.path === "/reports/culture"),
+  ).not.toHaveLength(0);
 });

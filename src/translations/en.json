@@ -1339,6 +1339,7 @@
     "tabTitle": "Culture",
     "hint": "Patient culture and antibiogram results, grouped by drug. While the lab result is still pending, the NoHarm prediction is shown instead, marked with the robot icon.",
     "empty": "No culture found",
+    "lastRelease": "latest release on {{date}}",
     "groups": {
       "resistant": "Resistant",
       "susceptible": "Susceptible",

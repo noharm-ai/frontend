@@ -14,6 +14,7 @@ import Help from "components/Help";
 import { Carousel } from "components/Carousel";
 import { setExamsModalAdmissionNumber } from "features/exams/ExamModal/ExamModalSlice";
 import { CultureTab } from "features/culture/CultureTab/CultureTab";
+import { CultureCardFooter } from "features/culture/CultureCardFooter/CultureCardFooter";
 import {
   trackPrescriptionAction,
   TrackedPrescriptionAction,
@@ -28,6 +29,7 @@ export default function ExamCard({
   siderCollapsed,
   count,
   admissionNumber,
+  prescription,
 }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -105,28 +107,34 @@ export default function ExamCard({
           )}
         </Flex>
       </div>
-      {tab === TAB_EXAMS && !isEmpty(exams) && (
+      {tab === TAB_CULTURE ? (
         <div className="footer">
-          <div className="stats">
-            {count > 0 && (
-              <div>
-                <Tooltip title={t("screeningList.clExamHint")}>
-                  <BellOutlined style={{ fontSize: "18px" }} />{" "}
-                  <span>{count}</span>
-                </Tooltip>
-              </div>
-            )}
-          </div>
-          <div className="action">
-            <Button
-              type="link"
-              className="gtm-btn-exams-all"
-              onClick={() => openModal()}
-            >
-              Ver todos
-            </Button>
-          </div>
+          <CultureCardFooter cultures={cultures} prescription={prescription} />
         </div>
+      ) : (
+        !isEmpty(exams) && (
+          <div className="footer">
+            <div className="stats">
+              {count > 0 && (
+                <div>
+                  <Tooltip title={t("screeningList.clExamHint")}>
+                    <BellOutlined style={{ fontSize: "18px" }} />{" "}
+                    <span>{count}</span>
+                  </Tooltip>
+                </div>
+              )}
+            </div>
+            <div className="action">
+              <Button
+                type="link"
+                className="gtm-btn-exams-all"
+                onClick={() => openModal()}
+              >
+                Ver todos
+              </Button>
+            </div>
+          </div>
+        )
       )}
     </PrescriptionCard>
   );

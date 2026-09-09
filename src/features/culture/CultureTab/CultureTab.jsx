@@ -7,7 +7,7 @@ import moment from "moment";
 import Popover from "components/PopoverStyled";
 import Empty from "components/Empty";
 
-import { Container, Group, List, Item } from "./CultureTab.style";
+import { Container, Scroll, Group, List, Item } from "./CultureTab.style";
 
 const GROUP_RESISTANT = "resistant";
 const GROUP_SUSCEPTIBLE = "susceptible";
@@ -171,22 +171,26 @@ export function CultureTab({ cultures }) {
     );
   }
 
+  const groups = buildGroups(cultures);
+
   return (
     <Container>
-      {buildGroups(cultures).map((group) => (
-        <Group key={group.key} className={`culture-group-${group.key}`}>
-          <div className="group-title">
-            {group.key === GROUP_PREDICTION && <RobotOutlined />}
-            <span>{t(`culture.groups.${group.key}`)}</span>
-            <span className="count">({group.drugs.length})</span>
-          </div>
-          <List>
-            {group.drugs.map((drug) => (
-              <CultureListItem drug={drug} key={drug.drug} t={t} />
-            ))}
-          </List>
-        </Group>
-      ))}
+      <Scroll>
+        {groups.map((group) => (
+          <Group key={group.key} className={`culture-group-${group.key}`}>
+            <div className="group-title">
+              {group.key === GROUP_PREDICTION && <RobotOutlined />}
+              <span>{t(`culture.groups.${group.key}`)}</span>
+              <span className="count">({group.drugs.length})</span>
+            </div>
+            <List>
+              {group.drugs.map((drug) => (
+                <CultureListItem drug={drug} key={drug.drug} t={t} />
+              ))}
+            </List>
+          </Group>
+        ))}
+      </Scroll>
     </Container>
   );
 }
