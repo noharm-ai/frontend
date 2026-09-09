@@ -66,6 +66,17 @@ export const Group = styled.div`
       font-weight: 400;
     }
   }
+
+  /* resistant and in use: the group the card exists to surface */
+  &.culture-group-resistantInUse .group-title {
+    color: #cf1322;
+
+    .anticon {
+      /* the header font is 11px, too small for the germ to read as one */
+      font-size: 15px;
+      color: #f44336;
+    }
+  }
 `;
 
 // mirrors the exams grid (components/PrescriptionCard.jsx .exam-list)
@@ -85,12 +96,15 @@ export const List = styled.div`
 `;
 
 const borderColor = (props) => {
+  // resistant and in use: the one row that must be found at a glance
+  if (props.$inUse) return "#f44336";
   if (props.$prediction) return "#a991d6";
 
   return props.$resistant ? "#F68C97" : "#e0e0e0";
 };
 
 const backgroundColor = (props) => {
+  if (props.$inUse) return "#F9C4CB";
   if (props.$prediction) return "#F4EFFB";
 
   return props.$resistant ? "#F8DEE2" : "#fff";
@@ -109,11 +123,29 @@ export const Item = styled.div`
   .name {
     flex: 1;
     font-size: 14px;
-    font-weight: 400;
+    font-weight: ${(props) => (props.$inUse ? 600 : 400)};
     color: var(--nh-text-color);
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+  }
+
+  /* the drug is in the prescription being screened: on a resistant row this
+     is the reason the item carries an alert */
+  .prescribed {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+
+    .anticon {
+      font-size: 15px;
+      color: #2e3c5a;
+    }
+
+    &.in-use .anticon {
+      font-size: 16px;
+      color: #f44336;
+    }
   }
 
   .marker {

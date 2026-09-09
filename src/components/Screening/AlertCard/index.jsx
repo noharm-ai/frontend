@@ -23,6 +23,7 @@ import { IconElderly } from "components/Icon/svgs/IconElderly";
 import { IconAllergy } from "components/Icon/svgs/IconAllergy";
 import { IconTube } from "components/Icon/svgs/IconTube";
 import { IconDuplicity } from "components/Icon/svgs/IconDuplicity";
+import { IconGerm } from "components/Icon/svgs/IconGerm";
 import {
   trackPrescriptionAction,
   TrackedPrescriptionAction,
@@ -86,6 +87,13 @@ export const getAlerts = (stats, t) => [
     value: stats.dup,
     filters: { typeList: ["dm", "dt"] },
   },
+  {
+    name: "culture",
+    label: t("alerts.culture"),
+    icon: () => <CustomIcon component={IconGerm} />,
+    value: (stats.cultureResistant || 0) + (stats.cultureResistantClass || 0),
+    filters: { typeList: ["cultureResistant", "cultureResistantClass"] },
+  },
 ];
 
 export default function AlertCard({ stats, prescription }) {
@@ -127,7 +135,12 @@ export default function AlertCard({ stats, prescription }) {
           {alerts.map((a) => (
             <Tooltip title={a.label} key={a.label}>
               <div
-                className={a.value > 0 ? "alert" : ""}
+                className={[
+                  a.value > 0 ? "alert" : "",
+                  a.name ? `alert-${a.name}` : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
                 onClick={() => openModal(a.filters)}
               >
                 {a.icon()} <span>{a.value}</span>

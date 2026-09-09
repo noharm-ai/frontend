@@ -7,6 +7,7 @@ import { Flex, Segmented } from "antd";
 
 import ExamListItem from "./ExamListItem";
 import Tooltip from "components/Tooltip";
+import Badge from "components/Badge";
 import Button from "components/Button";
 import PrescriptionCard from "components/PrescriptionCard";
 import Empty from "components/Empty";
@@ -15,6 +16,7 @@ import { Carousel } from "components/Carousel";
 import { setExamsModalAdmissionNumber } from "features/exams/ExamModal/ExamModalSlice";
 import { CultureTab } from "features/culture/CultureTab/CultureTab";
 import { CultureCardFooter } from "features/culture/CultureCardFooter/CultureCardFooter";
+import { countResistantInUse } from "features/culture/cultureResistance";
 import {
   trackPrescriptionAction,
   TrackedPrescriptionAction,
@@ -40,6 +42,10 @@ export default function ExamCard({
   const hasCultures = !isEmpty(cultures);
   const tab = hasCultures ? selectedTab : TAB_EXAMS;
 
+  // the culture card sits behind a tab, so a resistant drug the patient is on
+  // would go unseen unless the tab itself says so
+  const resistantInUse = countResistantInUse(cultures);
+
   const openModal = () => {
     dispatch(setExamsModalAdmissionNumber(admissionNumber));
     trackPrescriptionAction(TrackedPrescriptionAction.SHOW_EXAMS);
@@ -56,7 +62,25 @@ export default function ExamCard({
               onChange={setSelectedTab}
               options={[
                 { label: t("tableHeader.exams"), value: TAB_EXAMS },
-                { label: t("culture.tabTitle"), value: TAB_CULTURE },
+                {
+                  label:
+                    resistantInUse > 0 ? (
+                      <Tooltip
+                        title={t("culture.resistantInUseTabHint", {
+                          count: resistantInUse,
+                        })}
+                      >
+                        <Badge dot offset={[5, 2]}>
+                          <span className="culture-tab-alert">
+                            {t("culture.tabTitle")}
+                          </span>
+                        </Badge>
+                      </Tooltip>
+                    ) : (
+                      t("culture.tabTitle")
+                    ),
+                  value: TAB_CULTURE,
+                },
               ]}
             />
           ) : (

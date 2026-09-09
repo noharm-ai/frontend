@@ -1,3 +1,5 @@
+import type { Page } from "@playwright/test";
+
 import { test, expect } from "../support/mockApi";
 import { loadFixture } from "../support/defaultHandlers";
 
@@ -30,7 +32,10 @@ const RESISTANT_CLASS = {
 };
 
 type PrescriptionFixture = {
-  data: { prescription: Record<string, unknown>[] };
+  data: {
+    prescription: Record<string, unknown>[];
+    alertStats: Record<string, unknown>;
+  };
 };
 
 const prescriptionWithCultureAlerts = () => {
@@ -50,6 +55,12 @@ const prescriptionWithCultureAlerts = () => {
 
   return fixture;
 };
+
+const cultureCell = (page: Page) =>
+  page
+    .locator(".ant-col", { hasText: "Alertas" })
+    .last()
+    .locator(".alert-culture");
 
 test("the expanded item spells out the culture alert", async ({
   page,
@@ -105,4 +116,46 @@ test("the prescription items show the culture alerts by name", async ({
     page.getByText("Cultura com resistência ao medicamento"),
   ).toBeVisible();
   await expect(page.getByText(RESISTANT.text)).toBeVisible();
+});
+
+test("the alerts card counts the culture alerts", async ({ page, mockApi }) => {
+  const fixture = prescriptionWithCultureAlerts();
+  fixture.data.alertStats = {
+    ...fixture.data.alertStats,
+    cultureResistant: 1,
+    cultureResistantClass: 1,
+  };
+
+  mockApi.override("GET /prescriptions/:id", { json: fixture });
+
+  await page.goto("/prescricao/199");
+
+  await expect(
+    page.getByRole("heading", { name: "Prescrição nº 199 Liberada em" }),
+  ).toBeVisible();
+
+  // both kinds of resistance are counted together, in a cell the card fits
+  // into the rows it already had
+  const cell = cultureCell(page);
+  await expect(cell).toHaveText("2");
+  await expect(cell).toHaveClass(/(^|\s)alert(\s|$)/);
+});
+
+test("the culture cell is not flagged without a culture alert", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override("GET /prescriptions/:id", {
+    json: prescriptionWithCultureAlerts(),
+  });
+
+  await page.goto("/prescricao/199");
+
+  await expect(
+    page.getByRole("heading", { name: "Prescrição nº 199 Liberada em" }),
+  ).toBeVisible();
+
+  const cell = cultureCell(page);
+  await expect(cell).toHaveText("0");
+  await expect(cell).not.toHaveClass(/(^|\s)alert(\s|$)/);
 });

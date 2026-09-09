@@ -636,7 +636,8 @@
     "elderly": "Potentially inappropriate drugs for the elderly",
     "alergy": "Alergy",
     "tube": "Drug contraindicate by tube",
-    "duplicate": "Duplicity"
+    "duplicate": "Duplicity",
+    "culture": "Resistant culture"
   },
 
   "messages": {
@@ -1341,14 +1342,19 @@
   },
   "culture": {
     "tabTitle": "Culture",
-    "hint": "Patient culture and antibiogram results, grouped by drug. While the lab result is still pending, the NoHarm prediction is shown instead, marked with the robot icon.",
+    "hint": "Patient culture and antibiogram results, grouped by drug. While the lab result is still pending, the NoHarm prediction is shown instead, marked with the robot icon. Drugs in use in this prescription are marked with the medicine box icon.",
     "empty": "No culture found",
     "lastRelease": "latest release on {{date}}",
     "groups": {
+      "resistantInUse": "Resistant and in use",
       "resistant": "Resistant",
       "susceptible": "Susceptible",
       "prediction": "NoHarm prediction"
     },
+    "prescribedHint": "Drug in use in this prescription",
+    "resistantInUseHint": "Resistant and in use in this prescription",
+    "resistantInUseTabHint_one": "{{count}} resistant drug in use in this prescription",
+    "resistantInUseTabHint_other": "{{count}} resistant drugs in use in this prescription",
     "microorganism": "Microorganism",
     "material": "Material",
     "result": "Result",

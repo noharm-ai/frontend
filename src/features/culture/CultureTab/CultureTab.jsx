@@ -1,28 +1,26 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { Flex } from "antd";
-import { RobotOutlined } from "@ant-design/icons";
+import { RobotOutlined, MedicineBoxOutlined } from "@ant-design/icons";
 import moment from "moment";
 
 import Popover from "components/PopoverStyled";
 import Empty from "components/Empty";
+import CustomIcon from "components/Icon";
+import { IconGerm } from "components/Icon/svgs/IconGerm";
+import {
+  RESULT_RESISTANT,
+  isPrediction,
+  resultTypeOf,
+  isResistantInUse,
+} from "features/culture/cultureResistance";
 
 import { Container, Scroll, Group, List, Item } from "./CultureTab.style";
 
+const GROUP_RESISTANT_IN_USE = "resistantInUse";
 const GROUP_RESISTANT = "resistant";
 const GROUP_SUSCEPTIBLE = "susceptible";
 const GROUP_PREDICTION = "prediction";
-
-// the backend classifies the free text of the antibiogram (culture_service
-// RESULT_TYPES) and predictions share the same alphabet
-const RESULT_RESISTANT = "R";
-
-// a pending culture is shown through the prediction, which must never be
-// presented as if it were the lab result
-const isPrediction = (item) => !item.result;
-
-const resultTypeOf = (item) =>
-  isPrediction(item) ? item.predictionType : item.resultType;
 
 const formatDate = (date) => (date ? moment(date).format("DD/MM/YYYY") : "-");
 
@@ -38,6 +36,7 @@ const byPrediction = (a, b) => {
 };
 
 const buildGroups = (cultures) => {
+  const resistantInUse = [];
   const resistant = [];
   const susceptible = [];
   const predictions = [];
@@ -48,7 +47,12 @@ const buildGroups = (cultures) => {
     // antibiogram is never grouped by a prediction of a pending collection
     const [current] = drug.items;
 
-    if (isPrediction(current)) {
+    if (isResistantInUse(drug)) {
+      // its own group, first: a resistance the patient is being given right
+      // now is a different reading from a resistance on a drug nobody
+      // prescribed, and the group header carries it instead of the row
+      resistantInUse.push(drug);
+    } else if (isPrediction(current)) {
       predictions.push(drug);
     } else if (resultTypeOf(current) === RESULT_RESISTANT) {
       resistant.push(drug);
@@ -60,6 +64,7 @@ const buildGroups = (cultures) => {
   });
 
   return [
+    { key: GROUP_RESISTANT_IN_USE, drugs: resistantInUse.sort(byDrug) },
     { key: GROUP_RESISTANT, drugs: resistant.sort(byDrug) },
     { key: GROUP_SUSCEPTIBLE, drugs: susceptible.sort(byDrug) },
     { key: GROUP_PREDICTION, drugs: predictions.sort(byPrediction) },
@@ -78,6 +83,23 @@ const CultureResult = ({ item, t }) => {
 
 const CultureDetails = ({ drug, t }) => (
   <>
+    {drug.prescribed && (
+      <div
+        className="culture-prescribed-detail"
+        style={{ marginBottom: "8px", fontWeight: 500 }}
+      >
+        {isResistantInUse(drug) ? (
+          <>
+            <CustomIcon component={IconGerm} style={{ color: "#f44336" }} />{" "}
+            {t("culture.resistantInUseHint")}
+          </>
+        ) : (
+          <>
+            <MedicineBoxOutlined /> {t("culture.prescribedHint")}
+          </>
+        )}
+      </div>
+    )}
     {drug.items.map((item, index) => (
       <div key={item.key || index} style={{ marginTop: index > 0 ? "8px" : 0 }}>
         <div>
@@ -107,6 +129,9 @@ const CultureDetails = ({ drug, t }) => (
 const CultureListItem = ({ drug, t }) => {
   const [current] = drug.items;
   const prediction = isPrediction(current);
+  // a resistant drug the patient is actually on: the row itself has to shout,
+  // a label would only push the drug name out of a cell this narrow
+  const inUse = isResistantInUse(drug);
 
   // the group header already states the result, so the item only spells out
   // what the header does not cover: the predicted S/R and any result whose
@@ -121,11 +146,19 @@ const CultureListItem = ({ drug, t }) => {
       mouseEnterDelay={0.5}
     >
       <Item
-        className="culture-item"
+        className={`culture-item${inUse ? " culture-item-in-use" : ""}`}
         $prediction={prediction}
         $resistant={resultTypeOf(current) === RESULT_RESISTANT}
+        $inUse={inUse}
       >
         <div className="name">{drug.drug}</div>
+        {/* inside its own group every row is in use, so the marker is only
+            needed where a prescribed drug sits among drugs that are not */}
+        {drug.prescribed && !inUse && (
+          <div className="prescribed">
+            <MedicineBoxOutlined />
+          </div>
+        )}
         {marker && (
           <div className="marker">
             {prediction && <RobotOutlined />}
@@ -157,9 +190,15 @@ export function CultureTab({ cultures }) {
     <Container>
       <Scroll>
         {groups.map((group) => (
-          <Group key={group.key} className={`culture-group-${group.key}`}>
+          <Group
+            key={group.key}
+            className={`culture-group culture-group-${group.key}`}
+          >
             <div className="group-title">
               {group.key === GROUP_PREDICTION && <RobotOutlined />}
+              {group.key === GROUP_RESISTANT_IN_USE && (
+                <CustomIcon component={IconGerm} />
+              )}
               <span>{t(`culture.groups.${group.key}`)}</span>
               <span className="count">({group.drugs.length})</span>
             </div>

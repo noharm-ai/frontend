@@ -87,7 +87,9 @@ const CULTURES = [
     ],
   },
   {
+    // the backend marks the cultures of the drugs the prescription carries
     drug: "OXACILINA",
+    prescribed: true,
     items: [
       {
         key: "SANGUE TOTAL#MICROORGANISMO TESTE#OXACILINA",
@@ -132,6 +134,10 @@ test("culture tab lists the drugs and flags predictions", async ({
   // exams is the tab shown first
   await expect(page.getByRole("radio", { name: "Exames" })).toBeChecked();
 
+  // the card is behind a tab, so a resistant drug the patient is on has to be
+  // announced by the tab itself — asserted before anything is clicked
+  await expect(page.locator(".culture-tab-alert")).toBeVisible();
+
   // antd Segmented keeps the radio input hidden behind its label
   await page
     .locator(".ant-segmented-item-label", { hasText: "Cultura" })
@@ -143,13 +149,27 @@ test("culture tab lists the drugs and flags predictions", async ({
     "liberação mais recente em 08/03/24 07:17",
   );
 
-  // released results sit in their own group, predictions in the last one
+  // resistant AND in use is the finding the card exists for, so it gets a
+  // group of its own above every other one, and the row keeps nothing but the
+  // drug name: the header already says the drug is in use
+  const inUse = page.locator(".culture-group-resistantInUse");
+  await expect(inUse).toContainText("Resistentes em uso");
+  await expect(inUse.locator(".culture-item")).toHaveText(["OXACILINA"]);
+  await expect(inUse.locator(".prescribed")).toHaveCount(0);
+  await expect(page.locator(".culture-group").first()).toHaveClass(
+    /culture-group-resistantInUse/,
+  );
+
+  // a resistant drug nobody prescribed stays in the plain group
   const resistant = page.locator(".culture-group-resistant");
   await expect(resistant).toContainText("Resistentes");
-  await expect(resistant.locator(".culture-item")).toHaveText([
-    "CEFEPIME",
-    "OXACILINA",
-  ]);
+  await expect(resistant.locator(".culture-item")).toHaveText(["CEFEPIME"]);
+
+  // the popover spells the finding out
+  await inUse.locator(".culture-item", { hasText: "OXACILINA" }).hover();
+  await expect(
+    page.getByText("Resistente e em uso nesta prescrição"),
+  ).toBeVisible();
 
   // a result that is susceptible but does not read as a plain "Sensível"
   // keeps its own wording on the row
@@ -173,6 +193,26 @@ test("culture tab lists the drugs and flags predictions", async ({
   });
   await expect(pending).toContainText("S");
   await expect(pending.locator(".anticon-robot")).toBeVisible();
+});
+
+test("the tab is not flagged when no resistant drug is in use", async ({
+  page,
+  mockApi,
+}) => {
+  // the same cultures, none of them a drug the prescription carries
+  const notInUse = CULTURES.map((drug) => ({ ...drug, prescribed: false }));
+
+  mockApi.override("GET /prescriptions/:id", {
+    json: prescriptionWith({ cultures: notInUse }),
+  });
+
+  await page.goto("/prescricao/199");
+
+  // antd hides the Segmented radio input behind its label
+  await expect(
+    page.locator(".ant-segmented-item-label", { hasText: "Cultura" }),
+  ).toBeVisible();
+  await expect(page.locator(".culture-tab-alert")).toHaveCount(0);
 });
 
 test("card keeps no tabs when the patient has no cultures", async ({
