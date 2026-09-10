@@ -95,19 +95,18 @@ export const List = styled.div`
   }
 `;
 
-const borderColor = (props) => {
-  // resistant and in use: the one row that must be found at a glance
-  if (props.$inUse) return "#f44336";
+// the left bar carries the whole reading of the row. A prediction is checked
+// before resistance on purpose: a predicted resistant drug is still a pending
+// collection, and it must not be read in the same red as a released
+// antibiogram
+const accentColor = (props) => {
   if (props.$prediction) return "#a991d6";
+  if (props.$resistant) return "#f44336";
+  if (props.$susceptible) return "#7ebe9a";
 
-  return props.$resistant ? "#F68C97" : "#e0e0e0";
-};
-
-const backgroundColor = (props) => {
-  if (props.$inUse) return "#F9C4CB";
-  if (props.$prediction) return "#F4EFFB";
-
-  return props.$resistant ? "#F8DEE2" : "#fff";
+  // a result the backend could not classify (CultureResultTypeEnum.UNKNOWN):
+  // it is not a sensitivity, so it does not get the green bar
+  return "#e0e0e0";
 };
 
 export const Item = styled.div`
@@ -116,9 +115,13 @@ export const Item = styled.div`
   justify-content: space-between;
   gap: 6px;
   padding: 5px;
-  border: 1px solid ${borderColor};
+  border: 1px solid #e0e0e0;
+  /* resistant and in use: the same red, twice the bar — the row is found by
+     weight and not by a colour the other three states do not have, and a
+     one-pixel difference would not be seen at all */
+  border-left: ${(props) => (props.$inUse ? "6px" : "3px")} solid ${accentColor};
   border-radius: 5px;
-  background: ${backgroundColor};
+  background: #fff;
 
   .name {
     flex: 1;

@@ -9,6 +9,10 @@
 // RESULT_TYPES) and predictions share the same alphabet
 export const RESULT_RESISTANT = "R";
 
+// a result the backend read as a sensitivity. Anything it could not classify
+// is CultureResultTypeEnum.UNKNOWN and is deliberately neither of the two
+export const RESULT_SUSCEPTIBLE = "S";
+
 // a pending culture is shown through the prediction, which must never be
 // presented as if it were the lab result
 export const isPrediction = (item) => !item.result;

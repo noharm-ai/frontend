@@ -10,6 +10,7 @@ import CustomIcon from "components/Icon";
 import { IconGerm } from "components/Icon/svgs/IconGerm";
 import {
   RESULT_RESISTANT,
+  RESULT_SUSCEPTIBLE,
   isPrediction,
   resultTypeOf,
   isResistantInUse,
@@ -156,6 +157,7 @@ const CultureListItem = ({ drug, t }) => {
         className={`culture-item${inUse ? " culture-item-in-use" : ""}`}
         $prediction={prediction}
         $resistant={resultTypeOf(current) === RESULT_RESISTANT}
+        $susceptible={resultTypeOf(current) === RESULT_SUSCEPTIBLE}
         $inUse={inUse}
       >
         <div className="name">{drug.drug}</div>
