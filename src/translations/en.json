@@ -1343,7 +1343,8 @@
   "culture": {
     "tabTitle": "Culture",
     "hint": "Patient culture and antibiogram results, grouped by drug. While the lab result is still pending, the NoHarm prediction is shown instead, marked with the robot icon. Drugs in use in this prescription are marked with the medicine box icon.",
-    "empty": "No culture found",
+    "empty": "No positive culture results in the last 60 days",
+    "emptyHint": "Older results may exist: check the full report under \"Ver todos\".",
     "lastRelease": "latest release on {{date}}",
     "groups": {
       "resistantInUse": "Resistant and in use",

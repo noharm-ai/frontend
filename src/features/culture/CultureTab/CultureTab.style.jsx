@@ -166,3 +166,19 @@ export const Item = styled.div`
     box-shadow: 0px 1px 4px 0px rgb(0 0 0 / 16%);
   }
 `;
+
+export const EmptyDescription = styled.div`
+  .culture-empty-title {
+    color: var(--nh-text-color);
+    font-weight: 500;
+  }
+
+  /* the retention window is the reason the full report below still matters:
+     it reads as a footnote, not as a second headline */
+  .culture-empty-hint {
+    margin-top: 2px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #6d7a94;
+  }
+`;

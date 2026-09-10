@@ -15,7 +15,14 @@ import {
   isResistantInUse,
 } from "features/culture/cultureResistance";
 
-import { Container, Scroll, Group, List, Item } from "./CultureTab.style";
+import {
+  Container,
+  Scroll,
+  Group,
+  List,
+  Item,
+  EmptyDescription,
+} from "./CultureTab.style";
 
 const GROUP_RESISTANT_IN_USE = "resistantInUse";
 const GROUP_RESISTANT = "resistant";
@@ -174,11 +181,19 @@ export function CultureTab({ cultures }) {
   const { t } = useTranslation();
 
   if (!cultures || cultures.length === 0) {
+    // the card only carries the recent cultures, so "none" is a statement
+    // about the window and not about the patient: the footer link to the full
+    // report is what answers the older results, and it has to be said here
     return (
       <Flex align="center" justify="center" style={{ width: "100%" }}>
         <Empty
           image={Empty.PRESENTED_IMAGE_SIMPLE}
-          description={t("culture.empty")}
+          description={
+            <EmptyDescription>
+              <div className="culture-empty-title">{t("culture.empty")}</div>
+              <div className="culture-empty-hint">{t("culture.emptyHint")}</div>
+            </EmptyDescription>
+          }
         />
       </Flex>
     );

@@ -35,12 +35,7 @@ export default function ExamCard({
 }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const [selectedTab, setSelectedTab] = useState(TAB_EXAMS);
-
-  // schemas without a culture pipeline never get the tab, and the selection
-  // falls back to Exames when the next patient has no cultures
-  const hasCultures = !isEmpty(cultures);
-  const tab = hasCultures ? selectedTab : TAB_EXAMS;
+  const [tab, setTab] = useState(TAB_EXAMS);
 
   // the culture card sits behind a tab, so a resistant drug the patient is on
   // would go unseen unless the tab itself says so
@@ -55,37 +50,36 @@ export default function ExamCard({
     <PrescriptionCard className="full-height max-height">
       <div className="header">
         <h3 className="title">
-          {hasCultures ? (
-            <Segmented
-              size="small"
-              value={tab}
-              onChange={setSelectedTab}
-              options={[
-                { label: t("tableHeader.exams"), value: TAB_EXAMS },
-                {
-                  label:
-                    resistantInUse > 0 ? (
-                      <Tooltip
-                        title={t("culture.resistantInUseTabHint", {
-                          count: resistantInUse,
-                        })}
-                      >
-                        <Badge dot offset={[5, 2]}>
-                          <span className="culture-tab-alert">
-                            {t("culture.tabTitle")}
-                          </span>
-                        </Badge>
-                      </Tooltip>
-                    ) : (
-                      t("culture.tabTitle")
-                    ),
-                  value: TAB_CULTURE,
-                },
-              ]}
-            />
-          ) : (
-            t("tableHeader.exams")
-          )}
+          {/* the tab is always offered: a patient with no culture in the last
+              60 days still has the full report behind it, and the absence is
+              itself an answer the user came for */}
+          <Segmented
+            size="small"
+            value={tab}
+            onChange={setTab}
+            options={[
+              { label: t("tableHeader.exams"), value: TAB_EXAMS },
+              {
+                label:
+                  resistantInUse > 0 ? (
+                    <Tooltip
+                      title={t("culture.resistantInUseTabHint", {
+                        count: resistantInUse,
+                      })}
+                    >
+                      <Badge dot offset={[5, 2]}>
+                        <span className="culture-tab-alert">
+                          {t("culture.tabTitle")}
+                        </span>
+                      </Badge>
+                    </Tooltip>
+                  ) : (
+                    t("culture.tabTitle")
+                  ),
+                value: TAB_CULTURE,
+              },
+            ]}
+          />
           <Help
             text={
               tab === TAB_CULTURE

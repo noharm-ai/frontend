@@ -4,9 +4,8 @@ import { loadFixture } from "../support/defaultHandlers";
 /**
  * Culture tab of the exams card (src/features/culture/CultureTab).
  *
- * The card only grows a tab bar when the prescription payload carries
- * cultures, and a pending culture must be presented as a NoHarm prediction,
- * never as if it were the lab result.
+ * The card always carries the tab bar, and a pending culture must be
+ * presented as a NoHarm prediction, never as if it were the lab result.
  */
 
 const CULTURES = [
@@ -215,12 +214,15 @@ test("the tab is not flagged when no resistant drug is in use", async ({
   await expect(page.locator(".culture-tab-alert")).toHaveCount(0);
 });
 
-test("card keeps no tabs when the patient has no cultures", async ({
+test("the tab is offered with no cultures and points at the full report", async ({
   page,
   mockApi,
 }) => {
   mockApi.override("GET /prescriptions/:id", {
     json: prescriptionWith({ cultures: [] }),
+  });
+  mockApi.override("GET /reports/culture", {
+    json: { status: "success", data: [] },
   });
 
   await page.goto("/prescricao/199");
@@ -228,8 +230,40 @@ test("card keeps no tabs when the patient has no cultures", async ({
   await expect(
     page.getByRole("heading", { name: "Prescrição nº 199 Liberada em" }),
   ).toBeVisible();
-  await expect(page.getByRole("radio", { name: "Cultura" })).toBeHidden();
-  await expect(page.getByRole("heading", { name: "Exames" })).toBeVisible();
+
+  // no culture in the window is still an answer, so the tab is there to give
+  // it — and nothing flags a resistance the patient does not have
+  await expect(
+    page.locator(".ant-segmented-item-label", { hasText: "Exames" }),
+  ).toBeVisible();
+  await expect(page.locator(".culture-tab-alert")).toHaveCount(0);
+
+  await page
+    .locator(".ant-segmented-item-label", { hasText: "Cultura" })
+    .click();
+  await expect(page.getByRole("radio", { name: "Cultura" })).toBeChecked();
+
+  await expect(
+    page.getByText("Nenhum resultado positivo de cultura nos últimos 60 dias"),
+  ).toBeVisible();
+  // the 60 days are the DynamoDB retention, not the patient's history: the
+  // message has to send the user to the report that holds the older results
+  await expect(
+    page.getByText("Resultados mais antigos podem existir"),
+  ).toBeVisible();
+  await expect(page.locator(".culture-last-release")).toHaveCount(0);
+
+  const card = page
+    .locator(".ant-col", { has: page.getByRole("radio", { name: "Exames" }) })
+    .first();
+  await card.getByRole("button", { name: "Ver todos" }).click();
+
+  await expect(
+    page.getByRole("heading", { name: "Relatório: Culturas" }).first(),
+  ).toBeVisible();
+  expect(
+    mockApi.requests.filter((r) => r.path === "/reports/culture"),
+  ).not.toHaveLength(0);
 });
 
 test("the footer link opens the full culture report", async ({

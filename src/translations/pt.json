@@ -1353,7 +1353,8 @@
   "culture": {
     "tabTitle": "Cultura",
     "hint": "Resultados de cultura e antibiograma do paciente, agrupados por medicamento. Enquanto o resultado laboratorial não é liberado, é exibida a predição gerada pela NoHarm, identificada pelo ícone de robô. Os medicamentos em uso nesta prescrição são identificados pelo ícone de caixa de medicamento.",
-    "empty": "Nenhuma cultura encontrada",
+    "empty": "Nenhum resultado positivo de cultura nos últimos 60 dias",
+    "emptyHint": "Resultados mais antigos podem existir: consulte o relatório completo em \"Ver todos\".",
     "lastRelease": "liberação mais recente em {{date}}",
     "groups": {
       "resistantInUse": "Resistentes em uso",
