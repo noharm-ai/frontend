@@ -6,14 +6,17 @@ import { Rate } from "antd";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import DefaultModal from "components/Modal";
-import { Input } from "components/Inputs";
+import Alert from "components/Alert";
 import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
 
 import { Form } from "styles/Form.style";
 
 import { saveDraft } from "features/memory/MemoryDraft/MemoryDraftSlice";
-import { setSaveStatus, navigatePatient } from "../SummarySlice";
+import {
+  setSaveStatus,
+  createNavigationDischargeSummary,
+} from "../SummarySlice";
 import { blocksToClinicalNotes } from "../verbalizers";
 
 interface ISummaryNavigateProps {
@@ -30,17 +33,12 @@ export function SummaryNavigate({
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
-  const summaryData = useAppSelector((state) => state.summary.data);
   const blocks = useAppSelector((state) => state.summary.blocks);
   const validationSchema = Yup.object().shape({
     rate: Yup.string().nullable().required(t("validation.requiredField")),
-    name: Yup.string().nullable().required(t("validation.requiredField")),
-    phone: Yup.string().nullable().required(t("validation.requiredField")),
   });
   const initialValues = {
     rate: 0,
-    name: ((summaryData as any)?.patient?.name as string) || "",
-    phone: "",
   };
 
   const rates = ["Péssima", "Ruim", "Boa", "Muito Boa", "Excelente"];
@@ -66,14 +64,11 @@ export function SummaryNavigate({
 
     pageTimer?.reset();
 
-    //navigate
-
+    // send the discharge summary to the navigation schema
     const navigateResponse = await dispatch(
       // @ts-expect-error ts 2554 (legacy code)
-      navigatePatient({
+      createNavigationDischargeSummary({
         admission_number: admissionNumber,
-        name: params.name,
-        phone: params.phone,
         clinical_notes: blocksToClinicalNotes(blocks),
       }),
     );
@@ -86,9 +81,7 @@ export function SummaryNavigate({
       });
     } else {
       notification.success({
-        message: "Sumário finalizado e paciente copiado para navegação!",
-        description:
-          "A prescrição do paciente pode demorar até 5min para ser gerada",
+        message: "Sumário finalizado e enviado para navegação!",
         duration: 30,
       });
 
@@ -119,6 +112,13 @@ export function SummaryNavigate({
           <header>
             <h2 className="modal-title">Navegar Paciente</h2>
           </header>
+          <Alert
+            type="warning"
+            showIcon
+            message="O paciente já deve existir na navegação"
+            description="Esta ação envia somente o sumário de alta. Utilize a opção “Navegar Paciente” no menu da prescrição para copiar o paciente antes de enviar o sumário."
+            style={{ marginBottom: "20px" }}
+          />
           <Form>
             <div
               className={`form-row ${
@@ -144,46 +144,6 @@ export function SummaryNavigate({
               </div>
               {errors.rate && touched.rate && (
                 <div className="form-error">{errors.rate}</div>
-              )}
-            </div>
-
-            <div
-              className={`form-row ${
-                errors.name && touched.name ? "error" : ""
-              }`}
-            >
-              <div className="form-label">
-                <label>Nome do paciente:</label>
-              </div>
-              <div className="form-input">
-                <Input
-                  onChange={({ target }) => setFieldValue("name", target.value)}
-                  value={values.name}
-                />
-              </div>
-              {errors.name && touched.name && (
-                <div className="form-error">{errors.name}</div>
-              )}
-            </div>
-
-            <div
-              className={`form-row ${
-                errors.phone && touched.phone ? "error" : ""
-              }`}
-            >
-              <div className="form-label">
-                <label>Telefone do paciente:</label>
-              </div>
-              <div className="form-input">
-                <Input
-                  onChange={({ target }) =>
-                    setFieldValue("phone", target.value)
-                  }
-                  value={values.phone}
-                />
-              </div>
-              {errors.phone && touched.phone && (
-                <div className="form-error">{errors.phone}</div>
               )}
             </div>
           </Form>

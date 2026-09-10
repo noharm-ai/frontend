@@ -86,7 +86,9 @@ export const Form = styled.form`
         background: #f6ffed;
       }
 
-      input {
+      /* .ant-select-input overlays the select label (absolute, inset 0),
+         so an opaque background on it would hide the selected option */
+      input:not(.ant-select-input) {
         background: #f6ffed;
       }
 
@@ -102,7 +104,9 @@ export const Form = styled.form`
         background: #fff2f0;
       }
 
-      input {
+      /* .ant-select-input overlays the select label (absolute, inset 0),
+         so an opaque background on it would hide the selected option */
+      input:not(.ant-select-input) {
         background: #fff2f0;
       }
     }
@@ -114,7 +118,9 @@ export const Form = styled.form`
         background: #fffbe6;
       }
 
-      input {
+      /* .ant-select-input overlays the select label (absolute, inset 0),
+         so an opaque background on it would hide the selected option */
+      input:not(.ant-select-input) {
         background: #fffbe6;
       }
 

@@ -411,6 +411,11 @@ const saveReset = (state = INITIAL_STATE) => ({
 });
 
 const updateListStatus = (state = INITIAL_STATE, { data }) => {
+  // a failed/empty status refresh must not touch the list: this reducer keeps
+  // only the items present in `data`, so an undefined payload throws and an
+  // empty one would wipe the list.
+  if (isEmpty(data)) return state;
+
   const list = [...state.list];
   const newList = [];
 

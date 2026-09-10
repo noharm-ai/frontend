@@ -239,7 +239,8 @@
     "dischargeDateForecast": "Previsão de alta",
     "responsiblePhysician": "Médico responsável",
     "pepLink": "Abrir PEP",
-    "openDischargeSummary": "Abrir Sumário de Alta"
+    "openDischargeSummary": "Abrir Sumário de Alta",
+    "navigatePatient": "Navegar Paciente"
   },
   "screeningBody": {
     "tabDrugs": "Medicamentos",

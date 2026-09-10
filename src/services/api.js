@@ -899,6 +899,12 @@ api.navigation.copyPatient = (params = {}) => {
   });
 };
 
+api.navigation.createDischargeSummary = (params = {}) => {
+  return instance.post(`/navigation/discharge-summary`, params, {
+    ...setHeaders(),
+  });
+};
+
 /**
  * Intervention
  */

@@ -116,6 +116,10 @@ export const updatePrescriptionStatusThunk =
       return;
     }
 
+    // errorHandler resolves with `data: {}`, and a 204/malformed response has
+    // no `data` key either, so this can be undefined even with no error set.
+    if (isEmpty(data)) return;
+
     dispatch(prescriptionsUpdateListStatus(data));
   };
 
