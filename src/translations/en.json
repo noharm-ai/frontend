@@ -239,7 +239,8 @@
     "dischargeDateForecast": "Discharge forecast",
     "responsiblePhysician": "Responsible physician",
     "pepLink": "Open PEP",
-    "openDischargeSummary": "Open Discharge Summary"
+    "openDischargeSummary": "Open Discharge Summary",
+    "navigatePatient": "Navigate Patient"
   },
   "screeningBody": {
     "tabDrugs": "Drugs",

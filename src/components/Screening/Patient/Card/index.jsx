@@ -1,6 +1,6 @@
 import "styled-components";
 
-import React from "react";
+import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
@@ -17,6 +17,7 @@ import {
   TagsOutlined,
   FilePptOutlined,
   FileDoneOutlined,
+  UserSwitchOutlined,
 } from "@ant-design/icons";
 
 import Button from "components/Button";
@@ -44,6 +45,7 @@ import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
 
 import PatientNameCache from "components/PatientName/PatientNameCache";
+import { PrescriptionNavigate } from "features/prescription/PrescriptionNavigate/PrescriptionNavigate";
 
 import PatientTab from "./PatientTab";
 import AdmissionTab from "./AdmissionData";
@@ -68,6 +70,7 @@ export default function PatientCard({
   const aggPrescriptionStatus = useSelector(
     (state) => state.lists.searchAggPrescriptions.status,
   );
+  const [navigateModalOpen, setNavigateModalOpen] = useState(false);
 
   const {
     admissionNumber,
@@ -288,6 +291,11 @@ export default function PatientCard({
         openDischargeSummary();
         break;
 
+      case "navigatePatient":
+        trackPrescriptionAction(TrackedPrescriptionAction.NAVIGATE_PATIENT);
+        setNavigateModalOpen(true);
+        break;
+
       default:
         console.error("Invalid key", key);
     }
@@ -350,6 +358,15 @@ export default function PatientCard({
         label: t("patientCard.openDischargeSummary"),
         id: "gtm-bt-dischargesummary",
         icon: <FileDoneOutlined />,
+      });
+    }
+
+    if (PermissionService().has(Permission.NAV_COPY_PATIENT)) {
+      items.push({
+        key: "navigatePatient",
+        label: t("patientCard.navigatePatient"),
+        id: "gtm-bt-navigate-patient",
+        icon: <UserSwitchOutlined />,
       });
     }
 
@@ -564,6 +581,12 @@ export default function PatientCard({
           </Spin>
         </div>
       </div>
+      <PrescriptionNavigate
+        open={navigateModalOpen}
+        setOpen={setNavigateModalOpen}
+        admissionNumber={admissionNumber}
+        patientName={namePatient}
+      />
       <div className="patient-body">
         <Tabs
           defaultActiveKey="patientData"
