@@ -1,12 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex } from "antd";
 import { RobotOutlined, MedicineBoxOutlined } from "@ant-design/icons";
 import moment from "moment";
 
-import Popover from "components/PopoverStyled";
 import Empty from "components/Empty";
 import CustomIcon from "components/Icon";
+import DefaultModal from "components/Modal";
 import { IconGerm } from "components/Icon/svgs/IconGerm";
 import {
   RESULT_RESISTANT,
@@ -134,7 +134,7 @@ const CultureDetails = ({ drug, t }) => (
   </>
 );
 
-const CultureListItem = ({ drug, t }) => {
+const CultureListItem = ({ drug, onOpenDetails }) => {
   const [current] = drug.items;
   const prediction = isPrediction(current);
   // a resistant drug the patient is actually on: the row itself has to shout,
@@ -146,41 +146,48 @@ const CultureListItem = ({ drug, t }) => {
   // wording says more than the group itself
   const marker = prediction ? current.prediction : current.resultDetail;
 
+  // the row is too narrow to carry the antibiogram: the details open in a
+  // modal, which stays open while the user reads it
+  const openDetails = () => onOpenDetails(drug);
+
   return (
-    <Popover
-      content={<CultureDetails drug={drug} t={t} />}
-      title={drug.drug}
-      mouseLeaveDelay={0}
-      mouseEnterDelay={0.5}
+    <Item
+      className={`culture-item${inUse ? " culture-item-in-use" : ""}`}
+      $prediction={prediction}
+      $resistant={resultTypeOf(current) === RESULT_RESISTANT}
+      $susceptible={resultTypeOf(current) === RESULT_SUSCEPTIBLE}
+      $inUse={inUse}
+      role="button"
+      tabIndex={0}
+      onClick={openDetails}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          openDetails();
+        }
+      }}
     >
-      <Item
-        className={`culture-item${inUse ? " culture-item-in-use" : ""}`}
-        $prediction={prediction}
-        $resistant={resultTypeOf(current) === RESULT_RESISTANT}
-        $susceptible={resultTypeOf(current) === RESULT_SUSCEPTIBLE}
-        $inUse={inUse}
-      >
-        <div className="name">{drug.drug}</div>
-        {/* inside its own group every row is in use, so the marker is only
-            needed where a prescribed drug sits among drugs that are not */}
-        {drug.prescribed && !inUse && (
-          <div className="prescribed">
-            <MedicineBoxOutlined />
-          </div>
-        )}
-        {marker && (
-          <div className="marker">
-            {prediction && <RobotOutlined />}
-            <span>{marker}</span>
-          </div>
-        )}
-      </Item>
-    </Popover>
+      <div className="name">{drug.drug}</div>
+      {/* inside its own group every row is in use, so the marker is only
+          needed where a prescribed drug sits among drugs that are not */}
+      {drug.prescribed && !inUse && (
+        <div className="prescribed">
+          <MedicineBoxOutlined />
+        </div>
+      )}
+      {marker && (
+        <div className="marker">
+          {prediction && <RobotOutlined />}
+          <span>{marker}</span>
+        </div>
+      )}
+    </Item>
   );
 };
 
 export function CultureTab({ cultures }) {
   const { t } = useTranslation();
+  const [details, setDetails] = useState(null);
 
   if (!cultures || cultures.length === 0) {
     // the card only carries the recent cultures, so "none" is a statement
@@ -221,12 +228,29 @@ export function CultureTab({ cultures }) {
             </div>
             <List>
               {group.drugs.map((drug) => (
-                <CultureListItem drug={drug} key={drug.drug} t={t} />
+                <CultureListItem
+                  drug={drug}
+                  key={drug.drug}
+                  onOpenDetails={setDetails}
+                />
               ))}
             </List>
           </Group>
         ))}
       </Scroll>
+
+      <DefaultModal
+        open={!!details}
+        title={details?.drug}
+        width={500}
+        centered
+        destroyOnHidden
+        footer={null}
+        onCancel={() => setDetails(null)}
+        className="culture-details-modal"
+      >
+        {details && <CultureDetails drug={details} t={t} />}
+      </DefaultModal>
     </Container>
   );
 }

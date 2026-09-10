@@ -164,11 +164,18 @@ test("culture tab lists the drugs and flags predictions", async ({
   await expect(resistant).toContainText("Resistentes");
   await expect(resistant.locator(".culture-item")).toHaveText(["CEFEPIME"]);
 
-  // the popover spells the finding out
-  await inUse.locator(".culture-item", { hasText: "OXACILINA" }).hover();
+  // the row is narrow, so the details are behind a click and read in a modal
+  await inUse.locator(".culture-item", { hasText: "OXACILINA" }).click();
+  const details = page.locator(".culture-details-modal");
+  await expect(details.getByText("OXACILINA")).toBeVisible();
   await expect(
-    page.getByText("Resistente e em uso nesta prescrição"),
+    details.getByText("Resistente e em uso nesta prescrição"),
   ).toBeVisible();
+  await expect(details.getByText("Microorganismo Teste")).toBeVisible();
+
+  // the modal must be out of the way before the list is read again
+  await page.keyboard.press("Escape");
+  await expect(details).toBeHidden();
 
   // a result that is susceptible but does not read as a plain "Sensível"
   // keeps its own wording on the row

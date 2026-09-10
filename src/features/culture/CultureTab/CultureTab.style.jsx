@@ -122,6 +122,8 @@ export const Item = styled.div`
   border-left: ${(props) => (props.$inUse ? "6px" : "3px")} solid ${accentColor};
   border-radius: 5px;
   background: #fff;
+  /* the whole row opens the details */
+  cursor: pointer;
 
   .name {
     flex: 1;
@@ -167,6 +169,11 @@ export const Item = styled.div`
 
   &:hover {
     box-shadow: 0px 1px 4px 0px rgb(0 0 0 / 16%);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #2e3c5a;
+    outline-offset: 1px;
   }
 `;
 
