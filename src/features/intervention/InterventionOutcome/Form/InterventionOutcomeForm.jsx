@@ -380,7 +380,12 @@ export default function InterventionOutcomeForm({
                                     .idPrescriptionAggregate
                                 : outcomeData.origin.item.idPrescription,
 
-                              outcomeData?.original.origin?.item?.concilia,
+                              // custom-economy interventions (economyType 3)
+                              // come without the "original" block, so it can
+                              // only be read optionally — the same flag is
+                              // available on the current origin item
+                              outcomeData?.original?.origin?.item?.concilia ??
+                                outcomeData?.origin?.item?.concilia,
                             )
                           }
                         />

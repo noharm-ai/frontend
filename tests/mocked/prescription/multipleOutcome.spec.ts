@@ -555,3 +555,38 @@ test("saving a multiple intervention with an outcome runs the bulk flow", async 
   });
   expect(editParams).toEqual([null, null]);
 });
+
+test("opens the origin prescription from a custom-economy review", async ({
+  page,
+  mockApi,
+}) => {
+  // custom-economy interventions (economyType 3) come back without the
+  // "original" block, which used to break the "Abrir prescrição" button
+  mockApi.override(
+    "GET /prescriptions/:id",
+    prescriptionWithInterventions([
+      interventionRow(304, "Intervenção no paciente"),
+    ]),
+  );
+  mockApi.override(
+    "GET /intervention/outcome-data",
+    outcomeDataHandler({ "304": "interventions/outcome-data-custom.json" }, []),
+  );
+  mockApi.override("POST /intervention/set-outcome", {
+    json: { status: "success", data: true },
+  });
+
+  await openInterventionsTab(page);
+  await selectAllPending(page);
+
+  const modal = await applyOutcome(page, "Aceita");
+  await expect(modal.getByText("Revisão 1 de 1")).toBeVisible();
+
+  const popupPromise = page.waitForEvent("popup");
+  await modal
+    .locator(".form-row", { hasText: "Prescrição:" })
+    .getByRole("button")
+    .click();
+  const popup = await popupPromise;
+  await expect(popup).toHaveURL(/\/prescricao\/199$/);
+});
