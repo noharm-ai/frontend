@@ -16,6 +16,7 @@ import { isModuleFinished } from "./trainingUtils";
 import { TrainingModuleRow } from "./TrainingModuleRow";
 import { TrainingOverview } from "./TrainingOverview/TrainingOverview";
 import {
+  CentralHeader,
   ModuleList,
   SideColumn,
   ProgressPanel,
@@ -23,7 +24,6 @@ import {
   ProgressGroup,
   ProgressNote,
 } from "./TrainingCentral.style";
-import { PageHeader } from "styles/PageHeader.style";
 
 type TrainingModuleStatus = "completed" | "current";
 
@@ -53,14 +53,14 @@ export function TrainingCentral() {
 
   return (
     <>
-      <PageHeader>
+      <CentralHeader>
         <div>
           <h1 className="page-header-title">{t("trainingCentral.title")}</h1>
           <h1 className="page-header-legend">
             {t("trainingCentral.subtitle")}
           </h1>
         </div>
-      </PageHeader>
+      </CentralHeader>
 
       {canReadUsers ? (
         <Tabs
@@ -126,8 +126,10 @@ function MyTraining() {
       : 0;
 
   return (
-    <Row gutter={24}>
-      <Col xs={17}>
+    // on phones the columns stack, with the (short) progress summary on top
+    // and the module list right below it
+    <Row gutter={[24, 24]}>
+      <Col xs={{ span: 24, order: 2 }} lg={{ span: 17, order: 1 }}>
         <ModuleList>
           {status !== "loading" && !sortedList.length && (
             <Empty
@@ -147,7 +149,7 @@ function MyTraining() {
         </ModuleList>
       </Col>
 
-      <Col xs={7}>
+      <Col xs={{ span: 24, order: 1 }} lg={{ span: 7, order: 2 }}>
         <SideColumn>
           {total > 0 && (
             <ProgressPanel>

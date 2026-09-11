@@ -1,14 +1,73 @@
 import styled, { keyframes } from "styled-components";
 
 import colors from "styles/colors";
+import breakpoints, { breakpointsEnum } from "styles/breakpoints";
+import { PageHeader } from "styles/PageHeader.style";
 import { Radio } from "components/Inputs";
 import Modal from "components/Modal";
+
+// the two-column layout collapses below antd's `lg` (Col lg applies at >= 992px)
+const mobile = `@media (max-width: ${breakpointsEnum.lg - 1}px)`;
+
+export const PlayerHeader = styled(PageHeader)`
+  ${mobile} {
+    margin-bottom: 20px;
+
+    .page-header-title {
+      font-size: 22px;
+      line-height: 1.25;
+      overflow-wrap: anywhere;
+    }
+  }
+`;
 
 export const StepsPanel = styled.div`
   height: 100%;
   background: ${colors.commonLighter};
   border-radius: 8px;
   padding: 20px;
+`;
+
+/* mobile replacement for StepsPanel: back link, module title, progress and
+   a button that opens the lesson list in a drawer */
+export const MobileStepsBar = styled.div`
+  background: ${colors.commonLighter};
+  border-radius: 8px;
+  padding: 16px;
+
+  .mobile-steps-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 10px;
+
+    > div {
+      flex: 1;
+      min-width: 0;
+      margin-bottom: 0;
+      overflow-wrap: anywhere;
+    }
+
+    .ant-btn {
+      flex-shrink: 0;
+    }
+  }
+
+  .ant-progress {
+    margin: 0;
+  }
+`;
+
+export const LessonsDrawer = styled.div`
+  max-height: 70vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+
+  ul li {
+    /* larger touch targets than the desktop panel */
+    padding: 12px 10px;
+  }
 `;
 
 export const BackRow = styled.div`
@@ -130,8 +189,9 @@ export const Eyebrow = styled.div`
 
 export const MetaRow = styled.div`
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 16px;
+  gap: 8px 16px;
   margin-top: 6px;
 
   span {
@@ -171,6 +231,18 @@ export const ItemContent = styled.div`
       margin: 32px auto;
       border-radius: 8px;
       cursor: pointer;
+
+      ${mobile} {
+        max-width: 100%;
+        margin: 20px auto;
+      }
+    }
+
+    /* authored content can carry fixed widths (tables, iframes) */
+    table,
+    iframe,
+    video {
+      max-width: 100%;
     }
   }
 `;
@@ -232,6 +304,24 @@ export const CoverBrand = styled.div`
   align-items: center;
   gap: 10px;
 
+  @media (max-width: ${breakpoints.sm}) {
+    top: 12px;
+    left: 14px;
+
+    .avatar {
+      width: 24px;
+      height: 24px;
+    }
+
+    strong {
+      font-size: 0.75rem;
+    }
+
+    span {
+      font-size: 0.6875rem;
+    }
+  }
+
   .avatar {
     width: 32px;
     height: 32px;
@@ -269,6 +359,12 @@ export const CoverPlayButton = styled.div`
   color: ${colors.primary};
   font-size: 22px;
   box-shadow: 0 6px 16px rgb(0 0 0 / 20%);
+
+  @media (max-width: ${breakpoints.sm}) {
+    width: 46px;
+    height: 46px;
+    font-size: 18px;
+  }
 `;
 
 export const CoverTitle = styled.div`
@@ -284,6 +380,15 @@ export const CoverTitle = styled.div`
     font-weight: 700;
     line-height: 1.2;
   }
+
+  @media (max-width: ${breakpoints.sm}) {
+    bottom: 12px;
+    left: 14px;
+
+    span {
+      font-size: 1rem;
+    }
+  }
 `;
 
 export const QuizCard = styled.div`
@@ -296,8 +401,10 @@ export const QuizCard = styled.div`
 
 export const QuizHeader = styled.div`
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  gap: 4px 12px;
   margin-bottom: 16px;
 
   .quiz-title {
@@ -326,6 +433,7 @@ export const AnswerRadio = styled(Radio)`
   width: 100%;
   margin: 0 0 10px 0;
   padding: 12px 16px;
+  overflow-wrap: anywhere;
   border: 1px solid ${colors.detail};
   border-radius: 8px;
   color: ${colors.text};
@@ -354,11 +462,40 @@ export const FooterRow = styled.div`
   justify-content: space-between;
   max-width: 820px;
   margin-top: 30px;
+
+  ${mobile} {
+    /* stays reachable while the lesson content scrolls */
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    gap: 12px;
+    margin-top: 24px;
+    padding: 12px;
+    background: ${colors.commonLighter};
+    border-radius: 8px;
+    box-shadow: 0 -2px 12px rgb(0 0 0 / 10%);
+
+    .ant-btn {
+      /* size to the label, then share the leftover width */
+      flex: 1 1 auto;
+      min-width: 0;
+      height: auto;
+      min-height: 44px;
+      padding: 8px 12px;
+      white-space: normal;
+      line-height: 1.25;
+    }
+  }
 `;
 
 export const FooterProgress = styled.span`
   color: ${colors.text};
   font-size: 0.875rem;
+
+  ${mobile} {
+    /* already shown in the steps bar at the top */
+    display: none;
+  }
 `;
 
 export const QuizHint = styled.div`

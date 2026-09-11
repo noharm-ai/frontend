@@ -427,6 +427,9 @@ export function TrainingOverview() {
           locale={{ emptyText }}
           pagination={false}
           expandable={{ expandedRowRender }}
+          // seven columns never fit a phone: scroll sideways instead of
+          // squeezing every cell into a single character per line
+          scroll={{ x: 900 }}
         />
       </PageCard>
     </>
