@@ -299,14 +299,44 @@ test("culture tab lists the drugs and flags predictions", async ({
   // the drug does not have
   await expect(pending.locator(".culture-age")).toHaveCount(0);
 
-  // and the modal must not state a release either: the date the pending
-  // collection carries is not an antibiogram coming back
+  // the modal says outright that the lab result is pending, and keeps the
+  // prediction in a block of its own, so it is never read as the result
   await pending.click();
-  await expect(details.getByText("Predição NoHarm, acurácia")).toBeVisible();
+  await expect(details.locator(".culture-result-pending")).toContainText(
+    "Resultado: Resultado laboratorial pendente",
+  );
+  const prediction = details.locator(".culture-prediction");
+  await expect(prediction).toHaveClass(/culture-prediction-S/);
+  await expect(prediction.locator(".prediction-title")).toHaveText(
+    "Predição NoHarm",
+  );
+  await expect(prediction.locator(".prediction-value")).toHaveText(
+    "Sensível · Acurácia: 65%",
+  );
   await expect(
     details.getByText("Data da coleta: 01/03/2024 12:17"),
   ).toBeVisible();
+  // and it must not state a release either: the date the pending collection
+  // carries is not an antibiogram coming back
   await expect(details.getByText("Data da liberação")).toHaveCount(0);
+  await page.keyboard.press("Escape");
+  await expect(details).toBeHidden();
+
+  // a drug with a released antibiogram and a newer pending collection shows
+  // both, each as its own block: the released result with its date, the
+  // pending one with the prediction set apart
+  await resistant.locator(".culture-item", { hasText: "CEFEPIME" }).click();
+  const blocks = details.locator(".culture-detail-item");
+  await expect(blocks).toHaveCount(2);
+  await expect(blocks.nth(0)).toContainText("Resultado: Resistente");
+  await expect(blocks.nth(0)).toContainText(
+    "Data da liberação: 08/03/2024 07:17",
+  );
+  await expect(blocks.nth(0).locator(".culture-prediction")).toHaveCount(0);
+  await expect(blocks.nth(1)).toContainText("Resultado laboratorial pendente");
+  await expect(blocks.nth(1).locator(".culture-prediction")).toHaveClass(
+    /culture-prediction-S/,
+  );
 });
 
 test("the tab is not flagged when no resistant drug is in use", async ({

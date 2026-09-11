@@ -1377,7 +1377,10 @@
     "result": "Resultado",
     "collectionDate": "Data da coleta",
     "releaseDate": "Data da liberação",
-    "predictionAccuracy": "Predição NoHarm, acurácia",
+    "predictionAccuracy": "Acurácia",
+    "resultPending": "Resultado laboratorial pendente",
+    "predictionTitle": "Predição NoHarm",
+    "predictionHint": "Estimativa gerada pela NoHarm enquanto o antibiograma não é liberado pelo laboratório. Não substitui o resultado.",
     "prediction": {
       "R": "Resistente",
       "S": "Sensível"

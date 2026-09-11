@@ -29,6 +29,7 @@ import {
   Group,
   List,
   Item,
+  Details,
   EmptyDescription,
 } from "./CultureTab.style";
 
@@ -129,23 +130,65 @@ const buildGroups = (cultures) => {
   ].filter((group) => group.drugs.length > 0);
 };
 
-const CultureResult = ({ item, t }) => {
-  if (!isPrediction(item)) {
-    return item.result;
-  }
-
-  return t(`culture.prediction.${item.prediction}`, {
+// the prediction, in the same wording the row groups use, or the raw text of
+// one the backend could not classify
+const predictionLabel = (item, t) =>
+  t(`culture.prediction.${item.prediction}`, {
     defaultValue: item.prediction,
   });
-};
+
+// the antibiogram of a released collection: the reading the drug is grouped by
+const CultureReleasedResult = ({ item, t }) => (
+  <>
+    <div>
+      {t("culture.result")}: {item.result}
+    </div>
+    <div>
+      {t("culture.releaseDate")}: {formatDate(item.releaseDate)}
+    </div>
+  </>
+);
+
+// a pending collection has no result to state, and the modal is where that
+// has to be said outright: the prediction is set apart from the result line
+// it stands in for, so that it is never read as the lab result
+const CulturePendingResult = ({ item, t }) => (
+  <>
+    <div className="culture-result-pending">
+      {t("culture.result")}:{" "}
+      <span className="pending">
+        <ClockCircleOutlined /> {t("culture.resultPending")}
+      </span>
+    </div>
+    <div
+      className={`culture-prediction culture-prediction-${
+        [RESULT_RESISTANT, RESULT_SUSCEPTIBLE].includes(item.predictionType)
+          ? item.predictionType
+          : "unknown"
+      }`}
+    >
+      <div className="prediction-title">
+        <RobotOutlined /> {t("culture.predictionTitle")}
+      </div>
+      <div className="prediction-value">
+        {predictionLabel(item, t)}
+        {item.probability != null && (
+          <span className="prediction-accuracy">
+            {" "}
+            · {t("culture.predictionAccuracy")}:{" "}
+            {Math.round(item.probability * 100)}%
+          </span>
+        )}
+      </div>
+      <div className="prediction-hint">{t("culture.predictionHint")}</div>
+    </div>
+  </>
+);
 
 const CultureDetails = ({ drug, t }) => (
-  <>
+  <Details>
     {drug.prescribed && (
-      <div
-        className="culture-prescribed-detail"
-        style={{ marginBottom: "8px", fontWeight: 500 }}
-      >
+      <div className="culture-prescribed-detail">
         {isResistantInUse(drug) ? (
           <>
             <CustomIcon component={IconGerm} style={{ color: "#f44336" }} />{" "}
@@ -158,8 +201,10 @@ const CultureDetails = ({ drug, t }) => (
         )}
       </div>
     )}
+    {/* one block per collection: a drug may carry a released antibiogram and
+        a newer collection still pending, and the two must not run together */}
     {drug.items.map((item, index) => (
-      <div key={item.key || index} style={{ marginTop: index > 0 ? "8px" : 0 }}>
+      <div key={item.key || index} className="culture-detail-item">
         <div>
           {t("culture.microorganism")}: {item.microorganism || "-"}
         </div>
@@ -167,29 +212,18 @@ const CultureDetails = ({ drug, t }) => (
           {t("culture.material")}: {item.material || "-"}
         </div>
         <div>
-          {t("culture.result")}: <CultureResult item={item} t={t} />
-          {isPrediction(item) && (
-            <>
-              {" "}
-              ({t("culture.predictionAccuracy")}:{" "}
-              {Math.round(item.probability * 100)}%)
-            </>
-          )}
-        </div>
-        <div>
           {t("culture.collectionDate")}: {formatDate(item.collectionDate)}
         </div>
-        {/* the row only carries how old the release is, the date itself is
-            read here. A pending collection may carry a date of its own, and
-            it is not a release: nothing came back from it to be read as one */}
-        {!isPrediction(item) && item.releaseDate && (
-          <div>
-            {t("culture.releaseDate")}: {formatDate(item.releaseDate)}
-          </div>
+        {/* a pending collection may carry a release date of its own, and it
+            is not a release: nothing came back from it to be read as one */}
+        {isPrediction(item) ? (
+          <CulturePendingResult item={item} t={t} />
+        ) : (
+          <CultureReleasedResult item={item} t={t} />
         )}
       </div>
     ))}
-  </>
+  </Details>
 );
 
 const CultureListItem = ({ drug, onOpenDetails, t }) => {

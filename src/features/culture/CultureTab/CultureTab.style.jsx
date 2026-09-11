@@ -253,6 +253,93 @@ export const Item = styled.div`
   }
 `;
 
+// the details modal: one block per collection, and a pending collection set
+// apart from the result it has not got yet
+export const Details = styled.div`
+  .culture-prescribed-detail {
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  .culture-detail-item + .culture-detail-item {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  /* the result line of a pending collection says so instead of a result */
+  .culture-result-pending .pending {
+    font-weight: 500;
+    color: #6d7a94;
+
+    .anticon {
+      font-size: 12px;
+    }
+  }
+
+  /* the prediction is a box of its own, in the accent of what was predicted:
+     it stands in for the result above it, and must not be read as it */
+  .culture-prediction {
+    margin-top: 8px;
+    padding: 8px 10px;
+    border-left: 3px solid ${PREDICTED_UNKNOWN};
+    border-radius: 5px;
+    background: #f7f7fb;
+
+    .prediction-title {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: #6d7a94;
+
+      .anticon {
+        font-size: 13px;
+        color: ${PREDICTED_UNKNOWN};
+      }
+    }
+
+    .prediction-value {
+      margin-top: 4px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--nh-text-color);
+    }
+
+    .prediction-accuracy {
+      font-size: 12px;
+      font-weight: 400;
+      color: #6d7a94;
+    }
+
+    .prediction-hint {
+      margin-top: 4px;
+      font-size: 12px;
+      line-height: 1.4;
+      color: #6d7a94;
+    }
+
+    &.culture-prediction-R {
+      border-left-color: ${PREDICTED_RESISTANT};
+
+      .prediction-title .anticon {
+        color: ${PREDICTED_RESISTANT};
+      }
+    }
+
+    &.culture-prediction-S {
+      border-left-color: ${PREDICTED_SUSCEPTIBLE};
+
+      .prediction-title .anticon {
+        color: ${PREDICTED_SUSCEPTIBLE};
+      }
+    }
+  }
+`;
+
 export const EmptyDescription = styled.div`
   .culture-empty-title {
     color: var(--nh-text-color);
