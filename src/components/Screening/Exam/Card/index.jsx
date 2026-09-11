@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { isEmpty } from "lodash";
 import { BellOutlined } from "@ant-design/icons";
@@ -16,7 +16,7 @@ import { Carousel } from "components/Carousel";
 import { setExamsModalAdmissionNumber } from "features/exams/ExamModal/ExamModalSlice";
 import { CultureTab } from "features/culture/CultureTab/CultureTab";
 import { CultureCardFooter } from "features/culture/CultureCardFooter/CultureCardFooter";
-import { countResistantInUse } from "features/culture/cultureResistance";
+import { fetchCultures } from "features/culture/CultureSlice";
 import {
   trackPrescriptionAction,
   TrackedPrescriptionAction,
@@ -27,7 +27,6 @@ const TAB_CULTURE = "culture";
 
 export default function ExamCard({
   exams,
-  cultures,
   siderCollapsed,
   count,
   admissionNumber,
@@ -37,9 +36,24 @@ export default function ExamCard({
   const dispatch = useDispatch();
   const [tab, setTab] = useState(TAB_EXAMS);
 
+  const idPrescription = prescription?.idPrescription;
+  const cultures = useSelector((state) => state.cultures.list);
+  const culturesStatus = useSelector((state) => state.cultures.status);
+
   // the culture card sits behind a tab, so a resistant drug the patient is on
-  // would go unseen unless the tab itself says so
-  const resistantInUse = countResistantInUse(cultures);
+  // would go unseen unless the tab itself says so. The count comes with the
+  // prescription (cultureStats): the cultures themselves are only loaded when
+  // the tab is opened, they weighed on every load of the screen
+  const resistantInUse = prescription?.cultureStats?.resistantInUse ?? 0;
+
+  useEffect(() => {
+    // the slice skips the request while the cached list is current, and
+    // marks it stale whenever the prescription is loaded again (the
+    // "prescribed" flag follows the drug list)
+    if (tab === TAB_CULTURE && idPrescription) {
+      dispatch(fetchCultures({ idPrescription }));
+    }
+  }, [tab, idPrescription, culturesStatus, dispatch]);
 
   const openModal = () => {
     dispatch(setExamsModalAdmissionNumber(admissionNumber));
@@ -94,7 +108,14 @@ export default function ExamCard({
       <div className="content">
         <Flex align="center" style={{ height: "100%" }}>
           {tab === TAB_CULTURE ? (
-            <CultureTab cultures={cultures} />
+            <CultureTab
+              cultures={cultures}
+              loading={culturesStatus === "loading"}
+              error={culturesStatus === "failed"}
+              onRetry={() =>
+                dispatch(fetchCultures({ idPrescription, force: true }))
+              }
+            />
           ) : exams && exams.length > 0 ? (
             <div style={{ width: "100%" }}>
               <Carousel infinite={false}>

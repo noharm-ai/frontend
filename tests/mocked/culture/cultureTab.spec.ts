@@ -1,3 +1,5 @@
+import type { Page } from "@playwright/test";
+
 import { test, expect } from "../support/mockApi";
 import { loadFixture } from "../support/defaultHandlers";
 
@@ -6,6 +8,10 @@ import { loadFixture } from "../support/defaultHandlers";
  *
  * The card always carries the tab bar, and a pending culture must be
  * presented as a NoHarm prediction, never as if it were the lab result.
+ *
+ * The cultures are not part of the prescription payload: the prescription
+ * only carries their summary (cultureStats), and the list is fetched from
+ * GET /prescriptions/:id/cultures when the tab is opened.
  */
 
 const CULTURES = [
@@ -114,6 +120,8 @@ const CULTURES = [
   },
 ];
 
+const CULTURES_PATH = "/prescriptions/199/cultures";
+
 const prescriptionWith = (patch: Record<string, unknown>) => {
   const fixture = loadFixture<{ data: Record<string, unknown> }>(
     "prescriptions/single-199.json",
@@ -122,12 +130,26 @@ const prescriptionWith = (patch: Record<string, unknown>) => {
   return fixture;
 };
 
+const cultureRequests = (mockApi: { requests: { path: string }[] }) =>
+  mockApi.requests.filter((r) => r.path === CULTURES_PATH);
+
+const openCultureTab = async (page: Page) => {
+  // antd Segmented keeps the radio input hidden behind its label
+  await page
+    .locator(".ant-segmented-item-label", { hasText: "Cultura" })
+    .click();
+  await expect(page.getByRole("radio", { name: "Cultura" })).toBeChecked();
+};
+
 test("culture tab lists the drugs and flags predictions", async ({
   page,
   mockApi,
 }) => {
   mockApi.override("GET /prescriptions/:id", {
-    json: prescriptionWith({ cultures: CULTURES }),
+    json: prescriptionWith({ cultureStats: { resistantInUse: 1 } }),
+  });
+  mockApi.override("GET /prescriptions/:id/cultures", {
+    json: { status: "success", data: CULTURES },
   });
 
   await page.goto("/prescricao/199");
@@ -140,14 +162,16 @@ test("culture tab lists the drugs and flags predictions", async ({
   await expect(page.getByRole("radio", { name: "Exames" })).toBeChecked();
 
   // the card is behind a tab, so a resistant drug the patient is on has to be
-  // announced by the tab itself — asserted before anything is clicked
+  // announced by the tab itself — asserted before anything is clicked, and
+  // read from the summary the prescription carries: the cultures themselves
+  // are not loaded until the tab is opened, that is the point of the summary
   await expect(page.locator(".culture-tab-alert")).toBeVisible();
+  expect(cultureRequests(mockApi)).toHaveLength(0);
 
-  // antd Segmented keeps the radio input hidden behind its label
-  await page
-    .locator(".ant-segmented-item-label", { hasText: "Cultura" })
-    .click();
-  await expect(page.getByRole("radio", { name: "Cultura" })).toBeChecked();
+  await openCultureTab(page);
+  await expect
+    .poll(() => cultureRequests(mockApi).length)
+    .toBe(1);
 
   // the footer carries the newest release across every culture, counting only
   // the records that have a result: CEFEPIME has a pending collection with a
@@ -257,7 +281,10 @@ test("the tab is not flagged when no resistant drug is in use", async ({
   const notInUse = CULTURES.map((drug) => ({ ...drug, prescribed: false }));
 
   mockApi.override("GET /prescriptions/:id", {
-    json: prescriptionWith({ cultures: notInUse }),
+    json: prescriptionWith({ cultureStats: { resistantInUse: 0 } }),
+  });
+  mockApi.override("GET /prescriptions/:id/cultures", {
+    json: { status: "success", data: notInUse },
   });
 
   await page.goto("/prescricao/199");
@@ -274,7 +301,10 @@ test("the tab is offered with no cultures and points at the full report", async 
   mockApi,
 }) => {
   mockApi.override("GET /prescriptions/:id", {
-    json: prescriptionWith({ cultures: [] }),
+    json: prescriptionWith({ cultureStats: { resistantInUse: 0 } }),
+  });
+  mockApi.override("GET /prescriptions/:id/cultures", {
+    json: { status: "success", data: [] },
   });
   mockApi.override("GET /reports/culture", {
     json: { status: "success", data: [] },
@@ -293,10 +323,7 @@ test("the tab is offered with no cultures and points at the full report", async 
   ).toBeVisible();
   await expect(page.locator(".culture-tab-alert")).toHaveCount(0);
 
-  await page
-    .locator(".ant-segmented-item-label", { hasText: "Cultura" })
-    .click();
-  await expect(page.getByRole("radio", { name: "Cultura" })).toBeChecked();
+  await openCultureTab(page);
 
   await expect(
     page.getByText("Nenhum resultado positivo de cultura nos últimos 60 dias"),
@@ -326,16 +353,17 @@ test("the footer link opens the full culture report", async ({
   mockApi,
 }) => {
   mockApi.override("GET /prescriptions/:id", {
-    json: prescriptionWith({ cultures: CULTURES }),
+    json: prescriptionWith({ cultureStats: { resistantInUse: 1 } }),
+  });
+  mockApi.override("GET /prescriptions/:id/cultures", {
+    json: { status: "success", data: CULTURES },
   });
   mockApi.override("GET /reports/culture", {
     json: { status: "success", data: [] },
   });
 
   await page.goto("/prescricao/199");
-  await page
-    .locator(".ant-segmented-item-label", { hasText: "Cultura" })
-    .click();
+  await openCultureTab(page);
 
   const card = page
     .locator(".ant-col", { has: page.getByRole("radio", { name: "Exames" }) })
@@ -349,4 +377,65 @@ test("the footer link opens the full culture report", async ({
   expect(
     mockApi.requests.filter((r) => r.path === "/reports/culture"),
   ).not.toHaveLength(0);
+});
+
+test("a failed load says so and offers to try again", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override("GET /prescriptions/:id", {
+    json: prescriptionWith({ cultureStats: { resistantInUse: 1 } }),
+  });
+  mockApi.override("GET /prescriptions/:id/cultures", {
+    status: 500,
+    json: { status: "error", message: "boom" },
+  });
+
+  await page.goto("/prescricao/199");
+  await openCultureTab(page);
+
+  // "no cultures" would be a statement about the patient, and a failed load
+  // is not one
+  const error = page.locator(".culture-error");
+  await expect(error).toContainText("Não foi possível carregar as culturas");
+  await expect(
+    page.getByText("Nenhum resultado positivo de cultura"),
+  ).toHaveCount(0);
+
+  // a failure is not retried on its own, the card offers the retry
+  expect(cultureRequests(mockApi)).toHaveLength(1);
+  mockApi.override("GET /prescriptions/:id/cultures", {
+    json: { status: "success", data: CULTURES },
+  });
+  await error.getByRole("button", { name: "Tentar novamente" }).click();
+
+  await expect(page.locator(".culture-group-resistantInUse")).toContainText(
+    "Resistentes em uso",
+  );
+  expect(cultureRequests(mockApi)).toHaveLength(2);
+});
+
+test("the cultures are kept while the tab is switched away and back", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override("GET /prescriptions/:id", {
+    json: prescriptionWith({ cultureStats: { resistantInUse: 1 } }),
+  });
+  mockApi.override("GET /prescriptions/:id/cultures", {
+    json: { status: "success", data: CULTURES },
+  });
+
+  await page.goto("/prescricao/199");
+  await openCultureTab(page);
+  await expect(page.locator(".culture-group-resistantInUse")).toBeVisible();
+
+  await page
+    .locator(".ant-segmented-item-label", { hasText: "Exames" })
+    .click();
+  await openCultureTab(page);
+  await expect(page.locator(".culture-group-resistantInUse")).toBeVisible();
+
+  // the list is cached for the prescription: the second open asks nothing
+  expect(cultureRequests(mockApi)).toHaveLength(1);
 });

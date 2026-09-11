@@ -30,6 +30,7 @@ import { reset as multipleInterventionOutcomeReset } from "features/intervention
 import { reset as userAdminReset } from "features/userAdmin/UserAdminSlice";
 import { reset as examsModalReset } from "features/exams/ExamModal/ExamModalSlice";
 import { reset as examsFormReset } from "features/exams/ExamForm/ExamFormSlice";
+import { reset as culturesReset } from "features/culture/CultureSlice";
 import { reset as switchSchemaReset } from "features/switchSchema/SwitchSchemaSlice";
 
 import { reset as reportsReset } from "features/reports/ReportsSlice";
@@ -95,6 +96,7 @@ export const resetReduxState = (dispatch) => {
   dispatch(userAdminReset());
   dispatch(examsModalReset());
   dispatch(examsFormReset());
+  dispatch(culturesReset());
   dispatch(switchSchemaReset());
 
   dispatch(reportsReset());

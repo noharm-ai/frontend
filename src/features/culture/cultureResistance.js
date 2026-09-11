@@ -32,6 +32,10 @@ export const currentItemOf = (drug) => (drug.items || [])[0];
  * item (services/alert_service), and the finding the card has to make
  * impossible to miss. A predicted resistance never qualifies: the collection
  * is still pending and the prediction must not be read as the lab result.
+ *
+ * The tab badge does not count these here: the prescription carries the count
+ * (cultureStats.resistantInUse, culture_service.get_culture_stats), so the
+ * cultures need not be loaded before the tab is opened.
  */
 export const isResistantInUse = (drug) => {
   const current = currentItemOf(drug);
@@ -46,6 +50,3 @@ export const isResistantInUse = (drug) => {
     current.resultType === RESULT_RESISTANT,
   );
 };
-
-export const countResistantInUse = (cultures) =>
-  (cultures || []).filter(isResistantInUse).length;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Flex } from "antd";
+import { Flex, Spin } from "antd";
 import {
   RobotOutlined,
   MedicineBoxOutlined,
@@ -9,6 +9,7 @@ import {
 } from "@ant-design/icons";
 import moment from "moment";
 
+import Button from "components/Button";
 import Empty from "components/Empty";
 import CustomIcon from "components/Icon";
 import DefaultModal from "components/Modal";
@@ -250,9 +251,50 @@ const CultureListItem = ({ drug, onOpenDetails, t }) => {
   );
 };
 
-export function CultureTab({ cultures }) {
+export function CultureTab({ cultures, loading, error, onRetry }) {
   const { t } = useTranslation();
   const [details, setDetails] = useState(null);
+
+  // the cultures are fetched when the tab is opened (CultureSlice), so the
+  // first open waits for them; a reload of a list already shown keeps the
+  // list in place instead of flashing it away
+  if (loading && (!cultures || cultures.length === 0)) {
+    return (
+      <Flex
+        align="center"
+        justify="center"
+        style={{ width: "100%" }}
+        className="culture-loading"
+      >
+        <Spin />
+      </Flex>
+    );
+  }
+
+  if (error) {
+    // "no cultures" would be a statement about the patient, and this is not
+    // one: the card says the load failed and offers to try again
+    return (
+      <Flex align="center" justify="center" style={{ width: "100%" }}>
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          className="culture-error"
+          description={
+            <EmptyDescription>
+              <div className="culture-empty-title">
+                {t("culture.loadError")}
+              </div>
+              {onRetry && (
+                <Button type="link" onClick={onRetry}>
+                  {t("culture.retry")}
+                </Button>
+              )}
+            </EmptyDescription>
+          }
+        />
+      </Flex>
+    );
+  }
 
   if (!cultures || cultures.length === 0) {
     // the card only carries the recent cultures, so "none" is a statement

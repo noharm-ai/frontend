@@ -225,6 +225,9 @@
     "solution": [],
     "procedures": [],
     "diet": [],
-    "exams": []
+    "exams": [],
+    "cultureStats": {
+      "resistantInUse": 0
+    }
   }
 }

@@ -221,6 +221,13 @@ const getPrescriptionById = (bearerToken, idPrescription, params = {}) =>
     ...setHeaders(bearerToken),
   });
 
+// the cultures are not part of the prescription payload: the culture card
+// loads them when its tab is opened (features/culture/CultureSlice)
+const getPrescriptionCultures = (bearerToken, idPrescription) =>
+  instance.get(`${endpoints.prescriptions}/${idPrescription}/cultures`, {
+    ...setHeaders(bearerToken),
+  });
+
 const getPrescriptionDrugPeriod = (
   bearerToken,
   idPrescriptionDrug,
@@ -1113,6 +1120,7 @@ const methods = {
   getPrescriptions,
   getPrescriptionsStatusList,
   getPrescriptionById,
+  getPrescriptionCultures,
   getPrescriptionDrugPeriod,
   putPrescriptionById,
   getPatientList,

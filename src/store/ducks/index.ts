@@ -30,6 +30,7 @@ import multipleOutcomeSlice from "features/intervention/MultipleOutcome/Multiple
 import userAdminSlice from "features/userAdmin/UserAdminSlice";
 import examModalSlice from "features/exams/ExamModal/ExamModalSlice";
 import examFormSlice from "features/exams/ExamForm/ExamFormSlice";
+import { cultureReducer } from "features/culture/CultureSlice";
 import switchSchemaSlice from "features/switchSchema/SwitchSchemaSlice";
 import drugDashboardSlice from "features/drugs/DrugDashboard/DrugDashboardSlice";
 import drugRemoveOutlierSlice from "features/drugs/DrugRemoveOutlier/DrugRemoveOutlierSlice";
@@ -162,6 +163,7 @@ const rootReducer = combineReducers({
   userAdmin: userAdminSlice,
   examsModal: examModalSlice,
   examsForm: examFormSlice,
+  cultures: cultureReducer,
   switchSchema: switchSchemaSlice,
   drugDashboard: drugDashboardSlice,
   drugRemoveOutlier: drugRemoveOutlierSlice,
