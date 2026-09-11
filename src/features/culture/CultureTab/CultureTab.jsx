@@ -32,6 +32,30 @@ const GROUP_PREDICTION = "prediction";
 
 const formatDate = (date) => (date ? moment(date).format("DD/MM/YYYY") : "-");
 
+// how old the result is, in the shortest form that still reads: "45m", "6h",
+// "3d". The unit letters are the same in both languages, so they are not
+// translated
+const formatAge = (date) => {
+  const minutes = moment().diff(moment(date), "minutes");
+
+  if (minutes < 60) {
+    return `${Math.max(minutes, 1)}m`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+
+  if (hours < 24) {
+    return `${hours}h`;
+  }
+
+  // nothing in the backend bounds how old a release can be (the retention is
+  // a DynamoDB TTL, and the query filters by nothing), so the badge is capped:
+  // a four-digit day count would eat the drug name next to it
+  const days = Math.floor(hours / 24);
+
+  return days > 99 ? "99d+" : `${days}d`;
+};
+
 const byDrug = (a, b) => `${a.drug}`.localeCompare(`${b.drug}`);
 
 // inside the prediction group a predicted resistance is the one worth reading
@@ -129,6 +153,13 @@ const CultureDetails = ({ drug, t }) => (
         <div>
           {t("culture.collectionDate")}: {formatDate(item.collectionDate)}
         </div>
+        {/* the row only carries how old the release is, the date itself is
+            read here */}
+        {item.releaseDate && (
+          <div>
+            {t("culture.releaseDate")}: {formatDate(item.releaseDate)}
+          </div>
+        )}
       </div>
     ))}
   </>
@@ -180,6 +211,11 @@ const CultureListItem = ({ drug, onOpenDetails }) => {
           {prediction && <RobotOutlined />}
           <span>{marker}</span>
         </div>
+      )}
+      {/* how long ago the antibiogram was released: a pending prediction has
+          no release to age, and the collection date is not the same reading */}
+      {current.releaseDate && (
+        <div className="age culture-age">{formatAge(current.releaseDate)}</div>
       )}
     </Item>
   );

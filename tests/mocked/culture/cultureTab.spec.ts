@@ -45,7 +45,9 @@ const CULTURES = [
         predictionType: "S",
         probability: 0.65,
         collectionDate: "2024-03-01T12:17:03",
-        releaseDate: "2024-03-08T07:17:02",
+        // the antibiogram of this collection was never released: that is why
+        // the card has a prediction for it at all
+        releaseDate: null,
       },
     ],
   },
@@ -153,7 +155,7 @@ test("culture tab lists the drugs and flags predictions", async ({
   // drug name: the header already says the drug is in use
   const inUse = page.locator(".culture-group-resistantInUse");
   await expect(inUse).toContainText("Resistentes em uso");
-  await expect(inUse.locator(".culture-item")).toHaveText(["OXACILINA"]);
+  await expect(inUse.locator(".culture-item .name")).toHaveText(["OXACILINA"]);
   await expect(inUse.locator(".prescribed")).toHaveCount(0);
   await expect(page.locator(".culture-group").first()).toHaveClass(
     /culture-group-resistantInUse/,
@@ -162,7 +164,15 @@ test("culture tab lists the drugs and flags predictions", async ({
   // a resistant drug nobody prescribed stays in the plain group
   const resistant = page.locator(".culture-group-resistant");
   await expect(resistant).toContainText("Resistentes");
-  await expect(resistant.locator(".culture-item")).toHaveText(["CEFEPIME"]);
+  await expect(resistant.locator(".culture-item .name")).toHaveText(["CEFEPIME"]);
+
+  // how old the released antibiogram is, next to the drug. The fixture dates
+  // are fixed, so the badge is read by shape and not by value — and anything
+  // older than 99 days is capped so it cannot widen the row
+  await expect(inUse.locator(".culture-age")).toHaveText(/^(\d+[mhd]|99d\+)$/);
+
+  // a pending prediction has no release to age, and the collection date is
+  // not the same reading
 
   // the row is narrow, so the details are behind a click and read in a modal
   await inUse.locator(".culture-item", { hasText: "OXACILINA" }).click();
@@ -172,6 +182,8 @@ test("culture tab lists the drugs and flags predictions", async ({
     details.getByText("Resistente e em uso nesta prescrição"),
   ).toBeVisible();
   await expect(details.getByText("Microorganismo Teste")).toBeVisible();
+  // the row only carries the age of the release, the date itself is here
+  await expect(details.getByText("Data da liberação: 08/03/2024")).toBeVisible();
 
   // the modal must be out of the way before the list is read again
   await page.keyboard.press("Escape");
@@ -199,6 +211,9 @@ test("culture tab lists the drugs and flags predictions", async ({
   });
   await expect(pending).toContainText("S");
   await expect(pending.locator(".anticon-robot")).toBeVisible();
+  // nothing was released, so there is no age to show: the collection date is
+  // not the same reading and never takes its place
+  await expect(pending.locator(".culture-age")).toHaveCount(0);
 });
 
 test("the tab is not flagged when no resistant drug is in use", async ({

@@ -1360,6 +1360,7 @@
     "material": "Material",
     "result": "Result",
     "collectionDate": "Collection date",
+    "releaseDate": "Release date",
     "predictionAccuracy": "NoHarm prediction, accuracy",
     "prediction": {
       "R": "Resistant",

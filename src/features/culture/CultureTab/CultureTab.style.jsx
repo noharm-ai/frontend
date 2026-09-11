@@ -167,6 +167,16 @@ export const Item = styled.div`
     }
   }
 
+  /* how old the result is: a footnote on the row, never competing with the
+     drug name or with the marker that states the result */
+  .age {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    color: #6d7a94;
+  }
+
   &:hover {
     box-shadow: 0px 1px 4px 0px rgb(0 0 0 / 16%);
   }
