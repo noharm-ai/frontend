@@ -113,7 +113,7 @@ export const Item = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
+  gap: 4px;
   padding: 5px;
   border: 1px solid #e0e0e0;
   /* resistant and in use: the same red, twice the bar — the row is found by
@@ -127,6 +127,9 @@ export const Item = styled.div`
 
   .name {
     flex: 1;
+    /* enough of the drug name to identify it: past this the marker beside it
+       is what gives way, not the name */
+    min-width: 85px;
     font-size: 14px;
     font-weight: ${(props) => (props.$inUse ? 600 : 400)};
     color: var(--nh-text-color);
@@ -153,32 +156,70 @@ export const Item = styled.div`
     }
   }
 
+  /* what the group header does not say about the result. It is the drug name
+     that identifies the row, so this is what gives way when the row runs out
+     of space */
   .marker {
     display: flex;
     align-items: center;
     gap: 4px;
+    min-width: 0;
+    overflow: hidden;
     font-size: 12px;
     font-weight: 500;
     white-space: nowrap;
     color: var(--nh-text-color);
 
+    span {
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
     .anticon {
+      flex-shrink: 0;
       color: #a991d6;
     }
   }
 
   /* how old the result is: a footnote on the row, never competing with the
-     drug name or with the marker that states the result */
+     drug name or with the marker that states the result. The clock is what
+     tells the number apart from the result next to it */
   .age {
+    display: flex;
+    align-items: center;
+    gap: 3px;
     flex-shrink: 0;
     font-size: 11px;
     font-weight: 500;
     white-space: nowrap;
     color: #6d7a94;
+
+    .anticon {
+      font-size: 10px;
+    }
+  }
+
+  /* the row opens the details: the chevron says so without a hover, which is
+     the only thing the shadow could say */
+  .details-hint {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    /* it belongs to the row, not to the badge it sits next to */
+    margin-left: -1px;
+    color: #b6bece;
+
+    .anticon {
+      font-size: 10px;
+    }
   }
 
   &:hover {
     box-shadow: 0px 1px 4px 0px rgb(0 0 0 / 16%);
+
+    .details-hint {
+      color: #2e3c5a;
+    }
   }
 
   &:focus-visible {

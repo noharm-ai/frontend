@@ -83,7 +83,9 @@ export default function ExamCard({
           <Help
             text={
               tab === TAB_CULTURE
-                ? t("culture.hint")
+                ? // the rows open the antibiogram, which the list itself has
+                  // no room to say
+                  `${t("culture.hint")} ${t("culture.detailsHint")}`
                 : t("tooltips.recentExams")
             }
           />

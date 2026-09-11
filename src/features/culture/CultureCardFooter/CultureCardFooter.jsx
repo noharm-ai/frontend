@@ -5,16 +5,24 @@ import moment from "moment";
 import Button from "components/Button";
 import DefaultModal from "components/Modal";
 import CultureReport from "features/reports/CultureReport/CultureReport";
+import { isPrediction } from "features/culture/cultureResistance";
 import { trackReport, TrackedReport } from "src/utils/tracker";
 
 import { LastRelease } from "./CultureCardFooter.style";
 
-// the newest release across every culture of the patient
+// the newest release across every culture of the patient. A pending collection
+// may carry a release date of its own, but it has no result yet: what this
+// states is how recent the newest antibiogram is, so only released results
+// count
 const lastReleaseDate = (cultures) => {
   let last = null;
 
   (cultures ?? []).forEach((drug) =>
     drug.items.forEach((item) => {
+      if (isPrediction(item)) {
+        return;
+      }
+
       if (item.releaseDate && (!last || item.releaseDate > last)) {
         last = item.releaseDate;
       }

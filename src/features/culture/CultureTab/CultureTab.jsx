@@ -1,12 +1,18 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex } from "antd";
-import { RobotOutlined, MedicineBoxOutlined } from "@ant-design/icons";
+import {
+  RobotOutlined,
+  MedicineBoxOutlined,
+  ClockCircleOutlined,
+  RightOutlined,
+} from "@ant-design/icons";
 import moment from "moment";
 
 import Empty from "components/Empty";
 import CustomIcon from "components/Icon";
 import DefaultModal from "components/Modal";
+import Tooltip from "components/Tooltip";
 import { IconGerm } from "components/Icon/svgs/IconGerm";
 import {
   RESULT_RESISTANT,
@@ -30,7 +36,10 @@ const GROUP_RESISTANT = "resistant";
 const GROUP_SUSCEPTIBLE = "susceptible";
 const GROUP_PREDICTION = "prediction";
 
-const formatDate = (date) => (date ? moment(date).format("DD/MM/YYYY") : "-");
+// the modal is where the dates are actually read, and the hour of a release
+// is part of the reading: two collections of the same day are told apart by it
+const formatDate = (date) =>
+  date ? moment(date).format("DD/MM/YYYY HH:mm") : "-";
 
 // how old the result is, in the shortest form that still reads: "45m", "6h",
 // "3d". The unit letters are the same in both languages, so they are not
@@ -154,8 +163,9 @@ const CultureDetails = ({ drug, t }) => (
           {t("culture.collectionDate")}: {formatDate(item.collectionDate)}
         </div>
         {/* the row only carries how old the release is, the date itself is
-            read here */}
-        {item.releaseDate && (
+            read here. A pending collection may carry a date of its own, and
+            it is not a release: nothing came back from it to be read as one */}
+        {!isPrediction(item) && item.releaseDate && (
           <div>
             {t("culture.releaseDate")}: {formatDate(item.releaseDate)}
           </div>
@@ -165,7 +175,7 @@ const CultureDetails = ({ drug, t }) => (
   </>
 );
 
-const CultureListItem = ({ drug, onOpenDetails }) => {
+const CultureListItem = ({ drug, onOpenDetails, t }) => {
   const [current] = drug.items;
   const prediction = isPrediction(current);
   // a resistant drug the patient is actually on: the row itself has to shout,
@@ -212,11 +222,30 @@ const CultureListItem = ({ drug, onOpenDetails }) => {
           <span>{marker}</span>
         </div>
       )}
-      {/* how long ago the antibiogram was released: a pending prediction has
-          no release to age, and the collection date is not the same reading */}
-      {current.releaseDate && (
-        <div className="age culture-age">{formatAge(current.releaseDate)}</div>
+      {/* how long ago the antibiogram was released. A pending collection may
+          carry a release date of its own, but it has no antibiogram to age:
+          only a released result is read here, and the collection date is not
+          the same reading */}
+      {!prediction && current.releaseDate && (
+        <Tooltip
+          title={t("culture.releaseAgeHint", {
+            date: formatDate(current.releaseDate),
+          })}
+        >
+          {/* the row has no space to spell it out, so the clock and the "há"
+              carry what the bare number could not say */}
+          <div className="age culture-age">
+            <ClockCircleOutlined />
+            <span>
+              {t("culture.releaseAge", { age: formatAge(current.releaseDate) })}
+            </span>
+          </div>
+        </Tooltip>
       )}
+      {/* the row opens the details, and the hover shadow alone never said so */}
+      <div className="details-hint">
+        <RightOutlined />
+      </div>
     </Item>
   );
 };
@@ -268,6 +297,7 @@ export function CultureTab({ cultures }) {
                   drug={drug}
                   key={drug.drug}
                   onOpenDetails={setDetails}
+                  t={t}
                 />
               ))}
             </List>
