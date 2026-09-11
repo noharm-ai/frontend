@@ -98,6 +98,27 @@ const CULTURES = [
     ],
   },
   {
+    // a predicted resistance: still a pending collection, so it must not be
+    // read in the same group as a released resistant antibiogram
+    drug: "VANCOMICINA",
+    items: [
+      {
+        key: "SANGUE TOTAL#MICROORGANISMO TESTE#VANCOMICINA",
+        idExamItem: 900001,
+        microorganism: "Microorganismo Teste",
+        material: "Sangue Total",
+        result: null,
+        resultType: null,
+        resultDetail: null,
+        prediction: "R",
+        predictionType: "R",
+        probability: 0.82,
+        collectionDate: "2024-03-01T12:17:03",
+        releaseDate: "2024-03-11T08:20:00",
+      },
+    ],
+  },
+  {
     // the backend marks the cultures of the drugs the prescription carries
     drug: "OXACILINA",
     prescribed: true,
@@ -169,9 +190,7 @@ test("culture tab lists the drugs and flags predictions", async ({
   expect(cultureRequests(mockApi)).toHaveLength(0);
 
   await openCultureTab(page);
-  await expect
-    .poll(() => cultureRequests(mockApi).length)
-    .toBe(1);
+  await expect.poll(() => cultureRequests(mockApi).length).toBe(1);
 
   // the footer carries the newest release across every culture, counting only
   // the records that have a result: CEFEPIME has a pending collection with a
@@ -245,9 +264,25 @@ test("culture tab lists the drugs and flags predictions", async ({
   });
   await expect(intermediate).toContainText("intermediário");
 
-  // the pending culture shows the prediction, not a lab result
-  const predicted = page.locator(".culture-group-prediction");
-  await expect(predicted).toContainText("Predição NoHarm");
+  // the pending culture shows the prediction, not a lab result, and the
+  // predictions are split like the results: the header says what was
+  // predicted, so the row no longer repeats the letter
+  const predictedResistant = page.locator(".culture-group-predictionResistant");
+  await expect(predictedResistant).toContainText(
+    "Predição NoHarm: resistentes",
+  );
+  await expect(predictedResistant.locator(".culture-item .name")).toHaveText([
+    "VANCOMICINA",
+  ]);
+  // and it stays out of the released resistant group
+  await expect(resistant.locator(".culture-item .name")).toHaveText([
+    "CEFEPIME",
+  ]);
+  const predicted = page.locator(".culture-group-predictionSusceptible");
+  await expect(predicted).toContainText("Predição NoHarm: sensíveis");
+  await expect(predicted.locator(".culture-item .name")).toHaveText([
+    "GENTAMICINA",
+  ]);
   // a drug that already has an antibiogram never shows up here, even with a
   // newer collection still pending
   await expect(
@@ -256,7 +291,8 @@ test("culture tab lists the drugs and flags predictions", async ({
   const pending = predicted.locator(".culture-item", {
     hasText: "GENTAMICINA",
   });
-  await expect(pending).toContainText("S");
+  await expect(pending.locator(".name")).toHaveText("GENTAMICINA");
+  await expect(pending.locator(".marker")).toHaveText("");
   await expect(pending.locator(".anticon-robot")).toBeVisible();
   // the pending collection carries a release date of its own, but no
   // antibiogram came back from it: ageing it on the row would state a result

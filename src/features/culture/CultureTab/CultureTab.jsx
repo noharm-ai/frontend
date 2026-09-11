@@ -35,7 +35,15 @@ import {
 const GROUP_RESISTANT_IN_USE = "resistantInUse";
 const GROUP_RESISTANT = "resistant";
 const GROUP_SUSCEPTIBLE = "susceptible";
-const GROUP_PREDICTION = "prediction";
+// a pending collection is read through its prediction, which is split the
+// same way the released results are: the header says what was predicted
+const GROUP_PREDICTION_RESISTANT = "predictionResistant";
+const GROUP_PREDICTION_SUSCEPTIBLE = "predictionSusceptible";
+
+const PREDICTION_GROUPS = [
+  GROUP_PREDICTION_RESISTANT,
+  GROUP_PREDICTION_SUSCEPTIBLE,
+];
 
 // the modal is where the dates are actually read, and the hour of a release
 // is part of the reading: two collections of the same day are told apart by it
@@ -68,20 +76,12 @@ const formatAge = (date) => {
 
 const byDrug = (a, b) => `${a.drug}`.localeCompare(`${b.drug}`);
 
-// inside the prediction group a predicted resistance is the one worth reading
-// first, the group header cannot say it for both
-const byPrediction = (a, b) => {
-  const rank = (drug) =>
-    resultTypeOf(drug.items[0]) === RESULT_RESISTANT ? 0 : 1;
-
-  return rank(a) - rank(b) || byDrug(a, b);
-};
-
 const buildGroups = (cultures) => {
   const resistantInUse = [];
   const resistant = [];
   const susceptible = [];
-  const predictions = [];
+  const predictedResistant = [];
+  const predictedSusceptible = [];
 
   cultures.forEach((drug) => {
     // the item that represents the drug: the backend puts the released
@@ -95,7 +95,14 @@ const buildGroups = (cultures) => {
       // prescribed, and the group header carries it instead of the row
       resistantInUse.push(drug);
     } else if (isPrediction(current)) {
-      predictions.push(drug);
+      // the predictions are split like the results: a predicted resistance is
+      // the one worth reading first, and a prediction the backend could not
+      // classify is not guessed into it
+      if (resultTypeOf(current) === RESULT_RESISTANT) {
+        predictedResistant.push(drug);
+      } else {
+        predictedSusceptible.push(drug);
+      }
     } else if (resultTypeOf(current) === RESULT_RESISTANT) {
       resistant.push(drug);
     } else {
@@ -109,7 +116,16 @@ const buildGroups = (cultures) => {
     { key: GROUP_RESISTANT_IN_USE, drugs: resistantInUse.sort(byDrug) },
     { key: GROUP_RESISTANT, drugs: resistant.sort(byDrug) },
     { key: GROUP_SUSCEPTIBLE, drugs: susceptible.sort(byDrug) },
-    { key: GROUP_PREDICTION, drugs: predictions.sort(byPrediction) },
+    // the predictions stay below every released result: a pending collection
+    // is not a lab result, whatever it predicts
+    {
+      key: GROUP_PREDICTION_RESISTANT,
+      drugs: predictedResistant.sort(byDrug),
+    },
+    {
+      key: GROUP_PREDICTION_SUSCEPTIBLE,
+      drugs: predictedSusceptible.sort(byDrug),
+    },
   ].filter((group) => group.drugs.length > 0);
 };
 
@@ -183,10 +199,15 @@ const CultureListItem = ({ drug, onOpenDetails, t }) => {
   // a label would only push the drug name out of a cell this narrow
   const inUse = isResistantInUse(drug);
 
-  // the group header already states the result, so the item only spells out
-  // what the header does not cover: the predicted S/R and any result whose
-  // wording says more than the group itself
-  const marker = prediction ? current.prediction : current.resultDetail;
+  // the group header already states the result, predicted or released, so
+  // the item only spells out what the header does not cover: any wording that
+  // says more than the group itself, and a prediction the backend could not
+  // classify, which the header does not read for it
+  const marker = prediction
+    ? [RESULT_RESISTANT, RESULT_SUSCEPTIBLE].includes(current.predictionType)
+      ? null
+      : current.prediction
+    : current.resultDetail;
 
   // the row is too narrow to carry the antibiogram: the details open in a
   // modal, which stays open while the user reads it
@@ -217,10 +238,13 @@ const CultureListItem = ({ drug, onOpenDetails, t }) => {
           <MedicineBoxOutlined />
         </div>
       )}
-      {marker && (
+      {/* the robot marks a prediction on the row itself: the sticky header
+          scrolls away with the list, and a pending collection must never be
+          read as a lab result */}
+      {(prediction || marker) && (
         <div className="marker">
           {prediction && <RobotOutlined />}
-          <span>{marker}</span>
+          {marker && <span>{marker}</span>}
         </div>
       )}
       {/* how long ago the antibiogram was released. A pending collection may
@@ -326,7 +350,7 @@ export function CultureTab({ cultures, loading, error, onRetry }) {
             className={`culture-group culture-group-${group.key}`}
           >
             <div className="group-title">
-              {group.key === GROUP_PREDICTION && <RobotOutlined />}
+              {PREDICTION_GROUPS.includes(group.key) && <RobotOutlined />}
               {group.key === GROUP_RESISTANT_IN_USE && (
                 <CustomIcon component={IconGerm} />
               )}

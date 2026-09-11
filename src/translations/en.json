@@ -1352,7 +1352,8 @@
       "resistantInUse": "Resistant and in use",
       "resistant": "Resistant",
       "susceptible": "Susceptible",
-      "prediction": "NoHarm prediction"
+      "predictionResistant": "NoHarm prediction: resistant",
+      "predictionSusceptible": "NoHarm prediction: susceptible"
     },
     "prescribedHint": "Drug in use in this prescription",
     "resistantInUseHint": "Resistant and in use in this prescription",

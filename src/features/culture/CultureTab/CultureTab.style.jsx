@@ -2,6 +2,14 @@ import styled from "styled-components";
 
 import { get } from "styles/utils";
 
+// the prediction accents: each says what was predicted, and neither is the
+// red or the green of a released antibiogram, which a pending collection
+// must never be read as. A prediction the backend could not classify keeps
+// the plain prediction purple
+const PREDICTED_RESISTANT = "#f0a04b";
+const PREDICTED_SUSCEPTIBLE = "#5fb2d8";
+const PREDICTED_UNKNOWN = "#a991d6";
+
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -67,6 +75,16 @@ export const Group = styled.div`
     }
   }
 
+  /* the predictions carry the colour of what was predicted, on the robot
+     that marks them as predictions */
+  &.culture-group-predictionResistant .group-title .anticon {
+    color: ${PREDICTED_RESISTANT};
+  }
+
+  &.culture-group-predictionSusceptible .group-title .anticon {
+    color: ${PREDICTED_SUSCEPTIBLE};
+  }
+
   /* resistant and in use: the group the card exists to surface */
   &.culture-group-resistantInUse .group-title {
     color: #cf1322;
@@ -100,7 +118,12 @@ export const List = styled.div`
 // collection, and it must not be read in the same red as a released
 // antibiogram
 const accentColor = (props) => {
-  if (props.$prediction) return "#a991d6";
+  if (props.$prediction) {
+    if (props.$resistant) return PREDICTED_RESISTANT;
+    if (props.$susceptible) return PREDICTED_SUSCEPTIBLE;
+
+    return PREDICTED_UNKNOWN;
+  }
   if (props.$resistant) return "#f44336";
   if (props.$susceptible) return "#7ebe9a";
 
@@ -175,9 +198,11 @@ export const Item = styled.div`
       overflow: hidden;
     }
 
+    /* the robot marks the row as a prediction, in the colour of what was
+       predicted: the same one the bar and the group header carry */
     .anticon {
       flex-shrink: 0;
-      color: #a991d6;
+      color: ${accentColor};
     }
   }
 
