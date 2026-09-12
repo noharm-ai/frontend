@@ -58,7 +58,10 @@ const Editor = forwardRef(function Editor({
   const extensions = [];
 
   if (utilities.includes("basic")) {
-    extensions.push(StarterKit);
+    // StarterKit v3 bundles the Link extension; disable it here so the
+    // separately configured Link below (with its URI validation) is the
+    // single source of truth and no duplicate-extension conflict occurs.
+    extensions.push(StarterKit.configure({ link: false }));
   }
 
   if (utilities.includes("link")) {
