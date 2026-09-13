@@ -1,5 +1,8 @@
 name: E2E - Test
-on: workflow_dispatch
+on:
+  pull_request:
+    branches: [master, develop]
+  workflow_dispatch:
 permissions:
   contents: read
 
@@ -45,14 +48,27 @@ jobs:
           sleep 10
         env:
           MAIL_HOST: http://localhost:3000
+          # "test" makes the backend skip Redis and DynamoDB (cache_service,
+          # exams/culture/presence repositories), which are not available in CI.
+          ENV: test
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: lts/*
       - name: Install dependencies
         run: sfw npm ci --ignore-scripts
+      - name: Cache Playwright browsers
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('package-lock.json') }}
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+      - name: Install Playwright system deps
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
       - name: Run Playwright tests
         # --workers=1: the specs share the seeded data (check.spec checks
         # prescription 199 while intervention.spec and clinicalNotes.spec are
@@ -68,9 +84,8 @@ jobs:
           VITE_APP_SUPPORT_LINK: ${{ secrets.REACT_APP_SUPPORT_LINK }}
           VITE_APP_ODOO_LINK: ${{ secrets.REACT_APP_ODOO_LINK }}
           VITE_APP_ADMIN_LINK: ${{ secrets.REACT_APP_ADMIN_LINK }}
-          VITE_APP_VERSION: ${{ steps.package-version.outputs.current-version}}
           VITE_APP_URL: http://localhost:3000
-          VITE_MAIL_TEMPLATE_HOST: http://localhost:3000
+          VITE_MAIL_TEMPLATE_HOST: ${{ secrets.VITE_MAIL_TEMPLATE_HOST }}
           TEST_USER: e2e@e2e.com
           TEST_USER_PASSWORD: e2etest
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
