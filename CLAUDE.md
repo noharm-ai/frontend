@@ -147,5 +147,5 @@ Tests run in Chromium only. Firefox/WebKit are commented out in `playwright.conf
 
 ### CI
 
-- `.github/workflows/playwright-test.yml` — real-backend suite (manual trigger).
+- `.github/workflows/playwright-test.yml` — real-backend suite, runs on pull requests to `develop`/`master` (also manual trigger).
 - `.github/workflows/e2e-mock.yml` — mocked suite, runs on every pull request.
