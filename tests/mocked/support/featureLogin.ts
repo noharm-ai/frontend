@@ -21,8 +21,9 @@ export async function loginWithFeatures(
   page: Page,
   mockApi: MockApi,
   features: string[],
+  readyText?: string,
 ) {
-  return loginWithAuth(page, mockApi, { features });
+  return loginWithAuth(page, mockApi, { features }, readyText);
 }
 
 /**
@@ -42,11 +43,16 @@ export async function loginWithPermissions(
  * fields that are neither features nor permissions (onboardingStatus, training,
  * ...). Combine them freely in a single call; an `undefined` value omits the key
  * entirely, since the payload is serialized with JSON.stringify.
+ *
+ * `readyText` is the text that proves the logged-in header rendered; override it
+ * when the chosen payload changes what that header shows (HIDE_NAMES, for one,
+ * replaces the user name with asterisks).
  */
 export async function loginWithAuth(
   page: Page,
   mockApi: MockApi,
   overrides: Record<string, unknown>,
+  readyText = "E2E Test",
 ) {
   const auth = loadFixture<Record<string, unknown>>("auth/authenticate.json");
   mockApi.override("POST /authenticate", { json: { ...auth, ...overrides } });
@@ -58,7 +64,9 @@ export async function loginWithAuth(
 
   // the landing page differs per feature set, so wait for the logged-in
   // header instead of a specific heading
-  await expect(page.getByText("E2E Test")).toBeVisible({ timeout: 15000 });
+  await expect(page.getByText(readyText).first()).toBeVisible({
+    timeout: 15000,
+  });
 
   // give redux-persist a beat to flush user.account before navigating
   // (same as auth.setup.ts), or features are lost on the next page load
