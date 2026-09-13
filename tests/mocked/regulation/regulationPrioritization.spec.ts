@@ -88,8 +88,18 @@ const searchCalls = (mockApi: MockApi) =>
     (r) => r.method === "POST" && r.path === "/regulation/prioritization",
   );
 
-const lastSearch = (mockApi: MockApi) =>
-  JSON.parse(searchCalls(mockApi).at(-1)!.postData!);
+/**
+ * The payload of the most recent search. Asserts one was sent first, so a page
+ * that never searched fails with that, and not with a TypeError on `undefined`.
+ */
+const lastSearch = (mockApi: MockApi) => {
+  const calls = searchCalls(mockApi);
+  expect(
+    calls,
+    "no search reached /regulation/prioritization",
+  ).not.toHaveLength(0);
+  return JSON.parse(calls.at(-1)!.postData!);
+};
 
 /** The filter fields carry no id, so each one is reached through its label. */
 const filterField = (page: Page, label: string) =>
@@ -136,10 +146,9 @@ test("the list renders each solicitation with its type, risk, stage and resolved
   // names never travel with the list: they arrive from the getname service
   await expect(page.getByText("Fulano Beltrano")).toBeVisible();
   await expect(page.getByText("Ciclano de Tal")).toBeVisible();
-  expect(
-    JSON.parse(mockApi.requests.find((r) => r.path === "/names")!.postData!)
-      .patients,
-  ).toEqual([101, 102, 103]);
+  const namesCall = mockApi.requests.find((r) => r.path === "/names");
+  expect(namesCall, "the getname service was never called").toBeDefined();
+  expect(JSON.parse(namesCall!.postData!).patients).toEqual([101, 102, 103]);
 
   // a solicitation whose type could not be named falls back to the raw id
   await expect(rows(page).nth(2)).toContainText("502");
