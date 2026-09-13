@@ -139,7 +139,8 @@ tests/
     support/                       # mockApi fixture, default handlers, recorder
     fixtures/                      # endpoint payloads (JSON)
     prioritization/  prescription/  interventions/  outpatient/
-    userAdmin/  customForms/  training/  reports/  scenarios/
+    userAdmin/  userProfile/  customForms/  training/  reports/
+    regulation/  scenarios/
 ```
 
 Tests run in Chromium only. Firefox/WebKit are commented out in `playwright.config.ts`.

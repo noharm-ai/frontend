@@ -9,7 +9,10 @@ permissions:
 
 jobs:
   test:
-    timeout-minutes: 10
+    # The suite is ~10 min on a 2-worker runner and grows with every spec, so
+    # 10 was cutting it off mid-run. This is a ceiling for a hung run, not a
+    # budget: a healthy run still finishes well under it.
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     env:
       VITE_APP_URL: http://localhost:3000
