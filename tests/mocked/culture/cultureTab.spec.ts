@@ -2,6 +2,7 @@ import type { Page } from "@playwright/test";
 
 import { test, expect } from "../support/mockApi";
 import { loadFixture } from "../support/defaultHandlers";
+import { loginWithFeatures } from "../support/featureLogin";
 
 /**
  * Culture tab of the exams card (src/features/culture/CultureTab).
@@ -13,6 +14,16 @@ import { loadFixture } from "../support/defaultHandlers";
  * only carries their summary (cultureStats), and the list is fetched from
  * GET /prescriptions/:id/cultures when the tab is opened.
  */
+
+// the culture card and its alerts are behind a schema feature
+// (models/Feature.CULTURE), and the shared storage state of the mocked suite
+// has no feature at all, so these tests log in with it on. The card without
+// the feature is covered by cultureFeature.spec.ts
+test.use({ storageState: { cookies: [], origins: [] } });
+
+test.beforeEach(async ({ page, mockApi }) => {
+  await loginWithFeatures(page, mockApi, ["CULTURE"]);
+});
 
 const CULTURES = [
   {

@@ -85,6 +85,10 @@ const FeaturesService = (features) => {
     return hasFeature(Feature.MULTI_CLINICAL_NOTES);
   };
 
+  const hasCulture = () => {
+    return hasFeature(Feature.CULTURE);
+  };
+
   return {
     hasFeature,
     hasMicromedex,
@@ -106,6 +110,7 @@ const FeaturesService = (features) => {
     hasAddExams,
     hasPEC,
     hasMultiClinicalNotes,
+    hasCulture,
   };
 };
 

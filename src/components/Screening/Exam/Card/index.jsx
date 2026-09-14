@@ -21,6 +21,7 @@ import {
   trackPrescriptionAction,
   TrackedPrescriptionAction,
 } from "src/utils/tracker";
+import FeaturesService from "services/features";
 
 const TAB_EXAMS = "exams";
 const TAB_CULTURE = "culture";
@@ -39,6 +40,13 @@ export default function ExamCard({
   const idPrescription = prescription?.idPrescription;
   const cultures = useSelector((state) => state.cultures.list);
   const culturesStatus = useSelector((state) => state.cultures.status);
+  const features = useSelector((state) => state.user.account.features);
+
+  // the culture card depends on the antibiogram integration, so it is offered
+  // per schema (models/Feature.CULTURE). Without it the card is the exams one
+  // it has always been: no tab bar, and nothing of the culture is requested
+  const hasCulture = FeaturesService(features).hasCulture();
+  const cultureTab = hasCulture && tab === TAB_CULTURE;
 
   // the culture card sits behind a tab, so a resistant drug the patient is on
   // would go unseen unless the tab itself says so. The count comes with the
@@ -50,10 +58,10 @@ export default function ExamCard({
     // the slice skips the request while the cached list is current, and
     // marks it stale whenever the prescription is loaded again (the
     // "prescribed" flag follows the drug list)
-    if (tab === TAB_CULTURE && idPrescription) {
+    if (cultureTab && idPrescription) {
       dispatch(fetchCultures({ idPrescription }));
     }
-  }, [tab, idPrescription, culturesStatus, dispatch]);
+  }, [cultureTab, idPrescription, culturesStatus, dispatch]);
 
   const openModal = () => {
     dispatch(setExamsModalAdmissionNumber(admissionNumber));
@@ -64,39 +72,44 @@ export default function ExamCard({
     <PrescriptionCard className="full-height max-height">
       <div className="header">
         <h3 className="title">
-          {/* the tab is always offered: a patient with no culture in the last
-              60 days still has the full report behind it, and the absence is
-              itself an answer the user came for */}
-          <Segmented
-            size="small"
-            value={tab}
-            onChange={setTab}
-            options={[
-              { label: t("tableHeader.exams"), value: TAB_EXAMS },
-              {
-                label:
-                  resistantInUse > 0 ? (
-                    <Tooltip
-                      title={t("culture.resistantInUseTabHint", {
-                        count: resistantInUse,
-                      })}
-                    >
-                      <Badge dot offset={[5, 2]}>
-                        <span className="culture-tab-alert">
-                          {t("culture.tabTitle")}
-                        </span>
-                      </Badge>
-                    </Tooltip>
-                  ) : (
-                    t("culture.tabTitle")
-                  ),
-                value: TAB_CULTURE,
-              },
-            ]}
-          />
+          {hasCulture ? (
+            /* the tab is always offered to a schema that has the feature: a
+               patient with no culture in the last 60 days still has the full
+               report behind it, and the absence is itself an answer the user
+               came for */
+            <Segmented
+              size="small"
+              value={tab}
+              onChange={setTab}
+              options={[
+                { label: t("tableHeader.exams"), value: TAB_EXAMS },
+                {
+                  label:
+                    resistantInUse > 0 ? (
+                      <Tooltip
+                        title={t("culture.resistantInUseTabHint", {
+                          count: resistantInUse,
+                        })}
+                      >
+                        <Badge dot offset={[5, 2]}>
+                          <span className="culture-tab-alert">
+                            {t("culture.tabTitle")}
+                          </span>
+                        </Badge>
+                      </Tooltip>
+                    ) : (
+                      t("culture.tabTitle")
+                    ),
+                  value: TAB_CULTURE,
+                },
+              ]}
+            />
+          ) : (
+            t("tableHeader.exams")
+          )}
           <Help
             text={
-              tab === TAB_CULTURE
+              cultureTab
                 ? // the rows open the antibiogram, which the list itself has
                   // no room to say
                   `${t("culture.hint")} ${t("culture.detailsHint")}`
@@ -107,7 +120,7 @@ export default function ExamCard({
       </div>
       <div className="content">
         <Flex align="center" style={{ height: "100%" }}>
-          {tab === TAB_CULTURE ? (
+          {cultureTab ? (
             <CultureTab
               cultures={cultures}
               loading={culturesStatus === "loading"}
@@ -148,7 +161,7 @@ export default function ExamCard({
           )}
         </Flex>
       </div>
-      {tab === TAB_CULTURE ? (
+      {cultureTab ? (
         <div className="footer">
           <CultureCardFooter cultures={cultures} prescription={prescription} />
         </div>

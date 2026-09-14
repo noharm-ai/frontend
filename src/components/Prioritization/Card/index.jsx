@@ -43,9 +43,11 @@ const TabContent = ({ tab: requestedTab, prescription, featureService }) => {
       : requestedTab;
 
   if (tab === "patient") {
-    const alerts = getAlerts(prescription.alertStats || {}, t).filter(
-      (a) => a.value > 0,
-    );
+    const alerts = getAlerts(
+      prescription.alertStats || {},
+      t,
+      featureService,
+    ).filter((a) => a.value > 0);
 
     return (
       <div className="attribute-container">

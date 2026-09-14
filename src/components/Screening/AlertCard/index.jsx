@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
   ForkOutlined,
@@ -28,84 +28,91 @@ import {
   trackPrescriptionAction,
   TrackedPrescriptionAction,
 } from "src/utils/tracker";
+import FeaturesService from "services/features";
+import Feature from "models/Feature";
 
 import { AlertContainer } from "./index.style";
 
 /* eslint-disable-next-line react-refresh/only-export-components */
-export const getAlerts = (stats, t) => [
-  {
-    label: t("alerts.y"),
-    icon: () => <ForkOutlined />,
-    value: stats.inc + stats.isl,
-    filters: { typeList: ["iy", "sl"] },
-  },
-  {
-    label: t("alerts.interaction"),
-    icon: () => <CustomIcon component={IconInteractionAlert} />,
-    value: stats.int,
-    filters: { typeList: ["it"] },
-  },
-  {
-    label: t("alerts.max_dose"),
-    icon: () => <CustomIcon component={IconMaxDose} />,
-    value: stats.maxDose,
-    filters: { typeList: ["maxDose", "maxDosePlus"] },
-  },
-  {
-    label: t("alerts.exam"),
-    icon: () => <ExperimentOutlined />,
-    value: stats.exams,
-    filters: { typeList: ["liver", "kidney", "platelets"] },
-  },
-  {
-    label: t("alerts.time"),
-    icon: () => <HourglassOutlined />,
-    value: stats.maxTime,
-    filters: { typeList: ["maxTime"] },
-  },
-  {
-    label: t("alerts.elderly"),
-    icon: () => <CustomIcon component={IconElderly} />,
-    value: stats.elderly,
-    filters: { typeList: ["elderly"] },
-  },
-  {
-    label: t("alerts.alergy"),
-    icon: () => <CustomIcon component={IconAllergy} />,
-    value: stats.allergy + (stats?.interactions?.rx || 0),
-    filters: { typeList: ["allergy", "rx"] },
-  },
-  {
-    label: t("alerts.tube"),
-    icon: () => <CustomIcon component={IconTube} />,
-    value: stats.tube,
-    filters: { typeList: ["tube"] },
-  },
-  {
-    label: t("alerts.duplicate"),
-    icon: () => <CustomIcon component={IconDuplicity} />,
-    value: stats.dup,
-    filters: { typeList: ["dm", "dt"] },
-  },
-  {
-    name: "culture",
-    label: t("alerts.culture"),
-    icon: () => <CustomIcon component={IconGerm} />,
-    value: (stats.cultureResistant || 0) + (stats.cultureResistantClass || 0),
-    filters: { typeList: ["cultureResistant", "cultureResistantClass"] },
-  },
-];
+export const getAlerts = (stats, t, featureService = null) =>
+  [
+    {
+      label: t("alerts.y"),
+      icon: () => <ForkOutlined />,
+      value: stats.inc + stats.isl,
+      filters: { typeList: ["iy", "sl"] },
+    },
+    {
+      label: t("alerts.interaction"),
+      icon: () => <CustomIcon component={IconInteractionAlert} />,
+      value: stats.int,
+      filters: { typeList: ["it"] },
+    },
+    {
+      label: t("alerts.max_dose"),
+      icon: () => <CustomIcon component={IconMaxDose} />,
+      value: stats.maxDose,
+      filters: { typeList: ["maxDose", "maxDosePlus"] },
+    },
+    {
+      label: t("alerts.exam"),
+      icon: () => <ExperimentOutlined />,
+      value: stats.exams,
+      filters: { typeList: ["liver", "kidney", "platelets"] },
+    },
+    {
+      label: t("alerts.time"),
+      icon: () => <HourglassOutlined />,
+      value: stats.maxTime,
+      filters: { typeList: ["maxTime"] },
+    },
+    {
+      label: t("alerts.elderly"),
+      icon: () => <CustomIcon component={IconElderly} />,
+      value: stats.elderly,
+      filters: { typeList: ["elderly"] },
+    },
+    {
+      label: t("alerts.alergy"),
+      icon: () => <CustomIcon component={IconAllergy} />,
+      value: stats.allergy + (stats?.interactions?.rx || 0),
+      filters: { typeList: ["allergy", "rx"] },
+    },
+    {
+      label: t("alerts.tube"),
+      icon: () => <CustomIcon component={IconTube} />,
+      value: stats.tube,
+      filters: { typeList: ["tube"] },
+    },
+    {
+      label: t("alerts.duplicate"),
+      icon: () => <CustomIcon component={IconDuplicity} />,
+      value: stats.dup,
+      filters: { typeList: ["dm", "dt"] },
+    },
+    {
+      name: "culture",
+      // the antibiogram is a per-schema integration, so the row would read a
+      // bare zero for everyone else (models/Feature.CULTURE)
+      feature: Feature.CULTURE,
+      label: t("alerts.culture"),
+      icon: () => <CustomIcon component={IconGerm} />,
+      value: (stats.cultureResistant || 0) + (stats.cultureResistantClass || 0),
+      filters: { typeList: ["cultureResistant", "cultureResistantClass"] },
+    },
+  ].filter((a) => !a.feature || !!featureService?.hasFeature(a.feature));
 
 export default function AlertCard({ stats, prescription }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const features = useSelector((state) => state.user.account.features);
   const [modal, setModal] = useState(false);
 
   if (!stats) {
     return null;
   }
 
-  const alerts = getAlerts(stats, t);
+  const alerts = getAlerts(stats, t, FeaturesService(features));
 
   const openModal = (filters = {}) => {
     dispatch(setInitialFilters(filters));
