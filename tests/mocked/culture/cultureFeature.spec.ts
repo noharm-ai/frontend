@@ -124,24 +124,33 @@ test("with the feature the tab and the alert cell come back", async ({
  * intervention texts and the substance handling.
  */
 
-const RESISTANT_LABEL = "Cultura com resistência ao medicamento";
-const RESISTANT_CLASS_LABEL = "Cultura com resistência na mesma classe";
-
-const openAlertTypes = async (page: Page, mockApi: MockApi) => {
+const searchAlertTypes = async (page: Page, mockApi: MockApi, term: string) => {
   mockApi.override("GET /segments/departments", {
     json: { status: "success", data: [] },
   });
 
   await page.goto("/priorizacao/pacientes/cards");
   await page.getByRole("button", { name: /Ver mais/ }).click();
+  // the panel expands through a CSS max-height animation, so the field keeps
+  // moving until it settles
+  await page.waitForTimeout(800);
 
-  // the panel expands through a CSS max-height animation, and antd 6 renders
-  // the Select placeholder as bare text, not as an input placeholder
-  const alerts = page.getByText("Selecione os alertas");
-  await expect(alerts).toBeVisible();
-  await alerts.click();
+  // antd 6 renders the Select placeholder as bare text under the input, so the
+  // field is reached through the select itself
+  await page
+    .locator(".ant-select", {
+      has: page.locator(".ant-select-placeholder", {
+        hasText: "Selecione os alertas",
+      }),
+    })
+    .click();
 
-  await expect(page.getByRole("option", { name: "Alergia" })).toBeVisible();
+  // the list is virtualized, so it is searched instead of scrolled
+  await page.keyboard.type(term);
+
+  return page
+    .locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)")
+    .locator(".ant-select-item-option");
 };
 
 test("without the feature the alert types exclude the culture ones", async ({
@@ -150,14 +159,9 @@ test("without the feature the alert types exclude the culture ones", async ({
 }) => {
   await loginWithFeatures(page, mockApi, []);
 
-  await openAlertTypes(page, mockApi);
+  const options = await searchAlertTypes(page, mockApi, "Cultura");
 
-  await expect(page.getByRole("option", { name: RESISTANT_LABEL })).toHaveCount(
-    0,
-  );
-  await expect(
-    page.getByRole("option", { name: RESISTANT_CLASS_LABEL }),
-  ).toHaveCount(0);
+  await expect(options).toHaveCount(0);
 });
 
 test("with the feature the culture alert types are offered", async ({
@@ -166,12 +170,10 @@ test("with the feature the culture alert types are offered", async ({
 }) => {
   await loginWithFeatures(page, mockApi, ["CULTURE"]);
 
-  await openAlertTypes(page, mockApi);
+  const options = await searchAlertTypes(page, mockApi, "Cultura");
 
-  await expect(page.getByRole("option", { name: RESISTANT_LABEL })).toHaveCount(
-    1,
-  );
-  await expect(
-    page.getByRole("option", { name: RESISTANT_CLASS_LABEL }),
-  ).toHaveCount(1);
+  await expect(options).toHaveText([
+    "Cultura com resistência ao medicamento",
+    "Cultura com resistência na mesma classe",
+  ]);
 });
