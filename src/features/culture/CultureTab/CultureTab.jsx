@@ -30,6 +30,7 @@ import {
   List,
   Item,
   Details,
+  DetailItem,
   EmptyDescription,
 } from "./CultureTab.style";
 
@@ -202,27 +203,37 @@ const CultureDetails = ({ drug, t }) => (
       </div>
     )}
     {/* one block per collection: a drug may carry a released antibiogram and
-        a newer collection still pending, and the two must not run together */}
-    {drug.items.map((item, index) => (
-      <div key={item.key || index} className="culture-detail-item">
-        <div>
-          {t("culture.microorganism")}: {item.microorganism || "-"}
-        </div>
-        <div>
-          {t("culture.material")}: {item.material || "-"}
-        </div>
-        <div>
-          {t("culture.collectionDate")}: {formatDate(item.collectionDate)}
-        </div>
-        {/* a pending collection may carry a release date of its own, and it
-            is not a release: nothing came back from it to be read as one */}
-        {isPrediction(item) ? (
-          <CulturePendingResult item={item} t={t} />
-        ) : (
-          <CultureReleasedResult item={item} t={t} />
-        )}
-      </div>
-    ))}
+        a newer collection still pending, and the two must not run together.
+        They are laid out in two columns, so a drug with several collections
+        is read without scrolling the modal */}
+    <div className="culture-detail-items">
+      {drug.items.map((item, index) => (
+        <DetailItem
+          key={item.key || index}
+          className="culture-detail-item"
+          $prediction={isPrediction(item)}
+          $resistant={resultTypeOf(item) === RESULT_RESISTANT}
+          $susceptible={resultTypeOf(item) === RESULT_SUSCEPTIBLE}
+        >
+          <div>
+            {t("culture.microorganism")}: {item.microorganism || "-"}
+          </div>
+          <div>
+            {t("culture.material")}: {item.material || "-"}
+          </div>
+          <div>
+            {t("culture.collectionDate")}: {formatDate(item.collectionDate)}
+          </div>
+          {/* a pending collection may carry a release date of its own, and it
+              is not a release: nothing came back from it to be read as one */}
+          {isPrediction(item) ? (
+            <CulturePendingResult item={item} t={t} />
+          ) : (
+            <CultureReleasedResult item={item} t={t} />
+          )}
+        </DetailItem>
+      ))}
+    </div>
   </Details>
 );
 
@@ -408,7 +419,7 @@ export function CultureTab({ cultures, loading, error, onRetry }) {
       <DefaultModal
         open={!!details}
         title={details?.drug}
-        width={500}
+        width="min(760px, 96vw)"
         centered
         destroyOnHidden
         footer={null}

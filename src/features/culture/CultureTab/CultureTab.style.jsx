@@ -261,10 +261,29 @@ export const Details = styled.div`
     font-weight: 500;
   }
 
-  .culture-detail-item + .culture-detail-item {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid #e0e0e0;
+  /* the collections are read side by side: a drug with several of them fits
+     the modal instead of running past its bottom. Mirrors the row grid of
+     List above, including the minmax(0, …) a long microorganism name needs */
+  .culture-detail-items {
+    display: grid;
+    grid-template-columns: 1fr;
+    column-gap: 15px;
+    row-gap: 10px;
+    /* a released result is a third of the height of a pending one: without
+       this the short block is stretched to the tall one beside it */
+    align-items: start;
+  }
+
+  @media (min-width: ${get("breakpoints.md")}) {
+    .culture-detail-items {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+  }
+
+  /* a drug with a single collection fills the modal: the second track would
+     only be whitespace beside it */
+  .culture-detail-item:only-child {
+    grid-column: 1 / -1;
   }
 
   /* the result line of a pending collection says so instead of a result */
@@ -338,6 +357,18 @@ export const Details = styled.div`
       }
     }
   }
+`;
+
+// one collection inside the details modal. Side by side, a rule between the
+// blocks no longer separates them: each carries its own frame, and the left
+// bar states its result in the same colours the rows of the list use — a card
+// is read on its own here, and a drug may hold a released antibiogram beside
+// a pending collection that predicts the opposite
+export const DetailItem = styled.div`
+  padding: 10px;
+  border: 1px solid #e0e0e0;
+  border-left: 4px solid ${accentColor};
+  border-radius: 5px;
 `;
 
 export const EmptyDescription = styled.div`
