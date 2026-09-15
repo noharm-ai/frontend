@@ -261,6 +261,18 @@ export const Details = styled.div`
     font-weight: 500;
   }
 
+  /* the alternatives button, or the word that there is none, right under the
+     line that says the drug is in use: it is the next thing to ask */
+  .culture-prescribed-actions {
+    margin-top: 6px;
+    font-weight: 400;
+  }
+
+  .culture-prescribed-actions.culture-alternatives-none {
+    font-size: 13px;
+    color: #6d7a94;
+  }
+
   /* the collections are read side by side: a drug with several of them fits
      the modal instead of running past its bottom. Mirrors the row grid of
      List above, including the minmax(0, …) a long microorganism name needs */

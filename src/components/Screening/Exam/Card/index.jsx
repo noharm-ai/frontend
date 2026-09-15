@@ -123,6 +123,7 @@ export default function ExamCard({
           {cultureTab ? (
             <CultureTab
               cultures={cultures}
+              idPrescription={idPrescription}
               loading={culturesStatus === "loading"}
               error={culturesStatus === "failed"}
               onRetry={() =>
