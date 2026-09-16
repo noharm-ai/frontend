@@ -4,10 +4,13 @@ import { loginWithAuth } from "../support/featureLogin";
 import { openSelect, pickOption } from "../support/antd";
 
 /**
- * Support tickets are blocked while the user still owes mandatory training.
- * ADMIN_SUPPORT holders may override it for an urgent ticket, which the backend
- * records in the ticket body. The backend enforces the rule regardless — these
- * tests cover what the UI offers.
+ * Support tickets are blocked while the user still owes mandatory training,
+ * but only once the schema is in production — during integration the client is
+ * still being set up and support is how that gets done.
+ *
+ * ADMIN_SUPPORT holders may override the block for an urgent ticket, which the
+ * backend records in the ticket body. The backend enforces the rule regardless
+ * — these tests cover what the UI offers.
  */
 
 const BASE_PERMISSIONS = [
@@ -56,7 +59,9 @@ test("pending training removes the ticket path and explains why", async ({
 
   await openSupportDrawer(page);
 
-  await expect(page.getByText("Treinamento obrigatório pendente")).toBeVisible();
+  await expect(
+    page.getByText("Treinamento obrigatório pendente"),
+  ).toBeVisible();
   await expect(page.getByText("Abrir chamado", { exact: true })).toHaveCount(0);
 
   // the AI assistant and the knowledge base stay available
@@ -68,7 +73,9 @@ test("pending training removes the ticket path and explains why", async ({
 
 test("the notice links to the training center", async ({ page, mockApi }) => {
   installSupportHandlers(mockApi);
-  mockApi.override("GET /training/list", { json: { status: "success", data: [] } });
+  mockApi.override("GET /training/list", {
+    json: { status: "success", data: [] },
+  });
   await loginWithAuth(page, mockApi, {
     permissions: BASE_PERMISSIONS,
     training: { mandatoryTotal: 1, mandatoryFinished: 0 },
@@ -125,6 +132,33 @@ test("ADMIN_SUPPORT can open an urgent ticket but must confirm urgency", async (
   expect(request).toBeTruthy();
   expect(request.postData).toContain('name="urgent"');
   expect(request.postData).toContain("true");
+});
+
+test("pending training does not block while the schema is in integration", async ({
+  page,
+  mockApi,
+}) => {
+  installSupportHandlers(mockApi);
+  await loginWithAuth(page, mockApi, {
+    permissions: BASE_PERMISSIONS,
+    training: { mandatoryTotal: 2, mandatoryFinished: 0 },
+    // IntegrationStatus.INTEGRATION
+    integrationStatus: 0,
+  });
+
+  await openSupportDrawer(page);
+
+  await expect(page.getByText("Abrir chamado", { exact: true })).toBeVisible();
+  await expect(page.getByText("Treinamento obrigatório pendente")).toHaveCount(
+    0,
+  );
+
+  await page.getByText("Abrir chamado", { exact: true }).click();
+  await expect(
+    page.getByRole("checkbox", {
+      name: "Este chamado é urgente e não pode aguardar",
+    }),
+  ).toHaveCount(0);
 });
 
 test("no pending training keeps the normal ticket flow", async ({
