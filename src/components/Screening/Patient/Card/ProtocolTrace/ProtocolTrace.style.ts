@@ -177,17 +177,24 @@ export const ApplicabilityNote = styled.div`
   margin-bottom: 0.5rem;
 `;
 
-export const DateGroupBlock = styled.div`
+export const DateGroupBlock = styled.div<{ $discarded?: boolean }>`
   & + & {
     margin-top: 1rem;
     padding-top: 1rem;
     border-top: 1px dashed #e2e6ee;
   }
+
+  ${(p) =>
+    p.$discarded &&
+    css`
+      opacity: 0.7;
+    `}
 `;
 
-export const DateGroupHeading = styled.div`
+export const DateGroupHeading = styled.div<{ $discarded?: boolean }>`
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 0.6rem;
   font-size: 13px;
@@ -195,6 +202,34 @@ export const DateGroupHeading = styled.div`
   strong {
     font-weight: 600;
   }
+
+  ${(p) =>
+    p.$discarded &&
+    css`
+      strong {
+        text-decoration: line-through;
+      }
+    `}
+`;
+
+export const DiscardedBadge = styled.span`
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #fff7e6;
+  border: 1px solid #ffd591;
+  color: #ad6800;
+`;
+
+export const DiscardedNote = styled.div`
+  font-size: 12.5px;
+  color: #ad6800;
+  background: #fffbe6;
+  border: 1px solid #ffe58f;
+  border-radius: 4px;
+  padding: 0.5rem 0.65rem;
+  margin-bottom: 0.75rem;
 `;
 
 export const ErrorBox = styled.div`
@@ -483,12 +518,12 @@ export const VariableFooter = styled.div`
   }
 `;
 
-export const RelatedBanner = styled.div`
+export const RelatedBanner = styled.div<{ $muted?: boolean }>`
   margin-top: 0.6rem;
-  background: #f2faf3;
-  border: 1px solid #b7eb8f;
+  background: ${(p) => (p.$muted ? "#fafafa" : "#f2faf3")};
+  border: 1px solid ${(p) => (p.$muted ? "#e0e0e0" : "#b7eb8f")};
   border-radius: 4px;
   padding: 0.5rem 0.65rem;
   font-size: 12.5px;
-  color: #2e7d32;
+  color: ${(p) => (p.$muted ? "#595959" : "#2e7d32")};
 `;

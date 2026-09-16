@@ -16,6 +16,13 @@ import { ITestResultRow } from "./types";
 import { TestDetailModal } from "./TestDetailModal";
 import { useProtocolTestDetail } from "./useProtocolTestDetail";
 
+// row.activated already excludes discarded groups; this only picks out *why*
+// a row is not activated, to explain it to whoever is tuning the config
+const isDiscarded = (row: ITestResultRow) =>
+  !row.error &&
+  !row.activated &&
+  (row.dateGroups || []).some((g) => g.activated && g.discarded);
+
 export function TargetTestPanel() {
   const { t } = useTranslation();
   const { values } = useFormikContext<IProtocolFormBaseFields>();
@@ -125,6 +132,10 @@ export function TargetTestPanel() {
                     </Tooltip>
                   ) : row.activated ? (
                     <Tag color="green">{t("labels.activated")}</Tag>
+                  ) : isDiscarded(row) ? (
+                    <Tooltip title={t("labels.discardedHint")}>
+                      <Tag color="orange">{t("labels.discarded")}</Tag>
+                    </Tooltip>
                   ) : (
                     <Tag>{t("labels.notActivated")}</Tag>
                   )}

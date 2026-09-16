@@ -139,12 +139,13 @@ tests/
     support/                       # mockApi fixture, default handlers, recorder
     fixtures/                      # endpoint payloads (JSON)
     prioritization/  prescription/  interventions/  outpatient/
-    userAdmin/  customForms/  training/  reports/  scenarios/
+    userAdmin/  userProfile/  customForms/  training/  reports/
+    regulation/  scenarios/
 ```
 
 Tests run in Chromium only. Firefox/WebKit are commented out in `playwright.config.ts`.
 
 ### CI
 
-- `.github/workflows/playwright-test.yml` — real-backend suite (manual trigger).
+- `.github/workflows/playwright-test.yml` — real-backend suite, runs on pull requests to `develop`/`master` (also manual trigger).
 - `.github/workflows/e2e-mock.yml` — mocked suite, runs on every pull request.

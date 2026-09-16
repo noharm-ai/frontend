@@ -377,6 +377,8 @@
     "activated": "Activated",
     "notActivated": "Not activated",
     "typeMismatch": "This protocol type does not apply to this prescription",
+    "discarded": "Discarded",
+    "discardedHint": "The trigger evaluated true, but only on expire-date groups other than the prescription's latest one, so no alert is generated",
     "sampleSize": "Sample size",
     "operationCancelled": "Operation cancelled",
     "protocolTestIds": "Prescriptions to test",

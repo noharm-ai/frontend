@@ -41,6 +41,12 @@ export interface ITriggerTrace {
 export interface IDateGroupTrace {
   date: string;
   activated?: boolean;
+  /**
+   * The trigger evaluated true, but the protocol only counts on the latest
+   * expire date, so no alert is raised for this group. `activated: true` with
+   * `discarded: true` must never be presented as "this protocol fired".
+   */
+  discarded?: boolean;
   error?: string;
   summary?: string;
   trigger?: ITriggerTrace;
@@ -65,6 +71,8 @@ export interface IPrescriptionTrace {
 
 export interface IProtocolTraceWithStatus extends IProtocolTrace {
   activated: boolean;
+  /** fired on at least one group, but every firing group was discarded */
+  discarded: boolean;
 }
 
 export type StatusFilter = "all" | "active" | "inactive";

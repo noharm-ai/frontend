@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
-import { Row, Col } from "antd";
+import { Row, Col, Drawer } from "antd";
 import DOMPurify from "dompurify";
 import {
   LeftOutlined,
@@ -9,10 +9,9 @@ import {
   VideoCameraOutlined,
   FileTextOutlined,
   QuestionCircleOutlined,
-  CheckCircleFilled,
   TrophyFilled,
-  ClockCircleOutlined,
   ExclamationCircleOutlined,
+  UnorderedListOutlined,
 } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
@@ -23,30 +22,29 @@ import Progress from "components/Progress";
 import LoadBox from "components/LoadBox";
 import DefaultModal from "components/Modal";
 import { getErrorMessage } from "utils/errorHandler";
-import { PageHeader } from "styles/PageHeader.style";
 import colors from "styles/colors";
 
 import { fetchTrainingItems, finishTrainingItem } from "./TrainingPlayerSlice";
 import { fetchTrainingList } from "./TrainingCentralSlice";
 import { TrainingCertificate } from "./TrainingCertificate/TrainingCertificate";
 import { TrainingItemQuiz } from "./TrainingItemQuiz";
+import { TrainingLessonList } from "./TrainingLessonList/TrainingLessonList";
 import { YoutubeEmbed } from "./YoutubeEmbed";
+import { useIsMobile } from "./useIsMobile";
 import {
+  PlayerHeader,
   ItemContent,
   FooterRow,
   FooterProgress,
   StepsPanel,
+  MobileStepsBar,
+  LessonsDrawer,
   Eyebrow,
   MetaRow,
   ModuleTitle,
   ProgressLabel,
   StepsDivider,
   LessonsLabel,
-  LessonList,
-  LessonItem,
-  LessonNumber,
-  LessonTitle,
-  PendingBadge,
   BackRow,
   CompletionModal,
   CompletionHero,
@@ -80,8 +78,10 @@ export function TrainingPlayer() {
   const list = useAppSelector((state) => state.trainingPlayer.list);
   const status = useAppSelector((state) => state.trainingPlayer.status);
   const moduleList = useAppSelector((state) => state.trainingCentral.list);
+  const isMobile = useIsMobile();
 
   const [currentStep, setCurrentStep] = useState(0);
+  const [lessonsOpen, setLessonsOpen] = useState(false);
   const [passedByItem, setPassedByItem] = useState<Record<number, boolean>>({});
   const [locallyFinishedIds, setLocallyFinishedIds] = useState<
     Record<number, boolean>
@@ -189,79 +189,102 @@ export function TrainingPlayer() {
     }
   };
 
+  const lessonProgressLabel = t("trainingPlayer.lessonProgress", {
+    lesson: currentStep + 1,
+    total: sortedItems.length,
+  });
+
+  const backButton = (
+    <Button
+      type="text"
+      icon={<LeftOutlined />}
+      onClick={() => navigate("/treinamento")}
+    >
+      {t("trainingPlayer.backToCentral")}
+    </Button>
+  );
+
+  const lessonList = (
+    <TrainingLessonList
+      items={sortedItems}
+      currentStep={currentStep}
+      isItemFinished={isItemFinished}
+      onSelect={(index) => {
+        setCurrentStep(index);
+        setLessonsOpen(false);
+      }}
+    />
+  );
+
   return (
     <>
-      <Row gutter={24} justify="center" align="stretch">
-        <Col xs={7}>
-          <StepsPanel>
-            <BackRow>
-              <Button
-                type="text"
-                icon={<LeftOutlined />}
-                onClick={() => navigate("/treinamento")}
-              >
-                {t("trainingPlayer.backToCentral")}
-              </Button>
-            </BackRow>
+      <Row gutter={[24, 16]} justify="center" align="stretch">
+        {isMobile ? (
+          // phones and tablets: the lesson list would push the content below
+          // the fold, so it moves into a drawer behind a compact header
+          <Col xs={24}>
+            <MobileStepsBar>
+              <BackRow>{backButton}</BackRow>
 
-            <ModuleTitle>{moduleName}</ModuleTitle>
-            <Progress
-              percent={progressPercent}
-              size="small"
-              strokeColor={colors.accentSecondary}
-            />
-            <ProgressLabel>
-              {t("trainingPlayer.lessonProgress", {
-                lesson: currentStep + 1,
-                total: sortedItems.length,
-              })}
-            </ProgressLabel>
+              <div className="mobile-steps-head">
+                <ModuleTitle>{moduleName}</ModuleTitle>
+                <Button
+                  icon={<UnorderedListOutlined />}
+                  onClick={() => setLessonsOpen(true)}
+                  aria-label={t("trainingPlayer.lessonsListLabel")}
+                >
+                  {t("trainingPlayer.lessonsListLabel")}
+                </Button>
+              </div>
 
-            <StepsDivider />
+              <Progress
+                percent={progressPercent}
+                size="small"
+                strokeColor={colors.accentSecondary}
+              />
+              <ProgressLabel>{lessonProgressLabel}</ProgressLabel>
+            </MobileStepsBar>
 
-            <LessonsLabel>{t("trainingPlayer.lessonsListLabel")}</LessonsLabel>
-            <LessonList>
-              {sortedItems.map((item, index) => {
-                const finished = isItemFinished(item);
-                const unlocked =
-                  finished ||
-                  index === 0 ||
-                  isItemFinished(sortedItems[index - 1]);
+            <Drawer
+              open={lessonsOpen}
+              placement="bottom"
+              size="auto"
+              title={t("trainingPlayer.lessonsListLabel")}
+              onClose={() => setLessonsOpen(false)}
+              styles={{ body: { padding: "12px 16px 24px" } }}
+            >
+              <LessonsDrawer>
+                <ModuleTitle>{moduleName}</ModuleTitle>
+                <ProgressLabel>{lessonProgressLabel}</ProgressLabel>
+                {lessonList}
+              </LessonsDrawer>
+            </Drawer>
+          </Col>
+        ) : (
+          <Col lg={7}>
+            <StepsPanel>
+              <BackRow>{backButton}</BackRow>
 
-                return (
-                  <LessonItem
-                    key={item.id}
-                    $active={index === currentStep}
-                    $clickable={unlocked}
-                    onClick={() => {
-                      if (unlocked) {
-                        setCurrentStep(index);
-                      }
-                    }}
-                  >
-                    <LessonNumber
-                      $active={index === currentStep}
-                      $finished={finished}
-                    >
-                      {finished ? <CheckCircleFilled /> : index + 1}
-                    </LessonNumber>
-                    <LessonTitle $active={index === currentStep}>
-                      {item.title}
-                    </LessonTitle>
-                    {!finished && (
-                      <PendingBadge title={t("trainingPlayer.pendingLesson")}>
-                        <ClockCircleOutlined />
-                      </PendingBadge>
-                    )}
-                  </LessonItem>
-                );
-              })}
-            </LessonList>
-          </StepsPanel>
-        </Col>
+              <ModuleTitle>{moduleName}</ModuleTitle>
+              <Progress
+                percent={progressPercent}
+                size="small"
+                strokeColor={colors.accentSecondary}
+              />
+              <ProgressLabel>{lessonProgressLabel}</ProgressLabel>
 
-        <Col xs={17}>
-          <PageHeader>
+              <StepsDivider />
+
+              <LessonsLabel>
+                {t("trainingPlayer.lessonsListLabel")}
+              </LessonsLabel>
+              {lessonList}
+            </StepsPanel>
+          </Col>
+        )}
+
+        <Col xs={24} lg={17}>
+          <PlayerHeader>
             <div>
               <Eyebrow>
                 {t("trainingPlayer.moduleLessonLabel", {
@@ -292,7 +315,7 @@ export function TrainingPlayer() {
                 )}
               </MetaRow>
             </div>
-          </PageHeader>
+          </PlayerHeader>
 
           <ItemContent>
             {currentItem.video && (
@@ -348,12 +371,7 @@ export function TrainingPlayer() {
               {t("trainingPlayer.previous")}
             </Button>
 
-            <FooterProgress>
-              {t("trainingPlayer.lessonProgress", {
-                lesson: currentStep + 1,
-                total: sortedItems.length,
-              })}
-            </FooterProgress>
+            <FooterProgress>{lessonProgressLabel}</FooterProgress>
 
             <Button
               type="primary"

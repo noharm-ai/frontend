@@ -1,6 +1,9 @@
 import styled from "styled-components";
 
 import colors from "styles/colors";
+import { breakpointsEnum } from "styles/breakpoints";
+
+const mobile = `@media (max-width: ${breakpointsEnum.md - 1}px)`;
 
 export const SummaryRow = styled.div`
   display: flex;
@@ -76,6 +79,26 @@ export const ModuleProgressRow = styled.div`
     color: ${colors.text};
     font-size: 0.8rem;
   }
+
+  ${mobile} {
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    padding: 10px 0;
+
+    .module-name {
+      flex-basis: 100%;
+    }
+
+    .module-bar {
+      flex: 1 1 100%;
+      width: auto;
+    }
+
+    .module-count {
+      width: auto;
+      text-align: left;
+    }
+  }
 `;
 
 export const UserCell = styled.div`
@@ -134,6 +157,26 @@ export const UserModuleList = styled.div`
     width: 130px;
     flex-shrink: 0;
     text-align: right;
+  }
+
+  ${mobile} {
+    padding: 10px 0;
+
+    .user-module-row {
+      flex-wrap: wrap;
+      gap: 4px 12px;
+    }
+
+    .user-module-title {
+      flex-basis: 100%;
+    }
+
+    .user-module-lessons,
+    .user-module-date,
+    .user-module-status {
+      width: auto;
+      text-align: left;
+    }
   }
 `;
 

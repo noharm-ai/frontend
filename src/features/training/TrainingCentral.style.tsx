@@ -1,6 +1,21 @@
 import styled from "styled-components";
 
 import colors from "styles/colors";
+import { breakpointsEnum } from "styles/breakpoints";
+import { PageHeader } from "styles/PageHeader.style";
+
+// the two-column layout collapses below antd's `lg` (Col lg applies at >= 992px)
+const mobile = `@media (max-width: ${breakpointsEnum.lg - 1}px)`;
+
+export const CentralHeader = styled(PageHeader)`
+  ${mobile} {
+    margin-bottom: 20px;
+
+    .page-header-title {
+      font-size: 24px;
+    }
+  }
+`;
 
 export const SideColumn = styled.div`
   display: flex;
@@ -71,6 +86,18 @@ export const ModuleRow = styled.div<{ $current: boolean }>`
   background: ${colors.commonLighter};
   border: 1px solid
     ${(props) => (props.$current ? colors.accentSecondary : colors.detail)};
+
+  ${mobile} {
+    /* icon + text on the first line, the action buttons on a second one */
+    flex-wrap: wrap;
+    gap: 12px 15px;
+    padding: 16px;
+
+    > .ant-btn {
+      flex: 1 1 auto;
+      height: 40px;
+    }
+  }
 `;
 
 export const ModuleIconCircle = styled.div<{
@@ -91,11 +118,19 @@ export const ModuleIconCircle = styled.div<{
 
 export const ModuleText = styled.div`
   flex: 1;
+  min-width: 0;
+
+  ${mobile} {
+    /* fills the rest of the first line (icon 36px + gap 15px) so the buttons
+       wrap below */
+    flex-basis: calc(100% - 51px);
+  }
 
   strong {
     display: block;
     color: ${colors.primary};
     font-size: 1rem;
+    overflow-wrap: anywhere;
   }
 
   .mandatory-tag {

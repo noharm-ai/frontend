@@ -34,10 +34,19 @@ export function ProtocolTrace({ trace }: { trace: IPrescriptionTrace }) {
 
   const protocolsWithStatus: IProtocolTraceWithStatus[] = useMemo(
     () =>
-      trace.protocols.map((p) => ({
-        ...p,
-        activated: p.dateGroups.some((g) => g.activated),
-      })),
+      trace.protocols.map((p) => {
+        // a group whose trigger fired but was discarded raises no alert, so it
+        // must not make the protocol count as activated
+        const activated = p.dateGroups.some((g) => g.activated && !g.discarded);
+
+        return {
+          ...p,
+          activated,
+          discarded:
+            !activated &&
+            p.dateGroups.some((g) => g.activated && g.discarded),
+        };
+      }),
     [trace.protocols]
   );
 
@@ -121,6 +130,9 @@ export function ProtocolTrace({ trace }: { trace: IPrescriptionTrace }) {
                     <ListItemName>{protocol.name}</ListItemName>
                     {!protocol.applicable && (
                       <ListItemMeta>não aplicável</ListItemMeta>
+                    )}
+                    {protocol.discarded && (
+                      <ListItemMeta>descartado</ListItemMeta>
                     )}
                   </ListItemText>
                 </ProtocolListItem>
