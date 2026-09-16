@@ -3,6 +3,7 @@ import {
   ApplicabilityNote,
   DetailBody,
   DetailHeader,
+  DiscardedBadge,
   StatusChip,
 } from "./ProtocolTrace.style";
 import type { IProtocolTraceWithStatus } from "./types";
@@ -18,6 +19,9 @@ export function ProtocolDetail({
         <StatusChip $active={protocol.activated}>
           {protocol.activated ? "ATIVO" : "INATIVO"}
         </StatusChip>
+        {protocol.discarded && (
+          <DiscardedBadge>descartado — fora da última vigência</DiscardedBadge>
+        )}
         <span className="protocol-name">{protocol.name}</span>
         <span className="spacer" />
         <span className="date-count">

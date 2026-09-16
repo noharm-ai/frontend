@@ -377,6 +377,8 @@
     "activated": "Ativado",
     "notActivated": "Não ativado",
     "typeMismatch": "O tipo deste protocolo não se aplica a esta prescrição",
+    "discarded": "Descartado",
+    "discardedHint": "O gatilho foi verdadeiro, mas somente em grupos de vigência anteriores à última data da prescrição, portanto nenhum alerta é gerado",
     "sampleSize": "Tamanho da amostra",
     "operationCancelled": "Operação cancelada",
     "protocolTestIds": "Prescrições para teste",

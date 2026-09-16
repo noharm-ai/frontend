@@ -265,3 +265,142 @@ test("tests a protocol against target prescriptions from the trigger panel", asy
   expect(detailBody.detailed).toBe(true);
   expect(detailBody.idPrescriptionList).toEqual(["199"]);
 });
+
+test("marks a prescription whose only firing group is discarded", async ({
+  page,
+  mockApi,
+}) => {
+  // PRESCRIPTION_AGG + onlyLatestExpireDate: the trigger fires on an older
+  // expire-date group, so the backend discards it — no alert reaches the
+  // pharmacist, and the trace screen exists to explain exactly that
+  const discardedSummary =
+    "Protocolo 'Protocolo Vigência' ATIVADO: o gatilho avaliou como " +
+    "verdadeiro. Este grupo foi descartado: o protocolo está configurado " +
+    "para valer somente na última data de validade da prescrição " +
+    "(2026-08-05), portanto nenhum alerta é gerado aqui.";
+
+  const discardedGroup = {
+    date: "2026-07-31",
+    activated: true,
+    discarded: true,
+    summary: discardedSummary,
+  };
+  const latestGroup = {
+    date: "2026-08-05",
+    activated: false,
+    discarded: false,
+    summary:
+      "Protocolo 'Protocolo Vigência' NÃO ativado: o gatilho avaliou como falso.",
+  };
+
+  mockApi.override("GET /admin/protocol/:id", {
+    json: {
+      status: "success",
+      data: {
+        ...protocolFixture,
+        name: "Protocolo Vigência",
+        protocolType: 1,
+        config: { ...protocolFixture.config, onlyLatestExpireDate: true },
+      },
+    },
+  });
+  mockApi.override("POST /protocol/test", async (route) => {
+    const body = JSON.parse(route.request().postData() ?? "{}");
+
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify({
+        status: "success",
+        data: {
+          evaluatedAt: new Date().toISOString(),
+          results: [
+            {
+              idPrescription: "301",
+              typeMatch: true,
+              // row-level activated already excludes discarded groups
+              activated: false,
+              dateGroups: [discardedGroup, latestGroup],
+              error: null,
+              ...(body.detailed
+                ? {
+                    trace: {
+                      idPrescription: "301",
+                      evaluatedAt: new Date().toISOString(),
+                      protocols: [
+                        {
+                          idProtocol: 0,
+                          name: "Protocolo Vigência",
+                          protocolType: 1,
+                          statusType: 2,
+                          applicable: true,
+                          applicabilityNotes: [],
+                          dateGroups: [
+                            {
+                              ...discardedGroup,
+                              trigger: {
+                                expression: "{{v1}}",
+                                substituted: "True",
+                                result: true,
+                              },
+                              variableMessages: [],
+                              relatedItems: [],
+                              variables: [],
+                            },
+                            {
+                              ...latestGroup,
+                              trigger: {
+                                expression: "{{v1}}",
+                                substituted: "False",
+                                result: false,
+                              },
+                              variableMessages: [],
+                              relatedItems: [],
+                              variables: [],
+                            },
+                          ],
+                        },
+                      ],
+                    },
+                  }
+                : {}),
+            },
+          ],
+        },
+      }),
+    });
+  });
+
+  await page.goto("/admin/protocolos/1");
+
+  const panel = page.getByRole("main");
+  const idsInput = page.locator("#protocol-test-ids");
+  await idsInput.fill("301");
+  await idsInput.press("Enter");
+  await page.locator("#protocol-test-run").click();
+
+  // the row is not "Não ativado" — it says *why* nothing fired
+  await expect(panel.getByText("Descartado", { exact: true })).toBeVisible();
+  await expect(panel.getByText("Não ativado", { exact: true })).toBeHidden();
+
+  await panel
+    .getByRole("listitem")
+    .filter({ hasText: "301" })
+    .getByRole("button")
+    .click();
+
+  const traceModal = page
+    .getByRole("dialog")
+    .filter({ hasText: "Explicação da avaliação de protocolos" });
+
+  // the protocol did NOT fire, even though a group's trigger evaluated true
+  await expect(traceModal.getByText("INATIVO", { exact: true })).toBeVisible();
+  // the header count agrees: nothing fired
+  await expect(traceModal.getByText("1 inativos")).toBeVisible();
+  await expect(traceModal.getByText("ativado", { exact: true })).toBeVisible();
+  await expect(
+    traceModal.getByText("descartado — fora da última vigência").first(),
+  ).toBeVisible();
+  // the backend's verdict string is what names the latest expire date
+  await expect(traceModal.getByText(discardedSummary)).toBeVisible();
+});

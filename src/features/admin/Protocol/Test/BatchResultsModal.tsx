@@ -20,6 +20,13 @@ type SituationFilter = "activated" | "notActivated" | "error";
 const isError = (row: ITestResultRow) => !!row.error;
 const isActivated = (row: ITestResultRow) => !!row.activated && !row.error;
 const isNotActivated = (row: ITestResultRow) => !row.activated && !row.error;
+// row.activated already means "fired on a group that was NOT discarded", so a
+// discarded row is a "not activated" row worth explaining rather than a state
+// the frontend has to derive
+const isDiscarded = (row: ITestResultRow) =>
+  !row.error &&
+  !row.activated &&
+  (row.dateGroups || []).some((g) => g.activated && g.discarded);
 
 const filterPredicates: Record<
   SituationFilter,
@@ -87,8 +94,13 @@ export function BatchResultsModal({
         if (row.error) {
           return <Tag color="red">{t("labels.error")}</Tag>;
         }
-        return row.activated ? (
-          <Tag color="green">{t("labels.activated")}</Tag>
+        if (row.activated) {
+          return <Tag color="green">{t("labels.activated")}</Tag>;
+        }
+        return isDiscarded(row) ? (
+          <Tooltip title={t("labels.discardedHint")}>
+            <Tag color="orange">{t("labels.discarded")}</Tag>
+          </Tooltip>
         ) : (
           <Tag>{t("labels.notActivated")}</Tag>
         );
@@ -110,9 +122,13 @@ export function BatchResultsModal({
         if (row.error) {
           return row.error;
         }
+        const groups = row.dateGroups || [];
+        // prefer the group that actually raised the alert; failing that, a
+        // discarded one, whose summary is what explains the absent alert
         const group =
-          (row.dateGroups || []).find((g) => g.activated) ||
-          (row.dateGroups || [])[0];
+          groups.find((g) => g.activated && !g.discarded) ||
+          groups.find((g) => g.activated) ||
+          groups[0];
         return group?.summary || group?.error || "-";
       },
     },
