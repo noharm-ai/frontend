@@ -20,9 +20,13 @@ export const isPrediction = (item) => !item.result;
 export const resultTypeOf = (item) =>
   isPrediction(item) ? item.predictionType : item.resultType;
 
-// the item that represents the drug: the backend puts the released results
-// first (culture_service._group_by_drug), so a drug that has an antibiogram is
-// never read through a prediction of a pending collection
+// the item that represents the drug, chosen by the backend
+// (culture_service._order_items): the worst released result, not the latest.
+// A drug resistant for one microorganism and susceptible for another is read
+// as resistant whichever result came last, the same way the cultureResistant
+// alert reads it. A released result always comes before a prediction, so a
+// drug that has an antibiogram is never read through a prediction of a
+// pending collection
 export const currentItemOf = (drug) => (drug.items || [])[0];
 
 /**

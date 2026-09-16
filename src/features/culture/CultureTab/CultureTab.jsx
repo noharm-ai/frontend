@@ -92,9 +92,9 @@ const buildGroups = (cultures) => {
   const predictedSusceptible = [];
 
   cultures.forEach((drug) => {
-    // the item that represents the drug: the backend puts the released
-    // results first (culture_service._group_by_drug), so a drug that has an
-    // antibiogram is never grouped by a prediction of a pending collection
+    // the item that represents the drug, chosen by the backend (see
+    // currentItemOf): its worst released result, never a prediction of a
+    // pending collection while an antibiogram exists
     const [current] = drug.items;
 
     if (isResistantInUse(drug)) {
@@ -250,10 +250,11 @@ const CultureDetails = ({ drug, idPrescription, t }) => (
         />
       </div>
     )}
-    {/* one block per collection: a drug may carry a released antibiogram and
-        a newer collection still pending, and the two must not run together.
-        They are laid out in two columns, so a drug with several collections
-        is read without scrolling the modal */}
+    {/* one block per collection, in the order the backend reads them: the
+        worst result first (the one the drug is grouped by), then the pending
+        collections. A released antibiogram and a pending collection must not
+        run together. They are laid out in two columns, so a drug with several
+        collections is read without scrolling the modal */}
     <div className="culture-detail-items">
       {drug.items.map((item, index) => (
         <DetailItem
