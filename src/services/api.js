@@ -228,22 +228,6 @@ const getPrescriptionCultures = (bearerToken, idPrescription) =>
     ...setHeaders(bearerToken),
   });
 
-// what the antibiograms suggest in place of a prescribed antimicrobial, on
-// the AWaRe scale. Fetched on demand from the culture card and from the
-// culture alert of the item (features/culture/CultureAlternatives)
-const getPrescriptionCultureAlternatives = (
-  bearerToken,
-  idPrescription,
-  sctid,
-) =>
-  instance.get(
-    `${endpoints.prescriptions}/${idPrescription}/cultures/alternatives`,
-    {
-      params: { sctid },
-      ...setHeaders(bearerToken),
-    },
-  );
-
 const getPrescriptionDrugPeriod = (
   bearerToken,
   idPrescriptionDrug,
@@ -1137,7 +1121,6 @@ const methods = {
   getPrescriptionsStatusList,
   getPrescriptionById,
   getPrescriptionCultures,
-  getPrescriptionCultureAlternatives,
   getPrescriptionDrugPeriod,
   putPrescriptionById,
   getPatientList,

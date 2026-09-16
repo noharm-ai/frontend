@@ -1374,29 +1374,6 @@
     "prediction": {
       "R": "Resistant",
       "S": "Susceptible"
-    },
-    "alternatives": {
-      "escalationButton": "See susceptible alternatives",
-      "deescalationButton": "See de-escalation options",
-      "loadError": "The alternatives could not be loaded",
-      "title": "Alternatives from the antibiogram",
-      "prescribedLevel": "AWaRe classification of the prescribed drug",
-      "prescribedResult": "Result of the prescribed drug",
-      "escalationHint": "Resistant result: susceptible drugs in the same antibiogram, from the least to the most aggressive on the AWaRe scale.",
-      "deescalationHint": "Susceptible result: drugs that are also susceptible and less aggressive on the AWaRe scale, candidates for de-escalation.",
-      "noneEscalation": "No susceptible drug in this antibiogram.",
-      "noneDeescalation": "No less aggressive susceptible drug in this antibiogram.",
-      "noneLevel": "The prescribed drug has no AWaRe classification, so no less aggressive option can be pointed out.",
-      "noCultures": "No antibiogram released for this drug.",
-      "disclaimer": "Suggestion based only on the antibiogram and the WHO AWaRe classification. Assess the clinical picture, the infection site and the institutional guidelines before proposing a change."
-    },
-    "awareLevel": {
-      "label": "AWaRe",
-      "1": "Access",
-      "2": "Watch",
-      "3": "Reserve",
-      "unknown": "Unclassified",
-      "hint": "WHO AWaRe classification of the antimicrobial: Access is the least aggressive, Reserve the most aggressive."
     }
   }
 }

@@ -55,31 +55,6 @@ export const fetchCultures = createAsyncThunk(
   },
 );
 
-/**
- * What the antibiograms suggest in place of a prescribed antimicrobial
- * (GET /prescriptions/:id/cultures/alternatives?sctid=).
- *
- * Nothing of it is kept in the store: it is fetched when the user asks for
- * it, from the culture card or from the culture alert of the item, and read
- * in a modal (CultureAlternatives).
- */
-export const fetchCultureAlternatives = createAsyncThunk(
-  "cultures/fetch-alternatives",
-  async ({ idPrescription, sctid }, thunkAPI) => {
-    try {
-      const response = await api.getPrescriptionCultureAlternatives(
-        null,
-        idPrescription,
-        sctid,
-      );
-
-      return response.data.data;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response?.data);
-    }
-  },
-);
-
 const cultureSlice = createSlice({
   name: "cultures",
   initialState,

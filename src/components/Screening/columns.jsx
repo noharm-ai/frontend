@@ -503,7 +503,6 @@ export const expandedRowRender = (bag) => (record) => {
             <DrugAlerts
               alerts={record.alertsComplete}
               idSubstance={record.idSubstance}
-              idPrescription={record.idPrescription}
             />
           </Descriptions.Item>
         )}

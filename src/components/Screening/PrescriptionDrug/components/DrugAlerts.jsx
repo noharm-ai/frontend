@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Alert, Space, Tag } from "antd";
+import { Alert, Tag } from "antd";
 import {
   PlusOutlined,
   MinusOutlined,
@@ -16,18 +16,13 @@ import RichTextView from "components/RichTextView";
 import { getErrorMessage } from "utils/errorHandler";
 import { getSubstanceHandling } from "features/serverActions/ServerActionsSlice";
 import {
-  CultureAlternatives,
-  MODE_ESCALATION,
-} from "features/culture/CultureAlternatives/CultureAlternatives";
-import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
-import {
   trackPrescriptionAction,
   TrackedPrescriptionAction,
 } from "src/utils/tracker";
 
 import { DrugAlertsCollapse } from "../PrescriptionDrug.style";
 
-export default function DrugAlerts({ alerts, idSubstance, idPrescription }) {
+export default function DrugAlerts({ alerts, idSubstance }) {
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const [activeKey, setActiveKey] = useState(["high", "medium", "low"]);
@@ -69,44 +64,6 @@ export default function DrugAlerts({ alerts, idSubstance, idPrescription }) {
         }
       }
     );
-  };
-
-  // the culture alert says the drug tested resistant: what the same
-  // antibiogram found susceptible is one click away, fetched on demand
-  // (features/culture/CultureAlternatives)
-  const alertActions = (item) => {
-    const actions = [];
-
-    if (item.handling) {
-      actions.push(
-        <Button
-          key="handling"
-          size="small"
-          danger
-          onClick={() => getHandling(item.type)}
-          loading={loading}
-        >
-          Ver manejo
-        </Button>,
-      );
-    }
-
-    if (item.type === DrugAlertTypeEnum.CULTURE_RESISTANT) {
-      actions.push(
-        <CultureAlternatives
-          key="alternatives"
-          idPrescription={idPrescription}
-          sctid={idSubstance}
-          mode={MODE_ESCALATION}
-        />,
-      );
-    }
-
-    if (actions.length === 0) {
-      return null;
-    }
-
-    return <Space wrap>{actions}</Space>;
   };
 
   const activeKeyChange = (keys) => {
@@ -178,7 +135,18 @@ export default function DrugAlerts({ alerts, idSubstance, idPrescription }) {
                 icon={
                   <CloseCircleFilled style={{ color: getIconColor(type) }} />
                 }
-                action={alertActions(item)}
+                action={
+                  item.handling ? (
+                    <Button
+                      size="small"
+                      danger
+                      onClick={() => getHandling(item.type)}
+                      loading={loading}
+                    >
+                      Ver manejo
+                    </Button>
+                  ) : null
+                }
               />
             ))}
           </>

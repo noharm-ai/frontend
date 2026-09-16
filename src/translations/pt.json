@@ -1384,29 +1384,6 @@
     "prediction": {
       "R": "Resistente",
       "S": "Sensível"
-    },
-    "alternatives": {
-      "escalationButton": "Ver alternativas sensíveis",
-      "deescalationButton": "Ver opções de descalonamento",
-      "loadError": "Não foi possível carregar as alternativas",
-      "title": "Alternativas pelo antibiograma",
-      "prescribedLevel": "Classificação AWaRe do medicamento prescrito",
-      "prescribedResult": "Resultado do medicamento prescrito",
-      "escalationHint": "Resultado resistente: medicamentos sensíveis no mesmo antibiograma, do menos ao mais agressivo na escala AWaRe.",
-      "deescalationHint": "Resultado sensível: medicamentos também sensíveis e menos agressivos na escala AWaRe, candidatos a descalonamento.",
-      "noneEscalation": "Nenhum medicamento sensível neste antibiograma.",
-      "noneDeescalation": "Nenhum medicamento sensível menos agressivo neste antibiograma.",
-      "noneLevel": "O medicamento prescrito não possui classificação AWaRe, por isso não é possível apontar opções menos agressivas.",
-      "noCultures": "Nenhum antibiograma liberado para este medicamento.",
-      "disclaimer": "Sugestão baseada apenas no antibiograma e na classificação AWaRe da OMS. Avalie o quadro clínico, o sítio da infecção e as diretrizes institucionais antes de propor a troca."
-    },
-    "awareLevel": {
-      "label": "AWaRe",
-      "1": "Acesso",
-      "2": "Vigilância",
-      "3": "Reserva",
-      "unknown": "Sem classificação",
-      "hint": "Classificação AWaRe (OMS) do antimicrobiano: Acesso é o menos agressivo, Reserva o mais agressivo."
     }
   }
 }

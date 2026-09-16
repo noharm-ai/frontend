@@ -21,13 +21,7 @@ import {
   isPrediction,
   resultTypeOf,
   isResistantInUse,
-  currentItemOf,
 } from "features/culture/cultureResistance";
-import {
-  CultureAlternatives,
-  MODE_ESCALATION,
-  MODE_DEESCALATION,
-} from "features/culture/CultureAlternatives/CultureAlternatives";
 
 import {
   Container,
@@ -192,44 +186,7 @@ const CulturePendingResult = ({ item, t }) => (
   </>
 );
 
-// what the antibiogram suggests in place of a prescribed drug, asked for on
-// demand (CultureAlternatives). The backend says whether there is anything to
-// offer (hasAlternatives, culture_service.flag_alternatives): a susceptible
-// drug with nothing less aggressive to step down to gets no button, and a
-// resistant one with nothing susceptible beside it is told so outright
-const CulturePrescribedActions = ({ drug, idPrescription, t }) => {
-  const resistant = isResistantInUse(drug);
-  const current = currentItemOf(drug);
-  const susceptible =
-    !resistant &&
-    current &&
-    !isPrediction(current) &&
-    current.resultType === RESULT_SUSCEPTIBLE;
-
-  if (drug.hasAlternatives && (resistant || susceptible)) {
-    return (
-      <div className="culture-prescribed-actions">
-        <CultureAlternatives
-          idPrescription={idPrescription}
-          sctid={drug.sctid}
-          mode={resistant ? MODE_ESCALATION : MODE_DEESCALATION}
-        />
-      </div>
-    );
-  }
-
-  if (resistant) {
-    return (
-      <div className="culture-prescribed-actions culture-alternatives-none">
-        {t("culture.alternatives.noneEscalation")}
-      </div>
-    );
-  }
-
-  return null;
-};
-
-const CultureDetails = ({ drug, idPrescription, t }) => (
+const CultureDetails = ({ drug, t }) => (
   <Details>
     {drug.prescribed && (
       <div className="culture-prescribed-detail">
@@ -243,11 +200,6 @@ const CultureDetails = ({ drug, idPrescription, t }) => (
             <MedicineBoxOutlined /> {t("culture.prescribedHint")}
           </>
         )}
-        <CulturePrescribedActions
-          drug={drug}
-          idPrescription={idPrescription}
-          t={t}
-        />
       </div>
     )}
     {/* one block per collection, in the order the backend reads them: the
@@ -369,13 +321,7 @@ const CultureListItem = ({ drug, onOpenDetails, t }) => {
   );
 };
 
-export function CultureTab({
-  cultures,
-  loading,
-  error,
-  onRetry,
-  idPrescription,
-}) {
+export function CultureTab({ cultures, loading, error, onRetry }) {
   const { t } = useTranslation();
   const [details, setDetails] = useState(null);
 
@@ -481,13 +427,7 @@ export function CultureTab({
         onCancel={() => setDetails(null)}
         className="culture-details-modal"
       >
-        {details && (
-          <CultureDetails
-            drug={details}
-            idPrescription={idPrescription}
-            t={t}
-          />
-        )}
+        {details && <CultureDetails drug={details} t={t} />}
       </DefaultModal>
     </Container>
   );
