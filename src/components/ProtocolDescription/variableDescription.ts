@@ -78,6 +78,8 @@ const SUBJECTS: Record<string, string> = {
   [ProtocolVariableFieldEnum.TAGS]: "algum marcador do paciente",
   [ProtocolVariableFieldEnum.ADMISSION_NUMBER]:
     "o número de atendimento do paciente",
+  [ProtocolVariableFieldEnum.CULTURE_RELEASE_TIME]:
+    "o tempo desde a liberação da última cultura do paciente",
 };
 
 const UNITS: Record<string, string> = {
@@ -85,6 +87,7 @@ const UNITS: Record<string, string> = {
   [ProtocolVariableFieldEnum.WEIGHT]: "kg",
   [ProtocolVariableFieldEnum.IMC]: "kg/m²",
   [ProtocolVariableFieldEnum.ADMISSION_TIME]: "horas",
+  [ProtocolVariableFieldEnum.CULTURE_RELEASE_TIME]: "horas",
 };
 
 const FIELD_LABELS: Record<string, string> = Object.fromEntries(

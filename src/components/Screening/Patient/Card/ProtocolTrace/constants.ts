@@ -10,6 +10,8 @@ export const REASON_LABELS: Record<string, string> = {
   VALUE_NOT_NUMERIC: "Valor não numérico",
   NO_PATIENT: "Paciente não encontrado",
   NO_ADMISSION_DATE: "Data de internação ausente",
+  NO_CULTURE_RELEASE: "Nenhuma cultura liberada",
+  CULTURE_DATE_INVALID: "Data de liberação da cultura inválida",
   AGE_MISSING: "Idade ausente",
   WEIGHT_MISSING: "Peso ausente",
   NO_SEGMENT_TYPE: "Tipo de segmento ausente",

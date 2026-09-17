@@ -144,6 +144,8 @@ export function VariableTab() {
       "Verifica se algum dos marcadores do paciente está (IN) ou não está (NOTIN) na lista informada. Um paciente sem marcadores nunca atende ao IN e sempre atende ao NOTIN.",
     [ProtocolVariableFieldEnum.ADMISSION_NUMBER]:
       "Verifica se o número de atendimento do paciente (pessoa.nratendimento) está (IN) ou não está (NOTIN) na lista informada. Digite os números de atendimento e pressione Enter para adicionar cada um.",
+    [ProtocolVariableFieldEnum.CULTURE_RELEASE_TIME]:
+      "Compara quantas horas se passaram desde a liberação da última cultura do paciente (a mesma data exibida no card de culturas) com o valor informado. Ex.: \"< 48\" para uma cultura liberada nas últimas 48 horas; \"> 72\" para quando a cultura mais recente já tem mais de 72 horas. Coletas pendentes não contam: só resultados liberados. Se o paciente não possuir nenhuma cultura liberada, ou se o hospital não tiver a integração de culturas habilitada, a variável é sempre avaliada como falsa — para testar a ausência de cultura, use esta variável de forma positiva e negue-a na expressão gatilho (not).",
   };
 
   return (
