@@ -39,11 +39,10 @@ export const getAlerts = (
   stats,
   t,
   featureService = null,
-  // the general protocol alerts are built on the client from
-  // prescription.protocolAlerts (utils/transformers/prescriptions), so only
-  // the surfaces that load a prescription can count them: the prioritization
-  // list has no protocol alerts in its payload and counts the item ones alone
-  protocolGeneralCount = 0,
+  // how many different protocols are active on the prescription: the protocol
+  // alerts are not drug alerts and never reach alertStats, so each surface
+  // reads the count from the protocolAlerts summary it receives
+  protocolCount = 0,
 ) =>
   [
     {
@@ -104,7 +103,7 @@ export const getAlerts = (
       name: "protocol",
       label: t("alerts.protocol"),
       icon: () => <FileProtectOutlined />,
-      value: (stats.protocol || 0) + protocolGeneralCount,
+      value: protocolCount,
       filters: { typeList: ["protocol", "protocolGeneral"] },
     },
     {
@@ -129,18 +128,11 @@ export default function AlertCard({ stats, prescription }) {
     return null;
   }
 
-  // counted from the list the modal itself shows, so the cell and the report
-  // behind it can never disagree
-  const protocolGeneralCount =
-    prescription?.alertsList?.filter((a) => a.type === "protocolGeneral")
-      .length ?? 0;
+  // the summary holds one entry per protocol that alerted, however many items
+  // or date groups it raised an alert on
+  const protocolCount = prescription?.protocolAlerts?.summary?.length ?? 0;
 
-  const alerts = getAlerts(
-    stats,
-    t,
-    FeaturesService(features),
-    protocolGeneralCount,
-  );
+  const alerts = getAlerts(stats, t, FeaturesService(features), protocolCount);
 
   const openModal = (filters = {}) => {
     dispatch(setInitialFilters(filters));
