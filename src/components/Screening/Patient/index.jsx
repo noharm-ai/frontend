@@ -117,6 +117,7 @@ export default function Patient({
         <ExamCard
           admissionNumber={prescription.admissionNumber}
           exams={exams}
+          prescription={prescription}
           siderCollapsed={siderCollapsed}
           count={alertExams}
         />

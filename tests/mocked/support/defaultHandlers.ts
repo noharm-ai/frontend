@@ -72,6 +72,7 @@ export function defaultHandlers(): Record<string, Handler> {
       json: { status: "success", data: null },
     },
     "GET /prescriptions/:id/update": { json: { status: "success", data: {} } },
+    "GET /prescriptions/:id/cultures": emptyList,
 
     // async job polling: always terminal so the UI never polls forever
     "GET /queue/status/:id": {

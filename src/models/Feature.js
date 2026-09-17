@@ -30,6 +30,7 @@ export default class Feature {
     "PRIORITIZATION_FIELD_RESPONSIBLE_PHYSICIAN";
   static PRIORITIZATION_FIELD_CID = "PRIORITIZATION_FIELD_CID";
   static MULTI_CLINICAL_NOTES = "MULTI_CLINICAL_NOTES";
+  static CULTURE = "CULTURE";
 
   // driven by the backend FEATURE_USER_ONBOARDING env var, not schema config,
   // so it is intentionally absent from getFeatures() / the admin toggles
@@ -204,6 +205,12 @@ export default class Feature {
         label: "Campo de priorização: CID",
         description:
           "Habilita os campos CID e Grupos de CID no filtro de priorização.",
+      },
+      {
+        id: Feature.CULTURE,
+        label: "Culturas",
+        description:
+          "Habilita a aba Cultura no card de Exames e os alertas de resistência a culturas. Depende da integração de culturas (antibiograma) do cliente.",
       },
     ];
   }
