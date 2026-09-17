@@ -661,6 +661,7 @@
     "alergy": "Alergia",
     "tube": "Medicamento contraindicado por sonda",
     "duplicate": "Duplicidade",
+    "protocol": "Tipos de alerta de protocolo ativos",
     "culture": "Cultura resistente"
   },
 

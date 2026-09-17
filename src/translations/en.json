@@ -640,6 +640,7 @@
     "alergy": "Alergy",
     "tube": "Drug contraindicate by tube",
     "duplicate": "Duplicity",
+    "protocol": "Active protocol alert types",
     "culture": "Resistant culture"
   },
 

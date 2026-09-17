@@ -5,6 +5,7 @@ import {
   ForkOutlined,
   HourglassOutlined,
   ExperimentOutlined,
+  FileProtectOutlined,
 } from "@ant-design/icons";
 
 import CustomIcon from "components/Icon";
@@ -34,7 +35,15 @@ import Feature from "models/Feature";
 import { AlertContainer } from "./index.style";
 
 /* eslint-disable-next-line react-refresh/only-export-components */
-export const getAlerts = (stats, t, featureService = null) =>
+export const getAlerts = (
+  stats,
+  t,
+  featureService = null,
+  // how many different protocols are active on the prescription: the protocol
+  // alerts are not drug alerts and never reach alertStats, so each surface
+  // reads the count from the protocolAlerts summary it receives
+  protocolCount = 0,
+) =>
   [
     {
       label: t("alerts.y"),
@@ -91,6 +100,13 @@ export const getAlerts = (stats, t, featureService = null) =>
       filters: { typeList: ["dm", "dt"] },
     },
     {
+      name: "protocol",
+      label: t("alerts.protocol"),
+      icon: () => <FileProtectOutlined />,
+      value: protocolCount,
+      filters: { typeList: ["protocol", "protocolGeneral"] },
+    },
+    {
       name: "culture",
       // the antibiogram is a per-schema integration, so the row would read a
       // bare zero for everyone else (models/Feature.CULTURE)
@@ -112,7 +128,11 @@ export default function AlertCard({ stats, prescription }) {
     return null;
   }
 
-  const alerts = getAlerts(stats, t, FeaturesService(features));
+  // the summary holds one entry per protocol that alerted, however many items
+  // or date groups it raised an alert on
+  const protocolCount = prescription?.protocolAlerts?.summary?.length ?? 0;
+
+  const alerts = getAlerts(stats, t, FeaturesService(features), protocolCount);
 
   const openModal = (filters = {}) => {
     dispatch(setInitialFilters(filters));

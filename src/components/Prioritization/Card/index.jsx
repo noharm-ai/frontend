@@ -47,6 +47,8 @@ const TabContent = ({ tab: requestedTab, prescription, featureService }) => {
       prescription.alertStats || {},
       t,
       featureService,
+      // in the list, protocolAlerts is the summary itself (Prescription.features)
+      prescription.protocolAlerts?.length ?? 0,
     ).filter((a) => a.value > 0);
 
     return (
