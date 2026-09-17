@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Flex, Spin } from "antd";
 import {
@@ -6,6 +6,7 @@ import {
   MedicineBoxOutlined,
   ClockCircleOutlined,
   RightOutlined,
+  DownOutlined,
 } from "@ant-design/icons";
 import moment from "moment";
 
@@ -32,6 +33,9 @@ import {
   Details,
   DetailItem,
   EmptyDescription,
+  Predictions,
+  PredictionsToggle,
+  NoReleased,
 } from "./CultureTab.style";
 
 const GROUP_RESISTANT_IN_USE = "resistantInUse";
@@ -321,9 +325,56 @@ const CultureListItem = ({ drug, onOpenDetails, t }) => {
   );
 };
 
+const CultureGroup = ({ group, onOpenDetails, t }) => (
+  <Group className={`culture-group culture-group-${group.key}`}>
+    <div className="group-title">
+      {PREDICTION_GROUPS.includes(group.key) && <RobotOutlined />}
+      {group.key === GROUP_RESISTANT_IN_USE && (
+        <CustomIcon component={IconGerm} />
+      )}
+      <span>{t(`culture.groups.${group.key}`)}</span>
+      <span className="count">({group.drugs.length})</span>
+    </div>
+    <List>
+      {group.drugs.map((drug) => (
+        <CultureListItem
+          drug={drug}
+          key={drug.drug}
+          onOpenDetails={onOpenDetails}
+          t={t}
+        />
+      ))}
+    </List>
+  </Group>
+);
+
 export function CultureTab({ cultures, loading, error, onRetry }) {
   const { t } = useTranslation();
   const [details, setDetails] = useState(null);
+  const [showPredictions, setShowPredictions] = useState(false);
+  const scrollRef = useRef(null);
+  const predictionsRef = useRef(null);
+
+  // the released results alone can fill the scroll area, so the groups the
+  // fold opens are below it: without this the click looks like it did nothing
+  useEffect(() => {
+    if (!showPredictions) {
+      return;
+    }
+
+    const scroll = scrollRef.current;
+    const predictions = predictionsRef.current;
+
+    if (!scroll || !predictions) {
+      return;
+    }
+
+    // only the list scrolls: scrollIntoView would take the screening page
+    // with it
+    scroll.scrollTop +=
+      predictions.getBoundingClientRect().top -
+      scroll.getBoundingClientRect().top;
+  }, [showPredictions]);
 
   // the cultures are fetched when the tab is opened (CultureSlice), so the
   // first open waits for them; a reload of a list already shown keeps the
@@ -386,35 +437,99 @@ export function CultureTab({ cultures, loading, error, onRetry }) {
   }
 
   const groups = buildGroups(cultures);
+  // the predictions are kept out of the released results and folded away: a
+  // pending collection is not a lab result, and when the patient has no
+  // released result at all an open prediction list was read as if it were one
+  const releasedGroups = groups.filter(
+    (group) => !PREDICTION_GROUPS.includes(group.key),
+  );
+  const predictionGroups = groups.filter((group) =>
+    PREDICTION_GROUPS.includes(group.key),
+  );
+  const predictionCount = predictionGroups.reduce(
+    (total, group) => total + group.drugs.length,
+    0,
+  );
+  // what the fold hides: a predicted resistance is the one reason to open it,
+  // so the closed toggle has to say how many there are
+  const predictedResistantCount =
+    predictionGroups.find((group) => group.key === GROUP_PREDICTION_RESISTANT)
+      ?.drugs.length ?? 0;
 
   return (
     <Container>
-      <Scroll>
-        {groups.map((group) => (
-          <Group
+      <Scroll ref={scrollRef}>
+        {releasedGroups.map((group) => (
+          <CultureGroup
             key={group.key}
-            className={`culture-group culture-group-${group.key}`}
+            group={group}
+            onOpenDetails={setDetails}
+            t={t}
+          />
+        ))}
+
+        {predictionCount > 0 && (
+          <Predictions
+            ref={predictionsRef}
+            className="culture-predictions"
+            $standalone={releasedGroups.length === 0}
           >
-            <div className="group-title">
-              {PREDICTION_GROUPS.includes(group.key) && <RobotOutlined />}
-              {group.key === GROUP_RESISTANT_IN_USE && (
-                <CustomIcon component={IconGerm} />
+            {/* nothing came back from the lab: that is the answer the card
+                owes the user, and it has to be given before the prediction
+                that stands in for it */}
+            {releasedGroups.length === 0 && (
+              <NoReleased className="culture-no-released">
+                <div className="culture-no-released-title">
+                  {t("culture.noReleased")}
+                </div>
+                <div className="culture-no-released-hint">
+                  {t("culture.noReleasedHint")}
+                </div>
+              </NoReleased>
+            )}
+            <PredictionsToggle
+              type="button"
+              className="culture-predictions-toggle"
+              aria-expanded={showPredictions}
+              onClick={() => setShowPredictions((open) => !open)}
+            >
+              <RobotOutlined />
+              <span className="toggle-label">
+                {t(
+                  showPredictions
+                    ? "culture.predictionsHide"
+                    : "culture.predictionsShow",
+                  { count: predictionCount },
+                )}
+              </span>
+              {/* the count of predicted resistances is what the fold would
+                  otherwise hide: it is stated while the list is closed */}
+              {!showPredictions && predictedResistantCount > 0 && (
+                <span className="toggle-alert">
+                  {t("culture.predictionsResistant", {
+                    count: predictedResistantCount,
+                  })}
+                </span>
               )}
-              <span>{t(`culture.groups.${group.key}`)}</span>
-              <span className="count">({group.drugs.length})</span>
-            </div>
-            <List>
-              {group.drugs.map((drug) => (
-                <CultureListItem
-                  drug={drug}
-                  key={drug.drug}
+              <DownOutlined
+                className="toggle-chevron"
+                rotate={showPredictions ? 180 : 0}
+              />
+            </PredictionsToggle>
+            {/* conditional render, not a collapse: the group headers are
+                sticky against the scroll area and an animated wrapper with
+                overflow of its own would drop them */}
+            {showPredictions &&
+              predictionGroups.map((group) => (
+                <CultureGroup
+                  key={group.key}
+                  group={group}
                   onOpenDetails={setDetails}
                   t={t}
                 />
               ))}
-            </List>
-          </Group>
-        ))}
+          </Predictions>
+        )}
       </Scroll>
 
       <DefaultModal

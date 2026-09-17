@@ -275,6 +275,37 @@ test("culture tab lists the drugs and flags predictions", async ({
   });
   await expect(intermediate).toContainText("intermediário");
 
+  // the predictions are folded away under the released results: a pending
+  // collection is not a lab result, and nothing of it is on screen until the
+  // fold is opened
+  const toggle = page.locator(".culture-predictions-toggle");
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await expect(toggle).toContainText("Ver predições NoHarm (2)");
+  // what the fold hides is why it is worth opening: the predicted resistances
+  // are counted on the closed toggle
+  await expect(toggle.locator(".toggle-alert")).toHaveText(
+    "1 com predição de resistência",
+  );
+  await expect(page.locator(".culture-group-predictionResistant")).toHaveCount(
+    0,
+  );
+  await expect(
+    page.locator(".culture-group-predictionSusceptible"),
+  ).toHaveCount(0);
+  // the card holds released results, so it does not claim the lab returned
+  // nothing
+  await expect(page.locator(".culture-no-released")).toHaveCount(0);
+
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-expanded", "true");
+  await expect(toggle).toContainText("Ocultar predições NoHarm");
+  await expect(toggle.locator(".toggle-alert")).toHaveCount(0);
+  // the released groups above can fill the scroll area on their own: what the
+  // click opened has to be on screen, not below the fold it just opened
+  await expect(
+    page.locator(".culture-group-predictionResistant .culture-item"),
+  ).toBeInViewport({ ratio: 1 });
+
   // the pending culture shows the prediction, not a lab result, and the
   // predictions are split like the results: the header says what was
   // predicted, so the row no longer repeats the letter
@@ -348,6 +379,61 @@ test("culture tab lists the drugs and flags predictions", async ({
   await expect(blocks.nth(1).locator(".culture-prediction")).toHaveClass(
     /culture-prediction-S/,
   );
+});
+
+test("with no released result the card says so and folds the predictions", async ({
+  page,
+  mockApi,
+}) => {
+  // every collection of this patient is still pending: the card holds nothing
+  // but predictions, which is the reading that must not be mistaken for an
+  // antibiogram
+  const pendingOnly = CULTURES.filter((drug) =>
+    drug.items.every((item) => !item.result),
+  );
+
+  mockApi.override("GET /prescriptions/:id", {
+    json: prescriptionWith({ cultureStats: { resistantInUse: 0 } }),
+  });
+  mockApi.override("GET /prescriptions/:id/cultures", {
+    json: { status: "success", data: pendingOnly },
+  });
+
+  await page.goto("/prescricao/199");
+  await openCultureTab(page);
+
+  // the answer the card owes the user, before the prediction that stands in
+  // for the result it has not got
+  const noReleased = page.locator(".culture-no-released");
+  await expect(noReleased).toContainText(
+    "Nenhum resultado laboratorial liberado",
+  );
+  await expect(noReleased).toContainText(
+    "Enquanto o antibiograma não é liberado, a NoHarm gera uma predição",
+  );
+  // and it is not the empty state: the patient does have cultures
+  await expect(
+    page.getByText("Nenhum resultado positivo de cultura"),
+  ).toHaveCount(0);
+  // nothing was released, so the footer has no release to date either
+  await expect(page.locator(".culture-last-release")).toHaveCount(0);
+
+  // the predictions themselves are one click away
+  const toggle = page.locator(".culture-predictions-toggle");
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await expect(page.locator(".culture-item")).toHaveCount(0);
+
+  await toggle.click();
+  await expect(
+    page.locator(".culture-group-predictionResistant .culture-item .name"),
+  ).toHaveText(["VANCOMICINA"]);
+  await expect(
+    page.locator(".culture-group-predictionSusceptible .culture-item .name"),
+  ).toHaveText(["GENTAMICINA"]);
+
+  // and they can be folded back away
+  await toggle.click();
+  await expect(page.locator(".culture-item")).toHaveCount(0);
 });
 
 test("the tab is not flagged when no resistant drug is in use", async ({

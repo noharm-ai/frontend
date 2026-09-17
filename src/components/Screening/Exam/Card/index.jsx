@@ -122,6 +122,10 @@ export default function ExamCard({
         <Flex align="center" style={{ height: "100%" }}>
           {cultureTab ? (
             <CultureTab
+              /* the tab holds what the user opened on this patient — the
+                 prediction fold, the details modal — and none of it carries
+                 over to the next one */
+              key={idPrescription}
               cultures={cultures}
               loading={culturesStatus === "loading"}
               error={culturesStatus === "failed"}

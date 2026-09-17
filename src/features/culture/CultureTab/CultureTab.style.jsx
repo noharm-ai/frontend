@@ -386,3 +386,96 @@ export const EmptyDescription = styled.div`
     color: #6d7a94;
   }
 `;
+
+// the predictions, folded away under the released results. They are not lab
+// results, and below a card that holds none of them an open list of
+// predictions was read as if it were the antibiogram
+export const Predictions = styled.div`
+  /* the fold is what separates the two readings: above it, what the lab
+     released; below it, what is still a guess */
+  margin-top: ${(props) => (props.$standalone ? "0" : "12px")};
+  padding-top: ${(props) => (props.$standalone ? "0" : "10px")};
+  border-top: ${(props) => (props.$standalone ? "none" : "1px dashed #d9dee8")};
+
+  /* the first prediction group sits under the toggle, not against it */
+  .culture-group {
+    margin-top: 10px;
+  }
+`;
+
+// nothing came back from the lab: said outright, above the fold that hides
+// the prediction standing in for it
+export const NoReleased = styled.div`
+  margin-bottom: 10px;
+
+  .culture-no-released-title {
+    font-weight: 500;
+    color: var(--nh-text-color);
+  }
+
+  .culture-no-released-hint {
+    margin-top: 2px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #6d7a94;
+  }
+`;
+
+export const PredictionsToggle = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 8px;
+  border: 1px dashed #c9d0dd;
+  border-radius: 5px;
+  background: #f7f7fb;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4a5670;
+  cursor: pointer;
+  text-align: left;
+
+  > .anticon-robot {
+    flex-shrink: 0;
+    font-size: 14px;
+    color: ${PREDICTED_UNKNOWN};
+  }
+
+  .toggle-label {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* a predicted resistance is the reason to open the fold, so the closed
+     toggle states how many are behind it */
+  .toggle-alert {
+    flex-shrink: 0;
+    padding: 1px 6px;
+    border-radius: 10px;
+    background: ${PREDICTED_RESISTANT};
+    font-size: 11px;
+    font-weight: 600;
+    color: #fff;
+  }
+
+  .toggle-chevron {
+    flex-shrink: 0;
+    margin-left: auto;
+    font-size: 10px;
+    color: #6d7a94;
+  }
+
+  &:hover {
+    border-color: ${PREDICTED_UNKNOWN};
+    background: #f2f0fa;
+  }
+
+  &:focus-visible {
+    outline: 2px solid #2e3c5a;
+    outline-offset: 1px;
+  }
+`;
