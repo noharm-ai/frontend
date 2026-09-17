@@ -5,6 +5,7 @@ import {
   ForkOutlined,
   HourglassOutlined,
   ExperimentOutlined,
+  FileProtectOutlined,
 } from "@ant-design/icons";
 
 import CustomIcon from "components/Icon";
@@ -34,7 +35,16 @@ import Feature from "models/Feature";
 import { AlertContainer } from "./index.style";
 
 /* eslint-disable-next-line react-refresh/only-export-components */
-export const getAlerts = (stats, t, featureService = null) =>
+export const getAlerts = (
+  stats,
+  t,
+  featureService = null,
+  // the general protocol alerts are built on the client from
+  // prescription.protocolAlerts (utils/transformers/prescriptions), so only
+  // the surfaces that load a prescription can count them: the prioritization
+  // list has no protocol alerts in its payload and counts the item ones alone
+  protocolGeneralCount = 0,
+) =>
   [
     {
       label: t("alerts.y"),
@@ -91,6 +101,13 @@ export const getAlerts = (stats, t, featureService = null) =>
       filters: { typeList: ["dm", "dt"] },
     },
     {
+      name: "protocol",
+      label: t("alerts.protocol"),
+      icon: () => <FileProtectOutlined />,
+      value: (stats.protocol || 0) + protocolGeneralCount,
+      filters: { typeList: ["protocol", "protocolGeneral"] },
+    },
+    {
       name: "culture",
       // the antibiogram is a per-schema integration, so the row would read a
       // bare zero for everyone else (models/Feature.CULTURE)
@@ -112,7 +129,18 @@ export default function AlertCard({ stats, prescription }) {
     return null;
   }
 
-  const alerts = getAlerts(stats, t, FeaturesService(features));
+  // counted from the list the modal itself shows, so the cell and the report
+  // behind it can never disagree
+  const protocolGeneralCount =
+    prescription?.alertsList?.filter((a) => a.type === "protocolGeneral")
+      .length ?? 0;
+
+  const alerts = getAlerts(
+    stats,
+    t,
+    FeaturesService(features),
+    protocolGeneralCount,
+  );
 
   const openModal = (filters = {}) => {
     dispatch(setInitialFilters(filters));

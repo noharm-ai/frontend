@@ -2,8 +2,8 @@ import styled from "styled-components";
 
 export const AlertContainer = styled.div`
   display: grid;
-  /* ten alerts in three rows: a fourth row would make the card taller than
-     the ones it sits beside */
+  /* eleven alerts in three rows: a fourth row would make the card taller
+     than the ones it sits beside */
   grid-template-columns: repeat(4, minmax(0, 1fr));
   column-gap: 6px;
   row-gap: 8px;
