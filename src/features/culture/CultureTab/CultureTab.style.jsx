@@ -1,6 +1,7 @@
 import styled from "styled-components";
 
 import { get } from "styles/utils";
+import { AWARE_COLORS, awareKey } from "features/culture/awareLevel";
 
 // the prediction accents: each says what was predicted, and neither is the
 // red or the green of a released antibiogram, which a pending collection
@@ -253,12 +254,68 @@ export const Item = styled.div`
   }
 `;
 
+// the AWaRe group of the drug, on the row: the dot carries the colour and a
+// single letter the group. The row is too narrow to spell it out — the drug
+// name is what identifies it — so the badge is kept to the width of an icon
+// and the word is left to the tooltip and to the details modal
+export const AwareBadge = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  padding: 1px 5px;
+  border-radius: 10px;
+  background: #f1f3f7;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: #4b5872;
+
+  .aware-dot {
+    width: 7px;
+    height: 7px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: ${(props) => AWARE_COLORS[awareKey(props.$level)]};
+  }
+`;
+
 // the details modal: one block per collection, and a pending collection set
 // apart from the result it has not got yet
 export const Details = styled.div`
   .culture-prescribed-detail {
     margin-bottom: 10px;
     font-weight: 500;
+  }
+
+  /* the AWaRe group of the drug: the modal has the room the row had not, so
+     an antimicrobial that was never classified is said to be so here */
+  .culture-aware-detail {
+    margin-bottom: 10px;
+    font-weight: 500;
+
+    .culture-aware-value-1 {
+      color: ${AWARE_COLORS[1]};
+    }
+
+    .culture-aware-value-2 {
+      color: ${AWARE_COLORS[2]};
+    }
+
+    .culture-aware-value-3 {
+      color: ${AWARE_COLORS[3]};
+    }
+
+    .culture-aware-value-unknown {
+      color: #6d7a94;
+    }
+
+    .culture-aware-hint {
+      margin-top: 2px;
+      font-size: 12px;
+      font-weight: 400;
+      color: #6d7a94;
+    }
   }
 
   /* the collections are read side by side: a drug with several of them fits

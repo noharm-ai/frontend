@@ -1386,6 +1386,14 @@
     "prediction": {
       "R": "Resistant",
       "S": "Susceptible"
+    },
+    "awareLevel": {
+      "label": "AWaRe classification",
+      "1": "Access",
+      "2": "Watch",
+      "3": "Reserve",
+      "unknown": "Unclassified",
+      "hint": "WHO AWaRe classification of the antimicrobial: Access is the least aggressive, Reserve the most aggressive."
     }
   }
 }

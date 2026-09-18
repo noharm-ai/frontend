@@ -28,6 +28,9 @@ test.beforeEach(async ({ page, mockApi }) => {
 const CULTURES = [
   {
     drug: "AMICACINA",
+    // the substance was never placed on the AWaRe scale: the row says nothing
+    // rather than carrying a badge that classifies it by guess
+    atbLevel: null,
     items: [
       {
         key: "SANGUE TOTAL#MICROORGANISMO TESTE#AMICACINA",
@@ -48,6 +51,8 @@ const CULTURES = [
     ],
   },
   {
+    // an older backend, or a drug the antibiogram could not map to a
+    // substance: the field is not there at all
     drug: "GENTAMICINA",
     items: [
       {
@@ -74,6 +79,7 @@ const CULTURES = [
     // collection: the backend hands the result over first and the card must
     // read the drug by it, not by the prediction
     drug: "CEFEPIME",
+    atbLevel: 2,
     items: [
       {
         key: "SANGUE TOTAL#MICROORGANISMO TESTE#CEFEPIME#1",
@@ -112,6 +118,7 @@ const CULTURES = [
     // a predicted resistance: still a pending collection, so it must not be
     // read in the same group as a released resistant antibiogram
     drug: "VANCOMICINA",
+    atbLevel: 3,
     items: [
       {
         key: "SANGUE TOTAL#MICROORGANISMO TESTE#VANCOMICINA",
@@ -133,6 +140,7 @@ const CULTURES = [
     // the backend marks the cultures of the drugs the prescription carries
     drug: "OXACILINA",
     prescribed: true,
+    atbLevel: 1,
     items: [
       {
         key: "SANGUE TOTAL#MICROORGANISMO TESTE#OXACILINA",
@@ -378,6 +386,73 @@ test("culture tab lists the drugs and flags predictions", async ({
   await expect(blocks.nth(1)).toContainText("Resultado laboratorial pendente");
   await expect(blocks.nth(1).locator(".culture-prediction")).toHaveClass(
     /culture-prediction-S/,
+  );
+});
+
+test("the card states the AWaRe classification of each drug", async ({
+  page,
+  mockApi,
+}) => {
+  // how aggressive the antimicrobial is (substancia.tp_nivel_atb): the reading
+  // of an antibiogram is which drug to reach for, and the WHO AWaRe group is
+  // part of that answer
+  mockApi.override("GET /prescriptions/:id", {
+    json: prescriptionWith({ cultureStats: { resistantInUse: 1 } }),
+  });
+  mockApi.override("GET /prescriptions/:id/cultures", {
+    json: { status: "success", data: CULTURES },
+  });
+
+  await page.goto("/prescricao/199");
+  await openCultureTab(page);
+
+  const row = (drug: string) =>
+    page.locator(".culture-item", { hasText: drug });
+
+  // the row has no room for the word: it carries the dot and the initial of
+  // the group, and the drug name keeps the space it needs to identify the row
+  await expect(row("OXACILINA").locator(".culture-aware")).toHaveText("A");
+  await expect(row("CEFEPIME").locator(".culture-aware")).toHaveText("O");
+
+  // the level is stated on the row of a prediction too: the classification is
+  // a property of the drug, not of the antibiogram
+  await page.locator(".culture-predictions-toggle").click();
+  await expect(row("VANCOMICINA").locator(".culture-aware")).toHaveText("R");
+
+  // an unclassified substance, and one the backend did not send the field for,
+  // carry no badge: the column is curated apart from the card and a grey badge
+  // on every row would say nothing
+  await expect(row("AMICACINA").locator(".culture-aware")).toHaveCount(0);
+  await expect(row("GENTAMICINA").locator(".culture-aware")).toHaveCount(0);
+
+  // the word the letter stands for is one hover away, and nothing more: what
+  // the scale means is left to the modal, which has the room to say it
+  await row("OXACILINA").locator(".culture-aware").hover();
+  await expect(page.getByText("Classificação AWaRe: Acesso")).toBeVisible();
+  await expect(
+    page.getByText("Acesso é o menos agressivo, Reserva o mais agressivo"),
+  ).toHaveCount(0);
+
+  // the modal has the room the row had not: there an unclassified drug is
+  // said to be unclassified instead of being left silent
+  await row("AMICACINA").click();
+  const details = page.locator(".culture-details-modal");
+  await expect(details.locator(".culture-aware-detail")).toContainText(
+    "Classificação AWaRe: Sem classificação",
+  );
+  // and the sentence that explains the scale stays out of it: the drug is not
+  // on the scale, so there is nothing for it to explain
+  await expect(details.locator(".culture-aware-hint")).toHaveCount(0);
+
+  await page.keyboard.press("Escape");
+  await expect(details).toBeHidden();
+
+  await row("OXACILINA").click();
+  await expect(details.locator(".culture-aware-detail")).toContainText(
+    "Classificação AWaRe: Acesso",
+  );
+  await expect(details.locator(".culture-aware-hint")).toContainText(
+    "Acesso é o menos agressivo, Reserva o mais agressivo",
   );
 });
 

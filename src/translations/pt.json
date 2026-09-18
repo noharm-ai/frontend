@@ -1396,6 +1396,14 @@
     "prediction": {
       "R": "Resistente",
       "S": "Sensível"
+    },
+    "awareLevel": {
+      "label": "Classificação AWaRe",
+      "1": "Acesso",
+      "2": "Observe",
+      "3": "Reserva",
+      "unknown": "Sem classificação",
+      "hint": "Classificação AWaRe (OMS) do antimicrobiano: Acesso é o menos agressivo, Reserva o mais agressivo."
     }
   }
 }
