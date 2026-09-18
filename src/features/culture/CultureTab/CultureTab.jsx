@@ -24,6 +24,7 @@ import {
   isResistantInUse,
 } from "features/culture/cultureResistance";
 import { awareKey, hasAwareLevel } from "features/culture/awareLevel";
+import { AwareTag } from "components/AwareTag/AwareTag";
 
 import {
   Container,
@@ -37,7 +38,6 @@ import {
   Predictions,
   PredictionsToggle,
   NoReleased,
-  AwareBadge,
 } from "./CultureTab.style";
 
 const GROUP_RESISTANT_IN_USE = "resistantInUse";
@@ -143,39 +143,6 @@ const predictionLabel = (item, t) =>
   t(`culture.prediction.${item.prediction}`, {
     defaultValue: item.prediction,
   });
-
-// how aggressive the antimicrobial is, on the WHO AWaRe scale
-// (substancia.tp_nivel_atb, backend AntimicrobialLevelEnum). The colour is
-// carried by the dot alone: red, amber and green already mean resistance on
-// this card, and a filled pill in the very same colours would be read as the
-// antibiogram result instead of the classification
-const AwareLevel = ({ level, t }) => {
-  // the column is curated apart from the card, so an antimicrobial nobody has
-  // classified yet is a normal state: the row says nothing rather than
-  // carrying a grey badge on every drug. The modal is where it is spelled out
-  if (!hasAwareLevel(level)) {
-    return null;
-  }
-
-  const label = t(`culture.awareLevel.${level}`);
-
-  return (
-    // the row has no room to spell the group out, so what it carries is the
-    // dot and the initial of the group (A/V/R in pt, A/W/R in en): the word
-    // the letter stands for is one hover away. What the scale itself means is
-    // left to the details modal — the tooltip answers the row, which is only
-    // which group the drug is in
-    <Tooltip title={`${t("culture.awareLevel.label")}: ${label}`}>
-      <AwareBadge
-        className={`culture-aware culture-aware-${level}`}
-        $level={level}
-      >
-        <span className="aware-dot" />
-        <span className="aware-label">{label.charAt(0)}</span>
-      </AwareBadge>
-    </Tooltip>
-  );
-};
 
 // the antibiogram of a released collection: the reading the drug is grouped by
 const CultureReleasedResult = ({ item, t }) => (
@@ -336,7 +303,7 @@ const CultureListItem = ({ drug, onOpenDetails, t }) => {
       {/* how aggressive the drug is, next to its name: the reading of an
           antibiogram is which drug to reach for, and the AWaRe group is part
           of that answer */}
-      <AwareLevel level={drug.atbLevel} t={t} />
+      <AwareTag level={drug.atbLevel} />
       {/* inside its own group every row is in use, so the marker is only
           needed where a prescribed drug sits among drugs that are not */}
       {drug.prescribed && !inUse && (

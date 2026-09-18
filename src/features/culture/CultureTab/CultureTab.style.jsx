@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 import { get } from "styles/utils";
-import { AWARE_COLORS, awareKey } from "features/culture/awareLevel";
+import { AWARE_COLORS } from "features/culture/awareLevel";
 
 // the prediction accents: each says what was predicted, and neither is the
 // red or the green of a released antibiogram, which a pending collection
@@ -251,32 +251,6 @@ export const Item = styled.div`
   &:focus-visible {
     outline: 2px solid #2e3c5a;
     outline-offset: 1px;
-  }
-`;
-
-// the AWaRe group of the drug, on the row: the dot carries the colour and a
-// single letter the group. The row is too narrow to spell it out — the drug
-// name is what identifies it — so the badge is kept to the width of an icon
-// and the word is left to the tooltip and to the details modal
-export const AwareBadge = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 3px;
-  flex-shrink: 0;
-  padding: 1px 5px;
-  border-radius: 10px;
-  background: #f1f3f7;
-  font-size: 11px;
-  font-weight: 600;
-  white-space: nowrap;
-  color: #4b5872;
-
-  .aware-dot {
-    width: 7px;
-    height: 7px;
-    flex-shrink: 0;
-    border-radius: 50%;
-    background: ${(props) => AWARE_COLORS[awareKey(props.$level)]};
   }
 `;
 
