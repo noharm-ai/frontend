@@ -24,6 +24,15 @@ const sendButton = (page: Page) => page.getByRole("button", { name: "Enviar" });
 const forgetCalls = (mockApi: MockApi) =>
   mockApi.requests.filter((r) => r.path === "/user/forget");
 
+/**
+ * Yup stops an invalid submit before the thunk runs, and the component renders
+ * no message for it — the field flipping to antd's error state is the only
+ * signal that the attempt is over, and what makes "no request was sent" an
+ * assertion about a finished submit rather than about a racing one.
+ */
+const invalidField = (page: Page) =>
+  page.locator(".ant-input-affix-wrapper.ant-input-status-error");
+
 async function openForgotPassword(page: Page) {
   await page.goto("/login");
   await page.getByRole("button", { name: "Esqueci a senha" }).click();
@@ -58,24 +67,28 @@ test("sends the recovery request and answers without disclosing the account", as
   await expect(emailInput(page)).toHaveValue("");
 });
 
-test("does not call the endpoint when the e-mail is missing or malformed", async ({
+test("does not call the endpoint when the e-mail is missing", async ({
   page,
   mockApi,
 }) => {
   await openForgotPassword(page);
 
-  // empty
   await sendButton(page).click();
-  await expect(emailInput(page)).toHaveValue("");
 
-  // malformed
+  await expect(invalidField(page)).toBeVisible();
+  expect(forgetCalls(mockApi)).toHaveLength(0);
+});
+
+test("does not call the endpoint when the e-mail is malformed", async ({
+  page,
+  mockApi,
+}) => {
+  await openForgotPassword(page);
   await emailInput(page).fill("fulano-at-example");
+
   await sendButton(page).click();
 
-  // Yup stops the submit before the thunk runs: nothing reaches the backend.
-  // The component renders no message for it, so the request log is the
-  // assertion.
-  await page.waitForTimeout(500);
+  await expect(invalidField(page)).toBeVisible();
   expect(forgetCalls(mockApi)).toHaveLength(0);
 });
 
