@@ -1,0 +1,11 @@
+{
+  "status": "success",
+  "data": {
+    "maintainer": false,
+    "schemas": [
+      { "name": "demo", "friendlyName": "Hospital Demonstração" },
+      { "name": "hospital_teste", "friendlyName": "Hospital Teste" },
+      { "name": "clinica_teste", "friendlyName": "Clínica Teste" }
+    ]
+  }
+}

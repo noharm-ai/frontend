@@ -54,6 +54,13 @@ export function defaultHandlers(): Record<string, Handler> {
     "POST /names": json("names/multiple.json"),
     "GET /names/:idPatient": json("names/single.json"),
 
+    // password recovery (public endpoints: api key only, no bearer token)
+    "GET /user/forget": { json: { status: "success" } },
+    "POST /user/reset": { json: { status: "success" } },
+
+    // multi-schema / context switch
+    "GET /switch-schema": json("auth/switch-schema.json"),
+
     // base data
     "GET /segments": json("segments/list.json"),
     "GET /memory/:type": emptyList,
