@@ -20,6 +20,7 @@ export class ProtocolVariableFieldEnum {
   static INSURANCE = "insurance";
   static TAGS = "tags";
   static ADMISSION_NUMBER = "admissionNumber";
+  static CULTURE_RELEASE_TIME = "cultureReleaseTime";
 
   static getList = () =>
     [
@@ -107,6 +108,10 @@ export class ProtocolVariableFieldEnum {
         value: ProtocolVariableFieldEnum.ADMISSION_NUMBER,
         label: "Atendimento (nratendimento)",
       },
+      {
+        value: ProtocolVariableFieldEnum.CULTURE_RELEASE_TIME,
+        label: "Tempo desde a última cultura liberada (horas)",
+      },
     ].sort((a, b) => a.label.localeCompare(b.label));
 
   static getOperators = (type: string) => {
@@ -121,6 +126,7 @@ export class ProtocolVariableFieldEnum {
       ProtocolVariableFieldEnum.ADMISSION_TIME,
       ProtocolVariableFieldEnum.ST_CONCILIA,
       ProtocolVariableFieldEnum.CN_STATS,
+      ProtocolVariableFieldEnum.CULTURE_RELEASE_TIME,
     ];
 
     const containOperators = [

@@ -140,7 +140,7 @@ tests/
     fixtures/                      # endpoint payloads (JSON)
     prioritization/  prescription/  interventions/  outpatient/
     userAdmin/  userProfile/  customForms/  training/  reports/
-    regulation/  scenarios/
+    regulation/  culture/  password/  switchSchema/  scenarios/
 ```
 
 Tests run in Chromium only. Firefox/WebKit are commented out in `playwright.config.ts`.

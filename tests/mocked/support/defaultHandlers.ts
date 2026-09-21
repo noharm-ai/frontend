@@ -54,6 +54,13 @@ export function defaultHandlers(): Record<string, Handler> {
     "POST /names": json("names/multiple.json"),
     "GET /names/:idPatient": json("names/single.json"),
 
+    // password recovery (public endpoints: api key only, no bearer token)
+    "GET /user/forget": { json: { status: "success" } },
+    "POST /user/reset": { json: { status: "success" } },
+
+    // multi-schema / context switch
+    "GET /switch-schema": json("auth/switch-schema.json"),
+
     // base data
     "GET /segments": json("segments/list.json"),
     "GET /memory/:type": emptyList,
@@ -72,6 +79,7 @@ export function defaultHandlers(): Record<string, Handler> {
       json: { status: "success", data: null },
     },
     "GET /prescriptions/:id/update": { json: { status: "success", data: {} } },
+    "GET /prescriptions/:id/cultures": emptyList,
 
     // async job polling: always terminal so the UI never polls forever
     "GET /queue/status/:id": {

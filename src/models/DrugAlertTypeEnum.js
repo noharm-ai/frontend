@@ -1,3 +1,6 @@
+import { FeatureService } from "services/FeatureService";
+import Feature from "models/Feature";
+
 export default class DrugAlertTypeEnum {
   static ALLERGY = "allergy";
   static MAX_DOSE = "maxDose";
@@ -20,6 +23,8 @@ export default class DrugAlertTypeEnum {
   static LACTATING = "lactating";
   static PROTOCOL = "protocol";
   static PROTOCOL_GENERAL = "protocolGeneral";
+  static CULTURE_RESISTANT = "cultureResistant";
+  static CULTURE_RESISTANT_CLASS = "cultureResistantClass";
 
   static getAlertTypes = (t) => {
     const types = [
@@ -108,8 +113,22 @@ export default class DrugAlertTypeEnum {
         id: DrugAlertTypeEnum.PROTOCOL_GENERAL,
         label: t(`drugAlertType.${DrugAlertTypeEnum.PROTOCOL_GENERAL}`),
       },
+      {
+        id: DrugAlertTypeEnum.CULTURE_RESISTANT,
+        label: t(`drugAlertType.${DrugAlertTypeEnum.CULTURE_RESISTANT}`),
+        feature: Feature.CULTURE,
+      },
+      {
+        id: DrugAlertTypeEnum.CULTURE_RESISTANT_CLASS,
+        label: t(`drugAlertType.${DrugAlertTypeEnum.CULTURE_RESISTANT_CLASS}`),
+        feature: Feature.CULTURE,
+      },
     ];
 
-    return types.sort((a, b) => `${a?.label}`.localeCompare(`${b?.label}`));
+    // an alert type the schema can never raise has no place in the filters,
+    // the intervention texts or the substance handling (models/Feature)
+    return types
+      .filter((a) => !a.feature || FeatureService.has(a.feature))
+      .sort((a, b) => `${a?.label}`.localeCompare(`${b?.label}`));
   };
 }

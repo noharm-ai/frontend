@@ -660,7 +660,9 @@
     "elderly": "Medicamentos potencialmente inapropriados para idosos",
     "alergy": "Alergia",
     "tube": "Medicamento contraindicado por sonda",
-    "duplicate": "Duplicidade"
+    "duplicate": "Duplicidade",
+    "protocol": "Tipos de alerta de protocolo ativos",
+    "culture": "Cultura resistente"
   },
 
   "messages": {
@@ -986,6 +988,8 @@
     "lactating": "Lactante",
     "protocol": "Protocolo Item",
     "protocolGeneral": "Protocolo Geral",
+    "cultureResistant": "Cultura com resistência ao medicamento",
+    "cultureResistantClass": "Cultura com resistência na mesma classe",
 
     "high": "Alertas Nível Alto",
     "medium": "Alertas Nível Médio",
@@ -1013,7 +1017,9 @@
     "pregnant": "GES",
     "lactating": "LAC",
     "protocol": "PRO",
-    "protocolGeneral": "PRO"
+    "protocolGeneral": "PRO",
+    "cultureResistant": "CR",
+    "cultureResistantClass": "CRC"
   },
 
   "substanceTag": {
@@ -1347,5 +1353,57 @@
     "moduleCompletedProgressStat": "Progresso",
     "moduleCompletedTitle": "Parabéns!",
     "moduleCompletedMessage": "Você concluiu o módulo de treinamento \"{{module}}\"."
+  },
+  "culture": {
+    "tabTitle": "Cultura",
+    "loadError": "Não foi possível carregar as culturas",
+    "retry": "Tentar novamente",
+    "hint": "Resultados de cultura e antibiograma do paciente, agrupados por medicamento. Enquanto o resultado laboratorial não é liberado, é exibida a predição gerada pela NoHarm, identificada pelo ícone de robô — as predições ficam agrupadas ao final da lista e só são exibidas após um clique. Os medicamentos em uso nesta prescrição são identificados pelo ícone de caixa de medicamento.",
+    "empty": "Nenhum resultado positivo de cultura nos últimos 60 dias",
+    "emptyHint": "Resultados mais antigos podem existir: consulte o relatório completo em \"Ver todos\".",
+    "lastRelease": "liberação mais recente em {{date}}",
+    "noReleased": "Nenhum resultado laboratorial liberado",
+    "noReleasedHint": "As coletas deste paciente ainda estão pendentes. Enquanto o antibiograma não é liberado, a NoHarm gera uma predição — que é uma estimativa, não o resultado.",
+    "predictionsShow_one": "Ver predição NoHarm ({{count}})",
+    "predictionsShow_other": "Ver predições NoHarm ({{count}})",
+    "predictionsHide_one": "Ocultar predição NoHarm ({{count}})",
+    "predictionsHide_other": "Ocultar predições NoHarm ({{count}})",
+    "predictionsResistant_one": "{{count}} com predição de resistência",
+    "predictionsResistant_other": "{{count}} com predição de resistência",
+    "groups": {
+      "resistantInUse": "Resistentes em uso",
+      "resistant": "Resistentes",
+      "susceptible": "Sensíveis",
+      "predictionResistant": "Predição NoHarm: resistentes",
+      "predictionSusceptible": "Predição NoHarm: sensíveis"
+    },
+    "prescribedHint": "Medicamento em uso nesta prescrição",
+    "resistantInUseHint": "Resistente e em uso nesta prescrição",
+    "resistantInUseTabHint_one": "{{count}} medicamento resistente em uso nesta prescrição",
+    "resistantInUseTabHint_other": "{{count}} medicamentos resistentes em uso nesta prescrição",
+    "releaseAge": "há {{age}}",
+    "releaseAgeHint": "Antibiograma liberado em {{date}}",
+    "detailsHint": "Clique em um medicamento para ver o antibiograma completo.",
+    "microorganism": "Microorganismo",
+    "material": "Material",
+    "result": "Resultado",
+    "collectionDate": "Data da coleta",
+    "releaseDate": "Data da liberação",
+    "predictionAccuracy": "Acurácia",
+    "resultPending": "Resultado laboratorial pendente",
+    "predictionTitle": "Predição NoHarm",
+    "predictionHint": "Estimativa gerada pela NoHarm enquanto o antibiograma não é liberado pelo laboratório. Não substitui o resultado.",
+    "prediction": {
+      "R": "Resistente",
+      "S": "Sensível"
+    },
+    "awareLevel": {
+      "label": "Classificação AWaRe",
+      "1": "Acesso",
+      "2": "Observe",
+      "3": "Reserva",
+      "unknown": "Sem classificação",
+      "hint": "Classificação AWaRe (OMS) do antimicrobiano: Acesso é o menos agressivo, Reserva o mais agressivo."
+    }
   }
 }

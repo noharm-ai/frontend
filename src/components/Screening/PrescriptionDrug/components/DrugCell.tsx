@@ -5,6 +5,7 @@ import { Button as AntButton, Space } from "antd";
 import Tooltip from "components/Tooltip";
 import Popover from "components/PopoverStyled";
 import Tag from "components/Tag";
+import { AwareTag } from "components/AwareTag/AwareTag";
 import { createSlug } from "utils/transformers/utils";
 import { setCheckedIndexReport } from "features/prescription/PrescriptionSlice";
 import {
@@ -47,6 +48,9 @@ export interface DrugRecord {
   c?: boolean;
   q?: boolean;
   dialyzable?: boolean;
+  // AWaRe group of an antimicrobial, from its substance (backend
+  // AntimicrobialLevelEnum): null for anything the scale does not place
+  atbLevel?: number | null;
   idMeasureUnitDefault?: string;
   drugAttributes?: DrugAttributes;
 }
@@ -86,6 +90,10 @@ export const DrugTags = ({ drug, t, noMargin }: DrugTagsProps) => (
           </Tag>
         </Tooltip>
       )}
+      {/* how aggressive an antimicrobial is (AWaRe), the same tag the culture
+          card carries: it qualifies the AM tag beside it, so it is read right
+          after it — and it keeps that place whether or not AM is there */}
+      <AwareTag level={drug.atbLevel} />
       {drug.av && (
         <Tooltip title={t("drugTags.avHint")}>
           <Tag variant="outlined" color="red">
