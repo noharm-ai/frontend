@@ -1307,7 +1307,7 @@
     "invalidSubtitle": "No certificate matches this code. Check the code and try again.",
     "errorTitle": "Validation failed",
     "errorSubtitle": "Something went wrong. Please try again shortly.",
-    "invalidFormat": "The code must have 12 characters.",
+    "invalidFormat": "The code must have 8 or 12 characters.",
     "close": "Close"
   },
   "trainingPlayer": {

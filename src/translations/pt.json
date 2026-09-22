@@ -1317,7 +1317,7 @@
     "invalidSubtitle": "Nenhum certificado corresponde a este código. Confira a digitação e tente novamente.",
     "errorTitle": "Não foi possível validar",
     "errorSubtitle": "Ocorreu um erro na consulta. Tente novamente em alguns instantes.",
-    "invalidFormat": "O código deve ter 12 caracteres.",
+    "invalidFormat": "O código deve ter 8 ou 12 caracteres.",
     "close": "Fechar"
   },
   "trainingPlayer": {
