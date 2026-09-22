@@ -1403,7 +1403,12 @@
       "2": "Observe",
       "3": "Reserva",
       "unknown": "Sem classificação",
-      "hint": "Classificação AWaRe (OMS) do antimicrobiano: Acesso é o menos agressivo, Reserva o mais agressivo."
+      "hint": "Classificação AWaRe (OMS) do antimicrobiano: Acesso é o menos agressivo, Reserva o mais agressivo.",
+      "description": {
+        "1": "Grupo da OMS de antimicrobianos de primeira escolha para infecções comuns, com menor potencial de gerar resistência.",
+        "2": "Grupo da OMS de antimicrobianos com maior potencial de gerar resistência; o uso deve ser monitorado.",
+        "3": "Grupo da OMS de antimicrobianos de último recurso, reservados para infecções multirresistentes."
+      }
     }
   }
 }

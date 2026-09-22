@@ -31,9 +31,18 @@ export const AwareTag = ({
   const label = t(`culture.awareLevel.${level}`);
 
   return (
-    // the word the letter stands for is one hover away, and nothing more:
-    // what the scale itself means belongs where there is room to say it
-    <Tooltip title={`${t("culture.awareLevel.label")}: ${label}`}>
+    // the word the letter stands for is one hover away, with a line on what
+    // the group means: not every user knows the WHO scale
+    <Tooltip
+      title={
+        <>
+          <div>
+            <strong>{`${t("culture.awareLevel.label")}: ${label}`}</strong>
+          </div>
+          <div>{t(`culture.awareLevel.description.${level}`)}</div>
+        </>
+      }
+    >
       <Badge
         className={`culture-aware culture-aware-${level}`}
         $level={level as number}
