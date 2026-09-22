@@ -72,9 +72,12 @@ test("the drug list states the AWaRe group of an antimicrobial", async ({
     drugRow(page, "Omeprazol 20mg").locator(".culture-aware"),
   ).toHaveCount(0);
 
-  // the word the letter stands for is one hover away
+  // the word the letter stands for is one hover away, with what it means
   await antimicrobial.locator(".culture-aware").hover();
   await expect(page.getByText("Classificação AWaRe: Reserva")).toBeVisible();
+  await expect(
+    page.getByText("Grupo da OMS de antimicrobianos de último recurso"),
+  ).toBeVisible();
 });
 
 test("the drug list carries no AWaRe tag without the classification", async ({
