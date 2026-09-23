@@ -280,6 +280,10 @@ export const Details = styled.div`
       color: ${AWARE_COLORS[3]};
     }
 
+    .culture-aware-value-4 {
+      color: ${AWARE_COLORS[4]};
+    }
+
     .culture-aware-value-unknown {
       color: #6d7a94;
     }

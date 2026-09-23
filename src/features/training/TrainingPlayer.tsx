@@ -12,6 +12,7 @@ import {
   TrophyFilled,
   ExclamationCircleOutlined,
   UnorderedListOutlined,
+  LinkOutlined,
 } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
@@ -80,7 +81,6 @@ export function TrainingPlayer() {
   const moduleList = useAppSelector((state) => state.trainingCentral.list);
   const isMobile = useIsMobile();
 
-  const [currentStep, setCurrentStep] = useState(0);
   const [lessonsOpen, setLessonsOpen] = useState(false);
   const [passedByItem, setPassedByItem] = useState<Record<number, boolean>>({});
   const [locallyFinishedIds, setLocallyFinishedIds] = useState<
@@ -111,7 +111,21 @@ export function TrainingPlayer() {
     [list],
   );
 
+  // the current lesson lives in the URL (/treinamento/:id/aula/:lessonId) so
+  // any lesson can be linked to directly; without one, the module opens on
+  // its first lesson
+  const lessonIndex = sortedItems.findIndex(
+    (item) => String(item.id) === params.lessonId,
+  );
+  const currentStep = lessonIndex === -1 ? 0 : lessonIndex;
   const currentItem = sortedItems[currentStep];
+
+  const setCurrentStep = (index: number) => {
+    const item = sortedItems[index];
+    if (item) {
+      navigate(`/treinamento/${params.id}/aula/${item.id}`, { replace: true });
+    }
+  };
   const isItemFinished = (item: (typeof sortedItems)[number]) =>
     item.finished || Boolean(locallyFinishedIds[item.id]);
 
@@ -132,6 +146,22 @@ export function TrainingPlayer() {
     Boolean(passedByItem[currentItem?.id]) ||
     Boolean(currentItem && isItemFinished(currentItem));
   const finishedCount = sortedItems.filter(isItemFinished).length;
+
+  // lessons can be taken in any order: after finishing one, jump to the next
+  // pending lesson after it, wrapping around to the pending ones before it
+  const nextPendingStep = [
+    ...sortedItems.slice(currentStep + 1),
+    ...sortedItems.slice(0, currentStep),
+  ].findIndex((item) => !isItemFinished(item));
+  const nextPendingIndex =
+    nextPendingStep === -1
+      ? -1
+      : (currentStep + 1 + nextPendingStep) % sortedItems.length;
+  // nothing left to do after this lesson: either it is the only pending one,
+  // or the whole module is done and this is the last lesson being reviewed
+  const isFinalLesson =
+    nextPendingIndex === -1 &&
+    (isLastStep || Boolean(currentItem && !isItemFinished(currentItem)));
   const progressPercent = sortedItems.length
     ? Math.round((finishedCount / sortedItems.length) * 100)
     : 0;
@@ -141,7 +171,16 @@ export function TrainingPlayer() {
   }
 
   const goToPrevious = () => {
-    setCurrentStep((step) => Math.max(0, step - 1));
+    setCurrentStep(Math.max(0, currentStep - 1));
+  };
+
+  const copyLessonLink = () => {
+    const url = `${window.location.origin}/treinamento/${params.id}/aula/${currentItem.id}`;
+
+    navigator.clipboard.writeText(url).then(
+      () => notification.success({ message: t("trainingPlayer.linkCopied") }),
+      () => notification.error({ message: t("trainingPlayer.linkCopyError") }),
+    );
   };
 
   const goToNext = () => {
@@ -174,18 +213,18 @@ export function TrainingPlayer() {
         dispatch(fetchTrainingList({}));
       }
 
-      if (isLastStep) {
-        if (response.payload?.data?.moduleFinished) {
-          setShowCompletionModal(true);
-        } else {
-          notification.success({ message: t("trainingPlayer.completed") });
-          navigate("/treinamento");
-        }
+      if (response.payload?.data?.moduleFinished) {
+        setShowCompletionModal(true);
+      } else if (isFinalLesson) {
+        notification.success({ message: t("trainingPlayer.completed") });
+        navigate("/treinamento");
       }
     });
 
-    if (!isLastStep) {
-      setCurrentStep((step) => step + 1);
+    if (!isFinalLesson) {
+      setCurrentStep(
+        nextPendingIndex === -1 ? currentStep + 1 : nextPendingIndex,
+      );
     }
   };
 
@@ -315,6 +354,16 @@ export function TrainingPlayer() {
                 )}
               </MetaRow>
             </div>
+            <div className="page-header-actions">
+              <Button
+                type="text"
+                icon={<LinkOutlined />}
+                onClick={copyLessonLink}
+                aria-label={t("trainingPlayer.copyLink")}
+              >
+                {isMobile ? null : t("trainingPlayer.copyLink")}
+              </Button>
+            </div>
           </PlayerHeader>
 
           <ItemContent>
@@ -380,7 +429,7 @@ export function TrainingPlayer() {
               onClick={goToNext}
               disabled={hasQuiz && !passed}
             >
-              {isLastStep
+              {isFinalLesson
                 ? t("trainingPlayer.finish")
                 : t("trainingPlayer.markCompleted")}
             </Button>

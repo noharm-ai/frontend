@@ -194,11 +194,30 @@ test("a code of the wrong length is rejected without a request", async ({
   await page.getByRole("button", { name: "Validar" }).click();
 
   await expect(
-    page.getByText("O código deve ter 12 caracteres."),
+    page.getByText("O código deve ter 8 ou 12 caracteres."),
   ).toBeVisible();
   expect(
     mockApi.requests.filter((r) => r.path.startsWith("/public/certificate")),
   ).toHaveLength(0);
+});
+
+test("a NoHarm Aulas code (8 characters) is accepted and formatted", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override("GET /public/certificate/:code", { json: validCertificate });
+
+  await page.goto("/validar-certificado");
+
+  await page.getByLabel("Código de validação").fill("7k2m 9pq4");
+  await page.getByRole("button", { name: "Validar" }).click();
+
+  await expect(page).toHaveURL(/\/validar-certificado\/7K2M-9PQ4$/);
+  await expect
+    .poll(() =>
+      mockApi.requests.filter((r) => r.path === "/public/certificate/7K2M9PQ4"),
+    )
+    .toHaveLength(1);
 });
 
 test("a server fault reports an error, distinct from not found", async ({

@@ -40,4 +40,12 @@ export const DoseCellPopover = styled.div`
       }
     }
   }
+
+  .differentiated-dose-note {
+    max-width: 320px;
+    margin-top: 8px;
+    font-size: 12px;
+    line-height: 1.4;
+    color: #595959;
+  }
 `;

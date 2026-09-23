@@ -6,6 +6,7 @@ import Popover from "components/PopoverStyled";
 import Button from "components/Button";
 import { DoseCellPopover } from "./DoseCell.style";
 import { formatNumber } from "src/utils/number";
+import { getDifferentiatedDose } from "src/utils/dose";
 import { setDrugUnitConversionOpen } from "features/drugs/DrugUnitConversion/DrugUnitConversionSlice";
 import {
   TrackedPrescriptionAction,
@@ -23,6 +24,7 @@ interface DoseRecord {
   idDrug: string;
   measureUnit?: any;
   dose?: string | number;
+  differentiatedDose?: string | null;
   dosage?: string | number;
   idMeasureUnitDefault?: string;
   doseconv?: string | number;
@@ -66,6 +68,8 @@ function DoseCell({ record, bag }: DoseCellProps): React.ReactElement | null {
     );
   }
 
+  const differentiatedDose = getDifferentiatedDose(record);
+
   const popoverContent = (
     <DoseCellPopover>
       <table className="info-table">
@@ -79,7 +83,9 @@ function DoseCell({ record, bag }: DoseCellProps): React.ReactElement | null {
         <tbody>
           <tr>
             <td className="info-value header">Dose prescrita</td>
-            <td className="info-value right">{formatNumber(record.dose, 2)}</td>
+            <td className="info-value right">
+              {differentiatedDose ?? formatNumber(record.dose, 2)}
+            </td>
             <td className="info-value">
               {record.measureUnit?.value || "(indefinida)"}
             </td>
@@ -125,6 +131,14 @@ function DoseCell({ record, bag }: DoseCellProps): React.ReactElement | null {
         </tbody>
       </table>
 
+      {differentiatedDose && (
+        <p className="differentiated-dose-note">
+          <strong>Dose diferenciada:</strong> o prescritor definiu uma dose
+          diferente para cada administração ({differentiatedDose}). A dose
+          convertida corresponde à soma de todas as doses.
+        </p>
+      )}
+
       {PermissionService().has(Permission.WRITE_DRUG_ATTRIBUTES) && (
         <Button
           style={{ marginTop: "1rem" }}
@@ -151,7 +165,7 @@ function DoseCell({ record, bag }: DoseCellProps): React.ReactElement | null {
   if (!record.measureUnit) {
     return (
       <Popover content={popoverContent} mouseEnterDelay={0.3}>
-        <span>{record.dose}</span>
+        <span>{differentiatedDose ?? record.dose}</span>
       </Popover>
     );
   }
@@ -160,7 +174,9 @@ function DoseCell({ record, bag }: DoseCellProps): React.ReactElement | null {
   const measureUnit = PermissionService().has(Permission.READ_NAV)
     ? measureUnitValue.replace(/^\d+_/, "")
     : measureUnitValue;
-  const formattedDose = `${record.dose ? record.dose.toLocaleString("pt-BR") : ""}`;
+  const formattedDose =
+    differentiatedDose ??
+    `${record.dose ? record.dose.toLocaleString("pt-BR") : ""}`;
 
   return (
     <Popover content={popoverContent} mouseEnterDelay={0.3}>

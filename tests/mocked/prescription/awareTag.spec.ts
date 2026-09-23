@@ -98,3 +98,36 @@ test("the drug list carries no AWaRe tag without the classification", async ({
   await expect(page.getByText("Dipirona 500mg")).toBeVisible();
   await expect(page.locator(".culture-aware")).toHaveCount(0);
 });
+
+test("the drug list states a not recommended antimicrobial", async ({
+  page,
+  mockApi,
+}) => {
+  // the WHO group apart from the scale (substancia.tp_nivel_atb = 4): it is
+  // stated like the others, never left blank as if it were unclassified
+  mockApi.override("GET /prescriptions/:id", {
+    json: prescriptionWithLevels({ "9001": 4 }),
+  });
+
+  await page.goto("/prescricao/199");
+
+  await expect(
+    page.getByRole("heading", { name: "Prescrição nº 199 Liberada em" }),
+  ).toBeVisible();
+
+  const antimicrobial = drugRow(page, "Dipirona 500mg");
+  await expect(antimicrobial.locator(".culture-aware")).toHaveText("N");
+  await expect(antimicrobial.locator(".culture-aware")).toHaveClass(
+    /culture-aware-4/,
+  );
+
+  await antimicrobial.locator(".culture-aware").hover();
+  await expect(
+    page.getByText("Classificação AWaRe: Não recomendado"),
+  ).toBeVisible();
+  await expect(
+    page.getByText(
+      "Grupo da OMS de antimicrobianos cujo uso não é recomendado",
+    ),
+  ).toBeVisible();
+});

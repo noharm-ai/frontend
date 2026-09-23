@@ -456,6 +456,40 @@ test("the card states the AWaRe classification of each drug", async ({
   );
 });
 
+test("the card states a not recommended antimicrobial", async ({
+  page,
+  mockApi,
+}) => {
+  // the WHO group apart from the scale (substancia.tp_nivel_atb = 4): the row
+  // carries its badge and the modal names it, instead of reading it as
+  // unclassified
+  const notRecommended = CULTURES.map((drug) =>
+    drug.drug === "OXACILINA" ? { ...drug, atbLevel: 4 } : drug,
+  );
+
+  mockApi.override("GET /prescriptions/:id", {
+    json: prescriptionWith({ cultureStats: { resistantInUse: 1 } }),
+  });
+  mockApi.override("GET /prescriptions/:id/cultures", {
+    json: { status: "success", data: notRecommended },
+  });
+
+  await page.goto("/prescricao/199");
+  await openCultureTab(page);
+
+  const row = page.locator(".culture-item", { hasText: "OXACILINA" });
+  await expect(row.locator(".culture-aware")).toHaveText("N");
+  await expect(row.locator(".culture-aware")).toHaveClass(/culture-aware-4/);
+
+  await row.click();
+  const details = page.locator(".culture-details-modal");
+  await expect(details.locator(".culture-aware-detail")).toContainText(
+    "Classificação AWaRe: Não recomendado",
+  );
+  await expect(details.locator(".culture-aware-value-4")).toBeVisible();
+  await expect(details.locator(".culture-aware-hint")).toBeVisible();
+});
+
 test("with no released result the card says so and folds the predictions", async ({
   page,
   mockApi,
