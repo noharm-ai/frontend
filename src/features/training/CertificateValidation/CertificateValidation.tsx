@@ -21,8 +21,8 @@ import {
   ValidationResult,
 } from "./CertificateValidation.style";
 import {
-  CODE_LENGTH,
   formatCertificateCode,
+  hasValidCodeLength,
   normalizeCertificateCode,
 } from "./certificateCode";
 
@@ -81,7 +81,7 @@ export function CertificateValidation() {
 
     const normalized = normalizeCertificateCode(typedCode);
 
-    if (normalized.length !== CODE_LENGTH) {
+    if (!hasValidCodeLength(normalized)) {
       setFormError(t("certificateValidation.invalidFormat"));
       return;
     }

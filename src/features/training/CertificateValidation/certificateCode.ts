@@ -3,6 +3,16 @@
 const ALPHABET = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
 
 export const CODE_LENGTH = 12;
+// codes issued by NoHarm Aulas (backend EXTERNAL_CODE_LENGTH): shorter than
+// training codes, which is how the backend tells the two apart
+export const EXTERNAL_CODE_LENGTH = 8;
+
+export function hasValidCodeLength(normalized: string): boolean {
+  return (
+    normalized.length === CODE_LENGTH ||
+    normalized.length === EXTERNAL_CODE_LENGTH
+  );
+}
 
 /**
  * Fold what a human typing off a printed certificate gets wrong, then drop
@@ -23,7 +33,7 @@ export function normalizeCertificateCode(code: string): string {
     .join("");
 }
 
-/** XXXX-XXXX-XXXX, for display. Codes travel bare. */
+/** XXXX-XXXX-XXXX (or XXXX-XXXX), for display. Codes travel bare. */
 export function formatCertificateCode(code: string): string {
   return (code.match(/.{1,4}/g) ?? []).join("-");
 }
