@@ -14,6 +14,7 @@ import {
 } from "src/utils/tracker";
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
+import { getDifferentiatedDose } from "src/utils/dose";
 
 import { DrugLink } from "../../index.style";
 import { DrugCellPopover } from "./DrugCell.style";
@@ -34,6 +35,8 @@ export interface DrugRecord {
   substanceName?: string;
   grp_solution?: string;
   originalSource?: string;
+  dose?: number | string;
+  differentiatedDose?: string | null;
   doseconv?: number | string;
   dayFrequency?: number | string;
   intravenous?: boolean;
@@ -209,6 +212,7 @@ function DrugCell({ record, bag }: DrugCellProps): React.ReactElement | null {
       (record.periodFixed ?? 0) > 0
         ? record.periodDayInterval
         : (record.periodDayInterval ?? 0) + 1;
+    const differentiatedDose = getDifferentiatedDose(record);
 
     content = (
       <DrugCellPopover>
@@ -240,10 +244,27 @@ function DrugCell({ record, bag }: DrugCellProps): React.ReactElement | null {
           <span className="info-value">
             {record.doseconv}{" "}
             {record.idMeasureUnitDefault || "Unidade indefinida"}
+            {differentiatedDose && " (soma das doses diferenciadas)"}
           </span>
 
           <span className="info-label">frequenciadia:</span>
-          <span className="info-value">{record.dayFrequency}</span>
+          <span className="info-value">
+            {record.dayFrequency}
+            {differentiatedDose &&
+              " (sempre 1 na dose diferenciada, pois a doseconv já é o total do dia)"}
+          </span>
+
+          {record.differentiatedDose?.trim() && (
+            <>
+              <span className="info-label">dose_diferenciada:</span>
+              <span className="info-value">
+                {record.differentiatedDose}
+                {differentiatedDose
+                  ? " (ativa: dose = 0, uma dose diferente para cada administração)"
+                  : " (ignorada: dose informada)"}
+              </span>
+            </>
+          )}
 
           <span className="info-label">intravenosa:</span>
           <span className="info-value">
