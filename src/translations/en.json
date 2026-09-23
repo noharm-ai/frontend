@@ -1392,12 +1392,14 @@
       "1": "Access",
       "2": "Watch",
       "3": "Reserve",
+      "4": "Not recommended",
       "unknown": "Unclassified",
-      "hint": "WHO AWaRe classification of the antimicrobial: Access is the least aggressive, Reserve the most aggressive.",
+      "hint": "WHO AWaRe classification of the antimicrobial: Access is the least aggressive, Reserve the most aggressive; Not recommended marks the antimicrobials whose use WHO advises against.",
       "description": {
         "1": "WHO group of first-choice antimicrobials for common infections, with a lower potential to select for resistance.",
         "2": "WHO group of antimicrobials with a higher potential to select for resistance; their use should be monitored.",
-        "3": "WHO group of last-resort antimicrobials, kept for multidrug-resistant infections."
+        "3": "WHO group of last-resort antimicrobials, kept for multidrug-resistant infections.",
+        "4": "WHO group of antimicrobials whose use is not recommended, mostly fixed-dose combinations with no proven benefit over their components."
       }
     }
   }
