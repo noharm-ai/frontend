@@ -1342,7 +1342,10 @@
     "moduleCompletedLessonsStat_other": "Lessons completed",
     "moduleCompletedProgressStat": "Progress",
     "moduleCompletedTitle": "Congratulations!",
-    "moduleCompletedMessage": "You've completed the \"{{module}}\" training module."
+    "moduleCompletedMessage": "You've completed the \"{{module}}\" training module.",
+    "copyLink": "Copy lesson link",
+    "linkCopied": "Lesson link copied",
+    "linkCopyError": "Could not copy the link"
   },
   "culture": {
     "tabTitle": "Culture",

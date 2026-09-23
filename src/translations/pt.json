@@ -1352,7 +1352,10 @@
     "moduleCompletedLessonsStat_other": "Aulas concluídas",
     "moduleCompletedProgressStat": "Progresso",
     "moduleCompletedTitle": "Parabéns!",
-    "moduleCompletedMessage": "Você concluiu o módulo de treinamento \"{{module}}\"."
+    "moduleCompletedMessage": "Você concluiu o módulo de treinamento \"{{module}}\".",
+    "copyLink": "Copiar link da aula",
+    "linkCopied": "Link da aula copiado",
+    "linkCopyError": "Não foi possível copiar o link"
   },
   "culture": {
     "tabTitle": "Cultura",
