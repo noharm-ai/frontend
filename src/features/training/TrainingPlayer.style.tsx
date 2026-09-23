@@ -125,21 +125,19 @@ export const LessonList = styled.ul`
   gap: 4px;
 `;
 
-export const LessonItem = styled.li<{ $active: boolean; $clickable: boolean }>`
+export const LessonItem = styled.li<{ $active: boolean }>`
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 8px 10px;
   border-radius: 10px;
-  cursor: ${(props) => (props.$clickable ? "pointer" : "default")};
+  cursor: pointer;
   background: ${(props) =>
     props.$active ? "rgba(112, 189, 195, 0.12)" : "transparent"};
 
   &:hover {
     background: ${(props) =>
-      props.$clickable && !props.$active
-        ? "rgba(112, 189, 195, 0.06)"
-        : undefined};
+      !props.$active ? "rgba(112, 189, 195, 0.06)" : undefined};
   }
 `;
 

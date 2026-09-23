@@ -19,8 +19,8 @@ interface TrainingLessonListProps {
 
 /**
  * The ordered lesson list of a module. Shared by the desktop side panel and
- * the mobile drawer, so both unlock lessons by the same rule: a lesson opens
- * once the one before it is finished.
+ * the mobile drawer. Lessons can be taken in any order, so every lesson is
+ * selectable regardless of which ones are already finished.
  */
 export function TrainingLessonList({
   items,
@@ -34,19 +34,12 @@ export function TrainingLessonList({
     <LessonList>
       {items.map((item, index) => {
         const finished = isItemFinished(item);
-        const unlocked =
-          finished || index === 0 || isItemFinished(items[index - 1]);
 
         return (
           <LessonItem
             key={item.id}
             $active={index === currentStep}
-            $clickable={unlocked}
-            onClick={() => {
-              if (unlocked) {
-                onSelect(index);
-              }
-            }}
+            onClick={() => onSelect(index)}
           >
             <LessonNumber $active={index === currentStep} $finished={finished}>
               {finished ? <CheckCircleFilled /> : index + 1}

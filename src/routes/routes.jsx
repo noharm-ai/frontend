@@ -312,6 +312,11 @@ const routes = [
   },
   {
     exact: true,
+    path: "/treinamento/:id/aula/:lessonId",
+    element: <WithAuth component={TrainingPlayer} />,
+  },
+  {
+    exact: true,
     path: "/admin/exames",
     element: <WithAuth component={AdminExam} />,
   },

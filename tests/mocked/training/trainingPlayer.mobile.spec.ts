@@ -114,7 +114,7 @@ test.describe("on a phone", () => {
       drawer(page).getByText("Registrando uma intervenção"),
     ).toBeVisible();
 
-    // lesson 2 is unlocked (lesson 1 is finished); picking it closes the drawer
+    // picking a lesson closes the drawer
     await drawer(page).getByText("Conhecendo a tela de priorização").click();
 
     await expect(
@@ -125,17 +125,20 @@ test.describe("on a phone", () => {
     expect(await hasHorizontalOverflow(page)).toBe(false);
   });
 
-  test("a locked lesson cannot be opened from the drawer", async ({ page }) => {
+  test("any lesson can be opened from the drawer, in any order", async ({
+    page,
+  }) => {
     await page.goto("/treinamento/1");
     await page.getByRole("button", { name: "Aulas" }).click();
 
-    // lesson 3 is locked until lesson 2 is finished
+    // lesson 3 opens even though lesson 2 is still pending
     await drawer(page).getByText("Registrando uma intervenção").click();
 
     await expect(
-      page.getByRole("heading", { name: "Boas-vindas" }),
+      page.getByRole("heading", { name: "Registrando uma intervenção" }),
     ).toBeVisible();
-    await expect(drawer(page)).toBeVisible();
+    await expect(drawer(page)).toBeHidden();
+    await expect(page).toHaveURL(/\/treinamento\/1\/aula\/13$/);
   });
 
   test("Training Central stacks its columns and fits the screen", async ({
