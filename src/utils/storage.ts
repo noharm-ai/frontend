@@ -17,11 +17,13 @@ export function getStorageItem(key: string): string | null {
   }
 }
 
-export function setStorageItem(key: string, value: string): void {
+export function setStorageItem(key: string, value: string): boolean {
   try {
     localStorage.setItem(key, value);
+    return true;
   } catch {
     // localStorage unavailable (private mode, blocked cookies, quota) — ignore
+    return false;
   }
 }
 
