@@ -226,6 +226,54 @@ test("editing a user freezes the email and saves the rest", async ({
   await expect(rows(page)).toHaveCount(USERS.length);
 });
 
+test("users from other schemas are listed read only in their own card", async ({
+  page,
+  mockApi,
+}) => {
+  await openList(page, mockApi, [
+    ...USERS,
+    {
+      id: 4,
+      name: "Ciclano de Tal",
+      email: "ciclano@example.com",
+      external: null,
+      active: true,
+      roles: ["VIEWER"],
+      segments: [],
+      readOnly: true,
+      schema: "outro_schema",
+    },
+  ]);
+
+  const tables = page.locator(".ant-table");
+  await expect(tables).toHaveCount(2);
+
+  // the schema users table keeps only this schema's users and the count
+  await expect(
+    tables.nth(0).getByRole("row", { name: /Ciclano de Tal/ }),
+  ).toHaveCount(0);
+  await expect(page.getByText(`${USERS.length} registros`)).toBeVisible();
+
+  await expect(
+    page.getByRole("heading", { name: "Usuários externos" }),
+  ).toBeVisible();
+  const row = tables.nth(1).getByRole("row", { name: /Ciclano de Tal/ });
+  await expect(row).toContainText("outro_schema");
+  await expect(row.getByRole("button")).toHaveCount(0);
+});
+
+test("without external users there is no external card", async ({
+  page,
+  mockApi,
+}) => {
+  await openList(page, mockApi);
+
+  await expect(page.locator(".ant-table")).toHaveCount(1);
+  await expect(
+    page.getByRole("heading", { name: "Usuários externos" }),
+  ).toHaveCount(0);
+});
+
 test("a new user needs a name and a valid email, and starts with the default roles", async ({
   page,
   mockApi,

@@ -10,6 +10,7 @@ import BackTop from "components/BackTop";
 import notification from "components/notification";
 import Tag from "components/Tag";
 import { Select } from "components/Inputs";
+import { Typography } from "antd";
 import Button from "components/Button";
 import { toDataSource } from "utils";
 import { getErrorMessage } from "utils/errorHandler";
@@ -93,7 +94,19 @@ function UserAdminList() {
     };
   }, []); //eslint-disable-line
 
-  const ds = toDataSource(filterList(list, filter), null, {});
+  const filteredList = filterList(list, filter);
+  const ds = toDataSource(
+    filteredList.filter((i) => !i.readOnly),
+    null,
+    {},
+  );
+  // users from other schemas with access to this one (only sent to maintainers)
+  const externalDs = toDataSource(
+    filteredList.filter((i) => i.readOnly),
+    null,
+    {},
+  );
+  const hasExternalUsers = list?.some((i) => i.readOnly);
 
   return (
     <>
@@ -195,6 +208,26 @@ function UserAdminList() {
           dataSource={ds || []}
         />
       </PageCard>
+      {hasExternalUsers && (
+        <>
+          <Typography.Title level={4} style={{ marginTop: "30px" }}>
+            Usuários externos
+          </Typography.Title>
+          <div className="page-header-legend">
+            Usuários de outros schemas com acesso a este schema (somente
+            leitura)
+          </div>
+          <PageCard style={{ marginTop: "10px" }}>
+            <Table
+              columns={columns(t, dispatch, setUser, { external: true })}
+              pagination={false}
+              loading={status === "loading"}
+              locale={{ emptyText }}
+              dataSource={externalDs || []}
+            />
+          </PageCard>
+        </>
+      )}
       <UserAdminForm />
       <BackTop />
     </>
