@@ -101,7 +101,8 @@ const TRACE = {
       label: "Incompatibilidade em Y",
       active: true,
       level: "high",
-      text: "Texto de teste",
+      // relation texts are stored as HTML
+      text: "<p><strong>GRAVE</strong>. Texto de teste da relação.</p>",
     },
   ],
   kinds: [
@@ -244,6 +245,9 @@ test("two selected drugs are explained against each other", async ({
   await expect(
     modal.getByText("Sem relação cadastrada: Interação Medicamentosa"),
   ).toBeVisible();
+  // the HTML is rendered, not shown as markup
+  await expect(modal.locator("strong", { hasText: "GRAVE" })).toBeVisible();
+  await expect(modal.getByText("<strong>", { exact: false })).toHaveCount(0);
   // the pair comes from the list: nothing left to pick in the modal
   await expect(modal.locator(".ant-select")).toHaveCount(0);
 

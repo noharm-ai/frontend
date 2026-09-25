@@ -5,6 +5,7 @@ import { Select, Spin } from "antd";
 import { formatDate, formatDateTime } from "utils/date";
 import { getErrorMessage } from "utils/errorHandler";
 import notification from "components/notification";
+import RichTextView from "components/RichTextView";
 import { traceInteraction } from "features/serverActions/ServerActionsSlice";
 import { useAppDispatch } from "store/index";
 
@@ -12,9 +13,12 @@ import {
   Chip,
   DirectionBlock,
   KindBlock,
+  LevelChip,
   Muted,
   Note,
   PickerRow,
+  RelationCard,
+  RelationList,
   RuleList,
   Section,
   SideCard,
@@ -26,6 +30,7 @@ import {
 import type {
   IInteractionTraceDirection,
   IInteractionTracePair,
+  IInteractionTraceRelation,
   IInteractionTraceResponse,
   IInteractionTraceRule,
   IInteractionTraceSide,
@@ -207,20 +212,14 @@ function PairTrace({ trace }: { trace: IInteractionTracePair }) {
         {trace.relations.length === 0 ? (
           <Muted>Nenhuma relação cadastrada.</Muted>
         ) : (
-          <RuleList>
+          <RelationList>
             {trace.relations.map((r) => (
-              <li key={`${r.sctida}-${r.sctidb}-${r.kind}`}>
-                <Chip $variant={r.active ? "success" : "muted"}>
-                  {r.active ? "ativa" : "inativa"}
-                </Chip>
-                <span>
-                  <strong>{r.label}</strong>: {r.substanceA ?? r.sctida} →{" "}
-                  {r.substanceB ?? r.sctidb} (nível: {r.level ?? "--"})
-                  {r.text ? ` — ${r.text}` : ""}
-                </span>
-              </li>
+              <Relation
+                key={`${r.sctida}-${r.sctidb}-${r.kind}`}
+                relation={r}
+              />
             ))}
-          </RuleList>
+          </RelationList>
         )}
       </Section>
 
@@ -244,6 +243,40 @@ function PairTrace({ trace }: { trace: IInteractionTracePair }) {
         </Section>
       )}
     </>
+  );
+}
+
+const LEVEL_LABELS: Record<string, string> = {
+  high: "alto",
+  medium: "médio",
+  low: "baixo",
+};
+
+const levelLabel = (level: string | null) =>
+  level ? (LEVEL_LABELS[level] ?? level) : "sem nível";
+
+function Relation({ relation }: { relation: IInteractionTraceRelation }) {
+  return (
+    <RelationCard $inactive={!relation.active}>
+      <div className="relation-heading">
+        <Chip $variant={relation.active ? "success" : "muted"}>
+          {relation.active ? "ativa" : "inativa"}
+        </Chip>
+        <strong>{relation.label}</strong>
+        <LevelChip $level={relation.level}>
+          nível {levelLabel(relation.level)}
+        </LevelChip>
+      </div>
+      <div className="relation-substances">
+        {relation.substanceA ?? relation.sctida} →{" "}
+        {relation.substanceB ?? relation.sctidb}
+      </div>
+      {relation.text && (
+        <div className="relation-text">
+          <RichTextView text={relation.text} maxWidth="100%" />
+        </div>
+      )}
+    </RelationCard>
   );
 }
 
@@ -323,13 +356,18 @@ function Direction({ direction }: { direction: IInteractionTraceDirection }) {
       {direction.alert && (
         <>
           <div>
-            Nível: <strong>{direction.alert.level}</strong>
+            Nível:{" "}
+            <LevelChip $level={direction.alert.level}>
+              {levelLabel(direction.alert.level)}
+            </LevelChip>
             {" · "}Exibido em: {direction.alert.shownOn.join(", ")}
           </div>
           {direction.alert.levelNotes.map((note) => (
             <Muted key={note}>{note}</Muted>
           ))}
-          <div className="alert-text">{direction.alert.text}</div>
+          <div className="alert-text">
+            <RichTextView text={direction.alert.text} maxWidth="100%" />
+          </div>
         </>
       )}
     </DirectionBlock>

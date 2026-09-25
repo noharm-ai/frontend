@@ -173,7 +173,6 @@ export const DirectionBlock = styled.div`
   }
 
   .alert-text {
-    white-space: pre-line;
     background: #f4f6fa;
     border-radius: 4px;
     padding: 0.4rem 0.6rem;
@@ -182,6 +181,8 @@ export const DirectionBlock = styled.div`
 `;
 
 export const Chip = styled.span<{ $variant: "success" | "danger" | "muted" }>`
+  align-self: flex-start;
+  white-space: nowrap;
   font-size: 11px;
   font-weight: 600;
   padding: 1px 8px;
@@ -198,6 +199,63 @@ export const Chip = styled.span<{ $variant: "success" | "danger" | "muted" }>`
       : p.$variant === "danger"
         ? "#c62828"
         : "#595959"};
+`;
+
+export const RelationList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`;
+
+export const RelationCard = styled.div<{ $inactive: boolean }>`
+  border: 1px solid #e2e6ee;
+  border-radius: 6px;
+  padding: 0.55rem 0.75rem;
+  opacity: ${(p) => (p.$inactive ? 0.7 : 1)};
+
+  .relation-heading {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .relation-substances {
+    margin-top: 0.25rem;
+    color: #595959;
+  }
+
+  .relation-text {
+    margin-top: 0.4rem;
+    padding: 0.4rem 0.6rem;
+    background: #f4f6fa;
+    border-radius: 4px;
+
+    p {
+      margin: 0 !important;
+    }
+
+    p + p {
+      margin-top: 0.3rem !important;
+    }
+  }
+`;
+
+// same colors the prescription uses for alert levels
+const LEVEL_COLORS: Record<string, { bg: string; fg: string }> = {
+  high: { bg: "#ffebee", fg: "#c62828" },
+  medium: { bg: "#fff3e0", fg: "#e65100" },
+  low: { bg: "#fff8e1", fg: "#8d6e00" },
+};
+
+export const LevelChip = styled.span<{ $level: string | null }>`
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: ${(p) => LEVEL_COLORS[p.$level ?? ""]?.bg ?? "#f0f0f0"};
+  color: ${(p) => LEVEL_COLORS[p.$level ?? ""]?.fg ?? "#595959"};
 `;
 
 export const Muted = styled.div`
