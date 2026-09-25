@@ -18,6 +18,7 @@ import {
   FilePptOutlined,
   FileDoneOutlined,
   UserSwitchOutlined,
+  NodeIndexOutlined,
 } from "@ant-design/icons";
 
 import Button from "components/Button";
@@ -47,6 +48,7 @@ import Permission from "src/models/Permission";
 import PatientNameCache from "components/PatientName/PatientNameCache";
 import { usePatientName } from "hooks/usePatientName";
 import { PrescriptionNavigate } from "features/prescription/PrescriptionNavigate/PrescriptionNavigate";
+import { InteractionTrace } from "features/prescription/InteractionTrace/InteractionTrace";
 
 import PatientTab from "./PatientTab";
 import AdmissionTab from "./AdmissionData";
@@ -72,6 +74,7 @@ export default function PatientCard({
     (state) => state.lists.searchAggPrescriptions.status,
   );
   const [navigateModalOpen, setNavigateModalOpen] = useState(false);
+  const [interactionTraceOpen, setInteractionTraceOpen] = useState(false);
 
   const {
     admissionNumber,
@@ -297,6 +300,10 @@ export default function PatientCard({
         setNavigateModalOpen(true);
         break;
 
+      case "explainInteractions":
+        setInteractionTraceOpen(true);
+        break;
+
       default:
         console.error("Invalid key", key);
     }
@@ -368,6 +375,15 @@ export default function PatientCard({
         label: t("patientCard.navigatePatient"),
         id: "gtm-bt-navigate-patient",
         icon: <UserSwitchOutlined />,
+      });
+    }
+
+    if (PermissionService().has(Permission.MAINTAINER)) {
+      items.push({
+        key: "explainInteractions",
+        label: t("patientCard.explainInteractions"),
+        id: "gtm-bt-explain-interactions",
+        icon: <NodeIndexOutlined />,
       });
     }
 
@@ -588,6 +604,17 @@ export default function PatientCard({
         admissionNumber={admissionNumber}
         patientName={namePatient}
       />
+      <DefaultModal
+        title={t("titles.interactionTrace")}
+        destroyOnHidden
+        open={interactionTraceOpen}
+        onCancel={() => setInteractionTraceOpen(false)}
+        width="min(1000px, 96vw)"
+        style={{ top: 20 }}
+        footer={null}
+      >
+        <InteractionTrace idPrescription={prescription.idPrescription} />
+      </DefaultModal>
       <div className="patient-body">
         <Tabs
           defaultActiveKey="patientData"

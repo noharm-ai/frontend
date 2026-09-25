@@ -240,7 +240,8 @@
     "responsiblePhysician": "Médico responsável",
     "pepLink": "Abrir PEP",
     "openDischargeSummary": "Abrir Sumário de Alta",
-    "navigatePatient": "Navegar Paciente"
+    "navigatePatient": "Navegar Paciente",
+    "explainInteractions": "Detalhar interações"
   },
   "screeningBody": {
     "tabDrugs": "Medicamentos",
@@ -392,6 +393,7 @@
   "titles": {
     "protocolDescription": "Como este protocolo é disparado",
     "addDrugMeasureUnit": "Adicionar Unidade de Medida",
+    "interactionTrace": "Explicação das interações",
     "protocolTrace": "Explicação da avaliação de protocolos",
     "protocolTest": "Testar protocolo",
     "protocolTestResults": "Resultados do teste"
