@@ -45,6 +45,7 @@ import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
 
 import PatientNameCache from "components/PatientName/PatientNameCache";
+import { usePatientName } from "hooks/usePatientName";
 import { PrescriptionNavigate } from "features/prescription/PrescriptionNavigate/PrescriptionNavigate";
 
 import PatientTab from "./PatientTab";
@@ -77,12 +78,12 @@ export default function PatientCard({
     age,
     dischargeReason,
     dischargeFormated,
-    namePatient,
     observation,
     prevIntervention,
     existIntervention,
     concilia,
   } = prescription;
+  const { name: namePatient } = usePatientName(prescription.idPatient);
 
   const interventionTooltip = t("patientCard.patientIntervention");
   const hasIntervention =

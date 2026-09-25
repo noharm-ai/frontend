@@ -34,7 +34,7 @@ export function PrescriptionNavigate({
     phone: Yup.string().nullable().required(t("validation.requiredField")),
   });
   const initialValues = {
-    name: patientName || "",
+    name: patientName || `${admissionNumber}`,
     phone: "",
   };
 
