@@ -29,12 +29,10 @@ import {
 import { getReportData, filterAndExportCSV } from "../transformers";
 import MainFilters from "./MainFilters";
 import SecondaryFilters from "./SecondaryFilters";
-import {
-  onBeforePrint,
-  onAfterPrint,
-  decompressDatasource,
-} from "utils/report";
+import { onBeforePrint, onAfterPrint } from "utils/report";
 import useFetchReport from "hooks/useFetchReport";
+import ReportEnum from "models/ReportEnum";
+import { getReportDatasource } from "utils/reportDatasource";
 import HistoryModal from "features/reports/components/HistoryModal/HistoryModal";
 import HistoryAlert from "features/reports/components/HistoryAlert/HistoryAlert";
 import { trackReport, TrackedReport } from "src/utils/tracker";
@@ -47,9 +45,6 @@ export default function Filter({ printRef }) {
     useSelector((state) => state.reportsArea.intervention.status) === "loading";
   const currentFilters = useSelector(
     (state) => state.reportsArea.intervention.filters,
-  );
-  const datasource = useSelector(
-    (state) => state.reportsArea.intervention.list,
   );
   const reportDate = useSelector(
     (state) => state.reportsArea.intervention.date,
@@ -100,6 +95,7 @@ export default function Filter({ printRef }) {
   const reportManager = useFetchReport({
     action: fetchReportData,
     reset,
+    reportKey: ReportEnum.INTERVENTION,
     onAfterFetch: (body, header) => {
       search(
         {
@@ -115,7 +111,7 @@ export default function Filter({ printRef }) {
   });
 
   const exportCSV = async () => {
-    const ds = await decompressDatasource(datasource);
+    const ds = await getReportDatasource(ReportEnum.INTERVENTION);
     filterAndExportCSV(ds, currentFilters, t);
   };
 
@@ -136,7 +132,7 @@ export default function Filter({ printRef }) {
   const search = async (params, forceDs) => {
     let ds = [];
     if (!forceDs) {
-      ds = await decompressDatasource(datasource);
+      ds = await getReportDatasource(ReportEnum.INTERVENTION);
     }
 
     dispatch(setFilteredStatus("loading"));

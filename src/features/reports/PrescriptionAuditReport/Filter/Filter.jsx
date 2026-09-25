@@ -29,11 +29,9 @@ import { getReportData, filterAndExportCSV } from "../transformers";
 import MainFilters from "./MainFilters";
 import SecondaryFilters from "./SecondaryFilters";
 import useFetchReport from "hooks/useFetchReport";
-import {
-  onBeforePrint,
-  onAfterPrint,
-  decompressDatasource,
-} from "utils/report";
+import ReportEnum from "models/ReportEnum";
+import { getReportDatasource } from "utils/reportDatasource";
+import { onBeforePrint, onAfterPrint } from "utils/report";
 import HistoryModal from "features/reports/components/HistoryModal/HistoryModal";
 import HistoryAlert from "features/reports/components/HistoryAlert/HistoryAlert";
 
@@ -44,26 +42,23 @@ export default function Filter({ printRef }) {
     useSelector((state) => state.reportsArea.prescriptionAudit.status) ===
     "loading";
   const currentFilters = useSelector(
-    (state) => state.reportsArea.prescriptionAudit.filters
-  );
-  const datasource = useSelector(
-    (state) => state.reportsArea.prescriptionAudit.list
+    (state) => state.reportsArea.prescriptionAudit.filters,
   );
   const reportDate = useSelector(
-    (state) => state.reportsArea.prescriptionAudit.date
+    (state) => state.reportsArea.prescriptionAudit.date,
   );
   const reportUpdatedAt = useSelector(
-    (state) => state.reportsArea.prescriptionAudit.updatedAt
+    (state) => state.reportsArea.prescriptionAudit.updatedAt,
   );
   const userId = useSelector((state) => state.user.account.userId);
   const activeReport = useSelector(
-    (state) => state.reportsArea.prescriptionAudit.activeReport
+    (state) => state.reportsArea.prescriptionAudit.activeReport,
   );
   const historyModalOpen = useSelector(
-    (state) => state.reportsArea.prescriptionAudit.historyModal
+    (state) => state.reportsArea.prescriptionAudit.historyModal,
   );
   const availableReports = useSelector(
-    (state) => state.reportsArea.prescriptionAudit.availableReports
+    (state) => state.reportsArea.prescriptionAudit.availableReports,
   );
   const [exporting, setExporting] = useState(false);
   const handlePrint = useReactToPrint({
@@ -89,6 +84,7 @@ export default function Filter({ printRef }) {
   const reportManager = useFetchReport({
     action: fetchReportData,
     reset,
+    reportKey: ReportEnum.PRESCRIPTION_AUDIT,
     onAfterFetch: (body, header) => {
       search(
         {
@@ -98,7 +94,7 @@ export default function Filter({ printRef }) {
             dayjs(header.date).subtract(1, "day"),
           ],
         },
-        body
+        body,
       );
     },
   });
@@ -107,7 +103,7 @@ export default function Filter({ printRef }) {
     if (exporting) return;
 
     setExporting(true);
-    const ds = await decompressDatasource(datasource);
+    const ds = await getReportDatasource(ReportEnum.PRESCRIPTION_AUDIT);
     await filterAndExportCSV(ds, currentFilters, t);
 
     setExporting(false);
@@ -125,7 +121,7 @@ export default function Filter({ printRef }) {
   const search = async (params, forceDs) => {
     let ds = [];
     if (!forceDs) {
-      ds = await decompressDatasource(datasource);
+      ds = await getReportDatasource(ReportEnum.PRESCRIPTION_AUDIT);
     }
 
     dispatch(setFilteredStatus("loading"));

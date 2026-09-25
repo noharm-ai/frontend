@@ -3,11 +3,14 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "services/reports/api";
 import { getUniqList, getUniqDepartments } from "utils/report";
 import ReportEnum from "models/ReportEnum";
+import {
+  clearReportDatasource,
+  loadReportDatasource,
+} from "utils/reportDatasource";
 
 const initialState = {
   status: "idle",
   error: null,
-  list: [],
   updatedAt: null,
   version: null,
   date: null,
@@ -32,36 +35,58 @@ const initialState = {
   historyModal: false,
 };
 
+const getFilterOptions = (body) => {
+  const options = {
+    responsibles: getUniqList(body, "responsible"),
+    departments: getUniqDepartments(body, "department", "segment"),
+    segments: getUniqList(body, "segment"),
+  };
+
+  //added in new versions
+  if (body && body.length > 0) {
+    const firstRecord = body[0];
+
+    options.tags = firstRecord.hasOwnProperty("tags")
+      ? getUniqList(body, "tags")
+      : [];
+    options.insurances = firstRecord.hasOwnProperty("insurance")
+      ? getUniqList(body, "insurance")
+      : [];
+
+    options.hasAge = body.some((r) => r.age != null);
+    options.hasCheckedAt = body.some((r) => r.checkedAt != null);
+    options.hasOriginCreatedAt = body.some((r) => r.originCreatedAt != null);
+  }
+
+  return options;
+};
+
 export const fetchReportData = createAsyncThunk(
   "reports-prescription/fetch-data",
   async (params, thunkAPI) => {
     try {
       const response = await api.getReport(ReportEnum.PRESCRIPTION, params);
       if (!response.data.data.cached) {
-        return { ...response, cacheData: [], gzipped: {} };
+        return { cached: false };
       }
-      const cacheResponseStream = await fetch(response.data.data.url);
 
-      const gzipped = await cacheResponseStream.clone().blob();
-
-      const cacheReadableStream = cacheResponseStream.body.pipeThrough(
-        new window.DecompressionStream("gzip")
+      const { header, body } = await loadReportDatasource(
+        ReportEnum.PRESCRIPTION,
+        response.data.data.url,
       );
 
-      const decompressedResponse = new Response(cacheReadableStream);
-      const cache = await decompressedResponse.json();
-
       return {
-        ...response,
-        cacheData: cache,
-        gzipped,
+        cached: true,
+        header,
         availableReports: response.data.data.availableReports,
+        filterOptions: getFilterOptions(body),
       };
     } catch (err) {
       console.error(err);
+      clearReportDatasource(ReportEnum.PRESCRIPTION);
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 const prescriptionReportSlice = createSlice({
@@ -99,64 +124,20 @@ const prescriptionReportSlice = createSlice({
       .addCase(fetchReportData.fulfilled, (state, action) => {
         state.status = "succeeded";
 
-        if (action.payload.data.data.cached) {
-          state.list = action.payload.gzipped;
-          state.updatedAt =
-            action.payload.cacheData.header.updatedAt ??
-            action.payload.cacheData.header.date;
-          state.version = action.payload.cacheData.header.version;
-          state.date = action.payload.cacheData.header.date;
-          state.dateRange = action.payload.cacheData.header.dateRange ?? 60;
+        if (action.payload.cached) {
+          const { header } = action.payload;
+
+          state.updatedAt = header.updatedAt ?? header.date;
+          state.version = header.version;
+          state.date = header.date;
+          state.dateRange = header.dateRange ?? 60;
           state.availableReports = action.payload.availableReports;
-          state.responsibles = getUniqList(
-            action.payload.cacheData.body,
-            "responsible"
-          );
-          state.departments = getUniqDepartments(
-            action.payload.cacheData.body,
-            "department",
-            "segment"
-          );
-          state.segments = getUniqList(
-            action.payload.cacheData.body,
-            "segment"
-          );
-
-          //added in new versions
-          if (
-            action.payload.cacheData.body &&
-            action.payload.cacheData.body.length > 0
-          ) {
-            const firstRecord = action.payload.cacheData.body[0];
-
-            if (firstRecord.hasOwnProperty("tags")) {
-              state.tags = getUniqList(action.payload.cacheData.body, "tags");
-            } else {
-              state.tags = [];
-            }
-
-            if (firstRecord.hasOwnProperty("insurance")) {
-              state.insurances = getUniqList(
-                action.payload.cacheData.body,
-                "insurance"
-              );
-            } else {
-              state.insurances = [];
-            }
-
-            const records = action.payload.cacheData.body;
-            state.hasAge = records.some((r) => r.age != null);
-            state.hasCheckedAt = records.some((r) => r.checkedAt != null);
-            state.hasOriginCreatedAt = records.some(
-              (r) => r.originCreatedAt != null
-            );
-          }
+          Object.assign(state, action.payload.filterOptions);
         }
       })
       .addCase(fetchReportData.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
-        state.list = [];
       });
   },
 });

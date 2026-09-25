@@ -30,12 +30,10 @@ import { getReportData } from "../transformers";
 import { exportCSVSync } from "utils/report";
 import MainFilters from "./MainFilters";
 import SecondaryFilters from "./SecondaryFilters";
-import {
-  onBeforePrint,
-  onAfterPrint,
-  decompressDatasource,
-} from "utils/report";
+import { onBeforePrint, onAfterPrint } from "utils/report";
 import useFetchReport from "hooks/useFetchReport";
+import ReportEnum from "models/ReportEnum";
+import { getReportDatasource } from "utils/reportDatasource";
 import HistoryModal from "features/reports/components/HistoryModal/HistoryModal";
 import HistoryAlert from "features/reports/components/HistoryAlert/HistoryAlert";
 import { trackReport, TrackedReport } from "src/utils/tracker";
@@ -46,23 +44,22 @@ export default function Filter({ printRef }) {
   const navigate = useNavigate();
   const isFetching =
     useSelector((state) => state.reportsArea.economy.status) === "loading";
-  const datasource = useSelector((state) => state.reportsArea.economy.list);
   const reportDate = useSelector((state) => state.reportsArea.economy.date);
   const reportUpdatedAt = useSelector(
-    (state) => state.reportsArea.economy.updatedAt
+    (state) => state.reportsArea.economy.updatedAt,
   );
   const userId = useSelector((state) => state.user.account.userId);
   const filteredList = useSelector(
-    (state) => state.reportsArea.economy.filtered.result.list
+    (state) => state.reportsArea.economy.filtered.result.list,
   );
   const activeReport = useSelector(
-    (state) => state.reportsArea.economy.activeReport
+    (state) => state.reportsArea.economy.activeReport,
   );
   const historyModalOpen = useSelector(
-    (state) => state.reportsArea.economy.historyModal
+    (state) => state.reportsArea.economy.historyModal,
   );
   const availableReports = useSelector(
-    (state) => state.reportsArea.economy.availableReports
+    (state) => state.reportsArea.economy.availableReports,
   );
   const handlePrint = useReactToPrint({
     contentRef: printRef,
@@ -95,6 +92,7 @@ export default function Filter({ printRef }) {
   const reportManager = useFetchReport({
     action: fetchReportData,
     reset,
+    reportKey: ReportEnum.ECONOMY,
     onAfterFetch: (body, header) => {
       search(
         {
@@ -104,7 +102,7 @@ export default function Filter({ printRef }) {
             dayjs(header.date).subtract(1, "day"),
           ],
         },
-        body
+        body,
       );
     },
   });
@@ -117,7 +115,7 @@ export default function Filter({ printRef }) {
         delete item.processed;
         return item;
       }),
-      t
+      t,
     );
   };
 
@@ -138,7 +136,7 @@ export default function Filter({ printRef }) {
   const search = async (params, forceDs) => {
     let ds = [];
     if (!forceDs) {
-      ds = await decompressDatasource(datasource);
+      ds = await getReportDatasource(ReportEnum.ECONOMY);
     }
 
     dispatch(setFilteredStatus("loading"));

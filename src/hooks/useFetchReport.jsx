@@ -4,11 +4,16 @@ import { useDispatch } from "react-redux";
 
 import DefaultModal from "components/Modal";
 import notification from "components/notification";
+import {
+  clearReportDatasource,
+  takeLoadedReportBody,
+} from "utils/reportDatasource";
 
 export default function useFetchReport({
   action,
   reset,
   onAfterFetch,
+  reportKey,
   params = {},
 }) {
   const dispatch = useDispatch();
@@ -35,7 +40,7 @@ export default function useFetchReport({
             onOk: () => fetchData(),
             wrapClassName: "default-modal",
           });
-        } else if (!response.payload.data.data.cached) {
+        } else if (!response.payload.cached) {
           DefaultModal.info({
             title: "Não foi possível exibir este relatório.",
             content: (
@@ -57,8 +62,8 @@ export default function useFetchReport({
           });
         } else {
           onAfterFetch(
-            response.payload.cacheData.body,
-            response.payload.cacheData.header
+            takeLoadedReportBody(reportKey),
+            response.payload.header,
           );
         }
       });
@@ -68,21 +73,22 @@ export default function useFetchReport({
 
     return () => {
       dispatch(reset());
+      clearReportDatasource(reportKey);
     };
   }, []); //eslint-disable-line
 
   return {
     loadArchive: (filename) => {
       dispatch(action({ filename })).then((response) => {
-        if (response.error) {
+        if (response.error || !response.payload.cached) {
           notification.error({
             message: t("error.title"),
             description: t("error.description"),
           });
         } else {
           onAfterFetch(
-            response.payload.cacheData.body,
-            response.payload.cacheData.header
+            takeLoadedReportBody(reportKey),
+            response.payload.header,
           );
         }
       });

@@ -31,11 +31,9 @@ import { getReportData, filterAndExportCSV } from "../transformers";
 import MainFilters from "./MainFilters";
 import SecondaryFilters from "./SecondaryFilters";
 import useFetchReport from "hooks/useFetchReport";
-import {
-  onBeforePrint,
-  onAfterPrint,
-  decompressDatasource,
-} from "utils/report";
+import ReportEnum from "models/ReportEnum";
+import { getReportDatasource } from "utils/reportDatasource";
+import { onBeforePrint, onAfterPrint } from "utils/report";
 import HistoryModal from "features/reports/components/HistoryModal/HistoryModal";
 import HistoryAlert from "features/reports/components/HistoryAlert/HistoryAlert";
 import { trackReport, TrackedReport } from "src/utils/tracker";
@@ -48,9 +46,6 @@ export default function Filter({ printRef }) {
     useSelector((state) => state.reportsArea.prescription.status) === "loading";
   const currentFilters = useSelector(
     (state) => state.reportsArea.prescription.filters,
-  );
-  const datasource = useSelector(
-    (state) => state.reportsArea.prescription.list,
   );
   const reportDate = useSelector(
     (state) => state.reportsArea.prescription.date,
@@ -98,6 +93,7 @@ export default function Filter({ printRef }) {
   const reportManager = useFetchReport({
     action: fetchReportData,
     reset,
+    reportKey: ReportEnum.PRESCRIPTION,
     onAfterFetch: (body, header) => {
       search(
         {
@@ -116,7 +112,7 @@ export default function Filter({ printRef }) {
     if (exporting) return;
 
     setExporting(true);
-    const ds = await decompressDatasource(datasource);
+    const ds = await getReportDatasource(ReportEnum.PRESCRIPTION);
     await filterAndExportCSV(ds, currentFilters, t);
 
     setExporting(false);
@@ -134,7 +130,7 @@ export default function Filter({ printRef }) {
   const search = async (params, forceDs) => {
     let ds = [];
     if (!forceDs) {
-      ds = await decompressDatasource(datasource);
+      ds = await getReportDatasource(ReportEnum.PRESCRIPTION);
     }
 
     dispatch(setFilteredStatus("loading"));

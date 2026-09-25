@@ -3,11 +3,14 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "services/reports/api";
 import { getUniqList, getUniqDepartments } from "utils/report";
 import ReportEnum from "models/ReportEnum";
+import {
+  clearReportDatasource,
+  loadReportDatasource,
+} from "utils/reportDatasource";
 
 const initialState = {
   status: "idle",
   error: null,
-  list: [],
   updatedAt: null,
   version: null,
   date: null,
@@ -37,37 +40,73 @@ const initialState = {
   activeReport: "current",
 };
 
+const getFilterOptions = (body) => {
+  const options = {
+    responsibles: getUniqList(body, "responsible"),
+    departments: getUniqDepartments(body, "department", "segment"),
+    segments: getUniqList(body, "segment"),
+    originDrugs: getUniqList(body, "originDrug"),
+    destinyDrugs: getUniqList(body, "destinyDrug"),
+    reasons: getUniqList(body, "interventionReasonArray"),
+    insurances: getUniqList(body, "insurance"),
+  };
+
+  //added in new versions
+  if (body && body.length > 0) {
+    const firstRecord = body[0];
+
+    if (firstRecord.hasOwnProperty("tags")) {
+      options.tags = getUniqList(body, "tags");
+    }
+
+    if (firstRecord.hasOwnProperty("originSubstance")) {
+      options.originSubstances = getUniqList(body, "originSubstance");
+    }
+
+    if (firstRecord.hasOwnProperty("originSubstanceClass")) {
+      options.originSubstanceClasses = getUniqList(
+        body,
+        "originSubstanceClass",
+      );
+    }
+
+    if (firstRecord.hasOwnProperty("originSubstanceClassParent")) {
+      options.originSubstanceClassParents = getUniqList(
+        body,
+        "originSubstanceClassParent",
+      );
+    }
+  }
+
+  return options;
+};
+
 export const fetchReportData = createAsyncThunk(
   "reports-economy/fetch-data",
   async (params, thunkAPI) => {
     try {
       const response = await api.getReport(ReportEnum.ECONOMY, params);
       if (!response.data.data.cached) {
-        return { ...response, cacheData: [], gzipped: {} };
+        return { cached: false };
       }
 
-      const cacheResponseStream = await fetch(response.data.data.url);
-
-      const gzipped = await cacheResponseStream.clone().blob();
-
-      const cacheReadableStream = cacheResponseStream.body.pipeThrough(
-        new window.DecompressionStream("gzip")
+      const { header, body } = await loadReportDatasource(
+        ReportEnum.ECONOMY,
+        response.data.data.url,
       );
 
-      const decompressedResponse = new Response(cacheReadableStream);
-      const cache = await decompressedResponse.json();
-
       return {
-        ...response,
-        cacheData: cache,
-        gzipped,
+        cached: true,
+        header,
         availableReports: response.data.data.availableReports,
+        filterOptions: getFilterOptions(body),
       };
     } catch (err) {
       console.error(err);
+      clearReportDatasource(ReportEnum.ECONOMY);
       return thunkAPI.rejectWithValue(err.response.data);
     }
-  }
+  },
 );
 
 const economyReportSlice = createSlice({
@@ -105,83 +144,20 @@ const economyReportSlice = createSlice({
       .addCase(fetchReportData.fulfilled, (state, action) => {
         state.status = "succeeded";
 
-        if (action.payload.data.data.cached) {
-          state.list = action.payload.gzipped;
-          state.updatedAt =
-            action.payload.cacheData.header.updatedAt ??
-            action.payload.cacheData.header.date;
-          state.version = action.payload.cacheData.header.version;
-          state.date = action.payload.cacheData.header.date;
-          state.dateRange = action.payload.cacheData.header.dateRange ?? 360;
+        if (action.payload.cached) {
+          const { header } = action.payload;
+
+          state.updatedAt = header.updatedAt ?? header.date;
+          state.version = header.version;
+          state.date = header.date;
+          state.dateRange = header.dateRange ?? 360;
           state.availableReports = action.payload.availableReports;
-          state.responsibles = getUniqList(
-            action.payload.cacheData.body,
-            "responsible"
-          );
-          state.departments = getUniqDepartments(
-            action.payload.cacheData.body,
-            "department",
-            "segment"
-          );
-          state.segments = getUniqList(
-            action.payload.cacheData.body,
-            "segment"
-          );
-          state.originDrugs = getUniqList(
-            action.payload.cacheData.body,
-            "originDrug"
-          );
-          state.destinyDrugs = getUniqList(
-            action.payload.cacheData.body,
-            "destinyDrug"
-          );
-          state.reasons = getUniqList(
-            action.payload.cacheData.body,
-            "interventionReasonArray"
-          );
-          state.insurances = getUniqList(
-            action.payload.cacheData.body,
-            "insurance"
-          );
-
-          //added in new versions
-          if (
-            action.payload.cacheData.body &&
-            action.payload.cacheData.body.length > 0
-          ) {
-            const firstRecord = action.payload.cacheData.body[0];
-
-            if (firstRecord.hasOwnProperty("tags")) {
-              state.tags = getUniqList(action.payload.cacheData.body, "tags");
-            }
-
-            if (firstRecord.hasOwnProperty("originSubstance")) {
-              state.originSubstances = getUniqList(
-                action.payload.cacheData.body,
-                "originSubstance"
-              );
-            }
-
-            if (firstRecord.hasOwnProperty("originSubstanceClass")) {
-              state.originSubstanceClasses = getUniqList(
-                action.payload.cacheData.body,
-                "originSubstanceClass"
-              );
-            }
-
-            if (firstRecord.hasOwnProperty("originSubstanceClassParent")) {
-              state.originSubstanceClassParents = getUniqList(
-                action.payload.cacheData.body,
-                "originSubstanceClassParent"
-              );
-            }
-          }
+          Object.assign(state, action.payload.filterOptions);
         }
       })
       .addCase(fetchReportData.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
-        state.list = [];
       });
   },
 });

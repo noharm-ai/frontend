@@ -31,11 +31,9 @@ import { getReportData, filterAndExportCSV } from "../transformers";
 import MainFilters from "./MainFilters";
 import SecondaryFilters from "./SecondaryFilters";
 import useFetchReport from "hooks/useFetchReport";
-import {
-  onBeforePrint,
-  onAfterPrint,
-  decompressDatasource,
-} from "utils/report";
+import ReportEnum from "models/ReportEnum";
+import { getReportDatasource } from "utils/reportDatasource";
+import { onBeforePrint, onAfterPrint } from "utils/report";
 import HistoryModal from "features/reports/components/HistoryModal/HistoryModal";
 import HistoryAlert from "features/reports/components/HistoryAlert/HistoryAlert";
 import { trackReport, TrackedReport } from "src/utils/tracker";
@@ -49,7 +47,6 @@ export default function Filter({ printRef }) {
   const currentFilters = useSelector(
     (state) => state.reportsArea.patientDay.filters,
   );
-  const datasource = useSelector((state) => state.reportsArea.patientDay.list);
   const reportDate = useSelector((state) => state.reportsArea.patientDay.date);
   const reportUpdatedAt = useSelector(
     (state) => state.reportsArea.patientDay.updatedAt,
@@ -89,6 +86,7 @@ export default function Filter({ printRef }) {
   const reportManager = useFetchReport({
     action: fetchReportData,
     reset,
+    reportKey: ReportEnum.PATIENT_DAY,
     onAfterFetch: (body, header) => {
       search(
         {
@@ -107,7 +105,7 @@ export default function Filter({ printRef }) {
     if (exporting) return;
 
     setExporting(true);
-    const ds = await decompressDatasource(datasource);
+    const ds = await getReportDatasource(ReportEnum.PATIENT_DAY);
     await filterAndExportCSV(ds, currentFilters, t);
 
     setExporting(false);
@@ -125,7 +123,7 @@ export default function Filter({ printRef }) {
   const search = async (params, forceDs) => {
     let ds = [];
     if (!forceDs) {
-      ds = await decompressDatasource(datasource);
+      ds = await getReportDatasource(ReportEnum.PATIENT_DAY);
     }
 
     dispatch(setFilteredStatus("loading"));
