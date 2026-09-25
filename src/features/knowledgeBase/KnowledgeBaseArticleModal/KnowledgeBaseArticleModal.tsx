@@ -1,18 +1,30 @@
 import { useEffect, useState, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { Space, Spin, Tag, Typography } from "antd";
-import { BookOutlined, EditOutlined, LinkOutlined } from "@ant-design/icons";
+import {
+  BookOutlined,
+  EditOutlined,
+  LinkOutlined,
+  PlayCircleOutlined,
+} from "@ant-design/icons";
 
 import api from "services/api";
 import Button from "components/Button";
 import DefaultModal from "components/Modal";
 import notification from "components/notification";
+import Feature from "models/Feature";
+import { FeatureService } from "services/FeatureService";
 
 import { IKnowledgeBaseArticle } from "../KnowledgeBaseSlice";
 import { KnowledgeBaseForm } from "../KnowledgeBaseForm/KnowledgeBaseForm";
 import { canWriteKnowledgeBase } from "../knowledgeBasePermissions";
-import { ArticleBody, ArticleContent } from "../KnowledgeBase.style";
+import {
+  ArticleBody,
+  ArticleContent,
+  ArticleLessons,
+} from "../KnowledgeBase.style";
 
 const { Paragraph } = Typography;
 
@@ -27,6 +39,7 @@ export function KnowledgeBaseArticleModal({
   onClose,
 }: KnowledgeBaseArticleModalProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [article, setArticle] = useState<IKnowledgeBaseArticle | null>(null);
   const [editing, setEditing] = useState(false);
 
@@ -52,6 +65,16 @@ export function KnowledgeBaseArticleModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [articleId]);
 
+  // the training center only exists where the onboarding feature is on
+  const lessons = article?.trainingLessons ?? [];
+  const showLessons =
+    lessons.length > 0 && FeatureService.has(Feature.USER_ONBOARDING);
+
+  const openLesson = (trainingId: number, lessonId: number) => {
+    onClose();
+    navigate(`/treinamento/${trainingId}/aula/${lessonId}`);
+  };
+
   let body: ReactNode = <Spin />;
   if (article) {
     body = (
@@ -70,6 +93,24 @@ export function KnowledgeBaseArticleModal({
               __html: DOMPurify.sanitize(article.content),
             }}
           />
+        )}
+        {showLessons && (
+          <ArticleLessons>
+            <h4>Aulas relacionadas</h4>
+            <ul>
+              {lessons.map((lesson) => (
+                <li key={lesson.id}>
+                  <Button
+                    type="link"
+                    icon={<PlayCircleOutlined />}
+                    onClick={() => openLesson(lesson.trainingId, lesson.id)}
+                  >
+                    {lesson.trainingTitle} › {lesson.title}
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          </ArticleLessons>
         )}
       </>
     );

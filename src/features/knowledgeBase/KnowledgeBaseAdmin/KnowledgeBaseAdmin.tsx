@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Input, Select, Space, Tag, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import {
+  CloudSyncOutlined,
   EditOutlined,
   EyeOutlined,
   PlusOutlined,
@@ -12,6 +13,8 @@ import Table from "components/Table";
 import Empty from "components/Empty";
 import BackTop from "components/BackTop";
 import Button from "components/Button";
+import notification from "components/notification";
+import api from "services/api";
 import { useAppDispatch, useAppSelector } from "src/store";
 import { KnowledgeBasePathEnum } from "models/KnowledgeBasePathEnum";
 import { KnowledgeBaseSectionEnum } from "models/KnowledgeBaseSectionEnum";
@@ -26,6 +29,7 @@ import { PageHeader } from "styles/PageHeader.style";
 import {
   IKnowledgeBaseArticle,
   IKnowledgeBaseFilters,
+  VectorIndexStatus,
   fetchKnowledgeBaseArticles,
   setFilters,
 } from "../KnowledgeBaseSlice";
@@ -36,6 +40,22 @@ import { FilterBar } from "./KnowledgeBaseAdmin.style";
 const pageLabel = (value: string) =>
   KnowledgeBasePathEnum.getOptions().find((option) => option.value === value)
     ?.label ?? value;
+
+const indexMessages: Record<VectorIndexStatus, string> = {
+  indexed: "Artigo indexado para o assistente N0.",
+  removed: "Artigo não publicado: removido do índice do assistente N0.",
+  disabled: "O índice vetorial do assistente N0 não está configurado.",
+  failed: "Não foi possível indexar o artigo. Tente novamente mais tarde.",
+};
+
+const reindex = async (id: number): Promise<VectorIndexStatus> => {
+  try {
+    const response: any = await api.knowledgeBase.reindex(id);
+    return response.data.data.vectorIndex;
+  } catch {
+    return "failed";
+  }
+};
 
 const emptyText = (
   <Empty
@@ -53,6 +73,57 @@ export function KnowledgeBaseAdmin() {
   // undefined: form closed; null: new article; a number: edit that article
   const [editing, setEditing] = useState<number | null | undefined>(undefined);
   const [viewing, setViewing] = useState<number | null>(null);
+  const [indexing, setIndexing] = useState<number | null>(null);
+  // progress of "index all": how many articles are done
+  const [bulkProgress, setBulkProgress] = useState<number | null>(null);
+
+  const indexOne = async (id: number) => {
+    setIndexing(id);
+    const result = await reindex(id);
+    setIndexing(null);
+
+    const message = indexMessages[result];
+    if (result === "failed") {
+      notification.error({ message });
+    } else if (result === "disabled") {
+      notification.warning({ message });
+    } else {
+      notification.success({ message });
+    }
+  };
+
+  // writes every listed article to the index, one at a time: how existing
+  // articles get there, and how failed saves are caught up
+  const indexAll = async () => {
+    const counts: Record<VectorIndexStatus, number> = {
+      indexed: 0,
+      removed: 0,
+      disabled: 0,
+      failed: 0,
+    };
+
+    for (let n = 0; n < list.length; n += 1) {
+      setBulkProgress(n);
+      const result = await reindex(list[n].id);
+      counts[result] += 1;
+
+      if (result === "disabled") {
+        setBulkProgress(null);
+        notification.warning({ message: indexMessages.disabled });
+        return;
+      }
+    }
+    setBulkProgress(null);
+
+    const summary = `${counts.indexed} indexados, ${counts.removed} removidos (não publicados)`;
+    if (counts.failed) {
+      notification.error({
+        message: `${summary}, ${counts.failed} com erro. Tente indexá-los novamente.`,
+      });
+    } else {
+      notification.success({ message: `${summary}.` });
+    }
+  };
 
   useEffect(() => {
     dispatch(fetchKnowledgeBaseArticles(filters));
@@ -88,6 +159,13 @@ export function KnowledgeBaseAdmin() {
               {KnowledgeBaseSectionEnum.getLabel(section)}
             </Tag>
           ))}
+          {record.trainingItems.length > 0 && (
+            <Tag color="purple">
+              {record.trainingItems.length === 1
+                ? "1 aula de treinamento"
+                : `${record.trainingItems.length} aulas de treinamento`}
+            </Tag>
+          )}
         </Space>
       ),
     },
@@ -123,7 +201,7 @@ export function KnowledgeBaseAdmin() {
     },
     {
       title: "Ações",
-      width: 100,
+      width: 140,
       align: "center" as const,
       render: (_: unknown, record: IKnowledgeBaseArticle) => (
         <Space>
@@ -136,6 +214,14 @@ export function KnowledgeBaseAdmin() {
                   ? setViewing(record.id)
                   : window.open(record.link!, "_blank", "noopener")
               }
+            />
+          </Tooltip>
+          <Tooltip title="Indexar para o assistente N0">
+            <Button
+              icon={<CloudSyncOutlined />}
+              loading={indexing === record.id}
+              disabled={bulkProgress !== null}
+              onClick={() => indexOne(record.id)}
             />
           </Tooltip>
           <Tooltip title="Editar">
@@ -161,6 +247,16 @@ export function KnowledgeBaseAdmin() {
           </div>
         </div>
         <div className="page-header-actions">
+          <Button
+            icon={<CloudSyncOutlined />}
+            loading={bulkProgress !== null}
+            disabled={!list.length || indexing !== null}
+            onClick={indexAll}
+          >
+            {bulkProgress !== null
+              ? `Indexando ${bulkProgress + 1} de ${list.length}`
+              : "Indexar todos"}
+          </Button>
           <Button
             type="primary"
             icon={<PlusOutlined />}

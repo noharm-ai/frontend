@@ -1,5 +1,5 @@
 import { test, expect } from "../support/mockApi";
-import { loginWithPermissions } from "../support/featureLogin";
+import { loginWithAuth, loginWithPermissions } from "../support/featureLogin";
 
 const READER_PERMISSIONS = [
   "READ_BASIC_FEATURES",
@@ -21,6 +21,7 @@ const sectionArticle = {
   description: "Passo a passo da aba Medicamentos",
   link: null,
   section: ["prescricao.medicamentos"],
+  trainingItems: [],
   hasContent: true,
 };
 
@@ -35,6 +36,27 @@ const fullArticle = {
 };
 
 test.use({ storageState: { cookies: [], origins: [] } });
+
+const trainingLessons = [
+  {
+    id: 11,
+    title: "Boas-vindas",
+    trainingId: 1,
+    trainingTitle: "Módulo básico",
+  },
+  {
+    id: 12,
+    title: "Avaliando a prescrição",
+    trainingId: 1,
+    trainingTitle: "Módulo básico",
+  },
+];
+
+test.beforeEach(({ mockApi }) => {
+  mockApi.override("GET /knowledge-base/training-lessons", {
+    json: { status: "success", data: trainingLessons },
+  });
+});
 
 test("a reader opens the article of a prescription section", async ({
   page,
@@ -116,6 +138,19 @@ test("a maintainer writes an article straight from a section", async ({
     .fill("Revisar doses");
   await form.locator(".tiptap").click();
   await page.keyboard.type("Confira a dose de cada item.");
+
+  // relate a lesson of the training center
+  await form
+    .locator(".form-row")
+    .filter({ hasText: "Aulas de treinamento:" })
+    .locator(".ant-select")
+    .click();
+  await page
+    .locator(".ant-select-item-option")
+    .filter({ hasText: "Avaliando a prescrição" })
+    .click();
+  await page.keyboard.press("Escape");
+
   await form.getByRole("button", { name: "Salvar" }).click();
 
   await expect(page.getByText("Uhu! Salvo com sucesso! :)")).toBeVisible();
@@ -130,6 +165,7 @@ test("a maintainer writes an article straight from a section", async ({
     path: ["Prescrição"],
     active: true,
     link: null,
+    training_items: [12],
     content: expect.stringContaining("Confira a dose de cada item."),
   });
 });
@@ -176,6 +212,7 @@ test("the maintenance screen lists and filters the articles", async ({
           description: null,
           path: ["Relatório: Intervenções"],
           section: [],
+          trainingItems: [],
           link: "https://kb.example.com/artigo/40",
           active: false,
           hasContent: false,
@@ -205,4 +242,153 @@ test("the maintenance screen lists and filters the articles", async ({
   expect(JSON.parse(listCalls[listCalls.length - 1].postData!)).toMatchObject({
     term: "doses",
   });
+});
+
+test("the article points the reader to its training lessons", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override("POST /support/knowledge-base-articles", {
+    json: { status: "success", data: [sectionArticle] },
+  });
+  mockApi.override("GET /knowledge-base/:id", {
+    json: {
+      status: "success",
+      data: {
+        ...fullArticle,
+        trainingItems: [12],
+        trainingLessons: [trainingLessons[1]],
+      },
+    },
+  });
+  mockApi.override("GET /training/list", {
+    json: {
+      status: "success",
+      data: [
+        {
+          id: 1,
+          page: ["prescricao"],
+          title: "Módulo básico",
+          description: null,
+          position: 1,
+          totalLessons: 1,
+          totalLessonsFinished: 0,
+          mandatory: false,
+          certificateAvailable: false,
+        },
+      ],
+    },
+  });
+  mockApi.override("GET /training/:id/items", {
+    json: {
+      status: "success",
+      data: [
+        {
+          id: 12,
+          trainingId: 1,
+          title: "Avaliando a prescrição",
+          text: "<p>Conteúdo da aula.</p>",
+          video: null,
+          position: 1,
+          questions: null,
+          finished: false,
+        },
+      ],
+    },
+  });
+  await loginWithAuth(page, mockApi, {
+    permissions: READER_PERMISSIONS,
+    features: ["USER_ONBOARDING"],
+  });
+
+  await page.goto("/prescricao/199");
+  await page.getByRole("tab").getByRole("button", { name: "book" }).click();
+  await page
+    .getByRole("button", { name: "Como avaliar os medicamentos" })
+    .click();
+
+  await page
+    .getByRole("button", { name: "Módulo básico › Avaliando a prescrição" })
+    .click();
+
+  await expect(page).toHaveURL(/\/treinamento\/1\/aula\/12$/);
+  await expect(
+    page.getByRole("heading", { name: "Avaliando a prescrição" }),
+  ).toBeVisible();
+});
+
+test("without the training center the lessons are not offered", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override("POST /support/knowledge-base-articles", {
+    json: { status: "success", data: [sectionArticle] },
+  });
+  mockApi.override("GET /knowledge-base/:id", {
+    json: {
+      status: "success",
+      data: { ...fullArticle, trainingLessons: [trainingLessons[1]] },
+    },
+  });
+  await loginWithPermissions(page, mockApi, READER_PERMISSIONS);
+
+  await page.goto("/prescricao/199");
+  await page.getByRole("tab").getByRole("button", { name: "book" }).click();
+  await page
+    .getByRole("button", { name: "Como avaliar os medicamentos" })
+    .click();
+
+  const modal = page.locator(".ant-modal").filter({ hasText: "Confira a" });
+  await expect(modal.getByText("dose")).toBeVisible();
+  await expect(modal.getByText("Aulas relacionadas")).toHaveCount(0);
+});
+
+test("maintainers index the articles for the n0 agent", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override("POST /knowledge-base/list", {
+    json: {
+      status: "success",
+      data: [
+        { ...fullArticle, content: undefined, trainingItems: [11, 12] },
+        {
+          ...fullArticle,
+          id: 41,
+          title: "Rascunho",
+          active: false,
+          content: undefined,
+          trainingItems: [],
+        },
+      ],
+    },
+  });
+  mockApi.override("POST /knowledge-base/:id/reindex", (route) => {
+    const id = Number(route.request().url().split("/").slice(-2)[0]);
+    return route.fulfill({
+      json: {
+        status: "success",
+        data: { id, vectorIndex: id === 41 ? "removed" : "indexed" },
+      },
+    });
+  });
+  await loginWithPermissions(page, mockApi, MAINTAINER_PERMISSIONS);
+
+  await page.goto("/admin/base-conhecimento");
+  await expect(page.locator(".ant-table-tbody tr").first()).toContainText(
+    "2 aulas de treinamento",
+  );
+
+  await page.getByRole("button", { name: "Indexar todos" }).click();
+  await expect(
+    page.getByText("1 indexados, 1 removidos (não publicados)."),
+  ).toBeVisible();
+
+  const calls = mockApi.requests
+    .filter((r) => r.path.endsWith("/reindex"))
+    .map((r) => r.path);
+  expect(calls).toEqual([
+    "/knowledge-base/31/reindex",
+    "/knowledge-base/41/reindex",
+  ]);
 });

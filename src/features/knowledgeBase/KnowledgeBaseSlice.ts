@@ -4,16 +4,30 @@ import { AxiosError } from "axios";
 import api from "services/api";
 import { KnowledgeBaseSectionEnum } from "models/KnowledgeBaseSectionEnum";
 
+export interface ITrainingLesson {
+  id: number;
+  title: string;
+  trainingId: number;
+  trainingTitle: string;
+}
+
+// outcome of writing an article to the n0 agent vector index
+export type VectorIndexStatus = "indexed" | "removed" | "disabled" | "failed";
+
 export interface IKnowledgeBaseArticle {
   id: number;
   title: string;
   description: string | null;
   path: string[];
   section: string[];
+  trainingItems: number[];
   link: string | null;
   active: boolean;
   hasContent: boolean;
   content?: string | null;
+  // resolved lessons (only on a single article)
+  trainingLessons?: ITrainingLesson[];
+  vectorIndex?: VectorIndexStatus;
   createdAt?: string | null;
   updatedAt?: string | null;
 }
@@ -132,7 +146,12 @@ const knowledgeBaseSlice = createSlice({
       })
       .addCase(upsertKnowledgeBaseArticle.fulfilled, (state, action) => {
         const record: IKnowledgeBaseArticle = action.payload.data;
-        const { content: _content, ...summary } = record;
+        const {
+          content: _content,
+          trainingLessons: _lessons,
+          vectorIndex: _index,
+          ...summary
+        } = record;
 
         const index = state.list.findIndex((item) => item.id === record.id);
         if (index !== -1) {

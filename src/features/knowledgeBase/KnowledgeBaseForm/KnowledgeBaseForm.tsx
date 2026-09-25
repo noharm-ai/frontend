@@ -16,6 +16,7 @@ import { Form } from "styles/Form.style";
 
 import {
   IKnowledgeBaseArticle,
+  ITrainingLesson,
   upsertKnowledgeBaseArticle,
 } from "../KnowledgeBaseSlice";
 
@@ -25,6 +26,7 @@ interface IFormValues {
   description: string;
   path: string[];
   section: string[];
+  trainingItems: number[];
   link: string;
   content: string;
   active: boolean;
@@ -49,12 +51,33 @@ const emptyValues = (defaults: KnowledgeBaseFormProps["defaults"]) => ({
   description: "",
   path: defaults?.path ?? [],
   section: defaults?.section ?? [],
+  trainingItems: [],
   link: "",
   content: "",
   active: true,
 });
 
-function FormFields() {
+// lessons grouped by module, for the select
+const lessonOptions = (lessons: ITrainingLesson[]) => {
+  const groups = new Map<number, { label: string; options: any[] }>();
+
+  lessons.forEach((lesson) => {
+    if (!groups.has(lesson.trainingId)) {
+      groups.set(lesson.trainingId, {
+        label: lesson.trainingTitle,
+        options: [],
+      });
+    }
+    groups.get(lesson.trainingId)!.options.push({
+      value: lesson.id,
+      label: lesson.title,
+    });
+  });
+
+  return [...groups.values()];
+};
+
+function FormFields({ lessons }: { lessons: ITrainingLesson[] }) {
   const { values, errors, touched, setFieldValue } =
     useFormikContext<IFormValues>();
 
@@ -142,6 +165,24 @@ function FormFields() {
         </div>
       </div>
 
+      <div className="form-row">
+        <div className="form-label">
+          <label>Aulas de treinamento:</label>
+        </div>
+        <div className="form-input">
+          <Select
+            mode="multiple"
+            style={{ width: "100%" }}
+            placeholder="Aulas da Central de Treinamento que complementam o artigo"
+            value={values.trainingItems}
+            options={lessonOptions(lessons)}
+            optionFilterProp="label"
+            onChange={(value) => setFieldValue("trainingItems", value)}
+            allowClear
+          />
+        </div>
+      </div>
+
       <div className={`form-row ${errors.content ? "error" : ""}`}>
         <div className="form-label">
           <label>Conteúdo:</label>
@@ -201,6 +242,7 @@ export function KnowledgeBaseForm({
   const dispatch = useAppDispatch();
   const [initialValues, setInitialValues] = useState<IFormValues | null>(null);
   const [saving, setSaving] = useState(false);
+  const [lessons, setLessons] = useState<ITrainingLesson[]>([]);
 
   useEffect(() => {
     if (!open) {
@@ -208,17 +250,23 @@ export function KnowledgeBaseForm({
       return undefined;
     }
 
-    if (!articleId) {
-      setInitialValues(emptyValues(defaults));
-      return undefined;
-    }
-
     let active = true;
-    api.knowledgeBase
-      .get(articleId)
-      .then((response: any) => {
+    Promise.all([
+      api.knowledgeBase.listTrainingLessons(),
+      articleId ? api.knowledgeBase.get(articleId) : Promise.resolve(null),
+    ])
+      .then(([lessonsResponse, articleResponse]: any[]) => {
         if (!active) return;
-        const article: IKnowledgeBaseArticle = response.data.data;
+        const available: ITrainingLesson[] = lessonsResponse.data.data;
+        setLessons(available);
+
+        if (!articleResponse) {
+          setInitialValues(emptyValues(defaults));
+          return;
+        }
+
+        const article: IKnowledgeBaseArticle = articleResponse.data.data;
+        const availableIds = new Set(available.map((lesson) => lesson.id));
 
         setInitialValues({
           id: article.id,
@@ -226,6 +274,10 @@ export function KnowledgeBaseForm({
           description: article.description ?? "",
           path: article.path,
           section: article.section,
+          // a lesson deactivated since it was related can no longer be kept
+          trainingItems: article.trainingItems.filter((id) =>
+            availableIds.has(id),
+          ),
           link: article.link ?? "",
           content: article.content ?? "",
           active: article.active,
@@ -262,8 +314,10 @@ export function KnowledgeBaseForm({
   const onSave = (values: IFormValues) => {
     setSaving(true);
 
+    const { trainingItems, ...rest } = values;
     const params = {
-      ...values,
+      ...rest,
+      training_items: trainingItems,
       content: hasText(values.content) ? values.content : null,
       link: values.link?.trim() || null,
       description: values.description?.trim() || null,
@@ -277,8 +331,15 @@ export function KnowledgeBaseForm({
         return;
       }
 
+      const saved: IKnowledgeBaseArticle = response.payload.data;
       notification.success({ message: t("success.generic") });
-      onSaved?.(response.payload.data);
+      if (saved.vectorIndex === "failed") {
+        notification.warning({
+          message:
+            "O artigo foi salvo, mas não foi indexado para o assistente N0. Use a ação Indexar na base de conhecimento.",
+        });
+      }
+      onSaved?.(saved);
       onClose();
     });
   };
@@ -308,7 +369,7 @@ export function KnowledgeBaseForm({
         >
           {({ handleSubmit }) => (
             <Form id="knowledge-base-form" onSubmit={handleSubmit}>
-              <FormFields />
+              <FormFields lessons={lessons} />
             </Form>
           )}
         </Formik>

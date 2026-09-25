@@ -872,6 +872,16 @@ api.knowledgeBase.upsert = (params) =>
     ...setHeaders(),
   });
 
+api.knowledgeBase.reindex = (id) =>
+  instance.post(`/knowledge-base/${id}/reindex`, null, {
+    ...setHeaders(),
+  });
+
+api.knowledgeBase.listTrainingLessons = () =>
+  instance.get(`/knowledge-base/training-lessons`, {
+    ...setHeaders(),
+  });
+
 /**
  * training namespace
  */

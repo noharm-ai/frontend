@@ -24,3 +24,26 @@ export const ArticleBody = styled.div`
   max-height: 68vh;
   overflow-y: auto;
 `;
+
+export const ArticleLessons = styled.div`
+  margin-top: 1rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f0f0f0;
+
+  h4 {
+    margin: 0 0 0.5rem;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .ant-btn-link {
+    padding: 0;
+    height: auto;
+    white-space: normal;
+    text-align: left;
+  }
+`;
