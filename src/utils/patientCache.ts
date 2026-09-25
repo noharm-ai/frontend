@@ -34,16 +34,41 @@ function load(schema: string): Map<string, PatientData> {
   try {
     const parsed = raw ? JSON.parse(raw) : null;
     if (Array.isArray(parsed)) {
-      return trim(new Map(parsed as [string, PatientData][]));
+      return trim(
+        new Map(
+          parsed.filter(
+            (entry): entry is [string, PatientData] =>
+              Array.isArray(entry) && isValidEntry(entry[0], entry[1]),
+          ),
+        ),
+      );
     }
     if (parsed && typeof parsed === "object") {
       // legacy format: plain object without usage order
-      return trim(new Map(Object.entries(parsed as Cache)));
+      return trim(
+        new Map(
+          Object.entries(parsed as Cache).filter(([key, data]) =>
+            isValidEntry(key, data),
+          ),
+        ),
+      );
     }
   } catch {
     // corrupted cache — start over
   }
   return new Map();
+}
+
+// Discards malformed entries, e.g. leftovers written by an older app version
+// reading the current format, so they are fetched again.
+function isValidEntry(key: unknown, data: unknown): data is PatientData {
+  return (
+    typeof key === "string" &&
+    data !== null &&
+    typeof data === "object" &&
+    !Array.isArray(data) &&
+    String((data as PatientData).idPatient) === key
+  );
 }
 
 function trim(cache: Map<string, PatientData>): Map<string, PatientData> {
