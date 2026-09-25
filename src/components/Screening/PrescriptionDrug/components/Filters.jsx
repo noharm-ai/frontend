@@ -188,6 +188,20 @@ export default function Filters({
     };
   };
 
+  // two items are compared with each other; a single one with one of the
+  // patient's allergies
+  const explainInteractionDisabledReason = () => {
+    if (selectedRows.length === 0) {
+      return "Selecione dois itens para comparar entre si, ou um item para comparar com uma alergia do paciente";
+    }
+
+    if (selectedRows.length > 2) {
+      return `A explicação compara apenas um par de itens: selecione no máximo dois (${selectedRows.length} selecionados)`;
+    }
+
+    return null;
+  };
+
   const actionOptions = () => {
     const items = [
       {
@@ -201,14 +215,20 @@ export default function Filters({
         ? [
             {
               key: "explainInteraction",
-              label:
-                selectedRows.length === 1
-                  ? "Detalhar interação com alergia"
-                  : "Detalhar interação",
+              label: (
+                <Tooltip
+                  title={explainInteractionDisabledReason()}
+                  placement="left"
+                >
+                  <span>
+                    {selectedRows.length === 1
+                      ? "Detalhar interação com alergia"
+                      : "Detalhar interação"}
+                  </span>
+                </Tooltip>
+              ),
               icon: <NodeIndexOutlined style={{ fontSize: "16px" }} />,
-              // two items are compared with each other; a single one with
-              // one of the patient's allergies
-              disabled: selectedRows.length < 1 || selectedRows.length > 2,
+              disabled: explainInteractionDisabledReason() != null,
             },
           ]
         : []),

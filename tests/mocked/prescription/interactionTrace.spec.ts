@@ -3,6 +3,7 @@ import type { Page, Route } from "@playwright/test";
 import { test, expect } from "../support/mockApi";
 import type { MockApi } from "../support/mockApi";
 import { loginWithPermissions } from "../support/featureLogin";
+import { loadFixture } from "../support/defaultHandlers";
 import { openSelect, pickOption } from "../support/antd";
 
 /**
@@ -312,4 +313,44 @@ test("a single selected drug is explained against an allergy", async ({
   expect(last.get("idPrescriptionDrugFrom")).toBe("9001");
   expect(last.get("sctidAllergy")).toBe("2001");
   expect(traceParams.some((p) => p.has("idPrescriptionDrugTo"))).toBe(false);
+});
+
+test("the disabled action explains that only a pair is compared", async ({
+  page,
+  mockApi,
+}) => {
+  // the fixture prescribes two drugs: a third one makes the selection too big
+  const fixture = loadFixture<{
+    data: { prescription: Record<string, unknown>[] };
+  }>("prescriptions/single-199.json");
+  fixture.data.prescription.push({
+    ...fixture.data.prescription[0],
+    idPrescriptionDrug: "9003",
+    drug: "Paracetamol 750mg",
+  });
+  mockApi.override("GET /prescriptions/:id", { json: fixture });
+
+  await loginWithPermissions(page, mockApi, [
+    ...BASE_PERMISSIONS,
+    "MAINTAINER",
+  ]);
+  await openPrescription(page);
+  await selectDrugs(page, [
+    "Dipirona 500mg",
+    "Omeprazol 20mg",
+    "Paracetamol 750mg",
+  ]);
+
+  await openSelectionActions(page);
+  const action = page.locator(".ant-dropdown-menu-item", {
+    hasText: "Detalhar interação",
+  });
+  await expect(action).toHaveClass(/ant-dropdown-menu-item-disabled/);
+
+  await action.getByText("Detalhar interação").hover();
+  await expect(
+    page.getByText("A explicação compara apenas um par de itens", {
+      exact: false,
+    }),
+  ).toBeVisible();
 });
