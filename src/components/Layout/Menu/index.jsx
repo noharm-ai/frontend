@@ -24,6 +24,7 @@ import {
   FormOutlined,
   LayoutOutlined,
   ReadOutlined,
+  BookOutlined,
 } from "@ant-design/icons";
 import { Menu as Navigator } from "antd";
 
@@ -291,6 +292,14 @@ export default function Menu({ segments }) {
           icon: <FilePptOutlined />,
           id: "gtm-lnk-protocols",
           permission: [Permission.READ_PROTOCOLS],
+        },
+        {
+          key: "/admin/base-conhecimento",
+          link: "/admin/base-conhecimento",
+          label: t("menu.knowledgeBase"),
+          icon: <BookOutlined />,
+          id: "gtm-lnk-knowledge-base-admin",
+          permission: [Permission.WRITE_KNOWLEDGE_BASE],
         },
       ],
     },

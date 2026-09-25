@@ -50,18 +50,19 @@ export function SupportDrawer() {
   // pending training with no ADMIN_SUPPORT: no ticket path at all
   const ticketBlocked = blocked && !requiresUrgent;
 
+  const kbPath =
+    pathOverride || KnowledgeBasePathEnum.getPath(location.pathname);
+
   useEffect(() => {
     if (supportDrawerOpen) {
-      const path =
-        pathOverride || KnowledgeBasePathEnum.getPath(location.pathname);
       // @ts-expect-error ts 2554 (legacy code)
-      dispatch(fetchKnowledgeBaseArticles({ active: true, path: [path] }));
+      dispatch(fetchKnowledgeBaseArticles({ active: true, path: [kbPath] }));
       setShowForm(false);
     } else {
       dispatch(resetKnowledgeBase());
       setShowForm(false);
     }
-  }, [supportDrawerOpen, dispatch, location.pathname, pathOverride]);
+  }, [supportDrawerOpen, dispatch, location.pathname, kbPath]);
 
   const handleOpenSupportAI = () => {
     trackSupportAction(TrackedSupportAction.OPEN_AI_AGENT);
@@ -109,7 +110,7 @@ export function SupportDrawer() {
       }
     >
       {!showForm ? (
-        <SupportKnowledgeBase />
+        <SupportKnowledgeBase path={kbPath} />
       ) : (
         <>
           <Button

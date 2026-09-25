@@ -83,4 +83,5 @@ export default class Permission {
   static WRITE_CUSTOM_FORMS = "WRITE_CUSTOM_FORMS";
 
   static WRITE_HELP_TEXT = "WRITE_HELP_TEXT";
+  static WRITE_KNOWLEDGE_BASE = "WRITE_KNOWLEDGE_BASE";
 }

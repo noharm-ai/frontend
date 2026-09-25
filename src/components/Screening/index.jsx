@@ -24,6 +24,8 @@ import ScreeningActions from "containers/Screening/ScreeningActions";
 import EvaluationWarning from "features/prescription/EvaluationWarning/EvaluationWarning";
 import FormIntervention from "containers/Forms/Intervention";
 import Permission from "models/Permission";
+import { KnowledgeBaseSectionEnum } from "models/KnowledgeBaseSectionEnum";
+import { KnowledgeBaseSectionHelp } from "features/knowledgeBase/KnowledgeBaseSectionHelp/KnowledgeBaseSectionHelp";
 import {
   trackPrescriptionAction,
   TrackedPrescriptionAction,
@@ -72,7 +74,7 @@ export default function Screening({
   useEffect(() => {
     const getNextSibling = (elm) => {
       const allRows = document.querySelectorAll(
-        ".ant-tabs-content:not(.ant-tabs-content-hidden) .ant-table-tbody tr[data-row-key]:not(.summary-row):not(.divider-row)"
+        ".ant-tabs-content:not(.ant-tabs-content-hidden) .ant-table-tbody tr[data-row-key]:not(.summary-row):not(.divider-row)",
       );
 
       let currentIndex = -1;
@@ -93,7 +95,7 @@ export default function Screening({
 
     const getPreviousSibling = (elm) => {
       const allRows = document.querySelectorAll(
-        ".ant-tabs-content:not(.ant-tabs-content-hidden) .ant-table-tbody tr[data-row-key]:not(.summary-row):not(.divider-row)"
+        ".ant-tabs-content:not(.ant-tabs-content-hidden) .ant-table-tbody tr[data-row-key]:not(.summary-row):not(.divider-row)",
       );
 
       let currentIndex = -1;
@@ -142,11 +144,11 @@ export default function Screening({
 
       if (e.ctrlKey || e.metaKey) {
         let activeRow = document.querySelectorAll(
-          ".ant-tabs-content:not(.ant-tabs-content-hidden) .ant-table-tbody tr.highlight"
+          ".ant-tabs-content:not(.ant-tabs-content-hidden) .ant-table-tbody tr.highlight",
         )[0];
         if (!activeRow) {
           activeRow = document.querySelectorAll(
-            ".ant-tabs-content:not(.ant-tabs-content-hidden) .ant-table-tbody tr"
+            ".ant-tabs-content:not(.ant-tabs-content-hidden) .ant-table-tbody tr",
           )[0];
 
           activeRow?.classList.add("highlight");
@@ -155,7 +157,7 @@ export default function Screening({
         }
 
         const expandBtn = activeRow?.querySelector(
-          ".ant-table-row-expand-icon"
+          ".ant-table-row-expand-icon",
         );
 
         trackPrescriptionAction(TrackedPrescriptionAction.KEYBOARD_NAVIGATION, {
@@ -220,7 +222,7 @@ export default function Screening({
             e.preventDefault();
             activeRow.classList.remove("highlight");
             const first = document.querySelectorAll(
-              ".ant-tabs-content:not(.ant-tabs-content-hidden) .ant-table-tbody tr"
+              ".ant-tabs-content:not(.ant-tabs-content-hidden) .ant-table-tbody tr",
             )[0];
             first.classList.add("highlight");
             scrollIntoView(first);
@@ -234,14 +236,14 @@ export default function Screening({
             e.preventDefault();
             document
               .querySelectorAll(
-                ".ant-collapse-item:not(.ant-collapse-item-active)"
+                ".ant-collapse-item:not(.ant-collapse-item-active)",
               )
               .forEach((p) => p.children[0].click());
 
             setTimeout(() => {
               document
                 .querySelectorAll(
-                  ".expand-all.ant-table-row-expand-icon-collapsed"
+                  ".expand-all.ant-table-row-expand-icon-collapsed",
                 )
                 .forEach((p) => p.click());
             }, 100);
@@ -320,10 +322,15 @@ export default function Screening({
     {
       key: "drugs",
       label: (
-        <TabTitle
-          title={t("screeningBody.tabDrugs")}
-          count={listCount.prescriptions}
-        />
+        <>
+          <TabTitle
+            title={t("screeningBody.tabDrugs")}
+            count={listCount.prescriptions}
+          />
+          <KnowledgeBaseSectionHelp
+            section={KnowledgeBaseSectionEnum.PRESCRIPTION_DRUGS}
+          />
+        </>
       ),
       children: (
         <Col span={24} md={24} style={{ paddingTop: "20px" }}>
@@ -341,10 +348,15 @@ export default function Screening({
     tabs.push({
       key: "solutions",
       label: (
-        <TabTitle
-          title={t("screeningBody.tabSolutions")}
-          count={listCount.solutions}
-        />
+        <>
+          <TabTitle
+            title={t("screeningBody.tabSolutions")}
+            count={listCount.solutions}
+          />
+          <KnowledgeBaseSectionHelp
+            section={KnowledgeBaseSectionEnum.PRESCRIPTION_SOLUTIONS}
+          />
+        </>
       ),
       children: (
         <Col span={24} md={24} style={{ paddingTop: "20px" }}>
@@ -362,10 +374,15 @@ export default function Screening({
     tabs.push({
       key: "procedures",
       label: (
-        <TabTitle
-          title={t("screeningBody.tabProcedures")}
-          count={listCount.procedures}
-        />
+        <>
+          <TabTitle
+            title={t("screeningBody.tabProcedures")}
+            count={listCount.procedures}
+          />
+          <KnowledgeBaseSectionHelp
+            section={KnowledgeBaseSectionEnum.PRESCRIPTION_PROCEDURES}
+          />
+        </>
       ),
       children: (
         <Col span={24} md={24} style={{ paddingTop: "20px" }}>
@@ -383,7 +400,12 @@ export default function Screening({
     tabs.push({
       key: "diet",
       label: (
-        <TabTitle title={t("screeningBody.tabDiet")} count={listCount.diet} />
+        <>
+          <TabTitle title={t("screeningBody.tabDiet")} count={listCount.diet} />
+          <KnowledgeBaseSectionHelp
+            section={KnowledgeBaseSectionEnum.PRESCRIPTION_DIET}
+          />
+        </>
       ),
       children: (
         <Col span={24} md={24} style={{ paddingTop: "20px" }}>
@@ -400,10 +422,15 @@ export default function Screening({
   tabs.push({
     key: "intervention",
     label: (
-      <TabTitle
-        title={t("screeningBody.tabInterventions")}
-        count={listCount.interventions}
-      />
+      <>
+        <TabTitle
+          title={t("screeningBody.tabInterventions")}
+          count={listCount.interventions}
+        />
+        <KnowledgeBaseSectionHelp
+          section={KnowledgeBaseSectionEnum.PRESCRIPTION_INTERVENTIONS}
+        />
+      </>
     ),
     children: (
       <div style={{ paddingTop: "20px" }}>

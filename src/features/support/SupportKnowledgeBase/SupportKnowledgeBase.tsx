@@ -1,17 +1,45 @@
 import { useState } from "react";
 import { Button, Input, Skeleton, Typography, Space } from "antd";
-import { BookOutlined, LinkOutlined } from "@ant-design/icons";
+import { BookOutlined, LinkOutlined, PlusOutlined } from "@ant-design/icons";
 
-import { useAppSelector } from "src/store";
+import { useAppDispatch, useAppSelector } from "src/store";
 import { trackSupportAction, TrackedSupportAction } from "utils/tracker";
+import { fetchKnowledgeBaseArticles } from "features/support/SupportSlice";
+import { KnowledgeBaseArticleModal } from "features/knowledgeBase/KnowledgeBaseArticleModal/KnowledgeBaseArticleModal";
+import { KnowledgeBaseForm } from "features/knowledgeBase/KnowledgeBaseForm/KnowledgeBaseForm";
+import { canWriteKnowledgeBase } from "features/knowledgeBase/knowledgeBasePermissions";
 
 const { Text, Paragraph } = Typography;
 
-export function SupportKnowledgeBase() {
+interface SupportKnowledgeBaseProps {
+  // the KnowledgeBasePathEnum value of the page the panel was opened on
+  path: string;
+}
+
+export function SupportKnowledgeBase({ path }: SupportKnowledgeBaseProps) {
+  const dispatch = useAppDispatch();
   const { status, list } = useAppSelector(
     (state) => state.support.knowledgeBase,
   );
   const [query, setQuery] = useState("");
+  const [articleId, setArticleId] = useState<number | null>(null);
+  const [creating, setCreating] = useState(false);
+  const canWrite = canWriteKnowledgeBase();
+
+  const openArticle = (article: any) => {
+    trackSupportAction(TrackedSupportAction.OPEN_ARTICLE);
+
+    // written in NoHarm: read it here; otherwise it lives behind the link
+    if (article.hasContent) {
+      setArticleId(article.id);
+    } else {
+      window.open(article.link, "_blank", "noopener");
+    }
+  };
+
+  const reload = () =>
+    // @ts-expect-error ts 2554 (legacy code)
+    dispatch(fetchKnowledgeBaseArticles({ active: true, path: [path] }));
 
   const isLoading = status === "loading" || status === "idle";
 
@@ -99,17 +127,18 @@ export function SupportKnowledgeBase() {
                         {article.description}
                       </Paragraph>
                     )}
-                    {article.link && (
+                    {(article.hasContent || article.link) && (
                       <div style={{ marginLeft: 24 }}>
                         <Button
                           type="link"
-                          icon={<LinkOutlined />}
-                          onClick={() => {
-                            trackSupportAction(
-                              TrackedSupportAction.OPEN_ARTICLE,
-                            );
-                            window.open(article.link, "_blank");
-                          }}
+                          icon={
+                            article.hasContent ? (
+                              <BookOutlined />
+                            ) : (
+                              <LinkOutlined />
+                            )
+                          }
+                          onClick={() => openArticle(article)}
                           style={{ padding: 0, height: "auto", fontSize: 13 }}
                         >
                           Ver artigo
@@ -127,6 +156,28 @@ export function SupportKnowledgeBase() {
           </Text>
         )}
       </div>
+      {canWrite && (
+        <Button
+          type="dashed"
+          icon={<PlusOutlined />}
+          onClick={() => setCreating(true)}
+        >
+          Adicionar artigo nesta página
+        </Button>
+      )}
+
+      <KnowledgeBaseArticleModal
+        articleId={articleId}
+        onClose={() => setArticleId(null)}
+      />
+      {canWrite && (
+        <KnowledgeBaseForm
+          open={creating}
+          defaults={{ path: [path] }}
+          onClose={() => setCreating(false)}
+          onSaved={reload}
+        />
+      )}
     </div>
   );
 }

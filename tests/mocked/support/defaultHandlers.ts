@@ -65,6 +65,7 @@ export function defaultHandlers(): Record<string, Handler> {
     "GET /segments": json("segments/list.json"),
     "GET /memory/:type": emptyList,
     "GET /support/list-pending": emptyList,
+    "POST /support/knowledge-base-articles": emptyList,
     "GET /user/preferences": emptyList,
 
     // prioritization / screening

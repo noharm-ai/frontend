@@ -112,10 +112,21 @@ export class KnowledgeBasePathEnum {
     },
   ];
 
+  // pages without a pattern of their own fall back to GERAL
+  static GENERAL = "GERAL";
+
+  static getOptions = () => [
+    ...KnowledgeBasePathEnum.getList().map(({ value, label }) => ({
+      value,
+      label,
+    })),
+    { value: KnowledgeBasePathEnum.GENERAL, label: "Geral (demais páginas)" },
+  ];
+
   static getPath = (pathname: string): string => {
     const match = KnowledgeBasePathEnum.getList().find((item) =>
       item.pathPattern?.test(pathname),
     );
-    return match?.value ?? "GERAL";
+    return match?.value ?? KnowledgeBasePathEnum.GENERAL;
   };
 }

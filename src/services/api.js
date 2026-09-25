@@ -853,6 +853,26 @@ api.support.fetchKnowledgeBaseArticles = (params) =>
   });
 
 /**
+ * Knowledge base: articles written in NoHarm.
+ */
+api.knowledgeBase = {};
+
+api.knowledgeBase.list = (params = {}) =>
+  instance.post(`/knowledge-base/list`, params, {
+    ...setHeaders(),
+  });
+
+api.knowledgeBase.get = (id) =>
+  instance.get(`/knowledge-base/${id}`, {
+    ...setHeaders(),
+  });
+
+api.knowledgeBase.upsert = (params) =>
+  instance.post(`/knowledge-base/upsert`, params, {
+    ...setHeaders(),
+  });
+
+/**
  * training namespace
  */
 api.training = {};
