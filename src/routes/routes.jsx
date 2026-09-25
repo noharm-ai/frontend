@@ -48,6 +48,7 @@ import AdminProtocol from "pages/Admin/Protocol";
 import AdminProtocolEditor from "pages/Admin/Protocol/ProtocolEditor";
 import AdminGlobalMemoryNZero from "pages/Admin/GlobalMemory/GlobalMemoryNZero";
 import { AdminKnowledgeBase } from "pages/Admin/KnowledgeBase/KnowledgeBase";
+import { KnowledgeBasePage } from "pages/KnowledgeBase/KnowledgeBase";
 
 import PatientDayReport from "pages/Reports/PatientDayReport";
 import PrescriptionReport from "pages/Reports/PrescriptionReport";
@@ -398,6 +399,16 @@ const routes = [
     exact: true,
     path: "/admin/base-conhecimento",
     element: <WithAuth component={AdminKnowledgeBase} />,
+  },
+  {
+    exact: true,
+    path: "/base-conhecimento",
+    element: <WithAuth component={KnowledgeBasePage} />,
+  },
+  {
+    exact: true,
+    path: "/base-conhecimento/:id",
+    element: <WithAuth component={KnowledgeBasePage} />,
   },
   {
     exact: true,

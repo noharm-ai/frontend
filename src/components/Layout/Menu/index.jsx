@@ -161,8 +161,14 @@ export default function Menu({ segments }) {
       permission: [Permission.READ_REPORTS],
     },
     {
-      key: `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/39`,
-      link: `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/39`,
+      // users without the basic features (support-only roles) cannot read
+      // the in-app knowledge base: they keep the ODOO one
+      ...(PermissionService().has(Permission.READ_BASIC_FEATURES)
+        ? { key: "/base-conhecimento", link: "/base-conhecimento" }
+        : {
+            key: `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/39`,
+            link: `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/39`,
+          }),
       label: t("menu.knowledgeBase"),
       icon: <BulbOutlined />,
       id: "gtm-lnk-knowledgeBase",

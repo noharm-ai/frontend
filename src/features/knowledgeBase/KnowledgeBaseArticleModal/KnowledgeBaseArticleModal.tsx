@@ -1,32 +1,24 @@
 import { useEffect, useState, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
-import DOMPurify from "dompurify";
-import { Space, Spin, Tag, Typography } from "antd";
+import { Space, Spin } from "antd";
 import {
   BookOutlined,
   EditOutlined,
+  ExpandOutlined,
   LinkOutlined,
-  PlayCircleOutlined,
 } from "@ant-design/icons";
 
 import api from "services/api";
 import Button from "components/Button";
 import DefaultModal from "components/Modal";
 import notification from "components/notification";
-import Feature from "models/Feature";
-import { FeatureService } from "services/FeatureService";
 
 import { IKnowledgeBaseArticle } from "../KnowledgeBaseSlice";
 import { KnowledgeBaseForm } from "../KnowledgeBaseForm/KnowledgeBaseForm";
 import { canWriteKnowledgeBase } from "../knowledgeBasePermissions";
-import {
-  ArticleBody,
-  ArticleContent,
-  ArticleLessons,
-} from "../KnowledgeBase.style";
-
-const { Paragraph } = Typography;
+import { KnowledgeBaseArticleView } from "../KnowledgeBaseArticleView/KnowledgeBaseArticleView";
+import { ArticleBody } from "../KnowledgeBase.style";
 
 interface KnowledgeBaseArticleModalProps {
   // the article to show; the modal is closed when null
@@ -65,58 +57,24 @@ export function KnowledgeBaseArticleModal({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [articleId]);
 
-  // the training center only exists where the onboarding feature is on
-  const lessons = article?.trainingLessons ?? [];
-  const showLessons =
-    lessons.length > 0 && FeatureService.has(Feature.USER_ONBOARDING);
-
-  const openLesson = (trainingId: number, lessonId: number) => {
-    onClose();
-    navigate(`/treinamento/${trainingId}/aula/${lessonId}`);
-  };
-
   let body: ReactNode = <Spin />;
   if (article) {
-    body = (
-      <>
-        {!article.active && (
-          <Tag color="orange" style={{ marginBottom: 12 }}>
-            Não publicado
-          </Tag>
-        )}
-        {article.description && (
-          <Paragraph type="secondary">{article.description}</Paragraph>
-        )}
-        {article.content && (
-          <ArticleContent
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(article.content),
-            }}
-          />
-        )}
-        {showLessons && (
-          <ArticleLessons>
-            <h4>Aulas relacionadas</h4>
-            <ul>
-              {lessons.map((lesson) => (
-                <li key={lesson.id}>
-                  <Button
-                    type="link"
-                    icon={<PlayCircleOutlined />}
-                    onClick={() => openLesson(lesson.trainingId, lesson.id)}
-                  >
-                    {lesson.trainingTitle} › {lesson.title}
-                  </Button>
-                </li>
-              ))}
-            </ul>
-          </ArticleLessons>
-        )}
-      </>
-    );
+    body = <KnowledgeBaseArticleView article={article} onNavigate={onClose} />;
   }
 
+  const openPage = () => {
+    onClose();
+    navigate(`/base-conhecimento/${articleId}`);
+  };
+
   const footer = [
+    ...(article?.hasContent
+      ? [
+          <Button key="page" icon={<ExpandOutlined />} onClick={openPage}>
+            Abrir na base de conhecimento
+          </Button>,
+        ]
+      : []),
     ...(article?.link
       ? [
           <Button

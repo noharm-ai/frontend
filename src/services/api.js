@@ -862,6 +862,11 @@ api.knowledgeBase.list = (params = {}) =>
     ...setHeaders(),
   });
 
+api.knowledgeBase.browse = (params = {}) =>
+  instance.post(`/knowledge-base/articles`, params, {
+    ...setHeaders(),
+  });
+
 api.knowledgeBase.get = (id) =>
   instance.get(`/knowledge-base/${id}`, {
     ...setHeaders(),
