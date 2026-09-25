@@ -31,32 +31,27 @@ function getStorageKey(schema: string): string {
 // always iterated in ascending order.
 function load(schema: string): Map<string, PatientData> {
   const raw = getStorageItem(getStorageKey(schema));
+  let entries: [string, PatientData][] = [];
   try {
     const parsed = raw ? JSON.parse(raw) : null;
     if (Array.isArray(parsed)) {
-      return trim(
-        new Map(
-          parsed.filter(
-            (entry): entry is [string, PatientData] =>
-              Array.isArray(entry) && isValidEntry(entry[0], entry[1]),
-          ),
-        ),
+      entries = parsed.filter(
+        (entry): entry is [string, PatientData] =>
+          Array.isArray(entry) && isValidEntry(entry[0], entry[1]),
       );
-    }
-    if (parsed && typeof parsed === "object") {
+    } else if (parsed && typeof parsed === "object") {
       // legacy format: plain object without usage order
-      return trim(
-        new Map(
-          Object.entries(parsed as Cache).filter(([key, data]) =>
-            isValidEntry(key, data),
-          ),
-        ),
+      entries = Object.entries(parsed as Cache).filter(([key, data]) =>
+        isValidEntry(key, data),
       );
     }
   } catch {
     // corrupted cache — start over
   }
-  return new Map();
+
+  const cache = new Map(entries);
+  trim(cache);
+  return cache;
 }
 
 // Discards malformed entries, e.g. leftovers written by an older app version
@@ -71,15 +66,15 @@ function isValidEntry(key: unknown, data: unknown): data is PatientData {
   );
 }
 
-function trim(cache: Map<string, PatientData>): Map<string, PatientData> {
-  if (cache.size <= MAX_ENTRIES) return cache;
+// Evicts the least recently used entries in place.
+function trim(cache: Map<string, PatientData>): void {
+  if (cache.size <= MAX_ENTRIES) return;
 
   const excess = cache.size - MAX_ENTRIES;
   const keys = cache.keys();
   for (let i = 0; i < excess; i++) {
     cache.delete(keys.next().value as string);
   }
-  return cache;
 }
 
 function persist(schema: string, cache: Map<string, PatientData>): void {
