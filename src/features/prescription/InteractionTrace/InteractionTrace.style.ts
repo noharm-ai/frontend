@@ -45,12 +45,6 @@ export const PickerRow = styled.div`
   }
 `;
 
-export const OptionMeta = styled.span`
-  margin-left: 0.4rem;
-  font-size: 11px;
-  color: #ad6800;
-`;
-
 export const Summary = styled.div<{ $alerted: boolean }>`
   padding: 0.6rem 0.8rem;
   border-radius: 6px;

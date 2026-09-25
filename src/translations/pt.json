@@ -240,8 +240,7 @@
     "responsiblePhysician": "Médico responsável",
     "pepLink": "Abrir PEP",
     "openDischargeSummary": "Abrir Sumário de Alta",
-    "navigatePatient": "Navegar Paciente",
-    "explainInteractions": "Detalhar interações"
+    "navigatePatient": "Navegar Paciente"
   },
   "screeningBody": {
     "tabDrugs": "Medicamentos",

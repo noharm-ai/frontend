@@ -240,8 +240,7 @@
     "responsiblePhysician": "Responsible physician",
     "pepLink": "Open PEP",
     "openDischargeSummary": "Open Discharge Summary",
-    "navigatePatient": "Navigate Patient",
-    "explainInteractions": "Explain interactions"
+    "navigatePatient": "Navigate Patient"
   },
   "screeningBody": {
     "tabDrugs": "Drugs",

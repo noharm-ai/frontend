@@ -14,7 +14,6 @@ import {
   KindBlock,
   Muted,
   Note,
-  OptionMeta,
   PickerRow,
   RuleList,
   Section,
@@ -26,62 +25,65 @@ import {
 } from "./InteractionTrace.style";
 import type {
   IInteractionTraceDirection,
-  IInteractionTraceItem,
   IInteractionTracePair,
   IInteractionTraceResponse,
   IInteractionTraceRule,
   IInteractionTraceSide,
 } from "./types";
 
-const ALLERGY_PREFIX = "allergy:";
-
 interface IInteractionTraceProps {
   idPrescription: number | string;
+  idPrescriptionDrugFrom: string;
+  /** without it, the item is compared with an allergy picked in the modal */
+  idPrescriptionDrugTo?: string | null;
 }
 
-export function InteractionTrace({ idPrescription }: IInteractionTraceProps) {
+export function InteractionTrace({
+  idPrescription,
+  idPrescriptionDrugFrom,
+  idPrescriptionDrugTo,
+}: IInteractionTraceProps) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState(false);
   const [data, setData] = useState<IInteractionTraceResponse | null>(null);
-  const [fromId, setFromId] = useState<string | null>(null);
-  const [toValue, setToValue] = useState<string | null>(null);
+  const [sctidAllergy, setSctidAllergy] = useState<string | null>(null);
+  // key of the last answered request: loading while it differs from the
+  // current one
+  const [answeredKey, setAnsweredKey] = useState<string | null>(null);
 
-  const pair = fromId && toValue ? { fromId, toValue } : null;
-  const pairKey = pair ? `${pair.fromId}|${pair.toValue}` : null;
-  const hasData = data != null;
+  const comparesAllergy = !idPrescriptionDrugTo;
+  const requestKey = [
+    idPrescription,
+    idPrescriptionDrugFrom,
+    idPrescriptionDrugTo,
+    sctidAllergy,
+  ].join("|");
+  const loading = answeredKey !== requestKey;
 
   useEffect(() => {
-    // the item list only needs loading once; afterwards an incomplete pair
-    // just clears the previous trace
-    if (!pairKey && hasData) {
-      setData((prev) => prev && { ...prev, trace: null });
-      return;
-    }
-
     const params: {
       idPrescription: number | string;
       idPrescriptionDrugFrom?: string;
       idPrescriptionDrugTo?: string;
       sctidAllergy?: string;
     } = { idPrescription };
-    if (pairKey) {
-      const [from, to] = pairKey.split("|");
-      params.idPrescriptionDrugFrom = from;
-      if (to.startsWith(ALLERGY_PREFIX)) {
-        params.sctidAllergy = to.slice(ALLERGY_PREFIX.length);
-      } else {
-        params.idPrescriptionDrugTo = to;
-      }
+
+    // a single item waits for the allergy: until then only the allergy list
+    // is requested
+    if (idPrescriptionDrugTo) {
+      params.idPrescriptionDrugFrom = idPrescriptionDrugFrom;
+      params.idPrescriptionDrugTo = idPrescriptionDrugTo;
+    } else if (sctidAllergy) {
+      params.idPrescriptionDrugFrom = idPrescriptionDrugFrom;
+      params.sctidAllergy = sctidAllergy;
     }
 
     let stale = false;
-    setLoading(true);
     dispatch(traceInteraction(params)).then((response: any) => {
       if (stale) {
         return;
       }
-      setLoading(false);
+      setAnsweredKey(requestKey);
 
       if (response.error) {
         notification.error({ message: getErrorMessage(response, t) });
@@ -93,47 +95,19 @@ export function InteractionTrace({ idPrescription }: IInteractionTraceProps) {
     return () => {
       stale = true;
     };
-    // hasData is left out on purpose: loading the list must not refetch it
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, t, idPrescription, pairKey]);
+  }, [
+    dispatch,
+    t,
+    requestKey,
+    idPrescription,
+    idPrescriptionDrugFrom,
+    idPrescriptionDrugTo,
+    sctidAllergy,
+  ]);
 
-  const itemLabel = (item: IInteractionTraceItem) => (
-    <>
-      {item.drug ?? "--"}
-      {data?.agg && (
-        <OptionMeta style={{ color: "#8c94a6" }}>
-          #{item.idPrescription}
-        </OptionMeta>
-      )}
-      {!item.eligible && <OptionMeta>não analisado</OptionMeta>}
-    </>
+  const fromItem = data?.items.find(
+    (i) => i.idPrescriptionDrug === `${idPrescriptionDrugFrom}`,
   );
-
-  const itemOptions = (exclude: string | null) =>
-    (data?.items ?? [])
-      .filter((i) => i.idPrescriptionDrug !== exclude)
-      .map((i) => ({
-        value: i.idPrescriptionDrug,
-        label: itemLabel(i),
-        search: i.drug ?? "",
-      }));
-
-  const toOptions = [
-    { label: "Itens da prescrição", options: itemOptions(fromId) },
-    {
-      label: "Alergias do paciente",
-      options: (data?.allergies ?? []).map((a) => ({
-        value: `${ALLERGY_PREFIX}${a.sctid}`,
-        label: <>{a.name}</>,
-        search: a.name,
-      })),
-    },
-  ];
-
-  const filterOption = (input: string, option?: unknown) =>
-    String((option as { search?: string } | undefined)?.search ?? "")
-      .toLowerCase()
-      .includes(input.toLowerCase());
 
   return (
     <Spin spinning={loading}>
@@ -152,56 +126,50 @@ export function InteractionTrace({ idPrescription }: IInteractionTraceProps) {
           </TraceMeta>
         )}
 
-        <PickerRow>
-          <div>
-            <label>Item</label>
-            <Select
-              showSearch
-              allowClear
-              style={{ width: "100%" }}
-              placeholder="Selecione um item da prescrição"
-              value={fromId}
-              onChange={(value) => {
-                setFromId(value ?? null);
-                if (value && value === toValue) {
-                  setToValue(null);
-                }
-              }}
-              options={itemOptions(null)}
-              filterOption={filterOption}
-            />
-          </div>
-          <span className="arrow">×</span>
-          <div>
-            <label>Comparar com</label>
-            <Select
-              showSearch
-              allowClear
-              style={{ width: "100%" }}
-              placeholder="Selecione outro item ou uma alergia"
-              value={toValue}
-              onChange={(value) => setToValue(value ?? null)}
-              options={toOptions}
-              filterOption={filterOption}
-              disabled={!fromId}
-            />
-          </div>
-        </PickerRow>
+        {comparesAllergy && data && (
+          <>
+            <PickerRow>
+              <div>
+                <label>Item</label>
+                <strong>{fromItem?.drug ?? "--"}</strong>
+              </div>
+              <span className="arrow">×</span>
+              <div>
+                <label>Comparar com a alergia</label>
+                <Select
+                  showSearch={{ optionFilterProp: "label" }}
+                  style={{ width: "100%" }}
+                  placeholder="Selecione uma alergia do paciente"
+                  value={sctidAllergy}
+                  onChange={(value) => setSctidAllergy(value ?? null)}
+                  options={data.allergies.map((a) => ({
+                    value: a.sctid,
+                    label: a.name,
+                  }))}
+                  notFoundContent="Paciente sem alergias com substância definida"
+                />
+              </div>
+            </PickerRow>
 
-        {data && data.allergiesWithoutSubstance.length > 0 && (
-          <Note>
-            Alergias sem substância definida (nunca geram reatividade cruzada):{" "}
-            {data.allergiesWithoutSubstance.join(", ")}
-          </Note>
+            {data.allergiesWithoutSubstance.length > 0 && (
+              <Note>
+                Alergias sem substância definida (nunca geram reatividade
+                cruzada): {data.allergiesWithoutSubstance.join(", ")}
+              </Note>
+            )}
+          </>
         )}
 
         {data?.trace ? (
           <PairTrace trace={data.trace} />
         ) : (
-          <Muted>
-            Selecione dois itens para ver por que um alerta de interação foi ou
-            não gerado entre eles.
-          </Muted>
+          comparesAllergy &&
+          data && (
+            <Muted>
+              Selecione uma alergia para ver por que um alerta de reatividade
+              cruzada foi ou não gerado.
+            </Muted>
+          )
         )}
       </TraceRoot>
     </Spin>
