@@ -74,40 +74,57 @@ export const Section = styled.section`
   }
 `;
 
-export const SidesGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-
-  @media (max-width: 720px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-export const SideCard = styled.div`
+export const ComparisonTable = styled.div`
+  overflow-x: auto;
   border: 1px solid #e2e6ee;
   border-radius: 6px;
-  padding: 0.6rem 0.75rem;
 
-  .name {
+  table {
+    width: 100%;
+    min-width: 520px;
+    table-layout: fixed;
+    border-collapse: collapse;
+  }
+
+  .label-col {
+    width: 150px;
+  }
+
+  th,
+  td {
+    padding: 0.4rem 0.75rem;
+    text-align: left;
+    vertical-align: top;
+    word-break: break-word;
+  }
+
+  thead th {
     font-weight: 600;
-    margin-bottom: 0.4rem;
+    background: #f4f6fa;
+    border-bottom: 1px solid #e2e6ee;
   }
 
-  dl {
-    display: grid;
-    grid-template-columns: max-content 1fr;
-    gap: 0.15rem 0.6rem;
-    margin: 0;
-  }
-
-  dt {
+  tbody th {
+    font-weight: 400;
     color: #8c94a6;
   }
 
-  dd {
-    margin: 0;
-    word-break: break-word;
+  tbody tr + tr {
+    border-top: 1px solid #f0f0f0;
+  }
+
+  td,
+  thead th + th {
+    border-left: 1px solid #f0f0f0;
+  }
+
+  .code {
+    color: #8c94a6;
+  }
+
+  .not-applicable {
+    color: #bfbfbf;
+    font-style: italic;
   }
 `;
 

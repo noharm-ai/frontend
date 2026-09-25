@@ -245,6 +245,9 @@ test("two selected drugs are explained against each other", async ({
   await expect(
     modal.getByText("Sem relação cadastrada: Interação Medicamentosa"),
   ).toBeVisible();
+  // both items side by side, one row per compared attribute
+  const intravenousRow = modal.locator("tr", { hasText: "Intravenoso" });
+  await expect(intravenousRow.locator("td")).toHaveText(["não", "não"]);
   // the HTML is rendered, not shown as markup
   await expect(modal.locator("strong", { hasText: "GRAVE" })).toBeVisible();
   await expect(modal.getByText("<strong>", { exact: false })).toHaveCount(0);

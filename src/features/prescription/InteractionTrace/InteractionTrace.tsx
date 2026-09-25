@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import type { ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { Select, Spin } from "antd";
 
@@ -21,8 +22,7 @@ import {
   RelationList,
   RuleList,
   Section,
-  SideCard,
-  SidesGrid,
+  ComparisonTable,
   Summary,
   TraceMeta,
   TraceRoot,
@@ -197,10 +197,7 @@ function PairTrace({ trace }: { trace: IInteractionTracePair }) {
         <Note key={note}>{note}</Note>
       ))}
 
-      <SidesGrid>
-        <Side side={trace.from} />
-        <Side side={trace.to} />
-      </SidesGrid>
+      <ItemsComparison from={trace.from} to={trace.to} />
 
       <Section>
         <h4>Pré-condições</h4>
@@ -280,46 +277,109 @@ function Relation({ relation }: { relation: IInteractionTraceRelation }) {
   );
 }
 
-function Side({ side }: { side: IInteractionTraceSide }) {
-  const yesNo = (value?: boolean | null) =>
-    value == null ? "--" : value ? "sim" : "não";
+const yesNo = (value?: boolean | null) =>
+  value == null ? "--" : value ? "sim" : "não";
+
+const dateTime = (value?: string | null) =>
+  value ? formatDate(value, "DD/MM/YYYY HH:mm") : "--";
+
+// what the analysis compares, one row per attribute so both items line up;
+// prescriptionOnly rows do not exist for an allergy
+const COMPARISON_ROWS: {
+  label: string;
+  prescriptionOnly?: boolean;
+  value: (side: IInteractionTraceSide) => ReactNode;
+}[] = [
+  {
+    label: "Substância",
+    value: (side) => (
+      <>
+        {side.substance ?? "--"}
+        {side.sctid && <span className="code"> ({side.sctid})</span>}
+      </>
+    ),
+  },
+  { label: "Origem", value: (side) => side.source },
+  {
+    label: "fkpresmed",
+    prescriptionOnly: true,
+    value: (side) => side.idPrescriptionDrug,
+  },
+  {
+    label: "Intravenoso",
+    prescriptionOnly: true,
+    value: (side) => yesNo(side.intravenous),
+  },
+  {
+    label: "Grupo de solução",
+    prescriptionOnly: true,
+    value: (side) => side.group ?? "--",
+  },
+  {
+    label: "Frequência",
+    prescriptionOnly: true,
+    value: (side) => side.frequency ?? "--",
+  },
+  {
+    label: "Horários",
+    prescriptionOnly: true,
+    value: (side) => side.interval || "--",
+  },
+  {
+    label: "Início",
+    prescriptionOnly: true,
+    value: (side) => dateTime(side.prescriptionDate),
+  },
+  {
+    label: "Fim da vigência",
+    prescriptionOnly: true,
+    value: (side) => dateTime(side.expireDate),
+  },
+];
+
+function ItemsComparison({
+  from,
+  to,
+}: {
+  from: IInteractionTraceSide;
+  to: IInteractionTraceSide;
+}) {
+  const cell = (
+    side: IInteractionTraceSide,
+    row: (typeof COMPARISON_ROWS)[number],
+  ) =>
+    row.prescriptionOnly && !side.idPrescriptionDrug ? (
+      <td className="not-applicable">não se aplica</td>
+    ) : (
+      <td>{row.value(side)}</td>
+    );
 
   return (
-    <SideCard>
-      <div className="name">{side.drug ?? "--"}</div>
-      <dl>
-        <dt>Substância</dt>
-        <dd>
-          {side.substance ?? "--"} {side.sctid && `(${side.sctid})`}
-        </dd>
-        <dt>Origem</dt>
-        <dd>{side.source}</dd>
-        {side.idPrescriptionDrug && (
-          <>
-            <dt>fkpresmed</dt>
-            <dd>{side.idPrescriptionDrug}</dd>
-            <dt>Intravenoso</dt>
-            <dd>{yesNo(side.intravenous)}</dd>
-            <dt>Grupo de solução</dt>
-            <dd>{side.group ?? "--"}</dd>
-            <dt>Frequência</dt>
-            <dd>{side.frequency ?? "--"}</dd>
-            <dt>Horários</dt>
-            <dd>{side.interval ?? "--"}</dd>
-            <dt>Vigência</dt>
-            <dd>
-              {side.prescriptionDate
-                ? formatDate(side.prescriptionDate, "DD/MM/YYYY HH:mm")
-                : "--"}{" "}
-              a{" "}
-              {side.expireDate
-                ? formatDate(side.expireDate, "DD/MM/YYYY HH:mm")
-                : "--"}
-            </dd>
-          </>
-        )}
-      </dl>
-    </SideCard>
+    <ComparisonTable>
+      <table>
+        <colgroup>
+          <col className="label-col" />
+          <col />
+          <col />
+        </colgroup>
+        <thead>
+          <tr>
+            <th />
+            <th>{from.drug ?? "--"}</th>
+            <th>{to.drug ?? "--"}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {COMPARISON_ROWS.map((row) => (
+            <tr key={row.label}>
+              <th scope="row">{row.label}</th>
+              {cell(from, row)}
+              {cell(to, row)}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </ComparisonTable>
   );
 }
 
