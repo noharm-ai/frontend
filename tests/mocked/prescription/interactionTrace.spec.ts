@@ -243,8 +243,8 @@ test("two selected drugs are explained against each other", async ({
   const action = page.locator(".ant-dropdown-menu-item", {
     hasText: "Detalhar interação",
   });
-  await expect(action.getByText("Mantenedor")).toBeVisible();
-  await action.getByText("Mantenedor").hover();
+  await expect(action.getByTestId("maintainer-badge")).toBeVisible();
+  await action.getByTestId("maintainer-badge").hover();
   await expect(
     page.getByText("Visível apenas para mantenedores", { exact: false }),
   ).toBeVisible();
@@ -254,7 +254,7 @@ test("two selected drugs are explained against each other", async ({
     hasText: "Explicação das interações",
   });
   await expect(
-    modal.locator(".ant-modal-title").getByText("Mantenedor"),
+    modal.locator(".ant-modal-title").getByTestId("maintainer-badge"),
   ).toBeVisible();
   await expect(modal.getByText(TRACE.summary)).toBeVisible();
   await expect(

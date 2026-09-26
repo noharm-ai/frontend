@@ -13,6 +13,7 @@ import { Select } from "components/Inputs";
 import notification from "components/notification";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
+import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
 import { getSubstances } from "features/lists/ListsSlice";
 import { getErrorMessage } from "utils/errorHandler";
 import { updateDrugSubstance } from "./DrugSubstanceSlice";
@@ -94,7 +95,7 @@ export default function DrugSubstance({
         }}
       >
         <span>{sctNameA ?? "-"}</span>
-        <div style={{ display: "flex", gap: "10px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <Tooltip title="Alterar substância">
             <Button
               type="primary"
@@ -122,6 +123,7 @@ export default function DrugSubstance({
                   shape="circle"
                 />
               </Tooltip>
+              <MaintainerBadge />
             </>
           )}
         </div>

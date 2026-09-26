@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Alert, Space } from "antd";
+import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
 import { MedicineBoxOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
@@ -131,6 +132,7 @@ export function DrugDashboard() {
                 >
                   Remover Outlier
                 </Button>
+                <MaintainerBadge />
               </>
             )}
         </div>

@@ -6,6 +6,7 @@ import { FileSearchOutlined } from "@ant-design/icons";
 import { formatDate } from "utils/date";
 import { getErrorMessage } from "utils/errorHandler";
 import Tooltip from "components/Tooltip";
+import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
 import Button from "components/Button";
 import DefaultModal from "components/Modal";
 import notification from "components/notification";
@@ -107,15 +108,21 @@ export function ProtocolsTab({
           </div>
 
           {PermissionService().has(Permission.MAINTAINER) && (
-            <Button
-              size="small"
-              icon={<FileSearchOutlined />}
-              loading={traceLoading}
-              onClick={explainProtocols}
+            <Flex
+              align="center"
+              gap={6}
               style={{ marginRight: "10px", marginBottom: "5px" }}
             >
-              {t("buttons.explainProtocols")}
-            </Button>
+              <Button
+                size="small"
+                icon={<FileSearchOutlined />}
+                loading={traceLoading}
+                onClick={explainProtocols}
+              >
+                {t("buttons.explainProtocols")}
+              </Button>
+              <MaintainerBadge />
+            </Flex>
           )}
         </Flex>
 
@@ -137,7 +144,12 @@ export function ProtocolsTab({
       </div>
 
       <DefaultModal
-        title={t("titles.protocolTrace")}
+        title={
+          <Flex align="center" gap={8}>
+            {t("titles.protocolTrace")}
+            <MaintainerBadge />
+          </Flex>
+        }
         destroyOnHidden
         open={trace != null}
         onCancel={() => setTrace(null)}

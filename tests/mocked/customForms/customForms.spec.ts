@@ -346,6 +346,8 @@ test.describe("as a MAINTAINER", () => {
 
     await openEditor(page, `${LIST_PATH}/1`, "Avaliação Farmacêutica");
 
+    // the JSON tools are flagged as maintainer only
+    await expect(page.getByTestId("maintainer-badge")).toBeVisible();
     await page.getByRole("button", { name: "Carregar JSON" }).click();
     await page.locator(".ant-modal textarea").fill(
       JSON.stringify({

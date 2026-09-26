@@ -26,6 +26,7 @@ import {
   ReadOutlined,
 } from "@ant-design/icons";
 import { Menu as Navigator } from "antd";
+import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
 
 import Feature from "models/Feature";
 import Permission from "models/Permission";
@@ -242,7 +243,11 @@ export default function Menu({ segments }) {
 
     {
       key: "support",
-      label: "Curadoria",
+      label: (
+        <>
+          Curadoria <MaintainerBadge />
+        </>
+      ),
       icon: <ControlOutlined />,
       permission: [Permission.MAINTAINER],
       children: [

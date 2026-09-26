@@ -4,6 +4,7 @@ import { SettingOutlined } from "@ant-design/icons";
 
 import NumericValue from "components/NumericValue";
 import Tooltip from "components/Tooltip";
+import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
 import Button from "components/Button";
 import Tag from "components/Tag";
 import PermissionService from "src/services/PermissionService";
@@ -62,7 +63,11 @@ const columns = (t, sortedInfo) => {
       },
     },
     {
-      title: "Origem",
+      title: (
+        <>
+          Origem <MaintainerBadge />
+        </>
+      ),
       dataIndex: "source",
       align: "center",
       hidden: !PermissionService().has(Permission.MAINTAINER),

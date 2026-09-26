@@ -161,6 +161,12 @@ test("a maintainer picks the schema by name and composes the extra options", asy
   await openSelect(schemaField(page));
   await pickOption(page, "hospital_teste");
 
+  // flagged as maintainer only
+  await expect(
+    page
+      .locator(".ant-collapse-header", { hasText: "Mais opções" })
+      .getByTestId("maintainer-badge"),
+  ).toBeVisible();
   await page.getByText("Mais opções").click();
 
   const optionRow = (label: string) =>

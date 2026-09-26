@@ -3,6 +3,7 @@ import { PieChartOutlined } from "@ant-design/icons";
 import { Dropdown } from "antd";
 
 import Tooltip from "components/Tooltip";
+import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
 import ViewReport from "components/Reports/ViewReport";
 import DefaultModal from "components/Modal";
 import PermissionService from "services/PermissionService";
@@ -62,6 +63,7 @@ export default function ReportsTab({ prescription }) {
       description: "Pesquisa por exames, inclusive ainda não configurados.",
       type: "EXAMS_SEARCH",
       visible: PermissionService().has(Permission.MAINTAINER),
+      maintainerOnly: true,
     },
   ];
 
@@ -113,6 +115,12 @@ export default function ReportsTab({ prescription }) {
                     <li onClick={() => open(r.type, r.track, r.attribute)}>
                       <PieChartOutlined style={{ fontSize: "18px" }} />{" "}
                       {r.title}
+                      {r.maintainerOnly && (
+                        <>
+                          {" "}
+                          <MaintainerBadge />
+                        </>
+                      )}
                     </li>
                   </Tooltip>
                 );

@@ -23,6 +23,7 @@ import Button from "components/Button";
 import toast from "components/notification";
 import Tag from "components/Tag";
 import Tooltip from "components/Tooltip";
+import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
 import DefaultModal from "components/Modal";
 import IntegrationStatusTag from "components/IntegrationStatusTag";
 import { setSupportOpen } from "features/support/SupportSlice";
@@ -92,7 +93,12 @@ const Me = ({ user, t, doLogout, logoutUrl, integrationStatus }) => {
 
     if (PermissionService().has(Permission.MAINTAINER)) {
       options.push({
-        label: "Admin",
+        label: (
+          <Space size={6}>
+            Admin
+            <MaintainerBadge />
+          </Space>
+        ),
         key: "admin",
         icon: <LayoutOutlined />,
       });

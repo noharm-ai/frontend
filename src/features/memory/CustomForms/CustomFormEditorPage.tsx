@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { Button, Input, Popconfirm, Tag } from "antd";
+import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
 import { CopyOutlined, EyeOutlined, UploadOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
@@ -219,6 +220,7 @@ function InnerPage({
               >
                 Carregar JSON
               </Button>
+              <MaintainerBadge />
             </>
           )}
           <PreviewButton template={values.data} />

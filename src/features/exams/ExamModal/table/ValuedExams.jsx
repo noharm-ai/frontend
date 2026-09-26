@@ -1,6 +1,7 @@
 import React from "react";
 import { format } from "date-fns";
 import { Row, Col } from "antd";
+import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
 import { useTranslation } from "react-i18next";
 
 import NumericValue from "components/NumericValue";
@@ -57,7 +58,11 @@ export default function ValuedExams({ record }) {
           },
         },
         {
-          title: "Origem",
+          title: (
+            <>
+              Origem <MaintainerBadge />
+            </>
+          ),
           dataIndex: "source",
           align: "center",
           hidden: !PermissionService().has(Permission.MAINTAINER),

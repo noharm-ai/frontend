@@ -10,6 +10,7 @@ import {
   Tag,
   notification,
 } from "antd";
+import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
 import { useTranslation } from "react-i18next";
 
 import Button from "src/components/Button";
@@ -248,7 +249,9 @@ export function CopyCharts({
     <Space direction="vertical" size="middle" style={{ width: "100%" }}>
       {canPickSchema && (
         <div data-testid="copy-source-schema">
-          <div className="modal-section-title">Schema de origem</div>
+          <div className="modal-section-title">
+            Schema de origem <MaintainerBadge />
+          </div>
           <Select
             style={{ width: "100%" }}
             value={sourceSchema}

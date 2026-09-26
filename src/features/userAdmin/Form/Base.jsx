@@ -3,6 +3,7 @@ import { useSelector } from "react-redux";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 import { Flex, Tabs } from "antd";
+import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
 
 import { Input, Select, Checkbox } from "components/Inputs";
 import Switch from "components/Switch";
@@ -119,7 +120,15 @@ function BaseForm() {
                 PermissionService().has(Permission.MAINTAINER)) && (
                 <div className={`form-row ${errors.segments ? "error" : ""}`}>
                   <div className="form-label">
-                    <label>{t("userAdminForm.segments")} (Beta):</label>
+                    <label>
+                      {t("userAdminForm.segments")} (Beta):
+                      {!featureService.hasAuthorizationSegment() && (
+                        <>
+                          {" "}
+                          <MaintainerBadge />
+                        </>
+                      )}
+                    </label>
                   </div>
                   <div className="form-input">
                     <Select

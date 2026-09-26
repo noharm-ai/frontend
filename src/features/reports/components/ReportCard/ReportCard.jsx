@@ -3,6 +3,7 @@ import { Avatar } from "antd";
 
 import Heading from "components/Heading";
 import Tooltip from "components/Tooltip";
+import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
 import Alert from "components/Alert";
 import { Wrapper, Excerpt } from "./ReportCard.style";
 import { PieChartOutlined, BarChartOutlined } from "@ant-design/icons";
@@ -35,6 +36,12 @@ export default function ReportCard({ id, reportData, showReport, ...props }) {
         )}
         <Heading as="h4" $size="16px" $margin="18px 0 15px" $textAlign="center">
           {reportData.title}
+          {reportData.type === "internal" && !reportData.visible && (
+            <>
+              {" "}
+              <MaintainerBadge />
+            </>
+          )}
         </Heading>
 
         <Excerpt $margin="0 0 30px">{reportData.description}</Excerpt>
