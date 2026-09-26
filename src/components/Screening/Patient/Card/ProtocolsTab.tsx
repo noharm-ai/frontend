@@ -108,21 +108,16 @@ export function ProtocolsTab({
           </div>
 
           {PermissionService().has(Permission.MAINTAINER) && (
-            <Flex
-              align="center"
-              gap={6}
+            <Button
+              size="small"
+              icon={<FileSearchOutlined />}
+              loading={traceLoading}
+              onClick={explainProtocols}
               style={{ marginRight: "10px", marginBottom: "5px" }}
             >
-              <Button
-                size="small"
-                icon={<FileSearchOutlined />}
-                loading={traceLoading}
-                onClick={explainProtocols}
-              >
-                {t("buttons.explainProtocols")}
-              </Button>
+              {t("buttons.explainProtocols")}
               <MaintainerBadge />
-            </Flex>
+            </Button>
           )}
         </Flex>
 

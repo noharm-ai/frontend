@@ -13,7 +13,7 @@ import { Select } from "components/Inputs";
 import notification from "components/notification";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
-import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
+import { MaintainerGroup } from "components/MaintainerGroup/MaintainerGroup";
 import { getSubstances } from "features/lists/ListsSlice";
 import { getErrorMessage } from "utils/errorHandler";
 import { updateDrugSubstance } from "./DrugSubstanceSlice";
@@ -106,7 +106,7 @@ export default function DrugSubstance({
             />
           </Tooltip>
           {PermissionService().has(Permission.MAINTAINER) && (
-            <>
+            <MaintainerGroup>
               <Tooltip title="Referência">
                 <Button
                   onClick={() => dispatch(setDrawerSctid(sctidA))}
@@ -123,8 +123,7 @@ export default function DrugSubstance({
                   shape="circle"
                 />
               </Tooltip>
-              <MaintainerBadge />
-            </>
+            </MaintainerGroup>
           )}
         </div>
       </div>

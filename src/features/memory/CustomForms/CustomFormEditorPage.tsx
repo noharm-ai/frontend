@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { Button, Input, Popconfirm, Tag } from "antd";
-import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
+import { MaintainerGroup } from "components/MaintainerGroup/MaintainerGroup";
 import { CopyOutlined, EyeOutlined, UploadOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
@@ -210,7 +210,7 @@ function InnerPage({
             </Button>
           )}
           {isMaintainer && (
-            <>
+            <MaintainerGroup>
               <Button icon={<CopyOutlined />} onClick={handleCopyJson}>
                 Copiar JSON
               </Button>
@@ -220,8 +220,7 @@ function InnerPage({
               >
                 Carregar JSON
               </Button>
-              <MaintainerBadge />
-            </>
+            </MaintainerGroup>
           )}
           <PreviewButton template={values.data} />
           <Button
