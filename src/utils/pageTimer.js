@@ -2,12 +2,12 @@ import ifvisible from "ifvisible.js";
 
 const pageTimer = ({ debug = false }) => {
   let currentTime = 0;
-  let interval = null;
+  let timer = null;
 
   const start = () => {
-    clearInterval(interval?.code);
+    timer?.stop();
 
-    interval = ifvisible.onEvery(1, () => {
+    timer = ifvisible.onEvery(1, () => {
       currentTime += 1;
       if (debug) {
         console.debug("pagetimer", currentTime);
@@ -16,7 +16,8 @@ const pageTimer = ({ debug = false }) => {
   };
 
   const stop = () => {
-    clearInterval(interval?.code);
+    timer?.stop();
+    timer = null;
     currentTime = 0;
   };
 
