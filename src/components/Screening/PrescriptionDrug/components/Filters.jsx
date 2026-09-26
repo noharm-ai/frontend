@@ -40,6 +40,7 @@ import { selectPrescriptionDrugThunk } from "store/ducks/prescriptionDrugs/thunk
 import { fetchScreeningThunk } from "store/ducks/prescriptions/thunk";
 import PrescriptionDiff from "features/prescription/PrescriptionDiff/PrescriptionDiff";
 import { InteractionTrace } from "features/prescription/InteractionTrace/InteractionTrace";
+import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
 import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
@@ -216,16 +217,19 @@ export default function Filters({
             {
               key: "explainInteraction",
               label: (
-                <Tooltip
-                  title={explainInteractionDisabledReason()}
-                  placement="left"
-                >
-                  <span>
-                    {selectedRows.length === 1
-                      ? "Detalhar interação com alergia"
-                      : "Detalhar interação"}
-                  </span>
-                </Tooltip>
+                <Space size={8}>
+                  <Tooltip
+                    title={explainInteractionDisabledReason()}
+                    placement="left"
+                  >
+                    <span>
+                      {selectedRows.length === 1
+                        ? "Detalhar interação com alergia"
+                        : "Detalhar interação"}
+                    </span>
+                  </Tooltip>
+                  <MaintainerBadge />
+                </Space>
               ),
               icon: <NodeIndexOutlined style={{ fontSize: "16px" }} />,
               disabled: explainInteractionDisabledReason() != null,
@@ -597,7 +601,12 @@ export default function Filters({
         </div>
       </Affix>
       <DefaultModal
-        title={t("titles.interactionTrace")}
+        title={
+          <Space size={8}>
+            {t("titles.interactionTrace")}
+            <MaintainerBadge />
+          </Space>
+        }
         destroyOnHidden
         open={interactionTracePair != null}
         onCancel={() => setInteractionTracePair(null)}

@@ -389,6 +389,10 @@
     "protocolTargetTest": "Targeted",
     "protocolSampleTest": "Today's sample"
   },
+  "maintainerBadge": {
+    "label": "Maintainer",
+    "tooltip": "Only visible to maintainers (Admin and Curator). Client users have no access: do not recommend this action to them."
+  },
   "titles": {
     "protocolDescription": "How this protocol is triggered",
     "addDrugMeasureUnit": "Add Drug Unit",

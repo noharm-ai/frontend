@@ -389,6 +389,10 @@
     "protocolTargetTest": "Direcionado",
     "protocolSampleTest": "Amostra do dia"
   },
+  "maintainerBadge": {
+    "label": "Mantenedor",
+    "tooltip": "Visível apenas para mantenedores (Administrador e Curadoria). Usuários do cliente não têm acesso: não recomende esta ação a eles."
+  },
   "titles": {
     "protocolDescription": "Como este protocolo é disparado",
     "addDrugMeasureUnit": "Adicionar Unidade de Medida",

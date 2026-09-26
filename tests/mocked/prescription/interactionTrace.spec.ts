@@ -185,6 +185,13 @@ const openSelectionActions = async (page: Page) => {
     .getByRole("button")
     .last()
     .hover();
+  // hovering an item while the menu still animates open closes it again
+  await expect(
+    page.locator(".ant-dropdown:not(.ant-dropdown-hidden) .ant-dropdown-menu"),
+  ).toBeVisible();
+  await expect(
+    page.locator(".ant-dropdown:not(.ant-dropdown-hidden)"),
+  ).not.toHaveClass(/-(appear|enter)/);
 };
 
 /** Answers the trace with the options, adding TRACE once a pair is sent. */
@@ -232,11 +239,23 @@ test("two selected drugs are explained against each other", async ({
   await selectDrugs(page, ["Dipirona 500mg", "Omeprazol 20mg"]);
 
   await openSelectionActions(page);
+  // flagged as maintainer only, so it is not recommended to client users
+  const action = page.locator(".ant-dropdown-menu-item", {
+    hasText: "Detalhar interação",
+  });
+  await expect(action.getByText("Mantenedor")).toBeVisible();
+  await action.getByText("Mantenedor").hover();
+  await expect(
+    page.getByText("Visível apenas para mantenedores", { exact: false }),
+  ).toBeVisible();
   await page.getByText("Detalhar interação", { exact: true }).click();
 
   const modal = page.locator(".ant-modal", {
     hasText: "Explicação das interações",
   });
+  await expect(
+    modal.locator(".ant-modal-title").getByText("Mantenedor"),
+  ).toBeVisible();
   await expect(modal.getByText(TRACE.summary)).toBeVisible();
   await expect(
     modal.getByText("Os dois itens precisam ser intravenosos", {
