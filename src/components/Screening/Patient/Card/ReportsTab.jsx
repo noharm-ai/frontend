@@ -116,9 +116,9 @@ export default function ReportsTab({ prescription }) {
                       <PieChartOutlined style={{ fontSize: "18px" }} />{" "}
                       {r.title}
                       {r.maintainerOnly && (
-                        <span style={{ marginLeft: "auto", paddingLeft: 8 }}>
+                        <div style={{ marginLeft: "auto", paddingLeft: 8 }}>
                           <MaintainerBadge />
-                        </span>
+                        </div>
                       )}
                     </li>
                   </Tooltip>

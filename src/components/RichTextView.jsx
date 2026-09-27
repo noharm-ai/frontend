@@ -5,7 +5,7 @@ import DOMPurify from "dompurify";
 const Container = styled.div`
   p {
     margin-top: 5px !important;
-    max-width: ${({ maxWidth }) => (maxWidth ? `${maxWidth}` : "700px")};
+    max-width: ${({ $maxWidth }) => ($maxWidth ? `${$maxWidth}` : "700px")};
   }
 `;
 
@@ -20,7 +20,7 @@ const textToHtml = (obs) => {
 const RichTextView = ({ text, maxWidth, ...props }) => {
   return (
     <Container
-      maxWidth={maxWidth}
+      $maxWidth={maxWidth}
       dangerouslySetInnerHTML={{
         __html: DOMPurify.sanitize(textToHtml(text), { ADD_ATTR: ["target"] }),
       }}
