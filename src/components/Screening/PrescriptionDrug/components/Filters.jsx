@@ -14,6 +14,7 @@ import {
   CopyOutlined,
   SortAscendingOutlined,
   CheckSquareOutlined,
+  NodeIndexOutlined,
 } from "@ant-design/icons";
 import { Affix, Popconfirm, Space } from "antd";
 
@@ -21,6 +22,7 @@ import Tag from "components/Tag";
 import Dropdown from "components/Dropdown";
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
+import DefaultModal from "components/Modal";
 import notification from "components/notification";
 import {
   setPrescriptionFilters,
@@ -37,6 +39,10 @@ import {
 import { selectPrescriptionDrugThunk } from "store/ducks/prescriptionDrugs/thunk";
 import { fetchScreeningThunk } from "store/ducks/prescriptions/thunk";
 import PrescriptionDiff from "features/prescription/PrescriptionDiff/PrescriptionDiff";
+import { InteractionTrace } from "features/prescription/InteractionTrace/InteractionTrace";
+import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
+import Permission from "models/Permission";
+import PermissionService from "services/PermissionService";
 import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
 import FeaturesService from "services/features";
 import { getErrorMessage } from "utils/errorHandler";
@@ -84,6 +90,8 @@ export default function Filters({
   const features = useSelector((state) => state.user.account.features);
   const [prescriptionDiffModal, setPrescriptionDiffModal] = useState(false);
   const [copyingConciliation, setCopyingConciliation] = useState(false);
+  // the pair of selected items whose interaction analysis is being explained
+  const [interactionTracePair, setInteractionTracePair] = useState(null);
 
   const featureService = FeaturesService(features);
 
@@ -181,6 +189,20 @@ export default function Filters({
     };
   };
 
+  // two items are compared with each other; a single one with one of the
+  // patient's allergies
+  const explainInteractionDisabledReason = () => {
+    if (selectedRows.length === 0) {
+      return "Selecione dois itens para comparar entre si, ou um item para comparar com uma alergia do paciente";
+    }
+
+    if (selectedRows.length > 2) {
+      return `A explicação compara apenas um par de itens: selecione no máximo dois (${selectedRows.length} selecionados)`;
+    }
+
+    return null;
+  };
+
   const actionOptions = () => {
     const items = [
       {
@@ -190,6 +212,30 @@ export default function Filters({
         disabled: selectedRows.length === 0,
         danger: true,
       },
+      ...(PermissionService().has(Permission.MAINTAINER)
+        ? [
+            {
+              key: "explainInteraction",
+              label: (
+                <Space size={8}>
+                  <Tooltip
+                    title={explainInteractionDisabledReason()}
+                    placement="left"
+                  >
+                    <span>
+                      {selectedRows.length === 1
+                        ? "Detalhar interação com alergia"
+                        : "Detalhar interação"}
+                    </span>
+                  </Tooltip>
+                  <MaintainerBadge />
+                </Space>
+              ),
+              icon: <NodeIndexOutlined style={{ fontSize: "16px" }} />,
+              disabled: explainInteractionDisabledReason() != null,
+            },
+          ]
+        : []),
       {
         type: "divider",
       },
@@ -284,6 +330,12 @@ export default function Filters({
         trackPrescriptionAction(
           TrackedPrescriptionAction.MULTIPLE_INTERVENTION
         );
+        break;
+      case "explainInteraction":
+        setInteractionTracePair({
+          from: selectedRows[0],
+          to: selectedRows[1] ?? null,
+        });
         break;
       default:
         console.error(key);
@@ -548,6 +600,28 @@ export default function Filters({
           )}
         </div>
       </Affix>
+      <DefaultModal
+        title={
+          <Space size={8}>
+            {t("titles.interactionTrace")}
+            <MaintainerBadge />
+          </Space>
+        }
+        destroyOnHidden
+        open={interactionTracePair != null}
+        onCancel={() => setInteractionTracePair(null)}
+        width="min(1000px, 96vw)"
+        style={{ top: 20 }}
+        footer={null}
+      >
+        {interactionTracePair && (
+          <InteractionTrace
+            idPrescription={prescription.idPrescription}
+            idPrescriptionDrugFrom={interactionTracePair.from}
+            idPrescriptionDrugTo={interactionTracePair.to}
+          />
+        )}
+      </DefaultModal>
       {prescriptionDiffModal && (
         <PrescriptionDiff
           open={prescriptionDiffModal}

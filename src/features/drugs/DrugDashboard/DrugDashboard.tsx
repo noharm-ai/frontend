@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Alert, Space } from "antd";
+import { MaintainerGroup } from "components/MaintainerGroup/MaintainerGroup";
 import { MedicineBoxOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
@@ -102,7 +103,7 @@ export function DrugDashboard() {
           {drugDashboard.idSegment &&
             drugDashboard.idDrug &&
             PermissionService().has(Permission.MAINTAINER) && (
-              <>
+              <MaintainerGroup>
                 <Button
                   danger
                   onClick={() =>
@@ -131,7 +132,7 @@ export function DrugDashboard() {
                 >
                   Remover Outlier
                 </Button>
-              </>
+              </MaintainerGroup>
             )}
         </div>
       </PageHeader>

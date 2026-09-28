@@ -43,6 +43,22 @@ export const getPepLink = createAsyncThunk(
   }
 );
 
+export const traceInteraction = createAsyncThunk(
+  "serverActions/trace-interaction",
+  /**
+   * @param {{ idPrescription: number | string, idPrescriptionDrugFrom?: string, idPrescriptionDrugTo?: string, sctidAllergy?: string }} params
+   */
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.prescription.traceInteraction(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  },
+);
+
 export const traceProtocol = createAsyncThunk(
   "serverActions/trace-protocol",
   /**

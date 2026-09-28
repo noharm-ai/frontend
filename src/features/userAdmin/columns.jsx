@@ -5,12 +5,12 @@ import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import Tag from "components/Tag";
 
-const columns = (t, dispatch, setUser) => {
+const columns = (t, dispatch, setUser, { external = false } = {}) => {
   const openForm = (record) => {
     dispatch(setUser(record));
   };
 
-  return [
+  const columnList = [
     {
       title: "Id Externo",
       dataIndex: "external",
@@ -38,6 +38,22 @@ const columns = (t, dispatch, setUser) => {
         </Tag>
       ),
     },
+  ];
+
+  // users from other schemas are read only: show where they come from instead
+  // of the edit action
+  if (external) {
+    return [
+      ...columnList,
+      {
+        title: "Schema",
+        dataIndex: "schema",
+      },
+    ];
+  }
+
+  return [
+    ...columnList,
     {
       title: t("tableHeader.action"),
       key: "operations",

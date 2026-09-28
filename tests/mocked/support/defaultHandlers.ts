@@ -63,6 +63,7 @@ export function defaultHandlers(): Record<string, Handler> {
 
     // base data
     "GET /segments": json("segments/list.json"),
+    "GET /memory": emptyList,
     "GET /memory/:type": emptyList,
     "GET /support/list-pending": emptyList,
     "GET /user/preferences": emptyList,

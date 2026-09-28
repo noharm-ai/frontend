@@ -3,6 +3,7 @@ import { HistoryOutlined } from "@ant-design/icons";
 import { Button as AntButton, Space } from "antd";
 
 import Tooltip from "components/Tooltip";
+import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
 import Popover from "components/PopoverStyled";
 import Tag from "components/Tag";
 import { AwareTag } from "components/AwareTag/AwareTag";
@@ -216,7 +217,9 @@ function DrugCell({ record, bag }: DrugCellProps): React.ReactElement | null {
 
     content = (
       <DrugCellPopover>
-        <div className="popover-title">{record.drug}</div>
+        <div className="popover-title">
+          {record.drug} <MaintainerBadge />
+        </div>
         <div className="info-grid">
           <span className="info-label">fkpresmed:</span>
           <span className="info-value">{record.idPrescriptionDrug}</span>
