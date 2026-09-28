@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { Collapse, Card, Alert } from "antd";
+import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
@@ -58,7 +59,11 @@ export function SwitchSchema() {
   const getExtraOptions = (values: any, setFieldValue: any) => [
     {
       key: "1",
-      label: "Mais opções",
+      label: (
+        <>
+          Mais opções <MaintainerBadge />
+        </>
+      ),
       children: (
         <>
           <div className={`form-row`}>

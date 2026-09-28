@@ -4,6 +4,7 @@ import { Tag, Space } from "antd";
 import { formatDateTime } from "utils/date";
 import Table from "components/Table";
 import Tooltip from "components/Tooltip";
+import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
 import PermissionService from "services/PermissionService";
 import Permission from "src/models/Permission";
 import { translateFrequencyDay } from "utils/index";
@@ -114,9 +115,12 @@ export default function CheckedIndexList() {
   if (PermissionService().has(Permission.MAINTAINER)) {
     columns.push({
       title: (
-        <Tooltip title="Campos que não estão iguais entre a prescrição e a checagem">
-          Campos diff
-        </Tooltip>
+        <>
+          <Tooltip title="Campos que não estão iguais entre a prescrição e a checagem">
+            Campos diff
+          </Tooltip>{" "}
+          <MaintainerBadge />
+        </>
       ),
       dataIndex: "matchDiff",
       width: 160,

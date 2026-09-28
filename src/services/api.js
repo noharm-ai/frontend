@@ -639,6 +639,12 @@ api.prescription.getPepLink = (params) =>
     ...setHeaders(),
   });
 
+api.prescription.traceInteraction = (params) =>
+  instance.get(`/prescriptions/interaction-trace`, {
+    params,
+    ...setHeaders(),
+  });
+
 /**
  * Conciliation
  */
