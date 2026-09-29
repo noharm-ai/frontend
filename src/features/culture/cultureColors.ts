@@ -10,7 +10,14 @@ export const PREDICTED_UNKNOWN = "#a991d6";
 // before resistance on purpose: a predicted resistant drug is still a pending
 // collection, and it must not be read in the same red as a released
 // antibiogram
-export const accentColor = (props) => {
+// the transient props a culture row or detail block carries
+export interface IAccentProps {
+  $prediction?: boolean;
+  $resistant?: boolean;
+  $susceptible?: boolean;
+}
+
+export const accentColor = (props: IAccentProps): string => {
   if (props.$prediction) {
     if (props.$resistant) return PREDICTED_RESISTANT;
     if (props.$susceptible) return PREDICTED_SUSCEPTIBLE;

@@ -1,5 +1,5 @@
-import React from "react";
 import { useTranslation } from "react-i18next";
+import type { TFunction } from "react-i18next";
 import {
   RobotOutlined,
   MedicineBoxOutlined,
@@ -18,18 +18,34 @@ import {
 } from "features/culture/cultureResistance";
 import { awareKey, hasAwareLevel } from "features/culture/awareLevel";
 import { formatDate } from "features/culture/cultureDate";
+import type { ICultureDrug, ICultureItem } from "features/culture/cultureTypes";
 
 import { Details, DetailItem } from "./CultureDetailsModal.style";
 
+interface ICultureItemProps {
+  item: ICultureItem;
+  t: TFunction;
+}
+
+interface ICultureDetailsProps {
+  drug: ICultureDrug;
+  t: TFunction;
+}
+
+interface ICultureDetailsModalProps {
+  drug: ICultureDrug | null;
+  onClose: () => void;
+}
+
 // the prediction, in the same wording the row groups use, or the raw text of
 // one the backend could not classify
-const predictionLabel = (item, t) =>
+const predictionLabel = (item: ICultureItem, t: TFunction): string =>
   t(`culture.prediction.${item.prediction}`, {
     defaultValue: item.prediction,
   });
 
 // the antibiogram of a released collection: the reading the drug is grouped by
-const CultureReleasedResult = ({ item, t }) => (
+const CultureReleasedResult = ({ item, t }: ICultureItemProps) => (
   <>
     <div>
       {t("culture.result")}: {item.result}
@@ -43,7 +59,7 @@ const CultureReleasedResult = ({ item, t }) => (
 // a pending collection has no result to state, and the modal is where that
 // has to be said outright: the prediction is set apart from the result line
 // it stands in for, so that it is never read as the lab result
-const CulturePendingResult = ({ item, t }) => (
+const CulturePendingResult = ({ item, t }: ICultureItemProps) => (
   <>
     <div className="culture-result-pending">
       {t("culture.result")}:{" "}
@@ -53,7 +69,9 @@ const CulturePendingResult = ({ item, t }) => (
     </div>
     <div
       className={`culture-prediction culture-prediction-${
-        [RESULT_RESISTANT, RESULT_SUSCEPTIBLE].includes(item.predictionType)
+        [RESULT_RESISTANT, RESULT_SUSCEPTIBLE].includes(
+          item.predictionType ?? "",
+        )
           ? item.predictionType
           : "unknown"
       }`}
@@ -76,7 +94,7 @@ const CulturePendingResult = ({ item, t }) => (
   </>
 );
 
-const CultureDetails = ({ drug, t }) => (
+const CultureDetails = ({ drug, t }: ICultureDetailsProps) => (
   <Details>
     {/* the classification of the drug itself, before the collections: unlike
         the row, the modal has room to say that it has none */}
@@ -147,7 +165,10 @@ const CultureDetails = ({ drug, t }) => (
 
 // the row is too narrow to carry the antibiogram: the details open in a
 // modal, which stays open while the user reads it
-export function CultureDetailsModal({ drug, onClose }) {
+export function CultureDetailsModal({
+  drug,
+  onClose,
+}: ICultureDetailsModalProps) {
   const { t } = useTranslation();
 
   return (

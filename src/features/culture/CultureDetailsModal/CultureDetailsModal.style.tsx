@@ -7,6 +7,7 @@ import {
   PREDICTED_SUSCEPTIBLE,
   PREDICTED_UNKNOWN,
   accentColor,
+  type IAccentProps,
 } from "features/culture/cultureColors";
 
 // the details modal: one block per collection, and a pending collection set
@@ -154,7 +155,7 @@ export const Details = styled.div`
 // bar states its result in the same colours the rows of the list use — a card
 // is read on its own here, and a drug may hold a released antibiogram beside
 // a pending collection that predicts the opposite
-export const DetailItem = styled.div`
+export const DetailItem = styled.div<IAccentProps>`
   padding: 10px;
   border: 1px solid #e0e0e0;
   border-left: 4px solid ${accentColor};

@@ -6,6 +6,7 @@ import {
   PREDICTED_SUSCEPTIBLE,
   PREDICTED_UNKNOWN,
   accentColor,
+  type IAccentProps,
 } from "features/culture/cultureColors";
 
 export const Container = styled.div`
@@ -111,7 +112,7 @@ export const List = styled.div`
   }
 `;
 
-export const Item = styled.div`
+export const Item = styled.div<IAccentProps & { $inUse?: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -251,7 +252,7 @@ export const EmptyDescription = styled.div`
 // the predictions, folded away under the released results. They are not lab
 // results, and below a card that holds none of them an open list of
 // predictions was read as if it were the antibiogram
-export const Predictions = styled.div`
+export const Predictions = styled.div<{ $standalone?: boolean }>`
   /* the fold is what separates the two readings: above it, what the lab
      released; below it, what is still a guess */
   margin-top: ${(props) => (props.$standalone ? "0" : "12px")};

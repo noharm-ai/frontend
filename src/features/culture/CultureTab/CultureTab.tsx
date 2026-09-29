@@ -1,5 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import type { TFunction } from "react-i18next";
 import { Flex, Spin } from "antd";
 import {
   RobotOutlined,
@@ -25,6 +26,7 @@ import {
 import { formatDate } from "features/culture/cultureDate";
 import { CultureDetailsModal } from "features/culture/CultureDetailsModal/CultureDetailsModal";
 import { AwareTag } from "components/AwareTag/AwareTag";
+import type { ICultureDrug } from "features/culture/cultureTypes";
 
 import {
   Container,
@@ -37,6 +39,30 @@ import {
   PredictionsToggle,
   NoReleased,
 } from "./CultureTab.style";
+
+interface ICultureGroup {
+  key: string;
+  drugs: ICultureDrug[];
+}
+
+interface ICultureListItemProps {
+  drug: ICultureDrug;
+  onOpenDetails: (drug: ICultureDrug) => void;
+  t: TFunction;
+}
+
+interface ICultureGroupProps {
+  group: ICultureGroup;
+  onOpenDetails: (drug: ICultureDrug) => void;
+  t: TFunction;
+}
+
+interface ICultureTabProps {
+  cultures?: ICultureDrug[] | null;
+  loading?: boolean;
+  error?: boolean;
+  onRetry?: () => void;
+}
 
 const GROUP_RESISTANT_IN_USE = "resistantInUse";
 const GROUP_RESISTANT = "resistant";
@@ -54,7 +80,7 @@ const PREDICTION_GROUPS = [
 // how old the result is, in the shortest form that still reads: "45m", "6h",
 // "3d". The unit letters are the same in both languages, so they are not
 // translated
-const formatAge = (date) => {
+const formatAge = (date: string): string => {
   const minutes = moment().diff(moment(date), "minutes");
 
   if (minutes < 60) {
@@ -75,14 +101,15 @@ const formatAge = (date) => {
   return days > 99 ? "99d+" : `${days}d`;
 };
 
-const byDrug = (a, b) => `${a.drug}`.localeCompare(`${b.drug}`);
+const byDrug = (a: ICultureDrug, b: ICultureDrug) =>
+  `${a.drug}`.localeCompare(`${b.drug}`);
 
-const buildGroups = (cultures) => {
-  const resistantInUse = [];
-  const resistant = [];
-  const susceptible = [];
-  const predictedResistant = [];
-  const predictedSusceptible = [];
+const buildGroups = (cultures: ICultureDrug[]): ICultureGroup[] => {
+  const resistantInUse: ICultureDrug[] = [];
+  const resistant: ICultureDrug[] = [];
+  const susceptible: ICultureDrug[] = [];
+  const predictedResistant: ICultureDrug[] = [];
+  const predictedSusceptible: ICultureDrug[] = [];
 
   cultures.forEach((drug) => {
     // the item that represents the drug, chosen by the backend (see
@@ -130,7 +157,7 @@ const buildGroups = (cultures) => {
   ].filter((group) => group.drugs.length > 0);
 };
 
-const CultureListItem = ({ drug, onOpenDetails, t }) => {
+const CultureListItem = ({ drug, onOpenDetails, t }: ICultureListItemProps) => {
   const [current] = drug.items;
   const prediction = isPrediction(current);
   // a resistant drug the patient is actually on: the row itself has to shout,
@@ -142,7 +169,9 @@ const CultureListItem = ({ drug, onOpenDetails, t }) => {
   // says more than the group itself, and a prediction the backend could not
   // classify, which the header does not read for it
   const marker = prediction
-    ? [RESULT_RESISTANT, RESULT_SUSCEPTIBLE].includes(current.predictionType)
+    ? [RESULT_RESISTANT, RESULT_SUSCEPTIBLE].includes(
+        current.predictionType ?? "",
+      )
       ? null
       : current.prediction
     : current.resultDetail;
@@ -217,7 +246,7 @@ const CultureListItem = ({ drug, onOpenDetails, t }) => {
   );
 };
 
-const CultureGroup = ({ group, onOpenDetails, t }) => (
+const CultureGroup = ({ group, onOpenDetails, t }: ICultureGroupProps) => (
   <Group className={`culture-group culture-group-${group.key}`}>
     <div className="group-title">
       {PREDICTION_GROUPS.includes(group.key) && <RobotOutlined />}
@@ -240,12 +269,17 @@ const CultureGroup = ({ group, onOpenDetails, t }) => (
   </Group>
 );
 
-export function CultureTab({ cultures, loading, error, onRetry }) {
+export function CultureTab({
+  cultures,
+  loading,
+  error,
+  onRetry,
+}: ICultureTabProps) {
   const { t } = useTranslation();
-  const [details, setDetails] = useState(null);
+  const [details, setDetails] = useState<ICultureDrug | null>(null);
   const [showPredictions, setShowPredictions] = useState(false);
-  const scrollRef = useRef(null);
-  const predictionsRef = useRef(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const predictionsRef = useRef<HTMLDivElement>(null);
 
   // the released results alone can fill the scroll area, so the groups the
   // fold opens are below it: without this the click looks like it did nothing

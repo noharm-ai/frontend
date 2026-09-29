@@ -26,8 +26,6 @@ export const Badge = styled.div<{ $level: number }>`
     height: 7px;
     flex-shrink: 0;
     border-radius: 50%;
-    /* awareLevel.js is untyped, so the key it answers is narrowed here */
-    background: ${(props) =>
-      AWARE_COLORS[awareKey(props.$level) as keyof typeof AWARE_COLORS]};
+    background: ${(props) => AWARE_COLORS[awareKey(props.$level)]};
   }
 `;
