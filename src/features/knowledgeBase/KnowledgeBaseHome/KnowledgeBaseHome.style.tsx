@@ -12,23 +12,55 @@ export const Hero = styled.section`
   border-radius: 16px;
   padding: 48px 40px 40px;
   margin-bottom: 28px;
-  background:
-    radial-gradient(
-      circle at 88% 12%,
-      rgba(112, 189, 195, 0.45) 0,
-      rgba(112, 189, 195, 0) 42%
-    ),
-    radial-gradient(
-      circle at 8% 110%,
-      rgba(126, 190, 154, 0.35) 0,
-      rgba(126, 190, 154, 0) 45%
-    ),
-    ${colors.primary};
-  color: ${colors.commonLighter};
+  /* same look as the training video cover (TrainingPlayer.style VideoCover) */
+  background: linear-gradient(135deg, #eef6f5 0%, #f7faf9 100%);
+  color: ${colors.primary};
+
+  /* the cover's quarter circle, anchored top-left, plus a half circle at the
+     bottom-right; both sized to stay clear of the centered text */
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    background: linear-gradient(
+      135deg,
+      ${colors.accentSecondary},
+      ${colors.accent}
+    );
+  }
+
+  &::before {
+    top: 0;
+    left: 0;
+    width: 24%;
+    height: 80%;
+    border-radius: 0 0 100% 0;
+  }
+
+  /* centered on the bottom edge: the hero clips its lower half */
+  &::after {
+    right: 60px;
+    bottom: -100px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+  }
 
   ${mobile} {
     padding: 28px 18px 24px;
     border-radius: 12px;
+
+    &::before {
+      width: 26%;
+      height: 22%;
+    }
+
+    &::after {
+      right: 8px;
+      bottom: -32px;
+      width: 64px;
+      height: 64px;
+    }
   }
 
   .hero-inner {
@@ -44,7 +76,9 @@ export const Hero = styled.section`
     gap: 6px;
     padding: 4px 12px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.12);
+    background: #a991d6;
+    color: ${colors.commonLighter};
+    box-shadow: 0 1px 3px rgba(46, 60, 90, 0.1);
     font-size: 0.75rem;
     font-weight: 600;
     letter-spacing: 0.04em;
@@ -52,7 +86,7 @@ export const Hero = styled.section`
   }
 
   h1 {
-    color: ${colors.commonLighter};
+    color: ${colors.primary};
     font-size: 2.1rem;
     font-weight: 600;
     line-height: 1.2;
@@ -64,7 +98,7 @@ export const Hero = styled.section`
   }
 
   .hero-subtitle {
-    color: rgba(255, 255, 255, 0.78);
+    color: ${colors.text};
     font-size: 1rem;
     margin: 0 0 26px;
 
@@ -81,7 +115,7 @@ export const SearchBox = styled.div`
     padding: 0 18px;
     border: 0;
     border-radius: 14px;
-    box-shadow: 0 12px 32px rgba(10, 20, 40, 0.28);
+    box-shadow: 0 10px 28px rgba(46, 60, 90, 0.14);
     font-size: 1.05rem;
 
     ${mobile} {
@@ -105,14 +139,14 @@ export const Suggestions = styled.div`
   gap: 8px;
   margin-top: 16px;
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: ${colors.text};
 
   button {
     padding: 4px 12px;
-    border: 1px solid rgba(255, 255, 255, 0.25);
+    border: 1px solid ${colors.detail};
     border-radius: 999px;
-    background: transparent;
-    color: ${colors.commonLighter};
+    background: rgba(255, 255, 255, 0.7);
+    color: ${colors.primary};
     font-size: 0.8rem;
     cursor: pointer;
     transition:
@@ -121,8 +155,8 @@ export const Suggestions = styled.div`
 
     &:hover,
     &:focus-visible {
-      background: rgba(255, 255, 255, 0.14);
-      border-color: rgba(255, 255, 255, 0.5);
+      background: ${colors.commonLighter};
+      border-color: ${colors.accentSecondary};
       outline: none;
     }
   }
