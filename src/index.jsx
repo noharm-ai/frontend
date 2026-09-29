@@ -16,6 +16,7 @@ import dayjsLocaleEnUs from "dayjs/locale/en";
 import RoutedComponent from "routes";
 import App from "containers/App";
 import { SupportDrawer } from "./features/support/SupportDrawer";
+import { KnowledgeBaseArticleModal } from "./features/knowledgeBase/KnowledgeBaseArticleModal/KnowledgeBaseArticleModal";
 import { store, persistor } from "store/index.ts";
 import * as serviceWorker from "./serviceWorker";
 import { getStorageItem } from "utils/storage";
@@ -92,6 +93,7 @@ root.render(
                 <BrowserRouter>
                   <RoutedComponent />
                   <SupportDrawer />
+                  <KnowledgeBaseArticleModal />
                 </BrowserRouter>
               </App>
             </StyleProvider>
@@ -99,7 +101,7 @@ root.render(
         </PersistGate>
       </I18nextProvider>
     </Provider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
 // If you want your app to work offline and load faster, you can change

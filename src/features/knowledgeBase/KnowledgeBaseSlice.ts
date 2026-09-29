@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 
 import api from "services/api";
@@ -51,12 +51,20 @@ interface IKnowledgeBaseSlice {
     status: Status;
     data: IKnowledgeBaseArticle | null;
   };
+  // the article modal, opened from anywhere in the app: kept apart from the
+  // article page so one never overwrites the other
+  modal: {
+    articleId: number | null;
+    status: Status;
+    data: IKnowledgeBaseArticle | null;
+  };
 }
 
 const initialState: IKnowledgeBaseSlice = {
   list: { status: "idle", data: [] },
   search: { status: "idle", query: "", results: [] },
   article: { status: "idle", data: null },
+  modal: { articleId: null, status: "idle", data: null },
 };
 
 export const fetchKnowledgeBaseArticles = createAsyncThunk(
@@ -74,6 +82,19 @@ export const fetchKnowledgeBaseArticles = createAsyncThunk(
 
 export const fetchKnowledgeBaseArticle = createAsyncThunk(
   "knowledgeBase/fetch-article",
+  async (idArticle: number, thunkAPI) => {
+    try {
+      const response = await api.knowledgeBase.getArticle(idArticle);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
+export const fetchKnowledgeBaseModalArticle = createAsyncThunk(
+  "knowledgeBase/fetch-modal-article",
   async (idArticle: number, thunkAPI) => {
     try {
       const response = await api.knowledgeBase.getArticle(idArticle);
@@ -105,6 +126,13 @@ const knowledgeBaseSlice = createSlice({
     clearSearch(state) {
       state.search = initialState.search;
     },
+    openArticleModal(state, action: PayloadAction<number>) {
+      state.modal.articleId = action.payload;
+    },
+    closeArticleModal(state) {
+      // the article stays while the modal fades out
+      state.modal.articleId = null;
+    },
   },
   extraReducers(builder) {
     builder
@@ -130,6 +158,22 @@ const knowledgeBaseSlice = createSlice({
         state.article.status = "failed";
         state.article.data = null;
       })
+      .addCase(fetchKnowledgeBaseModalArticle.pending, (state) => {
+        state.modal.status = "loading";
+      })
+      .addCase(fetchKnowledgeBaseModalArticle.fulfilled, (state, action) => {
+        // the user may have moved on to another article (or closed the modal)
+        if (action.meta.arg !== state.modal.articleId) return;
+
+        state.modal.status = "succeeded";
+        state.modal.data = action.payload.data;
+      })
+      .addCase(fetchKnowledgeBaseModalArticle.rejected, (state, action) => {
+        if (action.meta.arg !== state.modal.articleId) return;
+
+        state.modal.status = "failed";
+        state.modal.data = null;
+      })
       .addCase(searchKnowledgeBase.pending, (state, action) => {
         state.search.status = "loading";
         state.search.query = action.meta.arg;
@@ -150,6 +194,7 @@ const knowledgeBaseSlice = createSlice({
   },
 });
 
-export const { clearSearch } = knowledgeBaseSlice.actions;
+export const { clearSearch, openArticleModal, closeArticleModal } =
+  knowledgeBaseSlice.actions;
 
 export const knowledgeBaseReducer = knowledgeBaseSlice.reducer;

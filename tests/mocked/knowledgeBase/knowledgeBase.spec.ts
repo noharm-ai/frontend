@@ -79,6 +79,8 @@ const mockKnowledgeBase = (mockApi: MockApi) => {
   mockApi.override("GET /knowledge-base/articles", ok(ARTICLES));
   mockApi.override("GET /knowledge-base/articles/:id", ok(ARTICLE));
   mockApi.override("POST /knowledge-base/search", ok(RESULTS));
+  // the support drawer's articles for the current screen
+  mockApi.override("POST /support/knowledge-base-articles", ok([]));
 };
 
 const searchCalls = (mockApi: MockApi) =>
@@ -180,7 +182,7 @@ test("the search button runs the search", async ({ page, mockApi }) => {
   await page
     .getByPlaceholder("Ex.: como registrar uma intervenção")
     .fill("registrar intervenção");
-  await page.getByRole("button", { name: "Buscar", exact: true }).click();
+  await page.getByRole("button", { name: /Buscar$/ }).click();
 
   await expect(
     page.getByRole("heading", {
@@ -216,9 +218,7 @@ test("queries shorter than three characters never hit the search", async ({
   await expect(
     page.getByText("Digite ao menos 3 caracteres para buscar."),
   ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Buscar", exact: true }),
-  ).toBeDisabled();
+  await expect(page.getByRole("button", { name: /Buscar$/ })).toBeDisabled();
 
   expect(searchCalls(mockApi)).toHaveLength(0);
   await expect(page.getByText("Todos os artigos")).toBeVisible();
@@ -247,6 +247,77 @@ test("the drawer links to the internal knowledge base", async ({ page }) => {
   ]);
 
   await expect(popup).toHaveURL(/\/base-de-conhecimento$/);
+});
+
+test("the app-wide article modal loads nothing until it opens", async ({
+  page,
+  mockApi,
+}) => {
+  await page.goto("/priorizacao/pacientes/cards");
+  // the page's own data loads first, alongside anything mounted app-wide
+  await expect
+    .poll(() => mockApi.requests.some((r) => r.path === "/prescriptions"))
+    .toBe(true);
+  await page.waitForTimeout(500);
+
+  expect(
+    mockApi.requests.filter((r) => r.path.startsWith("/knowledge-base/")),
+  ).toHaveLength(0);
+});
+
+test("the drawer opens an article in a modal, over the current page", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override(
+    "POST /support/knowledge-base-articles",
+    ok([{ id: 1, title: "Intervenções", description: "Resumo" }]),
+  );
+
+  await page.goto("/base-de-conhecimento");
+  await page.getByRole("button", { name: "Falar com o suporte" }).click();
+  await page.getByRole("button", { name: "Ver artigo" }).click();
+
+  // the article modal, whichever article it shows
+  const modal = page
+    .getByRole("dialog")
+    .filter({ has: page.getByRole("link", { name: "Abrir em nova aba" }) });
+  await expect(
+    modal.getByRole("heading", { name: "Intervenções", level: 1 }),
+  ).toBeVisible();
+  await expect(page).toHaveURL(/\/base-de-conhecimento$/);
+  await expect(
+    modal.getByRole("link", { name: "Abrir em nova aba" }),
+  ).toHaveAttribute("href", "/base-de-conhecimento/1");
+
+  // a link to another article switches the modal to it
+  mockApi.override(
+    "GET /knowledge-base/articles/:id",
+    ok({
+      ...ARTICLE,
+      ...ARTICLES[1],
+      content: "<p>Conteúdo do escore.</p>",
+      related: [],
+      relatedLessons: [],
+    }),
+  );
+  await modal
+    .locator("article")
+    .getByRole("link", { name: "Escore Global" })
+    .click();
+
+  await expect(
+    page.getByRole("heading", { name: "Escore Global", level: 1 }),
+  ).toBeVisible();
+  await expect(page).toHaveURL(/\/base-de-conhecimento$/);
+
+  await modal
+    .locator(".ant-modal-footer")
+    .getByRole("button", { name: "Fechar" })
+    .click();
+  await expect(
+    page.getByRole("heading", { name: "Escore Global", level: 1 }),
+  ).toBeHidden();
 });
 
 test("the help banner opens the AI agent modal", async ({ page }) => {

@@ -1274,7 +1274,9 @@
     "externalOnly": "O conteúdo deste artigo está disponível na versão externa.",
     "openExternal": "Abrir artigo",
     "notFound": "Artigo não encontrado",
-    "notFoundHint": "Ele pode ter sido removido ou o link está incorreto."
+    "notFoundHint": "Ele pode ter sido removido ou o link está incorreto.",
+    "openInNewTab": "Abrir em nova aba",
+    "close": "Fechar"
   },
   "trainingCentral": {
     "title": "Central de Treinamento",

@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Button, Input, Skeleton, Typography, Space } from "antd";
-import { BookOutlined, LinkOutlined, ReadOutlined } from "@ant-design/icons";
+import { BookOutlined, BulbOutlined, LinkOutlined } from "@ant-design/icons";
 
 import { useAppSelector } from "src/store";
 import { trackSupportAction, TrackedSupportAction } from "utils/tracker";
-import { articlePath } from "features/knowledgeBase/articleContent";
+import { useArticleModal } from "features/knowledgeBase/useArticleModal";
 
 const { Text, Paragraph } = Typography;
 
@@ -13,6 +13,7 @@ export function SupportKnowledgeBase() {
     (state) => state.support.knowledgeBase,
   );
   const [query, setQuery] = useState("");
+  const { openArticle } = useArticleModal();
 
   const isLoading = status === "loading" || status === "idle";
 
@@ -109,14 +110,13 @@ export function SupportKnowledgeBase() {
                             trackSupportAction(
                               TrackedSupportAction.OPEN_ARTICLE,
                             );
-                            // a new tab keeps the screen the user asked for
-                            // help on
-                            window.open(
-                              article.id
-                                ? articlePath(article.id)
-                                : article.link,
-                              "_blank",
-                            );
+                            // the modal keeps the screen the user asked for
+                            // help on; only the old external copy leaves it
+                            if (article.id) {
+                              openArticle(article.id);
+                            } else {
+                              window.open(article.link, "_blank");
+                            }
                           }}
                           style={{ padding: 0, height: "auto", fontSize: 13 }}
                         >
@@ -138,7 +138,7 @@ export function SupportKnowledgeBase() {
       {!isLoading && (
         <Button
           type="link"
-          icon={<ReadOutlined />}
+          icon={<BulbOutlined />}
           onClick={() => {
             trackSupportAction(TrackedSupportAction.OPEN_KNOWLEDGE_BASE);
             // a new tab keeps the screen the user asked for help on

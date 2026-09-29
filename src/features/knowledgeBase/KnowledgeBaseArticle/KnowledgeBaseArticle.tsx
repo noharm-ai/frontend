@@ -1,58 +1,29 @@
-import { MouseEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Button, Col, Row, Skeleton } from "antd";
-import {
-  ArrowLeftOutlined,
-  CalendarOutlined,
-  ClockCircleOutlined,
-  ExportOutlined,
-  FileTextOutlined,
-  PlayCircleOutlined,
-  UnorderedListOutlined,
-} from "@ant-design/icons";
-import dayjs from "dayjs";
+import { ArrowLeftOutlined, UnorderedListOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
-import DefaultModal from "components/Modal";
 
+import { fetchKnowledgeBaseArticle } from "../KnowledgeBaseSlice";
+import { articlePath } from "../articleContent";
+import { usePreparedArticle } from "../usePreparedArticle";
+import { ArticleContent } from "../ArticleContent/ArticleContent";
+import { ArticleRelated } from "../ArticleRelated/ArticleRelated";
 import {
-  fetchKnowledgeBaseArticle,
-  fetchKnowledgeBaseArticles,
-} from "../KnowledgeBaseSlice";
-import {
-  articlePath,
-  buildLinkIndex,
-  IArticleHeading,
-  prepareArticleContent,
-} from "../articleContent";
-import {
-  ArticleBody,
-  ArticleHeader,
   ArticleShell,
   BackLink,
-  ImagePreview,
-  LinkList,
   SidePanel,
   Sidebar,
   StateBox,
   TocList,
 } from "./KnowledgeBaseArticle.style";
 
-const WORDS_PER_MINUTE = 200;
 // the table of contents only helps once there is something to navigate
 const MIN_TOC_HEADINGS = 2;
 // a section becomes current once its heading reaches the top quarter
 const TOC_ACTIVE_OFFSET = 0.25;
-
-const readingMinutes = (html: string) => {
-  const words = html
-    .replace(/<[^>]+>/g, " ")
-    .split(/\s+/)
-    .filter(Boolean).length;
-
-  return Math.max(1, Math.round(words / WORDS_PER_MINUTE));
-};
 
 export function KnowledgeBaseArticle() {
   const { t } = useTranslation();
@@ -62,20 +33,11 @@ export function KnowledgeBaseArticle() {
   const params = useParams();
   const idArticle = Number(params.id);
 
-  const list = useAppSelector((state) => state.knowledgeBase.list);
   const { status, data } = useAppSelector(
     (state) => state.knowledgeBase.article,
   );
   const bodyRef = useRef<HTMLDivElement>(null);
-  const [previewImageSrc, setPreviewImageSrc] = useState<string | null>(null);
   const [activeHeading, setActiveHeading] = useState<string | null>(null);
-
-  useEffect(() => {
-    // the list resolves links between articles
-    if (list.status === "idle") {
-      dispatch(fetchKnowledgeBaseArticles());
-    }
-  }, [dispatch, list.status]);
 
   useEffect(() => {
     if (!Number.isInteger(idArticle)) return;
@@ -88,16 +50,7 @@ export function KnowledgeBaseArticle() {
   const article = data?.id === idArticle ? data : null;
   const isLoading = !article && status !== "failed";
 
-  const linkIndex = useMemo(() => buildLinkIndex(list.data), [list.data]);
-
-  const content = article?.content ?? null;
-  const prepared = useMemo(
-    () =>
-      content
-        ? prepareArticleContent(content, linkIndex)
-        : { html: "", headings: [] as IArticleHeading[] },
-    [content, linkIndex],
-  );
+  const prepared = usePreparedArticle(article?.content);
 
   // highlight the section being read: the last heading scrolled past the top
   // band of the viewport (a scroll listener, since fast scrolls skip headings
@@ -134,22 +87,6 @@ export function KnowledgeBaseArticle() {
   const goBack = () => {
     const from = (location.state as { from?: string } | null)?.from;
     navigate(`/base-de-conhecimento${from && from !== "?" ? from : ""}`);
-  };
-
-  const onBodyClick = (event: MouseEvent<HTMLDivElement>) => {
-    const target = event.target as HTMLElement;
-
-    if (target.tagName === "IMG") {
-      setPreviewImageSrc((target as HTMLImageElement).src);
-      return;
-    }
-
-    // links to other articles stay inside the app
-    const anchor = target.closest("a[data-kb-article]");
-    if (anchor && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
-      event.preventDefault();
-      navigate(articlePath(Number(anchor.getAttribute("data-kb-article"))));
-    }
   };
 
   const scrollToHeading = (id: string) => {
@@ -204,64 +141,12 @@ export function KnowledgeBaseArticle() {
 
       <Row gutter={[24, 24]}>
         <Col xs={24} lg={hasSidebar ? 17 : 24}>
-          <ArticleShell>
-            <ArticleHeader>
-              {article.path.length > 0 && (
-                <div className="article-tags">
-                  {article.path.map((p) => (
-                    <span key={p} className="article-tag">
-                      {p}
-                    </span>
-                  ))}
-                </div>
-              )}
-              <h1>{article.title}</h1>
-              {article.description && (
-                <p className="article-lead">{article.description}</p>
-              )}
-              <div className="article-meta">
-                {article.updatedAt && (
-                  <span>
-                    <CalendarOutlined />
-                    {t("knowledgeBase.updatedAt", {
-                      date: dayjs(article.updatedAt).format("DD/MM/YYYY"),
-                    })}
-                  </span>
-                )}
-                {article.content && (
-                  <span>
-                    <ClockCircleOutlined />
-                    {t("knowledgeBase.readingTime", {
-                      count: readingMinutes(article.content),
-                    })}
-                  </span>
-                )}
-              </div>
-            </ArticleHeader>
-
-            {prepared.html ? (
-              <ArticleBody
-                ref={bodyRef}
-                onClick={onBodyClick}
-                dangerouslySetInnerHTML={{ __html: prepared.html }}
-              />
-            ) : (
-              <StateBox style={{ padding: "24px 0" }}>
-                <strong>{t("knowledgeBase.externalOnly")}</strong>
-                {article.link && (
-                  <Button
-                    type="primary"
-                    icon={<ExportOutlined />}
-                    href={article.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {t("knowledgeBase.openExternal")}
-                  </Button>
-                )}
-              </StateBox>
-            )}
-          </ArticleShell>
+          <ArticleContent
+            article={article}
+            html={prepared.html}
+            bodyRef={bodyRef}
+            onOpenArticle={(id) => navigate(articlePath(id))}
+          />
         </Col>
 
         {hasSidebar && (
@@ -288,82 +173,21 @@ export function KnowledgeBaseArticle() {
                 </SidePanel>
               )}
 
-              {article.relatedLessons.length > 0 && (
-                <SidePanel>
-                  <h3>
-                    <PlayCircleOutlined /> {t("knowledgeBase.relatedLessons")}
-                  </h3>
-                  <LinkList>
-                    {article.relatedLessons.map((lesson) => (
-                      <li key={lesson.id}>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            navigate(
-                              `/treinamento/${lesson.trainingId}/aula/${lesson.id}`,
-                            )
-                          }
-                        >
-                          <span className="link-icon lesson">
-                            <PlayCircleOutlined />
-                          </span>
-                          <span className="link-text">
-                            <strong>{lesson.title}</strong>
-                            <span>{lesson.trainingTitle}</span>
-                          </span>
-                        </button>
-                      </li>
-                    ))}
-                  </LinkList>
-                </SidePanel>
-              )}
-
-              {article.related.length > 0 && (
-                <SidePanel>
-                  <h3>
-                    <FileTextOutlined /> {t("knowledgeBase.relatedArticles")}
-                  </h3>
-                  <LinkList>
-                    {article.related.map((related) => (
-                      <li key={related.id}>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            navigate(articlePath(related.id), {
-                              state: location.state,
-                            })
-                          }
-                        >
-                          <span className="link-icon">
-                            <FileTextOutlined />
-                          </span>
-                          <span className="link-text">
-                            <strong>{related.title}</strong>
-                            {related.description && (
-                              <span>{related.description}</span>
-                            )}
-                          </span>
-                        </button>
-                      </li>
-                    ))}
-                  </LinkList>
-                </SidePanel>
-              )}
+              <ArticleRelated
+                article={article}
+                onOpenLesson={(lesson) =>
+                  navigate(
+                    `/treinamento/${lesson.trainingId}/aula/${lesson.id}`,
+                  )
+                }
+                onOpenArticle={(id) =>
+                  navigate(articlePath(id), { state: location.state })
+                }
+              />
             </Sidebar>
           </Col>
         )}
       </Row>
-
-      <DefaultModal
-        open={Boolean(previewImageSrc)}
-        footer={null}
-        centered
-        destroyOnHidden
-        width="auto"
-        onCancel={() => setPreviewImageSrc(null)}
-      >
-        <ImagePreview src={previewImageSrc ?? undefined} alt="" />
-      </DefaultModal>
     </>
   );
 }
