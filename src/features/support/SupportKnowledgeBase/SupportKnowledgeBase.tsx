@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button, Input, Skeleton, Typography, Space } from "antd";
-import { BookOutlined, LinkOutlined } from "@ant-design/icons";
+import { BookOutlined, LinkOutlined, ReadOutlined } from "@ant-design/icons";
 
 import { useAppSelector } from "src/store";
 import { trackSupportAction, TrackedSupportAction } from "utils/tracker";
@@ -135,6 +135,20 @@ export function SupportKnowledgeBase() {
           </Text>
         )}
       </div>
+      {!isLoading && (
+        <Button
+          type="link"
+          icon={<ReadOutlined />}
+          onClick={() => {
+            trackSupportAction(TrackedSupportAction.OPEN_KNOWLEDGE_BASE);
+            // a new tab keeps the screen the user asked for help on
+            window.open("/base-de-conhecimento", "_blank");
+          }}
+          style={{ alignSelf: "flex-start", padding: 0, fontSize: 13 }}
+        >
+          Ver base de conhecimento completa
+        </Button>
+      )}
     </div>
   );
 }

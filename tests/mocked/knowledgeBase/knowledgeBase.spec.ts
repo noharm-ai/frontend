@@ -235,6 +235,20 @@ test("the help banner opens the support drawer", async ({ page }) => {
   await expect(page).toHaveURL(/\/base-de-conhecimento/);
 });
 
+test("the drawer links to the internal knowledge base", async ({ page }) => {
+  await page.goto("/base-de-conhecimento");
+  await page.getByRole("button", { name: "Falar com o suporte" }).click();
+
+  const [popup] = await Promise.all([
+    page.waitForEvent("popup"),
+    page
+      .getByRole("button", { name: "Ver base de conhecimento completa" })
+      .click(),
+  ]);
+
+  await expect(popup).toHaveURL(/\/base-de-conhecimento$/);
+});
+
 test("the help banner opens the AI agent modal", async ({ page }) => {
   await page.goto("/base-de-conhecimento");
 

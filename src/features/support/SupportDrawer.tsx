@@ -2,7 +2,6 @@ import { Drawer, Avatar, Typography, Card, Row, Col } from "antd";
 import {
   RobotOutlined,
   CustomerServiceOutlined,
-  LinkOutlined,
   ArrowLeftOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -202,22 +201,6 @@ export function SupportDrawer() {
               <PendingTrainingNotice canOpenUrgent={requiresUrgent} />
             </div>
           )}
-          <div style={{ textAlign: "center", marginTop: 12 }}>
-            <Button
-              type="link"
-              onClick={() => {
-                trackSupportAction(TrackedSupportAction.OPEN_KNOWLEDGE_BASE);
-                window.open(
-                  `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/39`,
-                  "_blank",
-                );
-              }}
-              icon={<LinkOutlined />}
-              style={{ fontSize: 12, color: "#8c8c8c" }}
-            >
-              Consultar base de conhecimento completa
-            </Button>
-          </div>
         </div>
       )}
 
