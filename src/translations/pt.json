@@ -1263,6 +1263,7 @@
     "helpTitle": "Não encontrou o que procurava?",
     "helpText": "Nossa equipe de suporte pode ajudar.",
     "helpAction": "Falar com o suporte",
+    "aiAgentAction": "Perguntar ao agente de IA",
     "backToList": "Base de Conhecimento",
     "updatedAt": "Atualizado em {{date}}",
     "readingTime_one": "{{count}} min de leitura",

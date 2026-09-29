@@ -464,6 +464,18 @@ export const HelpBanner = styled.div`
       font-size: 0.875rem;
     }
   }
+
+  .help-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+
+    ${mobile} {
+      flex-direction: column-reverse;
+      align-items: flex-start;
+    }
+  }
 `;
 
 export const StateBox = styled.div`

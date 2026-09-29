@@ -224,6 +224,27 @@ test("queries shorter than three characters never hit the search", async ({
   await expect(page.getByText("Todos os artigos")).toBeVisible();
 });
 
+test("the help banner opens the support drawer", async ({ page }) => {
+  await page.goto("/base-de-conhecimento");
+
+  await page.getByRole("button", { name: "Falar com o suporte" }).click();
+
+  await expect(
+    page.getByRole("heading", { name: "Suporte NoHarm" }),
+  ).toBeVisible();
+  await expect(page).toHaveURL(/\/base-de-conhecimento/);
+});
+
+test("the help banner opens the AI agent modal", async ({ page }) => {
+  await page.goto("/base-de-conhecimento");
+
+  await page.getByRole("button", { name: "Perguntar ao agente de IA" }).click();
+
+  await expect(
+    page.getByRole("heading", { name: "Agente de Suporte (IA)" }),
+  ).toBeVisible();
+});
+
 test("an empty search says so", async ({ page, mockApi }) => {
   mockApi.override("POST /knowledge-base/search", ok([]));
 

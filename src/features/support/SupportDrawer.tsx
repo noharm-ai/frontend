@@ -16,10 +16,8 @@ import {
   setSupportOpen,
   fetchKnowledgeBaseArticles,
   resetKnowledgeBase,
-  resetAIForm,
 } from "features/support/SupportSlice";
 import Permission from "src/models/Permission";
-import DefaultModal from "components/Modal";
 import { trackSupportAction, TrackedSupportAction } from "utils/tracker";
 
 import { ChatHeader } from "src/features/support/SupportFormAI/SupportFormAI.style";
@@ -27,7 +25,7 @@ import { SupportInfo } from "./SupportInfo/SupportInfo";
 import { PendingTrainingNotice } from "./PendingTrainingNotice/PendingTrainingNotice";
 import { useTicketCreationBlock } from "./useTicketCreationBlock";
 import { SupportKnowledgeBase } from "./SupportKnowledgeBase/SupportKnowledgeBase";
-import { SupportFormAI } from "./SupportFormAI/SupportFormAI";
+import { SupportAIModal } from "./SupportAIModal/SupportAIModal";
 import { KnowledgeBasePathEnum } from "src/models/KnowledgeBasePathEnum";
 
 const { Text } = Typography;
@@ -223,25 +221,10 @@ export function SupportDrawer() {
         </div>
       )}
 
-      <DefaultModal
-        width={850}
-        centered
-        footer={null}
+      <SupportAIModal
         open={aiModalOpen}
-        destroyOnHidden
-        onCancel={() => {
-          dispatch(resetAIForm());
-          setAiModalOpen(false);
-        }}
-      >
-        <header>
-          <h2 className="modal-title">Agente de Suporte (IA)</h2>
-        </header>
-        <p>
-          Tem alguma dúvida? Descreva no campo abaixo e a IA tentará ajudar:
-        </p>
-        <SupportFormAI mode="simple" />
-      </DefaultModal>
+        onClose={() => setAiModalOpen(false)}
+      />
     </Drawer>
   );
 }

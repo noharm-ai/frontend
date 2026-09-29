@@ -1253,6 +1253,7 @@
     "helpTitle": "Didn't find what you were looking for?",
     "helpText": "Our support team can help.",
     "helpAction": "Contact support",
+    "aiAgentAction": "Ask the AI agent",
     "backToList": "Knowledge Base",
     "updatedAt": "Updated on {{date}}",
     "readingTime_one": "{{count}} min read",

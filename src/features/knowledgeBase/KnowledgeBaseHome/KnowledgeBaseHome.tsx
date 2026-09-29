@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { Button, Col, Input, Row, Skeleton } from "antd";
 import {
   ArrowRightOutlined,
@@ -9,10 +9,14 @@ import {
   EnterOutlined,
   ExportOutlined,
   FileTextOutlined,
+  RobotOutlined,
   SearchOutlined,
 } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
+import { setSupportOpen } from "features/support/SupportSlice";
+import { SupportAIModal } from "features/support/SupportAIModal/SupportAIModal";
+import { trackSupportAction, TrackedSupportAction } from "utils/tracker";
 
 import {
   fetchKnowledgeBaseArticles,
@@ -340,7 +344,10 @@ export function KnowledgeBaseHome() {
           <strong>{t("knowledgeBase.helpTitle")}</strong>
           <span>{t("knowledgeBase.helpText")}</span>
         </div>
-        <HelpButton />
+        <div className="help-actions">
+          <AIAgentLink />
+          <HelpButton />
+        </div>
       </HelpBanner>
     </>
   );
@@ -348,12 +355,33 @@ export function KnowledgeBaseHome() {
 
 function HelpButton() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   return (
-    <Button onClick={() => navigate("/suporte")}>
+    <Button onClick={() => dispatch(setSupportOpen(true))}>
       {t("knowledgeBase.helpAction")}
     </Button>
+  );
+}
+
+function AIAgentLink() {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <Button
+        type="link"
+        icon={<RobotOutlined />}
+        onClick={() => {
+          trackSupportAction(TrackedSupportAction.OPEN_AI_AGENT);
+          setOpen(true);
+        }}
+      >
+        {t("knowledgeBase.aiAgentAction")}
+      </Button>
+      <SupportAIModal open={open} onClose={() => setOpen(false)} />
+    </>
   );
 }
 
