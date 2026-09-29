@@ -56,6 +56,7 @@ import notificationsSlice from "features/notifications/NotificationsSlice";
 import trainingCentralSlice from "features/training/TrainingCentralSlice";
 import trainingOverviewSlice from "features/training/TrainingOverviewSlice";
 import trainingPlayerSlice from "features/training/TrainingPlayerSlice";
+import { knowledgeBaseReducer } from "features/knowledgeBase/KnowledgeBaseSlice";
 import clinicalNotesMultiSlice from "features/clinicalNotes/ClinicalNotesSlice";
 import { navigationSoapNoteReducer } from "features/clinicalNotes/NavigationSoapNote/NavigationSoapNoteSlice";
 import { digitalSignatureReducer } from "features/clinicalNotes/DigitalSignature/DigitalSignatureSlice";
@@ -176,6 +177,7 @@ const rootReducer = combineReducers({
   trainingCentral: trainingCentralSlice,
   trainingOverview: trainingOverviewSlice,
   trainingPlayer: trainingPlayerSlice,
+  knowledgeBase: knowledgeBaseReducer,
 });
 
 export default rootReducer;

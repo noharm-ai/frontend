@@ -141,7 +141,7 @@ tests/
     prioritization/  prescription/  interventions/  outpatient/
     userAdmin/  userProfile/  customForms/  training/  reports/
     regulation/  culture/  password/  switchSchema/  scenarios/
-    memory/  supportCenter/
+    memory/  supportCenter/  knowledgeBase/
 ```
 
 Tests run in Chromium only. Firefox/WebKit are commented out in `playwright.config.ts`.

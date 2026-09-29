@@ -859,6 +859,17 @@ api.support.fetchKnowledgeBaseArticles = (params) =>
   });
 
 /**
+ * knowledge base namespace
+ */
+api.knowledgeBase = {};
+api.knowledgeBase.getArticles = () =>
+  instance.get(`/knowledge-base/articles`, { ...setHeaders() });
+api.knowledgeBase.getArticle = (idArticle) =>
+  instance.get(`/knowledge-base/articles/${idArticle}`, { ...setHeaders() });
+api.knowledgeBase.search = (params) =>
+  instance.post(`/knowledge-base/search`, params, { ...setHeaders() });
+
+/**
  * training namespace
  */
 api.training = {};

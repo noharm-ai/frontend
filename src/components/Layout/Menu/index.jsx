@@ -161,11 +161,12 @@ export default function Menu({ segments }) {
       permission: [Permission.READ_REPORTS],
     },
     {
-      key: `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/39`,
-      link: `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/39`,
+      key: "/base-de-conhecimento",
+      link: "/base-de-conhecimento",
       label: t("menu.knowledgeBase"),
       icon: <BulbOutlined />,
       id: "gtm-lnk-knowledgeBase",
+      permission: [Permission.READ_BASIC_FEATURES],
     },
     {
       key: `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/137`,
@@ -320,7 +321,12 @@ export default function Menu({ segments }) {
     <Navigator
       mode="vertical"
       theme="dark"
-      selectedKeys={[location.pathname]}
+      selectedKeys={[
+        // an article page still belongs to the knowledge base entry
+        location.pathname.startsWith("/base-de-conhecimento/")
+          ? "/base-de-conhecimento"
+          : location.pathname,
+      ]}
       items={getItems(items)}
       onClick={linkTo}
     />

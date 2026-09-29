@@ -32,6 +32,8 @@ import MemoryEditorPage from "pages/Memory/MemoryEditorPage";
 import TrainingCentral from "pages/TrainingCentral";
 import { CertificateValidationPage } from "pages/CertificateValidation/CertificateValidationPage";
 import TrainingPlayer from "pages/TrainingPlayer";
+import { KnowledgeBasePage } from "pages/KnowledgeBase/KnowledgeBasePage";
+import { KnowledgeBaseArticlePage } from "pages/KnowledgeBase/KnowledgeBaseArticlePage";
 
 import AdminTag from "pages/Admin/Tag";
 import AdminMemory from "pages/Admin/Memory";
@@ -314,6 +316,16 @@ const routes = [
     exact: true,
     path: "/treinamento/:id/aula/:lessonId",
     element: <WithAuth component={TrainingPlayer} />,
+  },
+  {
+    exact: true,
+    path: "/base-de-conhecimento",
+    element: <WithAuth component={KnowledgeBasePage} />,
+  },
+  {
+    exact: true,
+    path: "/base-de-conhecimento/:id",
+    element: <WithAuth component={KnowledgeBaseArticlePage} />,
   },
   {
     exact: true,

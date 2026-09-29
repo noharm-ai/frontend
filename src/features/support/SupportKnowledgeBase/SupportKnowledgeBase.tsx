@@ -4,6 +4,7 @@ import { BookOutlined, LinkOutlined } from "@ant-design/icons";
 
 import { useAppSelector } from "src/store";
 import { trackSupportAction, TrackedSupportAction } from "utils/tracker";
+import { articlePath } from "features/knowledgeBase/articleContent";
 
 const { Text, Paragraph } = Typography;
 
@@ -99,7 +100,7 @@ export function SupportKnowledgeBase() {
                         {article.description}
                       </Paragraph>
                     )}
-                    {article.link && (
+                    {(article.id || article.link) && (
                       <div style={{ marginLeft: 24 }}>
                         <Button
                           type="link"
@@ -108,7 +109,14 @@ export function SupportKnowledgeBase() {
                             trackSupportAction(
                               TrackedSupportAction.OPEN_ARTICLE,
                             );
-                            window.open(article.link, "_blank");
+                            // a new tab keeps the screen the user asked for
+                            // help on
+                            window.open(
+                              article.id
+                                ? articlePath(article.id)
+                                : article.link,
+                              "_blank",
+                            );
                           }}
                           style={{ padding: 0, height: "auto", fontSize: 13 }}
                         >
