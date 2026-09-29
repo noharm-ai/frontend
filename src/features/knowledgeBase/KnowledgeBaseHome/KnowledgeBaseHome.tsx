@@ -6,6 +6,7 @@ import {
   ArrowRightOutlined,
   BulbOutlined,
   CustomerServiceOutlined,
+  EnterOutlined,
   ExportOutlined,
   FileTextOutlined,
   SearchOutlined,
@@ -30,13 +31,13 @@ import {
   RelevanceBadge,
   ResultList,
   SearchBox,
+  SearchHint,
   SectionHeader,
   StateBox,
   Suggestions,
 } from "./KnowledgeBaseHome.style";
 
-// every search costs an embedding call: wait for a pause in typing
-const SEARCH_DEBOUNCE_MS = 600;
+// every search costs an embedding call: it only runs on enter or on the button
 const SEARCH_MIN_LENGTH = 3;
 const MAX_CARD_TAGS = 2;
 // the rest of the categories sit behind a "more" toggle
@@ -101,20 +102,6 @@ export function KnowledgeBaseHome() {
     }
   }, [dispatch, list.status]);
 
-  // typing commits the query after a pause
-  useEffect(() => {
-    const value = input.trim();
-    if (value === query) return;
-
-    const timeout = setTimeout(
-      () => updateParams({ q: value || null }),
-      value ? SEARCH_DEBOUNCE_MS : 0,
-    );
-
-    return () => clearTimeout(timeout);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [input]);
-
   const isSearching = query.length >= SEARCH_MIN_LENGTH;
 
   useEffect(() => {
@@ -130,6 +117,19 @@ export function KnowledgeBaseHome() {
     setInput(value);
     updateParams({ q: value.trim() || null });
   };
+
+  const changeInput = (value: string) => {
+    setInput(value);
+    // clearing the box goes straight back to the article list
+    if (!value.trim() && query) updateParams({ q: null });
+  };
+
+  const pendingInput = input.trim();
+  const isTooShort =
+    pendingInput !== "" && pendingInput.length < SEARCH_MIN_LENGTH;
+  // typed text that has not been searched yet
+  const hasPendingSearch =
+    !isTooShort && pendingInput !== "" && pendingInput !== query;
 
   const categories = useMemo(() => {
     const counts = new Map<string, number>();
@@ -193,11 +193,37 @@ export function KnowledgeBaseHome() {
               placeholder={t("knowledgeBase.searchPlaceholder")}
               aria-label={t("knowledgeBase.searchPlaceholder")}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => changeInput(e.target.value)}
               onPressEnter={() => submit(input)}
               maxLength={500}
+              suffix={
+                <Button
+                  type="primary"
+                  className="search-button"
+                  icon={<SearchOutlined />}
+                  disabled={!hasPendingSearch}
+                  onClick={() => submit(input)}
+                >
+                  {t("knowledgeBase.searchAction")}
+                </Button>
+              }
             />
           </SearchBox>
+
+          <SearchHint
+            aria-live="polite"
+            $pending={isTooShort || hasPendingSearch}
+          >
+            {isTooShort ? (
+              t("knowledgeBase.searchMinLength", { count: SEARCH_MIN_LENGTH })
+            ) : hasPendingSearch ? (
+              <>
+                <EnterOutlined /> {t("knowledgeBase.searchPendingHint")}
+              </>
+            ) : (
+              t("knowledgeBase.searchHint")
+            )}
+          </SearchHint>
 
           <Suggestions>
             <span>{t("knowledgeBase.suggestionsLabel")}</span>

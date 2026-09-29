@@ -6,8 +6,8 @@ import type { MockApi } from "../support/mockApi";
  *
  * The home page lists every published article, filtered by category (the
  * screens an article is pinned to) and searched through the semantic search
- * endpoint, which runs only after a pause in typing because every call costs
- * an embedding. The article page renders sanitized HTML, turns links to the
+ * endpoint, which runs only on enter or on the search button because every
+ * call costs an embedding. The article page renders sanitized HTML, turns links to the
  * old external copies into internal routes, and points at related articles
  * and training lessons.
  */
@@ -125,7 +125,7 @@ test("an article without content links to its external copy", async ({
   await expect(card).toHaveAttribute("target", "_blank");
 });
 
-test("search waits for a pause in typing and shows ranked snippets", async ({
+test("typing alone never searches, and asks for enter", async ({
   page,
   mockApi,
 }) => {
@@ -133,7 +133,28 @@ test("search waits for a pause in typing and shows ranked snippets", async ({
 
   await page
     .getByPlaceholder("Ex.: como registrar uma intervenção")
-    .pressSequentially("registrar intervenção", { delay: 30 });
+    .fill("registrar intervenção");
+
+  await expect(
+    page.getByText(
+      "Pressione Enter ou clique em Buscar para ver os resultados.",
+    ),
+  ).toBeVisible();
+  await page.waitForTimeout(900);
+
+  expect(searchCalls(mockApi)).toHaveLength(0);
+  await expect(page.getByText("Todos os artigos")).toBeVisible();
+});
+
+test("enter runs the search and shows ranked snippets", async ({
+  page,
+  mockApi,
+}) => {
+  await page.goto("/base-de-conhecimento");
+
+  const input = page.getByPlaceholder("Ex.: como registrar uma intervenção");
+  await input.fill("registrar intervenção");
+  await input.press("Enter");
 
   await expect(
     page.getByRole("heading", {
@@ -141,7 +162,6 @@ test("search waits for a pause in typing and shows ranked snippets", async ({
     }),
   ).toBeVisible();
 
-  // one call for the whole phrase, not one per keystroke
   expect(searchCalls(mockApi)).toHaveLength(1);
   expect(JSON.parse(searchCalls(mockApi)[0].postData!)).toEqual({
     query: "registrar intervenção",
@@ -152,6 +172,22 @@ test("search waits for a pause in typing and shows ranked snippets", async ({
   await expect(
     page.locator("mark", { hasText: "intervenção" }).first(),
   ).toBeVisible();
+});
+
+test("the search button runs the search", async ({ page, mockApi }) => {
+  await page.goto("/base-de-conhecimento");
+
+  await page
+    .getByPlaceholder("Ex.: como registrar uma intervenção")
+    .fill("registrar intervenção");
+  await page.getByRole("button", { name: "Buscar", exact: true }).click();
+
+  await expect(
+    page.getByRole("heading", {
+      name: "Resultados para “registrar intervenção”",
+    }),
+  ).toBeVisible();
+  expect(searchCalls(mockApi)).toHaveLength(1);
 });
 
 test("a suggestion runs the search right away", async ({ page, mockApi }) => {
@@ -173,8 +209,16 @@ test("queries shorter than three characters never hit the search", async ({
 }) => {
   await page.goto("/base-de-conhecimento");
 
-  await page.getByPlaceholder("Ex.: como registrar uma intervenção").fill("ab");
-  await page.waitForTimeout(900);
+  const input = page.getByPlaceholder("Ex.: como registrar uma intervenção");
+  await input.fill("ab");
+  await input.press("Enter");
+
+  await expect(
+    page.getByText("Digite ao menos 3 caracteres para buscar."),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Buscar", exact: true }),
+  ).toBeDisabled();
 
   expect(searchCalls(mockApi)).toHaveLength(0);
   await expect(page.getByText("Todos os artigos")).toBeVisible();

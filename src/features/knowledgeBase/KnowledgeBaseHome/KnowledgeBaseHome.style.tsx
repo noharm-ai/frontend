@@ -129,6 +129,55 @@ export const SearchBox = styled.div`
     color: ${colors.accentSecondary};
     font-size: 1.25rem;
   }
+
+  .ant-input-suffix {
+    gap: 8px;
+  }
+
+  .search-button {
+    height: 40px;
+    border-radius: 10px;
+
+    &.ant-btn-variant-solid:not(:disabled) {
+      background: #70bdc4;
+
+      &:hover {
+        background: #5aa9b0;
+      }
+
+      &:active {
+        background: #4b959c;
+      }
+    }
+
+    ${mobile} {
+      height: 34px;
+      padding: 0 10px;
+
+      /* icon only on small screens */
+      .ant-btn-icon + span {
+        display: none;
+      }
+    }
+  }
+`;
+
+export const SearchHint = styled.p<{ $pending: boolean }>`
+  min-height: 1.4em;
+  margin: 10px 0 0;
+  font-size: 0.8rem;
+  transition: color 0.2s;
+
+  ${({ $pending }) =>
+    $pending
+      ? css`
+          color: ${colors.accentSecondary};
+          font-weight: 600;
+        `
+      : css`
+          color: ${colors.text};
+          opacity: 0.8;
+        `}
 `;
 
 export const Suggestions = styled.div`
