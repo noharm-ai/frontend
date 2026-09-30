@@ -17,6 +17,9 @@ export interface ICultureItem {
   result?: string | null;
   resultType?: CultureResultType | null;
   resultDetail?: string | null;
+  // MIC (minimum inhibitory concentration) as the lab reports it, qualifier
+  // included ("<=0.5"): only a released antibiogram carries one
+  mic?: string | null;
   prediction?: string | null;
   predictionType?: CultureResultType | null;
   probability?: number | null;

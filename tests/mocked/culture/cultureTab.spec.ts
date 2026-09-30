@@ -150,6 +150,7 @@ const CULTURES = [
         result: "Resistente",
         resultType: "R",
         resultDetail: null,
+        mic: "<=0.5",
         prediction: null,
         predictionType: null,
         probability: null,
@@ -269,6 +270,10 @@ test("culture tab lists the drugs and flags predictions", async ({
   await expect(
     details.getByText("Data da coleta: 01/03/2024 12:17"),
   ).toBeVisible();
+  // the MIC of the released antibiogram, as the lab reported it
+  await expect(details.locator(".culture-mic")).toHaveText(
+    "CIM (concentração inibitória mínima): <=0.5",
+  );
 
   // the modal must be out of the way before the list is read again
   await page.keyboard.press("Escape");
@@ -391,6 +396,8 @@ test("culture tab lists the drugs and flags predictions", async ({
     "Data da liberação: 08/03/2024 07:17",
   );
   await expect(blocks.nth(0).locator(".culture-prediction")).toHaveCount(0);
+  // a lab that reports no MIC leaves no empty line behind
+  await expect(blocks.nth(0).locator(".culture-mic")).toHaveCount(0);
   await expect(details.locator(".culture-pending-title")).toHaveText(
     "1 coleta com resultado laboratorial pendente",
   );

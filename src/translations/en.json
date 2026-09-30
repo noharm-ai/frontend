@@ -1387,6 +1387,7 @@
     "result": "Result",
     "collectionDate": "Collection date",
     "releaseDate": "Release date",
+    "mic": "MIC (minimum inhibitory concentration)",
     "predictionAccuracy": "Accuracy",
     "resultPending": "Lab result pending",
     "pendingTitle_one": "{{count}} collection with lab result pending",

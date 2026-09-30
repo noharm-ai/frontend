@@ -1397,6 +1397,7 @@
     "result": "Resultado",
     "collectionDate": "Data da coleta",
     "releaseDate": "Data da liberação",
+    "mic": "CIM (concentração inibitória mínima)",
     "predictionAccuracy": "Acurácia",
     "resultPending": "Resultado laboratorial pendente",
     "pendingTitle_one": "{{count}} coleta com resultado laboratorial pendente",

@@ -77,6 +77,12 @@ const CultureReleasedItems = ({ items, t }: ICultureItemsProps) => (
         <div>
           {t("culture.result")}: {item.result}
         </div>
+        {/* not every lab reports it: a line of "-" would only be noise */}
+        {item.mic && (
+          <div className="culture-mic">
+            {t("culture.mic")}: {item.mic}
+          </div>
+        )}
         <div>
           {t("culture.releaseDate")}: {formatDate(item.releaseDate)}
         </div>
