@@ -5,6 +5,8 @@
  * prescription.
  */
 
+import type { ICultureDrug, ICultureItem } from "./cultureTypes";
+
 // the backend classifies the free text of the antibiogram (culture_service
 // RESULT_TYPES) and predictions share the same alphabet
 export const RESULT_RESISTANT = "R";
@@ -15,9 +17,9 @@ export const RESULT_SUSCEPTIBLE = "S";
 
 // a pending culture is shown through the prediction, which must never be
 // presented as if it were the lab result
-export const isPrediction = (item) => !item.result;
+export const isPrediction = (item: ICultureItem): boolean => !item.result;
 
-export const resultTypeOf = (item) =>
+export const resultTypeOf = (item: ICultureItem) =>
   isPrediction(item) ? item.predictionType : item.resultType;
 
 // the item that represents the drug, chosen by the backend
@@ -27,7 +29,8 @@ export const resultTypeOf = (item) =>
 // alert reads it. A released result always comes before a prediction, so a
 // drug that has an antibiogram is never read through a prediction of a
 // pending collection
-export const currentItemOf = (drug) => (drug.items || [])[0];
+export const currentItemOf = (drug: ICultureDrug): ICultureItem | undefined =>
+  (drug.items || [])[0];
 
 /**
  * A released resistant antibiogram for a drug the prescription carries.
@@ -41,7 +44,7 @@ export const currentItemOf = (drug) => (drug.items || [])[0];
  * (cultureStats.resistantInUse, culture_service.get_culture_stats), so the
  * cultures need not be loaded before the tab is opened.
  */
-export const isResistantInUse = (drug) => {
+export const isResistantInUse = (drug: ICultureDrug): boolean => {
   const current = currentItemOf(drug);
 
   if (!current) {

@@ -1378,17 +1378,17 @@
     "predictionsHide_other": "Ocultar predições NoHarm ({{count}})",
     "predictionsResistant_one": "{{count}} com predição de resistência",
     "predictionsResistant_other": "{{count}} com predição de resistência",
-    "groups": {
-      "resistantInUse": "Resistentes em uso",
-      "resistant": "Resistentes",
-      "susceptible": "Sensíveis",
-      "predictionResistant": "Predição NoHarm: resistentes",
-      "predictionSusceptible": "Predição NoHarm: sensíveis"
-    },
     "prescribedHint": "Medicamento em uso nesta prescrição",
     "resistantInUseHint": "Resistente e em uso nesta prescrição",
     "resistantInUseTabHint_one": "{{count}} medicamento resistente em uso nesta prescrição",
     "resistantInUseTabHint_other": "{{count}} medicamentos resistentes em uso nesta prescrição",
+    "columns": {
+      "drug": "Medicamento",
+      "result": "Resultado",
+      "aware": "AWaRe",
+      "prescribed": "Em uso",
+      "age": "Liberação"
+    },
     "releaseAge": "há {{age}}",
     "releaseAgeHint": "Antibiograma liberado em {{date}}",
     "detailsHint": "Clique em um medicamento para ver o antibiograma completo.",
@@ -1397,8 +1397,11 @@
     "result": "Resultado",
     "collectionDate": "Data da coleta",
     "releaseDate": "Data da liberação",
+    "mic": "CIM (concentração inibitória mínima)",
     "predictionAccuracy": "Acurácia",
     "resultPending": "Resultado laboratorial pendente",
+    "pendingTitle_one": "{{count}} coleta com resultado laboratorial pendente",
+    "pendingTitle_other": "{{count}} coletas com resultado laboratorial pendente",
     "predictionTitle": "Predição NoHarm",
     "predictionHint": "Estimativa gerada pela NoHarm enquanto o antibiograma não é liberado pelo laboratório. Não substitui o resultado.",
     "prediction": {

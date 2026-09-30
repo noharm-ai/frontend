@@ -12,7 +12,7 @@ export const AWARE_NOT_RECOMMENDED = 4;
 
 // least aggressive first; Not recommended is not a step further on that
 // scale but a group apart, so it closes the list
-export const AWARE_LEVELS = [
+export const AWARE_LEVELS: readonly number[] = [
   AWARE_ACCESS,
   AWARE_WATCH,
   AWARE_RESERVE,
@@ -22,7 +22,9 @@ export const AWARE_LEVELS = [
 // a drug the scale does not place: said so, never guessed onto it
 export const AWARE_UNKNOWN = "unknown";
 
-export const AWARE_COLORS = {
+export type AwareKey = number | typeof AWARE_UNKNOWN;
+
+export const AWARE_COLORS: Record<AwareKey, string> = {
   [AWARE_ACCESS]: "#7ebe9a",
   [AWARE_WATCH]: "#f0a04b",
   [AWARE_RESERVE]: "#f44336",
@@ -31,9 +33,10 @@ export const AWARE_COLORS = {
 };
 
 // the translation / class key of a level
-export const awareKey = (level) =>
-  AWARE_LEVELS.includes(level) ? level : AWARE_UNKNOWN;
+export const awareKey = (level?: number | null): AwareKey =>
+  hasAwareLevel(level) ? level : AWARE_UNKNOWN;
 
 // whether the substance was placed on the scale at all: the column is curated
 // apart from the card, so an antimicrobial with no level yet is a normal state
-export const hasAwareLevel = (level) => AWARE_LEVELS.includes(level);
+export const hasAwareLevel = (level?: number | null): level is number =>
+  level != null && AWARE_LEVELS.includes(level);

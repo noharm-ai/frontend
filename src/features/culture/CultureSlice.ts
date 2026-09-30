@@ -1,7 +1,10 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { AxiosError } from "axios";
 
 import api from "services/api";
 import { Types as PrescriptionTypes } from "store/ducks/prescriptions";
+
+import type { ICultureDrug } from "./cultureTypes";
 
 /**
  * Cultures of the patient, flagged against the prescription
@@ -13,16 +16,44 @@ import { Types as PrescriptionTypes } from "store/ducks/prescriptions";
  * not need it, the prescription carries the count (cultureStats).
  */
 
-const initialState = {
+type IdPrescription = number | string;
+
+interface ICultureSlice {
+  status: "idle" | "loading" | "succeeded" | "failed";
+  error: string | null;
+  idPrescription: IdPrescription | null;
+  list: ICultureDrug[];
+}
+
+interface IFetchCulturesParams {
+  idPrescription: IdPrescription;
+  // skips the cache: the retry of the card
+  force?: boolean;
+}
+
+interface IErrorResponse {
+  message?: string;
+}
+
+const initialState: ICultureSlice = {
   status: "idle",
   error: null,
   idPrescription: null,
   list: [],
 };
 
-const sameId = (a, b) => `${a}` === `${b}`;
+const sameId = (a: IdPrescription | null, b: IdPrescription | null) =>
+  `${a}` === `${b}`;
 
-export const fetchCultures = createAsyncThunk(
+export const fetchCultures = createAsyncThunk<
+  ICultureDrug[],
+  IFetchCulturesParams,
+  // the store type is built from this reducer: typed here, not imported
+  {
+    state: { cultures: ICultureSlice };
+    rejectValue: IErrorResponse | undefined;
+  }
+>(
   "cultures/fetch",
   async ({ idPrescription }, thunkAPI) => {
     try {
@@ -30,7 +61,9 @@ export const fetchCultures = createAsyncThunk(
 
       return response.data.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response?.data);
+      return thunkAPI.rejectWithValue(
+        (err as AxiosError<IErrorResponse>).response?.data,
+      );
     }
   },
   {
@@ -83,16 +116,19 @@ const cultureSlice = createSlice({
       })
       .addCase(fetchCultures.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.payload?.message || action.error?.message;
+        state.error = action.payload?.message || action.error?.message || null;
       })
       // the "prescribed" flag compares the cultures to the drug list, which
       // a new load of the prescription may have changed: the cache is stale,
       // and the card fetches again if its tab is open
-      .addCase(PrescriptionTypes.PRESCRIPTIONS_FETCH_SINGLE_SUCCESS, (state) => {
-        if (state.status !== "loading") {
-          state.status = "idle";
-        }
-      });
+      .addCase(
+        PrescriptionTypes.PRESCRIPTIONS_FETCH_SINGLE_SUCCESS,
+        (state) => {
+          if (state.status !== "loading") {
+            state.status = "idle";
+          }
+        },
+      );
   },
 });
 

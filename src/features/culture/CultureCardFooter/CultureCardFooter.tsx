@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 
@@ -7,15 +7,22 @@ import DefaultModal from "components/Modal";
 import CultureReport from "features/reports/CultureReport/CultureReport";
 import { isPrediction } from "features/culture/cultureResistance";
 import { trackReport, TrackedReport } from "src/utils/tracker";
+import type { ICultureDrug } from "features/culture/cultureTypes";
 
 import { LastRelease } from "./CultureCardFooter.style";
+
+interface ICultureCardFooterProps {
+  cultures?: ICultureDrug[] | null;
+  // the prescription being screened (store/ducks/prescriptions), untyped
+  prescription?: any;
+}
 
 // the newest release across every culture of the patient. A pending collection
 // may carry a release date of its own, but it has no result yet: what this
 // states is how recent the newest antibiogram is, so only released results
 // count
-const lastReleaseDate = (cultures) => {
-  let last = null;
+const lastReleaseDate = (cultures?: ICultureDrug[] | null): string | null => {
+  let last: string | null = null;
 
   (cultures ?? []).forEach((drug) =>
     drug.items.forEach((item) => {
@@ -32,7 +39,10 @@ const lastReleaseDate = (cultures) => {
   return last;
 };
 
-export function CultureCardFooter({ cultures, prescription }) {
+export function CultureCardFooter({
+  cultures,
+  prescription,
+}: ICultureCardFooterProps) {
   const { t } = useTranslation();
   const [reportOpen, setReportOpen] = useState(false);
 

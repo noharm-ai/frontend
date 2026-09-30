@@ -106,7 +106,11 @@ export default function Reports() {
   }, []); //eslint-disable-line
 
   const showReport = (data) => {
-    setCurrentReport(data);
+    if (data.newWindow === true) {
+      window.open(data.link, "_blank", "noopener,noreferrer");
+    } else {
+      setCurrentReport(data);
+    }
 
     if (data.title) {
       trackReport(TrackedReport.CUSTOM, {

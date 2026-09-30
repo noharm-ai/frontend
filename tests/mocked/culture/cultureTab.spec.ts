@@ -38,7 +38,7 @@ const CULTURES = [
         microorganism: "Microorganismo Teste",
         material: "Sangue Total",
         // the backend reads "intermediário" as susceptible, but keeps the
-        // wording in resultDetail because the group header does not say it
+        // wording in resultDetail because the accent bar does not say it
         result: "intermediário",
         resultType: "S",
         resultDetail: "intermediário",
@@ -150,6 +150,7 @@ const CULTURES = [
         result: "Resistente",
         resultType: "R",
         resultDetail: null,
+        mic: "<=0.5",
         prediction: null,
         predictionType: null,
         probability: null,
@@ -218,23 +219,37 @@ test("culture tab lists the drugs and flags predictions", async ({
     "liberação mais recente em 08/03/24 07:17",
   );
 
-  // resistant AND in use is the finding the card exists for, so it gets a
-  // group of its own above every other one, and the row keeps nothing but the
-  // drug name: the header already says the drug is in use
-  const inUse = page.locator(".culture-group-resistantInUse");
-  await expect(inUse).toContainText("Resistentes em uso");
-  await expect(inUse.locator(".culture-item .name")).toHaveText(["OXACILINA"]);
-  await expect(inUse.locator(".prescribed")).toHaveCount(0);
-  await expect(page.locator(".culture-group").first()).toHaveClass(
-    /culture-group-resistantInUse/,
+  // every drug is a row of one table, under the columns it is read by
+  await expect(page.locator(".culture-table thead th")).toHaveText([
+    "Medicamento",
+    "Resultado",
+    "AWaRe",
+    "Em uso",
+    "Liberação",
+    "",
+  ]);
+
+  // the rows follow one another with no header between the groups
+  await expect(page.locator(".culture-table .group-title")).toHaveCount(0);
+
+  // resistant AND in use is the finding the card exists for, so it is sorted
+  // above every other row, and the prescribed column says it is in use like
+  // on any other row
+  const inUse = page.locator(".culture-item.culture-row-resistantInUse");
+  await expect(inUse.locator(".name")).toHaveText(["OXACILINA"]);
+  await expect(inUse.locator(".prescribed")).toHaveCount(1);
+  await expect(page.locator(".culture-item").first()).toHaveClass(
+    /culture-row-resistantInUse/,
   );
 
-  // a resistant drug nobody prescribed stays in the plain group
-  const resistant = page.locator(".culture-group-resistant");
-  await expect(resistant).toContainText("Resistentes");
-  await expect(resistant.locator(".culture-item .name")).toHaveText([
-    "CEFEPIME",
-  ]);
+  // a resistant drug nobody prescribed is read as a plain resistance
+  const resistant = page.locator(".culture-item.culture-row-resistant");
+  await expect(resistant.locator(".name")).toHaveText(["CEFEPIME"]);
+
+  // the result is spelled out in a column of its own: the bar colour alone
+  // does not say it to everyone
+  await expect(inUse.locator(".culture-result")).toHaveText("Resistente");
+  await expect(resistant.locator(".culture-result")).toHaveText("Resistente");
 
   // how old the released antibiogram is, next to the drug. The fixture dates
   // are fixed, so the badge is read by shape and not by value — and anything
@@ -251,10 +266,10 @@ test("culture tab lists the drugs and flags predictions", async ({
   ).toBeVisible();
 
   // the row opens the details, which the hover shadow alone never said
-  await expect(inUse.locator(".culture-item .details-hint")).toHaveCount(1);
+  await expect(inUse.locator(".details-hint")).toHaveCount(1);
 
   // the row is narrow, so the details are behind a click and read in a modal
-  await inUse.locator(".culture-item", { hasText: "OXACILINA" }).click();
+  await inUse.filter({ hasText: "OXACILINA" }).click();
   const details = page.locator(".culture-details-modal");
   await expect(details.getByText("OXACILINA")).toBeVisible();
   await expect(
@@ -269,6 +284,10 @@ test("culture tab lists the drugs and flags predictions", async ({
   await expect(
     details.getByText("Data da coleta: 01/03/2024 12:17"),
   ).toBeVisible();
+  // the MIC of the released antibiogram, as the lab reported it
+  await expect(details.locator(".culture-mic")).toHaveText(
+    "CIM (concentração inibitória mínima): <=0.5",
+  );
 
   // the modal must be out of the way before the list is read again
   await page.keyboard.press("Escape");
@@ -276,12 +295,12 @@ test("culture tab lists the drugs and flags predictions", async ({
 
   // a result that is susceptible but does not read as a plain "Sensível"
   // keeps its own wording on the row
-  const susceptible = page.locator(".culture-group-susceptible");
-  await expect(susceptible).toContainText("Sensíveis");
-  const intermediate = susceptible.locator(".culture-item", {
+  const intermediate = page.locator(".culture-item.culture-row-susceptible", {
     hasText: "AMICACINA",
   });
-  await expect(intermediate).toContainText("intermediário");
+  await expect(intermediate.locator(".culture-result")).toHaveText(
+    "intermediário",
+  );
 
   // the predictions are folded away under the released results: a pending
   // collection is not a lab result, and nothing of it is on screen until the
@@ -294,12 +313,10 @@ test("culture tab lists the drugs and flags predictions", async ({
   await expect(toggle.locator(".toggle-alert")).toHaveText(
     "1 com predição de resistência",
   );
-  await expect(page.locator(".culture-group-predictionResistant")).toHaveCount(
+  await expect(page.locator(".culture-row-predictionResistant")).toHaveCount(0);
+  await expect(page.locator(".culture-row-predictionSusceptible")).toHaveCount(
     0,
   );
-  await expect(
-    page.locator(".culture-group-predictionSusceptible"),
-  ).toHaveCount(0);
   // the card holds released results, so it does not claim the lab returned
   // nothing
   await expect(page.locator(".culture-no-released")).toHaveCount(0);
@@ -308,64 +325,68 @@ test("culture tab lists the drugs and flags predictions", async ({
   await expect(toggle).toHaveAttribute("aria-expanded", "true");
   await expect(toggle).toContainText("Ocultar predições NoHarm");
   await expect(toggle.locator(".toggle-alert")).toHaveCount(0);
-  // the released groups above can fill the scroll area on their own: what the
+  // the released rows above can fill the scroll area on their own: what the
   // click opened has to be on screen, not below the fold it just opened
   await expect(
-    page.locator(".culture-group-predictionResistant .culture-item"),
+    page.locator(".culture-item.culture-row-predictionResistant"),
   ).toBeInViewport({ ratio: 1 });
 
   // the pending culture shows the prediction, not a lab result, and the
-  // predictions are split like the results: the header says what was
-  // predicted, so the row no longer repeats the letter
-  const predictedResistant = page.locator(".culture-group-predictionResistant");
-  await expect(predictedResistant).toContainText(
-    "Predição NoHarm: resistentes",
+  // predictions are sorted like the results: the bar says what was
+  // predicted, and the result column says it next to the robot
+  const predictedResistant = page.locator(
+    ".culture-item.culture-row-predictionResistant",
   );
-  await expect(predictedResistant.locator(".culture-item .name")).toHaveText([
-    "VANCOMICINA",
-  ]);
-  // and it stays out of the released resistant group
-  await expect(resistant.locator(".culture-item .name")).toHaveText([
-    "CEFEPIME",
-  ]);
-  const predicted = page.locator(".culture-group-predictionSusceptible");
-  await expect(predicted).toContainText("Predição NoHarm: sensíveis");
-  await expect(predicted.locator(".culture-item .name")).toHaveText([
-    "GENTAMICINA",
-  ]);
+  await expect(predictedResistant.locator(".name")).toHaveText(["VANCOMICINA"]);
+  await expect(predictedResistant.locator(".culture-result")).toHaveText(
+    "Resistente",
+  );
+  await expect(
+    predictedResistant.locator(".culture-result .anticon-robot"),
+  ).toBeVisible();
+  // and it stays out of the released resistant rows
+  await expect(resistant.locator(".name")).toHaveText(["CEFEPIME"]);
+  const predicted = page.locator(
+    ".culture-item.culture-row-predictionSusceptible",
+  );
+  await expect(predicted.locator(".name")).toHaveText(["GENTAMICINA"]);
   // a drug that already has an antibiogram never shows up here, even with a
   // newer collection still pending
-  await expect(
-    predicted.locator(".culture-item", { hasText: "CEFEPIME" }),
-  ).toHaveCount(0);
-  const pending = predicted.locator(".culture-item", {
-    hasText: "GENTAMICINA",
-  });
+  await expect(predicted.filter({ hasText: "CEFEPIME" })).toHaveCount(0);
+  const pending = predicted.filter({ hasText: "GENTAMICINA" });
   await expect(pending.locator(".name")).toHaveText("GENTAMICINA");
-  await expect(pending.locator(".marker")).toHaveText("");
-  await expect(pending.locator(".anticon-robot")).toBeVisible();
+  await expect(pending.locator(".culture-result")).toHaveText("Sensível");
+  await expect(pending.locator(".culture-result .anticon-robot")).toBeVisible();
   // the pending collection carries a release date of its own, but no
   // antibiogram came back from it: ageing it on the row would state a result
   // the drug does not have
   await expect(pending.locator(".culture-age")).toHaveCount(0);
 
-  // the modal says outright that the lab result is pending, and keeps the
-  // prediction in a block of its own, so it is never read as the result
+  // the modal says outright that the lab result is pending, and summarises
+  // the collection on one line with the prediction in a column of its own, so
+  // it is never read as the result
   await pending.click();
-  await expect(details.locator(".culture-result-pending")).toContainText(
-    "Resultado: Resultado laboratorial pendente",
+  await expect(details.locator(".culture-pending-title")).toHaveText(
+    "1 coleta com resultado laboratorial pendente",
   );
-  const prediction = details.locator(".culture-prediction");
+  // no released antibiogram: no result card at all
+  await expect(details.locator(".culture-detail-item")).toHaveCount(0);
+  const pendingRows = details.locator(".culture-pending-item");
+  await expect(pendingRows).toHaveCount(1);
+  await expect(pendingRows.nth(0).locator(".pending-date")).toHaveText(
+    "01/03/2024 12:17",
+  );
+  const prediction = pendingRows.nth(0).locator(".culture-prediction");
   await expect(prediction).toHaveClass(/culture-prediction-S/);
-  await expect(prediction.locator(".prediction-title")).toHaveText(
+  await expect(prediction).toHaveText("Sensível · 65%");
+  await expect(
+    details.locator(".culture-pending-header .anticon-robot"),
+  ).toBeVisible();
+  await expect(details.locator(".culture-pending-header")).toContainText(
     "Predição NoHarm",
   );
-  await expect(prediction.locator(".prediction-value")).toHaveText(
-    "Sensível · Acurácia: 65%",
-  );
-  await expect(
-    details.getByText("Data da coleta: 01/03/2024 12:17"),
-  ).toBeVisible();
+  // what a prediction is, said once for the list
+  await expect(details.locator(".prediction-hint")).toHaveCount(1);
   // and it must not state a release either: the date the pending collection
   // carries is not an antibiogram coming back
   await expect(details.getByText("Data da liberação")).toHaveCount(0);
@@ -373,20 +394,58 @@ test("culture tab lists the drugs and flags predictions", async ({
   await expect(details).toBeHidden();
 
   // a drug with a released antibiogram and a newer pending collection shows
-  // both, each as its own block: the released result with its date, the
-  // pending one with the prediction set apart
-  await resistant.locator(".culture-item", { hasText: "CEFEPIME" }).click();
+  // both: the released result as a card with its date, the pending one
+  // summarised below it
+  await resistant.filter({ hasText: "CEFEPIME" }).click();
   const blocks = details.locator(".culture-detail-item");
-  await expect(blocks).toHaveCount(2);
+  await expect(blocks).toHaveCount(1);
   await expect(blocks.nth(0)).toContainText("Resultado: Resistente");
   await expect(blocks.nth(0)).toContainText(
     "Data da liberação: 08/03/2024 07:17",
   );
   await expect(blocks.nth(0).locator(".culture-prediction")).toHaveCount(0);
-  await expect(blocks.nth(1)).toContainText("Resultado laboratorial pendente");
-  await expect(blocks.nth(1).locator(".culture-prediction")).toHaveClass(
-    /culture-prediction-S/,
+  // a lab that reports no MIC leaves no empty line behind
+  await expect(blocks.nth(0).locator(".culture-mic")).toHaveCount(0);
+  await expect(details.locator(".culture-pending-title")).toHaveText(
+    "1 coleta com resultado laboratorial pendente",
   );
+  await expect(
+    details.locator(".culture-pending-item .culture-prediction"),
+  ).toHaveClass(/culture-prediction-S/);
+});
+
+test("the rows are read resistant in use, resistant, susceptible in use, susceptible", async ({
+  page,
+  mockApi,
+}) => {
+  // a susceptible drug the patient is on is the answer to whether the current
+  // antimicrobial covers the culture: it reads before the ones nobody
+  // prescribed
+  const susceptibleInUse = CULTURES.map((drug) =>
+    drug.drug === "AMICACINA" ? { ...drug, prescribed: true } : drug,
+  );
+
+  mockApi.override("GET /prescriptions/:id", {
+    json: prescriptionWith({ cultureStats: { resistantInUse: 1 } }),
+  });
+  mockApi.override("GET /prescriptions/:id/cultures", {
+    json: { status: "success", data: susceptibleInUse },
+  });
+
+  await page.goto("/prescricao/199");
+  await openCultureTab(page);
+
+  const released = page.locator(".culture-table").first();
+  await expect(released.locator(".culture-item .name")).toHaveText([
+    "OXACILINA",
+    "CEFEPIME",
+    "AMICACINA",
+  ]);
+
+  const inUse = page.locator(".culture-item.culture-row-susceptibleInUse");
+  await expect(inUse.locator(".name")).toHaveText(["AMICACINA"]);
+  await expect(inUse.locator(".prescribed")).toHaveCount(1);
+  await expect(page.locator(".culture-row-susceptible")).toHaveCount(0);
 });
 
 test("the card states the AWaRe classification of each drug", async ({
@@ -534,10 +593,10 @@ test("with no released result the card says so and folds the predictions", async
 
   await toggle.click();
   await expect(
-    page.locator(".culture-group-predictionResistant .culture-item .name"),
+    page.locator(".culture-item.culture-row-predictionResistant .name"),
   ).toHaveText(["VANCOMICINA"]);
   await expect(
-    page.locator(".culture-group-predictionSusceptible .culture-item .name"),
+    page.locator(".culture-item.culture-row-predictionSusceptible .name"),
   ).toHaveText(["GENTAMICINA"]);
 
   // and they can be folded back away
@@ -681,9 +740,9 @@ test("a failed load says so and offers to try again", async ({
   });
   await error.getByRole("button", { name: "Tentar novamente" }).click();
 
-  await expect(page.locator(".culture-group-resistantInUse")).toContainText(
-    "Resistentes em uso",
-  );
+  await expect(
+    page.locator(".culture-item.culture-row-resistantInUse"),
+  ).toContainText("OXACILINA");
   expect(cultureRequests(mockApi)).toHaveLength(2);
 });
 
@@ -700,13 +759,13 @@ test("the cultures are kept while the tab is switched away and back", async ({
 
   await page.goto("/prescricao/199");
   await openCultureTab(page);
-  await expect(page.locator(".culture-group-resistantInUse")).toBeVisible();
+  await expect(page.locator(".culture-row-resistantInUse")).toBeVisible();
 
   await page
     .locator(".ant-segmented-item-label", { hasText: "Exames" })
     .click();
   await openCultureTab(page);
-  await expect(page.locator(".culture-group-resistantInUse")).toBeVisible();
+  await expect(page.locator(".culture-row-resistantInUse")).toBeVisible();
 
   // the list is cached for the prescription: the second open asks nothing
   expect(cultureRequests(mockApi)).toHaveLength(1);
