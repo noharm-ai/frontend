@@ -7,9 +7,9 @@ import type { MockApi } from "../support/mockApi";
  * The home page lists every published article, filtered by category (the
  * screens an article is pinned to) and searched through the semantic search
  * endpoint, which runs only on enter or on the search button because every
- * call costs an embedding. The article page renders sanitized HTML, turns links to the
- * old external copies into internal routes, and points at related articles
- * and training lessons.
+ * call costs an embedding. The article page renders sanitized HTML, keeps
+ * links to other articles inside the app, and points at related articles and
+ * training lessons.
  */
 
 const OLD_KB = "https://kb.example.com/knowledge/article";
@@ -43,7 +43,7 @@ const ARTICLE = {
   ...ARTICLES[0],
   content:
     "<h2>Como registrar</h2><p>Veja também o " +
-    `<a href="${OLD_KB}/102/">Escore Global</a>.</p>` +
+    '<a href="/base-de-conhecimento/2">Escore Global</a>.</p>' +
     '<p><a href="https://example.org/fora">link externo</a></p>' +
     '<img src="https://example.org/tela.png" onerror="window.__xss = 1">' +
     '<iframe src="https://evil.example.com/embed"></iframe>' +
@@ -386,7 +386,7 @@ test("the article page renders sanitized content with a table of contents", asyn
   await expect(external).toHaveAttribute("target", "_blank");
 });
 
-test("links to the old copy of an article stay inside the app", async ({
+test("links to another article stay inside the app", async ({
   page,
   mockApi,
 }) => {

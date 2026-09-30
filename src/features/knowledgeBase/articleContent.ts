@@ -1,7 +1,5 @@
 import DOMPurify from "dompurify";
 
-import { IKnowledgeBaseArticleSummary } from "./KnowledgeBaseSlice";
-
 export interface IArticleHeading {
   id: string;
   text: string;
@@ -13,38 +11,18 @@ const ALLOWED_IFRAME_SRC =
 
 export const articlePath = (id: number) => `/base-de-conhecimento/${id}`;
 
-// the migrated content still links to the old (external) copies of the
-// articles; compare them without protocol, query, hash or trailing slash
-const normalizeLink = (link: string) => {
-  try {
-    const url = new URL(link);
-    return `${url.host}${url.pathname}`.replace(/\/+$/, "").toLowerCase();
-  } catch {
-    return null;
-  }
-};
-
-export const buildLinkIndex = (articles: IKnowledgeBaseArticleSummary[]) => {
-  const index = new Map<string, number>();
-
-  articles.forEach((article) => {
-    const key = article.link ? normalizeLink(article.link) : null;
-    if (key) index.set(key, article.id);
-  });
-
-  return index;
-};
+// a link written as /base-de-conhecimento/<id> points to another article
+const ARTICLE_HREF = /^\/base-de-conhecimento\/(\d+)\/?(?:[?#].*)?$/;
 
 /**
  * Sanitize an article body and prepare it for the reader:
  * - h2 headings get ids, feeding the table of contents;
- * - links to the old copy of another article point to its page here;
+ * - links to another article (/base-de-conhecimento/<id>) stay in the app;
  * - every other link opens in a new tab;
  * - YouTube embeds get a responsive wrapper, any other iframe is dropped.
  */
 export const prepareArticleContent = (
   html: string,
-  linkIndex: Map<string, number>,
 ): { html: string; headings: IArticleHeading[] } => {
   const body = DOMPurify.sanitize(html, {
     ADD_TAGS: ["iframe"],
@@ -62,13 +40,10 @@ export const prepareArticleContent = (
   });
 
   body.querySelectorAll("a[href]").forEach((anchor) => {
-    const href = anchor.getAttribute("href") ?? "";
-    const key = normalizeLink(href);
-    const articleId = key ? linkIndex.get(key) : undefined;
+    const match = (anchor.getAttribute("href") ?? "").match(ARTICLE_HREF);
 
-    if (articleId) {
-      anchor.setAttribute("href", articlePath(articleId));
-      anchor.setAttribute("data-kb-article", String(articleId));
+    if (match) {
+      anchor.setAttribute("data-kb-article", match[1]);
       anchor.removeAttribute("target");
     } else {
       anchor.setAttribute("target", "_blank");

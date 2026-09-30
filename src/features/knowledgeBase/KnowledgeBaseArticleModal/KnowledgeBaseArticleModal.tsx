@@ -46,8 +46,7 @@ export function KnowledgeBaseArticleModal() {
   const article = data?.id === shownId ? data : null;
   const isLoading = !article && status !== "failed";
 
-  // mounted app-wide: load nothing until an article is actually opened
-  const prepared = usePreparedArticle(article?.content, articleId !== null);
+  const prepared = usePreparedArticle(article?.content);
 
   const close = () => dispatch(closeArticleModal());
   const openArticle = (id: number) => dispatch(openArticleModal(id));
