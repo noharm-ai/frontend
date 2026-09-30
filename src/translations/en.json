@@ -1368,20 +1368,13 @@
     "predictionsHide_other": "Hide NoHarm predictions ({{count}})",
     "predictionsResistant_one": "{{count}} predicted resistant",
     "predictionsResistant_other": "{{count}} predicted resistant",
-    "groups": {
-      "resistantInUse": "Resistant and in use",
-      "resistant": "Resistant",
-      "susceptibleInUse": "Susceptible and in use",
-      "susceptible": "Susceptible",
-      "predictionResistant": "NoHarm prediction: resistant",
-      "predictionSusceptible": "NoHarm prediction: susceptible"
-    },
     "prescribedHint": "Drug in use in this prescription",
     "resistantInUseHint": "Resistant and in use in this prescription",
     "resistantInUseTabHint_one": "{{count}} resistant drug in use in this prescription",
     "resistantInUseTabHint_other": "{{count}} resistant drugs in use in this prescription",
     "columns": {
       "drug": "Drug",
+      "result": "Result",
       "aware": "AWaRe",
       "prescribed": "In use",
       "age": "Released"

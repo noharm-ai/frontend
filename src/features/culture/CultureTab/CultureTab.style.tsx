@@ -2,7 +2,6 @@ import styled from "styled-components";
 
 import {
   PREDICTED_RESISTANT,
-  PREDICTED_SUSCEPTIBLE,
   PREDICTED_UNKNOWN,
   accentColor,
   type IAccentProps,
@@ -72,6 +71,7 @@ export const Table = styled.table`
 
   /* every column but the drug is as narrow as its content: the drug name is
      what identifies the row, and it gets the rest of the width */
+  .cell-result,
   .cell-aware,
   .cell-prescribed,
   .cell-age,
@@ -86,53 +86,6 @@ export const Table = styled.table`
 
   .cell-hint {
     padding-left: 0;
-  }
-`;
-
-export const Group = styled.tbody`
-  .group-title {
-    padding: 10px 6px 4px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.04em;
-    text-align: left;
-    text-transform: uppercase;
-    color: #6d7a94;
-
-    > div {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .anticon {
-      color: #a991d6;
-    }
-
-    .count {
-      font-weight: 400;
-    }
-  }
-
-  /* the predictions carry the colour of what was predicted, on the robot
-     that marks them as predictions */
-  &.culture-group-predictionResistant .group-title .anticon {
-    color: ${PREDICTED_RESISTANT};
-  }
-
-  &.culture-group-predictionSusceptible .group-title .anticon {
-    color: ${PREDICTED_SUSCEPTIBLE};
-  }
-
-  /* resistant and in use: the group the card exists to surface */
-  &.culture-group-resistantInUse .group-title {
-    color: #cf1322;
-
-    .anticon {
-      /* the header font is 11px, too small for the germ to read as one */
-      font-size: 15px;
-      color: #f44336;
-    }
   }
 `;
 
@@ -155,16 +108,7 @@ export const Item = styled.tr<IAccentProps & { $inUse?: boolean }>`
       ${accentColor};
   }
 
-  .drug {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    min-width: 0;
-  }
-
   .name {
-    /* enough of the drug name to identify it: past this the marker beside it
-       is what gives way, not the name */
     min-width: 85px;
     font-size: 14px;
     font-weight: ${(props) => (props.$inUse ? 600 : 400)};
@@ -188,22 +132,11 @@ export const Item = styled.tr<IAccentProps & { $inUse?: boolean }>`
     }
   }
 
-  /* what the group header does not say about the result */
-  .marker {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    min-width: 0;
-    font-size: 12px;
-    font-weight: 500;
-    color: var(--nh-text-color);
-
-    /* the robot marks the row as a prediction, in the colour of what was
-       predicted: the same one the bar and the group header carry */
-    .anticon {
-      flex-shrink: 0;
-      color: ${accentColor};
-    }
+  /* the result in words, so the row is not read by the colour of its bar
+     alone */
+  .culture-result {
+    margin: 0;
+    font-weight: 600;
   }
 
   /* how old the result is. The clock is what tells the number apart from

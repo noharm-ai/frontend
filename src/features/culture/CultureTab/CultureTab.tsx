@@ -13,9 +13,8 @@ import moment from "moment";
 
 import Button from "components/Button";
 import Empty from "components/Empty";
-import CustomIcon from "components/Icon";
+import Tag from "components/Tag";
 import Tooltip from "components/Tooltip";
-import { IconGerm } from "components/Icon/svgs/IconGerm";
 import {
   RESULT_RESISTANT,
   RESULT_SUSCEPTIBLE,
@@ -32,7 +31,6 @@ import {
   Container,
   Scroll,
   Table,
-  Group,
   Item,
   EmptyDescription,
   Predictions,
@@ -47,12 +45,9 @@ interface ICultureGroup {
 
 interface ICultureListItemProps {
   drug: ICultureDrug;
-  onOpenDetails: (drug: ICultureDrug) => void;
-  t: TFunction;
-}
-
-interface ICultureGroupProps {
-  group: ICultureGroup;
+  // the group the row was sorted into: the table has no header rows, so the
+  // row carries it
+  groupKey: string;
   onOpenDetails: (drug: ICultureDrug) => void;
   t: TFunction;
 }
@@ -79,13 +74,31 @@ const GROUP_SUSCEPTIBLE = "susceptible";
 const GROUP_PREDICTION_RESISTANT = "predictionResistant";
 const GROUP_PREDICTION_SUSCEPTIBLE = "predictionSusceptible";
 
-// drug, AWaRe, prescribed, age and the details chevron
-const COLUMN_COUNT = 5;
-
 const PREDICTION_GROUPS = [
   GROUP_PREDICTION_RESISTANT,
   GROUP_PREDICTION_SUSCEPTIBLE,
 ];
+
+// the tag colour of a result: the hue of the accent bar, a released result
+// in red or green, a prediction in the orange or blue of what was predicted,
+// and the prediction purple for one the backend could not classify. A
+// released result it could not classify is not a sensitivity, so it gets no
+// colour at all
+const resultTagColor = (
+  prediction: boolean,
+  type: string,
+): string | undefined => {
+  if (prediction) {
+    if (type === RESULT_RESISTANT) return "orange";
+    if (type === RESULT_SUSCEPTIBLE) return "blue";
+
+    return "purple";
+  }
+  if (type === RESULT_RESISTANT) return "red";
+  if (type === RESULT_SUSCEPTIBLE) return "green";
+
+  return undefined;
+};
 
 // how old the result is, in the shortest form that still reads: "45m", "6h",
 // "3d". The unit letters are the same in both languages, so they are not
@@ -131,7 +144,7 @@ const buildGroups = (cultures: ICultureDrug[]): ICultureGroup[] => {
     if (isResistantInUse(drug)) {
       // its own group, first: a resistance the patient is being given right
       // now is a different reading from a resistance on a drug nobody
-      // prescribed, and the group header carries it instead of the row
+      // prescribed, and the row is sorted above every other one
       resistantInUse.push(drug);
     } else if (isPrediction(current)) {
       // the predictions are split like the results: a predicted resistance is
@@ -174,24 +187,29 @@ const buildGroups = (cultures: ICultureDrug[]): ICultureGroup[] => {
   ].filter((group) => group.drugs.length > 0);
 };
 
-const CultureListItem = ({ drug, onOpenDetails, t }: ICultureListItemProps) => {
+const CultureListItem = ({
+  drug,
+  groupKey,
+  onOpenDetails,
+  t,
+}: ICultureListItemProps) => {
   const [current] = drug.items;
   const prediction = isPrediction(current);
   // a resistant drug the patient is actually on: the row itself has to shout,
   // a label would only push the drug name out of a cell this narrow
   const inUse = isResistantInUse(drug);
 
-  // the group header already states the result, predicted or released, so
-  // the item only spells out what the header does not cover: any wording that
-  // says more than the group itself, and a prediction the backend could not
-  // classify, which the header does not read for it
-  const marker = prediction
-    ? [RESULT_RESISTANT, RESULT_SUSCEPTIBLE].includes(
-        current.predictionType ?? "",
-      )
-      ? null
+  // the result in words, so the row is not read by the colour of its bar
+  // alone: any wording that says more than R or S, the plain label of R or S
+  // otherwise, and the raw text of a result the backend could not classify
+  const type = resultTypeOf(current) ?? "";
+  const known = [RESULT_RESISTANT, RESULT_SUSCEPTIBLE].includes(type);
+  const result = prediction
+    ? known
+      ? t(`culture.prediction.${type}`)
       : current.prediction
-    : current.resultDetail;
+    : current.resultDetail ||
+      (known ? t(`culture.prediction.${type}`) : current.result);
 
   // the row carries only the reading of the list: the antibiogram itself
   // opens in a modal, which stays open while the user reads it
@@ -199,7 +217,9 @@ const CultureListItem = ({ drug, onOpenDetails, t }: ICultureListItemProps) => {
 
   return (
     <Item
-      className={`culture-item${inUse ? " culture-item-in-use" : ""}`}
+      className={`culture-item culture-row-${groupKey}${
+        inUse ? " culture-item-in-use" : ""
+      }`}
       $prediction={prediction}
       $resistant={resultTypeOf(current) === RESULT_RESISTANT}
       $susceptible={resultTypeOf(current) === RESULT_SUSCEPTIBLE}
@@ -214,18 +234,19 @@ const CultureListItem = ({ drug, onOpenDetails, t }: ICultureListItemProps) => {
       }}
     >
       <td className="cell-drug">
-        <div className="drug">
-          <div className="name">{drug.drug}</div>
-          {/* the robot marks a prediction on the row itself: the group header
-              scrolls away with the list, and a pending collection must never
-              be read as a lab result */}
-          {(prediction || marker) && (
-            <div className="marker">
-              {prediction && <RobotOutlined />}
-              {marker && <span>{marker}</span>}
-            </div>
-          )}
-        </div>
+        <div className="name">{drug.drug}</div>
+      </td>
+      {/* the robot marks a predicted result: a pending collection must never
+          be read as a lab result */}
+      <td className="cell-result">
+        <Tag
+          className="culture-result"
+          variant="filled"
+          color={resultTagColor(prediction, type)}
+          icon={prediction ? <RobotOutlined /> : undefined}
+        >
+          {result || "-"}
+        </Tag>
       </td>
       {/* how aggressive the drug is: the reading of an antibiogram is which
           drug to reach for, and the AWaRe group is part of that answer */}
@@ -273,54 +294,34 @@ const CultureListItem = ({ drug, onOpenDetails, t }: ICultureListItemProps) => {
   );
 };
 
-// a group is a tbody of its own: the header row states the result, predicted
-// or released, and the rows below it only what the header does not cover
-const CultureGroup = ({ group, onOpenDetails, t }: ICultureGroupProps) => (
-  <Group className={`culture-group culture-group-${group.key}`}>
-    <tr>
-      <th className="group-title" colSpan={COLUMN_COUNT} scope="rowgroup">
-        <div>
-          {PREDICTION_GROUPS.includes(group.key) && <RobotOutlined />}
-          {group.key === GROUP_RESISTANT_IN_USE && (
-            <CustomIcon component={IconGerm} />
-          )}
-          <span>{t(`culture.groups.${group.key}`)}</span>
-          <span className="count">({group.drugs.length})</span>
-        </div>
-      </th>
-    </tr>
-    {group.drugs.map((drug) => (
-      <CultureListItem
-        drug={drug}
-        key={drug.drug}
-        onOpenDetails={onOpenDetails}
-        t={t}
-      />
-    ))}
-  </Group>
-);
-
-// every drug in one table, one row each, in the order the groups are read:
-// resistant in use, resistant, susceptible in use, susceptible
+// every drug in one table, one row each and no header rows between them, in
+// the order the groups are read: resistant in use, resistant, susceptible in
+// use, susceptible. The accent bar is what tells the readings apart
 const CultureTable = ({ groups, onOpenDetails, t }: ICultureTableProps) => (
   <Table className="culture-table">
     <thead>
       <tr>
         <th className="cell-drug">{t("culture.columns.drug")}</th>
+        <th className="cell-result">{t("culture.columns.result")}</th>
         <th className="cell-aware">{t("culture.columns.aware")}</th>
         <th className="cell-prescribed">{t("culture.columns.prescribed")}</th>
         <th className="cell-age">{t("culture.columns.age")}</th>
         <th className="cell-hint" aria-hidden />
       </tr>
     </thead>
-    {groups.map((group) => (
-      <CultureGroup
-        key={group.key}
-        group={group}
-        onOpenDetails={onOpenDetails}
-        t={t}
-      />
-    ))}
+    <tbody>
+      {groups.flatMap((group) =>
+        group.drugs.map((drug) => (
+          <CultureListItem
+            drug={drug}
+            groupKey={group.key}
+            key={drug.drug}
+            onOpenDetails={onOpenDetails}
+            t={t}
+          />
+        )),
+      )}
+    </tbody>
   </Table>
 );
 
