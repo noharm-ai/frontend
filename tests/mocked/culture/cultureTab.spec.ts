@@ -219,13 +219,22 @@ test("culture tab lists the drugs and flags predictions", async ({
     "liberação mais recente em 08/03/24 07:17",
   );
 
+  // every drug is a row of one table, under the columns it is read by
+  await expect(page.locator(".culture-table thead th")).toHaveText([
+    "Medicamento",
+    "AWaRe",
+    "Em uso",
+    "Liberação",
+    "",
+  ]);
+
   // resistant AND in use is the finding the card exists for, so it gets a
-  // group of its own above every other one, and the row keeps nothing but the
-  // drug name: the header already says the drug is in use
+  // group of its own above every other one, and the prescribed column says
+  // it is in use like on any other row
   const inUse = page.locator(".culture-group-resistantInUse");
   await expect(inUse).toContainText("Resistentes em uso");
   await expect(inUse.locator(".culture-item .name")).toHaveText(["OXACILINA"]);
-  await expect(inUse.locator(".prescribed")).toHaveCount(0);
+  await expect(inUse.locator(".prescribed")).toHaveCount(1);
   await expect(page.locator(".culture-group").first()).toHaveClass(
     /culture-group-resistantInUse/,
   );
@@ -404,6 +413,44 @@ test("culture tab lists the drugs and flags predictions", async ({
   await expect(
     details.locator(".culture-pending-item .culture-prediction"),
   ).toHaveClass(/culture-prediction-S/);
+});
+
+test("the groups are read resistant in use, resistant, susceptible in use, susceptible", async ({
+  page,
+  mockApi,
+}) => {
+  // a susceptible drug the patient is on is the answer to whether the current
+  // antimicrobial covers the culture: it reads before the ones nobody
+  // prescribed
+  const susceptibleInUse = CULTURES.map((drug) =>
+    drug.drug === "AMICACINA" ? { ...drug, prescribed: true } : drug,
+  );
+
+  mockApi.override("GET /prescriptions/:id", {
+    json: prescriptionWith({ cultureStats: { resistantInUse: 1 } }),
+  });
+  mockApi.override("GET /prescriptions/:id/cultures", {
+    json: { status: "success", data: susceptibleInUse },
+  });
+
+  await page.goto("/prescricao/199");
+  await openCultureTab(page);
+
+  const released = page.locator(".culture-table").first();
+  await expect(released.locator(".culture-group .group-title")).toHaveText([
+    "Resistentes em uso(1)",
+    "Resistentes(1)",
+    "Sensíveis em uso(1)",
+  ]);
+  await expect(released.locator(".culture-item .name")).toHaveText([
+    "OXACILINA",
+    "CEFEPIME",
+    "AMICACINA",
+  ]);
+
+  const inUse = page.locator(".culture-group-susceptibleInUse");
+  await expect(inUse.locator(".prescribed")).toHaveCount(1);
+  await expect(page.locator(".culture-group-susceptible")).toHaveCount(0);
 });
 
 test("the card states the AWaRe classification of each drug", async ({

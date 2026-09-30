@@ -1371,6 +1371,7 @@
     "groups": {
       "resistantInUse": "Resistant and in use",
       "resistant": "Resistant",
+      "susceptibleInUse": "Susceptible and in use",
       "susceptible": "Susceptible",
       "predictionResistant": "NoHarm prediction: resistant",
       "predictionSusceptible": "NoHarm prediction: susceptible"
@@ -1379,6 +1380,12 @@
     "resistantInUseHint": "Resistant and in use in this prescription",
     "resistantInUseTabHint_one": "{{count}} resistant drug in use in this prescription",
     "resistantInUseTabHint_other": "{{count}} resistant drugs in use in this prescription",
+    "columns": {
+      "drug": "Drug",
+      "aware": "AWaRe",
+      "prescribed": "In use",
+      "age": "Released"
+    },
     "releaseAge": "{{age}} ago",
     "releaseAgeHint": "Antibiogram released on {{date}}",
     "detailsHint": "Click a drug to see the full antibiogram.",

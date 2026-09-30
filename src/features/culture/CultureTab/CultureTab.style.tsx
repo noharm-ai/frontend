@@ -1,6 +1,5 @@
 import styled from "styled-components";
 
-import { get } from "styles/utils";
 import {
   PREDICTED_RESISTANT,
   PREDICTED_SUSCEPTIBLE,
@@ -44,26 +43,67 @@ export const Scroll = styled.div`
   }
 `;
 
-export const Group = styled.div`
-  & + & {
-    margin-top: 10px;
-  }
+// every drug of the card in a single table: one row per drug, the columns
+// read across the groups instead of down two narrow columns of cards
+export const Table = styled.table`
+  width: 100%;
+  /* separate, not collapse: the accent bar is the left border of the first
+     cell, and a collapsed border would be shared with the row above */
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 13px;
 
-  .group-title {
-    /* the list scrolls, the header must not leave its rows without context */
+  thead th {
+    /* the list scrolls, the columns must not leave the rows without context */
     position: sticky;
     top: 0;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    padding-bottom: 5px;
+    z-index: 2;
+    padding: 0 6px 4px;
     background: #fff;
+    border-bottom: 1px solid #e0e0e0;
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.04em;
+    text-align: left;
+    text-transform: uppercase;
+    white-space: nowrap;
+    color: #6d7a94;
+  }
+
+  /* every column but the drug is as narrow as its content: the drug name is
+     what identifies the row, and it gets the rest of the width */
+  .cell-aware,
+  .cell-prescribed,
+  .cell-age,
+  .cell-hint {
+    width: 1%;
+    white-space: nowrap;
+  }
+
+  .cell-prescribed {
+    text-align: center;
+  }
+
+  .cell-hint {
+    padding-left: 0;
+  }
+`;
+
+export const Group = styled.tbody`
+  .group-title {
+    padding: 10px 6px 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-align: left;
     text-transform: uppercase;
     color: #6d7a94;
+
+    > div {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
 
     .anticon {
       color: #a991d6;
@@ -96,57 +136,47 @@ export const Group = styled.div`
   }
 `;
 
-// mirrors the exams grid (components/PrescriptionCard.jsx .exam-list)
-export const List = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  column-gap: 10px;
-  row-gap: 8px;
-
-  @media (min-width: ${get("breakpoints.md")}) {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  }
-
-  @media only screen and (min-width: 1515px) {
-    column-gap: 15px;
-  }
-`;
-
-export const Item = styled.div<IAccentProps & { $inUse?: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 4px;
-  padding: 5px;
-  border: 1px solid #e0e0e0;
-  /* resistant and in use: the same red, twice the bar — the row is found by
-     weight and not by a colour the other three states do not have, and a
-     one-pixel difference would not be seen at all */
-  border-left: ${(props) => (props.$inUse ? "6px" : "3px")} solid ${accentColor};
-  border-radius: 5px;
-  background: #fff;
+export const Item = styled.tr<IAccentProps & { $inUse?: boolean }>`
   /* the whole row opens the details */
   cursor: pointer;
 
+  td {
+    padding: 5px 6px;
+    border-bottom: 1px solid #f0f0f0;
+    background: #fff;
+    vertical-align: middle;
+  }
+
+  /* resistant and in use: the same red, twice the bar — the row is found by
+     weight and not by a colour the other three states do not have, and a
+     one-pixel difference would not be seen at all */
+  td:first-child {
+    border-left: ${(props) => (props.$inUse ? "6px" : "3px")} solid
+      ${accentColor};
+  }
+
+  .drug {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+
   .name {
-    flex: 1;
     /* enough of the drug name to identify it: past this the marker beside it
        is what gives way, not the name */
     min-width: 85px;
     font-size: 14px;
     font-weight: ${(props) => (props.$inUse ? 600 : 400)};
     color: var(--nh-text-color);
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+    overflow-wrap: anywhere;
   }
 
   /* the drug is in the prescription being screened: on a resistant row this
      is the reason the item carries an alert */
   .prescribed {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    flex-shrink: 0;
 
     .anticon {
       font-size: 15px;
@@ -154,29 +184,19 @@ export const Item = styled.div<IAccentProps & { $inUse?: boolean }>`
     }
 
     &.in-use .anticon {
-      font-size: 16px;
       color: #f44336;
     }
   }
 
-  /* what the group header does not say about the result. It is the drug name
-     that identifies the row, so this is what gives way when the row runs out
-     of space */
+  /* what the group header does not say about the result */
   .marker {
     display: flex;
     align-items: center;
     gap: 4px;
     min-width: 0;
-    overflow: hidden;
     font-size: 12px;
     font-weight: 500;
-    white-space: nowrap;
     color: var(--nh-text-color);
-
-    span {
-      text-overflow: ellipsis;
-      overflow: hidden;
-    }
 
     /* the robot marks the row as a prediction, in the colour of what was
        predicted: the same one the bar and the group header carry */
@@ -186,14 +206,12 @@ export const Item = styled.div<IAccentProps & { $inUse?: boolean }>`
     }
   }
 
-  /* how old the result is: a footnote on the row, never competing with the
-     drug name or with the marker that states the result. The clock is what
-     tells the number apart from the result next to it */
+  /* how old the result is. The clock is what tells the number apart from
+     the result next to it */
   .age {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 3px;
-    flex-shrink: 0;
     font-size: 11px;
     font-weight: 500;
     white-space: nowrap;
@@ -204,14 +222,10 @@ export const Item = styled.div<IAccentProps & { $inUse?: boolean }>`
     }
   }
 
-  /* the row opens the details: the chevron says so without a hover, which is
-     the only thing the shadow could say */
+  /* the row opens the details: the chevron says so without a hover */
   .details-hint {
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    flex-shrink: 0;
-    /* it belongs to the row, not to the badge it sits next to */
-    margin-left: -1px;
     color: #b6bece;
 
     .anticon {
@@ -219,17 +233,17 @@ export const Item = styled.div<IAccentProps & { $inUse?: boolean }>`
     }
   }
 
-  &:hover {
-    box-shadow: 0px 1px 4px 0px rgb(0 0 0 / 16%);
+  &:hover td {
+    background: #f7f7fb;
+  }
 
-    .details-hint {
-      color: #2e3c5a;
-    }
+  &:hover .details-hint {
+    color: #2e3c5a;
   }
 
   &:focus-visible {
     outline: 2px solid #2e3c5a;
-    outline-offset: 1px;
+    outline-offset: -2px;
   }
 `;
 
@@ -259,8 +273,8 @@ export const Predictions = styled.div<{ $standalone?: boolean }>`
   padding-top: ${(props) => (props.$standalone ? "0" : "10px")};
   border-top: ${(props) => (props.$standalone ? "none" : "1px dashed #d9dee8")};
 
-  /* the first prediction group sits under the toggle, not against it */
-  .culture-group {
+  /* the prediction table sits under the toggle, not against it */
+  .culture-table {
     margin-top: 10px;
   }
 `;

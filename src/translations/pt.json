@@ -1381,6 +1381,7 @@
     "groups": {
       "resistantInUse": "Resistentes em uso",
       "resistant": "Resistentes",
+      "susceptibleInUse": "Sensíveis em uso",
       "susceptible": "Sensíveis",
       "predictionResistant": "Predição NoHarm: resistentes",
       "predictionSusceptible": "Predição NoHarm: sensíveis"
@@ -1389,6 +1390,12 @@
     "resistantInUseHint": "Resistente e em uso nesta prescrição",
     "resistantInUseTabHint_one": "{{count}} medicamento resistente em uso nesta prescrição",
     "resistantInUseTabHint_other": "{{count}} medicamentos resistentes em uso nesta prescrição",
+    "columns": {
+      "drug": "Medicamento",
+      "aware": "AWaRe",
+      "prescribed": "Em uso",
+      "age": "Liberação"
+    },
     "releaseAge": "há {{age}}",
     "releaseAgeHint": "Antibiograma liberado em {{date}}",
     "detailsHint": "Clique em um medicamento para ver o antibiograma completo.",

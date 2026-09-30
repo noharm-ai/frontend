@@ -31,8 +31,8 @@ import type { ICultureDrug } from "features/culture/cultureTypes";
 import {
   Container,
   Scroll,
+  Table,
   Group,
-  List,
   Item,
   EmptyDescription,
   Predictions,
@@ -57,6 +57,12 @@ interface ICultureGroupProps {
   t: TFunction;
 }
 
+interface ICultureTableProps {
+  groups: ICultureGroup[];
+  onOpenDetails: (drug: ICultureDrug) => void;
+  t: TFunction;
+}
+
 interface ICultureTabProps {
   cultures?: ICultureDrug[] | null;
   loading?: boolean;
@@ -66,11 +72,15 @@ interface ICultureTabProps {
 
 const GROUP_RESISTANT_IN_USE = "resistantInUse";
 const GROUP_RESISTANT = "resistant";
+const GROUP_SUSCEPTIBLE_IN_USE = "susceptibleInUse";
 const GROUP_SUSCEPTIBLE = "susceptible";
 // a pending collection is read through its prediction, which is split the
 // same way the released results are: the header says what was predicted
 const GROUP_PREDICTION_RESISTANT = "predictionResistant";
 const GROUP_PREDICTION_SUSCEPTIBLE = "predictionSusceptible";
+
+// drug, AWaRe, prescribed, age and the details chevron
+const COLUMN_COUNT = 5;
 
 const PREDICTION_GROUPS = [
   GROUP_PREDICTION_RESISTANT,
@@ -107,6 +117,7 @@ const byDrug = (a: ICultureDrug, b: ICultureDrug) =>
 const buildGroups = (cultures: ICultureDrug[]): ICultureGroup[] => {
   const resistantInUse: ICultureDrug[] = [];
   const resistant: ICultureDrug[] = [];
+  const susceptibleInUse: ICultureDrug[] = [];
   const susceptible: ICultureDrug[] = [];
   const predictedResistant: ICultureDrug[] = [];
   const predictedSusceptible: ICultureDrug[] = [];
@@ -133,6 +144,11 @@ const buildGroups = (cultures: ICultureDrug[]): ICultureGroup[] => {
       }
     } else if (resultTypeOf(current) === RESULT_RESISTANT) {
       resistant.push(drug);
+    } else if (drug.prescribed) {
+      // what the patient is on reads before what they are not, on the
+      // susceptible side too: it is the answer to whether the current
+      // antimicrobial covers the culture
+      susceptibleInUse.push(drug);
     } else {
       // a result the backend could not read stays here, spelled out by
       // resultDetail instead of being guessed into resistance
@@ -143,6 +159,7 @@ const buildGroups = (cultures: ICultureDrug[]): ICultureGroup[] => {
   return [
     { key: GROUP_RESISTANT_IN_USE, drugs: resistantInUse.sort(byDrug) },
     { key: GROUP_RESISTANT, drugs: resistant.sort(byDrug) },
+    { key: GROUP_SUSCEPTIBLE_IN_USE, drugs: susceptibleInUse.sort(byDrug) },
     { key: GROUP_SUSCEPTIBLE, drugs: susceptible.sort(byDrug) },
     // the predictions stay below every released result: a pending collection
     // is not a lab result, whatever it predicts
@@ -176,8 +193,8 @@ const CultureListItem = ({ drug, onOpenDetails, t }: ICultureListItemProps) => {
       : current.prediction
     : current.resultDetail;
 
-  // the row is too narrow to carry the antibiogram: the details open in a
-  // modal, which stays open while the user reads it
+  // the row carries only the reading of the list: the antibiogram itself
+  // opens in a modal, which stays open while the user reads it
   const openDetails = () => onOpenDetails(drug);
 
   return (
@@ -187,7 +204,6 @@ const CultureListItem = ({ drug, onOpenDetails, t }: ICultureListItemProps) => {
       $resistant={resultTypeOf(current) === RESULT_RESISTANT}
       $susceptible={resultTypeOf(current) === RESULT_SUSCEPTIBLE}
       $inUse={inUse}
-      role="button"
       tabIndex={0}
       onClick={openDetails}
       onKeyDown={(e) => {
@@ -197,76 +213,115 @@ const CultureListItem = ({ drug, onOpenDetails, t }: ICultureListItemProps) => {
         }
       }}
     >
-      <div className="name">{drug.drug}</div>
-      {/* how aggressive the drug is, next to its name: the reading of an
-          antibiogram is which drug to reach for, and the AWaRe group is part
-          of that answer */}
-      <AwareTag level={drug.atbLevel} />
-      {/* inside its own group every row is in use, so the marker is only
-          needed where a prescribed drug sits among drugs that are not */}
-      {drug.prescribed && !inUse && (
-        <div className="prescribed">
-          <MedicineBoxOutlined />
+      <td className="cell-drug">
+        <div className="drug">
+          <div className="name">{drug.drug}</div>
+          {/* the robot marks a prediction on the row itself: the group header
+              scrolls away with the list, and a pending collection must never
+              be read as a lab result */}
+          {(prediction || marker) && (
+            <div className="marker">
+              {prediction && <RobotOutlined />}
+              {marker && <span>{marker}</span>}
+            </div>
+          )}
         </div>
-      )}
-      {/* the robot marks a prediction on the row itself: the sticky header
-          scrolls away with the list, and a pending collection must never be
-          read as a lab result */}
-      {(prediction || marker) && (
-        <div className="marker">
-          {prediction && <RobotOutlined />}
-          {marker && <span>{marker}</span>}
-        </div>
-      )}
+      </td>
+      {/* how aggressive the drug is: the reading of an antibiogram is which
+          drug to reach for, and the AWaRe group is part of that answer */}
+      <td className="cell-aware">
+        <AwareTag level={drug.atbLevel} />
+      </td>
+      <td className="cell-prescribed">
+        {drug.prescribed && (
+          <Tooltip title={t("culture.prescribedHint")}>
+            <span className={`prescribed${inUse ? " in-use" : ""}`}>
+              <MedicineBoxOutlined />
+            </span>
+          </Tooltip>
+        )}
+      </td>
       {/* how long ago the antibiogram was released. A pending collection may
           carry a release date of its own, but it has no antibiogram to age:
           only a released result is read here, and the collection date is not
           the same reading */}
-      {!prediction && current.releaseDate && (
-        <Tooltip
-          title={t("culture.releaseAgeHint", {
-            date: formatDate(current.releaseDate),
-          })}
-        >
-          {/* the row has no space to spell it out, so the clock and the "há"
-              carry what the bare number could not say */}
-          <div className="age culture-age">
-            <ClockCircleOutlined />
-            <span>
-              {t("culture.releaseAge", { age: formatAge(current.releaseDate) })}
+      <td className="cell-age">
+        {!prediction && current.releaseDate && (
+          <Tooltip
+            title={t("culture.releaseAgeHint", {
+              date: formatDate(current.releaseDate),
+            })}
+          >
+            <span className="age culture-age">
+              <ClockCircleOutlined />
+              <span>
+                {t("culture.releaseAge", {
+                  age: formatAge(current.releaseDate),
+                })}
+              </span>
             </span>
-          </div>
-        </Tooltip>
-      )}
+          </Tooltip>
+        )}
+      </td>
       {/* the row opens the details, and the hover shadow alone never said so */}
-      <div className="details-hint">
-        <RightOutlined />
-      </div>
+      <td className="cell-hint">
+        <span className="details-hint">
+          <RightOutlined />
+        </span>
+      </td>
     </Item>
   );
 };
 
+// a group is a tbody of its own: the header row states the result, predicted
+// or released, and the rows below it only what the header does not cover
 const CultureGroup = ({ group, onOpenDetails, t }: ICultureGroupProps) => (
   <Group className={`culture-group culture-group-${group.key}`}>
-    <div className="group-title">
-      {PREDICTION_GROUPS.includes(group.key) && <RobotOutlined />}
-      {group.key === GROUP_RESISTANT_IN_USE && (
-        <CustomIcon component={IconGerm} />
-      )}
-      <span>{t(`culture.groups.${group.key}`)}</span>
-      <span className="count">({group.drugs.length})</span>
-    </div>
-    <List>
-      {group.drugs.map((drug) => (
-        <CultureListItem
-          drug={drug}
-          key={drug.drug}
-          onOpenDetails={onOpenDetails}
-          t={t}
-        />
-      ))}
-    </List>
+    <tr>
+      <th className="group-title" colSpan={COLUMN_COUNT} scope="rowgroup">
+        <div>
+          {PREDICTION_GROUPS.includes(group.key) && <RobotOutlined />}
+          {group.key === GROUP_RESISTANT_IN_USE && (
+            <CustomIcon component={IconGerm} />
+          )}
+          <span>{t(`culture.groups.${group.key}`)}</span>
+          <span className="count">({group.drugs.length})</span>
+        </div>
+      </th>
+    </tr>
+    {group.drugs.map((drug) => (
+      <CultureListItem
+        drug={drug}
+        key={drug.drug}
+        onOpenDetails={onOpenDetails}
+        t={t}
+      />
+    ))}
   </Group>
+);
+
+// every drug in one table, one row each, in the order the groups are read:
+// resistant in use, resistant, susceptible in use, susceptible
+const CultureTable = ({ groups, onOpenDetails, t }: ICultureTableProps) => (
+  <Table className="culture-table">
+    <thead>
+      <tr>
+        <th className="cell-drug">{t("culture.columns.drug")}</th>
+        <th className="cell-aware">{t("culture.columns.aware")}</th>
+        <th className="cell-prescribed">{t("culture.columns.prescribed")}</th>
+        <th className="cell-age">{t("culture.columns.age")}</th>
+        <th className="cell-hint" aria-hidden />
+      </tr>
+    </thead>
+    {groups.map((group) => (
+      <CultureGroup
+        key={group.key}
+        group={group}
+        onOpenDetails={onOpenDetails}
+        t={t}
+      />
+    ))}
+  </Table>
 );
 
 export function CultureTab({
@@ -385,14 +440,13 @@ export function CultureTab({
   return (
     <Container>
       <Scroll ref={scrollRef}>
-        {releasedGroups.map((group) => (
-          <CultureGroup
-            key={group.key}
-            group={group}
+        {releasedGroups.length > 0 && (
+          <CultureTable
+            groups={releasedGroups}
             onOpenDetails={setDetails}
             t={t}
           />
-        ))}
+        )}
 
         {predictionCount > 0 && (
           <Predictions
@@ -442,18 +496,16 @@ export function CultureTab({
                 rotate={showPredictions ? 180 : 0}
               />
             </PredictionsToggle>
-            {/* conditional render, not a collapse: the group headers are
+            {/* conditional render, not a collapse: the table header is
                 sticky against the scroll area and an animated wrapper with
-                overflow of its own would drop them */}
-            {showPredictions &&
-              predictionGroups.map((group) => (
-                <CultureGroup
-                  key={group.key}
-                  group={group}
-                  onOpenDetails={setDetails}
-                  t={t}
-                />
-              ))}
+                overflow of its own would drop it */}
+            {showPredictions && (
+              <CultureTable
+                groups={predictionGroups}
+                onOpenDetails={setDetails}
+                t={t}
+              />
+            )}
           </Predictions>
         )}
       </Scroll>
