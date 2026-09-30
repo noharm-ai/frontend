@@ -349,23 +349,31 @@ test("culture tab lists the drugs and flags predictions", async ({
   // the drug does not have
   await expect(pending.locator(".culture-age")).toHaveCount(0);
 
-  // the modal says outright that the lab result is pending, and keeps the
-  // prediction in a block of its own, so it is never read as the result
+  // the modal says outright that the lab result is pending, and summarises
+  // the collection on one line with the prediction in a column of its own, so
+  // it is never read as the result
   await pending.click();
-  await expect(details.locator(".culture-result-pending")).toContainText(
-    "Resultado: Resultado laboratorial pendente",
+  await expect(details.locator(".culture-pending-title")).toHaveText(
+    "1 coleta com resultado laboratorial pendente",
   );
-  const prediction = details.locator(".culture-prediction");
+  // no released antibiogram: no result card at all
+  await expect(details.locator(".culture-detail-item")).toHaveCount(0);
+  const pendingRows = details.locator(".culture-pending-item");
+  await expect(pendingRows).toHaveCount(1);
+  await expect(pendingRows.nth(0).locator(".pending-date")).toHaveText(
+    "01/03/2024 12:17",
+  );
+  const prediction = pendingRows.nth(0).locator(".culture-prediction");
   await expect(prediction).toHaveClass(/culture-prediction-S/);
-  await expect(prediction.locator(".prediction-title")).toHaveText(
+  await expect(prediction).toHaveText("Sensível · 65%");
+  await expect(
+    details.locator(".culture-pending-header .anticon-robot"),
+  ).toBeVisible();
+  await expect(details.locator(".culture-pending-header")).toContainText(
     "Predição NoHarm",
   );
-  await expect(prediction.locator(".prediction-value")).toHaveText(
-    "Sensível · Acurácia: 65%",
-  );
-  await expect(
-    details.getByText("Data da coleta: 01/03/2024 12:17"),
-  ).toBeVisible();
+  // what a prediction is, said once for the list
+  await expect(details.locator(".prediction-hint")).toHaveCount(1);
   // and it must not state a release either: the date the pending collection
   // carries is not an antibiogram coming back
   await expect(details.getByText("Data da liberação")).toHaveCount(0);
@@ -373,20 +381,22 @@ test("culture tab lists the drugs and flags predictions", async ({
   await expect(details).toBeHidden();
 
   // a drug with a released antibiogram and a newer pending collection shows
-  // both, each as its own block: the released result with its date, the
-  // pending one with the prediction set apart
+  // both: the released result as a card with its date, the pending one
+  // summarised below it
   await resistant.locator(".culture-item", { hasText: "CEFEPIME" }).click();
   const blocks = details.locator(".culture-detail-item");
-  await expect(blocks).toHaveCount(2);
+  await expect(blocks).toHaveCount(1);
   await expect(blocks.nth(0)).toContainText("Resultado: Resistente");
   await expect(blocks.nth(0)).toContainText(
     "Data da liberação: 08/03/2024 07:17",
   );
   await expect(blocks.nth(0).locator(".culture-prediction")).toHaveCount(0);
-  await expect(blocks.nth(1)).toContainText("Resultado laboratorial pendente");
-  await expect(blocks.nth(1).locator(".culture-prediction")).toHaveClass(
-    /culture-prediction-S/,
+  await expect(details.locator(".culture-pending-title")).toHaveText(
+    "1 coleta com resultado laboratorial pendente",
   );
+  await expect(
+    details.locator(".culture-pending-item .culture-prediction"),
+  ).toHaveClass(/culture-prediction-S/);
 });
 
 test("the card states the AWaRe classification of each drug", async ({

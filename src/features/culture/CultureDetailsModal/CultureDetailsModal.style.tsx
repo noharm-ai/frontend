@@ -10,8 +10,8 @@ import {
   type IAccentProps,
 } from "features/culture/cultureColors";
 
-// the details modal: one block per collection, and a pending collection set
-// apart from the result it has not got yet
+// the details modal: a card per released antibiogram, and the pending
+// collections summarised below them
 export const Details = styled.div`
   .culture-prescribed-detail {
     margin-bottom: 10px;
@@ -77,75 +77,114 @@ export const Details = styled.div`
     grid-column: 1 / -1;
   }
 
-  /* the result line of a pending collection says so instead of a result */
-  .culture-result-pending .pending {
-    font-weight: 500;
-    color: #6d7a94;
+  /* the pending collections, summarised under the released results: a
+     compact table instead of a card each, so the antibiograms are what the
+     modal is read for */
+  .culture-pending {
+    margin-top: 15px;
 
-    .anticon {
-      font-size: 12px;
+    .culture-pending-title {
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: #6d7a94;
+
+      .anticon {
+        font-size: 12px;
+      }
     }
-  }
 
-  /* the prediction is a box of its own, in the accent of what was predicted:
-     it stands in for the result above it, and must not be read as it */
-  .culture-prediction {
-    margin-top: 8px;
-    padding: 8px 10px;
-    border-left: 3px solid ${PREDICTED_UNKNOWN};
-    border-radius: 5px;
-    background: #f7f7fb;
+    .culture-pending-list {
+      border: 1px solid #e0e0e0;
+      border-radius: 5px;
+      overflow: hidden;
+    }
 
-    .prediction-title {
-      display: flex;
+    /* minmax(0, …): a long material name wraps instead of pushing the
+       prediction out of the modal */
+    .culture-pending-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto minmax(0, 140px);
+      column-gap: 12px;
       align-items: center;
-      gap: 5px;
+      padding: 6px 10px;
+      font-size: 13px;
+
+      & + .culture-pending-row {
+        border-top: 1px solid #f0f0f0;
+      }
+    }
+
+    .culture-pending-header {
       font-size: 11px;
       font-weight: 600;
       letter-spacing: 0.04em;
       text-transform: uppercase;
       color: #6d7a94;
+      background: #f7f7fb;
 
       .anticon {
-        font-size: 13px;
-        color: ${PREDICTED_UNKNOWN};
+        font-size: 12px;
+      }
+    }
+
+    .pending-microorganism {
+      display: block;
+      font-size: 12px;
+      color: #6d7a94;
+    }
+
+    .pending-date {
+      color: #6d7a94;
+      white-space: nowrap;
+    }
+
+    /* the prediction keeps the accent of what was predicted: the bar says it
+       is an estimate, never the red or green of a released result */
+    .culture-prediction {
+      padding-left: 8px;
+      border-left: 3px solid ${PREDICTED_UNKNOWN};
+
+      &.culture-prediction-R {
+        border-left-color: ${PREDICTED_RESISTANT};
+      }
+
+      &.culture-prediction-S {
+        border-left-color: ${PREDICTED_SUSCEPTIBLE};
       }
     }
 
     .prediction-value {
-      margin-top: 4px;
-      font-size: 14px;
       font-weight: 600;
-      color: var(--nh-text-color);
     }
 
     .prediction-accuracy {
       font-size: 12px;
-      font-weight: 400;
       color: #6d7a94;
     }
 
     .prediction-hint {
-      margin-top: 4px;
+      margin-top: 6px;
       font-size: 12px;
       line-height: 1.4;
       color: #6d7a94;
     }
+  }
 
-    &.culture-prediction-R {
-      border-left-color: ${PREDICTED_RESISTANT};
-
-      .prediction-title .anticon {
-        color: ${PREDICTED_RESISTANT};
-      }
+  /* at phone width the date moves under the material, and the prediction
+     keeps its column */
+  @media (max-width: ${get("breakpoints.md")}) {
+    .culture-pending .culture-pending-row {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 120px);
     }
 
-    &.culture-prediction-S {
-      border-left-color: ${PREDICTED_SUSCEPTIBLE};
+    .culture-pending .pending-date {
+      grid-column: 1;
+      grid-row: 2;
+      font-size: 12px;
+    }
 
-      .prediction-title .anticon {
-        color: ${PREDICTED_SUSCEPTIBLE};
-      }
+    .culture-pending .culture-pending-header .pending-date-header {
+      display: none;
     }
   }
 `;

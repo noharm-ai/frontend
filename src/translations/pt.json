@@ -1399,6 +1399,8 @@
     "releaseDate": "Data da liberação",
     "predictionAccuracy": "Acurácia",
     "resultPending": "Resultado laboratorial pendente",
+    "pendingTitle_one": "{{count}} coleta com resultado laboratorial pendente",
+    "pendingTitle_other": "{{count}} coletas com resultado laboratorial pendente",
     "predictionTitle": "Predição NoHarm",
     "predictionHint": "Estimativa gerada pela NoHarm enquanto o antibiograma não é liberado pelo laboratório. Não substitui o resultado.",
     "prediction": {

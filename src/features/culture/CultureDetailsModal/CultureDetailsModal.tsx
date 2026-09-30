@@ -22,11 +22,6 @@ import type { ICultureDrug, ICultureItem } from "features/culture/cultureTypes";
 
 import { Details, DetailItem } from "./CultureDetailsModal.style";
 
-interface ICultureItemProps {
-  item: ICultureItem;
-  t: TFunction;
-}
-
 interface ICultureDetailsProps {
   drug: ICultureDrug;
   t: TFunction;
@@ -44,124 +39,163 @@ const predictionLabel = (item: ICultureItem, t: TFunction): string =>
     defaultValue: item.prediction,
   });
 
-// the antibiogram of a released collection: the reading the drug is grouped by
-const CultureReleasedResult = ({ item, t }: ICultureItemProps) => (
-  <>
-    <div>
-      {t("culture.result")}: {item.result}
-    </div>
-    <div>
-      {t("culture.releaseDate")}: {formatDate(item.releaseDate)}
-    </div>
-  </>
-);
+interface ICultureItemsProps {
+  items: ICultureItem[];
+  t: TFunction;
+}
 
-// a pending collection has no result to state, and the modal is where that
-// has to be said outright: the prediction is set apart from the result line
-// it stands in for, so that it is never read as the lab result
-const CulturePendingResult = ({ item, t }: ICultureItemProps) => (
-  <>
-    <div className="culture-result-pending">
-      {t("culture.result")}:{" "}
-      <span className="pending">
-        <ClockCircleOutlined /> {t("culture.resultPending")}
-      </span>
-    </div>
-    <div
-      className={`culture-prediction culture-prediction-${
-        [RESULT_RESISTANT, RESULT_SUSCEPTIBLE].includes(
-          item.predictionType ?? "",
-        )
-          ? item.predictionType
-          : "unknown"
-      }`}
-    >
-      <div className="prediction-title">
-        <RobotOutlined /> {t("culture.predictionTitle")}
-      </div>
-      <div className="prediction-value">
-        {predictionLabel(item, t)}
-        {item.probability != null && (
-          <span className="prediction-accuracy">
-            {" "}
-            · {t("culture.predictionAccuracy")}:{" "}
-            {Math.round(item.probability * 100)}%
-          </span>
-        )}
-      </div>
-      <div className="prediction-hint">{t("culture.predictionHint")}</div>
-    </div>
-  </>
-);
+// the accent class of a prediction: R, S, or the plain prediction colour of
+// one the backend could not classify
+const predictionClass = (item: ICultureItem): string => {
+  const type = item.predictionType ?? "";
 
-const CultureDetails = ({ drug, t }: ICultureDetailsProps) => (
-  <Details>
-    {/* the classification of the drug itself, before the collections: unlike
-        the row, the modal has room to say that it has none */}
-    <div className="culture-aware-detail">
-      {t("culture.awareLevel.label")}:{" "}
-      <span
-        className={`culture-aware-value culture-aware-value-${awareKey(
-          drug.atbLevel,
-        )}`}
+  return [RESULT_RESISTANT, RESULT_SUSCEPTIBLE].includes(type)
+    ? type
+    : "unknown";
+};
+
+// the antibiogram of a released collection: the reading the drug is grouped
+// by, and what the modal is opened for, so each one keeps a full card
+const CultureReleasedItems = ({ items, t }: ICultureItemsProps) => (
+  <div className="culture-detail-items">
+    {items.map((item, index) => (
+      <DetailItem
+        key={item.key || index}
+        className="culture-detail-item"
+        $resistant={resultTypeOf(item) === RESULT_RESISTANT}
+        $susceptible={resultTypeOf(item) === RESULT_SUSCEPTIBLE}
       >
-        {t(`culture.awareLevel.${awareKey(drug.atbLevel)}`)}
-      </span>
-      {/* what the scale means, only where the drug is on it: under a drug
-          nobody classified the sentence would explain a scale it is not on */}
-      {hasAwareLevel(drug.atbLevel) && (
-        <div className="culture-aware-hint">{t("culture.awareLevel.hint")}</div>
-      )}
+        <div>
+          {t("culture.microorganism")}: {item.microorganism || "-"}
+        </div>
+        <div>
+          {t("culture.material")}: {item.material || "-"}
+        </div>
+        <div>
+          {t("culture.collectionDate")}: {formatDate(item.collectionDate)}
+        </div>
+        <div>
+          {t("culture.result")}: {item.result}
+        </div>
+        <div>
+          {t("culture.releaseDate")}: {formatDate(item.releaseDate)}
+        </div>
+      </DetailItem>
+    ))}
+  </div>
+);
+
+// the pending collections are summarised: one line each, under a header that
+// says outright the lab result is pending, and the prediction in its own
+// column so it is never read as the result. What a prediction is, is said
+// once for the whole list instead of under every collection. A pending
+// collection may carry a release date of its own, and it is not a release:
+// nothing came back from it to be read as one
+const CulturePendingItems = ({ items, t }: ICultureItemsProps) => (
+  <div className="culture-pending">
+    <div className="culture-pending-title">
+      <ClockCircleOutlined />{" "}
+      {t("culture.pendingTitle", { count: items.length })}
     </div>
-    {drug.prescribed && (
-      <div className="culture-prescribed-detail">
-        {isResistantInUse(drug) ? (
-          <>
-            <CustomIcon component={IconGerm} style={{ color: "#f44336" }} />{" "}
-            {t("culture.resistantInUseHint")}
-          </>
-        ) : (
-          <>
-            <MedicineBoxOutlined /> {t("culture.prescribedHint")}
-          </>
-        )}
+    <div className="culture-pending-list" role="table">
+      <div className="culture-pending-row culture-pending-header" role="row">
+        <span role="columnheader">{t("culture.material")}</span>
+        <span className="pending-date-header" role="columnheader">
+          {t("culture.collectionDate")}
+        </span>
+        <span role="columnheader">
+          <RobotOutlined /> {t("culture.predictionTitle")}
+        </span>
       </div>
-    )}
-    {/* one block per collection, in the order the backend reads them: the
-        worst result first (the one the drug is grouped by), then the pending
-        collections. A released antibiogram and a pending collection must not
-        run together. They are laid out in two columns, so a drug with several
-        collections is read without scrolling the modal */}
-    <div className="culture-detail-items">
-      {drug.items.map((item, index) => (
-        <DetailItem
+      {items.map((item, index) => (
+        <div
           key={item.key || index}
-          className="culture-detail-item"
-          $prediction={isPrediction(item)}
-          $resistant={resultTypeOf(item) === RESULT_RESISTANT}
-          $susceptible={resultTypeOf(item) === RESULT_SUSCEPTIBLE}
+          className="culture-pending-row culture-pending-item"
+          role="row"
         >
-          <div>
-            {t("culture.microorganism")}: {item.microorganism || "-"}
-          </div>
-          <div>
-            {t("culture.material")}: {item.material || "-"}
-          </div>
-          <div>
-            {t("culture.collectionDate")}: {formatDate(item.collectionDate)}
-          </div>
-          {/* a pending collection may carry a release date of its own, and it
-              is not a release: nothing came back from it to be read as one */}
-          {isPrediction(item) ? (
-            <CulturePendingResult item={item} t={t} />
-          ) : (
-            <CultureReleasedResult item={item} t={t} />
-          )}
-        </DetailItem>
+          <span className="pending-material" role="cell">
+            {item.material || "-"}
+            {item.microorganism && (
+              <span className="pending-microorganism">
+                {item.microorganism}
+              </span>
+            )}
+          </span>
+          <span className="pending-date" role="cell">
+            {formatDate(item.collectionDate)}
+          </span>
+          <span
+            className={`culture-prediction culture-prediction-${predictionClass(
+              item,
+            )}`}
+            role="cell"
+          >
+            <span className="prediction-value">
+              {predictionLabel(item, t)}
+            </span>
+            {item.probability != null && (
+              <span
+                className="prediction-accuracy"
+                title={t("culture.predictionAccuracy")}
+              >
+                {" "}
+                · {Math.round(item.probability * 100)}%
+              </span>
+            )}
+          </span>
+        </div>
       ))}
     </div>
-  </Details>
+    <div className="prediction-hint">{t("culture.predictionHint")}</div>
+  </div>
 );
+
+const CultureDetails = ({ drug, t }: ICultureDetailsProps) => {
+  // the backend order is kept within each group: the worst released result
+  // first, then the pending collections
+  const released = drug.items.filter((item) => !isPrediction(item));
+  const pending = drug.items.filter(isPrediction);
+
+  return (
+    <Details>
+      {/* the classification of the drug itself, before the collections:
+          unlike the row, the modal has room to say that it has none */}
+      <div className="culture-aware-detail">
+        {t("culture.awareLevel.label")}:{" "}
+        <span
+          className={`culture-aware-value culture-aware-value-${awareKey(
+            drug.atbLevel,
+          )}`}
+        >
+          {t(`culture.awareLevel.${awareKey(drug.atbLevel)}`)}
+        </span>
+        {/* what the scale means, only where the drug is on it: under a drug
+            nobody classified the sentence would explain a scale it is not on */}
+        {hasAwareLevel(drug.atbLevel) && (
+          <div className="culture-aware-hint">
+            {t("culture.awareLevel.hint")}
+          </div>
+        )}
+      </div>
+      {drug.prescribed && (
+        <div className="culture-prescribed-detail">
+          {isResistantInUse(drug) ? (
+            <>
+              <CustomIcon component={IconGerm} style={{ color: "#f44336" }} />{" "}
+              {t("culture.resistantInUseHint")}
+            </>
+          ) : (
+            <>
+              <MedicineBoxOutlined /> {t("culture.prescribedHint")}
+            </>
+          )}
+        </div>
+      )}
+      {released.length > 0 && <CultureReleasedItems items={released} t={t} />}
+      {pending.length > 0 && <CulturePendingItems items={pending} t={t} />}
+    </Details>
+  );
+};
 
 // the row is too narrow to carry the antibiogram: the details open in a
 // modal, which stays open while the user reads it
