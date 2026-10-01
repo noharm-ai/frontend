@@ -438,7 +438,11 @@ export default function Filters({
           {showFilter && (
             <Space>
               <Dropdown menu={filterOptions()}>
-                <Tag className="add-filter" icon={<FilterOutlined />}>
+                <Tag
+                  className="add-filter"
+                  icon={<FilterOutlined />}
+                  data-kb="prescription.drugs.filters"
+                >
                   {t("labels.filters")}
                 </Tag>
               </Dropdown>
@@ -464,6 +468,7 @@ export default function Filters({
         <div className="viz-mode">
           {hasAddDrugPermission && (
             <Button
+              data-kb="prescription.drugs.add"
               icon={<PlusOutlined />}
               onClick={() => addPrescriptionDrug()}
               style={{ marginRight: "10px" }}
@@ -481,6 +486,7 @@ export default function Filters({
             >
               <Tooltip title="Copiar medicamentos da conciliação anterior">
                 <Button
+                  data-kb="prescription.drugs.copyConciliation"
                   icon={<CopyOutlined />}
                   style={{ marginRight: "10px" }}
                   loading={copyingConciliation}
@@ -491,7 +497,7 @@ export default function Filters({
             </Popconfirm>
           )}
           {showMultipleSelection && (
-            <span>
+            <span data-kb="prescription.drugs.multipleSelection">
               <Dropdown.Button
                 menu={actionOptions()}
                 type={selectedRowsActive ? "primary" : "default"}
@@ -512,6 +518,7 @@ export default function Filters({
               }
             >
               <Button
+                data-kb="prescription.drugs.alertsPerspective"
                 shape="circle"
                 type={
                   prescriptionPerspective === "alerts" ? "primary" : "default"
@@ -537,6 +544,7 @@ export default function Filters({
               }
             >
               <Button
+                data-kb="prescription.drugs.condensed"
                 shape="circle"
                 type={
                   prescriptionListType === "condensed" ? "primary" : "default"
@@ -557,6 +565,7 @@ export default function Filters({
               }
             >
               <Button
+                data-kb="prescription.drugs.diff"
                 shape="circle"
                 icon={<DiffOutlined />}
                 onClick={() => setPrescriptionDiffModal(true)}
@@ -567,7 +576,7 @@ export default function Filters({
           )}
 
           <Tooltip title="Ordenar lista de medicamentos por:">
-            <span>
+            <span data-kb="prescription.drugs.sort">
               <Dropdown menu={sortOptions()} trigger={["click"]}>
                 <Button
                   shape="circle"
@@ -588,6 +597,7 @@ export default function Filters({
               }
             >
               <Button
+                data-kb="prescription.drugs.order"
                 className={`btn-order ${
                   prescriptionListOrder === "desc" ? "order-desc" : "order-asc"
                 }`}

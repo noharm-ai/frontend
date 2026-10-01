@@ -1461,5 +1461,48 @@
         "4": "WHO group of antimicrobials whose use is not recommended, mostly fixed-dose combinations with no proven benefit over their components."
       }
     }
+  },
+  "helpMode": {
+    "toggle": "Help mode",
+    "toggleTooltip": "Highlights the elements of this screen that have knowledge base articles",
+    "toggleTooltipActive": "Leave help mode",
+    "barTitle": "Help mode",
+    "barHint": "Click a highlight to see the related articles.",
+    "barEmpty": "No element with articles is visible on this screen.",
+    "pickHint": "Click the element that will get the help. Hold Alt to pick exactly the element under the cursor.",
+    "add": "Add help",
+    "cancel": "Cancel",
+    "exit": "Exit",
+    "hidden_one": "{{count}} not visible",
+    "hidden_other": "{{count}} not visible",
+    "hiddenTitle": "Help on this screen that is not visible right now: inside closed tabs or modals, or on elements that changed.",
+    "highlight": "Help available",
+    "edit": "Edit help",
+    "allScreens": "Every screen",
+    "thisScreen": "This screen",
+    "useElement": "Use the element",
+    "useElementHint": "The highlight steps aside until you move the mouse away from the element.",
+    "fragile": "Fragile selector",
+    "editor": {
+      "titleNew": "Add help to the element",
+      "titleEdit": "Edit the element's help",
+      "element": "Element",
+      "fragileWarning": "This element has no stable identifier: the help may stop showing when the screen changes. Ask the development team for a data-kb attribute on it.",
+      "scope": "Where to show",
+      "label": "Label",
+      "labelPlaceholder": "E.g.: Drug list",
+      "articles": "Articles",
+      "articlesRequired": "Choose at least one article.",
+      "save": "Save",
+      "remove": "Remove help",
+      "removeConfirm": "Remove every article from this element?",
+      "saveSuccess": "Help saved.",
+      "removeSuccess": "Help removed.",
+      "saveError": "Could not save the help.",
+      "addArticle": "Add article",
+      "removeArticle": "Remove article",
+      "removeArticleConfirm": "Remove “{{title}}” from this element?",
+      "removeArticleSuccess": "Article removed from the element."
+    }
   }
 }

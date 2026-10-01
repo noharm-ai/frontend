@@ -20,6 +20,7 @@ export default function Modal({
 
   return (
     <DefaultModal
+      data-kb="clinicalNotes.modal"
       title={t("tableHeader.clinicalNotes")}
       destroyOnHidden
       open={!!visible}

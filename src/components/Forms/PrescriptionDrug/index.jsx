@@ -205,6 +205,7 @@ export default function PrescriptionDrug({
     >
       {({ handleSubmit }) => (
         <DefaultModal
+          data-kb="prescriptionDrug.form"
           open={!isEmpty(item)}
           width={700}
           centered

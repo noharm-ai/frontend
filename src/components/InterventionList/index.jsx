@@ -263,7 +263,7 @@ export default function InterventionList({
         resetLocalFilters={resetLocalFilters}
         segments={segments}
       />
-      <TableInfo>
+      <TableInfo data-kb="interventions.status">
         {isFetching ? (
           <div style={{ minHeight: "100px", position: "relative" }}>
             <LoadBox $absolute />
@@ -388,7 +388,7 @@ export default function InterventionList({
 
       <BackTop />
 
-      <PageCard>
+      <PageCard data-kb="interventions.table">
         <MultipleOutcomeToolbar
           pendingIds={pendingIds}
           origin="lista-intervencoes"

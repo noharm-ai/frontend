@@ -483,6 +483,7 @@ export default function PrioritizationCard({
       $alert={prescription.dischargeDate ? "" : prescription.class}
       href={href}
       target="_blank"
+      data-kb="prioritization.card"
     >
       <div className="card-header">
         <div
@@ -507,7 +508,10 @@ export default function PrioritizationCard({
             </Tooltip>
           )}
         </div>
-        <div className={`stamp ${highlight ? "highlight" : ""}`}>
+        <div
+          className={`stamp ${highlight ? "highlight" : ""}`}
+          data-kb="prioritization.card.stamp"
+        >
           <div className="stamp-label">{prioritization.label}</div>
           <div className="stamp-value">
             {prioritization.formattedKey === "filled"
@@ -540,7 +544,7 @@ export default function PrioritizationCard({
         />
       </motion.div>
 
-      <div className="tabs">
+      <div className="tabs" data-kb="prioritization.card.tabs">
         <div
           className={`tab ${activeTab === "patient" ? "active" : ""}`}
           onClick={(e) => tabClick("patient", e)}

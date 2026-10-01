@@ -99,7 +99,7 @@ export function OutpatientPrioritization() {
         </div>
       </PageHeader>
       <Filter />
-      <ExtraFilters>
+      <ExtraFilters data-kb="patients.search">
         <div className="filter-field">
           <Input
             placeholder={t("screeningList.iptSearchPlaceholder")}
@@ -110,7 +110,7 @@ export function OutpatientPrioritization() {
           />
         </div>
       </ExtraFilters>
-      <PageCard>
+      <PageCard data-kb="patients.table">
         <ExpandableTable
           columns={columns(sortOrder, filter, t) as any}
           pagination={{

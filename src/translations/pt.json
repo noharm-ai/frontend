@@ -1471,5 +1471,48 @@
         "4": "Grupo da OMS de antimicrobianos cujo uso não é recomendado, em sua maioria associações em dose fixa sem benefício comprovado sobre seus componentes."
       }
     }
+  },
+  "helpMode": {
+    "toggle": "Modo ajuda",
+    "toggleTooltip": "Destaca os elementos desta tela que têm artigos da base de conhecimento",
+    "toggleTooltipActive": "Sair do modo ajuda",
+    "barTitle": "Modo ajuda",
+    "barHint": "Clique em um destaque para ver os artigos relacionados.",
+    "barEmpty": "Nenhum elemento com artigos visível nesta tela.",
+    "pickHint": "Clique no elemento que vai receber a ajuda. Segure Alt para escolher exatamente o elemento sob o cursor.",
+    "add": "Adicionar ajuda",
+    "cancel": "Cancelar",
+    "exit": "Sair",
+    "hidden_one": "{{count}} não visível",
+    "hidden_other": "{{count}} não visíveis",
+    "hiddenTitle": "Ajudas desta tela que não estão visíveis agora: em abas ou modais fechados, ou em elementos que mudaram.",
+    "highlight": "Ajuda disponível",
+    "edit": "Editar ajuda",
+    "allScreens": "Todas as telas",
+    "thisScreen": "Esta tela",
+    "useElement": "Usar o elemento",
+    "useElementHint": "O destaque sai da frente até você afastar o mouse do elemento.",
+    "fragile": "Seletor frágil",
+    "editor": {
+      "titleNew": "Adicionar ajuda ao elemento",
+      "titleEdit": "Editar ajuda do elemento",
+      "element": "Elemento",
+      "fragileWarning": "Este elemento não tem um identificador estável: a ajuda pode deixar de aparecer quando a tela mudar. Peça ao time de desenvolvimento um atributo data-kb para ele.",
+      "scope": "Onde mostrar",
+      "label": "Rótulo",
+      "labelPlaceholder": "Ex.: Lista de medicamentos",
+      "articles": "Artigos",
+      "articlesRequired": "Escolha ao menos um artigo.",
+      "save": "Salvar",
+      "remove": "Remover ajuda",
+      "removeConfirm": "Remover todos os artigos deste elemento?",
+      "saveSuccess": "Ajuda salva.",
+      "removeSuccess": "Ajuda removida.",
+      "saveError": "Não foi possível salvar a ajuda.",
+      "addArticle": "Adicionar artigo",
+      "removeArticle": "Remover artigo",
+      "removeArticleConfirm": "Remover “{{title}}” deste elemento?",
+      "removeArticleSuccess": "Artigo removido do elemento."
+    }
   }
 }

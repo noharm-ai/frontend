@@ -594,7 +594,7 @@ export default function ScreeningList({
   const info = (
     <>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <TableInfo>
+        <TableInfo data-kb="prioritization.table.status">
           <Input
             placeholder={t("screeningList.iptSearchPlaceholder")}
             style={{ width: 300 }}
@@ -754,7 +754,7 @@ export default function ScreeningList({
       />
 
       {!isFetching && <Affix offsetTop={10}>{info}</Affix>}
-      <PageCard>
+      <PageCard data-kb="prioritization.table">
         <ScreeningTable
           title={title}
           columns={columnsTable(sortOrder, filter, t, bag)}

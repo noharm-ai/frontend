@@ -14,9 +14,11 @@ import dayjsLocalePtBr from "dayjs/locale/pt-br";
 import dayjsLocaleEnUs from "dayjs/locale/en";
 
 import RoutedComponent from "routes";
+import routes from "routes/routes";
 import App from "containers/App";
 import { SupportDrawer } from "./features/support/SupportDrawer";
 import { KnowledgeBaseArticleModal } from "./features/knowledgeBase/KnowledgeBaseArticleModal/KnowledgeBaseArticleModal";
+import { HelpModeLayer } from "./features/knowledgeBase/HelpMode/HelpModeLayer/HelpModeLayer";
 import { store, persistor } from "store/index.ts";
 import * as serviceWorker from "./serviceWorker";
 import { getStorageItem } from "utils/storage";
@@ -94,6 +96,7 @@ root.render(
                   <RoutedComponent />
                   <SupportDrawer />
                   <KnowledgeBaseArticleModal />
+                  <HelpModeLayer routes={routes} />
                 </BrowserRouter>
               </App>
             </StyleProvider>

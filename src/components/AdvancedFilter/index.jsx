@@ -139,7 +139,7 @@ export default function AdvancedFilter({
   const hiddenFieldCount = countHiddenFilters(values);
 
   return (
-    <FilterCard>
+    <FilterCard data-kb="filter">
       <SearchBox className={open ? "open" : ""}>
         <AdvancedFilterContext.Provider value={{ values, setFieldValue }}>
           <Row gutter={[16, 16]} type="flex">

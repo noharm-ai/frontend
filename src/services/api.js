@@ -868,6 +868,10 @@ api.knowledgeBase.getArticle = (idArticle) =>
   instance.get(`/knowledge-base/articles/${idArticle}`, { ...setHeaders() });
 api.knowledgeBase.search = (params) =>
   instance.post(`/knowledge-base/search`, params, { ...setHeaders() });
+api.knowledgeBase.getElements = (params) =>
+  instance.get(`/knowledge-base/elements`, { params, ...setHeaders() });
+api.knowledgeBase.saveElement = (params) =>
+  instance.put(`/knowledge-base/elements`, params, { ...setHeaders() });
 
 /**
  * training namespace
