@@ -8,6 +8,7 @@ import { useAppDispatch, useAppSelector } from "src/store";
 import Permission from "models/Permission";
 
 import notification from "components/notification";
+import { setSupportOpen } from "features/support/SupportSlice";
 
 import { useArticleModal } from "../../useArticleModal";
 import {
@@ -53,7 +54,8 @@ interface IHelpModeLayerProps {
  * shows its articles instead of reaching the element. Curators (the
  * WRITE_HELP_TEXT permission) also pin articles to elements from here.
  *
- * Switched on by HelpModeToggle, in the header.
+ * Switched on from the support drawer (HelpModeDrawerAction), which the
+ * header's help icon (HelpTrigger) and the user menu open.
  */
 export function HelpModeLayer({ routes }: IHelpModeLayerProps) {
   const dispatch = useAppDispatch();
@@ -84,6 +86,7 @@ export function HelpModeLayer({ routes }: IHelpModeLayerProps) {
   const articleOpen = useAppSelector(
     (state) => state.knowledgeBase.modal.articleId !== null,
   );
+  const supportOpen = useAppSelector((state) => state.support.open);
 
   const elements = cached?.list ?? EMPTY;
   // modals opened from the help mode go over it, so it steps aside meanwhile
@@ -184,8 +187,9 @@ export function HelpModeLayer({ routes }: IHelpModeLayerProps) {
     if (!shown) return undefined;
 
     const onKeyDown = (event: KeyboardEvent) => {
-      // the modal handles its own keys, escape included
-      if (articlesOpen) return;
+      // the list modal and the support drawer handle their own keys, escape
+      // included
+      if (articlesOpen || supportOpen) return;
 
       if (event.key === "Escape") {
         event.preventDefault();
@@ -227,6 +231,7 @@ export function HelpModeLayer({ routes }: IHelpModeLayerProps) {
     matched,
     asideKey,
     articlesOpen,
+    supportOpen,
   ]);
 
   const edit = useCallback(
@@ -346,6 +351,7 @@ export function HelpModeLayer({ routes }: IHelpModeLayerProps) {
               onOpenArticle={openArticle}
               articlesOpen={articlesOpen}
               onArticlesOpenChange={setArticlesOpen}
+              onMoreHelp={() => dispatch(setSupportOpen(true))}
               onExit={() => dispatch(setHelpModeActive(false))}
             />
           </LayerRoot>,

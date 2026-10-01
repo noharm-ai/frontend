@@ -1473,16 +1473,13 @@
     }
   },
   "helpMode": {
-    "toggle": "Modo ajuda",
-    "toggleTooltip": "Destaca os elementos desta tela que têm artigos da base de conhecimento",
-    "toggleTooltipActive": "Sair do modo ajuda",
     "barTitle": "Modo ajuda",
     "barHint": "Clique em um destaque para ver os artigos relacionados.",
     "barEmpty": "Nenhum elemento com artigos visível nesta tela.",
     "pickHint": "Clique no elemento que vai receber a ajuda. Segure Alt para escolher exatamente o elemento sob o cursor.",
     "add": "Adicionar ajuda",
     "cancel": "Cancelar",
-    "exit": "Sair",
+    "exit": "Sair do modo ajuda",
     "hidden_one": "{{count}} não visível",
     "hidden_other": "{{count}} não visíveis",
     "hiddenTitle": "Ajudas desta tela que não estão visíveis agora: em abas ou modais fechados, ou em elementos que mudaram.",
@@ -1498,6 +1495,15 @@
     "pageArticlesWhere": "Em: {{labels}}",
     "pageArticlesHint": "Artigos associados aos elementos desta tela, inclusive os que não estão visíveis agora.",
     "searchKnowledgeBase": "Buscar mais artigos na base de conhecimento",
+    "moreHelp": "Mais ajuda",
+    "drawer": {
+      "title": "Mostrar ajuda na tela",
+      "hint": "Destaca os elementos desta tela que têm artigos da base de conhecimento.",
+      "show": "Mostrar ajuda na tela",
+      "activeTitle": "Modo ajuda ligado",
+      "activeHint": "Os elementos com artigos estão destacados na tela.",
+      "exit": "Sair do modo ajuda"
+    },
     "fragile": "Seletor frágil",
     "editor": {
       "titleNew": "Adicionar ajuda ao elemento",

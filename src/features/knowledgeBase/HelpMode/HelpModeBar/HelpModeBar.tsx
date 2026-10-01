@@ -4,6 +4,7 @@ import { createGlobalStyle } from "styled-components";
 import { Button, Popover } from "antd";
 import {
   CloseOutlined,
+  CustomerServiceOutlined,
   EyeInvisibleOutlined,
   PlusOutlined,
   QuestionCircleOutlined,
@@ -80,6 +81,8 @@ interface IHelpModeBarProps {
   onOpenArticle: (id: number) => void;
   articlesOpen: boolean;
   onArticlesOpenChange: (open: boolean) => void;
+  // the support drawer: more articles, the AI agent and tickets
+  onMoreHelp: () => void;
   onExit: () => void;
 }
 
@@ -100,6 +103,7 @@ export function HelpModeBar({
   onOpenArticle,
   articlesOpen,
   onArticlesOpenChange,
+  onMoreHelp,
   onExit,
 }: IHelpModeBarProps) {
   const { t } = useTranslation();
@@ -144,6 +148,13 @@ export function HelpModeBar({
           onOpenChange={onArticlesOpenChange}
           onOpenArticle={onOpenArticle}
         />
+        <Button
+          size="small"
+          icon={<CustomerServiceOutlined />}
+          onClick={onMoreHelp}
+        >
+          {t("helpMode.moreHelp")}
+        </Button>
         {canEdit && hidden.length > 0 && (
           <Popover
             trigger="click"

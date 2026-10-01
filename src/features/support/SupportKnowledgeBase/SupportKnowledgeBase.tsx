@@ -6,12 +6,13 @@ import { useAppSelector } from "src/store";
 import { trackSupportAction, TrackedSupportAction } from "utils/tracker";
 import { useArticleModal } from "features/knowledgeBase/useArticleModal";
 
+import { useScreenArticles } from "../useScreenArticles";
+
 const { Text, Paragraph } = Typography;
 
 export function SupportKnowledgeBase() {
-  const { status, list } = useAppSelector(
-    (state) => state.support.knowledgeBase,
-  );
+  const status = useAppSelector((state) => state.support.knowledgeBase.status);
+  const list = useScreenArticles();
   const [query, setQuery] = useState("");
   const { openArticle } = useArticleModal();
 

@@ -1463,16 +1463,13 @@
     }
   },
   "helpMode": {
-    "toggle": "Help mode",
-    "toggleTooltip": "Highlights the elements of this screen that have knowledge base articles",
-    "toggleTooltipActive": "Leave help mode",
     "barTitle": "Help mode",
     "barHint": "Click a highlight to see the related articles.",
     "barEmpty": "No element with articles is visible on this screen.",
     "pickHint": "Click the element that will get the help. Hold Alt to pick exactly the element under the cursor.",
     "add": "Add help",
     "cancel": "Cancel",
-    "exit": "Exit",
+    "exit": "Leave help mode",
     "hidden_one": "{{count}} not visible",
     "hidden_other": "{{count}} not visible",
     "hiddenTitle": "Help on this screen that is not visible right now: inside closed tabs or modals, or on elements that changed.",
@@ -1488,6 +1485,15 @@
     "pageArticlesWhere": "On: {{labels}}",
     "pageArticlesHint": "Articles pinned to elements of this screen, including those not visible right now.",
     "searchKnowledgeBase": "Search more articles in the knowledge base",
+    "moreHelp": "More help",
+    "drawer": {
+      "title": "Show help on the screen",
+      "hint": "Highlights the elements of this screen that have knowledge base articles.",
+      "show": "Show help on the screen",
+      "activeTitle": "Help mode is on",
+      "activeHint": "The elements with articles are highlighted on the screen.",
+      "exit": "Leave help mode"
+    },
     "fragile": "Fragile selector",
     "editor": {
       "titleNew": "Add help to the element",

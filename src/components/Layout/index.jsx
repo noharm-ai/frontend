@@ -40,7 +40,7 @@ import Menu from "./Menu";
 import { InfoAlert } from "features/notifications/InfoAlert/InfoAlert";
 import { WelcomeOnboarding } from "features/onboarding/WelcomeOnboarding/WelcomeOnboarding";
 import { TrainingStatusIndicator } from "features/training/TrainingStatusIndicator/TrainingStatusIndicator";
-import { HelpModeToggle } from "features/knowledgeBase/HelpMode/HelpModeToggle/HelpModeToggle";
+import { HelpTrigger } from "features/knowledgeBase/HelpMode/HelpTrigger/HelpTrigger";
 import { useTrainingStatus } from "features/training/useTrainingStatus";
 import SearchPrescription from "./SearchPrescription";
 import {
@@ -195,11 +195,11 @@ const Me = ({ user, t, doLogout, logoutUrl, integrationStatus }) => {
         />
       </div>
 
-      <HelpModeToggle />
-
       <TrainingStatusIndicator />
 
       {showAlert && <InfoAlert />}
+
+      <HelpTrigger />
 
       <Tooltip title="Clique para abrir o menu" placement="left">
         <div>

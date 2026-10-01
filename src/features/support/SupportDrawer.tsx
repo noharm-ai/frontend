@@ -26,6 +26,8 @@ import { useTicketCreationBlock } from "./useTicketCreationBlock";
 import { SupportKnowledgeBase } from "./SupportKnowledgeBase/SupportKnowledgeBase";
 import { SupportAIModal } from "./SupportAIModal/SupportAIModal";
 import { KnowledgeBasePathEnum } from "src/models/KnowledgeBasePathEnum";
+import { HelpModeDrawerAction } from "features/knowledgeBase/HelpMode/HelpModeDrawerAction/HelpModeDrawerAction";
+import { useScreenArticles } from "./useScreenArticles";
 
 const { Text } = Typography;
 
@@ -40,7 +42,7 @@ export function SupportDrawer() {
   const kbStatus = useAppSelector(
     (state) => state.support.knowledgeBase.status,
   );
-  const kbList = useAppSelector((state) => state.support.knowledgeBase.list);
+  const kbList = useScreenArticles();
   const [showForm, setShowForm] = useState(false);
   const [aiModalOpen, setAiModalOpen] = useState(false);
   const { blocked, requiresUrgent } = useTicketCreationBlock();
@@ -106,7 +108,10 @@ export function SupportDrawer() {
       }
     >
       {!showForm ? (
-        <SupportKnowledgeBase />
+        <>
+          <HelpModeDrawerAction />
+          <SupportKnowledgeBase />
+        </>
       ) : (
         <>
           <Button

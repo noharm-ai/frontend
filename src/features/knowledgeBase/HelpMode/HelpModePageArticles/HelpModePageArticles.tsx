@@ -6,14 +6,10 @@ import { ReadOutlined, SearchOutlined } from "@ant-design/icons";
 import DefaultModal from "components/Modal";
 
 import { KNOWLEDGE_BASE_PATH } from "../../articleContent";
-import { IHelpElement, IHelpElementArticle } from "../HelpModeSlice";
+import { IHelpElement } from "../HelpModeSlice";
+import { collectPageArticles } from "../pageArticles";
 import { HELP_LAYER_Z_INDEX } from "../HelpModeLayer/HelpModeLayer.style";
 import { ArticleList, ListHint } from "./HelpModePageArticles.style";
-
-interface IPageArticle extends IHelpElementArticle {
-  // labels of the elements the article is pinned to
-  labels: string[];
-}
 
 interface IHelpModePageArticlesProps {
   // every element of the screen, visible or not
@@ -36,24 +32,7 @@ export function HelpModePageArticles({
 }: IHelpModePageArticlesProps) {
   const { t } = useTranslation();
 
-  const articles = useMemo(() => {
-    const byId = new Map<number, IPageArticle>();
-
-    elements.forEach((item) =>
-      item.articles.forEach((article) => {
-        const entry = byId.get(article.id) ?? { ...article, labels: [] };
-
-        if (item.label && !entry.labels.includes(item.label)) {
-          entry.labels.push(item.label);
-        }
-        byId.set(article.id, entry);
-      }),
-    );
-
-    return Array.from(byId.values()).sort((a, b) =>
-      a.title.localeCompare(b.title),
-    );
-  }, [elements]);
+  const articles = useMemo(() => collectPageArticles(elements), [elements]);
 
   if (articles.length === 0) return null;
 

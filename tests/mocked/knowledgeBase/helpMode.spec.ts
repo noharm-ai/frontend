@@ -84,11 +84,24 @@ const openCards = async (page: Page) => {
   await expect(page.getByText("Paciente 99")).toBeVisible();
 };
 
-const toggle = (page: Page) => page.locator("#gtm-btn-help-mode");
+const headerHelp = (page: Page) => page.locator("#gtm-btn-header-help");
+const drawerAction = (page: Page) => page.locator("#gtm-btn-help-mode");
+const supportDrawer = (page: Page) =>
+  page.getByRole("dialog", { name: "Suporte NoHarm" });
+
+/** Header help icon, then "Mostrar ajuda na tela" in the support drawer */
+const enableHelpMode = async (page: Page) => {
+  await headerHelp(page).click();
+  await drawerAction(page).click();
+  // it slides away to uncover the highlights
+  await expect(supportDrawer(page)).toBeHidden();
+};
 const highlight = (page: Page, selector: string) =>
   page.locator(`[data-help-selector='${selector}']`);
 
 test.beforeEach(async ({ mockApi }) => {
+  // the support drawer's articles for the screen (by category)
+  mockApi.override("POST /support/knowledge-base-articles", ok([]));
   mockApi.override("GET /knowledge-base/articles", ok(ARTICLES));
   mockApi.override(
     "GET /knowledge-base/articles/:id",
@@ -107,15 +120,70 @@ test("asks for nothing until the help mode is on", async ({
 }) => {
   const pages = mockElements(mockApi);
   await openCards(page);
+
+  // not even the support drawer asks: only the help mode does
+  await headerHelp(page).click();
+  await expect(drawerAction(page)).toHaveText("Mostrar ajuda na tela");
   await page.waitForTimeout(500);
-
   expect(pages).toEqual([]);
-  // no count yet: the elements are unknown until the help mode asks
-  await expect(toggle(page)).toHaveText("Modo ajuda");
 
-  await toggle(page).click();
+  await drawerAction(page).click();
   await expect.poll(() => pages).toEqual([CARDS_PAGE]);
-  await expect(toggle(page)).toContainText("3");
+  // the drawer steps aside for the highlights, and the header says it is on
+  await expect(drawerAction(page)).toBeHidden();
+  await expect(highlight(page, CARD)).toHaveCount(1);
+  await expect(headerHelp(page).locator(".ant-badge-dot")).toBeVisible();
+});
+
+test("the drawer lists the pinned articles with the screen's own", async ({
+  page,
+  mockApi,
+}) => {
+  mockElements(mockApi);
+  mockApi.override(
+    "POST /support/knowledge-base-articles",
+    ok([article(2, "Escore Global"), article(9, "Artigo da categoria")]),
+  );
+  await openCards(page);
+  await enableHelpMode(page);
+
+  // "Mais ajuda" in the bar: articles, the AI agent and tickets
+  await page.getByRole("button", { name: "Mais ajuda" }).click();
+  const drawer = supportDrawer(page);
+  await expect(drawer).toContainText("Modo ajuda ligado");
+
+  // the category's first, then the pinned ones it left out, once each
+  await expect(drawer.locator("strong")).toHaveText([
+    "Escore Global",
+    "Artigo da categoria",
+    "Artigo antigo",
+    "Lendo o card",
+    "Usando a base de conhecimento",
+  ]);
+
+  // escape closes the drawer and leaves the help mode on
+  await page.keyboard.press("Escape");
+  await expect(drawer).toBeHidden();
+  await expect(highlight(page, CARD)).toHaveCount(1);
+
+  // and the drawer turns it off too
+  await headerHelp(page).click();
+  await drawerAction(page).click();
+  await expect(highlight(page, CARD)).toHaveCount(0);
+  await expect(headerHelp(page).locator(".ant-badge-dot")).toHaveCount(0);
+});
+
+test("the user menu still opens the help", async ({ page, mockApi }) => {
+  mockElements(mockApi);
+  await openCards(page);
+
+  await page.getByText("E2E Test").first().click();
+  await page
+    .locator(".ant-dropdown-menu-item")
+    .filter({ hasText: /^Ajuda$/ })
+    .click();
+
+  await expect(drawerAction(page)).toBeVisible();
 });
 
 test("asks for the screen's route pattern, not its url", async ({
@@ -125,7 +193,7 @@ test("asks for the screen's route pattern, not its url", async ({
   const pages = mockElements(mockApi);
 
   await page.goto("/prescricao/199");
-  await toggle(page).click();
+  await enableHelpMode(page);
 
   await expect.poll(() => pages).toEqual(["/prescricao/:slug"]);
 });
@@ -137,10 +205,12 @@ test("highlights pinned elements and opens their articles", async ({
   mockElements(mockApi);
   await openCards(page);
 
-  await toggle(page).click();
+  await enableHelpMode(page);
 
   await expect(
-    page.locator("#nh-help-mode-layer").getByText("Modo ajuda"),
+    page
+      .locator("#nh-help-mode-layer")
+      .getByText("Modo ajuda", { exact: true }),
   ).toBeVisible();
   // one highlight per element, on the first card only, plus the global one
   await expect(highlight(page, CARD)).toHaveCount(1);
@@ -181,7 +251,7 @@ test("lists every article of the screen, hidden elements included", async ({
     },
   ]);
   await openCards(page);
-  await toggle(page).click();
+  await enableHelpMode(page);
 
   const list = page
     .getByRole("dialog")
@@ -250,7 +320,7 @@ test("a highlighted card does not open the prescription", async ({
     popups += 1;
   });
 
-  await toggle(page).click();
+  await enableHelpMode(page);
   await expect(highlight(page, CARD)).toHaveCount(1);
 
   // the same click, at the same spot, shows the help instead
@@ -271,7 +341,7 @@ test("the highlight steps aside so its element can be used", async ({
 }) => {
   mockElements(mockApi);
   await openCards(page);
-  await toggle(page).click();
+  await enableHelpMode(page);
 
   const box = (await page.locator(CARD).first().boundingBox())!;
   const center = { x: box.x + box.width / 2, y: box.y + box.height / 2 };
@@ -371,7 +441,7 @@ test("highlights an anchored block of the prescription", async ({
   await expect(page.locator('[data-kb="prescription.alerts"]')).toBeVisible({
     timeout: 15000,
   });
-  await toggle(page).click();
+  await enableHelpMode(page);
 
   await expect(
     highlight(page, '[data-kb="prescription.alerts"]'),
@@ -385,13 +455,16 @@ test("escape and the exit button leave help mode", async ({
   mockElements(mockApi);
   await openCards(page);
 
-  await toggle(page).click();
+  await enableHelpMode(page);
   await expect(highlight(page, CARD)).toHaveCount(1);
   await page.keyboard.press("Escape");
   await expect(highlight(page, CARD)).toHaveCount(0);
 
-  await toggle(page).click();
-  await page.getByRole("button", { name: "Sair" }).click();
+  await enableHelpMode(page);
+  await page
+    .locator("#nh-help-mode-layer")
+    .getByRole("button", { name: "Sair do modo ajuda" })
+    .click();
   await expect(highlight(page, CARD)).toHaveCount(0);
 });
 
@@ -425,7 +498,7 @@ test.describe("curator", () => {
     await openCards(page);
 
     // shown to curators even when the screen has no help yet
-    await toggle(page).click();
+    await enableHelpMode(page);
     await page.getByRole("button", { name: "Adicionar ajuda" }).click();
 
     // the click on the status select snaps to its anchored block
@@ -470,7 +543,7 @@ test.describe("curator", () => {
     await loginAsCurator(page, mockApi);
     await openCards(page);
 
-    await toggle(page).click();
+    await enableHelpMode(page);
     await page.getByRole("button", { name: "Adicionar ajuda" }).click();
 
     const label = page.locator(STATUS).locator(".filters-item-label");
@@ -494,7 +567,7 @@ test.describe("curator", () => {
     await loginAsCurator(page, mockApi);
     await openCards(page);
 
-    await toggle(page).click();
+    await enableHelpMode(page);
 
     // the pinned element no longer on screen is listed for curators
     await page.getByRole("button", { name: "1 não visível" }).click();
@@ -522,7 +595,7 @@ test.describe("curator", () => {
     await loginAsCurator(page, mockApi);
     await openCards(page);
 
-    await toggle(page).click();
+    await enableHelpMode(page);
     await highlight(page, CARD).click();
     await page.getByRole("button", { name: "Editar ajuda" }).click();
 
@@ -557,7 +630,7 @@ test.describe("curator", () => {
     await loginAsCurator(page, mockApi);
     await openCards(page);
 
-    await toggle(page).click();
+    await enableHelpMode(page);
     await highlight(page, CARD).click();
 
     await page
@@ -592,7 +665,7 @@ test.describe("curator", () => {
     await loginWithPermissions(page, mockApi, auth.permissions);
     await openCards(page);
 
-    await toggle(page).click();
+    await enableHelpMode(page);
     await highlight(page, CARD).click();
 
     await expect(page.getByText("Card do paciente")).toBeVisible();
@@ -632,7 +705,7 @@ test.describe("curator", () => {
     await page.goto("/prescricao/199");
     const drugs = page.locator('[data-kb="prescription.drugs"]');
     await expect(drugs).toBeVisible({ timeout: 15000 });
-    await toggle(page).click();
+    await enableHelpMode(page);
 
     const cases: [Locator, string][] = [
       // a cell snaps to its column
@@ -671,7 +744,7 @@ test.describe("curator", () => {
     await expect(page.locator('[data-kb="prescription.alerts"]')).toBeVisible({
       timeout: 15000,
     });
-    await toggle(page).click();
+    await enableHelpMode(page);
 
     const alertsModal = page.locator(
       '[data-kb="prescription.alerts.modal"] .ant-modal',
@@ -713,7 +786,7 @@ test.describe("curator", () => {
     // escape closes the modal and the help mode alike
     await page.keyboard.press("Escape");
     await expect(alertsModal).toHaveCount(0);
-    await toggle(page).click();
+    await enableHelpMode(page);
     await page.getByText("Ver todos").click();
     await expect(alertsModal).toBeVisible();
 
