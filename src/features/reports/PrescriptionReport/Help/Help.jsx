@@ -7,20 +7,22 @@ import Heading from "components/Heading";
 import Modal from "components/Modal";
 import Button from "components/Button";
 import Alert from "components/Alert";
+import { useArticleModal } from "features/knowledgeBase/useArticleModal";
 
 import { setHelpModal } from "../PrescriptionReportSlice";
 
 export default function HelpModal() {
   const dispatch = useDispatch();
+  const { openArticle } = useArticleModal();
   const open = useSelector((state) => state.reportsArea.prescription.helpModal);
   const updatedAt = useSelector(
-    (state) => state.reportsArea.prescription.updatedAt
+    (state) => state.reportsArea.prescription.updatedAt,
   );
   const dateRange = useSelector(
-    (state) => state.reportsArea.prescription.dateRange
+    (state) => state.reportsArea.prescription.dateRange,
   );
   const reportDate = useSelector(
-    (state) => state.reportsArea.prescription.date
+    (state) => state.reportsArea.prescription.date,
   );
 
   return (
@@ -68,12 +70,7 @@ export default function HelpModal() {
           size="large"
           style={{ marginTop: "10px" }}
           block
-          onClick={() =>
-            window.open(
-              `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/140`,
-              "_blank"
-            )
-          }
+          onClick={() => openArticle(42)}
         >
           Base de Conhecimento
         </Button>

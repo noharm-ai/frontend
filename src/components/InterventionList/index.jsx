@@ -250,7 +250,7 @@ export default function InterventionList({
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">{t("menu.interventions")}</h1>
+          <h1 className="page-header-title" data-kb="interventions.title">{t("menu.interventions")}</h1>
           <div className="page-header-legend">
             Lista de intervenções registradas.
           </div>
@@ -263,7 +263,7 @@ export default function InterventionList({
         resetLocalFilters={resetLocalFilters}
         segments={segments}
       />
-      <TableInfo>
+      <TableInfo data-kb="interventions.status">
         {isFetching ? (
           <div style={{ minHeight: "100px", position: "relative" }}>
             <LoadBox $absolute />
@@ -388,7 +388,7 @@ export default function InterventionList({
 
       <BackTop />
 
-      <PageCard>
+      <PageCard data-kb="interventions.table">
         <MultipleOutcomeToolbar
           pendingIds={pendingIds}
           origin="lista-intervencoes"

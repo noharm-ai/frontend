@@ -7,17 +7,19 @@ import Heading from "components/Heading";
 import Modal from "components/Modal";
 import Button from "components/Button";
 import Alert from "components/Alert";
+import { useArticleModal } from "features/knowledgeBase/useArticleModal";
 
 import { setHelpModal } from "../PatientDayReportSlice";
 
 export default function HelpModal() {
   const dispatch = useDispatch();
+  const { openArticle } = useArticleModal();
   const open = useSelector((state) => state.reportsArea.patientDay.helpModal);
   const updatedAt = useSelector(
-    (state) => state.reportsArea.patientDay.updatedAt
+    (state) => state.reportsArea.patientDay.updatedAt,
   );
   const dateRange = useSelector(
-    (state) => state.reportsArea.patientDay.dateRange
+    (state) => state.reportsArea.patientDay.dateRange,
   );
   const reportDate = useSelector((state) => state.reportsArea.patientDay.date);
 
@@ -66,12 +68,7 @@ export default function HelpModal() {
           size="large"
           style={{ marginTop: "10px" }}
           block
-          onClick={() =>
-            window.open(
-              `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/141`,
-              "_blank"
-            )
-          }
+          onClick={() => openArticle(41)}
         >
           Base de Conhecimento
         </Button>

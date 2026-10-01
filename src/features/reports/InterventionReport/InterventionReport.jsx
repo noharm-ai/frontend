@@ -113,7 +113,7 @@ export default function InterventionReport() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">
+          <h1 className="page-header-title" data-kb="reports.intervention.title">
             Relatório: Intervenções{" "}
             <Tooltip title="Informações sobre este relatório">
               <Button

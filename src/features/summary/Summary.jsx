@@ -126,7 +126,7 @@ function Summary({ mock }) {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">{t("summary.title")}</h1>
+          <h1 className="page-header-title" data-kb="summary.title">{t("summary.title")}</h1>
           <div className="page-header-legend">{t("summary.summaryLegend")}</div>
         </div>
         <div className="page-header-actions">

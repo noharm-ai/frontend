@@ -214,7 +214,7 @@ export function GlobalMemoryNZero() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Configuração NZero</h1>
+          <h1 className="page-header-title" data-kb="admin.nzero.title">Configuração NZero</h1>
           <div className="page-header-legend">
             Configurações gerais do Agente NZero
           </div>

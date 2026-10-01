@@ -90,7 +90,7 @@ function MemorySchedules() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Horários</h1>
+          <h1 className="page-header-title" data-kb="admin.schedules.title">Horários</h1>
           <div className="page-header-legend">
             Configurações de horários de administração
           </div>

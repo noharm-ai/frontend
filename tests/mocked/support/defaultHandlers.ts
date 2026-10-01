@@ -66,6 +66,10 @@ export function defaultHandlers(): Record<string, Handler> {
     "GET /memory": emptyList,
     "GET /memory/:type": emptyList,
     "GET /support/list-pending": emptyList,
+
+    // knowledge base (/base-de-conhecimento)
+    "GET /knowledge-base/articles": emptyList,
+    "POST /knowledge-base/search": emptyList,
     "GET /user/preferences": emptyList,
 
     // prioritization / screening

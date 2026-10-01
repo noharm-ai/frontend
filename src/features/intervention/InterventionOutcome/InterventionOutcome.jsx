@@ -16,6 +16,7 @@ import Dropdown from "components/Dropdown";
 import Heading from "components/Heading";
 import Tooltip from "components/Tooltip";
 import DefaultModal from "components/Modal";
+import { useArticleModal } from "features/knowledgeBase/useArticleModal";
 import {
   fetchInterventionOutcomeData,
   setInterventionOutcome,
@@ -34,6 +35,7 @@ import { ModalFooter } from "styles/Utils.style";
 export default function InterventionOutcome({ ...props }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const { openArticle } = useArticleModal();
   const selectedIntervention = useSelector(
     (state) => state.interventionOutcome.selectedIntervention,
   );
@@ -279,13 +281,7 @@ export default function InterventionOutcome({ ...props }) {
                   type="primary"
                   shape="circle"
                   icon={<QuestionOutlined />}
-                  onClick={() =>
-                    window.open(
-                      `${
-                        import.meta.env.VITE_APP_ODOO_LINK
-                      }/knowledge/article/138`,
-                    )
-                  }
+                  onClick={() => openArticle(19)}
                 />
               </Tooltip>
             )}

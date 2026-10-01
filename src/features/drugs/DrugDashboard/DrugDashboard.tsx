@@ -97,7 +97,7 @@ export function DrugDashboard() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Painel de Medicamentos</h1>
+          <h1 className="page-header-title" data-kb="drugs.title">Painel de Medicamentos</h1>
         </div>
         <div className="page-header-actions">
           {drugDashboard.idSegment &&

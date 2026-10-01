@@ -47,7 +47,7 @@ export default function PatientObservationReport({
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">
+          <h1 className="page-header-title" data-kb="reports.patientObservation.title">
             Histórico de Anotações - Atendimento {prescription.admissionNumber}
           </h1>
         </div>

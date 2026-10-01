@@ -70,7 +70,7 @@ export function Protocol() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Protocolos</h1>
+          <h1 className="page-header-title" data-kb="admin.protocols.title">Protocolos</h1>
         </div>
         <div className="page-header-actions">
           <Button

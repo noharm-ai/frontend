@@ -101,7 +101,7 @@ export default function Patient({
 
   return (
     <Row gutter={[8, 16]} type="flex">
-      <Col xs={24} xl={8}>
+      <Col xs={24} xl={8} data-kb="prescription.patient">
         <PatientCard
           prescription={prescription}
           checkPrescriptionDrug={checkPrescriptionDrug}
@@ -113,7 +113,7 @@ export default function Patient({
           interventions={interventions}
         />
       </Col>
-      <Col xs={24} md={14} xl={10} xxl={11}>
+      <Col xs={24} md={14} xl={10} xxl={11} data-kb="prescription.exams">
         <ExamCard
           admissionNumber={prescription.admissionNumber}
           exams={exams}
@@ -124,12 +124,12 @@ export default function Patient({
       </Col>
       <Col xs={24} md={10} xl={6} xxl={5}>
         <MaxHeightContainer>
-          <div style={{ flex: 1 }}>
+          <div style={{ flex: 1 }} data-kb="prescription.alerts">
             <AlertCard stats={alertStats} prescription={prescription} />
           </div>
 
           <Flex style={{ marginTop: "8px" }} gap={8}>
-            <div style={{ flex: 1 }}>
+            <div style={{ flex: 1 }} data-kb="prescription.clinicalNotes">
               <ClinicalNotesCard
                 stats={clinicalNotesStats}
                 total={clinicalNotes}
@@ -137,7 +137,10 @@ export default function Patient({
                 setModalVisibility={setModalVisibility}
               />
             </div>
-            <div style={{ width: "50%", maxWidth: "160px" }}>
+            <div
+              style={{ width: "50%", maxWidth: "160px" }}
+              data-kb="prescription.score"
+            >
               <ScoreCard prescription={prescription} />
             </div>
           </Flex>

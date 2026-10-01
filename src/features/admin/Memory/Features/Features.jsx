@@ -87,7 +87,7 @@ function MemoryFeatures() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Features</h1>
+          <h1 className="page-header-title" data-kb="admin.features.title">Features</h1>
           <div className="page-header-legend">
             Habilita/Desabilita funcionalidades da NoHarm
           </div>

@@ -104,7 +104,7 @@ function MemoryList() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Memória</h1>
+          <h1 className="page-header-title" data-kb="memory.title">Memória</h1>
           <div className="page-header-legend">
             Gerencie modelos e textos de memória
           </div>

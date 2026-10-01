@@ -99,7 +99,7 @@ export function CheckedIndexReport({
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Histórico de Checagem</h1>
+          <h1 className="page-header-title" data-kb="reports.checkedIndex.title">Histórico de Checagem</h1>
         </div>
       </PageHeader>
 

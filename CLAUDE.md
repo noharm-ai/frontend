@@ -44,6 +44,8 @@ src/
 
 **Styling:** Prefer Styled Components; Ant Design v6 for structure/layout. Theme tokens are in `styles/theme.js` and `styles/colors.js`.
 
+**Help mode anchors:** Curators pin knowledge base articles to screen elements (`features/knowledgeBase/HelpMode`), stored by CSS selector. Give blocks worth explaining a stable `data-kb="<screen>.<block>"` attribute (e.g. `data-kb="prescription.alerts"`), since hashed styled-components classes can't anchor a selector. Every page title carries `data-kb="<screen>.title"` (e.g. `reports.economy.title`) — give a new page's `page-header-title` one too. antd components forward `data-*` to their root, except `Modal`: put the anchor on the modal's content. Renaming or removing a `data-kb` breaks the help pinned to it.
+
 **Exports:** Always use named exports. Avoid default exports.
 
 **Component file naming:** Each component lives in a folder named after it, with the main file matching the folder name — never `index.tsx`. Example: `TestComponent/TestComponent.tsx`, not `TestComponent/index.tsx`.
@@ -141,7 +143,7 @@ tests/
     prioritization/  prescription/  interventions/  outpatient/
     userAdmin/  userProfile/  customForms/  training/  reports/
     regulation/  culture/  password/  switchSchema/  scenarios/
-    memory/  supportCenter/
+    memory/  supportCenter/  knowledgeBase/
 ```
 
 Tests run in Chromium only. Firefox/WebKit are commented out in `playwright.config.ts`.

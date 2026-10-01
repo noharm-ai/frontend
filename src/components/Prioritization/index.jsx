@@ -219,7 +219,9 @@ export default function Prioritization({
       <Row align="middle">
         <Col span={24} md={10}>
           <header>
-            <Heading>Priorização por Pacientes</Heading>
+            <Heading data-kb="prioritization.title">
+              Priorização por Pacientes
+            </Heading>
           </header>
         </Col>
         <Col span={24} md={24 - 10} style={{ textAlign: "right" }}>
@@ -249,7 +251,7 @@ export default function Prioritization({
           <ResultActions className={state.affixed ? "affixed" : ""}>
             <div className="filters-block">
               <div className="filters">
-                <div className="filters-item">
+                <div className="filters-item" data-kb="prioritization.order">
                   <div className="filters-item-label">Priorizar por:</div>
                   <div className="filters-item-value flex">
                     <Select
@@ -295,7 +297,7 @@ export default function Prioritization({
                   </div>
                 </div>
 
-                <div className="filters-item">
+                <div className="filters-item" data-kb="prioritization.status">
                   <div className="filters-item-label">Situação:</div>
                   <div className="filters-item-value">
                     <Select
@@ -320,7 +322,7 @@ export default function Prioritization({
                   </div>
                 </div>
 
-                <div className="filters-item">
+                <div className="filters-item" data-kb="prioritization.search">
                   <div className="filters-item-label">
                     Buscar por atendimento/nome:
                   </div>
@@ -370,7 +372,7 @@ export default function Prioritization({
                 </div>
               )}
             {filteredList && filteredList.length > 0 && (
-              <div className="grid">
+              <div className="grid" data-kb="prioritization.cards">
                 {patients.map((item, index) => (
                   <motion.div
                     initial={{

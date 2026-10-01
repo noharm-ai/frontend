@@ -112,7 +112,7 @@ function UserAdminList() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Cadastro de Usuários</h1>
+          <h1 className="page-header-title" data-kb="userAdmin.title">Cadastro de Usuários</h1>
           <div className="page-header-legend">
             Lista de usuários com acesso à NoHarm
           </div>

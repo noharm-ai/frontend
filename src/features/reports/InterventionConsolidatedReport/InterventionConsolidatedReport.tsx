@@ -208,7 +208,7 @@ export function InterventionConsolidatedReport() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">
+          <h1 className="page-header-title" data-kb="reports.interventionConsolidated.title">
             Relatório: Intervenções Anual
             <Tooltip title="Informações sobre este relatório">
               <Button

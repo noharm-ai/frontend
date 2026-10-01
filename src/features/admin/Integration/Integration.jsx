@@ -71,7 +71,7 @@ function IntegrationAdmin() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Integração</h1>
+          <h1 className="page-header-title" data-kb="admin.integration.title">Integração</h1>
           <div className="page-header-legend">Utilizades para a integração</div>
         </div>
       </PageHeader>

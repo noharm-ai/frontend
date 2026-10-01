@@ -13,7 +13,6 @@ import {
   setAIFormResponse,
   fetchN0Response,
   fetchN0Form,
-  fetchRelatedArticles,
 } from "../../SupportSlice";
 import { trackSupportAction, TrackedSupportAction } from "utils/tracker";
 
@@ -74,12 +73,6 @@ export function Question({ mode }: QuestionInteface) {
         }
       });
     }
-
-    dispatch(fetchRelatedArticles(params)).then((response: any) => {
-      if (response.error) {
-        console.error(response.error);
-      }
-    });
 
     dispatch(setAIFormStep(["question", "response"]));
   };

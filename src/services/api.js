@@ -848,15 +848,25 @@ api.support.fetchN0Form = (params) =>
     ...setHeaders(),
   });
 
-api.support.fetchRelatedArticles = (params) =>
-  instance.post(`/support/related-articles`, params, {
-    ...setHeaders(),
-  });
-
 api.support.fetchKnowledgeBaseArticles = (params) =>
   instance.post(`/support/knowledge-base-articles`, params, {
     ...setHeaders(),
   });
+
+/**
+ * knowledge base namespace
+ */
+api.knowledgeBase = {};
+api.knowledgeBase.getArticles = () =>
+  instance.get(`/knowledge-base/articles`, { ...setHeaders() });
+api.knowledgeBase.getArticle = (idArticle) =>
+  instance.get(`/knowledge-base/articles/${idArticle}`, { ...setHeaders() });
+api.knowledgeBase.search = (params) =>
+  instance.post(`/knowledge-base/search`, params, { ...setHeaders() });
+api.knowledgeBase.getElements = (params) =>
+  instance.get(`/knowledge-base/elements`, { params, ...setHeaders() });
+api.knowledgeBase.saveElement = (params) =>
+  instance.put(`/knowledge-base/elements`, params, { ...setHeaders() });
 
 /**
  * training namespace

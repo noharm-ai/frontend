@@ -62,7 +62,7 @@ export default function Exams() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Exames</h1>
+          <h1 className="page-header-title" data-kb="admin.exams.title">Exames</h1>
           <div className="page-header-legend">Configuração de exames</div>
         </div>
         <div className="page-header-actions">

@@ -171,7 +171,7 @@ function MemoryReports() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Relatórios</h1>
+          <h1 className="page-header-title" data-kb="admin.reports.title">Relatórios</h1>
           <div className="page-header-legend">Configuração de relatórios</div>
         </div>
       </PageHeader>

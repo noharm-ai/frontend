@@ -395,6 +395,7 @@ export default function Intervention({
     >
       {({ handleSubmit, setFieldValue }) => (
         <DefaultModal
+          data-kb="intervention.form"
           open={!isEmpty(item)}
           width={700}
           centered
