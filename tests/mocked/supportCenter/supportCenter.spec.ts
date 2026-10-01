@@ -125,7 +125,9 @@ test("my tickets carry the reference, the date and the mapped stage", async ({
   // a stage the UI has no label for falls back to the raw id
   await expect(rows(page).nth(2)).toContainText("99");
 
-  await expect(page.getByText("* Lista limitada em 50 registros.")).toBeVisible();
+  await expect(
+    page.getByText("* Lista limitada em 50 registros."),
+  ).toBeVisible();
 });
 
 test("only a waiting ticket the requester owes an answer on is flagged", async ({
@@ -142,7 +144,12 @@ test("only a waiting ticket the requester owes an answer on is flagged", async (
   installTickets(mockApi, {
     ...TICKETS,
     myTickets: [
-      ticket({ id: 44, ticket_ref: "NH-0044", tag_ids: [23], stage_id: [2, "Em andamento"] }),
+      ticket({
+        id: 44,
+        ticket_ref: "NH-0044",
+        tag_ids: [23],
+        stage_id: [2, "Em andamento"],
+      }),
     ],
   });
   await page.reload();
@@ -174,7 +181,8 @@ test("the tabs are fed by a single fetch and the organization one needs ADMIN_SU
   await openCenter(page, mockApi);
 
   const ticketFetches = () =>
-    mockApi.requests.filter((r) => r.path === "/support/list-tickets/v2").length;
+    mockApi.requests.filter((r) => r.path === "/support/list-tickets/v2")
+      .length;
   const fetchesOnLoad = ticketFetches();
 
   await expect(page.getByRole("tab", { name: "Meus chamados" })).toBeVisible();
@@ -221,48 +229,21 @@ test("following a ticket opens it in Odoo with its access token", async ({
   const opened = await recordWindowOpen(page);
   await openCenter(page, mockApi);
 
-  await rows(page)
-    .nth(1)
-    .getByRole("button", { name: /edit/i })
-    .click();
+  await rows(page).nth(1).getByRole("button", { name: /edit/i }).click();
 
   expect(await opened()).toHaveLength(1);
   expect((await opened())[0]).toContain("my/ticket/42?access_token=tok-42");
 });
 
-test("the FAQ shortcuts open the knowledge base",async ({
+test("the knowledge base card leads to the knowledge base", async ({
   page,
   mockApi,
 }) => {
-  mockApi.override("GET /knowledge-base/articles/:id", {
-    json: {
-      status: "success",
-      data: {
-        id: 36,
-        title: "Escore 4: o que fazer?",
-        description: null,
-        path: ["Prescrição"],
-        link: null,
-        hasContent: true,
-        updatedAt: "2026-09-01T10:00:00",
-        content: "<p>Revise a prescrição.</p>",
-        related: [],
-        relatedLessons: [],
-      },
-    },
-  });
   await openCenter(page, mockApi);
 
-  const [request] = await Promise.all([
-    page.waitForRequest(/\/knowledge-base\/articles\/36$/),
-    page.getByRole("button", { name: "Escore 4: o que fazer?" }).click(),
-  ]);
-  expect(request.method()).toBe("GET");
-  await expect(page.getByRole("dialog")).toContainText("Revise a prescrição.");
-  await page.keyboard.press("Escape");
-  await expect(page.getByRole("dialog")).toBeHidden();
-
-  await page.getByRole("button", { name: "Ver todas" }).click();
+  await page
+    .getByRole("button", { name: "Acessar a Base de Conhecimento" })
+    .click();
   await expect(page).toHaveURL(/\/base-de-conhecimento$/);
 });
 
@@ -282,6 +263,45 @@ test("the page offers the same ticket drawer as the rest of the app", async ({
   ).toBeVisible();
 });
 
+test("the AI agent card opens the support agent chat", async ({
+  page,
+  mockApi,
+}) => {
+  await openCenter(page, mockApi);
+
+  await page.getByRole("button", { name: "Conversar com o Agente IA" }).click();
+
+  await expect(
+    page.getByRole("heading", { name: "Agente de Suporte (IA)" }),
+  ).toBeVisible();
+});
+
+test("the help mode switch turns help mode on and off", async ({
+  page,
+  mockApi,
+}) => {
+  // help mode loads the anchors pinned to this screen
+  mockApi.override("GET /knowledge-base/elements", {
+    json: { status: "success", data: [] },
+  });
+  await openCenter(page, mockApi);
+
+  const toggle = page.getByRole("switch", { name: "Modo ajuda" });
+  await expect(toggle).not.toBeChecked();
+
+  await toggle.click();
+  await expect(toggle).toBeChecked();
+  await expect(
+    page.getByRole("button", { name: "Sair do modo ajuda" }),
+  ).toBeVisible();
+
+  await toggle.click();
+  await expect(toggle).not.toBeChecked();
+  await expect(
+    page.getByRole("button", { name: "Sair do modo ajuda" }),
+  ).toHaveCount(0);
+});
+
 test("a failing fetch warns and leaves every tab empty", async ({
   page,
   mockApi,
@@ -295,5 +315,7 @@ test("a failing fetch warns and leaves every tab empty", async ({
   await expect(page.getByRole("heading", { name: "Ajuda" })).toBeVisible();
 
   await expect(page.locator(".ant-notification-notice").first()).toBeVisible();
-  await expect(page.getByText("Nenhum registro encontrado").first()).toBeVisible();
+  await expect(
+    page.getByText("Nenhum registro encontrado").first(),
+  ).toBeVisible();
 });
