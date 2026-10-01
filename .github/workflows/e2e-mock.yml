@@ -9,9 +9,8 @@ permissions:
 
 jobs:
   test:
-    # The suite is ~10 min on a 2-worker runner and grows with every spec, so
-    # 10 was cutting it off mid-run. This is a ceiling for a hung run, not a
-    # budget: a healthy run still finishes well under it.
+    # The suite is ~5 min against a production build on 4 workers. This is a
+    # ceiling for a hung run, not a budget.
     timeout-minutes: 20
     runs-on: ubuntu-latest
     env:
@@ -35,11 +34,22 @@ jobs:
       - name: Install Playwright chromium
         run: npx playwright install --with-deps chromium
 
+      # Serve a production build instead of the dev server: with the backend
+      # mocked, page loads are the bottleneck, and the dev server serves
+      # every module unbundled to each test's fresh browser context. The
+      # `build` workflow already runs the TypeScript check, so vite build
+      # alone is enough here.
+      - name: Build app
+        run: npx vite build
+
       # npx (not sfw npm run): the sfw wrapper injects proxy env vars that
       # break Playwright's webServer startup probe (same pattern as
-      # playwright-test.yml)
+      # playwright-test.yml). --workers=4 matches the runner's 4 vCPUs; the
+      # mocked specs share no state, so they parallelize freely.
       - name: Run mocked e2e tests
-        run: npx playwright test --project=mock-setup --project=chromium-mocked
+        env:
+          E2E_PREVIEW: "1"
+        run: npx playwright test --project=mock-setup --project=chromium-mocked --workers=4
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: failure()
