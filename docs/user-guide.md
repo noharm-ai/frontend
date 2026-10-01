@@ -141,22 +141,28 @@ in the background; the screen tells you when the file is ready.
 
 A custom report can open the prescription from a row. The report's SQL names a
 column with one of the reserved aliases below and fills it with the plain
-integer id. The table shows a button that opens the prescription in a new tab.
+integer id. The table shows a button that opens it in a new tab.
 
 | Column alias | Value | Opens |
 |---|---|---|
 | `link_prescricao` | Prescription id | The prescription |
 | `link_atendimento` | Admission number | The most recent prescription of the admission |
+| `link_conciliacao` | Conciliation id | The conciliation |
+| `link_alertas` | Prescription id | The prescription with the alerts report open |
+| `link_exame` | `fkexame` | The prescription with the exams open on that exam |
+| `link_evolucao` | `fkevolucao` | The prescription with the clinical notes open on that note |
 
-A value that is not a whole number shows as plain text. Exported files keep the
-plain id.
+`link_exame` and `link_evolucao` also need the prescription id in the same row,
+in `link_prescricao`, `fkprescricao` or `idprescricao`. Only numeric exams have
+an id, so textual exams cannot be linked. A value that is not a whole number
+shows as plain text. Exported files keep the plain id.
 
-Cast the ids to text. Very long ids lose digits when the browser reads them as
-numbers, and then show as plain text.
+Cast the ids to text. Very long ids, such as 17-digit conciliation ids, lose
+digits when the browser reads them as numbers, and then show as plain text.
 
 ```sql
 SELECT p.fkprescricao::text AS link_prescricao,
-       p.nratendimento::text AS link_atendimento,
+       e.fkexame::text AS link_exame,
        ...
 ```
 

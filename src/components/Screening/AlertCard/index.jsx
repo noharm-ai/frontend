@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import {
@@ -15,6 +15,7 @@ import DefaultModal from "components/Modal";
 import Button from "components/Button";
 import AlertListReport from "features/reports/AlertListReport/AlertListReport";
 import {
+  setAlertsModalOpen,
   setInitialFilters,
   setReportData,
 } from "features/reports/AlertListReport/AlertListReportSlice";
@@ -122,7 +123,7 @@ export default function AlertCard({ stats, prescription }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const features = useSelector((state) => state.user.account.features);
-  const [modal, setModal] = useState(false);
+  const modal = useSelector((state) => state.reportsArea.alertList.open);
 
   if (!stats) {
     return null;
@@ -137,7 +138,7 @@ export default function AlertCard({ stats, prescription }) {
   const openModal = (filters = {}) => {
     dispatch(setInitialFilters(filters));
     dispatch(setReportData(prescription.alertsList));
-    setModal(true);
+    dispatch(setAlertsModalOpen(true));
     trackPrescriptionAction(TrackedPrescriptionAction.SHOW_ALERTS_MODAL, {
       filters: filters,
     });
@@ -179,7 +180,7 @@ export default function AlertCard({ stats, prescription }) {
       <DefaultModal
         destroyOnHidden
         open={modal}
-        onCancel={() => setModal(false)}
+        onCancel={() => dispatch(setAlertsModalOpen(false))}
         width={"min(1440px, 100%)"}
         footer={null}
         style={{ top: "10px", height: "100vh" }}

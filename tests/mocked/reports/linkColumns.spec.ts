@@ -5,9 +5,10 @@ import { test, expect, API_URL } from "../support/mockApi";
 import { loginWithPermissions } from "../support/featureLogin";
 
 /**
- * Link columns in custom reports: a column aliased link_prescricao or
- * link_atendimento renders its integer id as a button that opens in a new
- * tab. Anything that is not a positive integer stays plain text.
+ * Link columns in custom reports: a column aliased with a reserved name
+ * (link_prescricao, link_conciliacao, link_alertas, link_exame,
+ * link_evolucao) renders its integer id as a new-tab link. Anything that is
+ * not a positive integer stays plain text.
  */
 
 const PERMISSIONS = [
@@ -20,29 +21,43 @@ const PERMISSIONS = [
 const REPORT_URL = "/relatorios/arquivo/CUSTOM/7/20260101";
 const CACHE_URL = `${API_URL}/cache/report.json.gz`;
 
-// column order follows the first row: paciente, link_prescricao, link_atendimento
+// column order follows the first row:
+// paciente, link_prescricao, link_conciliacao, link_alertas, link_exame, link_evolucao
 const ROWS = [
   {
     paciente: "Fulano Beltrano",
     link_prescricao: 199,
+    link_conciliacao: 300,
+    link_alertas: 199,
+    link_exame: 10,
+    link_evolucao: 20,
     link_atendimento: 9999,
   },
   {
-    // ids may come serialized as strings, and above 2^53 only a string is exact
+    // ids may come serialized as strings
     paciente: "Ciclano de Tal",
-    link_prescricao: "92600000000000001",
-    link_atendimento: null,
+    link_prescricao: "200",
+    // above 2^53: only exact as a string
+    link_conciliacao: "92600000000000001",
+    link_alertas: null,
+    link_exame: null,
+    link_evolucao: null,
   },
   {
+    // no prescription in the row: link_exame cannot be built
     paciente: "Maria Teste",
     link_prescricao: null,
-    link_atendimento: "abc",
+    link_conciliacao: "abc",
+    link_alertas: null,
+    link_exame: 11,
+    link_evolucao: null,
   },
 ];
 
 const COLUMN = {
   prescription: 1,
-  admission: 2,
+  conciliation: 2,
+  exam: 4,
 };
 
 const openReport = async (page: Page, mockApi: any) => {
@@ -83,7 +98,7 @@ const cell = (page: Page, rowText: string, column: number) =>
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
-test("renders each link column as a new-tab button", async ({
+test("renders each link column as a new-tab link", async ({
   page,
   mockApi,
 }) => {
@@ -91,11 +106,16 @@ test("renders each link column as a new-tab button", async ({
 
   const expected: [string, string][] = [
     ["Abrir prescrição 199", "/prescricao/199"],
-    ["Abrir prescrição 92600000000000001", "/prescricao/92600000000000001"],
+    ["Abrir prescrição 200", "/prescricao/200"],
     [
       "Abrir prescrição mais recente do atendimento 9999",
       "/prescricao/atendimento/9999",
     ],
+    ["Abrir conciliação 300", "/conciliacao/300"],
+    ["Abrir conciliação 92600000000000001", "/conciliacao/92600000000000001"],
+    ["Abrir alertas da prescrição 199", "/prescricao/199?modal=alertas"],
+    ["Abrir exame 10", "/prescricao/199?modal=exames&fkexame=10"],
+    ["Abrir evolução 20", "/prescricao/199?modal=evolucoes&fkevolucao=20"],
   ];
 
   for (const [name, href] of expected) {
@@ -116,9 +136,14 @@ test("values that are not positive integers stay plain text", async ({
   await expect(empty).toHaveText("");
   await expect(empty.locator("a")).toHaveCount(0);
 
-  const text = cell(page, "Maria Teste", COLUMN.admission);
+  const text = cell(page, "Maria Teste", COLUMN.conciliation);
   await expect(text).toHaveText("abc");
   await expect(text.locator("a")).toHaveCount(0);
+
+  // link_exame needs the prescription of the same row
+  const orphan = cell(page, "Maria Teste", COLUMN.exam);
+  await expect(orphan).toHaveText("11");
+  await expect(orphan.locator("a")).toHaveCount(0);
 });
 
 test("following a link opens a new tab without opening the record drawer", async ({
@@ -165,5 +190,5 @@ test("the column picker tags link columns", async ({ page, mockApi }) => {
 
   const picker = page.locator(".ant-dropdown");
   await expect(picker).toBeVisible();
-  await expect(picker.getByText("Link", { exact: true })).toHaveCount(2);
+  await expect(picker.getByText("Link", { exact: true })).toHaveCount(6);
 });

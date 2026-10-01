@@ -21,6 +21,8 @@ const initialState = {
   list: [],
   admissionNumber: null,
   lastAdmissionNumber: null,
+  // fkexame to scroll to and highlight when the modal opens (deep link)
+  highlightExamId: null,
   raw: rawInitialState,
 };
 
@@ -46,8 +48,10 @@ const examsModalSlice = createSlice({
     },
     setExamsModalAdmissionNumber(state, action) {
       if (action.payload && action.payload !== state.lastAdmissionNumber) {
-        // clear list when new admissionNumber
+        // clear list when new admissionNumber; status goes back to idle so a
+        // stale "succeeded" is not read as "loaded, and empty"
         state.list = [];
+        state.status = "idle";
         state.raw = rawInitialState;
       }
 
@@ -55,7 +59,12 @@ const examsModalSlice = createSlice({
 
       if (action.payload) {
         state.lastAdmissionNumber = action.payload;
+      } else {
+        state.highlightExamId = null;
       }
+    },
+    setExamsModalHighlight(state, action) {
+      state.highlightExamId = action.payload;
     },
     clearExamsCache(state) {
       state.list = [];
@@ -78,7 +87,11 @@ const examsModalSlice = createSlice({
   },
 });
 
-export const { reset, setExamsModalAdmissionNumber, clearExamsCache } =
-  examsModalSlice.actions;
+export const {
+  reset,
+  setExamsModalAdmissionNumber,
+  setExamsModalHighlight,
+  clearExamsCache,
+} = examsModalSlice.actions;
 
 export default examsModalSlice.reducer;

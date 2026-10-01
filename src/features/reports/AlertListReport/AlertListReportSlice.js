@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 import { getUniqList } from "utils/report";
+import { Types as PrescriptionTypes } from "store/ducks/prescriptions";
 
 const initialState = {
   status: "idle",
@@ -18,6 +19,7 @@ const initialState = {
     drugs: [],
   },
   initialFilters: {},
+  open: false,
 };
 
 const alertListReportSlice = createSlice({
@@ -26,6 +28,9 @@ const alertListReportSlice = createSlice({
   reducers: {
     reset() {
       return initialState;
+    },
+    setAlertsModalOpen(state, action) {
+      state.open = action.payload;
     },
     setInitialFilters(state, action) {
       state.initialFilters = action.payload;
@@ -44,6 +49,16 @@ const alertListReportSlice = createSlice({
       state.filterData.drugs = getUniqList(action.payload, "drugName");
     },
   },
+  extraReducers(builder) {
+    // loading a prescription closes the modal (it holds the previous
+    // prescription's alerts)
+    builder.addCase(
+      PrescriptionTypes.PRESCRIPTIONS_FETCH_SINGLE_START,
+      (state) => {
+        state.open = false;
+      },
+    );
+  },
 });
 
 export const {
@@ -53,6 +68,7 @@ export const {
   setFilteredStatus,
   setReportData,
   setInitialFilters,
+  setAlertsModalOpen,
 } = alertListReportSlice.actions;
 
 export default alertListReportSlice.reducer;
