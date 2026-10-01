@@ -1,10 +1,5 @@
-type DataRow = Record<string, unknown> & { _index?: number; key?: string | number };
-
-interface ColumnMeta {
-    key: string;
-    title: string;
-    type: 'string' | 'number' | 'boolean' | 'object';
-}
+import { resolveColumnLink } from './DataViewer.links';
+import type { ColumnMeta, DataRow } from './types';
 
 export const detectColumnType = (values: unknown[]): ColumnMeta['type'] => {
     const sample = values.slice(0, 100).filter(v => v !== null && v !== undefined && v !== '');
@@ -38,6 +33,7 @@ export const inferColumnsFromData = (data: DataRow[]): ColumnMeta[] => {
             key,
             title: key,
             type: detectColumnType(values),
+            link: resolveColumnLink(key),
         };
     });
 };
@@ -53,6 +49,7 @@ export const getTypeTagColor = (type: string): string => {
         case 'number': return 'cyan';
         case 'boolean': return 'green';
         case 'object': return 'purple';
+        case 'link': return 'blue';
         default: return 'default';
     }
 };
@@ -63,6 +60,7 @@ export const getTypeTagLabel = (type: string): string => {
         case 'boolean': return 'Sim/Não';
         case 'object': return 'Objeto';
         case 'string': return 'Texto';
+        case 'link': return 'Link';
         default: return 'Não identificado';
     }
 };
