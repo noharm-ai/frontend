@@ -848,11 +848,6 @@ api.support.fetchN0Form = (params) =>
     ...setHeaders(),
   });
 
-api.support.fetchRelatedArticles = (params) =>
-  instance.post(`/support/related-articles`, params, {
-    ...setHeaders(),
-  });
-
 api.support.fetchKnowledgeBaseArticles = (params) =>
   instance.post(`/support/knowledge-base-articles`, params, {
     ...setHeaders(),
