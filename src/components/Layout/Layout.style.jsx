@@ -115,7 +115,9 @@ Wrapper.Sider = styled(Layout.Sider)`
   &.ant-layout-sider {
     background: ${get("colors.primary")};
     color: #fff;
-    height: 100vh;
+    /* below the help mode bar, when it is shown (HelpModeBar) */
+    top: var(--nh-help-bar-height, 0px);
+    height: calc(100vh - var(--nh-help-bar-height, 0px));
     left: 0;
     padding: 15px 0;
     z-index: 999;

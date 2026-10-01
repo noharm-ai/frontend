@@ -126,27 +126,50 @@ export const PickerBox = styled.div<{ $fragile: boolean }>`
   }
 `;
 
+// the highlights' teal (accentSecondary), darkened for white text (~5:1)
+const HELP_BAR_COLOR = "#0f7c84";
+
+// height of the bar, published by HelpModeBar while it is shown so the app
+// can make room for it above the header
+export const HELP_BAR_HEIGHT_VAR = "--nh-help-bar-height";
+
 export const Bar = styled.div`
   position: fixed;
-  left: 50%;
-  bottom: 24px;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 4;
-  display: flex;
+  /* the text centered on the screen, whatever the width of the actions:
+     two equal side columns, the actions in the right one */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 12px;
-  max-width: calc(100vw - 32px);
-  padding: 10px 12px 10px 18px;
-  border-radius: 12px;
-  background: ${colors.primary};
+  min-height: 44px;
+  padding: 6px 16px;
+  /* teal like the highlights, and unlike the navy sider and menu: a mode
+     the user is in, not part of the app's chrome */
+  background: ${HELP_BAR_COLOR};
   color: ${colors.commonLighter};
-  box-shadow: 0 6px 24px rgba(46, 60, 90, 0.35);
-  transform: translateX(-50%);
+  box-shadow: 0 2px 8px rgba(15, 124, 132, 0.35);
 
   ${mobile} {
+    grid-template-columns: 1fr;
+    row-gap: 6px;
+  }
+
+  .bar-text {
+    grid-column: 2;
+    display: flex;
     flex-wrap: wrap;
-    left: 16px;
-    right: 16px;
-    transform: none;
+    align-items: center;
+    justify-content: center;
+    gap: 4px 12px;
+    text-align: center;
+
+    ${mobile} {
+      grid-column: 1;
+    }
   }
 
   .bar-title {
@@ -158,14 +181,20 @@ export const Bar = styled.div`
   }
 
   .bar-hint {
-    color: rgba(255, 255, 255, 0.8);
+    color: rgba(255, 255, 255, 0.9);
     font-size: 13px;
   }
 
   .bar-actions {
+    grid-column: 3;
+    justify-self: end;
     display: flex;
     gap: 8px;
-    margin-left: auto;
+
+    ${mobile} {
+      grid-column: 1;
+      justify-self: center;
+    }
   }
 `;
 

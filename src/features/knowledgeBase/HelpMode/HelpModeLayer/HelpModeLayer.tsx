@@ -278,7 +278,8 @@ export function HelpModeLayer({ routes }: IHelpModeLayerProps) {
     <>
       {canEdit && <HelpElementEditor page={page} />}
 
-      {shown &&
+      {active &&
+        canRead &&
         createPortal(
           <LayerRoot
             id={HELP_LAYER_ID}
@@ -286,35 +287,38 @@ export function HelpModeLayer({ routes }: IHelpModeLayerProps) {
             // portaled out of the app's root, which sets the font
             style={{ fontFamily: token.fontFamily }}
           >
-            {matched.map(({ item, rect }) => {
-              const key = elementKey(item);
+            {/* the bar stays while a modal opened from it is over the page,
+                or the page would jump up and down under the modal */}
+            {shown &&
+              matched.map(({ item, rect }) => {
+                const key = elementKey(item);
 
-              return (
-                <HelpModeHighlight
-                  key={key}
-                  item={item}
-                  rect={rect}
-                  open={openKey === key && !picking}
-                  aside={asideKey === key}
-                  canEdit={canEdit}
-                  container={container}
-                  onOpenChange={(open) => setOpenKey(open ? key : null)}
-                  onOpenArticle={(id) => {
-                    setOpenKey(null);
-                    openArticle(id);
-                  }}
-                  onRemoveArticle={(id) => removeArticle(item, id)}
-                  onUseElement={() => {
-                    asideEntered.current = false;
-                    setOpenKey(null);
-                    setStepAside({ key, page });
-                  }}
-                  onEdit={() => edit(item)}
-                />
-              );
-            })}
+                return (
+                  <HelpModeHighlight
+                    key={key}
+                    item={item}
+                    rect={rect}
+                    open={openKey === key && !picking}
+                    aside={asideKey === key}
+                    canEdit={canEdit}
+                    container={container}
+                    onOpenChange={(open) => setOpenKey(open ? key : null)}
+                    onOpenArticle={(id) => {
+                      setOpenKey(null);
+                      openArticle(id);
+                    }}
+                    onRemoveArticle={(id) => removeArticle(item, id)}
+                    onUseElement={() => {
+                      asideEntered.current = false;
+                      setOpenKey(null);
+                      setStepAside({ key, page });
+                    }}
+                    onEdit={() => edit(item)}
+                  />
+                );
+              })}
 
-            {picking && canEdit && <HelpModePicker onPick={pick} />}
+            {shown && picking && canEdit && <HelpModePicker onPick={pick} />}
 
             <HelpModeBar
               picking={picking && canEdit}

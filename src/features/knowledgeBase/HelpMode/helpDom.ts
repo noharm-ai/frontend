@@ -257,7 +257,14 @@ export interface IRect {
  */
 export const visibleRect = (element: Element): IRect | null => {
   const rect = element.getBoundingClientRect();
-  const top = Math.max(rect.top, 0);
+  // nothing under the help mode bar is visible
+  const barHeight =
+    parseFloat(
+      getComputedStyle(document.documentElement).getPropertyValue(
+        "--nh-help-bar-height",
+      ),
+    ) || 0;
+  const top = Math.max(rect.top, barHeight);
   const left = Math.max(rect.left, 0);
   const bottom = Math.min(rect.bottom, window.innerHeight);
   const right = Math.min(rect.right, window.innerWidth);

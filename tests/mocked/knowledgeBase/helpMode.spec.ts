@@ -235,7 +235,7 @@ test("the highlight steps aside so its element can be used", async ({
   // away from the element, the highlight is back in front of it
   // (in steps, as a real mouse moves: Chromium drops a lone move right
   // after the popup closes)
-  await page.mouse.move(5, box.y + box.height + 150, { steps: 5 });
+  await page.mouse.move(5, 300, { steps: 5 });
   let popups = 0;
   page.on("popup", () => {
     popups += 1;
@@ -551,6 +551,8 @@ test.describe("curator", () => {
 
   /** Starts the picker and clicks the middle of the element */
   const pickAt = async (page: Page, target: Locator) => {
+    // the help mode bar pushed the page down: the target may be below the fold
+    await target.scrollIntoViewIfNeeded();
     await page.getByRole("button", { name: "Adicionar ajuda" }).click();
     const box = (await target.boundingBox())!;
     await page.getByTestId("help-mode-picker").click({
