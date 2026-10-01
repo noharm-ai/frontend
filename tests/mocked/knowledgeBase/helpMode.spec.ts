@@ -166,6 +166,63 @@ test("highlights pinned elements and opens their articles", async ({
   await expect(page.getByRole("dialog")).toContainText("Como ler");
 });
 
+test("lists every article of the screen, hidden elements included", async ({
+  page,
+  mockApi,
+}) => {
+  mockElements(mockApi, [
+    ...ELEMENTS,
+    // the same article on a second element is listed once
+    {
+      page: CARDS_PAGE,
+      selector: STATUS,
+      label: "Situação",
+      articles: [article(2, "Escore Global")],
+    },
+  ]);
+  await openCards(page);
+  await toggle(page).click();
+
+  const list = page
+    .getByRole("dialog")
+    .filter({ hasText: "Artigos desta tela" });
+  const items = list.getByRole("listitem");
+
+  await page.getByRole("button", { name: "4 artigos nesta tela" }).click();
+
+  await expect(items.locator("strong")).toHaveText([
+    "Artigo antigo",
+    "Escore Global",
+    "Lendo o card",
+    "Usando a base de conhecimento",
+  ]);
+  await expect(items.filter({ hasText: "Escore Global" })).toContainText(
+    "Em: Card do paciente, Situação",
+  );
+
+  // more articles in the knowledge base, without leaving this screen
+  const search = list.getByRole("link", {
+    name: /Buscar mais artigos na base de conhecimento/,
+  });
+  await expect(search).toHaveAttribute("href", "/base-de-conhecimento");
+  await expect(search).toHaveAttribute("target", "_blank");
+
+  // escape closes the list, not the help mode
+  await page.keyboard.press("Escape");
+  await expect(list).toHaveCount(0);
+  await expect(highlight(page, CARD)).toHaveCount(1);
+
+  // an article pinned to an element not on screen is still reachable
+  await page.getByRole("button", { name: "4 artigos nesta tela" }).click();
+  await items.filter({ hasText: "Artigo antigo" }).getByRole("button").click();
+  await expect(list).toHaveCount(0);
+  await expect
+    .poll(() =>
+      mockApi.requests.some((r) => r.path === "/knowledge-base/articles/4"),
+    )
+    .toBe(true);
+});
+
 test("a highlighted card does not open the prescription", async ({
   page,
   mockApi,

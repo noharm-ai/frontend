@@ -1482,6 +1482,12 @@
     "thisScreen": "This screen",
     "useElement": "Use the element",
     "useElementHint": "The highlight steps aside until you move the mouse away from the element.",
+    "pageArticles_one": "{{count}} article on this screen",
+    "pageArticles_other": "{{count}} articles on this screen",
+    "pageArticlesTitle": "Articles on this screen",
+    "pageArticlesWhere": "On: {{labels}}",
+    "pageArticlesHint": "Articles pinned to elements of this screen, including those not visible right now.",
+    "searchKnowledgeBase": "Search more articles in the knowledge base",
     "fragile": "Fragile selector",
     "editor": {
       "titleNew": "Add help to the element",

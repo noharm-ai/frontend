@@ -1492,6 +1492,12 @@
     "thisScreen": "Esta tela",
     "useElement": "Usar o elemento",
     "useElementHint": "O destaque sai da frente até você afastar o mouse do elemento.",
+    "pageArticles_one": "{{count}} artigo nesta tela",
+    "pageArticles_other": "{{count}} artigos nesta tela",
+    "pageArticlesTitle": "Artigos desta tela",
+    "pageArticlesWhere": "Em: {{labels}}",
+    "pageArticlesHint": "Artigos associados aos elementos desta tela, inclusive os que não estão visíveis agora.",
+    "searchKnowledgeBase": "Buscar mais artigos na base de conhecimento",
     "fragile": "Seletor frágil",
     "editor": {
       "titleNew": "Adicionar ajuda ao elemento",

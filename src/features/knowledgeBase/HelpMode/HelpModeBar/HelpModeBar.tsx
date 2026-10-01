@@ -10,6 +10,7 @@ import {
 } from "@ant-design/icons";
 
 import { IHelpElement } from "../HelpModeSlice";
+import { HelpModePageArticles } from "../HelpModePageArticles/HelpModePageArticles";
 import {
   Bar,
   HELP_BAR_HEIGHT_VAR,
@@ -70,10 +71,15 @@ interface IHelpModeBarProps {
   picking: boolean;
   canEdit: boolean;
   visibleCount: number;
+  // every element of the screen, and those not on screen right now
+  elements: IHelpElement[];
   hidden: IHelpElement[];
   container: HTMLElement | null;
   onPick: (picking: boolean) => void;
   onEdit: (item: IHelpElement) => void;
+  onOpenArticle: (id: number) => void;
+  articlesOpen: boolean;
+  onArticlesOpenChange: (open: boolean) => void;
   onExit: () => void;
 }
 
@@ -86,10 +92,14 @@ export function HelpModeBar({
   picking,
   canEdit,
   visibleCount,
+  elements,
   hidden,
   container,
   onPick,
   onEdit,
+  onOpenArticle,
+  articlesOpen,
+  onArticlesOpenChange,
   onExit,
 }: IHelpModeBarProps) {
   const { t } = useTranslation();
@@ -128,6 +138,12 @@ export function HelpModeBar({
         </span>
       </div>
       <div className="bar-actions">
+        <HelpModePageArticles
+          elements={elements}
+          open={articlesOpen}
+          onOpenChange={onArticlesOpenChange}
+          onOpenArticle={onOpenArticle}
+        />
         {canEdit && hidden.length > 0 && (
           <Popover
             trigger="click"

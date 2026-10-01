@@ -90,6 +90,8 @@ export function HelpModeLayer({ routes }: IHelpModeLayerProps) {
   const shown = active && canRead && !editorOpen && !articleOpen;
 
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
+  // the list of the screen's articles, a modal of its own
+  const [articlesOpen, setArticlesOpen] = useState(false);
   // a popover only stays open on the screen, and while the layer is shown
   const [opened, setOpened] = useState<{ key: string; page: string | null }>();
   const openKey = shown && opened && opened.page === page ? opened.key : null;
@@ -182,6 +184,9 @@ export function HelpModeLayer({ routes }: IHelpModeLayerProps) {
     if (!shown) return undefined;
 
     const onKeyDown = (event: KeyboardEvent) => {
+      // the modal handles its own keys, escape included
+      if (articlesOpen) return;
+
       if (event.key === "Escape") {
         event.preventDefault();
 
@@ -213,7 +218,16 @@ export function HelpModeLayer({ routes }: IHelpModeLayerProps) {
     window.addEventListener("keydown", onKeyDown, true);
 
     return () => window.removeEventListener("keydown", onKeyDown, true);
-  }, [dispatch, shown, picking, openKey, setOpenKey, matched, asideKey]);
+  }, [
+    dispatch,
+    shown,
+    picking,
+    openKey,
+    setOpenKey,
+    matched,
+    asideKey,
+    articlesOpen,
+  ]);
 
   const edit = useCallback(
     (item: IHelpElement) => {
@@ -324,10 +338,14 @@ export function HelpModeLayer({ routes }: IHelpModeLayerProps) {
               picking={picking && canEdit}
               canEdit={canEdit}
               visibleCount={matched.length}
+              elements={elements}
               hidden={unmatched}
               container={container}
               onPick={(value) => dispatch(setHelpModePicking(value))}
               onEdit={edit}
+              onOpenArticle={openArticle}
+              articlesOpen={articlesOpen}
+              onArticlesOpenChange={setArticlesOpen}
               onExit={() => dispatch(setHelpModeActive(false))}
             />
           </LayerRoot>,

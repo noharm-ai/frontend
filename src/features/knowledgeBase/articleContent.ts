@@ -9,7 +9,9 @@ export interface IArticleHeading {
 const ALLOWED_IFRAME_SRC =
   /^https:\/\/(www\.)?(youtube\.com|youtube-nocookie\.com)\/embed\//;
 
-export const articlePath = (id: number) => `/base-de-conhecimento/${id}`;
+export const KNOWLEDGE_BASE_PATH = "/base-de-conhecimento";
+
+export const articlePath = (id: number) => `${KNOWLEDGE_BASE_PATH}/${id}`;
 
 // a link written as /base-de-conhecimento/<id> points to another article
 const ARTICLE_HREF = /^\/base-de-conhecimento\/(\d+)\/?(?:[?#].*)?$/;

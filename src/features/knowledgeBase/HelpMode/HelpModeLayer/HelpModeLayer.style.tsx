@@ -1,6 +1,8 @@
 import styled, { css } from "styled-components";
 
 import colors from "styles/colors";
+
+import { helpModeColors, helpModeTint } from "../helpModeColors";
 import { breakpointsEnum } from "styles/breakpoints";
 
 const mobile = `@media (max-width: ${breakpointsEnum.md - 1}px)`;
@@ -28,9 +30,9 @@ const box = css`
 export const HighlightBox = styled.div<{ $open: boolean; $aside: boolean }>`
   ${box}
   z-index: 1;
-  border: 2px solid ${colors.accentSecondary};
-  background: rgba(112, 189, 195, 0.14);
-  box-shadow: 0 0 0 3px rgba(112, 189, 195, 0.22);
+  border: 2px solid ${helpModeColors.strong};
+  background: ${helpModeTint(0.14)};
+  box-shadow: 0 0 0 3px ${helpModeTint(0.22)};
   cursor: help;
   transition:
     background 0.15s ease,
@@ -39,13 +41,13 @@ export const HighlightBox = styled.div<{ $open: boolean; $aside: boolean }>`
   ${({ $open }) =>
     $open &&
     css`
-      background: rgba(112, 189, 195, 0.24);
-      box-shadow: 0 0 0 5px rgba(112, 189, 195, 0.3);
+      background: ${helpModeTint(0.24)};
+      box-shadow: 0 0 0 5px ${helpModeTint(0.3)};
     `}
 
   &:hover,
   &:focus-visible {
-    background: rgba(112, 189, 195, 0.24);
+    background: ${helpModeTint(0.24)};
     outline: none;
   }
 
@@ -77,7 +79,7 @@ export const HighlightBox = styled.div<{ $open: boolean; $aside: boolean }>`
     height: 20px;
     padding: 0 5px;
     border-radius: 10px;
-    background: ${colors.accentSecondary};
+    background: ${helpModeColors.strong};
     color: ${colors.commonLighter};
     font-size: 11px;
     font-weight: 600;
@@ -126,9 +128,6 @@ export const PickerBox = styled.div<{ $fragile: boolean }>`
   }
 `;
 
-// the highlights' teal (accentSecondary), darkened for white text (~5:1)
-const HELP_BAR_COLOR = "#0f7c84";
-
 // height of the bar, published by HelpModeBar while it is shown so the app
 // can make room for it above the header
 export const HELP_BAR_HEIGHT_VAR = "--nh-help-bar-height";
@@ -147,11 +146,11 @@ export const Bar = styled.div`
   gap: 12px;
   min-height: 44px;
   padding: 6px 16px;
-  /* teal like the highlights, and unlike the navy sider and menu: a mode
-     the user is in, not part of the app's chrome */
-  background: ${HELP_BAR_COLOR};
-  color: ${colors.commonLighter};
-  box-shadow: 0 2px 8px rgba(15, 124, 132, 0.35);
+  /* the highlights' lavender, unlike anything in the app's chrome: a mode
+     the user is in */
+  background: ${helpModeColors.base};
+  color: ${helpModeColors.text};
+  box-shadow: 0 2px 8px ${helpModeTint(0.45)};
 
   ${mobile} {
     grid-template-columns: 1fr;
@@ -181,7 +180,7 @@ export const Bar = styled.div`
   }
 
   .bar-hint {
-    color: rgba(255, 255, 255, 0.9);
+    color: ${helpModeColors.text};
     font-size: 13px;
   }
 
@@ -257,7 +256,7 @@ export const PopoverBody = styled.div`
 
     &:hover,
     &:focus-visible {
-      background: rgba(112, 189, 195, 0.14);
+      background: ${helpModeTint(0.14)};
       outline: none;
     }
   }
@@ -302,7 +301,7 @@ export const HiddenList = styled.ul`
 
     &:hover,
     &:focus-visible {
-      background: rgba(112, 189, 195, 0.14);
+      background: ${helpModeTint(0.14)};
       outline: none;
     }
   }
