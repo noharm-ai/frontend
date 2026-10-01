@@ -15,9 +15,10 @@ const FLAG = "{idPatient}";
  *
  * @param {object} requestConfig
  * @param {[object]} requestConfig.listToRequest array of objects containing idPatient (and optionally birthdate)
+ * @param {boolean} [requestConfig.forceRefresh] ignore cached entries and always request the names again
  */
 const getPatients = async (requestConfig) => {
-  const { listToRequest, nameUrl, proxy } = requestConfig;
+  const { listToRequest, nameUrl, proxy, forceRefresh } = requestConfig;
   const getnameType = store.getState().app.config.getnameType;
   const apiKey = store.getState().user.account.apiKey;
   let nameHeaders =
@@ -52,7 +53,7 @@ const getPatients = async (requestConfig) => {
 
     listToRequest.forEach((p) => {
       const cachedPatient = patientCache.getPatient(p.idPatient);
-      if (!cachedPatient || !cachedPatient?.cache) {
+      if (forceRefresh || !cachedPatient?.cache) {
         requestIds.push(p.idPatient);
 
         if (p.birthdate && moment().diff(p.birthdate, "years") > 0) {
@@ -101,8 +102,7 @@ const getPatients = async (requestConfig) => {
   } else {
     await Promise.all(
       listToRequest.map(async ({ idPatient, birthdate }) => {
-        const cached = patientCache.getPatient(idPatient);
-        if (cached?.cache) {
+        if (!forceRefresh && patientCache.getPatient(idPatient)?.cache) {
           return;
         }
 
