@@ -183,7 +183,7 @@ export default function Prioritization() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Regulação</h1>
+          <h1 className="page-header-title" data-kb="regulation.title">Regulação</h1>
         </div>
         <div className="page-header-actions">
           <Button

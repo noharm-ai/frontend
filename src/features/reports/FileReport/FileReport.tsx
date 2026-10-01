@@ -302,7 +302,7 @@ export function FileReport() {
       <Spin spinning={isLoading}>
         <PageHeader>
           <div>
-            <h1 className="page-header-title">Relatório: {title}</h1>
+            <h1 className="page-header-title" data-kb="reports.file.title">Relatório: {title}</h1>
             <div className="page-header-legend">
               Data de geração: {formatDate(filename)}
             </div>

@@ -400,16 +400,23 @@ test("the main screens carry their help anchors", async ({ page, mockApi }) => {
     ],
     [
       "/priorizacao/prescricoes",
-      ["prioritization.filter", "prioritization.table"],
+      ["prioritization.title", "prioritization.filter", "prioritization.table"],
     ],
     [
       "/intervencoes",
-      ["filter", "interventions.status", "interventions.table"],
+      [
+        "interventions.title",
+        "filter",
+        "interventions.status",
+        "interventions.table",
+      ],
     ],
     [
       "/pacientes-ambulatoriais",
-      ["filter", "patients.search", "patients.table"],
+      ["patients.title", "filter", "patients.search", "patients.table"],
     ],
+    ["/priorizacao/pacientes/cards", ["prioritization.title"]],
+    ["/base-de-conhecimento", ["knowledgeBase.title"]],
   ];
 
   for (const [url, anchors] of screens) {
@@ -753,10 +760,18 @@ test.describe("curator", () => {
     await expect(alertsModal).toBeVisible();
     await expect(alertsModal).not.toHaveClass(/zoom-(appear|enter)/);
 
+    // the report's title has an anchor of its own
     await pickAt(
       page,
       alertsModal.getByRole("heading", { name: /Relatório: Alertas/ }),
     );
+    await expect(editorDialog(page).locator("code").first()).toHaveText(
+      '[data-kb="reports.alertList.title"]',
+    );
+    await cancelEditor(page);
+
+    // the footnote under it has none
+    await pickAt(page, alertsModal.getByText(/A quantidade de alertas/));
     const selector = await editorDialog(page)
       .locator("code")
       .first()

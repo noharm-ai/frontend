@@ -170,7 +170,7 @@ function InnerPage({
       <DirtyGuard dirty={dirty} />
       <PageHeader>
         <div>
-          <h1 className="page-header-title">{title}</h1>
+          <h1 className="page-header-title" data-kb="customForms.editor.title">{title}</h1>
           <div className="page-header-legend">Formulários de evolução</div>
         </div>
         <div className="page-header-actions">

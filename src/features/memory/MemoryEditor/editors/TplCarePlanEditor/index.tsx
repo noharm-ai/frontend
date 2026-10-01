@@ -417,7 +417,7 @@ function TplCarePlanEditorInner({
             <DirtyGuard dirty={dirty} />
             <PageHeader>
               <div>
-                <h1 className="page-header-title">
+                <h1 className="page-header-title" data-kb="memory.carePlanEditor.title">
                   Modelo de Plano de Cuidado
                 </h1>
                 <div className="page-header-legend">

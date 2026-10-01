@@ -100,7 +100,7 @@ function MemoryCustomForms() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Formulários de evolução</h1>
+          <h1 className="page-header-title" data-kb="customForms.title">Formulários de evolução</h1>
           <div className="page-header-legend">
             Crie e edite formulários de evolução
           </div>

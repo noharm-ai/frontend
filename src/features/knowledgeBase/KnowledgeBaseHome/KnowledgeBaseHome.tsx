@@ -185,7 +185,7 @@ export function KnowledgeBaseHome() {
           <span className="hero-eyebrow">
             <BulbOutlined /> {t("knowledgeBase.eyebrow")}
           </span>
-          <h1>{t("knowledgeBase.title")}</h1>
+          <h1 data-kb="knowledgeBase.title">{t("knowledgeBase.title")}</h1>
           <p className="hero-subtitle">{t("knowledgeBase.subtitle")}</p>
 
           <SearchBox>

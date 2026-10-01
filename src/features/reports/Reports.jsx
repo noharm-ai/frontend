@@ -177,7 +177,7 @@ export default function Reports() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">
+          <h1 className="page-header-title" data-kb="reports.title">
             {currentReport ? currentReport.title : "Relatórios"}
           </h1>
           <div className="page-header-legend">

@@ -12,7 +12,7 @@ function SummarySearch() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">{t("summary.title")}</h1>
+          <h1 className="page-header-title" data-kb="summary.search.title">{t("summary.title")}</h1>
           <div className="page-header-legend">{t("summary.searchLegend")}</div>
         </div>
       </PageHeader>

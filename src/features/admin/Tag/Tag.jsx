@@ -38,7 +38,7 @@ export function Tag() {
     <PageContainer>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">{t("menu.tag")}</h1>
+          <h1 className="page-header-title" data-kb="admin.tags.title">{t("menu.tag")}</h1>
         </div>
         <div className="page-header-actions">
           {canCreateTags() && (

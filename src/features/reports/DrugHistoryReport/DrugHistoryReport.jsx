@@ -53,7 +53,7 @@ export default function DrugHistoryReport({ prescription, attribute }) {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">
+          <h1 className="page-header-title" data-kb="reports.drugHistory.title">
             Relatório: Histórico de {attributeLabel}{" "}
           </h1>
         </div>

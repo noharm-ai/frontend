@@ -332,7 +332,7 @@ export function TrainingPlayer() {
                   total: sortedItems.length,
                 })}
               </Eyebrow>
-              <h1 className="page-header-title">{currentItem.title}</h1>
+              <h1 className="page-header-title" data-kb="training.lesson.title">{currentItem.title}</h1>
               <MetaRow>
                 {currentItem.video && (
                   <span>

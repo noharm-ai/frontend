@@ -250,7 +250,7 @@ export default function InterventionList({
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">{t("menu.interventions")}</h1>
+          <h1 className="page-header-title" data-kb="interventions.title">{t("menu.interventions")}</h1>
           <div className="page-header-legend">
             Lista de intervenções registradas.
           </div>

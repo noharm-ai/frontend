@@ -223,7 +223,7 @@ export function ProtocolEditorPage() {
             <div ref={sentinelRef} />
             <StickyPageHeader className={isStuck ? "is-stuck" : ""}>
               <div>
-                <h1 className="page-header-title">
+                <h1 className="page-header-title" data-kb="admin.protocols.editor.title">
                   {isNew
                     ? protocolCopy
                       ? "Copiar Protocolo"

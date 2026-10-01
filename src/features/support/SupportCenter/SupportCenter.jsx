@@ -100,7 +100,7 @@ function SupportCenter() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">{t("menu.help")}</h1>
+          <h1 className="page-header-title" data-kb="support.title">{t("menu.help")}</h1>
           <h1 className="page-header-legend">
             Consulte os seus chamados de suporte e confira a nossa base de
             conhecimento.

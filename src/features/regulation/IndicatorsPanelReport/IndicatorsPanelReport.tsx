@@ -112,7 +112,7 @@ export default function IndicatorsPanelReport() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Juntos pela Saúde: Indicadores</h1>
+          <h1 className="page-header-title" data-kb="regulation.indicators.title">Juntos pela Saúde: Indicadores</h1>
           <div className="page-header-legend ">
             Acompanhamento de indicadores
           </div>

@@ -64,7 +64,7 @@ export function UserProfile() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">{t("menu.userConfig")}</h1>
+          <h1 className="page-header-title" data-kb="userProfile.title">{t("menu.userConfig")}</h1>
           <h1 className="page-header-legend">
             Central de configurações do usuário.
           </h1>

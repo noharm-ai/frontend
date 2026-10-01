@@ -41,7 +41,7 @@ export default function AlertListReport({ prescription }) {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Relatório: Alertas </h1>
+          <h1 className="page-header-title" data-kb="reports.alertList.title">Relatório: Alertas </h1>
         </div>
       </PageHeader>
 

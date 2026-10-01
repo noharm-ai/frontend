@@ -50,7 +50,7 @@ function Memory() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Memória</h1>
+          <h1 className="page-header-title" data-kb="admin.memory.title">Memória</h1>
           <div className="page-header-legend">
             Configurações gerais da aplicação
           </div>

@@ -38,7 +38,7 @@ export default function ExamsRawSearchReport({ prescription }) {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">
+          <h1 className="page-header-title" data-kb="reports.examsRawSearch.title">
             Relatório: Busca de Exames - Atendimento{" "}
             {prescription.admissionNumber}
           </h1>

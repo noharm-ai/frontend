@@ -55,7 +55,7 @@ export function TrainingCentral() {
     <>
       <CentralHeader>
         <div>
-          <h1 className="page-header-title">{t("trainingCentral.title")}</h1>
+          <h1 className="page-header-title" data-kb="training.title">{t("trainingCentral.title")}</h1>
           <h1 className="page-header-legend">
             {t("trainingCentral.subtitle")}
           </h1>

@@ -726,7 +726,7 @@ export default function ScreeningList({
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">{pageTitle}</h1>
+          <h1 className="page-header-title" data-kb="prioritization.title">{pageTitle}</h1>
         </div>
         <div className="page-header-actions">
           <InitialPage />
