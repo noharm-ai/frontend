@@ -1227,6 +1227,23 @@
       "menuHint": "Você pode acessar o treinamento a qualquer momento pelo menu lateral, em \"Treinamento\"."
     }
   },
+  "news": {
+    "eyebrow": "Novidades",
+    "title": "O que há de novo na NoHarm",
+    "subtitle": "Lançamentos, melhorias e ajustes, da novidade mais recente para a mais antiga.",
+    "new": "Novo",
+    "readMore": "Ler novidade",
+    "collapse": "Recolher",
+    "monthFormat": "MMMM [de] YYYY",
+    "dateFormat": "D [de] MMMM [de] YYYY",
+    "empty": "Nenhuma novidade publicada ainda.",
+    "emptyHint": "Assim que houver lançamentos, eles aparecerão aqui.",
+    "loadError": "Não foi possível carregar as novidades.",
+    "contentError": "Não foi possível carregar esta novidade.",
+    "retry": "Tentar novamente",
+    "recentBadge_one": "{{count}} novidade recente",
+    "recentBadge_other": "{{count}} novidades recentes"
+  },
   "knowledgeBase": {
     "eyebrow": "Base de conhecimento",
     "title": "Como podemos ajudar?",

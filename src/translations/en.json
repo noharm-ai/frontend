@@ -1217,6 +1217,23 @@
       "menuHint": "You can access the training anytime from the side menu, under \"Training\"."
     }
   },
+  "news": {
+    "eyebrow": "News",
+    "title": "What's new in NoHarm",
+    "subtitle": "Releases, improvements and fixes, from the most recent to the oldest.",
+    "new": "New",
+    "readMore": "Read more",
+    "collapse": "Collapse",
+    "monthFormat": "MMMM YYYY",
+    "dateFormat": "MMMM D, YYYY",
+    "empty": "No news published yet.",
+    "emptyHint": "New releases will show up here.",
+    "loadError": "Could not load the news.",
+    "contentError": "Could not load this news.",
+    "retry": "Try again",
+    "recentBadge_one": "{{count}} recent news",
+    "recentBadge_other": "{{count}} recent news"
+  },
   "knowledgeBase": {
     "eyebrow": "Knowledge base",
     "title": "How can we help?",

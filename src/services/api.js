@@ -869,6 +869,13 @@ api.knowledgeBase.saveElement = (params) =>
   instance.put(`/knowledge-base/elements`, params, { ...setHeaders() });
 
 /**
+ * news namespace
+ */
+api.news = {};
+api.news.getList = () => instance.get(`/news`, { ...setHeaders() });
+api.news.get = (idNews) => instance.get(`/news/${idNews}`, { ...setHeaders() });
+
+/**
  * training namespace
  */
 api.training = {};

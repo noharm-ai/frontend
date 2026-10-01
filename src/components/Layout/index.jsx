@@ -406,7 +406,7 @@ export default function Layout({
         <div style={{ padding: "0 15px 30px" }}>
           <Brand className="brand" title="noHarm.ai | Cuidando dos pacientes" />
         </div>
-        <Menu segments={segments} />
+        <Menu segments={segments} collapsed={sider.collapsed} />
       </Sider>
       <Main
         style={{

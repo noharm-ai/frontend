@@ -2,6 +2,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import {
   TableOutlined,
   FileTextOutlined,
@@ -25,7 +26,7 @@ import {
   LayoutOutlined,
   ReadOutlined,
 } from "@ant-design/icons";
-import { Menu as Navigator } from "antd";
+import { Badge, Menu as Navigator } from "antd";
 import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
 
 import Feature from "models/Feature";
@@ -34,8 +35,9 @@ import PermissionService from "services/PermissionService";
 import { FeatureService } from "services/FeatureService";
 import { getStorageItem } from "utils/storage";
 
-export default function Menu({ segments }) {
+export default function Menu({ segments, collapsed }) {
   const location = useLocation();
+  const recentNews = useSelector((state) => state.user.account.recentNews);
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -169,10 +171,30 @@ export default function Menu({ segments }) {
       permission: [Permission.READ_BASIC_FEATURES],
     },
     {
-      key: `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/137`,
-      link: `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/137`,
-      label: t("menu.news"),
-      icon: <ThunderboltOutlined />,
+      key: "/novidades",
+      link: "/novidades",
+      label: recentNews ? (
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+          {t("menu.news")}
+          <Badge
+            count={recentNews}
+            size="small"
+            color="#a991d6"
+            title={t("news.recentBadge", { count: recentNews })}
+          />
+        </span>
+      ) : (
+        t("menu.news")
+      ),
+      // with the sider collapsed only the icon shows: it carries the badge
+      icon:
+        recentNews && collapsed ? (
+          <Badge dot color="#a991d6" offset={[-2, 4]}>
+            <ThunderboltOutlined />
+          </Badge>
+        ) : (
+          <ThunderboltOutlined />
+        ),
       id: "gtm-lnk-news",
     },
     {
