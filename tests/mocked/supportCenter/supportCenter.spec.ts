@@ -87,7 +87,7 @@ const installTickets = (mockApi: MockApi, data: unknown = TICKETS) =>
   });
 
 /**
- * Tickets and FAQ entries leave for Odoo through window.open. VITE_APP_ODOO_LINK
+ * Tickets leave for Odoo through window.open. VITE_APP_ODOO_LINK
  * is not set in CI, so the recorded URL is asserted on its path, and stubbing
  * window.open keeps a half-built URL from loading the SPA in a second tab.
  */
@@ -230,20 +230,40 @@ test("following a ticket opens it in Odoo with its access token", async ({
   expect((await opened())[0]).toContain("my/ticket/42?access_token=tok-42");
 });
 
-test("the FAQ shortcuts point at the knowledge base", async ({
+test("the FAQ shortcuts open the knowledge base",async ({
   page,
   mockApi,
 }) => {
-  const opened = await recordWindowOpen(page);
+  mockApi.override("GET /knowledge-base/articles/:id", {
+    json: {
+      status: "success",
+      data: {
+        id: 36,
+        title: "Escore 4: o que fazer?",
+        description: null,
+        path: ["Prescrição"],
+        link: null,
+        hasContent: true,
+        updatedAt: "2026-09-01T10:00:00",
+        content: "<p>Revise a prescrição.</p>",
+        related: [],
+        relatedLessons: [],
+      },
+    },
+  });
   await openCenter(page, mockApi);
 
-  await page.getByRole("button", { name: "Escore 4: o que fazer?" }).click();
-  await page.getByRole("button", { name: "Ver todas" }).click();
+  const [request] = await Promise.all([
+    page.waitForRequest(/\/knowledge-base\/articles\/36$/),
+    page.getByRole("button", { name: "Escore 4: o que fazer?" }).click(),
+  ]);
+  expect(request.method()).toBe("GET");
+  await expect(page.getByRole("dialog")).toContainText("Revise a prescrição.");
+  await page.keyboard.press("Escape");
+  await expect(page.getByRole("dialog")).toBeHidden();
 
-  const urls = await opened();
-  expect(urls).toHaveLength(2);
-  expect(urls[0]).toContain("/knowledge/article/111");
-  expect(urls[1]).toContain("/knowledge/article/39");
+  await page.getByRole("button", { name: "Ver todas" }).click();
+  await expect(page).toHaveURL(/\/base-de-conhecimento$/);
 });
 
 test("the page offers the same ticket drawer as the rest of the app", async ({

@@ -7,11 +7,13 @@ import Heading from "components/Heading";
 import Modal from "components/Modal";
 import Button from "components/Button";
 import Alert from "components/Alert";
+import { useArticleModal } from "features/knowledgeBase/useArticleModal";
 
 import { setHelpModal } from "../EconomyReportSlice";
 
 export default function HelpModal() {
   const dispatch = useDispatch();
+  const { openArticle } = useArticleModal();
   const open = useSelector((state) => state.reportsArea.economy.helpModal);
   const updatedAt = useSelector((state) => state.reportsArea.economy.updatedAt);
   const dateRange = useSelector((state) => state.reportsArea.economy.dateRange);
@@ -62,11 +64,7 @@ export default function HelpModal() {
           size="large"
           style={{ marginTop: "10px" }}
           block
-          onClick={() =>
-            window.open(
-              `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/192`
-            )
-          }
+          onClick={() => openArticle(45)}
         >
           Base de Conhecimento
         </Button>

@@ -30,6 +30,7 @@ import { NavigationSoapNote } from "features/clinicalNotes/NavigationSoapNote/Na
 import { openNavigationSoapNote } from "features/clinicalNotes/NavigationSoapNote/NavigationSoapNoteSlice";
 import { DigitalSignature } from "features/clinicalNotes/DigitalSignature/DigitalSignature";
 import { openDigitalSignature } from "features/clinicalNotes/DigitalSignature/DigitalSignatureSlice";
+import { useArticleModal } from "features/knowledgeBase/useArticleModal";
 
 import Edit from "./Edit";
 import ClinicalNotesIndicator from "./ClinicalNotesIndicator";
@@ -40,8 +41,6 @@ import {
   MenuPopup,
   Legend,
 } from "./index.style";
-
-const helpLink = `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/113`;
 
 export default function View({
   selected,
@@ -66,6 +65,7 @@ export default function View({
   const [prevSelected, setPrevSelected] = useState(selected);
   const [prevSaveStatus, setPrevSaveStatus] = useState(saveStatus);
   const { t } = useTranslation();
+  const { openArticle } = useArticleModal();
 
   if (prevSelected !== selected) {
     setPrevSelected(selected);
@@ -94,7 +94,7 @@ export default function View({
   }, [saveStatus, t]);
 
   const goToHelp = () => {
-    window.open(helpLink);
+    openArticle(14);
   };
 
   // evoluções originadas de prescrição não podem ser anotadas

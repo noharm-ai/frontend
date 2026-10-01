@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { MessageOutlined } from "@ant-design/icons";
 import { Typography, Row, Col, Tabs } from "antd";
 
@@ -9,6 +10,7 @@ import Empty from "components/Empty";
 import notification from "components/notification";
 import Table from "components/Table";
 import { getErrorMessage } from "utils/errorHandler";
+import { useArticleModal } from "features/knowledgeBase/useArticleModal";
 import { fetchTickets, setSupportOpen } from "../SupportSlice";
 import columns from "./columns";
 import expandedRowRender from "./expandedRowRender";
@@ -21,10 +23,12 @@ import { PageCard } from "styles/Utils.style";
 function SupportCenter() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { openArticle } = useArticleModal();
   const myTickets = useSelector((state) => state.support.tickets.myTickets);
   const following = useSelector((state) => state.support.tickets.following);
   const organization = useSelector(
-    (state) => state.support.tickets.organization
+    (state) => state.support.tickets.organization,
   );
   const status = useSelector((state) => state.support.tickets.status);
 
@@ -100,7 +104,9 @@ function SupportCenter() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title" data-kb="support.title">{t("menu.help")}</h1>
+          <h1 className="page-header-title" data-kb="support.title">
+            {t("menu.help")}
+          </h1>
           <h1 className="page-header-legend">
             Consulte os seus chamados de suporte e confira a nossa base de
             conhecimento.
@@ -132,12 +138,7 @@ function SupportCenter() {
           <PageCard style={{ marginTop: "10px" }}>
             <Button
               type="default"
-              onClick={() =>
-                window.open(
-                  `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/182`,
-                  "_blank"
-                )
-              }
+              onClick={() => openArticle(28)}
               size="large"
               block
               style={{ marginTop: "20px" }}
@@ -147,12 +148,7 @@ function SupportCenter() {
 
             <Button
               type="default"
-              onClick={() =>
-                window.open(
-                  `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/111`,
-                  "_blank"
-                )
-              }
+              onClick={() => openArticle(36)}
               size="large"
               block
               style={{ marginTop: "20px" }}
@@ -162,12 +158,7 @@ function SupportCenter() {
 
             <Button
               type="default"
-              onClick={() =>
-                window.open(
-                  `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/131`,
-                  "_blank"
-                )
-              }
+              onClick={() => openArticle(38)}
               size="large"
               block
               style={{ marginTop: "20px" }}
@@ -177,12 +168,7 @@ function SupportCenter() {
 
             <Button
               type="primary"
-              onClick={() =>
-                window.open(
-                  `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/39`,
-                  "_blank"
-                )
-              }
+              onClick={() => navigate("/base-de-conhecimento")}
               size="large"
               block
               style={{ marginTop: "20px" }}
