@@ -15,7 +15,7 @@ import { formatDate } from "utils/date";
 import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
 
-export default function ValuedExams({ record }) {
+export default function ValuedExams({ record, highlightExamId }) {
   const { t } = useTranslation();
   //const dispatch = useDispatch();
 
@@ -129,7 +129,17 @@ export default function ValuedExams({ record }) {
               ),
             }}
             dataSource={dsHistory}
-            rowClassName={examRowClassName}
+            rowClassName={(item) =>
+              [
+                examRowClassName(item),
+                highlightExamId &&
+                String(item.idExam) === String(highlightExamId)
+                  ? "highlight"
+                  : "",
+              ]
+                .filter(Boolean)
+                .join(" ")
+            }
           />
         </Col>
         <Col xs={24} lg={12}>

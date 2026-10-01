@@ -24,6 +24,7 @@ import ScreeningActions from "containers/Screening/ScreeningActions";
 import EvaluationWarning from "features/prescription/EvaluationWarning/EvaluationWarning";
 import FormIntervention from "containers/Forms/Intervention";
 import Permission from "models/Permission";
+import { usePrescriptionDeepLink } from "hooks/usePrescriptionDeepLink";
 import {
   trackPrescriptionAction,
   TrackedPrescriptionAction,
@@ -47,6 +48,7 @@ export default function Screening({
 
   const { t } = useTranslation();
   const isMounted = useRef(true);
+  usePrescriptionDeepLink();
 
   useEffect(() => {
     isMounted.current = true;

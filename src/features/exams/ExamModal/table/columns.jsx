@@ -144,12 +144,12 @@ export const examRowClassName = (record) => {
   return "";
 };
 
-export const expandedExamRowRender = (record) => {
+export const expandedExamRowRender = (record, highlightExamId) => {
   if (record.text) {
     return <TextualExams record={record} />;
   }
 
-  return <ValuedExams record={record} />;
+  return <ValuedExams record={record} highlightExamId={highlightExamId} />;
 };
 
 export default columns;

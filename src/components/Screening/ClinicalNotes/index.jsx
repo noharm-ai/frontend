@@ -22,6 +22,7 @@ import { intersection } from "utils/lodash";
 import FeatureService from "services/features";
 
 import View from "./View";
+import { useTargetClinicalNote } from "./useTargetClinicalNote";
 import ClinicalNotesIndicator from "./ClinicalNotesIndicator";
 import { Container, List, FilterContainer } from "./index.style";
 
@@ -191,6 +192,19 @@ export default function ClinicalNotes({
       }
     }
   }, [list]); //eslint-disable-line
+
+  // deep link: open the list on a given note (after the first-note selection
+  // above, so it wins)
+  useTargetClinicalNote({
+    targetId: visibleState?.selectedId,
+    admissionNumber: localAdmissionNumber,
+    list,
+    dates,
+    isFetching,
+    isFetchingExtra,
+    fetchByDate,
+    select,
+  });
 
   const handlePositionChange = (p) => {
     setPositions(p);
@@ -367,6 +381,7 @@ export default function ClinicalNotes({
                               selected && c.id === selected.id ? "active" : ""
                             } ${edit ? "disabled" : ""}`}
                             key={i}
+                            data-note-id={c.id}
                             onClick={() => handleSelect(c)}
                             aria-hidden="true"
                           >

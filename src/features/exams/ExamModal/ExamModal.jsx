@@ -10,7 +10,11 @@ import DefaultModal from "components/Modal";
 import { ExpandableTable } from "components/Table";
 import notification from "components/notification";
 import Empty from "components/Empty";
-import { fetchExams, setExamsModalAdmissionNumber } from "./ExamModalSlice";
+import {
+  fetchExams,
+  setExamsModalAdmissionNumber,
+  setExamsModalHighlight,
+} from "./ExamModalSlice";
 import { setExamFormModal } from "../ExamForm/ExamFormSlice";
 import { setExam as setAdminExam } from "features/admin/Exam/ExamForm/ExamFormSlice";
 import { ExamForm as AdminExamForm } from "features/admin/Exam/ExamForm/ExamForm";
@@ -34,6 +38,9 @@ export default function ExamsModal({ idSegment }) {
   );
   const list = useSelector((state) => state.examsModal.list);
   const status = useSelector((state) => state.examsModal.status);
+  const highlightExamId = useSelector(
+    (state) => state.examsModal.highlightExamId,
+  );
 
   const [sortOrder, setSortOrder] = useState({
     order: "ascend",
@@ -43,7 +50,86 @@ export default function ExamsModal({ idSegment }) {
   const [activeTab, setActiveTab] = useState("exams");
   const [showOnlyConfigured, setShowOnlyConfigured] = useState(true);
   const [selectedNames, setSelectedNames] = useState([]);
+  const [expandedRowKeys, setExpandedRowKeys] = useState([]);
   const { t } = useTranslation();
+
+  // exam type row holding the deep-linked fkexame in its history; only numeric
+  // exams carry an id
+  const highlightedExam = useMemo(() => {
+    if (!highlightExamId) return null;
+
+    return (
+      list.find(
+        (e) =>
+          !e.text &&
+          e.history?.some((h) => String(h.idExam) === String(highlightExamId)),
+      ) ?? null
+    );
+  }, [list, highlightExamId]);
+
+  // state adjusted while rendering (not in an effect) when its inputs change:
+  // https://react.dev/learn/you-might-not-need-an-effect
+  const [prevAdmissionNumber, setPrevAdmissionNumber] =
+    useState(admissionNumber);
+  const [appliedHighlightId, setAppliedHighlightId] = useState(null);
+
+  if (admissionNumber !== prevAdmissionNumber) {
+    setPrevAdmissionNumber(admissionNumber);
+    if (!admissionNumber) {
+      setExpandedRowKeys([]);
+      setAppliedHighlightId(null);
+    }
+  }
+
+  const highlightLoaded = !!highlightExamId && status === "succeeded";
+
+  if (
+    highlightLoaded &&
+    highlightedExam &&
+    appliedHighlightId !== highlightExamId
+  ) {
+    // make the row reachable: right tab, no filter hiding it, expanded
+    setAppliedHighlightId(highlightExamId);
+    setActiveTab("exams");
+    setSelectedNames([]);
+    if (!highlightedExam.configured) {
+      setShowOnlyConfigured(false);
+    }
+    setExpandedRowKeys((keys) =>
+      keys.includes(highlightedExam.key) ? keys : [...keys, highlightedExam.key],
+    );
+  }
+
+  useEffect(() => {
+    if (!highlightLoaded || highlightedExam) return;
+
+    notification.info({
+      message:
+        "Exame não localizado entre os exames carregados deste atendimento.",
+    });
+    dispatch(setExamsModalHighlight(null));
+  }, [highlightLoaded, highlightedExam, dispatch]);
+
+  useEffect(() => {
+    if (!appliedHighlightId || !highlightedExam) return;
+
+    const rowKey = CSS.escape(String(highlightedExam.key));
+    const timer = window.setTimeout(() => {
+      document
+        .querySelector(`.ant-modal tr[data-row-key="${rowKey}"]`)
+        ?.scrollIntoView({ behavior: "smooth", block: "center" });
+    }, 300);
+
+    return () => window.clearTimeout(timer);
+  }, [appliedHighlightId, highlightedExam]);
+
+  const numericRowClassName = (record) =>
+    [
+      examRowClassName(record),
+      highlightedExam && record.key === highlightedExam.key ? "highlight" : "",
+    ]
+      .filter(Boolean)
+      .join(" ");
 
   useEffect(() => {
     if (admissionNumber) {
@@ -135,8 +221,13 @@ export default function ExamsModal({ idSegment }) {
                 ? toDataSource(filteredNumericExams, "key", { onConfigure })
                 : []
             }
-            rowClassName={examRowClassName}
-            expandedRowRender={expandedExamRowRender}
+            rowClassName={numericRowClassName}
+            expandable={{
+              expandedRowRender: (record) =>
+                expandedExamRowRender(record, highlightExamId),
+              expandedRowKeys,
+              onExpandedRowsChange: setExpandedRowKeys,
+            }}
             onChange={handleTableChange}
             scroll={getResponsiveTableWidth("max-content")}
           />
@@ -166,7 +257,7 @@ export default function ExamsModal({ idSegment }) {
               : []
           }
           rowClassName={examRowClassName}
-          expandedRowRender={expandedExamRowRender}
+          expandedRowRender={(record) => expandedExamRowRender(record)}
           onChange={handleTableChange}
           scroll={getResponsiveTableWidth("max-content")}
         />

@@ -15,11 +15,13 @@ import ConciliationDrugList from "containers/Conciliation/ConciliationDrugList";
 import PrescriptionDrugForm from "containers/Forms/PrescriptionDrug";
 import ScreeningActions from "containers/Screening/ScreeningActions";
 import FormIntervention from "containers/Forms/Intervention";
+import { usePrescriptionDeepLink } from "hooks/usePrescriptionDeepLink";
 
 export default function Screening({ fetchScreeningById, isFetching, error }) {
   const params = useParams();
   const id = params?.slug;
   const { t } = useTranslation();
+  usePrescriptionDeepLink();
 
   // show message if has error
   useEffect(() => {
