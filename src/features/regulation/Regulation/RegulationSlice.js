@@ -48,6 +48,7 @@ export const fetchPatient = createAsyncThunk(
         thunkAPI.getState().regulation.regulation.data.patient.id;
       const requestConfig = {
         listToRequest: [{ idPatient }],
+        forceRefresh: true,
         nameUrl: thunkAPI.getState().app.config.nameUrl,
         proxy: thunkAPI.getState().app.config.proxy,
         nameHeaders: thunkAPI.getState().app.config.nameHeaders,
