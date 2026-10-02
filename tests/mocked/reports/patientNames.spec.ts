@@ -143,6 +143,16 @@ const startLoad = async (dialog: Locator) => {
   }).toPass({ timeout: 15000 });
 };
 
+/**
+ * Closes the modal through its footer button: the corner close icon is also
+ * labelled "Fechar" in the pt-BR antd locale.
+ */
+const closeDialog = (dialog: Locator) =>
+  dialog
+    .locator(".ant-modal-footer")
+    .getByRole("button", { name: "Fechar" })
+    .click();
+
 const loadAllNames = async (page: Page) => {
   await loadAllButton(page).click();
   const dialog = page.getByRole("dialog");
@@ -267,7 +277,7 @@ test("loading every name unlocks filtering by name", async ({
       `Carregados: ${remaining} (cache: 0, buscados: ${remaining})`,
     ),
   ).toBeVisible();
-  await dialog.getByRole("button", { name: "Fechar" }).click();
+  await closeDialog(dialog);
 
   await expect(loadAllButton(page)).toHaveText(/Nomes carregados \(150\/150\)/);
 
@@ -304,7 +314,7 @@ test("reuses cached names and does not add the fetched ones to the cache", async
   await expect(
     dialog.getByText("Carregados: 0 (cache: 0, buscados: 0)"),
   ).toBeVisible();
-  await dialog.getByRole("button", { name: "Fechar" }).click();
+  await closeDialog(dialog);
   expect(nameRequests(mockApi)).toEqual([[2, 3]]);
 
   // past the cache's write delay, the stored cache is exactly the seed
@@ -363,7 +373,7 @@ test("ids the name service leaves out are failures, not missing patients", async
   await expect(
     dialog.getByText("Não foi possível buscar todos os nomes."),
   ).toBeVisible();
-  await dialog.getByRole("button", { name: "Fechar" }).click();
+  await closeDialog(dialog);
 
   // the failed ids still have no answer: the name filter stays locked
   await expect(loadAllButton(page)).toHaveText("Carregar todos os nomes");
@@ -424,7 +434,7 @@ test("without a batch endpoint every name is one request", async ({
 
   const dialog = await loadAllNames(page);
   await expect(dialog.getByText(/^Carregados: \d+/)).toBeVisible();
-  await dialog.getByRole("button", { name: "Fechar" }).click();
+  await closeDialog(dialog);
   await expect(loadAllButton(page)).toHaveText(/Nomes carregados \(29\/30\)/);
 
   const singles = mockApi.requests
@@ -495,7 +505,10 @@ test("cancelling the full load keeps the names but not the name filter", async (
   await expect(dialog.getByTestId("patient-names-progress")).toHaveText(
     /^200 de \d+$/,
   );
-  await dialog.getByRole("button", { name: "Cancelar" }).click();
+  await dialog
+    .locator(".ant-modal-footer")
+    .getByRole("button", { name: "Cancelar" })
+    .click();
 
   await expect(
     dialog.getByText(
@@ -503,7 +516,7 @@ test("cancelling the full load keeps the names but not the name filter", async (
     ),
   ).toBeVisible();
   await expect(dialog.getByText(/^Não consultados: \d+$/)).toBeVisible();
-  await dialog.getByRole("button", { name: "Fechar" }).click();
+  await closeDialog(dialog);
 
   // not every patient was queried: the column is still partial
   await expect(loadAllButton(page)).toHaveText("Carregar todos os nomes");
@@ -523,7 +536,7 @@ test("patient names never reach the chart suggestion agent", async ({
   await openReport(page, mockApi);
 
   const dialog = await loadAllNames(page);
-  await dialog.getByRole("button", { name: "Fechar" }).click();
+  await closeDialog(dialog);
   await expect(loadAllButton(page)).toHaveText(/Nomes carregados \(3\/3\)/);
 
   await page.getByRole("tab", { name: /Gráficos/ }).click();
