@@ -21,6 +21,7 @@ export function ChartCreator({
   readOnly,
   extraActions,
   onGenerateCharts,
+  excludeKeys,
   ref,
 }: ChartCreatorProps) {
   const [charts, setCharts] = useState<ChartConfig[]>(initialCharts ?? []);
@@ -42,7 +43,12 @@ export function ChartCreator({
     [],
   );
 
-  const schema = useMemo(() => detectColumnSchema(data), [data]);
+  const schema = useMemo(() => {
+    const detected = detectColumnSchema(data);
+    return excludeKeys?.length
+      ? detected.filter((column) => !excludeKeys.includes(column.key))
+      : detected;
+  }, [data, excludeKeys]);
   const keys = useMemo(() => schema.map((s) => s.key), [schema]);
 
   const openWithType = (type: ChartConfig["type"]) => {

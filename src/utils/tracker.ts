@@ -207,6 +207,7 @@ export enum TrackedCustomReportAction {
   REMOVE_FILTER = "remove-filter",
   CLEAR_FILTERS = "clear-filters",
   COPY_CHARTS = "copy-charts",
+  LOAD_PATIENT_NAMES = "load-patient-names",
 }
 
 export enum TrackedPrescriptionPrioritizationAction {
