@@ -1,4 +1,6 @@
-import { gzipSync } from "node:zlib";
+import { readFileSync } from "node:fs";
+import { gzipSync, inflateRawSync } from "node:zlib";
+import type { Download } from "@playwright/test";
 import type { Locator, Page, Route } from "@playwright/test";
 
 import { test, expect, API_URL } from "../support/mockApi";
@@ -80,6 +82,12 @@ const installReportHandlers = (
   );
 
   mockApi.override("POST /names", echoNames);
+
+  // the server export answers with a presigned url; none here, so nothing opens
+  mockApi.override(
+    "GET /reports/custom/download/:idReport/:filename",
+    ok({ cached: true, url: "" }),
+  );
 };
 
 // The landing page shown after login resolves its own patient names, so only
@@ -521,6 +529,258 @@ test("cancelling the full load keeps the names but not the name filter", async (
   // not every patient was queried: the column is still partial
   await expect(loadAllButton(page)).toHaveText("Carregar todos os nomes");
   expect(await filterFieldOptions(page)).not.toContain("nome_paciente");
+});
+
+/* --------------------------------- export --------------------------------- */
+
+const serverExports = (mockApi: MockApi) =>
+  mockApi.requests
+    .slice(reportOpenedAt)
+    .filter((r) => r.path.startsWith("/reports/custom/download/"))
+    .map((r) => r.path);
+
+const openExport = async (page: Page) => {
+  // floating menu: icon-only buttons, named by their icons
+  await page.getByRole("button", { name: "menu", exact: true }).click();
+  await page.getByRole("button", { name: "download", exact: true }).click();
+  const dialog = page.getByRole("dialog", { name: "Exportar relatório" });
+  await expect(dialog).toBeVisible();
+  return dialog;
+};
+
+const exportFormat = (dialog: Locator, format: "CSV" | "XLSX") =>
+  dialog.getByRole("button", { name: format });
+
+/** Reads one file out of the xlsx (zip) the app built. */
+const readXlsxEntry = (file: Buffer, entryName: string): string => {
+  let offset = 0;
+  while (file.readUInt32LE(offset) === 0x04034b50) {
+    const method = file.readUInt16LE(offset + 8);
+    const size = file.readUInt32LE(offset + 18);
+    const nameLength = file.readUInt16LE(offset + 26);
+    const extraLength = file.readUInt16LE(offset + 28);
+    const name = file.toString("utf8", offset + 30, offset + 30 + nameLength);
+    const start = offset + 30 + nameLength + extraLength;
+    const data = file.subarray(start, start + size);
+
+    if (name === entryName) {
+      return (method === 8 ? inflateRawSync(data) : data).toString("utf8");
+    }
+    offset = start + size;
+  }
+  throw new Error(`${entryName} not found in the xlsx`);
+};
+
+const downloadedFile = async (download: Download) =>
+  readFileSync((await download.path())!);
+
+test("a report without fkpessoa exports the server file directly", async ({
+  page,
+  mockApi,
+}) => {
+  installReportHandlers(mockApi, [{ setor: "UTI", dose: 10 }]);
+  await loginWithPermissions(page, mockApi, PERMISSIONS);
+  await openReport(page, mockApi);
+
+  const dialog = await openExport(page);
+  await expect(dialog.getByText("Nomes dos pacientes")).toHaveCount(0);
+  await exportFormat(dialog, "CSV").click();
+
+  await expect
+    .poll(() => serverExports(mockApi))
+    .toEqual(["/reports/custom/download/7/20260101.csv"]);
+});
+
+test("exporting asks for the names first; without them it is the server file", async ({
+  page,
+  mockApi,
+}) => {
+  installReportHandlers(mockApi, rowsFor(3));
+  await loginWithPermissions(page, mockApi, PERMISSIONS);
+  await openReport(page, mockApi);
+  await expect(table(page).getByText("Fulano Beltrano")).toBeVisible();
+  const before = nameRequests(mockApi).length;
+
+  const dialog = await openExport(page);
+  await expect(exportFormat(dialog, "XLSX")).toBeDisabled();
+  await expect(exportFormat(dialog, "CSV")).toBeDisabled();
+
+  await dialog.getByText("Sem nomes").click();
+  await exportFormat(dialog, "XLSX").click();
+
+  await expect
+    .poll(() => serverExports(mockApi))
+    .toEqual(["/reports/custom/download/7/20260101.xlsx"]);
+  expect(nameRequests(mockApi)).toHaveLength(before);
+});
+
+test("exporting with names loads the missing ones and builds the xlsx", async ({
+  page,
+  mockApi,
+}) => {
+  installReportHandlers(mockApi, rowsFor(150));
+  await loginWithPermissions(page, mockApi, PERMISSIONS);
+  await openReport(page, mockApi);
+  await expect(table(page).getByText("Fulano Beltrano")).toBeVisible();
+  const onScreen = requestedIds(mockApi).length;
+
+  const dialog = await openExport(page);
+  await dialog.getByText("Com nomes").click();
+  await expect(
+    dialog.getByText(
+      `Antes da exportação, serão carregados os nomes de ${150 - onScreen} pacientes.`,
+    ),
+  ).toBeVisible();
+
+  const [download] = await Promise.all([
+    page.waitForEvent("download"),
+    exportFormat(dialog, "XLSX").click(),
+  ]);
+
+  expect(download.suggestedFilename()).toBe(
+    "pacientes-com-antimicrobiano-20260101-com-nomes.xlsx",
+  );
+  const sheet = readXlsxEntry(
+    await downloadedFile(download),
+    "xl/worksheets/sheet1.xml",
+  );
+  // the name column follows fkpessoa, for every patient
+  expect(sheet).toMatch(
+    /<row r="1"><c r="A1" s="1" t="inlineStr"><is><t>fkpessoa<\/t><\/is><\/c><c r="B1" s="1" t="inlineStr"><is><t>nome_paciente<\/t>/,
+  );
+  expect(sheet).toContain("<t>Fulano Beltrano</t>");
+  expect(sheet).toContain(`<t>${nameOf(150)}</t>`);
+  expect(sheet).toContain('<row r="151">');
+
+  // the full load also served the table: filtering by name is unlocked
+  expect(new Set(requestedIds(mockApi)).size).toBe(150);
+  await expect(loadAllButton(page)).toHaveText(/Nomes carregados \(150\/150\)/);
+  expect(serverExports(mockApi)).toEqual([]);
+});
+
+test("once every name is loaded the csv is built without new lookups", async ({
+  page,
+  mockApi,
+}) => {
+  installReportHandlers(mockApi, [
+    { fkpessoa: 1, setor: "UTI, adulto", dose: 10 },
+    { fkpessoa: 2, setor: "ENF", dose: 20.5 },
+    { fkpessoa: null, setor: "ENF", dose: 30 },
+  ]);
+  mockApi.override("POST /names", {
+    json: [
+      { status: "success", idPatient: 1, name: "Fulano Beltrano" },
+      { status: "error", idPatient: 2, name: "Paciente 2" },
+    ],
+  });
+  await loginWithPermissions(page, mockApi, PERMISSIONS);
+  await openReport(page, mockApi);
+
+  const loadDialog = await loadAllNames(page);
+  await closeDialog(loadDialog);
+  await expect(loadAllButton(page)).toHaveText(/Nomes carregados/);
+  const before = nameRequests(mockApi).length;
+
+  const dialog = await openExport(page);
+  await dialog.getByText("Com nomes").click();
+  const [download] = await Promise.all([
+    page.waitForEvent("download"),
+    exportFormat(dialog, "CSV").click(),
+  ]);
+
+  const csv = (await downloadedFile(download)).toString("utf8");
+  expect(csv).toBe(
+    "\uFEFF" +
+      [
+        "fkpessoa,nome_paciente,setor,dose",
+        '1,Fulano Beltrano,"UTI, adulto",10',
+        "2,,ENF,20.5",
+        ",,ENF,30",
+      ].join("\r\n"),
+  );
+  expect(nameRequests(mockApi)).toHaveLength(before);
+});
+
+test("names that fail can still be exported blank", async ({
+  page,
+  mockApi,
+}) => {
+  installReportHandlers(mockApi, rowsFor(4));
+  // the name service never answers patients 2 and 4
+  mockApi.override("POST /names", async (route) => {
+    const { patients } = JSON.parse(route.request().postData() ?? "{}");
+    await route.fulfill({
+      json: (patients as number[])
+        .filter((id) => id % 2 === 1)
+        .map((idPatient) => ({
+          status: "success",
+          idPatient,
+          name: nameOf(idPatient),
+        })),
+    });
+  });
+  await loginWithPermissions(page, mockApi, PERMISSIONS);
+  await openReport(page, mockApi);
+  await expect(table(page).getByText("Fulano Beltrano")).toBeVisible();
+
+  const dialog = await openExport(page);
+  await dialog.getByText("Com nomes").click();
+  await exportFormat(dialog, "CSV").click();
+
+  await expect(
+    dialog.getByText("Não foi possível buscar os nomes de 2 pacientes."),
+  ).toBeVisible();
+
+  const [download] = await Promise.all([
+    page.waitForEvent("download"),
+    dialog.getByRole("button", { name: "Exportar mesmo assim" }).click(),
+  ]);
+  const lines = (await downloadedFile(download))
+    .toString("utf8")
+    .split("\r\n");
+  expect(lines[1]).toBe("1,Fulano Beltrano,ENF,10");
+  expect(lines[2]).toBe("2,,UTI,20");
+
+  // the names are still partial: filtering by name stays locked
+  await expect(loadAllButton(page)).toHaveText("Carregar todos os nomes");
+});
+
+test("cancelling the name load exports nothing", async ({ page, mockApi }) => {
+  installReportHandlers(mockApi, rowsFor(300));
+  mockApi.override("POST /names", async (route) => {
+    const { patients } = JSON.parse(route.request().postData() ?? "{}");
+    if ((patients as number[]).includes(300)) {
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+    }
+    try {
+      await echoNames(route);
+    } catch {
+      // request aborted by the cancel button
+    }
+  });
+  await loginWithPermissions(page, mockApi, PERMISSIONS);
+  await openReport(page, mockApi);
+  await expect(table(page).getByText("Fulano Beltrano")).toBeVisible();
+
+  let downloads = 0;
+  page.on("download", () => downloads++);
+
+  const dialog = await openExport(page);
+  await dialog.getByText("Com nomes").click();
+  await exportFormat(dialog, "XLSX").click();
+  await expect(dialog.getByTestId("patient-names-progress")).toHaveText(
+    /^200 de \d+$/,
+  );
+  await dialog
+    .locator(".ant-modal-footer")
+    .getByRole("button", { name: "Cancelar" })
+    .click();
+
+  // back to the choice, nothing downloaded
+  await expect(exportFormat(dialog, "XLSX")).toBeEnabled();
+  await page.waitForTimeout(500);
+  expect(downloads).toBe(0);
+  expect(serverExports(mockApi)).toEqual([]);
 });
 
 test("patient names never reach the chart suggestion agent", async ({

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import {
   Spin,
@@ -16,8 +16,6 @@ import {
   MenuOutlined,
   DownloadOutlined,
   SyncOutlined,
-  FileTextOutlined,
-  FileExcelOutlined,
   SaveOutlined,
   TableOutlined,
   BarChartOutlined,
@@ -31,13 +29,10 @@ import { getFileReport } from "../ReportsSlice";
 import Button from "src/components/Button";
 import { FloatButtonGroup } from "src/components/FloatButton";
 import {
-  TrackedReport,
-  trackReport,
   trackCustomReportAction,
   TrackedCustomReportAction,
 } from "src/utils/tracker";
 import {
-  downloadReport,
   updateReportGraphs,
   suggestReportGraphs,
 } from "src/features/reports/ReportsSlice";
@@ -54,7 +49,6 @@ import {
   FilterList,
   ContentContainer,
 } from "./FileReport.style";
-import Modal from "src/components/Modal";
 import { ChartCreator } from "src/components/ChartCreator/ChartCreator";
 import { ChartConfig, ChartCreatorHandle } from "src/components/ChartCreator/types";
 import {
@@ -70,6 +64,7 @@ import { CopyCharts, CopySummary } from "./CopyCharts/CopyCharts";
 import hospital from "src/services/hospital";
 import type { ColumnOverride } from "src/components/DataViewer/types";
 import { LoadPatientNames } from "./LoadPatientNames/LoadPatientNames";
+import { ExportNames, ExportReport } from "./ExportReport/ExportReport";
 import { PatientNameCell } from "./PatientNameCell/PatientNameCell";
 import {
   collectDistinctPatientIds,
@@ -241,12 +236,15 @@ export function FileReport() {
     nameStore?.setIds(patientIds);
   }, [nameStore, patientIds]);
 
-  const handleNamesFinished = ({ complete }: { complete: boolean }) => {
-    if (complete && nameStore) {
-      setPatientNames(nameStore.getNames());
-      setAllNamesLoaded(true);
-    }
-  };
+  const handleNamesFinished = useCallback(
+    ({ complete }: { complete: boolean }) => {
+      if (complete && nameStore) {
+        setPatientNames(nameStore.getNames());
+        setAllNamesLoaded(true);
+      }
+    },
+    [nameStore],
+  );
 
   const nameExtraColumns = useMemo(
     () =>
@@ -403,41 +401,19 @@ export function FileReport() {
     });
   };
 
-  const executeDownloadWithFormat = (
-    filename: string,
-    format: "csv" | "xlsx",
-  ) => {
-    setIsExporting(true);
-    trackReport(TrackedReport.CUSTOM, {
-      title: `exportar: ${title} - ${format}`,
-    });
-
-    const formatExtension = format === "csv" ? ".csv" : ".xlsx";
-    const formattedFilename = filename.includes(".")
-      ? filename.replace(/\.[^/.]+$/, formatExtension)
-      : filename + formatExtension;
-
-    const payload = {
-      idReport: id_report,
-      filename: formattedFilename,
-    };
-
-    // @ts-expect-error ts 2554 (legacy code)
-    dispatch(downloadReport(payload)).then((response: any) => {
-      if (response.error) {
-        notification.error({
-          message: getErrorMessage(response, t),
-        });
-      } else {
-        if (response.payload.data.data.url) {
-          window.open(response.payload.data.data.url);
-        }
-      }
-
-      setIsExporting(false);
-      setShowExportModal(false);
-    });
-  };
+  const exportNames = useMemo<ExportNames | undefined>(
+    () =>
+      nameStore && patientIdKey && nameColumnKey
+        ? {
+            store: nameStore,
+            idKey: patientIdKey,
+            nameKey: nameColumnKey,
+            allLoaded: allNamesLoaded,
+            onFinished: handleNamesFinished,
+          }
+        : undefined,
+    [nameStore, patientIdKey, nameColumnKey, allNamesLoaded, handleNamesFinished],
+  );
 
   return (
     <>
@@ -613,51 +589,16 @@ export function FileReport() {
           />
         </FloatButtonGroup>
       )}
-      <Modal
-        title="Escolha o formato de exportação"
+      <ExportReport
         open={showExportModal}
-        onCancel={() => setShowExportModal(false)}
-        footer={null}
-        destroyOnHidden
-        width={400}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "20px",
-            padding: "20px 0",
-          }}
-        >
-          <Button
-            size="large"
-            icon={<FileTextOutlined />}
-            onClick={() => executeDownloadWithFormat(filename!, "csv")}
-            loading={isExporting}
-          >
-            CSV
-          </Button>
-          <Button
-            size="large"
-            type="primary"
-            icon={<FileExcelOutlined />}
-            onClick={() => executeDownloadWithFormat(filename!, "xlsx")}
-            loading={isExporting}
-          >
-            XLSX
-          </Button>
-        </div>
-        <p>
-          *Os filtros não são aplicados no arquivo exportado. Ele sempre possui
-          os dados completos.
-        </p>
-        {nameColumnKey && (
-          <p>
-            *Os nomes de pacientes carregados nesta tela não são incluídos no
-            arquivo exportado.
-          </p>
-        )}
-      </Modal>
+        onClose={() => setShowExportModal(false)}
+        idReport={id_report!}
+        filename={filename!}
+        title={title}
+        rows={data}
+        names={exportNames}
+        onExportingChange={setIsExporting}
+      />
       {!isLoading && filteredData.length > 0 && canWriteGraphs && (
         <>
           {hasUnsavedChanges && (

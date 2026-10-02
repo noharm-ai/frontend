@@ -1,18 +1,16 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
-import { Alert, Flex, Progress } from "antd";
+import { useState, useSyncExternalStore } from "react";
+import { Alert } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 
 import Button from "src/components/Button";
 import Modal from "src/components/Modal";
 import {
-  trackCustomReportAction,
-  TrackedCustomReportAction,
-} from "src/utils/tracker";
-import {
   LoadAllResult,
   LoadPlan,
   PatientNameStore,
 } from "../patientNames/patientNameStore";
+import { usePatientNamesLoad } from "../patientNames/usePatientNamesLoad";
+import { NamesLoadProgress } from "../NamesLoadProgress/NamesLoadProgress";
 
 interface LoadPatientNamesProps {
   /** Page-local names of the report: a run only asks for the unanswered. */
@@ -35,8 +33,6 @@ const EMPTY_PLAN: LoadPlan = {
   pending: 0,
 };
 
-const formatCount = (value: number) => value.toLocaleString("pt-BR");
-
 export function LoadPatientNames({
   store,
   total,
@@ -46,22 +42,12 @@ export function LoadPatientNames({
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
   const [plan, setPlan] = useState<LoadPlan>(EMPTY_PLAN);
-  const [progress, setProgress] = useState({ current: 0, total: 0 });
   const [summary, setSummary] = useState<LoadAllResult | null>(null);
-  const abortRef = useRef<AbortController | null>(null);
-  const mountedRef = useRef(true);
+  const load = usePatientNamesLoad(store, { onFinished, source: "button" });
 
   const loadedCount = useSyncExternalStore(store.subscribe, () =>
     store.loadedCount(),
   );
-
-  useEffect(() => {
-    mountedRef.current = true;
-    return () => {
-      mountedRef.current = false;
-      abortRef.current?.abort();
-    };
-  }, []);
 
   const nothingToFetch = plan.cached === 0 && plan.pending === 0;
 
@@ -69,48 +55,22 @@ export function LoadPatientNames({
     setPlan(store.plan());
     setStatus("idle");
     setSummary(null);
-    setProgress({ current: 0, total: 0 });
     setOpen(true);
   };
 
   const run = async () => {
-    const controller = new AbortController();
-    abortRef.current = controller;
     setStatus("running");
+    const result = await load.run();
+    if (!result) return;
 
-    const result = await store.loadAll({
-      signal: controller.signal,
-      onProgress: (current, total) => {
-        if (mountedRef.current) setProgress({ current, total });
-      },
-    });
-
-    abortRef.current = null;
-    if (!mountedRef.current) return;
-
-    onFinished({ complete: result.complete });
     setSummary(result);
     setStatus(result.complete || result.cancelled ? "finished" : "error");
-
-    trackCustomReportAction(TrackedCustomReportAction.LOAD_PATIENT_NAMES, {
-      total,
-      ...result,
-    });
-  };
-
-  const cancel = () => {
-    abortRef.current?.abort();
   };
 
   const close = () => {
     if (status === "running") return;
     setOpen(false);
   };
-
-  const percent =
-    progress.total > 0
-      ? Math.round((progress.current / progress.total) * 100)
-      : 0;
 
   const footer = (() => {
     if (status === "idle") {
@@ -128,7 +88,7 @@ export function LoadPatientNames({
 
     if (status === "running") {
       return [
-        <Button key="stop" danger onClick={cancel}>
+        <Button key="stop" danger onClick={load.cancel}>
           Cancelar
         </Button>,
       ];
@@ -203,23 +163,10 @@ export function LoadPatientNames({
           )}
 
           {status === "running" && (
-            <Flex vertical gap={8} style={{ padding: "16px 0" }}>
-              <Flex justify="space-between">
-                <span>Buscando nomes dos pacientes...</span>
-                <span data-testid="patient-names-progress">
-                  {formatCount(progress.current)} de{" "}
-                  {formatCount(progress.total)}
-                </span>
-              </Flex>
-              <Progress
-                percent={percent}
-                showInfo={false}
-                strokeColor={{
-                  "0%": "rgb(112, 189, 196)",
-                  "100%": "rgb(126, 190, 154)",
-                }}
-              />
-            </Flex>
+            <NamesLoadProgress
+              current={load.progress.current}
+              total={load.progress.total}
+            />
           )}
 
           {(status === "finished" || status === "error") && summary && (
