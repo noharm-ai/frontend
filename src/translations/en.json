@@ -432,6 +432,13 @@
     "loadError": "Error loading help text.",
     "saveError": "Error saving help text."
   },
+  "knowledgeBaseIcon": {
+    "helpMode": "Help mode",
+    "title": "Knowledge base articles",
+    "empty": "No articles linked to this item yet.",
+    "edit": "Link articles",
+    "loadError": "Error loading the articles."
+  },
   "prescriptionDrugTags": {
     "checked": "Checked previously",
     "recommendation": "Has medical observation",

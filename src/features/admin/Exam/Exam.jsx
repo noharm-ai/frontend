@@ -27,6 +27,7 @@ import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
 import { canWriteExamConfig } from "./examPermissions";
 import { ConfigManagerContact } from "features/admin/ConfigManagerContact/ConfigManagerContact";
+import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
 
 const emptyText = (
   <Empty
@@ -62,7 +63,10 @@ export default function Exams() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title" data-kb="admin.exams.title">Exames</h1>
+          <h1 className="page-header-title" data-kb="admin.exams.title">
+            Exames
+            <KnowledgeBaseIcon anchor="admin.exams.articles" label="Exames" />
+          </h1>
           <div className="page-header-legend">Configuração de exames</div>
         </div>
         <div className="page-header-actions">

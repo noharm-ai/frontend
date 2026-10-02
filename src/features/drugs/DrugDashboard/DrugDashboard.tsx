@@ -29,6 +29,7 @@ import Permission from "models/Permission";
 import { PageHeader } from "src/styles/PageHeader.style";
 import DrugReferenceDrawer from "features/admin/DrugReferenceDrawer/DrugReferenceDrawer";
 import SubstanceForm from "features/admin/Substance/Form/SubstanceForm";
+import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
 
 export function DrugDashboard() {
   const dispatch = useAppDispatch();
@@ -97,7 +98,13 @@ export function DrugDashboard() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title" data-kb="drugs.title">Painel de Medicamentos</h1>
+          <h1 className="page-header-title" data-kb="drugs.title">
+            Painel de Medicamentos
+            <KnowledgeBaseIcon
+              anchor="drugs.articles"
+              label="Painel de Medicamentos"
+            />
+          </h1>
         </div>
         <div className="page-header-actions">
           {drugDashboard.idSegment &&

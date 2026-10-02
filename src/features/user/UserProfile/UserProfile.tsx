@@ -18,6 +18,7 @@ import Feature from "models/Feature";
 import { Signature } from "./Signature/Signature";
 import { ChangePassword } from "./ChangePassword/ChangePassword";
 import { PageHeader } from "src/styles/PageHeader.style";
+import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
 
 const { appResetScreeningListFilter } = AppCreators;
 
@@ -64,7 +65,13 @@ export function UserProfile() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title" data-kb="userProfile.title">{t("menu.userConfig")}</h1>
+          <h1 className="page-header-title" data-kb="userProfile.title">
+            {t("menu.userConfig")}
+            <KnowledgeBaseIcon
+              anchor="userProfile.articles"
+              label={t("menu.userConfig")}
+            />
+          </h1>
           <h1 className="page-header-legend">
             Central de configurações do usuário.
           </h1>

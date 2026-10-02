@@ -432,6 +432,13 @@
     "loadError": "Erro ao carregar o texto de ajuda.",
     "saveError": "Erro ao salvar o texto de ajuda."
   },
+  "knowledgeBaseIcon": {
+    "helpMode": "Modo ajuda",
+    "title": "Artigos da base de conhecimento",
+    "empty": "Nenhum artigo vinculado a este item ainda.",
+    "edit": "Vincular artigos",
+    "loadError": "Erro ao carregar os artigos."
+  },
   "prescriptionDrugTags": {
     "checked": "Checado anteriormente",
     "recommendation": "Possui observação médica",

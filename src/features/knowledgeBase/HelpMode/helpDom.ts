@@ -60,6 +60,11 @@ const PORTAL_PARTS = [
 
 const quote = (value: string) => `"${value.replace(/["\\]/g, "\\$&")}"`;
 
+/**
+ * Selector of a data-kb anchor, the same one the picker builds for it
+ */
+export const kbSelector = (anchor: string) => `[data-kb=${quote(anchor)}]`;
+
 export const isInsideHelpLayer = (node: Node | null) =>
   !!node &&
   !!(node instanceof Element ? node : node.parentElement)?.closest(
@@ -71,7 +76,7 @@ export const isInsideHelpLayer = (node: Node | null) =>
  */
 const stableSelector = (element: Element): string | null => {
   const kb = element.getAttribute("data-kb");
-  if (kb) return `[data-kb=${quote(kb)}]`;
+  if (kb) return kbSelector(kb);
 
   const testId = element.getAttribute("data-testid");
   if (testId) return `[data-testid=${quote(testId)}]`;
