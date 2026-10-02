@@ -664,8 +664,10 @@ test("once every name is loaded the csv is built without new lookups", async ({
 }) => {
   installReportHandlers(mockApi, [
     { fkpessoa: 1, setor: "UTI, adulto", dose: 10 },
-    { fkpessoa: 2, setor: "ENF", dose: 20.5 },
-    { fkpessoa: null, setor: "ENF", dose: 30 },
+    // would run as a formula in a spreadsheet: neutralized
+    { fkpessoa: 2, setor: "-2+3+cmd|' /C calc'!A0", dose: 20.5 },
+    // a dash placeholder is data, kept as is
+    { fkpessoa: null, setor: "-", dose: 30 },
   ]);
   mockApi.override("POST /names", {
     json: [
@@ -694,8 +696,8 @@ test("once every name is loaded the csv is built without new lookups", async ({
       [
         "fkpessoa,nome_paciente,setor,dose",
         '1,Fulano Beltrano,"UTI, adulto",10',
-        "2,,ENF,20.5",
-        ",,ENF,30",
+        "2,,'-2+3+cmd|' /C calc'!A0,20.5",
+        ",,-,30",
       ].join("\r\n"),
   );
   expect(nameRequests(mockApi)).toHaveLength(before);

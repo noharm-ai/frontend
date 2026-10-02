@@ -26,7 +26,10 @@ const toText = (value: unknown): string => {
 
 // A cell starting with one of these runs as a formula when the CSV is opened
 // in a spreadsheet (CSV injection), so it is prefixed with an apostrophe.
-const FORMULA_START = /^[=+@\t\r]/;
+const FORMULA_START = /^[=+\-@\t\r\n]/;
+// ...except a dash placeholder or a plain negative number, which a
+// spreadsheet reads as data, not as a formula
+const PLAIN_DASH = /^-[\d.,\s]*$/;
 
 const csvCell = (value: unknown): string => {
   if (typeof value === "number" || typeof value === "boolean") {
@@ -34,7 +37,7 @@ const csvCell = (value: unknown): string => {
   }
 
   let text = toText(value);
-  if (FORMULA_START.test(text)) text = `'${text}`;
+  if (FORMULA_START.test(text) && !PLAIN_DASH.test(text)) text = `'${text}`;
 
   return /[",\r\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 };
