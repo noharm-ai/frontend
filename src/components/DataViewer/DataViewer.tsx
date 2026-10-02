@@ -39,7 +39,7 @@ import {
   getTypeTagColor,
   getTypeTagLabel,
 } from "./DataViewer.utils";
-import { DataRow } from "./types";
+import { ColumnMeta, ColumnOverride, DataRow, ExtraColumn } from "./types";
 
 export interface DataViewerProps {
   data: DataRow[];
@@ -49,6 +49,17 @@ export interface DataViewerProps {
   onRowClick?: (record: DataRow) => void;
   loading?: boolean;
   showFilters?: boolean;
+  /**
+   * Per-column customizations keyed by column key, e.g. a cell that renders
+   * a value not present in the row yet. Pass a memoized object.
+   */
+  columnOverrides?: Record<string, ColumnOverride>;
+  /**
+   * Columns shown even though the rows do not carry them (yet), rendered
+   * through `columnOverrides`. Ignored once the rows have the key. Pass a
+   * memoized array.
+   */
+  extraColumns?: ExtraColumn[];
 }
 
 export const DataViewer: React.FC<DataViewerProps> = ({
@@ -59,13 +70,32 @@ export const DataViewer: React.FC<DataViewerProps> = ({
   onRowClick,
   loading = false,
   showFilters = true,
+  columnOverrides,
+  extraColumns,
 }) => {
   const indexedData: DataRow[] = useMemo(
     () => data.map((row, index) => ({ ...row, _index: index, key: index })),
     [data],
   );
 
-  const columnsMeta = useMemo(() => inferColumnsFromData(data), [data]);
+  const columnsMeta = useMemo(() => {
+    const inferred: ColumnMeta[] = inferColumnsFromData(data);
+    if (!extraColumns?.length || inferred.length === 0) return inferred;
+
+    const columns = [...inferred];
+    extraColumns.forEach(({ key, after }) => {
+      if (columns.some((col) => col.key === key)) return;
+
+      const meta: ColumnMeta = { key, title: key, type: "string" };
+      const index = after ? columns.findIndex((col) => col.key === after) : -1;
+      if (index >= 0) {
+        columns.splice(index + 1, 0, meta);
+      } else {
+        columns.push(meta);
+      }
+    });
+    return columns;
+  }, [data, extraColumns]);
 
   const [globalFilter, setGlobalFilter] = useState("");
   const [searchValue, setSearchValue] = useState("");
@@ -95,14 +125,17 @@ export const DataViewer: React.FC<DataViewerProps> = ({
     return columnsMeta
       .filter((col) => !hiddenColumnKeys.has(col.key))
       .map((col) => {
+        const override = columnOverrides?.[col.key];
         const column: ColumnType<DataRow> = {
-          title: col.title,
+          title: override?.title ?? col.title,
           dataIndex: col.key,
           key: col.key,
           sorter: true,
           ellipsis: true,
           width: col.type === "number" ? 120 : 180,
-          render: (value: unknown) => {
+          render: (value: unknown, record: DataRow) => {
+            if (override?.render) return override.render(value, record);
+
             const formatted = formatValue(value);
 
             if (col.type === "number" && typeof value === "number") {
@@ -127,9 +160,13 @@ export const DataViewer: React.FC<DataViewerProps> = ({
           };
         }
 
+        if (override?.sortable === false) {
+          column.sorter = false;
+        }
+
         return column;
       });
-  }, [columnsMeta, hiddenColumnKeys]);
+  }, [columnsMeta, hiddenColumnKeys, columnOverrides]);
 
   const debouncedSearch = useMemo(
     () => debounce((value: string) => setGlobalFilter(value), 250),
@@ -320,6 +357,19 @@ export const DataViewer: React.FC<DataViewerProps> = ({
         {selectedRecord &&
           columnsMeta.map((col) => {
             const value = selectedRecord[col.key];
+            const override = columnOverrides?.[col.key];
+
+            if (override?.render) {
+              return (
+                <FieldItem key={col.key}>
+                  <FieldLabel>{col.title}</FieldLabel>
+                  <FieldValue $type={col.type}>
+                    {override.render(value, selectedRecord)}
+                  </FieldValue>
+                </FieldItem>
+              );
+            }
+
             if (value === null || value === undefined || value === "")
               return null;
 

@@ -1,6 +1,14 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { Spin, notification, FloatButton, Tag, Alert, Tabs } from "antd";
+import {
+  Spin,
+  notification,
+  FloatButton,
+  Tag,
+  Alert,
+  Tabs,
+  Tooltip,
+} from "antd";
 import { useParams } from "react-router-dom";
 import {
   DeleteOutlined,
@@ -36,6 +44,8 @@ import {
 import { getErrorMessage } from "src/utils/errorHandler";
 import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
+import { FeatureService } from "src/services/FeatureService";
+import Feature from "src/models/Feature";
 
 import { PageHeader } from "src/styles/PageHeader.style";
 import {
@@ -57,6 +67,18 @@ import { FilterRow } from "./FilterRow";
 import { ErrorBoundary } from "react-error-boundary";
 import { withChartDefaults } from "src/components/ChartCreator/chartRemap";
 import { CopyCharts, CopySummary } from "./CopyCharts/CopyCharts";
+import hospital from "src/services/hospital";
+import type { ColumnOverride } from "src/components/DataViewer/types";
+import { LoadPatientNames } from "./LoadPatientNames/LoadPatientNames";
+import { PatientNameCell } from "./PatientNameCell/PatientNameCell";
+import {
+  collectDistinctPatientIds,
+  enrichRowsWithNames,
+  findPatientIdColumn,
+  PatientNames,
+  resolveNameColumnKey,
+} from "./patientNames/patientNames.utils";
+import { createPatientNameStore } from "./patientNames/patientNameStore";
 
 const ChartCreatorFallback = ({
   resetErrorBoundary,
@@ -94,6 +116,12 @@ export function FileReport() {
   const [currentCharts, setCurrentCharts] = useState<ChartConfig[]>([]);
   const [isSavingCharts, setIsSavingCharts] = useState(false);
   const [showCopyCharts, setShowCopyCharts] = useState(false);
+  // Patient names live only in this page, never in the shared name cache.
+  // On screen they load as rows appear; `patientNames` is the snapshot taken
+  // when every patient has been queried, which unlocks filter/sort by name.
+  const [patientNames, setPatientNames] = useState<PatientNames>({});
+  const [allNamesLoaded, setAllNamesLoaded] = useState(false);
+  const appConfig = useAppSelector((state: any) => state.app.config);
   const chartCreatorRef = useRef<ChartCreatorHandle>(null);
   const currentSchema = useAppSelector(
     (state: any) => state.user.account.schema,
@@ -125,6 +153,8 @@ export function FileReport() {
         const decompressedResponse = new Response(cacheReadableStream);
         const cache = await decompressedResponse.json();
 
+        setPatientNames({});
+        setAllNamesLoaded(false);
         setData(cache);
         setTitle(response.payload.data.data.title);
         if (response.payload.data.data.graphs) {
@@ -150,16 +180,126 @@ export function FileReport() {
     fetchData();
   }, [type, id_report, filename, dispatch]);
 
+  // Patient names are offered only when the report has a patient id column
+  // and name lookup is enabled for the session.
+  const canLoadPatientNames =
+    !FeatureService.has(Feature.DISABLE_GETNAME) &&
+    !FeatureService.has(Feature.HIDE_NAMES);
+  const patientIdKey = useMemo(
+    () => (canLoadPatientNames ? findPatientIdColumn(data[0]) : null),
+    [data, canLoadPatientNames],
+  );
+  const nameColumnKey = useMemo(
+    () =>
+      patientIdKey ? resolveNameColumnKey(Object.keys(data[0] ?? {})) : null,
+    [data, patientIdKey],
+  );
+  const patientIds = useMemo(
+    () => (patientIdKey ? collectDistinctPatientIds(data, patientIdKey) : []),
+    [data, patientIdKey],
+  );
+  // Until every patient is answered the name column is virtual: the table
+  // shows it, rendered from the store, but the rows (and so the schema,
+  // filters and charts) do not carry it. Once complete, the names are
+  // written into the rows, which unlocks filtering and sorting by name.
+  const enrichedData = useMemo(
+    () =>
+      allNamesLoaded && patientIdKey && nameColumnKey
+        ? enrichRowsWithNames(data, patientIdKey, nameColumnKey, patientNames)
+        : data,
+    [data, allNamesLoaded, patientIdKey, nameColumnKey, patientNames],
+  );
+
+  // One store per name configuration: names stay valid across datasets of the
+  // same schema, and switching schema replaces the app config.
+  const nameStore = useMemo(
+    () =>
+      nameColumnKey
+        ? createPatientNameStore({
+            // one id per request without a batch endpoint, 10 in flight
+            batchSize: appConfig.multipleNameUrl ? 100 : 1,
+            concurrency: appConfig.multipleNameUrl ? 1 : 10,
+            resolveHeaders: () => hospital.resolveNameHeaders(appConfig),
+            fetchNames: (ids, { signal, headers }) =>
+              hospital.getPatientNames({
+                ids,
+                nameUrl: appConfig.nameUrl,
+                multipleNameUrl: appConfig.multipleNameUrl,
+                headers,
+                signal,
+              }),
+          })
+        : null,
+    [nameColumnKey, appConfig],
+  );
+
   useEffect(() => {
-    if (data.length > 0) {
-      const detectedSchema = detectColumnSchema(data);
+    return () => nameStore?.stop();
+  }, [nameStore]);
+
+  useEffect(() => {
+    nameStore?.setIds(patientIds);
+  }, [nameStore, patientIds]);
+
+  const handleNamesFinished = ({ complete }: { complete: boolean }) => {
+    if (complete && nameStore) {
+      setPatientNames(nameStore.getNames());
+      setAllNamesLoaded(true);
+    }
+  };
+
+  const nameExtraColumns = useMemo(
+    () =>
+      nameColumnKey && patientIdKey
+        ? [{ key: nameColumnKey, after: patientIdKey }]
+        : undefined,
+    [nameColumnKey, patientIdKey],
+  );
+
+  const nameColumnOverrides = useMemo<
+    Record<string, ColumnOverride> | undefined
+  >(() => {
+    if (!nameColumnKey || !patientIdKey || !nameStore) return undefined;
+
+    return {
+      [nameColumnKey]: {
+        title: allNamesLoaded ? (
+          nameColumnKey
+        ) : (
+          <Tooltip title="Carregue todos os nomes para ordenar e filtrar por esta coluna.">
+            <span>{nameColumnKey}</span>
+          </Tooltip>
+        ),
+        sortable: allNamesLoaded,
+        render: (_value, record) => (
+          <PatientNameCell store={nameStore} idPatient={record[patientIdKey]} />
+        ),
+      },
+    };
+  }, [nameColumnKey, patientIdKey, nameStore, allNamesLoaded]);
+
+  useEffect(() => {
+    if (enrichedData.length > 0) {
+      const detectedSchema = detectColumnSchema(enrichedData);
       setSchema(detectedSchema);
     }
-  }, [data]);
+  }, [enrichedData]);
 
   const filteredData = useMemo(() => {
-    return applyFilters(data, filters, schema);
-  }, [data, filters, schema]);
+    return applyFilters(enrichedData, filters, schema);
+  }, [enrichedData, filters, schema]);
+
+  // The name column stays out of everything charts touch: saved charts are
+  // shared and persisted, and chart suggestions are generated by an LLM.
+  const chartExcludeKeys = useMemo(
+    () => (nameColumnKey ? [nameColumnKey] : []),
+    [nameColumnKey],
+  );
+  const chartSchema = useMemo(
+    () =>
+      nameColumnKey ? schema.filter((c) => c.key !== nameColumnKey) : schema,
+    [schema, nameColumnKey],
+  );
 
   const addFilter = () => {
     setFilters([...filters, { id: generateId(), field: "", value: null }]);
@@ -219,16 +359,18 @@ export function FileReport() {
     hint: string,
   ): Promise<ChartConfig[]> => {
     const payload = {
-      columns: schema.map(({ key, label, type: columnType, options }) => ({
+      columns: chartSchema.map(({ key, label, type: columnType, options }) => ({
         key,
         label,
         type: columnType,
         options: options?.slice(0, 20),
         distinctCount: options?.length,
       })),
+      // only the chart columns: page-local data (patient names) never leaves
       sampleRows: filteredData.slice(0, 5).map((row) => {
         const truncatedRow: Record<string, any> = {};
-        Object.entries(row).forEach(([key, value]) => {
+        chartSchema.forEach(({ key }) => {
+          const value = row[key];
           truncatedRow[key] =
             typeof value === "string" && value.length > 120
               ? value.slice(0, 120)
@@ -360,6 +502,16 @@ export function FileReport() {
 
           <ContentContainer>
           <Tabs
+            tabBarExtraContent={
+              !isLoading && nameStore ? (
+                <LoadPatientNames
+                  store={nameStore}
+                  total={patientIds.length}
+                  allLoaded={allNamesLoaded}
+                  onFinished={handleNamesFinished}
+                />
+              ) : null
+            }
             // Remount when the tab set changes (e.g. charts load) so the
             // correct default tab (Gráficos first when present) takes effect.
             key={showChartsTab ? "with-charts" : "table-only"}
@@ -384,11 +536,12 @@ export function FileReport() {
                               onChartsChange={setCurrentCharts}
                               readOnly={!canWriteGraphs}
                               onGenerateCharts={requestChartSuggestions}
+                              excludeKeys={chartExcludeKeys}
                               extraActions={
                                 <Button
                                   icon={<CopyOutlined />}
                                   onClick={() => setShowCopyCharts(true)}
-                                  disabled={schema.length === 0}
+                                  disabled={chartSchema.length === 0}
                                 >
                                   Copiar de outro relatório
                                 </Button>
@@ -423,6 +576,8 @@ export function FileReport() {
                 ),
                 children: (
                   <DataViewer
+                    columnOverrides={nameColumnOverrides}
+                    extraColumns={nameExtraColumns}
                     data={filteredData}
                     onRowClick={() => {}}
                     showFilters={false}
@@ -496,6 +651,12 @@ export function FileReport() {
           *Os filtros não são aplicados no arquivo exportado. Ele sempre possui
           os dados completos.
         </p>
+        {nameColumnKey && (
+          <p>
+            *Os nomes de pacientes carregados nesta tela não são incluídos no
+            arquivo exportado.
+          </p>
+        )}
       </Modal>
       {!isLoading && filteredData.length > 0 && canWriteGraphs && (
         <>
@@ -532,7 +693,7 @@ export function FileReport() {
         <CopyCharts
           open={showCopyCharts}
           onClose={() => setShowCopyCharts(false)}
-          targetSchema={schema}
+          targetSchema={chartSchema}
           existingTitles={currentCharts.map((chart) => chart.title)}
           currentSchemaName={currentSchema}
           onImport={handleCopiedCharts}

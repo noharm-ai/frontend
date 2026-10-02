@@ -165,6 +165,13 @@ export function getPatient(id: number | string): PatientData | undefined {
   return data;
 }
 
+// Reads a cached patient without marking it as recently used, for bulk lookups
+// that should not reorder the LRU (e.g. resolving a whole report).
+export function peekPatient(id: number | string): PatientData | undefined {
+  ensureSchemaLoaded();
+  return mem.get(String(id));
+}
+
 export function setPatient(data: PatientData): void {
   ensureSchemaLoaded();
   put(data);
