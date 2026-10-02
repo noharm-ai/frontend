@@ -34,6 +34,7 @@ import { CertificateValidationPage } from "pages/CertificateValidation/Certifica
 import TrainingPlayer from "pages/TrainingPlayer";
 import { KnowledgeBasePage } from "pages/KnowledgeBase/KnowledgeBasePage";
 import { KnowledgeBaseArticlePage } from "pages/KnowledgeBase/KnowledgeBaseArticlePage";
+import { NewsPage } from "pages/News/NewsPage";
 
 import AdminTag from "pages/Admin/Tag";
 import AdminMemory from "pages/Admin/Memory";
@@ -326,6 +327,11 @@ const routes = [
     exact: true,
     path: "/base-de-conhecimento/:id",
     element: <WithAuth component={KnowledgeBaseArticlePage} />,
+  },
+  {
+    exact: true,
+    path: "/novidades",
+    element: <WithAuth component={NewsPage} />,
   },
   {
     exact: true,

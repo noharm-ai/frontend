@@ -70,6 +70,11 @@ export function defaultHandlers(): Record<string, Handler> {
     // knowledge base (/base-de-conhecimento)
     "GET /knowledge-base/articles": emptyList,
     "POST /knowledge-base/search": emptyList,
+
+    // news (/novidades)
+    "GET /news": {
+      json: { status: "success", data: { news: [], hasMore: false } },
+    },
     "GET /user/preferences": emptyList,
 
     // prioritization / screening
