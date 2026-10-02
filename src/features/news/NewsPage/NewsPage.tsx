@@ -1,12 +1,8 @@
-import { MouseEvent, useEffect, useMemo, useState } from "react";
+import { MouseEvent, useEffect, useMemo, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Button, Skeleton } from "antd";
-import {
-  DownOutlined,
-  ThunderboltOutlined,
-  UpOutlined,
-} from "@ant-design/icons";
+import { ThunderboltOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
 import { useAppDispatch, useAppSelector } from "src/store";
@@ -15,11 +11,17 @@ import { articlePath } from "features/knowledgeBase/articleContent";
 import { usePreparedArticle } from "features/knowledgeBase/usePreparedArticle";
 import { ArticleBody } from "features/knowledgeBase/KnowledgeBaseArticle/KnowledgeBaseArticle.style";
 
-import { fetchNewsContent, fetchNewsList, INewsSummary } from "../NewsSlice";
+import {
+  fetchMoreNews,
+  fetchNewsList,
+  INews,
+  NEWS_PAGE_SIZE,
+} from "../NewsSlice";
 import { isRecentNews } from "../newsDate";
 import {
   DateBadge,
   Hero,
+  LoadMore,
   MonthGroup,
   NewsCard,
   NewsItem,
@@ -27,8 +29,8 @@ import {
   Timeline,
 } from "./NewsPage.style";
 
-const groupByMonth = (news: INewsSummary[]) => {
-  const groups: { month: string; items: INewsSummary[] }[] = [];
+const groupByMonth = (news: INews[]) => {
+  const groups: { month: string; items: INews[] }[] = [];
 
   news.forEach((item) => {
     const month = item.date.slice(0, 7);
@@ -44,6 +46,24 @@ const groupByMonth = (news: INewsSummary[]) => {
   return groups;
 };
 
+// the next page starts loading this far before the end of the list shows up
+const LOAD_MORE_MARGIN = "0px 0px 600px 0px";
+
+function NewsSkeleton({ count }: { count: number }) {
+  return (
+    <Timeline aria-busy="true">
+      {Array.from({ length: count }, (_, i) => (
+        <NewsItem key={i}>
+          <DateBadge />
+          <NewsCard>
+            <Skeleton active title={{ width: "50%" }} paragraph={{ rows: 5 }} />
+          </NewsCard>
+        </NewsItem>
+      ))}
+    </Timeline>
+  );
+}
+
 export function NewsPage() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
@@ -51,8 +71,6 @@ export function NewsPage() {
   const recentNews = useAppSelector(
     (state: any) => state.user.account.recentNews,
   );
-  // the most recent news starts open
-  const [openId, setOpenId] = useState<number | null | undefined>(undefined);
 
   useEffect(() => {
     dispatch(fetchNewsList());
@@ -67,9 +85,32 @@ export function NewsPage() {
 
   const groups = useMemo(() => groupByMonth(list.data), [list.data]);
 
-  const latest = list.data[0];
-  const currentOpenId =
-    openId === undefined ? (latest?.hasContent ? latest.id : null) : openId;
+  // infinite scroll: the next page loads as the end of the list nears. The
+  // observer is recreated after every page, so a page too short to fill the
+  // screen still triggers the next one. A failed page waits for a retry.
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const canLoadMore =
+    list.status === "succeeded" &&
+    list.hasMore &&
+    list.moreStatus !== "loading" &&
+    list.moreStatus !== "failed";
+
+  useEffect(() => {
+    const target = loadMoreRef.current;
+    if (!canLoadMore || !target) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          dispatch(fetchMoreNews());
+        }
+      },
+      { rootMargin: LOAD_MORE_MARGIN },
+    );
+    observer.observe(target);
+
+    return () => observer.disconnect();
+  }, [dispatch, canLoadMore, list.data.length]);
 
   return (
     <>
@@ -84,20 +125,7 @@ export function NewsPage() {
       </Hero>
 
       {list.status === "loading" || list.status === "idle" ? (
-        <Timeline aria-busy="true">
-          {[0, 1, 2].map((i) => (
-            <NewsItem key={i}>
-              <DateBadge />
-              <NewsCard>
-                <Skeleton
-                  active
-                  title={{ width: "50%" }}
-                  paragraph={{ rows: 2 }}
-                />
-              </NewsCard>
-            </NewsItem>
-          ))}
-        </Timeline>
+        <NewsSkeleton count={3} />
       ) : list.status === "failed" ? (
         <StateBox>
           <strong>{t("news.loadError")}</strong>
@@ -111,51 +139,56 @@ export function NewsPage() {
           <span>{t("news.emptyHint")}</span>
         </StateBox>
       ) : (
-        groups.map((group) => (
-          <MonthGroup key={group.month}>
-            <h2>{dayjs(`${group.month}-01`).format(t("news.monthFormat"))}</h2>
-            <Timeline>
-              {group.items.map((item) => (
-                <NewsEntry
-                  key={item.id}
-                  news={item}
-                  open={currentOpenId === item.id}
-                  onToggle={() =>
-                    setOpenId(currentOpenId === item.id ? null : item.id)
-                  }
-                />
-              ))}
-            </Timeline>
-          </MonthGroup>
-        ))
+        <>
+          {groups.map((group) => (
+            <MonthGroup key={group.month}>
+              <h2>
+                {dayjs(`${group.month}-01`).format(t("news.monthFormat"))}
+              </h2>
+              <Timeline>
+                {group.items.map((item) => (
+                  <NewsEntry key={item.id} news={item} />
+                ))}
+              </Timeline>
+            </MonthGroup>
+          ))}
+
+          {list.hasMore ? (
+            <LoadMore ref={loadMoreRef} data-testid="news-load-more">
+              {list.moreStatus === "loading" ? (
+                <NewsSkeleton count={1} />
+              ) : list.moreStatus === "failed" ? (
+                <>
+                  {t("news.loadMoreError")}
+                  <Button type="link" onClick={() => dispatch(fetchMoreNews())}>
+                    {t("news.retry")}
+                  </Button>
+                </>
+              ) : (
+                <Button onClick={() => dispatch(fetchMoreNews())}>
+                  {t("news.loadMore")}
+                </Button>
+              )}
+            </LoadMore>
+          ) : (
+            list.data.length > NEWS_PAGE_SIZE && (
+              <LoadMore>
+                <div className="load-more-end">{t("news.end")}</div>
+              </LoadMore>
+            )
+          )}
+        </>
       )}
     </>
   );
 }
 
-function NewsEntry({
-  news,
-  open,
-  onToggle,
-}: {
-  news: INewsSummary;
-  open: boolean;
-  onToggle: () => void;
-}) {
+function NewsEntry({ news }: { news: INews }) {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const loaded = useAppSelector((state) => state.news.contents[news.id]);
-  const prepared = usePreparedArticle(loaded?.content);
+  const prepared = usePreparedArticle(news.content);
   const date = dayjs(news.date);
   const isNew = isRecentNews(news.date);
-  const contentId = `news-content-${news.id}`;
-
-  useEffect(() => {
-    if (open && news.hasContent && !loaded) {
-      dispatch(fetchNewsContent(news.id));
-    }
-  }, [dispatch, open, news.hasContent, news.id, loaded]);
 
   // links to knowledge base articles stay inside the app
   const onBodyClick = (event: MouseEvent<HTMLDivElement>) => {
@@ -173,7 +206,7 @@ function NewsEntry({
         <span className="month">{date.format("MMM")}</span>
       </DateBadge>
 
-      <NewsCard $open={open} $highlight={isNew} data-testid="news-card">
+      <NewsCard $highlight={isNew} data-testid="news-card">
         <div className="news-header">
           <time dateTime={news.date}>{date.format(t("news.dateFormat"))}</time>
           {isNew && <span className="news-new">{t("news.new")}</span>}
@@ -181,49 +214,13 @@ function NewsEntry({
         <h3>{news.title}</h3>
         {news.description && <p className="news-lead">{news.description}</p>}
 
-        {news.hasContent && (
-          <>
-            {open && (
-              <div id={contentId} className="news-content">
-                {!loaded || loaded.status === "loading" ? (
-                  <Skeleton active title={false} paragraph={{ rows: 4 }} />
-                ) : loaded.status === "failed" ? (
-                  <div className="news-error">
-                    {t("news.contentError")}
-                    <Button
-                      type="link"
-                      onClick={() => dispatch(fetchNewsContent(news.id))}
-                    >
-                      {t("news.retry")}
-                    </Button>
-                  </div>
-                ) : (
-                  <ArticleBody
-                    onClick={onBodyClick}
-                    dangerouslySetInnerHTML={{ __html: prepared.html }}
-                  />
-                )}
-              </div>
-            )}
-
-            <button
-              type="button"
-              className="news-toggle"
-              aria-expanded={open}
-              aria-controls={contentId}
-              onClick={onToggle}
-            >
-              {open ? (
-                <>
-                  {t("news.collapse")} <UpOutlined />
-                </>
-              ) : (
-                <>
-                  {t("news.readMore")} <DownOutlined />
-                </>
-              )}
-            </button>
-          </>
+        {news.content && (
+          <div className="news-content">
+            <ArticleBody
+              onClick={onBodyClick}
+              dangerouslySetInnerHTML={{ __html: prepared.html }}
+            />
+          </div>
         )}
       </NewsCard>
     </NewsItem>

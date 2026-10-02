@@ -3,53 +3,45 @@ import { AxiosError } from "axios";
 
 import api from "services/api";
 
-export interface INewsSummary {
+export interface INews {
   id: number;
   // publication date (YYYY-MM-DD)
   date: string;
   title: string;
   description: string | null;
   hasContent: boolean;
-}
-
-export interface INews extends INewsSummary {
+  // news body, as HTML
   content: string | null;
 }
 
 type Status = "idle" | "loading" | "succeeded" | "failed";
 
+// news per page of the list
+export const NEWS_PAGE_SIZE = 5;
+
 interface INewsSlice {
   list: {
+    // first page
     status: Status;
-    data: INewsSummary[];
+    data: INews[];
+    hasMore: boolean;
+    // next pages, appended to data
+    moreStatus: Status;
   };
-  // contents loaded so far, by news id: a record is only fetched when opened
-  contents: Record<number, { status: Status; content: string | null }>;
 }
 
 const initialState: INewsSlice = {
-  list: { status: "idle", data: [] },
-  contents: {},
+  list: { status: "idle", data: [], hasMore: false, moreStatus: "idle" },
 };
 
 export const fetchNewsList = createAsyncThunk(
   "news/fetch-list",
   async (_params: void, thunkAPI) => {
     try {
-      const response = await api.news.getList();
-
-      return response.data;
-    } catch (err) {
-      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
-    }
-  },
-);
-
-export const fetchNewsContent = createAsyncThunk(
-  "news/fetch-content",
-  async (idNews: number, thunkAPI) => {
-    try {
-      const response = await api.news.get(idNews);
+      const response = await api.news.getList({
+        limit: NEWS_PAGE_SIZE,
+        offset: 0,
+      });
 
       return response.data;
     } catch (err) {
@@ -57,11 +49,39 @@ export const fetchNewsContent = createAsyncThunk(
     }
   },
   {
-    // a record is fetched once; only a failed load is tried again
-    condition: (idNews, { getState }) => {
-      const loaded = (getState() as { news: INewsSlice }).news.contents[idNews];
+    // a load already on its way is not repeated
+    condition: (_params, { getState }) =>
+      (getState() as { news: INewsSlice }).news.list.status !== "loading",
+  },
+);
 
-      return !loaded || loaded.status === "failed";
+export const fetchMoreNews = createAsyncThunk(
+  "news/fetch-more",
+  async (_params: void, thunkAPI) => {
+    const offset = (thunkAPI.getState() as { news: INewsSlice }).news.list.data
+      .length;
+
+    try {
+      const response = await api.news.getList({
+        limit: NEWS_PAGE_SIZE,
+        offset,
+      });
+
+      return { offset, ...response.data.data };
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+  {
+    // one page at a time, and only while there is a next one
+    condition: (_params, { getState }) => {
+      const { list } = (getState() as { news: INewsSlice }).news;
+
+      return (
+        list.status === "succeeded" &&
+        list.hasMore &&
+        list.moreStatus !== "loading"
+      );
     },
   },
 );
@@ -74,26 +94,35 @@ const newsSlice = createSlice({
     builder
       .addCase(fetchNewsList.pending, (state) => {
         state.list.status = "loading";
+        state.list.moreStatus = "idle";
       })
       .addCase(fetchNewsList.fulfilled, (state, action) => {
         state.list.status = "succeeded";
-        state.list.data = action.payload.data;
+        state.list.data = action.payload.data.news;
+        state.list.hasMore = action.payload.data.hasMore;
       })
       .addCase(fetchNewsList.rejected, (state) => {
         state.list.status = "failed";
         state.list.data = [];
+        state.list.hasMore = false;
       })
-      .addCase(fetchNewsContent.pending, (state, action) => {
-        state.contents[action.meta.arg] = { status: "loading", content: null };
+      .addCase(fetchMoreNews.pending, (state) => {
+        state.list.moreStatus = "loading";
       })
-      .addCase(fetchNewsContent.fulfilled, (state, action) => {
-        state.contents[action.meta.arg] = {
-          status: "succeeded",
-          content: action.payload.data.content,
-        };
+      .addCase(fetchMoreNews.fulfilled, (state, action) => {
+        // a page requested before the list was reloaded
+        if (action.payload.offset !== state.list.data.length) return;
+
+        // a news published meanwhile shifts the offsets: skip the repeated ones
+        const ids = new Set(state.list.data.map((n) => n.id));
+        state.list.data.push(
+          ...action.payload.news.filter((n: INews) => !ids.has(n.id)),
+        );
+        state.list.hasMore = action.payload.hasMore;
+        state.list.moreStatus = "succeeded";
       })
-      .addCase(fetchNewsContent.rejected, (state, action) => {
-        state.contents[action.meta.arg] = { status: "failed", content: null };
+      .addCase(fetchMoreNews.rejected, (state) => {
+        state.list.moreStatus = "failed";
       });
   },
 });

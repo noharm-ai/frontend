@@ -110,7 +110,8 @@ export const MonthGroup = styled.section`
   max-width: 920px;
   margin: 0 auto 12px;
 
-  h2 {
+  /* the month title only: news contents carry their own h2 */
+  > h2 {
     margin: 0 0 16px;
     padding-left: ${BADGE_SIZE + 24}px;
     color: ${colors.text};
@@ -217,17 +218,13 @@ export const DateBadge = styled.div<{ $highlight?: boolean }>`
   }
 `;
 
-export const NewsCard = styled.article<{
-  $open?: boolean;
-  $highlight?: boolean;
-}>`
+export const NewsCard = styled.article<{ $highlight?: boolean }>`
   position: relative;
   flex: 1;
   min-width: 0;
   padding: 22px 28px;
   border-radius: 14px;
   background: ${colors.commonLighter};
-  transition: box-shadow 0.2s ease;
 
   /* the notch pointing at the date badge */
   &::before {
@@ -242,21 +239,16 @@ export const NewsCard = styled.article<{
     border-radius: 2px;
   }
 
-  /* recent news carry an accent stripe on the left; the open one is lifted */
-  ${({ $highlight, $open }) => {
-    const stripe = $highlight ? `inset 4px 0 0 ${colors.accent}, ` : "";
-    const lifted = "0 8px 24px rgba(46, 60, 90, 0.1)";
+  /* recent news carry an accent stripe on the left */
+  box-shadow: 0 1px 2px rgba(46, 60, 90, 0.06);
 
-    return css`
-      box-shadow: ${stripe}${$open
-          ? lifted
-          : "0 1px 2px rgba(46, 60, 90, 0.06)"};
-
-      &:hover {
-        box-shadow: ${stripe}${lifted};
-      }
-    `;
-  }}
+  ${({ $highlight }) =>
+    $highlight &&
+    css`
+      box-shadow:
+        inset 4px 0 0 ${colors.accent},
+        0 1px 2px rgba(46, 60, 90, 0.06);
+    `}
 
   ${mobile} {
     padding: 18px 18px;
@@ -307,30 +299,6 @@ export const NewsCard = styled.article<{
     padding-top: 20px;
     border-top: 1px solid ${colors.detail};
   }
-
-  .news-error {
-    color: ${colors.text};
-  }
-
-  .news-toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 14px;
-    padding: 0;
-    border: 0;
-    background: none;
-    color: ${colors.accentSecondary};
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-
-    &:hover,
-    &:focus-visible {
-      color: ${colors.primary};
-      outline: none;
-    }
-  }
 `;
 
 export const StateBox = styled.div`
@@ -352,5 +320,21 @@ export const StateBox = styled.div`
     display: block;
     color: ${colors.text};
     font-size: 0.875rem;
+  }
+`;
+
+export const LoadMore = styled.div`
+  max-width: 920px;
+  margin: 0 auto 24px;
+  text-align: center;
+  color: ${colors.text};
+  font-size: 0.875rem;
+
+  .load-more-end {
+    padding-left: ${BADGE_SIZE + 24}px;
+
+    ${mobile} {
+      padding-left: ${BADGE_SIZE_MOBILE + 14}px;
+    }
   }
 `;

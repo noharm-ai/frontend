@@ -189,8 +189,10 @@ export default function Menu({ segments, collapsed }) {
       // with the sider collapsed only the icon shows: it carries the badge
       icon:
         recentNews && collapsed ? (
-          <Badge dot color="#a991d6" offset={[-2, 4]}>
-            <ThunderboltOutlined />
+          // the collapsed menu gives icons a 40px line height, which puts the
+          // dot high above the bolt and under the item's clipping
+          <Badge dot color="#a991d6">
+            <ThunderboltOutlined style={{ lineHeight: 1 }} />
           </Badge>
         ) : (
           <ThunderboltOutlined />
