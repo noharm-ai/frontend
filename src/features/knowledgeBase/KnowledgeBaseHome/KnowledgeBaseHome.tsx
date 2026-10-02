@@ -16,7 +16,12 @@ import {
 import { useAppDispatch, useAppSelector } from "src/store";
 import { setSupportOpen } from "features/support/SupportSlice";
 import { SupportAIModal } from "features/support/SupportAIModal/SupportAIModal";
-import { trackSupportAction, TrackedSupportAction } from "utils/tracker";
+import {
+  trackKnowledgeBaseAction,
+  trackSupportAction,
+  TrackedKnowledgeBaseAction,
+  TrackedSupportAction,
+} from "utils/tracker";
 
 import {
   fetchKnowledgeBaseArticles,
@@ -99,6 +104,10 @@ export function KnowledgeBaseHome() {
     );
     setSearchParams(next, { replace: true });
   };
+
+  useEffect(() => {
+    trackKnowledgeBaseAction(TrackedKnowledgeBaseAction.ACCESS_HOME);
+  }, []);
 
   useEffect(() => {
     if (list.status === "idle") {

@@ -18,7 +18,12 @@ import notification from "components/notification";
 import Table from "components/Table";
 import { getErrorMessage } from "utils/errorHandler";
 import { setHelpModeActive } from "features/knowledgeBase/HelpMode/HelpModeSlice";
-import { trackSupportAction, TrackedSupportAction } from "utils/tracker";
+import {
+  trackKnowledgeBaseAction,
+  trackSupportAction,
+  TrackedKnowledgeBaseAction,
+  TrackedSupportAction,
+} from "utils/tracker";
 import { fetchTickets, setSupportOpen } from "../SupportSlice";
 import { SupportAIModal } from "../SupportAIModal/SupportAIModal";
 import columns from "./columns";
@@ -46,6 +51,7 @@ function SupportCenter() {
   );
   const status = useSelector((state) => state.support.tickets.status);
   const helpModeActive = useSelector((state) => state.helpMode.active);
+  const helpModePage = useSelector((state) => state.helpMode.page);
 
   const emptyText = (
     <Empty
@@ -194,7 +200,15 @@ function SupportCenter() {
                 <Switch
                   id="support-help-mode"
                   checked={helpModeActive}
-                  onChange={(checked) => dispatch(setHelpModeActive(checked))}
+                  onChange={(checked) => {
+                    if (checked) {
+                      trackKnowledgeBaseAction(
+                        TrackedKnowledgeBaseAction.ACTIVATE_HELP_MODE,
+                        { page: helpModePage, via: "central-suporte" },
+                      );
+                    }
+                    dispatch(setHelpModeActive(checked));
+                  }}
                 />
               </div>
               <p>

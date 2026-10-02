@@ -5,6 +5,10 @@ import { Button, Col, Row, Skeleton } from "antd";
 import { ArrowLeftOutlined, UnorderedListOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
+import {
+  trackKnowledgeBaseAction,
+  TrackedKnowledgeBaseAction,
+} from "utils/tracker";
 
 import { fetchKnowledgeBaseArticle } from "../KnowledgeBaseSlice";
 import { articlePath } from "../articleContent";
@@ -44,6 +48,10 @@ export function KnowledgeBaseArticle() {
 
     window.scrollTo({ top: 0 });
     dispatch(fetchKnowledgeBaseArticle(idArticle));
+    trackKnowledgeBaseAction(TrackedKnowledgeBaseAction.VIEW_ARTICLE, {
+      idArticle,
+      via: "pagina",
+    });
   }, [dispatch, idArticle]);
 
   // the store may still hold the previous article while this one loads

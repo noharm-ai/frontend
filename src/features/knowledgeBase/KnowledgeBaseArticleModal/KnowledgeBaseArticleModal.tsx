@@ -1,11 +1,16 @@
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useStore } from "react-redux";
 import { Button, Skeleton } from "antd";
 import { ExportOutlined } from "@ant-design/icons";
 
-import { useAppDispatch, useAppSelector } from "src/store";
+import { IRootState, useAppDispatch, useAppSelector } from "src/store";
 import DefaultModal from "components/Modal";
+import {
+  trackKnowledgeBaseAction,
+  TrackedKnowledgeBaseAction,
+} from "utils/tracker";
 
 import {
   closeArticleModal,
@@ -30,6 +35,7 @@ export function KnowledgeBaseArticleModal() {
   const { articleId, status, data } = useAppSelector(
     (state) => state.knowledgeBase.modal,
   );
+  const store = useStore<IRootState>();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -37,7 +43,13 @@ export function KnowledgeBaseArticleModal() {
 
     scrollRef.current?.scrollTo({ top: 0 });
     dispatch(fetchKnowledgeBaseModalArticle(articleId));
-  }, [dispatch, articleId]);
+    trackKnowledgeBaseAction(TrackedKnowledgeBaseAction.VIEW_ARTICLE, {
+      idArticle: articleId,
+      via: "modal",
+      // screen the modal was opened on
+      page: store.getState().helpMode.page,
+    });
+  }, [dispatch, store, articleId]);
 
   // closing keeps the last article, so it does not blink out while the
   // modal fades away
