@@ -1,2 +1,2 @@
 export { DataViewer } from "./DataViewer";
-export type { DataRow, ColumnMeta } from "./types";
+export type { DataRow, ColumnMeta, ColumnLinkMeta } from "./types";
