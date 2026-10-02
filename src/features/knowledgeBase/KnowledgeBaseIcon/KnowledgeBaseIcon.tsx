@@ -31,6 +31,9 @@ interface IKnowledgeBaseIconProps {
   anchor: string;
   // label of the element in the help mode
   label?: string;
+  // shown on several screens (e.g. a modal): new pins default to every
+  // screen, so they follow the icon wherever it opens
+  global?: boolean;
 }
 
 const NO_ELEMENTS: IHelpElement[] = [];
@@ -40,7 +43,11 @@ const NO_ELEMENTS: IHelpElement[] = [];
  * pinned to the icon itself in the help mode's elements, so they also show in
  * the help mode, and curators (WRITE_HELP_TEXT) edit them with its editor.
  */
-export function KnowledgeBaseIcon({ anchor, label }: IKnowledgeBaseIconProps) {
+export function KnowledgeBaseIcon({
+  anchor,
+  label,
+  global = false,
+}: IKnowledgeBaseIconProps) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { openArticle } = useArticleModal();
@@ -105,7 +112,7 @@ export function KnowledgeBaseIcon({ anchor, label }: IKnowledgeBaseIconProps) {
     setOpen(false);
     dispatch(
       openHelpElementEditor({
-        page: element?.page ?? page,
+        page: element?.page ?? (global ? GLOBAL_PAGE : page),
         selector,
         label: element?.label ?? label ?? null,
         articleIds: articles.map((article) => article.id),
