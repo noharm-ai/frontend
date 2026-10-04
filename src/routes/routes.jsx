@@ -21,6 +21,7 @@ import UserAdmin from "pages/UserAdmin";
 import { OutpatientPrioritizationPage } from "pages/OutpatientPrioritization/OutpatientPrioritizationPage";
 import Prioritization from "pages/Prioritization";
 import ClinicalNotes from "pages/Screening/ClinicalNotes";
+import { AdmissionPrescriptionPage } from "pages/AdmissionPrescription/AdmissionPrescription";
 import Summary from "pages/Summary";
 import SummarySearch from "pages/Summary/SummarySearch";
 import SupportCenter from "pages/SupportCenter";
@@ -152,6 +153,11 @@ const routes = [
     exact: true,
     path: "/prescricao/evolucao/:admissionNumber",
     element: <WithAuth component={ClinicalNotes} />,
+  },
+  {
+    exact: true,
+    path: "/prescricao/atendimento/:admissionNumber",
+    element: <WithAuth component={AdmissionPrescriptionPage} />,
   },
   {
     exact: true,

@@ -137,6 +137,29 @@ requires a configuration or curation role.
 Reports can be exported for use outside the system. Large reports are generated
 in the background; the screen tells you when the file is ready.
 
+### Links in custom reports
+
+A custom report can open the prescription from a row. The report's SQL names a
+column with one of the reserved aliases below and fills it with the plain
+integer id. The table shows a button that opens the prescription in a new tab.
+
+| Column alias | Value | Opens |
+|---|---|---|
+| `link_prescricao` | Prescription id | The prescription |
+| `link_atendimento` | Admission number | The most recent prescription of the admission |
+
+A value that is not a whole number shows as plain text. Exported files keep the
+plain id.
+
+Cast the ids to text. Very long ids lose digits when the browser reads them as
+numbers, and then show as plain text.
+
+```sql
+SELECT p.fkprescricao::text AS link_prescricao,
+       p.nratendimento::text AS link_atendimento,
+       ...
+```
+
 ## 10. Regulation
 
 Where the regulation feature is enabled, this area handles solicitations —
