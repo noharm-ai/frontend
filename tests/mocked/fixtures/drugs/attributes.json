@@ -1,0 +1,25 @@
+{
+  "status": "success",
+  "data": {
+    "idDrug": 5200,
+    "idSegment": 1,
+    "idMeasureUnit": "MG",
+    "divisionRange": 100,
+    "useWeight": false,
+    "antimicro": true,
+    "mav": false,
+    "controlled": false,
+    "notdefault": false,
+    "elderly": true,
+    "tube": false,
+    "chemo": false,
+    "dialyzable": false,
+    "fasting": false,
+    "whiteList": false,
+    "maxDose": 4000,
+    "maxTime": 7,
+    "platelets": null,
+    "fallRisk": 2,
+    "price": 1.25
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "status": "success",
+  "data": [
+    { "idDrug": 5100, "name": "Dipirona 500mg comprimido" },
+    { "idDrug": 5200, "name": "Paracetamol 750mg comprimido" }
+  ]
+}

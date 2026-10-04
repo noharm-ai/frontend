@@ -1,0 +1,64 @@
+{
+  "status": "success",
+  "data": {
+    "substance": { "sctid": "387517004", "name": "Paracetamol" },
+    "attributes": {
+      "idDrug": 5200,
+      "idSegment": 1,
+      "idMeasureUnit": "MG",
+      "divisionRange": 100,
+      "useWeight": false
+    },
+    "outliers": [
+      {
+        "idOutlier": 901,
+        "idDrug": 5200,
+        "dose": 500,
+        "unit": "MG",
+        "frequency": 2,
+        "score": 0,
+        "manualScore": null,
+        "countNum": 10,
+        "divisionRange": 100,
+        "obs": "",
+        "useWeight": false,
+        "selected": false,
+        "updatedAt": "2026-02-10T13:45:00"
+      },
+      {
+        "idOutlier": 902,
+        "idDrug": 5200,
+        "dose": 1500,
+        "unit": "MG",
+        "frequency": 3,
+        "score": 3,
+        "manualScore": 1,
+        "countNum": 42,
+        "divisionRange": 100,
+        "obs": "Dose habitual no pós-operatório.",
+        "useWeight": false,
+        "selected": true,
+        "updatedAt": "2026-02-11T09:05:00"
+      },
+      {
+        "idOutlier": 903,
+        "idDrug": 5200,
+        "dose": 2000,
+        "unit": "",
+        "frequency": 4,
+        "score": 4,
+        "manualScore": null,
+        "countNum": 3,
+        "divisionRange": null,
+        "obs": "",
+        "useWeight": false,
+        "selected": false,
+        "updatedAt": "2026-01-05T08:00:00"
+      }
+    ],
+    "conversions": [
+      { "factor": 1, "idMeasureUnit": "MG", "name": "Miligrama" },
+      { "factor": 1000, "idMeasureUnit": "G", "name": "Grama" }
+    ]
+  }
+}
