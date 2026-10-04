@@ -72,7 +72,9 @@ export function DrugDashboardFilter({
 
   const handleDrugChange = (value: any) => {
     if (!idSegment) return;
-    const drug = drugs.list.find((d) => d.idDrug === value);
+    // the options carry the id as a string, so it matches the one the URL
+    // gives back, while the list keeps it numeric
+    const drug = drugs.list.find((d) => `${d.idDrug}` === `${value}`);
     if (!drug) return;
     const slug = createSlug(drug.name);
     navigate(`/painel-medicamentos/${idSegment}/${value}/${slug}`);
