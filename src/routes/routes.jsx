@@ -36,6 +36,7 @@ import TrainingPlayer from "pages/TrainingPlayer";
 import { KnowledgeBasePage } from "pages/KnowledgeBase/KnowledgeBasePage";
 import { KnowledgeBaseArticlePage } from "pages/KnowledgeBase/KnowledgeBaseArticlePage";
 import { NewsPage } from "pages/News/NewsPage";
+import { AntimicrobialTimelinePage } from "pages/AntimicrobialTimeline/AntimicrobialTimeline";
 
 import AdminTag from "pages/Admin/Tag";
 import AdminMemory from "pages/Admin/Memory";
@@ -338,6 +339,11 @@ const routes = [
     exact: true,
     path: "/novidades",
     element: <WithAuth component={NewsPage} />,
+  },
+  {
+    exact: true,
+    path: "/antimicrobianos/:admissionNumber",
+    element: <WithAuth component={AntimicrobialTimelinePage} />,
   },
   {
     exact: true,

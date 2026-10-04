@@ -1,0 +1,353 @@
+import styled from "styled-components";
+
+import {
+  COURSE_COLORS,
+  DISCHARGE_COLOR,
+  SCHEDULED_COLOR,
+  TODAY_COLOR,
+} from "../courseColors";
+
+// fixed column with the drug of each row (--label-width), narrower on phones
+const LABEL_WIDTH = 280;
+const LABEL_WIDTH_SMALL = 160;
+// narrowest a day column gets before the timeline scrolls sideways
+export const DAY_WIDTH = 34;
+
+const GRID_LINE = "#f0f0f0";
+const HATCH =
+  "repeating-linear-gradient(-45deg, #fff 0 3px, rgba(0, 0, 0, 0.12) 3px 6px)";
+
+export const Gantt = styled.div`
+  --label-width: ${LABEL_WIDTH}px;
+
+  @media (max-width: 768px) {
+    --label-width: ${LABEL_WIDTH_SMALL}px;
+  }
+
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+`;
+
+export const GanttScroll = styled.div`
+  overflow-x: auto;
+`;
+
+export const GanttGrid = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const Row = styled.div`
+  border-bottom: 1px solid ${GRID_LINE};
+  display: flex;
+  min-height: 64px;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  &.row-header {
+    background: #fafafa;
+    min-height: 50px;
+  }
+`;
+
+export const RowLabel = styled.div`
+  background: inherit;
+  background-color: #fff;
+  border-right: 1px solid #e0e0e0;
+  display: flex;
+  flex: 0 0 var(--label-width);
+  flex-direction: column;
+  justify-content: center;
+  left: 0;
+  min-width: 0;
+  padding: 6px 12px;
+  position: sticky;
+  z-index: 3;
+
+  .row-header & {
+    background-color: #fafafa;
+  }
+
+  .label-drug {
+    align-items: center;
+    display: flex;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .label-name {
+    color: #2e3c5a;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .label-info {
+    align-items: center;
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+
+    .ant-tag {
+      margin: 0;
+    }
+  }
+
+  .label-day {
+    color: #2e3c5a;
+  }
+
+  .label-dates {
+    color: #8c8c8c;
+    font-size: 12px;
+    white-space: nowrap;
+
+    @media (max-width: 768px) {
+      display: none;
+    }
+  }
+`;
+
+export const Track = styled.div<{ $days: number }>`
+  background-image: linear-gradient(
+    to right,
+    ${GRID_LINE} 1px,
+    transparent 1px
+  );
+  background-size: calc(100% / ${(props) => props.$days}) 100%;
+  display: flex;
+  flex: 1;
+  position: relative;
+
+  &.track-header {
+    background-image: none;
+  }
+
+  .marker-label {
+    border-radius: 3px;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 16px;
+    padding: 0 4px;
+    position: absolute;
+    top: 0;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    z-index: 2;
+  }
+
+  .marker-label-today {
+    background: ${TODAY_COLOR};
+  }
+
+  .marker-label-discharge {
+    background: ${DISCHARGE_COLOR};
+    top: auto;
+    bottom: 0;
+  }
+
+  .planned-end {
+    border-left: 2px solid ${DISCHARGE_COLOR};
+    cursor: help;
+    height: 30px;
+    position: absolute;
+    top: 50%;
+    transform: translate(-1px, -50%);
+    width: 8px;
+    z-index: 2;
+
+    &::after {
+      border-bottom: 5px solid transparent;
+      border-left: 7px solid ${DISCHARGE_COLOR};
+      border-top: 5px solid transparent;
+      content: "";
+      left: 0;
+      position: absolute;
+      top: 0;
+    }
+  }
+
+  .regimen-change {
+    background: #fff;
+    border: 2px solid #2e3c5a;
+    border-radius: 2px;
+    cursor: help;
+    height: 10px;
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    width: 10px;
+    z-index: 2;
+  }
+`;
+
+export const HeaderDay = styled.div`
+  align-items: center;
+  border-left: 1px solid ${GRID_LINE};
+  color: #8c8c8c;
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  font-size: 11px;
+  justify-content: center;
+  line-height: 1.2;
+  min-width: 0;
+  padding-top: 18px;
+
+  .day-number {
+    color: #2e3c5a;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  .day-month {
+    visibility: hidden;
+  }
+
+  &.month-start .day-month {
+    visibility: visible;
+  }
+
+  &.weekend {
+    background: #f5f5f5;
+  }
+
+  &.today .day-number {
+    color: ${TODAY_COLOR};
+    font-weight: 700;
+  }
+`;
+
+export const Bar = styled.div<{ $color?: string }>`
+  border-radius: 4px;
+  height: 18px;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+
+  &.bar-given {
+    background: ${(props) => props.$color};
+    cursor: help;
+    min-width: 3px;
+    z-index: 1;
+  }
+
+  &.bar-scheduled {
+    background: ${SCHEDULED_COLOR};
+    border-radius: 0 4px 4px 0;
+    cursor: help;
+    z-index: 1;
+  }
+
+  &.bar-planned {
+    border: 2px dashed ${(props) => props.$color};
+    opacity: 0.6;
+  }
+
+  &.bar-gap {
+    background: ${HATCH};
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0;
+    height: 18px;
+    z-index: 1;
+  }
+`;
+
+export const Marker = styled.div`
+  bottom: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 0;
+  z-index: 2;
+
+  &.marker-today {
+    border-left: 2px solid ${TODAY_COLOR};
+  }
+
+  &.marker-discharge {
+    border-left: 2px dashed ${DISCHARGE_COLOR};
+  }
+`;
+
+export const Legend = styled.div`
+  border-top: 1px solid #e0e0e0;
+  color: #595959;
+  display: flex;
+  flex-wrap: wrap;
+  font-size: 12px;
+  gap: 6px 18px;
+  padding: 10px 12px;
+
+  span {
+    align-items: center;
+    display: inline-flex;
+    gap: 6px;
+  }
+
+  i {
+    border-radius: 3px;
+    display: inline-block;
+    height: 10px;
+    width: 18px;
+  }
+
+  .legend-given {
+    background: ${COURSE_COLORS.active};
+  }
+
+  .legend-scheduled {
+    background: ${SCHEDULED_COLOR};
+  }
+
+  .legend-planned {
+    border: 2px dashed ${COURSE_COLORS.active};
+    opacity: 0.6;
+  }
+
+  .legend-planned-end {
+    border-left: 2px solid ${DISCHARGE_COLOR};
+    border-radius: 0;
+    height: 12px;
+    position: relative;
+    width: 8px;
+
+    &::after {
+      border-bottom: 4px solid transparent;
+      border-left: 6px solid ${DISCHARGE_COLOR};
+      border-top: 4px solid transparent;
+      content: "";
+      left: 0;
+      position: absolute;
+      top: 0;
+    }
+  }
+
+  .legend-suspended {
+    background: ${COURSE_COLORS.suspended};
+  }
+
+  .legend-finished {
+    background: ${COURSE_COLORS.finished};
+  }
+
+  .legend-gap {
+    background: ${HATCH};
+    border: 1px solid rgba(0, 0, 0, 0.15);
+  }
+
+  .legend-change {
+    background: #fff;
+    border: 2px solid #2e3c5a;
+    border-radius: 2px;
+    height: 9px;
+    transform: rotate(45deg);
+    width: 9px;
+  }
+`;

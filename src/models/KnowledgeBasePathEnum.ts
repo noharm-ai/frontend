@@ -110,6 +110,11 @@ export class KnowledgeBasePathEnum {
       label: "Sumário de Alta",
       pathPattern: /^\/sumario-alta/,
     },
+    {
+      value: "Antimicrobianos",
+      label: "Antimicrobianos",
+      pathPattern: /^\/antimicrobianos/,
+    },
   ];
 
   static getPath = (pathname: string): string => {

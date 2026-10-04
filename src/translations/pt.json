@@ -1553,5 +1553,83 @@
       "removeArticleConfirm": "Remover “{{title}}” deste elemento?",
       "removeArticleSuccess": "Artigo removido do elemento."
     }
+  },
+  "antimicrobialTimeline": {
+    "title": "Linha do tempo de antimicrobianos",
+    "legend": "Antimicrobianos prescritos no atendimento {{admissionNumber}}",
+    "openPrescription": "Abrir prescrição",
+    "notFound": "Nenhum registro encontrado para o atendimento {{admissionNumber}}.",
+    "loadError": "Não foi possível carregar os antimicrobianos do atendimento {{admissionNumber}}.",
+    "retry": "Tentar novamente",
+    "patient": {
+      "admission": "Atendimento",
+      "age": "Idade",
+      "ageYears_one": "{{count}} ano",
+      "ageYears_other": "{{count}} anos",
+      "ageMonths_one": "{{count}} mês",
+      "ageMonths_other": "{{count}} meses",
+      "gender": "Sexo",
+      "male": "Masculino",
+      "female": "Feminino",
+      "weight": "Peso",
+      "admissionDate": "Internação",
+      "lengthOfStay_one": "{{count}} dia",
+      "lengthOfStay_other": "{{count}} dias",
+      "department": "Setor",
+      "bed": "Leito",
+      "dischargeDate": "Alta"
+    },
+    "current": {
+      "title": "Em uso agora",
+      "empty": "Nenhum antimicrobiano em uso no momento.",
+      "dayOf": "de {{count}} dias previstos",
+      "noPlannedEnd": "Sem previsão de término",
+      "started": "Início",
+      "plannedEnd": "Término previsto",
+      "endsToday": "termina hoje",
+      "endsIn_one": "termina em {{count}} dia",
+      "endsIn_other": "termina em {{count}} dias",
+      "overdue_one": "previsão excedida há {{count}} dia",
+      "overdue_other": "previsão excedida há {{count}} dias",
+      "validUntil": "Prescrição válida até {{date}}",
+      "regimen": "Posologia atual"
+    },
+    "timeline": {
+      "title": "Linha do tempo",
+      "empty": "Nenhum antimicrobiano prescrito neste atendimento.",
+      "today": "Hoje",
+      "discharge": "Alta",
+      "day": "D{{count}}",
+      "dayPlanned": "D{{count}}/{{planned}}",
+      "legendActive": "Em uso",
+      "legendScheduled": "Prescrito (a cumprir)",
+      "legendPlanned": "Previsto, ainda não prescrito",
+      "legendPlannedEnd": "Término previsto",
+      "plannedEnd": "Término previsto em {{date}}",
+      "legendSuspended": "Suspenso",
+      "legendFinished": "Encerrado",
+      "legendGap": "Dia sem prescrição",
+      "legendChange": "Mudança de posologia",
+      "regimenChange": "Mudança de posologia em {{date}}",
+      "gap": "Sem prescrição de {{start}} a {{end}}"
+    },
+    "status": {
+      "active": "Em uso",
+      "suspended": "Suspenso",
+      "finished": "Encerrado"
+    },
+    "details": {
+      "period": "Período",
+      "days_one": "{{count}} dia de tratamento",
+      "days_other": "{{count}} dias de tratamento",
+      "plannedEnd": "Término previsto",
+      "prescriptionType": "Tipo de prescrição",
+      "cpoe": "CPOE (prescrição com vigência)",
+      "daily": "Prescrição diária",
+      "prescriptions": "Prescrições",
+      "regimens": "Posologias",
+      "gaps_one": "{{count}} intervalo sem prescrição",
+      "gaps_other": "{{count}} intervalos sem prescrição"
+    }
   }
 }

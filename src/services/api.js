@@ -876,6 +876,15 @@ api.news.getList = (params = {}) =>
   instance.get(`/news`, { params, ...setHeaders() });
 
 /**
+ * antimicrobial namespace
+ */
+api.antimicrobial = {};
+api.antimicrobial.getTimeline = (admissionNumber) =>
+  instance.get(`/antimicrobial/timeline/${admissionNumber}`, {
+    ...setHeaders(),
+  });
+
+/**
  * training namespace
  */
 api.training = {};

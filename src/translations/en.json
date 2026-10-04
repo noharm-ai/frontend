@@ -1543,5 +1543,83 @@
       "removeArticleConfirm": "Remove “{{title}}” from this element?",
       "removeArticleSuccess": "Article removed from the element."
     }
+  },
+  "antimicrobialTimeline": {
+    "title": "Antimicrobial timeline",
+    "legend": "Antimicrobials prescribed in admission {{admissionNumber}}",
+    "openPrescription": "Open prescription",
+    "notFound": "No record found for admission {{admissionNumber}}.",
+    "loadError": "Could not load the antimicrobials of admission {{admissionNumber}}.",
+    "retry": "Try again",
+    "patient": {
+      "admission": "Admission",
+      "age": "Age",
+      "ageYears_one": "{{count}} year",
+      "ageYears_other": "{{count}} years",
+      "ageMonths_one": "{{count}} month",
+      "ageMonths_other": "{{count}} months",
+      "gender": "Gender",
+      "male": "Male",
+      "female": "Female",
+      "weight": "Weight",
+      "admissionDate": "Admitted",
+      "lengthOfStay_one": "{{count}} day",
+      "lengthOfStay_other": "{{count}} days",
+      "department": "Department",
+      "bed": "Bed",
+      "dischargeDate": "Discharge"
+    },
+    "current": {
+      "title": "In use now",
+      "empty": "No antimicrobial in use right now.",
+      "dayOf": "of {{count}} planned days",
+      "noPlannedEnd": "No planned end",
+      "started": "Started",
+      "plannedEnd": "Planned end",
+      "endsToday": "ends today",
+      "endsIn_one": "ends in {{count}} day",
+      "endsIn_other": "ends in {{count}} days",
+      "overdue_one": "{{count}} day past the planned end",
+      "overdue_other": "{{count}} days past the planned end",
+      "validUntil": "Prescription valid until {{date}}",
+      "regimen": "Current regimen"
+    },
+    "timeline": {
+      "title": "Timeline",
+      "empty": "No antimicrobial prescribed in this admission.",
+      "today": "Today",
+      "discharge": "Discharge",
+      "day": "D{{count}}",
+      "dayPlanned": "D{{count}}/{{planned}}",
+      "legendActive": "In use",
+      "legendScheduled": "Prescribed (ahead)",
+      "legendPlanned": "Planned, not prescribed yet",
+      "legendPlannedEnd": "Planned end",
+      "plannedEnd": "Planned to end on {{date}}",
+      "legendSuspended": "Suspended",
+      "legendFinished": "Finished",
+      "legendGap": "Day without prescription",
+      "legendChange": "Regimen change",
+      "regimenChange": "Regimen changed on {{date}}",
+      "gap": "Not prescribed from {{start}} to {{end}}"
+    },
+    "status": {
+      "active": "In use",
+      "suspended": "Suspended",
+      "finished": "Finished"
+    },
+    "details": {
+      "period": "Period",
+      "days_one": "{{count}} day of treatment",
+      "days_other": "{{count}} days of treatment",
+      "plannedEnd": "Planned end",
+      "prescriptionType": "Prescription type",
+      "cpoe": "CPOE (order with validity)",
+      "daily": "Daily prescription",
+      "prescriptions": "Prescriptions",
+      "regimens": "Regimens",
+      "gaps_one": "{{count}} gap without prescription",
+      "gaps_other": "{{count}} gaps without prescription"
+    }
   }
 }
