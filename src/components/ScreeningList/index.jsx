@@ -50,6 +50,7 @@ import columnsTable, { expandedRowRender } from "./columns";
 import Filter from "../Prioritization/Filter";
 import {
   applyPrescriptionDatesReference,
+  countHiddenByPrescriptionDates,
   filterByPrescriptionDates,
   getDefaultPrescriptionDatesFilter,
   isPrescriptionDatesPrioritization,
@@ -715,6 +716,10 @@ export default function ScreeningList({
             <PrescriptionDatesFilter
               value={prescriptionDatesFilter}
               onChange={setPrescriptionDatesFilter}
+              hiddenCount={countHiddenByPrescriptionDates(
+                list,
+                prescriptionDatesFilter,
+              )}
               style={{ marginLeft: "10px" }}
             />
           )}

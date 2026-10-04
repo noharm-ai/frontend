@@ -28,6 +28,7 @@ import { PrescriptionDatesFilter } from "./PrescriptionDatesFilter/PrescriptionD
 import { reducer, initState } from "./Store";
 import {
   applyPrescriptionDatesReference,
+  countHiddenByPrescriptionDates,
   isPrescriptionDatesPrioritization,
   sortList,
   filterList,
@@ -349,6 +350,10 @@ export default function Prioritization({
                   className="prescription-dates-filter"
                   value={state.filter.prescriptionDates}
                   onChange={onChangePrescriptionDates}
+                  hiddenCount={countHiddenByPrescriptionDates(
+                    list,
+                    state.filter.prescriptionDates,
+                  )}
                 />
               )}
             </div>
