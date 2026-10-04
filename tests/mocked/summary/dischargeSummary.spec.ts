@@ -369,16 +369,17 @@ test("a like is recorded and marks the block; a dislike carries its reason", asy
   );
   expect(reactions).toHaveLength(2);
 
-  const liked = reactions.find((m) => m.type === "summary-like");
-  expect(liked.block).toBe("reason");
-  expect(liked.value.text).toBe(
-    "Admitida por pneumonia adquirida na comunidade.",
-  );
+  // matched as a whole, so a reaction that never arrived fails the assertion
+  // instead of blowing up on a property of undefined
+  expect(reactions.find((m) => m.type === "summary-like")).toMatchObject({
+    block: "reason",
+    value: { text: "Admitida por pneumonia adquirida na comunidade." },
+  });
 
-  const disliked = reactions.find((m) => m.type === "summary-dislike");
-  expect(disliked.block).toBe("diagnosis");
-  expect(disliked.value.idReason).toBe("2");
-  expect(disliked.value.reason).toBe("Informação insuficiente");
+  expect(reactions.find((m) => m.type === "summary-dislike")).toMatchObject({
+    block: "diagnosis",
+    value: { idReason: "2", reason: "Informação insuficiente" },
+  });
 });
 
 test("'Gerar Texto' assembles the whole summary and copies it", async ({
