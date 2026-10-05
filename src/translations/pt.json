@@ -93,8 +93,13 @@
     "orderByDate": "Priorizar por data da prescrição",
     "orderByNextPrescription": "Priorizar por próxima prescrição",
     "prescriptionDatesPlaceholder": "Todas as prescrições",
-    "prescriptionDatesFrom": "A partir de",
-    "prescriptionDatesHint": "Mostra as prescrições a partir deste momento",
+    "prescriptionDatesHideBefore": "Ocultar prescrições anteriores a",
+    "prescriptionDatesSliderTooltip": "Ocultando antes das {{time}}",
+    "prescriptionDatesHidden_one": "{{count}} paciente oculto",
+    "prescriptionDatesHidden_other": "{{count}} pacientes ocultos",
+    "prescriptionDatesHiddenHint": "Pacientes cujas prescrições são todas anteriores ao horário escolhido",
+    "prescriptionDatesShowAll": "Mostrar todos",
+    "prescriptionDatesHint": "A lista mostra apenas pacientes com prescrição a partir deste momento. Arraste o horário para trás ou use \"Mostrar todos\" para ver os demais.",
     "orderByPlaceholder": "Priorizar por",
     "patientRisk": "Risco do paciente",
     "prescriptionRisk": "Risco da prescrição",
@@ -431,6 +436,13 @@
     "close": "Fechar",
     "loadError": "Erro ao carregar o texto de ajuda.",
     "saveError": "Erro ao salvar o texto de ajuda."
+  },
+  "knowledgeBaseIcon": {
+    "helpMode": "Modo ajuda",
+    "title": "Artigos da base de conhecimento",
+    "empty": "Nenhum artigo vinculado a este item ainda.",
+    "edit": "Vincular artigos",
+    "loadError": "Erro ao carregar os artigos."
   },
   "prescriptionDrugTags": {
     "checked": "Checado anteriormente",
@@ -1226,6 +1238,23 @@
       "secondaryAction": "Explorar o sistema",
       "menuHint": "Você pode acessar o treinamento a qualquer momento pelo menu lateral, em \"Treinamento\"."
     }
+  },
+  "news": {
+    "eyebrow": "Novidades",
+    "title": "O que há de novo na NoHarm",
+    "subtitle": "Lançamentos, melhorias e ajustes, da novidade mais recente para a mais antiga.",
+    "new": "Novo",
+    "monthFormat": "MMMM [de] YYYY",
+    "dateFormat": "D [de] MMMM [de] YYYY",
+    "empty": "Nenhuma novidade publicada ainda.",
+    "emptyHint": "Assim que houver lançamentos, eles aparecerão aqui.",
+    "loadError": "Não foi possível carregar as novidades.",
+    "retry": "Tentar novamente",
+    "loadMore": "Carregar mais novidades",
+    "loadMoreError": "Não foi possível carregar mais novidades.",
+    "end": "Você viu todas as novidades.",
+    "recentBadge_one": "{{count}} novidade recente",
+    "recentBadge_other": "{{count}} novidades recentes"
   },
   "knowledgeBase": {
     "eyebrow": "Base de conhecimento",

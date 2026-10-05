@@ -26,6 +26,7 @@ import { InfoIcon } from "components/Icon";
 import BackTop from "components/BackTop";
 import { Input, Select } from "components/Inputs";
 import InitialPage from "features/preferences/InitialPage/InitialPage";
+import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
 import Dropdown from "components/Dropdown";
 import DefaultModal from "components/Modal";
 import {
@@ -49,6 +50,7 @@ import columnsTable, { expandedRowRender } from "./columns";
 import Filter from "../Prioritization/Filter";
 import {
   applyPrescriptionDatesReference,
+  countHiddenByPrescriptionDates,
   filterByPrescriptionDates,
   getDefaultPrescriptionDatesFilter,
   isPrescriptionDatesPrioritization,
@@ -714,6 +716,10 @@ export default function ScreeningList({
             <PrescriptionDatesFilter
               value={prescriptionDatesFilter}
               onChange={setPrescriptionDatesFilter}
+              hiddenCount={countHiddenByPrescriptionDates(
+                list,
+                prescriptionDatesFilter,
+              )}
               style={{ marginLeft: "10px" }}
             />
           )}
@@ -726,7 +732,14 @@ export default function ScreeningList({
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title" data-kb="prioritization.title">{pageTitle}</h1>
+          <h1 className="page-header-title" data-kb="prioritization.title">
+            {pageTitle}
+            {/* one anchor per prioritization type: each has its own articles */}
+            <KnowledgeBaseIcon
+              anchor={`prioritization.${prioritizationType}.articles`}
+              label={pageTitle}
+            />
+          </h1>
         </div>
         <div className="page-header-actions">
           <InitialPage />

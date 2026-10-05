@@ -1,27 +1,23 @@
-import type { ReactNode } from "react";
-
 export type DataRow = Record<string, unknown> & {
   _index?: number;
   key?: string | number;
 };
 
+export interface ColumnLinkMeta {
+  /** Button text, e.g. "Prescrição" */
+  label: string;
+  /** Tooltip / accessible label prefix, followed by the id, e.g. "Abrir prescrição" */
+  title: string;
+  /**
+   * Builds the URL for an already validated id (digits only). May read sibling
+   * columns of the same row; returns undefined when the link cannot be built.
+   */
+  getHref: (id: string, row: DataRow) => string | undefined;
+}
+
 export interface ColumnMeta {
   key: string;
   title: string;
   type: "string" | "number" | "boolean" | "object";
-}
-
-export interface ColumnOverride {
-  /** Header content; the column key is shown when omitted. */
-  title?: ReactNode;
-  /** Cell content, also used in the record drawer. */
-  render?: (value: unknown, record: DataRow) => ReactNode;
-  /** false turns sorting off for the column. */
-  sortable?: boolean;
-}
-
-export interface ExtraColumn {
-  key: string;
-  /** Key of the column it follows; appended at the end when omitted. */
-  after?: string;
+  link?: ColumnLinkMeta;
 }

@@ -25,6 +25,7 @@ import { PageHeader } from "styles/PageHeader.style";
 import InterventionOutcome from "features/intervention/InterventionOutcome/InterventionOutcome";
 import { MultipleOutcome } from "features/intervention/MultipleOutcome/MultipleOutcome";
 import { MultipleOutcomeToolbar } from "features/intervention/MultipleOutcome/MultipleOutcomeToolbar";
+import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
 
 const TableInfo = styled.div`
   .filter-field {
@@ -250,7 +251,13 @@ export default function InterventionList({
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title" data-kb="interventions.title">{t("menu.interventions")}</h1>
+          <h1 className="page-header-title" data-kb="interventions.title">
+            {t("menu.interventions")}
+            <KnowledgeBaseIcon
+              anchor="interventions.articles"
+              label={t("menu.interventions")}
+            />
+          </h1>
           <div className="page-header-legend">
             Lista de intervenções registradas.
           </div>

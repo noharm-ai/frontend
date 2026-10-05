@@ -55,7 +55,8 @@ const passwordCalls = (mockApi: MockApi) =>
 async function openProfile(page: Page) {
   await page.goto("/configuracoes/usuario");
   await expect(
-    page.getByRole("heading", { name: "Usuário", exact: true }),
+    // the title's name also carries its knowledge base icon's
+    page.getByRole("heading", { name: /^Usuário\b/ }),
   ).toBeVisible();
 }
 

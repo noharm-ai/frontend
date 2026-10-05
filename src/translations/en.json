@@ -93,8 +93,13 @@
     "orderByDate": "Prioritize by date",
     "orderByNextPrescription": "Prioritize by next prescription",
     "prescriptionDatesPlaceholder": "All prescriptions",
-    "prescriptionDatesFrom": "From",
-    "prescriptionDatesHint": "Shows prescriptions from this point in time",
+    "prescriptionDatesHideBefore": "Hide prescriptions before",
+    "prescriptionDatesSliderTooltip": "Hiding before {{time}}",
+    "prescriptionDatesHidden_one": "{{count}} patient hidden",
+    "prescriptionDatesHidden_other": "{{count}} patients hidden",
+    "prescriptionDatesHiddenHint": "Patients whose prescriptions are all before the chosen time",
+    "prescriptionDatesShowAll": "Show all",
+    "prescriptionDatesHint": "The list only shows patients with a prescription from this point in time on. Drag the time back or use \"Show all\" to see the others.",
     "orderByPlaceholder": "Prioritize by",
     "patientRisk": "Patient risk",
     "prescriptionRisk": "Prescription risk",
@@ -431,6 +436,13 @@
     "close": "Close",
     "loadError": "Error loading help text.",
     "saveError": "Error saving help text."
+  },
+  "knowledgeBaseIcon": {
+    "helpMode": "Help mode",
+    "title": "Knowledge base articles",
+    "empty": "No articles linked to this item yet.",
+    "edit": "Link articles",
+    "loadError": "Error loading the articles."
   },
   "prescriptionDrugTags": {
     "checked": "Checked previously",
@@ -1216,6 +1228,23 @@
       "secondaryAction": "Explore the system",
       "menuHint": "You can access the training anytime from the side menu, under \"Training\"."
     }
+  },
+  "news": {
+    "eyebrow": "News",
+    "title": "What's new in NoHarm",
+    "subtitle": "Releases, improvements and fixes, from the most recent to the oldest.",
+    "new": "New",
+    "monthFormat": "MMMM YYYY",
+    "dateFormat": "MMMM D, YYYY",
+    "empty": "No news published yet.",
+    "emptyHint": "New releases will show up here.",
+    "loadError": "Could not load the news.",
+    "retry": "Try again",
+    "loadMore": "Load more news",
+    "loadMoreError": "Could not load more news.",
+    "end": "You've seen all the news.",
+    "recentBadge_one": "{{count}} recent news",
+    "recentBadge_other": "{{count}} recent news"
   },
   "knowledgeBase": {
     "eyebrow": "Knowledge base",

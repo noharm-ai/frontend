@@ -54,6 +54,79 @@ export const Container = styled(PageCard) <{ $height: number }>`
     }
   }
 
+  /*
+   * The table is virtual: rows scroll inside a custom scrollbar drawn by the
+   * virtual list (8px, inline styles, hidden while idle), not the native one.
+   * Keep it visible, give it a wider grab area and a thumb that grows and
+   * takes the accent color on hover or while dragging.
+   */
+  .ant-table-tbody-virtual-scrollbar {
+    --rc-virtual-list-scrollbar-bg: rgba(0, 0, 0, 0.3);
+    visibility: visible !important;
+    background: rgba(0, 0, 0, 0.04);
+    border-radius: 99px;
+    transition:
+      background 0.2s,
+      width 0.15s,
+      height 0.15s;
+    z-index: 2;
+
+    &:hover {
+      --rc-virtual-list-scrollbar-bg: ${get('colors.accentSecondary')};
+      background: rgba(0, 0, 0, 0.08);
+
+      .ant-table-tbody-virtual-scrollbar-thumb {
+        border-width: 2px;
+      }
+    }
+  }
+
+  /* anchored to the right/bottom edge, so growing on hover expands inwards */
+  /* stays large while dragging, even when the pointer leaves the bar */
+  .ant-table-tbody-virtual-scrollbar-vertical {
+    width: 14px !important;
+
+    &:hover,
+    &:has(.ant-table-tbody-virtual-scrollbar-thumb-moving) {
+      width: 20px !important;
+    }
+  }
+
+  .ant-table-tbody-virtual-scrollbar-horizontal {
+    height: 14px !important;
+
+    &:hover,
+    &:has(.ant-table-tbody-virtual-scrollbar-thumb-moving) {
+      height: 20px !important;
+    }
+  }
+
+  .ant-table-tbody-virtual-scrollbar-thumb {
+    border: 3px solid transparent;
+    background-clip: padding-box !important;
+    transition: border-width 0.15s;
+
+    /*
+     * The thumb can be as short as 20px on long reports (fixed by the virtual
+     * list, which positions it by that size); widen only the grab area.
+     */
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -10px -3px;
+    }
+  }
+
+  .ant-table-tbody-virtual-scrollbar-horizontal
+    .ant-table-tbody-virtual-scrollbar-thumb::before {
+    inset: -3px -10px;
+  }
+
+  .ant-table-tbody-virtual-scrollbar-thumb-moving {
+    --rc-virtual-list-scrollbar-bg: ${get('colors.accent')};
+    border-width: 2px;
+  }
+
   .ant-table-thead > tr > th {
     background: rgba(244, 244, 244, 0.95);
     color: ${get('colors.primary')};

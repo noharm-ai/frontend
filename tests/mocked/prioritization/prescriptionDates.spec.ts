@@ -357,6 +357,43 @@ test("prioritizing by next prescription starts from the current point in time, h
   await expect(page.getByText(PAST)).toBeHidden();
 });
 
+test("tells the user how many patients the pointer hides", async ({
+  page,
+  mockApi,
+}) => {
+  await loginWithFeatures(page, mockApi, [FEATURE]);
+  await search(page);
+  await prioritizeBy(page, "Próxima prescrição");
+
+  const filter = datesFilter(page);
+  await expect(
+    filter.getByText("Ocultar prescrições anteriores a"),
+  ).toBeVisible();
+  await expect(filter.getByText("1 paciente oculto")).toBeVisible();
+
+  // from midnight nothing is left out, so the count goes away
+  await filter.locator(".ant-slider-handle").click();
+  await filter.locator(".ant-slider-handle").press("Home");
+
+  await expect(page.getByText(PAST)).toBeVisible();
+  await expect(filter.locator(".prescription-dates-hidden")).toHaveCount(0);
+});
+
+test("show all turns the filter off", async ({ page, mockApi }) => {
+  await loginWithFeatures(page, mockApi, [FEATURE]);
+  await search(page);
+  await prioritizeBy(page, "Próxima prescrição");
+  await expect(page.getByText(PAST)).toBeHidden();
+
+  const filter = datesFilter(page);
+  await filter.getByRole("button", { name: "Mostrar todos" }).click();
+
+  await expect(page.getByText(UPCOMING)).toBeVisible();
+  await expect(page.getByText(PAST)).toBeVisible();
+  await expect(filter.getByPlaceholder("Todas as prescrições")).toBeVisible();
+  await expect(filter.locator(".ant-slider")).toHaveCount(0);
+});
+
 test("switching to another prioritization turns the filter off", async ({
   page,
   mockApi,

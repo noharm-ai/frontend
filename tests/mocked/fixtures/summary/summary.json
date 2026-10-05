@@ -1,0 +1,181 @@
+{
+  "status": "success",
+  "data": {
+    "patient": {
+      "idPatient": 4210,
+      "admissionNumber": 9100,
+      "birthdate": "__DATE_BIRTH__",
+      "gender": "F",
+      "color": "Parda",
+      "weight": 72.5,
+      "weightDate": "__DATE_ADMISSION__",
+      "height": 165,
+      "imc": 26.63,
+      "admissionDate": "__DATE_ADMISSION__",
+      "dischargeDate": "__DATE_NOW__"
+    },
+    "allergies": [
+      {
+        "name": "Dipirona"
+      },
+      {
+        "name": "Penicilina"
+      }
+    ],
+    "exams": [
+      {
+        "name": "Creatinina",
+        "date": "2024-03-04T08:00:00",
+        "result": 1.1,
+        "measureUnit": "mg/dL"
+      },
+      {
+        "name": "Potássio",
+        "date": "2024-03-04T08:00:00",
+        "result": 4.2,
+        "measureUnit": "mEq/L"
+      }
+    ],
+    "drugsUsed": [
+      {
+        "name": "Ceftriaxona 1g",
+        "idClass": "J1",
+        "nameClass": "Antimicrobianos",
+        "period": "7 dias"
+      },
+      {
+        "name": "Omeprazol 40mg",
+        "idClass": "A2",
+        "nameClass": "Trato digestivo",
+        "period": "5 dias"
+      }
+    ],
+    "drugsSuspended": [
+      {
+        "name": "Varfarina 5mg"
+      }
+    ],
+    "receipt": [
+      {
+        "name": "Amoxicilina 500mg",
+        "dose": 1,
+        "measureUnit": "CP",
+        "frequency": "8/8 horas",
+        "route": "Oral"
+      },
+      {
+        "name": "Enoxaparina 40mg",
+        "dose": 1,
+        "measureUnit": "SER",
+        "frequency": "1x ao dia",
+        "route": "Subcutânea"
+      }
+    ],
+    "summaryConfig": {
+      "reason": {
+        "prompt": {
+          "messages": [
+            {
+              "role": "system",
+              "content": "Resuma o motivo da admissão."
+            }
+          ],
+          "temperature": 0.1,
+          "top_p": 0.9
+        },
+        "audit": ["Evolução médica 01/03", "Evolução médica 02/03"]
+      },
+      "diagnosis": {
+        "prompt": {
+          "messages": [
+            {
+              "role": "system",
+              "content": "Liste os diagnósticos."
+            }
+          ],
+          "temperature": 0.1,
+          "top_p": 0.9
+        },
+        "audit": ["CID J18 - Pneumonia"]
+      },
+      "previousDrugs": {
+        "prompt": {
+          "messages": [
+            {
+              "role": "system",
+              "content": "Liste os medicamentos prévios."
+            }
+          ],
+          "temperature": 0.1,
+          "top_p": 0.9
+        },
+        "audit": ["Anamnese de admissão"]
+      },
+      "clinicalSummary": {
+        "prompt": {
+          "messages": [
+            {
+              "role": "system",
+              "content": "Resuma a internação."
+            }
+          ],
+          "temperature": 0.1,
+          "top_p": 0.9
+        },
+        "audit": ["Evolução multiprofissional"]
+      },
+      "exams": {
+        "prompt": {
+          "messages": [
+            {
+              "role": "system",
+              "content": "Resuma os exames."
+            }
+          ],
+          "temperature": 0.1,
+          "top_p": 0.9
+        },
+        "audit": []
+      },
+      "procedures": {
+        "prompt": {
+          "messages": [
+            {
+              "role": "system",
+              "content": "Liste os procedimentos."
+            }
+          ],
+          "temperature": 0.1,
+          "top_p": 0.9
+        },
+        "audit": ["Descrição cirúrgica"]
+      },
+      "dischargeCondition": {
+        "prompt": {
+          "messages": [
+            {
+              "role": "system",
+              "content": "Descreva a condição de alta."
+            }
+          ],
+          "temperature": 0.1,
+          "top_p": 0.9
+        },
+        "audit": ["Evolução de alta"]
+      },
+      "dischargePlan": {
+        "prompt": {
+          "messages": [
+            {
+              "role": "system",
+              "content": "Descreva o plano de alta."
+            }
+          ],
+          "temperature": 0.1,
+          "top_p": 0.9
+        },
+        "audit": ["Orientações de alta"]
+      }
+    }
+  }
+}

@@ -107,6 +107,7 @@ export const setUser = (userData, keepMeLogged, dispatch) => {
     signature,
     onboardingStatus,
     training,
+    recentNews,
     ...identify
   } = userData;
   const user = {
@@ -125,6 +126,8 @@ export const setUser = (userData, keepMeLogged, dispatch) => {
     signature,
     onboardingStatus,
     training,
+    // published news from the last days, for the menu badge (login only)
+    recentNews: recentNews ?? 0,
   };
 
   setStorageItem("schema", schema);

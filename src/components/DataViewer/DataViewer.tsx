@@ -39,7 +39,9 @@ import {
   getTypeTagColor,
   getTypeTagLabel,
 } from "./DataViewer.utils";
-import { ColumnMeta, ColumnOverride, DataRow, ExtraColumn } from "./types";
+import { getColumnHref } from "./DataViewer.links";
+import { LinkCell } from "./LinkCell/LinkCell";
+import { ColumnMeta, DataRow } from "./types";
 
 export interface DataViewerProps {
   data: DataRow[];
@@ -49,18 +51,14 @@ export interface DataViewerProps {
   onRowClick?: (record: DataRow) => void;
   loading?: boolean;
   showFilters?: boolean;
-  /**
-   * Per-column customizations keyed by column key, e.g. a cell that renders
-   * a value not present in the row yet. Pass a memoized object.
-   */
-  columnOverrides?: Record<string, ColumnOverride>;
-  /**
-   * Columns shown even though the rows do not carry them (yet), rendered
-   * through `columnOverrides`. Ignored once the rows have the key. Pass a
-   * memoized array.
-   */
-  extraColumns?: ExtraColumn[];
 }
+
+const renderLink = (col: ColumnMeta, value: unknown, record: DataRow) => {
+  const href = getColumnHref(col.link, value, record);
+  if (!href || !col.link) return null;
+
+  return <LinkCell href={href} id={String(value).trim()} link={col.link} />;
+};
 
 export const DataViewer: React.FC<DataViewerProps> = ({
   data,
@@ -70,32 +68,13 @@ export const DataViewer: React.FC<DataViewerProps> = ({
   onRowClick,
   loading = false,
   showFilters = true,
-  columnOverrides,
-  extraColumns,
 }) => {
   const indexedData: DataRow[] = useMemo(
     () => data.map((row, index) => ({ ...row, _index: index, key: index })),
     [data],
   );
 
-  const columnsMeta = useMemo(() => {
-    const inferred: ColumnMeta[] = inferColumnsFromData(data);
-    if (!extraColumns?.length || inferred.length === 0) return inferred;
-
-    const columns = [...inferred];
-    extraColumns.forEach(({ key, after }) => {
-      if (columns.some((col) => col.key === key)) return;
-
-      const meta: ColumnMeta = { key, title: key, type: "string" };
-      const index = after ? columns.findIndex((col) => col.key === after) : -1;
-      if (index >= 0) {
-        columns.splice(index + 1, 0, meta);
-      } else {
-        columns.push(meta);
-      }
-    });
-    return columns;
-  }, [data, extraColumns]);
+  const columnsMeta = useMemo(() => inferColumnsFromData(data), [data]);
 
   const [globalFilter, setGlobalFilter] = useState("");
   const [searchValue, setSearchValue] = useState("");
@@ -125,16 +104,16 @@ export const DataViewer: React.FC<DataViewerProps> = ({
     return columnsMeta
       .filter((col) => !hiddenColumnKeys.has(col.key))
       .map((col) => {
-        const override = columnOverrides?.[col.key];
         const column: ColumnType<DataRow> = {
-          title: override?.title ?? col.title,
+          title: col.title,
           dataIndex: col.key,
           key: col.key,
           sorter: true,
           ellipsis: true,
-          width: col.type === "number" ? 120 : 180,
+          width: col.link ? 150 : col.type === "number" ? 120 : 180,
           render: (value: unknown, record: DataRow) => {
-            if (override?.render) return override.render(value, record);
+            const link = renderLink(col, value, record);
+            if (link) return link;
 
             const formatted = formatValue(value);
 
@@ -160,13 +139,9 @@ export const DataViewer: React.FC<DataViewerProps> = ({
           };
         }
 
-        if (override?.sortable === false) {
-          column.sorter = false;
-        }
-
         return column;
       });
-  }, [columnsMeta, hiddenColumnKeys, columnOverrides]);
+  }, [columnsMeta, hiddenColumnKeys]);
 
   const debouncedSearch = useMemo(
     () => debounce((value: string) => setGlobalFilter(value), 250),
@@ -240,8 +215,11 @@ export const DataViewer: React.FC<DataViewerProps> = ({
           >
             {col.title}
           </Checkbox>
-          <TypeTag $type={col.type} color={getTypeTagColor(col.type)}>
-            {getTypeTagLabel(col.type)}
+          <TypeTag
+            $type={col.type}
+            color={getTypeTagColor(col.link ? "link" : col.type)}
+          >
+            {getTypeTagLabel(col.link ? "link" : col.type)}
           </TypeTag>
         </CheckboxItem>
       ))}
@@ -357,26 +335,15 @@ export const DataViewer: React.FC<DataViewerProps> = ({
         {selectedRecord &&
           columnsMeta.map((col) => {
             const value = selectedRecord[col.key];
-            const override = columnOverrides?.[col.key];
-
-            if (override?.render) {
-              return (
-                <FieldItem key={col.key}>
-                  <FieldLabel>{col.title}</FieldLabel>
-                  <FieldValue $type={col.type}>
-                    {override.render(value, selectedRecord)}
-                  </FieldValue>
-                </FieldItem>
-              );
-            }
-
             if (value === null || value === undefined || value === "")
               return null;
 
             return (
               <FieldItem key={col.key}>
                 <FieldLabel>{col.title}</FieldLabel>
-                <FieldValue $type={col.type}>{formatValue(value)}</FieldValue>
+                <FieldValue $type={col.type}>
+                  {renderLink(col, value, selectedRecord) ?? formatValue(value)}
+                </FieldValue>
               </FieldItem>
             );
           })}

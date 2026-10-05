@@ -15,6 +15,7 @@ import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import { Row, Col } from "components/Grid";
 import InitialPage from "features/preferences/InitialPage/InitialPage";
+import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
 import FeatureService from "services/features";
 import {
   trackPrescriptionPrioritizationAction,
@@ -27,6 +28,7 @@ import { PrescriptionDatesFilter } from "./PrescriptionDatesFilter/PrescriptionD
 import { reducer, initState } from "./Store";
 import {
   applyPrescriptionDatesReference,
+  countHiddenByPrescriptionDates,
   isPrescriptionDatesPrioritization,
   sortList,
   filterList,
@@ -219,8 +221,16 @@ export default function Prioritization({
       <Row align="middle">
         <Col span={24} md={10}>
           <header>
-            <Heading data-kb="prioritization.title">
+            <Heading
+              data-kb="prioritization.title"
+              style={{ display: "flex", alignItems: "center", gap: "1rem" }}
+            >
               Priorização por Pacientes
+              {/* apart from the lists': the cards have their own articles */}
+              <KnowledgeBaseIcon
+                anchor="prioritization.cards.articles"
+                label="Priorização por Pacientes"
+              />
             </Heading>
           </header>
         </Col>
@@ -340,6 +350,10 @@ export default function Prioritization({
                   className="prescription-dates-filter"
                   value={state.filter.prescriptionDates}
                   onChange={onChangePrescriptionDates}
+                  hiddenCount={countHiddenByPrescriptionDates(
+                    list,
+                    state.filter.prescriptionDates,
+                  )}
                 />
               )}
             </div>

@@ -4,19 +4,14 @@ import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { Spin, Alert, Space } from "antd";
-import {
-  EditOutlined,
-  RollbackOutlined,
-  QuestionOutlined,
-} from "@ant-design/icons";
+import { EditOutlined, RollbackOutlined } from "@ant-design/icons";
 
 import notification from "components/notification";
 import Button from "components/Button";
 import Dropdown from "components/Dropdown";
 import Heading from "components/Heading";
-import Tooltip from "components/Tooltip";
 import DefaultModal from "components/Modal";
-import { useArticleModal } from "features/knowledgeBase/useArticleModal";
+import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
 import {
   fetchInterventionOutcomeData,
   setInterventionOutcome,
@@ -35,7 +30,6 @@ import { ModalFooter } from "styles/Utils.style";
 export default function InterventionOutcome({ ...props }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
-  const { openArticle } = useArticleModal();
   const selectedIntervention = useSelector(
     (state) => state.interventionOutcome.selectedIntervention,
   );
@@ -263,8 +257,10 @@ export default function InterventionOutcome({ ...props }) {
           maskClosable={false}
           {...props}
         >
-          <header style={{ display: "flex", alignItems: "center" }}>
-            <Heading style={{ marginRight: "10px" }} $size="18px">
+          <header
+            style={{ display: "flex", alignItems: "center", gap: "10px" }}
+          >
+            <Heading $size="18px">
               {selectedIntervention.view ? (
                 <>Detalhes da Intervenção</>
               ) : (
@@ -275,16 +271,11 @@ export default function InterventionOutcome({ ...props }) {
                 </>
               )}
             </Heading>
-            {outcomeData.header?.economyType && (
-              <Tooltip title="Ajuda sobre Farmacoeconomia">
-                <Button
-                  type="primary"
-                  shape="circle"
-                  icon={<QuestionOutlined />}
-                  onClick={() => openArticle(19)}
-                />
-              </Tooltip>
-            )}
+            <KnowledgeBaseIcon
+              anchor="interventionOutcome.form.articles"
+              label="Desfecho da intervenção"
+              global
+            />
           </header>
 
           <Spin spinning={loadStatus === "loading"}>
