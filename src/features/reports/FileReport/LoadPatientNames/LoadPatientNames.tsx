@@ -1,26 +1,18 @@
-import { useState, useSyncExternalStore } from "react";
+import { useState } from "react";
 import { Alert } from "antd";
 import { UserOutlined } from "@ant-design/icons";
 
 import Button from "src/components/Button";
 import Modal from "src/components/Modal";
+import { LoadPlan, LoadResult } from "../patientNames/loadPatientNames";
 import {
-  LoadAllResult,
-  LoadPlan,
-  PatientNameStore,
-} from "../patientNames/patientNameStore";
-import { usePatientNamesLoad } from "../patientNames/usePatientNamesLoad";
+  ReportNames,
+  usePatientNamesLoad,
+} from "../patientNames/usePatientNamesLoad";
 import { NamesLoadProgress } from "../NamesLoadProgress/NamesLoadProgress";
 
 interface LoadPatientNamesProps {
-  /** Page-local names of the report: a run only asks for the unanswered. */
-  store: PatientNameStore;
-  /** Distinct patients of the report. */
-  total: number;
-  /** True once a run has answered every patient of the report. */
-  allLoaded: boolean;
-  /** Called when a run ends; `complete` when every patient was answered. */
-  onFinished: (result: { complete: boolean }) => void;
+  names: ReportNames;
 }
 
 type Status = "idle" | "running" | "finished" | "error";
@@ -33,26 +25,22 @@ const EMPTY_PLAN: LoadPlan = {
   pending: 0,
 };
 
-export function LoadPatientNames({
-  store,
-  total,
-  allLoaded,
-  onFinished,
-}: LoadPatientNamesProps) {
+/**
+ * The only way to load the report's patient names: a button and a modal
+ * with progress. A new run asks only for the patients still unanswered.
+ */
+export function LoadPatientNames({ names }: LoadPatientNamesProps) {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
   const [plan, setPlan] = useState<LoadPlan>(EMPTY_PLAN);
-  const [summary, setSummary] = useState<LoadAllResult | null>(null);
-  const load = usePatientNamesLoad(store, { onFinished, source: "button" });
+  const [summary, setSummary] = useState<LoadResult | null>(null);
+  const load = usePatientNamesLoad(names, "button");
 
-  const loadedCount = useSyncExternalStore(store.subscribe, () =>
-    store.loadedCount(),
-  );
-
-  const nothingToFetch = plan.cached === 0 && plan.pending === 0;
+  const loadedCount = Object.keys(names.known).length;
+  const nothingToLoad = plan.cached === 0 && plan.pending === 0;
 
   const openModal = () => {
-    setPlan(store.plan());
+    setPlan(load.plan());
     setStatus("idle");
     setSummary(null);
     setOpen(true);
@@ -76,13 +64,15 @@ export function LoadPatientNames({
     if (status === "idle") {
       return [
         <Button key="cancel" onClick={close}>
-          Cancelar
+          {nothingToLoad ? "Fechar" : "Cancelar"}
         </Button>,
-        // still enabled with nothing to fetch: completing the run is what
-        // unlocks filtering and sorting by name
-        <Button key="load" type="primary" onClick={run}>
-          {plan.pending > 0 ? "Carregar" : "Aplicar"}
-        </Button>,
+        ...(nothingToLoad
+          ? []
+          : [
+              <Button key="load" type="primary" onClick={run}>
+                Carregar
+              </Button>,
+            ]),
       ];
     }
 
@@ -108,9 +98,9 @@ export function LoadPatientNames({
         onClick={openModal}
         data-kb="reports.file.patientNames"
       >
-        {allLoaded
-          ? `Nomes carregados (${loadedCount}/${total})`
-          : "Carregar todos os nomes"}
+        {loadedCount > 0
+          ? `Nomes carregados (${loadedCount}/${names.ids.length})`
+          : "Carregar nomes"}
       </Button>
 
       <Modal
@@ -131,7 +121,7 @@ export function LoadPatientNames({
                 Este relatório possui <strong>{plan.total}</strong> pacientes
                 distintos.
               </p>
-              {nothingToFetch ? (
+              {nothingToLoad ? (
                 <p>Todos os nomes deste relatório já foram consultados.</p>
               ) : (
                 <ul>
@@ -150,14 +140,7 @@ export function LoadPatientNames({
               <Alert
                 type="info"
                 showIcon
-                description={
-                  <>
-                    Os nomes já aparecem conforme as linhas surgem na tabela.
-                    Carregue todos para filtrar e ordenar pela coluna de nome.
-                    Eles ficam apenas nesta tela: não são gravados no cache de
-                    nomes nem incluídos nos arquivos exportados.
-                  </>
-                }
+                description="Os nomes ficam apenas nesta tela: não são gravados no cache de nomes. Para tê-los num arquivo, escolha exportar com nomes."
               />
             </>
           )}
@@ -176,7 +159,7 @@ export function LoadPatientNames({
                   Carregados: {summary.cached + summary.fetched} (cache:{" "}
                   {summary.cached}, buscados: {summary.fetched})
                 </li>
-                <li>Não encontrados: {summary.notFound}</li>
+                <li>Não encontrados: {summary.notFound.length}</li>
                 {summary.failed > 0 && (
                   <li>Falha na busca: {summary.failed}</li>
                 )}
@@ -198,7 +181,7 @@ export function LoadPatientNames({
                   type="error"
                   showIcon
                   message="Não foi possível buscar todos os nomes."
-                  description='Os nomes obtidos até aqui foram aplicados. Clique em "Carregar todos os nomes" novamente para buscar os restantes.'
+                  description='Os nomes obtidos até aqui foram aplicados. Clique em "Nomes carregados" novamente para buscar os restantes.'
                 />
               )}
             </>

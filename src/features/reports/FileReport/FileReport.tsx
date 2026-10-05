@@ -7,7 +7,6 @@ import {
   Tag,
   Alert,
   Tabs,
-  Tooltip,
 } from "antd";
 import { useParams } from "react-router-dom";
 import {
@@ -61,11 +60,8 @@ import { FilterRow } from "./FilterRow";
 import { ErrorBoundary } from "react-error-boundary";
 import { withChartDefaults } from "src/components/ChartCreator/chartRemap";
 import { CopyCharts, CopySummary } from "./CopyCharts/CopyCharts";
-import hospital from "src/services/hospital";
-import type { ColumnOverride } from "src/components/DataViewer/types";
 import { LoadPatientNames } from "./LoadPatientNames/LoadPatientNames";
 import { ExportNames, ExportReport } from "./ExportReport/ExportReport";
-import { PatientNameCell } from "./PatientNameCell/PatientNameCell";
 import {
   collectDistinctPatientIds,
   enrichRowsWithNames,
@@ -73,7 +69,8 @@ import {
   PatientNames,
   resolveNameColumnKey,
 } from "./patientNames/patientNames.utils";
-import { createPatientNameStore } from "./patientNames/patientNameStore";
+import { LoadResult } from "./patientNames/loadPatientNames";
+import { ReportNames } from "./patientNames/usePatientNamesLoad";
 
 const ChartCreatorFallback = ({
   resetErrorBoundary,
@@ -112,11 +109,12 @@ export function FileReport() {
   const [isSavingCharts, setIsSavingCharts] = useState(false);
   const [showCopyCharts, setShowCopyCharts] = useState(false);
   // Patient names live only in this page, never in the shared name cache.
-  // On screen they load as rows appear; `patientNames` is the snapshot taken
-  // when every patient has been queried, which unlocks filter/sort by name.
+  // They are loaded on demand ("Carregar nomes" or an export with names) and
+  // written into the rows, so the table, sorting and filters use them.
   const [patientNames, setPatientNames] = useState<PatientNames>({});
-  const [allNamesLoaded, setAllNamesLoaded] = useState(false);
-  const appConfig = useAppSelector((state: any) => state.app.config);
+  const [notFoundIds, setNotFoundIds] = useState<ReadonlySet<string>>(
+    () => new Set(),
+  );
   const chartCreatorRef = useRef<ChartCreatorHandle>(null);
   const currentSchema = useAppSelector(
     (state: any) => state.user.account.schema,
@@ -149,7 +147,7 @@ export function FileReport() {
         const cache = await decompressedResponse.json();
 
         setPatientNames({});
-        setAllNamesLoaded(false);
+        setNotFoundIds(new Set());
         setData(cache);
         setTitle(response.payload.data.data.title);
         if (response.payload.data.data.graphs) {
@@ -193,88 +191,38 @@ export function FileReport() {
     () => (patientIdKey ? collectDistinctPatientIds(data, patientIdKey) : []),
     [data, patientIdKey],
   );
-  // Until every patient is answered the name column is virtual: the table
-  // shows it, rendered from the store, but the rows (and so the schema,
-  // filters and charts) do not carry it. Once complete, the names are
-  // written into the rows, which unlocks filtering and sorting by name.
+  // the name column shows up once a load has answered some patient
+  const hasNameAnswers =
+    Object.keys(patientNames).length > 0 || notFoundIds.size > 0;
   const enrichedData = useMemo(
     () =>
-      allNamesLoaded && patientIdKey && nameColumnKey
+      hasNameAnswers && patientIdKey && nameColumnKey
         ? enrichRowsWithNames(data, patientIdKey, nameColumnKey, patientNames)
         : data,
-    [data, allNamesLoaded, patientIdKey, nameColumnKey, patientNames],
+    [data, hasNameAnswers, patientIdKey, nameColumnKey, patientNames],
   );
 
-  // One store per name configuration: names stay valid across datasets of the
-  // same schema, and switching schema replaces the app config.
-  const nameStore = useMemo(
+  const handleNamesLoaded = useCallback((result: LoadResult) => {
+    if (Object.keys(result.names).length > 0) {
+      setPatientNames((current) => ({ ...current, ...result.names }));
+    }
+    if (result.notFound.length > 0) {
+      setNotFoundIds((current) => new Set([...current, ...result.notFound]));
+    }
+  }, []);
+
+  const reportNames = useMemo<ReportNames | null>(
     () =>
-      nameColumnKey
-        ? createPatientNameStore({
-            // one id per request without a batch endpoint, 10 in flight
-            batchSize: appConfig.multipleNameUrl ? 100 : 1,
-            concurrency: appConfig.multipleNameUrl ? 1 : 10,
-            resolveHeaders: () => hospital.resolveNameHeaders(appConfig),
-            fetchNames: (ids, { signal, headers }) =>
-              hospital.getPatientNames({
-                ids,
-                nameUrl: appConfig.nameUrl,
-                multipleNameUrl: appConfig.multipleNameUrl,
-                headers,
-                signal,
-              }),
-          })
+      nameColumnKey && patientIds.length > 0
+        ? {
+            ids: patientIds,
+            known: patientNames,
+            notFound: notFoundIds,
+            onLoaded: handleNamesLoaded,
+          }
         : null,
-    [nameColumnKey, appConfig],
+    [nameColumnKey, patientIds, patientNames, notFoundIds, handleNamesLoaded],
   );
-
-  useEffect(() => {
-    return () => nameStore?.stop();
-  }, [nameStore]);
-
-  useEffect(() => {
-    nameStore?.setIds(patientIds);
-  }, [nameStore, patientIds]);
-
-  const handleNamesFinished = useCallback(
-    ({ complete }: { complete: boolean }) => {
-      if (complete && nameStore) {
-        setPatientNames(nameStore.getNames());
-        setAllNamesLoaded(true);
-      }
-    },
-    [nameStore],
-  );
-
-  const nameExtraColumns = useMemo(
-    () =>
-      nameColumnKey && patientIdKey
-        ? [{ key: nameColumnKey, after: patientIdKey }]
-        : undefined,
-    [nameColumnKey, patientIdKey],
-  );
-
-  const nameColumnOverrides = useMemo<
-    Record<string, ColumnOverride> | undefined
-  >(() => {
-    if (!nameColumnKey || !patientIdKey || !nameStore) return undefined;
-
-    return {
-      [nameColumnKey]: {
-        title: allNamesLoaded ? (
-          nameColumnKey
-        ) : (
-          <Tooltip title="Carregue todos os nomes para ordenar e filtrar por esta coluna.">
-            <span>{nameColumnKey}</span>
-          </Tooltip>
-        ),
-        sortable: allNamesLoaded,
-        render: (_value, record) => (
-          <PatientNameCell store={nameStore} idPatient={record[patientIdKey]} />
-        ),
-      },
-    };
-  }, [nameColumnKey, patientIdKey, nameStore, allNamesLoaded]);
 
   useEffect(() => {
     if (enrichedData.length > 0) {
@@ -403,16 +351,10 @@ export function FileReport() {
 
   const exportNames = useMemo<ExportNames | undefined>(
     () =>
-      nameStore && patientIdKey && nameColumnKey
-        ? {
-            store: nameStore,
-            idKey: patientIdKey,
-            nameKey: nameColumnKey,
-            allLoaded: allNamesLoaded,
-            onFinished: handleNamesFinished,
-          }
+      reportNames && patientIdKey && nameColumnKey
+        ? { report: reportNames, idKey: patientIdKey, nameKey: nameColumnKey }
         : undefined,
-    [nameStore, patientIdKey, nameColumnKey, allNamesLoaded, handleNamesFinished],
+    [reportNames, patientIdKey, nameColumnKey],
   );
 
   return (
@@ -479,13 +421,8 @@ export function FileReport() {
           <ContentContainer>
           <Tabs
             tabBarExtraContent={
-              !isLoading && nameStore ? (
-                <LoadPatientNames
-                  store={nameStore}
-                  total={patientIds.length}
-                  allLoaded={allNamesLoaded}
-                  onFinished={handleNamesFinished}
-                />
+              !isLoading && reportNames ? (
+                <LoadPatientNames names={reportNames} />
               ) : null
             }
             // Remount when the tab set changes (e.g. charts load) so the
@@ -552,8 +489,6 @@ export function FileReport() {
                 ),
                 children: (
                   <DataViewer
-                    columnOverrides={nameColumnOverrides}
-                    extraColumns={nameExtraColumns}
                     data={filteredData}
                     onRowClick={() => {}}
                     showFilters={false}

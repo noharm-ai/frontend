@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Alert, Flex, Radio, Spin } from "antd";
+import { Alert, Flex, Progress, Radio } from "antd";
 import { FileExcelOutlined, FileTextOutlined } from "@ant-design/icons";
 import slugify from "slugify";
 
@@ -10,32 +10,26 @@ import Modal from "src/components/Modal";
 import notification from "src/components/notification";
 import { downloadReport } from "src/features/reports/ReportsSlice";
 import { getErrorMessage } from "src/utils/errorHandler";
+import { exportCSV } from "src/utils/report";
 import { TrackedReport, trackReport } from "src/utils/tracker";
+import { LoadResult } from "../patientNames/loadPatientNames";
+import { enrichRowsWithNames } from "../patientNames/patientNames.utils";
 import {
-  LoadAllResult,
-  PatientNameStore,
-} from "../patientNames/patientNameStore";
-import { usePatientNamesLoad } from "../patientNames/usePatientNamesLoad";
+  ReportNames,
+  usePatientNamesLoad,
+} from "../patientNames/usePatientNamesLoad";
 import { NamesLoadProgress } from "../NamesLoadProgress/NamesLoadProgress";
-import {
-  buildCsv,
-  buildXlsx,
-  downloadBlob,
-  ExportColumn,
-} from "./exportFile";
 
 type Format = "csv" | "xlsx";
 type Phase = "choose" | "loading" | "failed" | "generating";
 type Row = Record<string, unknown>;
 
 export interface ExportNames {
-  store: PatientNameStore;
+  report: ReportNames;
   /** Patient id column of the dataset. */
   idKey: string;
   /** Column the names are exported in, right after the id. */
   nameKey: string;
-  allLoaded: boolean;
-  onFinished: (result: { complete: boolean }) => void;
 }
 
 interface ExportReportProps {
@@ -54,36 +48,23 @@ interface ExportReportProps {
 
 const EXTENSION: Record<Format, string> = { csv: ".csv", xlsx: ".xlsx" };
 
-const nextFrame = () => new Promise((resolve) => setTimeout(resolve, 0));
+// exportCSV translates headers as `${namespace}.${column}`; custom report
+// columns keep their own names, so the "translation" drops the namespace
+const COLUMN_NAMESPACE = "column";
+const columnHeader = (path: string) =>
+  path.slice(COLUMN_NAMESPACE.length + 1);
 
-/** Dataset columns, with the name column right after the patient id. */
-const columnsWithNames = (
-  rows: Row[],
-  { idKey, nameKey }: ExportNames,
-  names: Record<string, string>,
-): ExportColumn[] => {
-  const columns: ExportColumn[] = [];
-
-  Object.keys(rows[0] ?? {}).forEach((key) => {
-    columns.push({ key, value: (row) => row[key] });
-    if (key === idKey) {
-      columns.push({
-        key: nameKey,
-        value: (row) => {
-          const id = row[idKey];
-          return id === null || id === undefined ? null : names[String(id)];
-        },
-      });
-    }
-  });
-
-  return columns;
+const EMPTY_REPORT: ReportNames = {
+  ids: [],
+  known: {},
+  notFound: new Set(),
+  onLoaded: () => undefined,
 };
 
 /**
  * Export of a custom report. Without names it downloads the file the server
- * generated; with names the file is built in the browser, after loading the
- * names that are still missing.
+ * generated. With names it is always a CSV, built in the browser by the
+ * app's CSV export (in a web worker), after loading the missing names.
  */
 export function ExportReport({
   open,
@@ -100,13 +81,10 @@ export function ExportReport({
   const [phase, setPhase] = useState<Phase>("choose");
   const [withNames, setWithNames] = useState<boolean | undefined>();
   const [toLoad, setToLoad] = useState(0);
-  const [format, setFormat] = useState<Format>("xlsx");
-  const [failure, setFailure] = useState<LoadAllResult | null>(null);
+  const [failure, setFailure] = useState<LoadResult | null>(null);
+  const [generated, setGenerated] = useState(0);
   const [serverExporting, setServerExporting] = useState(false);
-  const load = usePatientNamesLoad(names?.store ?? null, {
-    onFinished: (result) => names?.onFinished(result),
-    source: "export",
-  });
+  const load = usePatientNamesLoad(names?.report ?? EMPTY_REPORT, "export");
 
   const busy = phase === "loading" || phase === "generating";
   const mustChoose = !!names && withNames === undefined;
@@ -124,8 +102,8 @@ export function ExportReport({
 
   const chooseNames = (value: boolean) => {
     setWithNames(value);
-    if (value && names && !names.allLoaded) {
-      const plan = names.store.plan();
+    if (value) {
+      const plan = load.plan();
       setToLoad(plan.cached + plan.pending);
     }
   };
@@ -157,12 +135,13 @@ export function ExportReport({
     });
   };
 
-  const exportWithNames = async (selected: Format, force = false) => {
+  const exportWithNames = async (force = false) => {
     if (!names) return;
-    setFormat(selected);
     setFailure(null);
+    // the names known when the export was asked; a load below adds to them
+    let known = names.report.known;
 
-    if (!names.allLoaded && !force) {
+    if (toLoad > 0 && !force) {
       setPhase("loading");
       const result = await load.run();
       if (!result) return;
@@ -171,32 +150,38 @@ export function ExportReport({
         setPhase("choose");
         return;
       }
+      known = { ...known, ...result.names };
       if (!result.complete) {
         setFailure(result);
+        setToLoad(result.failed + result.remaining);
         setPhase("failed");
         return;
       }
+      setToLoad(0);
     }
 
     setPhase("generating");
+    setGenerated(0);
     onExportingChange?.(true);
-    await nextFrame();
 
     try {
-      const columns = columnsWithNames(rows, names, names.store.getNames());
-      const blob =
-        selected === "csv"
-          ? await buildCsv(rows, columns)
-          : await buildXlsx(rows, columns, title);
-
       const baseName = slugify(title || "relatorio", {
         lower: true,
         strict: true,
       });
-      downloadBlob(blob, `${baseName}-${filename}-com-nomes${EXTENSION[selected]}`);
+      await exportCSV(
+        enrichRowsWithNames(rows, names.idKey, names.nameKey, known),
+        columnHeader,
+        COLUMN_NAMESPACE,
+        {
+          filename: `${baseName}-${filename}-com-nomes.csv`,
+          onProgress: ({ percentage }: { percentage: number }) =>
+            setGenerated(percentage),
+        },
+      );
 
       trackReport(TrackedReport.CUSTOM, {
-        title: `exportar: ${title} - ${selected} - com nomes`,
+        title: `exportar: ${title} - csv - com nomes`,
       });
       onClose();
     } catch (error) {
@@ -210,7 +195,7 @@ export function ExportReport({
 
   const exportAs = (selected: Format) => {
     if (names && withNames) {
-      exportWithNames(selected);
+      exportWithNames();
     } else {
       exportFromServer(selected);
     }
@@ -226,13 +211,13 @@ export function ExportReport({
     }
     if (phase === "failed") {
       return [
-        <Button key="retry" onClick={() => exportWithNames(format)}>
+        <Button key="retry" onClick={() => exportWithNames()}>
           Tentar novamente
         </Button>,
         <Button
           key="anyway"
           type="primary"
-          onClick={() => exportWithNames(format, true)}
+          onClick={() => exportWithNames(true)}
         >
           Exportar mesmo assim
         </Button>,
@@ -272,7 +257,7 @@ export function ExportReport({
                     { label: "Com nomes", value: true },
                   ]}
                 />
-                {withNames && !names.allLoaded && (
+                {withNames && toLoad > 0 && (
                   <Alert
                     type="info"
                     showIcon
@@ -293,20 +278,23 @@ export function ExportReport({
               >
                 CSV
               </Button>
-              <Button
-                size="large"
-                type="primary"
-                icon={<FileExcelOutlined />}
-                onClick={() => exportAs("xlsx")}
-                loading={serverExporting}
-                disabled={mustChoose}
-              >
-                XLSX
-              </Button>
+              {!withNames && (
+                <Button
+                  size="large"
+                  type="primary"
+                  icon={<FileExcelOutlined />}
+                  onClick={() => exportAs("xlsx")}
+                  loading={serverExporting}
+                  disabled={mustChoose}
+                >
+                  XLSX
+                </Button>
+              )}
             </Flex>
             {mustChoose && (
               <p>Escolha se o arquivo terá os nomes dos pacientes.</p>
             )}
+            {withNames && <p>*Com nomes, o arquivo é exportado em CSV.</p>}
             <p>
               *Os filtros não são aplicados no arquivo exportado. Ele sempre
               possui os dados completos.
@@ -331,9 +319,9 @@ export function ExportReport({
         )}
 
         {phase === "generating" && (
-          <Flex vertical align="center" gap={12} style={{ padding: "24px 0" }}>
-            <Spin />
+          <Flex vertical gap={8} style={{ padding: "16px 0" }}>
             <span>Gerando arquivo...</span>
+            <Progress percent={generated} showInfo={false} />
           </Flex>
         )}
       </div>
