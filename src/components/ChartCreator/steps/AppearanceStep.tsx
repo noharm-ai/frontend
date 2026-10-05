@@ -9,6 +9,7 @@ import { applyFilters } from "src/utils/dataFilters";
 import { labelStyle } from "./fieldStyles";
 import { CustomColorsField } from "./CustomColorsField";
 import { ECHARTS_DEFAULT_COLORS, PALETTE_OPTIONS } from "../palettes";
+import { CHART_HEIGHT } from "../chartLayout";
 import type { ColorMode, ColorPalette, SortOrder } from "../types";
 import type { WizardStepProps } from "./StepProps";
 
@@ -136,12 +137,12 @@ export function AppearanceStep(props: WizardStepProps) {
           <Col span={12}>
             <label style={labelStyle}>Altura (px)</label>
             <InputNumber
-              min={200}
-              max={1200}
-              step={50}
+              min={CHART_HEIGHT.min}
+              max={CHART_HEIGHT.max}
+              step={CHART_HEIGHT.step}
               style={{ width: "100%" }}
-              value={draft.height ?? 400}
-              onChange={(val) => patchDraft({ height: val ?? 400 })}
+              value={draft.height ?? CHART_HEIGHT.initial}
+              onChange={(val) => patchDraft({ height: val ?? CHART_HEIGHT.initial })}
             />
           </Col>
         </Row>
@@ -204,12 +205,12 @@ export function AppearanceStep(props: WizardStepProps) {
         <Col span={12}>
           <label style={labelStyle}>Altura (px)</label>
           <InputNumber
-            min={200}
-            max={1200}
-            step={50}
+            min={CHART_HEIGHT.min}
+            max={CHART_HEIGHT.max}
+            step={CHART_HEIGHT.step}
             style={{ width: "100%" }}
-            value={draft.height ?? 400}
-            onChange={(val) => patchDraft({ height: val ?? 400 })}
+            value={draft.height ?? CHART_HEIGHT.initial}
+            onChange={(val) => patchDraft({ height: val ?? CHART_HEIGHT.initial })}
           />
         </Col>
       </Row>
