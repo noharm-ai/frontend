@@ -10,7 +10,7 @@ import {
 // fixed column with the drug of each row (--label-width), narrower on phones
 const LABEL_WIDTH = 280;
 const LABEL_WIDTH_SMALL = 160;
-// narrowest a day column gets before the timeline scrolls sideways
+// every day column has this width; long admissions scroll sideways
 export const DAY_WIDTH = 34;
 
 const GRID_LINE = "#f0f0f0";
@@ -119,9 +119,9 @@ export const Track = styled.div<{ $days: number }>`
     ${GRID_LINE} 1px,
     transparent 1px
   );
-  background-size: calc(100% / ${(props) => props.$days}) 100%;
+  background-size: ${DAY_WIDTH}px 100%;
   display: flex;
-  flex: 1;
+  flex: 0 0 ${(props) => props.$days * DAY_WIDTH}px;
   position: relative;
 
   &.track-header {
@@ -192,12 +192,11 @@ export const HeaderDay = styled.div`
   border-left: 1px solid ${GRID_LINE};
   color: #8c8c8c;
   display: flex;
-  flex: 1 1 0;
+  flex: 0 0 ${DAY_WIDTH}px;
   flex-direction: column;
   font-size: 11px;
   justify-content: center;
   line-height: 1.2;
-  min-width: 0;
   padding-top: 18px;
 
   .day-number {

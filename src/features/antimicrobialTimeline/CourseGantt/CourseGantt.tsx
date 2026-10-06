@@ -173,10 +173,10 @@ export function CourseGantt({ courses, now, dischargeDate }: CourseGanttProps) {
 
     const labelWidth =
       el.querySelector<HTMLElement>("[data-row-label]")?.offsetWidth ?? 0;
-    const trackWidth = el.scrollWidth - labelWidth;
+    const trackWidth = range.days.length * DAY_WIDTH;
     const todayX = labelWidth + (trackWidth * todayPercent) / 100;
     el.scrollLeft = Math.max(0, todayX - el.clientWidth * 0.7);
-  }, [showToday, todayPercent]);
+  }, [showToday, todayPercent, range.days.length]);
 
   const markers = (
     <>
