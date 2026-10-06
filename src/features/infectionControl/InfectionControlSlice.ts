@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 
 import api from "services/api";
@@ -77,6 +77,100 @@ export interface IAntimicrobialTimeline {
   courses: ICourse[];
 }
 
+// an open reason that keeps the admission pending
+export interface IFollowUpPending {
+  id: string;
+  // InfectionControlPendingTypeEnum
+  type: number;
+  origin: number;
+  idDrug: number | null;
+  idPrescription: string | null;
+  details: { drug?: string; courseStart?: string } | null;
+  createdAt: string;
+}
+
+// how the posology was when the drug was evaluated
+export interface IEvaluationPosology {
+  idPrescriptionDrug: string;
+  dose: number | null;
+  doseconv: number | null;
+  measureUnit: string | null;
+  frequency: string | null;
+  dailyFrequency: number | null;
+  route: string | null;
+}
+
+// conformity of one antimicrobial course, recorded in a review
+export interface IAntimicrobialEvaluation {
+  id: string;
+  idReview: string;
+  idDrug: number;
+  idPrescription: string;
+  courseStart: string;
+  conforming: boolean;
+  notes: string | null;
+  posology: IEvaluationPosology;
+  validUntil: string;
+  // AntimicrobialEvaluationStatusEnum
+  status: number;
+  closedAt: string | null;
+  closingType: number | null;
+  createdAt: string;
+  createdBy: string | null;
+}
+
+// the evaluations of one course; idDrug + start match an ICourse
+export interface IFollowUpCourse {
+  idDrug: number;
+  start: string;
+  ongoing: boolean;
+  evaluation: IAntimicrobialEvaluation | null;
+  // every evaluation of the course, latest first
+  history: IAntimicrobialEvaluation[];
+}
+
+export interface IFollowUpReview {
+  id: string;
+  notes: string | null;
+  nextReviewDate: string | null;
+  createdAt: string;
+  createdBy: string | null;
+}
+
+/**
+ * Infection control follow-up of an admission
+ * (backend services/infection_control/infection_control_service.py). Only
+ * `enabled` and `admissionNumber` come when the schema has not turned the
+ * feature on.
+ */
+export interface IFollowUp {
+  enabled: boolean;
+  admissionNumber: number;
+  followed?: boolean;
+  // InfectionControlStatusEnum, null when the admission is not followed
+  status?: number | null;
+  statusDate?: string | null;
+  nextReviewDate?: string | null;
+  recalculatedAt?: string | null;
+  pendings?: IFollowUpPending[];
+  reviews?: IFollowUpReview[];
+  courses?: IFollowUpCourse[];
+}
+
+export interface IReviewEvaluationPayload {
+  idDrug: number;
+  conforming: boolean;
+  notes: string | null;
+  validUntil: string;
+}
+
+export interface IReviewPayload {
+  admissionNumber: number;
+  notes: string | null;
+  nextReviewDate: string | null;
+  evaluations: IReviewEvaluationPayload[];
+}
+
 type Status = "idle" | "loading" | "succeeded" | "failed";
 
 interface IInfectionControlSlice {
@@ -84,12 +178,28 @@ interface IInfectionControlSlice {
   data: IAntimicrobialTimeline | null;
   // i18n code of a failed load (errors.invalidRecord: unknown admission)
   errorCode: string | null;
+  followUp: {
+    status: Status;
+    data: IFollowUp | null;
+  };
+  review: {
+    open: boolean;
+    status: Status;
+  };
 }
 
 const initialState: IInfectionControlSlice = {
   status: "idle",
   data: null,
   errorCode: null,
+  followUp: {
+    status: "idle",
+    data: null,
+  },
+  review: {
+    open: false,
+    status: "idle",
+  },
 };
 
 export const fetchAntimicrobialTimeline = createAsyncThunk(
@@ -124,6 +234,32 @@ export const fetchAntimicrobialTimeline = createAsyncThunk(
   },
 );
 
+export const fetchFollowUp = createAsyncThunk(
+  "infectionControl/fetchFollowUp",
+  async (params: { admissionNumber: string }, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.getAdmission(
+        params.admissionNumber,
+      );
+      return response.data.data as IFollowUp;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
+export const saveReview = createAsyncThunk(
+  "infectionControl/saveReview",
+  async (params: IReviewPayload, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.saveReview(params);
+      return response.data.data as IFollowUp;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
 const infectionControlSlice = createSlice({
   name: "infectionControl",
   initialState,
@@ -131,9 +267,35 @@ const infectionControlSlice = createSlice({
     reset() {
       return initialState;
     },
+    setReviewOpen(state, action: PayloadAction<boolean>) {
+      state.review.open = action.payload;
+    },
   },
   extraReducers(builder) {
     builder
+      .addCase(fetchFollowUp.pending, (state) => {
+        state.followUp.status = "loading";
+      })
+      .addCase(fetchFollowUp.fulfilled, (state, action) => {
+        state.followUp.status = "succeeded";
+        state.followUp.data = action.payload;
+      })
+      .addCase(fetchFollowUp.rejected, (state) => {
+        state.followUp.status = "failed";
+        state.followUp.data = null;
+      })
+      .addCase(saveReview.pending, (state) => {
+        state.review.status = "loading";
+      })
+      .addCase(saveReview.fulfilled, (state, action) => {
+        state.review.status = "succeeded";
+        state.review.open = false;
+        state.followUp.status = "succeeded";
+        state.followUp.data = action.payload;
+      })
+      .addCase(saveReview.rejected, (state) => {
+        state.review.status = "failed";
+      })
       .addCase(fetchAntimicrobialTimeline.pending, (state) => {
         state.status = "loading";
         state.errorCode = null;
@@ -151,6 +313,6 @@ const infectionControlSlice = createSlice({
   },
 });
 
-export const { reset } = infectionControlSlice.actions;
+export const { reset, setReviewOpen } = infectionControlSlice.actions;
 
 export const infectionControlReducer = infectionControlSlice.reducer;

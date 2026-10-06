@@ -60,6 +60,7 @@ import { knowledgeBaseReducer } from "features/knowledgeBase/KnowledgeBaseSlice"
 import { helpModeReducer } from "features/knowledgeBase/HelpMode/HelpModeSlice";
 import { newsReducer } from "features/news/NewsSlice";
 import { infectionControlReducer } from "features/infectionControl/InfectionControlSlice";
+import { infectionControlListReducer } from "features/infectionControl/InfectionControlListSlice";
 import clinicalNotesMultiSlice from "features/clinicalNotes/ClinicalNotesSlice";
 import { navigationSoapNoteReducer } from "features/clinicalNotes/NavigationSoapNote/NavigationSoapNoteSlice";
 import { digitalSignatureReducer } from "features/clinicalNotes/DigitalSignature/DigitalSignatureSlice";
@@ -183,6 +184,7 @@ const rootReducer = combineReducers({
   knowledgeBase: knowledgeBaseReducer,
   news: newsReducer,
   infectionControl: infectionControlReducer,
+  infectionControlList: infectionControlListReducer,
   helpMode: helpModeReducer,
 });
 

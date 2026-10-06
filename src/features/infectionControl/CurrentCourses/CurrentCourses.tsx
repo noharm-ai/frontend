@@ -5,8 +5,10 @@ import dayjs, { Dayjs } from "dayjs";
 import { AwareTag } from "components/AwareTag/AwareTag";
 import { formatDate } from "utils/date";
 
-import { ICourse } from "../InfectionControlSlice";
+import { ICourse, IFollowUpCourse } from "../InfectionControlSlice";
 import { COURSE_COLORS } from "../courseColors";
+import { EvaluationTag } from "../EvaluationTag/EvaluationTag";
+import { courseKey } from "../followUp";
 import { daysSince, daysUntil, formatRegimen } from "../timeline";
 import { CourseCard, CourseCards, EmptyCurrent } from "./CurrentCourses.style";
 
@@ -14,6 +16,9 @@ interface CurrentCoursesProps {
   // active courses only
   courses: ICourse[];
   now: Dayjs;
+  // the infection control follow-up of each course (courseKey), when the
+  // schema has it: each card then shows its evaluation
+  followUps?: Record<string, IFollowUpCourse> | null;
 }
 
 interface PlannedEndProps {
@@ -57,7 +62,11 @@ function PlannedEndHint({ course, now }: PlannedEndProps) {
  * The antimicrobials in use right now, one card each: which treatment day it
  * is, how many were planned and when it should end
  */
-export function CurrentCourses({ courses, now }: CurrentCoursesProps) {
+export function CurrentCourses({
+  courses,
+  now,
+  followUps,
+}: CurrentCoursesProps) {
   const { t } = useTranslation();
 
   if (courses.length === 0) {
@@ -83,6 +92,18 @@ export function CurrentCourses({ courses, now }: CurrentCoursesProps) {
                 {course.drug}
               </span>
             </div>
+
+            {followUps && (
+              <div className="course-evaluation">
+                <EvaluationTag
+                  evaluation={
+                    followUps[courseKey(course.idDrug, course.start)]
+                      ?.evaluation ?? null
+                  }
+                  now={now}
+                />
+              </div>
+            )}
 
             <div className="course-day">
               <span className="course-day-number">

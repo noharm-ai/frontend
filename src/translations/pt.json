@@ -53,6 +53,7 @@
     "frequency": "Frequências",
     "interventionReasons": "Motivos de Intervenções",
     "news": "Novidades",
+    "infectionControl": "Controle de Infecção",
     "memory": "Memória",
     "summary": "Sumário de Alta",
     "integration": "Integração",
@@ -777,6 +778,7 @@
     "USER_MANAGER": "Gestor de Usuários",
     "CONFIG_MANAGER": "Gestor de Configurações",
     "DISCHARGE_MANAGER": "Gestor de Alta",
+    "INFECTION_CONTROLLER": "Controle de Infecção",
     "VIEWER": "Visualizador",
     "DISPENSING_MANAGER": "Gestor de Dispensação",
     "REGULATOR": "Regulador",
@@ -792,6 +794,7 @@
     "USER_MANAGER": "Responsável por cadastrar e editar os usuários da organização.",
     "CONFIG_MANAGER": "Responsável pela curadoria das configurações de medicamentos, escores e exames.",
     "DISCHARGE_MANAGER": "Responsável pela criação de sumários de alta",
+    "INFECTION_CONTROLLER": "Responsável por revisar os pacientes em uso de antimicrobianos e avaliar a conformidade das prescrições.",
     "VIEWER": "Acesso somente leitura às prescrições",
     "DISPENSING_MANAGER": "Responsável pela gestão das informações de dispensação dos itens",
     "REGULATOR": "Responsável pela regulação",
@@ -1562,7 +1565,6 @@
   "infectionControl": {
     "title": "Controle de Infecção",
     "legend": "Atendimento {{admissionNumber}}",
-    "openPrescription": "Abrir prescrição",
     "notFound": "Nenhum registro encontrado para o atendimento {{admissionNumber}}.",
     "loadError": "Não foi possível carregar os antimicrobianos do atendimento {{admissionNumber}}.",
     "retry": "Tentar novamente",
@@ -1648,6 +1650,85 @@
       "gapsTitle": "Intervalos sem prescrição",
       "openPrescription": "Abrir última prescrição",
       "close": "Fechar"
+    },
+    "followUp": {
+      "title": "Acompanhamento",
+      "status": {
+        "1": "Pendente",
+        "2": "Revisado",
+        "3": "Encerrado"
+      },
+      "notFollowed": "Não acompanhado",
+      "notFollowedHint": "Este atendimento ainda não está no acompanhamento do controle de infecção.",
+      "since": "desde {{date}}",
+      "nextReview": "Próxima revisão",
+      "noNextReview": "Não agendada",
+      "overdue": "vencida",
+      "lastReview": "Última revisão",
+      "neverReviewed": "Nunca revisado",
+      "reviewBy": "{{date}} por {{user}}",
+      "pendings": "Pendências",
+      "noPendings": "Nenhuma pendência.",
+      "pending": {
+        "1": "Paciente ainda não revisado",
+        "2": "{{drug}} sem avaliação",
+        "3": "Avaliação de {{drug}} vencida",
+        "4": "Data de revisão agendada chegou",
+        "5": "Alerta disparado"
+      },
+      "unknownDrug": "Antimicrobiano",
+      "register": "Registrar revisão",
+      "loadError": "Não foi possível carregar o acompanhamento do controle de infecção."
+    },
+    "evaluation": {
+      "conforming": "Conforme",
+      "nonConforming": "Não conforme",
+      "none": "Sem avaliação",
+      "until": "até {{date}}",
+      "expired": "vencida em {{date}}"
+    },
+    "review": {
+      "title": "Registrar revisão",
+      "legend": "Avalie os antimicrobianos em uso e agende a próxima revisão do paciente.",
+      "antimicrobials": "Antimicrobianos em uso",
+      "noOngoing": "Nenhum antimicrobiano em uso.",
+      "evaluate": "Avaliar",
+      "current": "Avaliação atual: {{status}} até {{date}}",
+      "conformity": "Conformidade",
+      "validUntil": "Válida até",
+      "evaluationNotes": "Observação",
+      "notes": "Observações da revisão",
+      "nextReviewDate": "Próxima revisão do paciente",
+      "presetDays_one": "{{count}} dia",
+      "presetDays_other": "{{count}} dias",
+      "futureDate": "A data deve ser futura",
+      "success": "Revisão registrada com sucesso!"
+    },
+    "history": {
+      "title": "Revisões",
+      "empty": "Nenhuma revisão registrada.",
+      "nextReview": "Próxima revisão: {{date}}",
+      "evaluations": "Avaliações"
+    },
+    "worklist": {
+      "title": "Controle de Infecção",
+      "legend": "Pacientes em uso de antimicrobianos",
+      "filter": {
+        "1": "Pendentes",
+        "2": "Revisados",
+        "3": "Encerrados"
+      },
+      "patient": "Paciente",
+      "admission": "Atendimento",
+      "bed": "Leito",
+      "department": "Setor",
+      "status": "Situação",
+      "pendings": "Pendências",
+      "nextReview": "Próxima revisão",
+      "validity": "Avaliação vence em",
+      "open": "Abrir",
+      "empty": "Nenhum paciente nesta situação.",
+      "loadError": "Não foi possível carregar a lista de pacientes."
     }
   }
 }

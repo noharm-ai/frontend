@@ -32,6 +32,10 @@ export const CourseCard = styled.div<{ $overdue?: boolean }>`
     white-space: nowrap;
   }
 
+  .course-evaluation {
+    margin-top: 6px;
+  }
+
   .course-day {
     align-items: baseline;
     display: flex;

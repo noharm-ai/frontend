@@ -2,23 +2,35 @@ import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { Button, Empty } from "antd";
-import { ReloadOutlined } from "@ant-design/icons";
+import { FileDoneOutlined, ReloadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import LoadBox, { LoadContainer } from "components/LoadBox";
+import Permission from "models/Permission";
+import PermissionService from "services/PermissionService";
 
-import { fetchAntimicrobialTimeline, reset } from "../InfectionControlSlice";
+import {
+  fetchAntimicrobialTimeline,
+  fetchFollowUp,
+  reset,
+  setReviewOpen,
+} from "../InfectionControlSlice";
 import { CourseGantt } from "../CourseGantt/CourseGantt";
 import { CurrentCourses } from "../CurrentCourses/CurrentCourses";
+import { FollowUpStatus } from "../FollowUpStatus/FollowUpStatus";
 import { InfectionControlPatient } from "../InfectionControlPatient/InfectionControlPatient";
+import { ReviewHistory } from "../ReviewHistory/ReviewHistory";
+import { ReviewModal } from "../ReviewModal/ReviewModal";
+import { getDrugNames, getFollowUpCourses } from "../followUp";
 import { sortCourses } from "../timeline";
 import { Header, Section, StateBox } from "./InfectionControl.style";
 
 /**
  * /controle-infeccao/:admissionNumber: the infection control view of an
- * admission. For now, its antimicrobials at a glance - the ones in use now and
- * a timeline of every course
+ * admission. Its antimicrobials at a glance - the ones in use now and a
+ * timeline of every course - and, when the schema has the feature, the
+ * follow-up: status, pending reasons, reviews and the conformity of each drug
  */
 export function InfectionControl() {
   const { t } = useTranslation();
@@ -27,12 +39,16 @@ export function InfectionControl() {
   const { status, data, errorCode } = useAppSelector(
     (state) => state.infectionControl,
   );
+  const followUp = useAppSelector(
+    (state) => state.infectionControl.followUp.data,
+  );
 
   const isValid = /^\d+$/.test(admissionNumber);
 
   const load = () => {
     if (isValid) {
       dispatch(fetchAntimicrobialTimeline({ admissionNumber }));
+      dispatch(fetchFollowUp({ admissionNumber }));
     }
   };
 
@@ -48,6 +64,22 @@ export function InfectionControl() {
   const now = useMemo(() => (data ? dayjs(data.now) : dayjs()), [data]);
   const courses = useMemo(() => sortCourses(data?.courses ?? []), [data]);
   const activeCourses = courses.filter((c) => c.status === "active");
+  const drugNames = useMemo(() => getDrugNames(courses), [courses]);
+  const followUpEnabled = !!followUp?.enabled;
+  const followUpCourses = useMemo(
+    () => (followUpEnabled ? getFollowUpCourses(followUp) : null),
+    [followUp, followUpEnabled],
+  );
+  const canReview =
+    followUpEnabled &&
+    PermissionService().has(Permission.WRITE_INFECTION_CONTROL);
+  // a review needs a followed admission or a running antimicrobial, and the
+  // timeline loaded, since the review modal lives with it
+  const showReview =
+    canReview &&
+    status === "succeeded" &&
+    (!!followUp?.followed ||
+      (followUp?.courses ?? []).some((course) => course.ongoing));
 
   const header = (
     <Header>
@@ -59,13 +91,14 @@ export function InfectionControl() {
           {t("infectionControl.legend", { admissionNumber })}
         </div>
       </div>
-      {data?.patient.idPrescription && (
+      {showReview && (
         <div className="page-header-actions">
           <Button
-            href={`/prescricao/${data.patient.idPrescription}`}
-            target="_blank"
+            type="primary"
+            icon={<FileDoneOutlined />}
+            onClick={() => dispatch(setReviewOpen(true))}
           >
-            {t("infectionControl.openPrescription")}
+            {t("infectionControl.followUp.register")}
           </Button>
         </div>
       )}
@@ -121,9 +154,17 @@ export function InfectionControl() {
         }
       />
 
+      {followUpEnabled && followUp && (
+        <FollowUpStatus followUp={followUp} drugNames={drugNames} now={now} />
+      )}
+
       <Section data-kb="infectionControl.antimicrobials.current">
         <h2 className="section-title">{t("infectionControl.current.title")}</h2>
-        <CurrentCourses courses={activeCourses} now={now} />
+        <CurrentCourses
+          courses={activeCourses}
+          now={now}
+          followUps={followUpCourses}
+        />
       </Section>
 
       <Section>
@@ -145,6 +186,19 @@ export function InfectionControl() {
           />
         )}
       </Section>
+
+      {followUpEnabled && followUp && (
+        <Section data-kb="infectionControl.reviews">
+          <h2 className="section-title">
+            {t("infectionControl.history.title")}
+          </h2>
+          <ReviewHistory followUp={followUp} drugNames={drugNames} />
+        </Section>
+      )}
+
+      {followUp && canReview && (
+        <ReviewModal followUp={followUp} drugNames={drugNames} now={now} />
+      )}
     </>
   );
 }

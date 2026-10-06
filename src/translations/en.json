@@ -53,6 +53,7 @@
     "frequency": "Frequency",
     "interventionReasons": "Intervenções",
     "news": "News",
+    "infectionControl": "Infection Control",
     "memory": "Memory",
     "summary": "Discharge Summary",
     "integration": "Integration",
@@ -773,6 +774,7 @@
     "USER_MANAGER": "User Administrator",
     "CONFIG_MANAGER": "Configuration Administrator",
     "DISCHARGE_MANAGER": "Discharge Manager",
+    "INFECTION_CONTROLLER": "Infection Control",
     "VIEWER": "Viewer",
     "DISPENSING_MANAGER": "Dispensing Manager",
     "REGULATOR": "Regulator",
@@ -785,6 +787,7 @@
     "USER_MANAGER": "Responsible for registering and editing the organization's users.",
     "CONFIG_MANAGER": "Responsible for curating medication, score and exam settings.",
     "DISCHARGE_MANAGER": "Responsible for creating discharge summaries.",
+    "INFECTION_CONTROLLER": "Responsible for reviewing the patients on antimicrobials and evaluating the conformity of the prescriptions.",
     "VIEWER": "Read-only access to prescriptions.",
     "DISPENSING_MANAGER": "Responsible for managing item dispensing information",
     "REGULATOR": "Responsible for regulation",
@@ -1552,7 +1555,6 @@
   "infectionControl": {
     "title": "Infection control",
     "legend": "Admission {{admissionNumber}}",
-    "openPrescription": "Open prescription",
     "notFound": "No record found for admission {{admissionNumber}}.",
     "loadError": "Could not load the antimicrobials of admission {{admissionNumber}}.",
     "retry": "Try again",
@@ -1638,6 +1640,85 @@
       "gapsTitle": "Gaps without prescription",
       "openPrescription": "Open latest prescription",
       "close": "Close"
+    },
+    "followUp": {
+      "title": "Follow-up",
+      "status": {
+        "1": "Pending",
+        "2": "Revised",
+        "3": "Closed"
+      },
+      "notFollowed": "Not followed",
+      "notFollowedHint": "This admission is not in the infection control follow-up yet.",
+      "since": "since {{date}}",
+      "nextReview": "Next review",
+      "noNextReview": "Not scheduled",
+      "overdue": "overdue",
+      "lastReview": "Last review",
+      "neverReviewed": "Never reviewed",
+      "reviewBy": "{{date}} by {{user}}",
+      "pendings": "Pending items",
+      "noPendings": "Nothing pending.",
+      "pending": {
+        "1": "Patient not reviewed yet",
+        "2": "{{drug}} not evaluated",
+        "3": "{{drug}} evaluation expired",
+        "4": "Scheduled review date reached",
+        "5": "Alert fired"
+      },
+      "unknownDrug": "Antimicrobial",
+      "register": "Register review",
+      "loadError": "Could not load the infection control follow-up."
+    },
+    "evaluation": {
+      "conforming": "Conforming",
+      "nonConforming": "Non-conforming",
+      "none": "Not evaluated",
+      "until": "until {{date}}",
+      "expired": "expired on {{date}}"
+    },
+    "review": {
+      "title": "Register review",
+      "legend": "Evaluate the antimicrobials in use and schedule the patient's next review.",
+      "antimicrobials": "Antimicrobials in use",
+      "noOngoing": "No antimicrobial in use.",
+      "evaluate": "Evaluate",
+      "current": "Current evaluation: {{status}} until {{date}}",
+      "conformity": "Conformity",
+      "validUntil": "Valid until",
+      "evaluationNotes": "Note",
+      "notes": "Review notes",
+      "nextReviewDate": "Patient's next review",
+      "presetDays_one": "{{count}} day",
+      "presetDays_other": "{{count}} days",
+      "futureDate": "The date must be in the future",
+      "success": "Review registered!"
+    },
+    "history": {
+      "title": "Reviews",
+      "empty": "No review registered.",
+      "nextReview": "Next review: {{date}}",
+      "evaluations": "Evaluations"
+    },
+    "worklist": {
+      "title": "Infection Control",
+      "legend": "Patients on antimicrobials",
+      "filter": {
+        "1": "Pending",
+        "2": "Revised",
+        "3": "Closed"
+      },
+      "patient": "Patient",
+      "admission": "Admission",
+      "bed": "Bed",
+      "department": "Department",
+      "status": "Status",
+      "pendings": "Pending items",
+      "nextReview": "Next review",
+      "validity": "Evaluation expires",
+      "open": "Open",
+      "empty": "No patient in this status.",
+      "loadError": "Could not load the patient list."
     }
   }
 }

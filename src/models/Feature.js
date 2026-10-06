@@ -31,6 +31,7 @@ export default class Feature {
   static PRIORITIZATION_FIELD_CID = "PRIORITIZATION_FIELD_CID";
   static MULTI_CLINICAL_NOTES = "MULTI_CLINICAL_NOTES";
   static CULTURE = "CULTURE";
+  static INFECTION_CONTROL = "INFECTION_CONTROL";
 
   // driven by the backend FEATURE_USER_ONBOARDING env var, not schema config,
   // so it is intentionally absent from getFeatures() / the admin toggles
@@ -211,6 +212,12 @@ export default class Feature {
         label: "Culturas",
         description:
           "Habilita a aba Cultura no card de Exames e os alertas de resistência a culturas. Depende da integração de culturas (antibiograma) do cliente.",
+      },
+      {
+        id: Feature.INFECTION_CONTROL,
+        label: "Controle de Infecção",
+        description:
+          "Habilita o acompanhamento dos pacientes em uso de antimicrobianos: lista de pendências, revisões e avaliação de conformidade pelo infectologista.",
       },
     ];
   }

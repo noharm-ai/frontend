@@ -883,6 +883,14 @@ api.infectionControl.getAntimicrobialTimeline = (admissionNumber) =>
   instance.get(`/infection-control/antimicrobial-timeline/${admissionNumber}`, {
     ...setHeaders(),
   });
+api.infectionControl.getAdmission = (admissionNumber) =>
+  instance.get(`/infection-control/admission/${admissionNumber}`, {
+    ...setHeaders(),
+  });
+api.infectionControl.saveReview = (params = {}) =>
+  instance.post(`/infection-control/review`, params, setHeaders());
+api.infectionControl.listAdmissions = (params = {}) =>
+  instance.post(`/infection-control/admissions`, params, setHeaders());
 
 /**
  * training namespace

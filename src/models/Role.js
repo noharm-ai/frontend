@@ -10,6 +10,7 @@ export default class Role {
   static SUPPORT_REQUESTER = "SUPPORT_REQUESTER";
   static SUPPORT_MANAGER = "SUPPORT_MANAGER";
   static DISCHARGE_MANAGER = "DISCHARGE_MANAGER";
+  static INFECTION_CONTROLLER = "INFECTION_CONTROLLER";
 
   static getNewRoles(t, features) {
     const roles = [
@@ -51,6 +52,14 @@ export default class Role {
         id: Role.DISCHARGE_MANAGER,
         label: t(`roles.${Role.DISCHARGE_MANAGER}`),
         description: t(`rolesDescription.${Role.DISCHARGE_MANAGER}`),
+      });
+    }
+
+    if (!features || features.indexOf(Feature.INFECTION_CONTROL) !== -1) {
+      roles.push({
+        id: Role.INFECTION_CONTROLLER,
+        label: t(`roles.${Role.INFECTION_CONTROLLER}`),
+        description: t(`rolesDescription.${Role.INFECTION_CONTROLLER}`),
       });
     }
 

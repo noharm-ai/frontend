@@ -135,9 +135,10 @@ test("shows the patient and the antimicrobials in use now", async ({
   ).toBeVisible({ timeout: 15000 });
   await expect(page.getByText("Ciclano de Tal")).toBeVisible();
   await expect(page.getByText("UTI Adulto")).toBeVisible();
+  // the header no longer links to the prescription
   await expect(
-    page.getByRole("link", { name: "Abrir prescrição" }),
-  ).toHaveAttribute("href", "/prescricao/199");
+    page.getByRole("link", { name: "Abrir prescrição", exact: true }),
+  ).toHaveCount(0);
 
   const cards = page.getByTestId("current-course");
   await expect(cards).toHaveCount(2);
@@ -190,7 +191,8 @@ test("lists every course on the timeline, the ones in use first", async ({
   ).toBeVisible();
   await expect(details.getByText("Posologias")).toBeVisible();
 
-  await details.getByRole("button", { name: "Fechar" }).click();
+  // the footer button (the corner X is labeled "Fechar" too)
+  await details.locator("button.ant-btn", { hasText: "Fechar" }).click();
   await expect(details).toHaveCount(0);
 });
 

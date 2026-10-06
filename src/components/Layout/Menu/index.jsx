@@ -25,6 +25,7 @@ import {
   FormOutlined,
   LayoutOutlined,
   ReadOutlined,
+  SafetyCertificateOutlined,
 } from "@ant-design/icons";
 import { Badge, Menu as Navigator } from "antd";
 import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
@@ -152,6 +153,15 @@ export default function Menu({ segments, collapsed }) {
       label: t("menu.interventions"),
       icon: <WarningOutlined />,
       id: "gtm-lnk-intervencoes",
+      permission: [Permission.READ_PRESCRIPTION],
+    },
+    {
+      key: "/controle-infeccao",
+      link: "/controle-infeccao",
+      label: t("menu.infectionControl"),
+      icon: <SafetyCertificateOutlined />,
+      id: "gtm-lnk-controle-infeccao",
+      feature: Feature.INFECTION_CONTROL,
       permission: [Permission.READ_PRESCRIPTION],
     },
     {
