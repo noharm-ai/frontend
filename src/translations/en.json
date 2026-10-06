@@ -1549,9 +1549,9 @@
       "removeArticleSuccess": "Article removed from the element."
     }
   },
-  "antimicrobialTimeline": {
-    "title": "Antimicrobial timeline",
-    "legend": "Antimicrobials prescribed in admission {{admissionNumber}}",
+  "infectionControl": {
+    "title": "Infection control",
+    "legend": "Admission {{admissionNumber}}",
     "openPrescription": "Open prescription",
     "notFound": "No record found for admission {{admissionNumber}}.",
     "loadError": "Could not load the antimicrobials of admission {{admissionNumber}}.",
@@ -1575,7 +1575,7 @@
       "dischargeDate": "Discharge"
     },
     "current": {
-      "title": "In use now",
+      "title": "Antimicrobials in use now",
       "empty": "No antimicrobial in use right now.",
       "dayOf": "of {{count}} planned days",
       "noPlannedEnd": "No planned end",
@@ -1590,7 +1590,7 @@
       "regimen": "Current regimen"
     },
     "timeline": {
-      "title": "Timeline",
+      "title": "Antimicrobial timeline",
       "empty": "No antimicrobial prescribed in this admission.",
       "today": "Today",
       "discharge": "Discharge",

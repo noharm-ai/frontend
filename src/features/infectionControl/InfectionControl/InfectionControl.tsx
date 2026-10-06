@@ -8,26 +8,24 @@ import dayjs from "dayjs";
 import { useAppDispatch, useAppSelector } from "src/store";
 import LoadBox, { LoadContainer } from "components/LoadBox";
 
-import {
-  fetchAntimicrobialTimeline,
-  reset,
-} from "../AntimicrobialTimelineSlice";
+import { fetchAntimicrobialTimeline, reset } from "../InfectionControlSlice";
 import { CourseGantt } from "../CourseGantt/CourseGantt";
 import { CurrentCourses } from "../CurrentCourses/CurrentCourses";
-import { TimelinePatient } from "../TimelinePatient/TimelinePatient";
+import { InfectionControlPatient } from "../InfectionControlPatient/InfectionControlPatient";
 import { sortCourses } from "../timeline";
-import { Header, Section, StateBox } from "./AntimicrobialTimeline.style";
+import { Header, Section, StateBox } from "./InfectionControl.style";
 
 /**
- * /antimicrobianos/:admissionNumber: the antimicrobials of an admission at a
- * glance - the ones in use now and a timeline of every course
+ * /controle-infeccao/:admissionNumber: the infection control view of an
+ * admission. For now, its antimicrobials at a glance - the ones in use now and
+ * a timeline of every course
  */
-export function AntimicrobialTimeline() {
+export function InfectionControl() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const { admissionNumber = "" } = useParams();
   const { status, data, errorCode } = useAppSelector(
-    (state) => state.antimicrobialTimeline,
+    (state) => state.infectionControl,
   );
 
   const isValid = /^\d+$/.test(admissionNumber);
@@ -54,11 +52,11 @@ export function AntimicrobialTimeline() {
   const header = (
     <Header>
       <div>
-        <h1 className="page-header-title" data-kb="antimicrobialTimeline.title">
-          {t("antimicrobialTimeline.title")}
+        <h1 className="page-header-title" data-kb="infectionControl.title">
+          {t("infectionControl.title")}
         </h1>
         <div className="page-header-legend">
-          {t("antimicrobialTimeline.legend", { admissionNumber })}
+          {t("infectionControl.legend", { admissionNumber })}
         </div>
       </div>
       {data?.patient.idPrescription && (
@@ -67,7 +65,7 @@ export function AntimicrobialTimeline() {
             href={`/prescricao/${data.patient.idPrescription}`}
             target="_blank"
           >
-            {t("antimicrobialTimeline.openPrescription")}
+            {t("infectionControl.openPrescription")}
           </Button>
         </div>
       )}
@@ -86,14 +84,14 @@ export function AntimicrobialTimeline() {
             image={Empty.PRESENTED_IMAGE_SIMPLE}
             description={t(
               notFound
-                ? "antimicrobialTimeline.notFound"
-                : "antimicrobialTimeline.loadError",
+                ? "infectionControl.notFound"
+                : "infectionControl.loadError",
               { admissionNumber },
             )}
           />
           {!notFound && (
             <Button icon={<ReloadOutlined />} onClick={load}>
-              {t("antimicrobialTimeline.retry")}
+              {t("infectionControl.retry")}
             </Button>
           )}
         </StateBox>
@@ -116,29 +114,27 @@ export function AntimicrobialTimeline() {
     <>
       {header}
 
-      <TimelinePatient
+      <InfectionControlPatient
         patient={data.patient}
         reference={
           data.patient.dischargeDate ? dayjs(data.patient.dischargeDate) : now
         }
       />
 
-      <Section data-kb="antimicrobialTimeline.current">
-        <h2 className="section-title">
-          {t("antimicrobialTimeline.current.title")}
-        </h2>
+      <Section data-kb="infectionControl.antimicrobials.current">
+        <h2 className="section-title">{t("infectionControl.current.title")}</h2>
         <CurrentCourses courses={activeCourses} now={now} />
       </Section>
 
       <Section>
         <h2 className="section-title">
-          {t("antimicrobialTimeline.timeline.title")}
+          {t("infectionControl.timeline.title")}
         </h2>
         {courses.length === 0 ? (
           <StateBox>
             <Empty
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={t("antimicrobialTimeline.timeline.empty")}
+              description={t("infectionControl.timeline.empty")}
             />
           </StateBox>
         ) : (

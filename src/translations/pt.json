@@ -1559,9 +1559,9 @@
       "removeArticleSuccess": "Artigo removido do elemento."
     }
   },
-  "antimicrobialTimeline": {
-    "title": "Linha do tempo de antimicrobianos",
-    "legend": "Antimicrobianos prescritos no atendimento {{admissionNumber}}",
+  "infectionControl": {
+    "title": "Controle de Infecção",
+    "legend": "Atendimento {{admissionNumber}}",
     "openPrescription": "Abrir prescrição",
     "notFound": "Nenhum registro encontrado para o atendimento {{admissionNumber}}.",
     "loadError": "Não foi possível carregar os antimicrobianos do atendimento {{admissionNumber}}.",
@@ -1585,7 +1585,7 @@
       "dischargeDate": "Alta"
     },
     "current": {
-      "title": "Em uso agora",
+      "title": "Antimicrobianos em uso agora",
       "empty": "Nenhum antimicrobiano em uso no momento.",
       "dayOf": "de {{count}} dias previstos",
       "noPlannedEnd": "Sem previsão de término",
@@ -1600,7 +1600,7 @@
       "regimen": "Posologia atual"
     },
     "timeline": {
-      "title": "Linha do tempo",
+      "title": "Linha do tempo de antimicrobianos",
       "empty": "Nenhum antimicrobiano prescrito neste atendimento.",
       "today": "Hoje",
       "discharge": "Alta",

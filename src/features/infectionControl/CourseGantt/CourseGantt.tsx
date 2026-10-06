@@ -6,7 +6,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { AwareTag } from "components/AwareTag/AwareTag";
 import { formatDate } from "utils/date";
 
-import { CourseStatus, ICourse } from "../AntimicrobialTimelineSlice";
+import { CourseStatus, ICourse } from "../InfectionControlSlice";
 import { CourseDetails } from "../CourseDetails/CourseDetails";
 import { COURSE_COLORS } from "../courseColors";
 import {
@@ -84,7 +84,7 @@ function CourseBars({
   const clickable = {
     role: "button",
     tabIndex: 0,
-    "aria-label": t("antimicrobialTimeline.timeline.openDetails", {
+    "aria-label": t("infectionControl.timeline.openDetails", {
       drug: course.drug,
     }),
     onClick: onOpen,
@@ -134,7 +134,7 @@ function CourseBars({
       {course.gaps.map((gap) => (
         <Tooltip
           key={gap.start}
-          title={t("antimicrobialTimeline.timeline.gap", {
+          title={t("infectionControl.timeline.gap", {
             start: formatDate(gap.start, "DD/MM HH:mm"),
             end: formatDate(gap.end, "DD/MM HH:mm"),
           })}
@@ -145,7 +145,7 @@ function CourseBars({
 
       {plannedEnd && plannedEnd === plannedUntil && (
         <Tooltip
-          title={t("antimicrobialTimeline.timeline.plannedEnd", {
+          title={t("infectionControl.timeline.plannedEnd", {
             date: formatDate(course.plannedEnd, "DD/MM HH:mm"),
           })}
         >
@@ -163,7 +163,7 @@ function CourseBars({
           title={
             <>
               <div>
-                {t("antimicrobialTimeline.timeline.regimenChange", {
+                {t("infectionControl.timeline.regimenChange", {
                   date: formatDate(regimen.start, "DD/MM HH:mm"),
                 })}
               </div>
@@ -228,7 +228,7 @@ export function CourseGantt({ courses, now, dischargeDate }: CourseGanttProps) {
   );
 
   return (
-    <Gantt data-kb="antimicrobialTimeline.timeline">
+    <Gantt data-kb="infectionControl.antimicrobials.timeline">
       <GanttScroll ref={scrollRef}>
         <GanttGrid
           style={{
@@ -256,7 +256,7 @@ export function CourseGantt({ courses, now, dischargeDate }: CourseGanttProps) {
                   className="marker-label marker-label-today"
                   style={{ left: `${todayPercent}%` }}
                 >
-                  {t("antimicrobialTimeline.timeline.today")}
+                  {t("infectionControl.timeline.today")}
                 </span>
               )}
               {dischargePercent != null && (
@@ -264,7 +264,7 @@ export function CourseGantt({ courses, now, dischargeDate }: CourseGanttProps) {
                   className="marker-label marker-label-discharge"
                   style={{ left: `${dischargePercent}%` }}
                 >
-                  {t("antimicrobialTimeline.timeline.discharge")}
+                  {t("infectionControl.timeline.discharge")}
                 </span>
               )}
             </Track>
@@ -287,15 +287,15 @@ export function CourseGantt({ courses, now, dischargeDate }: CourseGanttProps) {
                 </div>
                 <div className="label-info">
                   <Tag color={STATUS_TAG_COLORS[course.status]}>
-                    {t(`antimicrobialTimeline.status.${course.status}`)}
+                    {t(`infectionControl.status.${course.status}`)}
                   </Tag>
                   <strong className="label-day">
                     {course.plannedDays != null
-                      ? t("antimicrobialTimeline.timeline.dayPlanned", {
+                      ? t("infectionControl.timeline.dayPlanned", {
                           count: course.days,
                           planned: course.plannedDays,
                         })
-                      : t("antimicrobialTimeline.timeline.day", {
+                      : t("infectionControl.timeline.day", {
                           count: course.days,
                         })}
                   </strong>
@@ -306,7 +306,7 @@ export function CourseGantt({ courses, now, dischargeDate }: CourseGanttProps) {
                 </div>
                 {drugCourses.length > 1 && (
                   <div className="label-cycles">
-                    {t("antimicrobialTimeline.timeline.otherCourses", {
+                    {t("infectionControl.timeline.otherCourses", {
                       count: drugCourses.length - 1,
                     })}
                   </div>
@@ -333,35 +333,35 @@ export function CourseGantt({ courses, now, dischargeDate }: CourseGanttProps) {
       <Legend>
         <span>
           <i className="legend-given" />
-          {t("antimicrobialTimeline.timeline.legendActive")}
+          {t("infectionControl.timeline.legendActive")}
         </span>
         <span>
           <i className="legend-scheduled" />
-          {t("antimicrobialTimeline.timeline.legendScheduled")}
+          {t("infectionControl.timeline.legendScheduled")}
         </span>
         <span>
           <i className="legend-planned" />
-          {t("antimicrobialTimeline.timeline.legendPlanned")}
+          {t("infectionControl.timeline.legendPlanned")}
         </span>
         <span>
           <i className="legend-planned-end" />
-          {t("antimicrobialTimeline.timeline.legendPlannedEnd")}
+          {t("infectionControl.timeline.legendPlannedEnd")}
         </span>
         <span>
           <i className="legend-suspended" />
-          {t("antimicrobialTimeline.timeline.legendSuspended")}
+          {t("infectionControl.timeline.legendSuspended")}
         </span>
         <span>
           <i className="legend-finished" />
-          {t("antimicrobialTimeline.timeline.legendFinished")}
+          {t("infectionControl.timeline.legendFinished")}
         </span>
         <span>
           <i className="legend-gap" />
-          {t("antimicrobialTimeline.timeline.legendGap")}
+          {t("infectionControl.timeline.legendGap")}
         </span>
         <span>
           <i className="legend-change" />
-          {t("antimicrobialTimeline.timeline.legendChange")}
+          {t("infectionControl.timeline.legendChange")}
         </span>
       </Legend>
 

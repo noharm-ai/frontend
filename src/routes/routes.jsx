@@ -36,7 +36,7 @@ import TrainingPlayer from "pages/TrainingPlayer";
 import { KnowledgeBasePage } from "pages/KnowledgeBase/KnowledgeBasePage";
 import { KnowledgeBaseArticlePage } from "pages/KnowledgeBase/KnowledgeBaseArticlePage";
 import { NewsPage } from "pages/News/NewsPage";
-import { AntimicrobialTimelinePage } from "pages/AntimicrobialTimeline/AntimicrobialTimeline";
+import { InfectionControlPage } from "pages/InfectionControl/InfectionControl";
 
 import AdminTag from "pages/Admin/Tag";
 import AdminMemory from "pages/Admin/Memory";
@@ -342,8 +342,8 @@ const routes = [
   },
   {
     exact: true,
-    path: "/antimicrobianos/:admissionNumber",
-    element: <WithAuth component={AntimicrobialTimelinePage} />,
+    path: "/controle-infeccao/:admissionNumber",
+    element: <WithAuth component={InfectionControlPage} />,
   },
   {
     exact: true,

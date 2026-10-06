@@ -1,10 +1,10 @@
 import { test, expect } from "../support/mockApi";
 
 /**
- * Antimicrobial timeline (/antimicrobianos/:admissionNumber,
- * src/features/antimicrobialTimeline).
+ * Infection control (/controle-infeccao/:admissionNumber,
+ * src/features/infectionControl).
  *
- * One GET /antimicrobial/timeline/:admissionNumber brings the patient and the
+ * One GET /infection-control/antimicrobial-timeline/:admissionNumber brings the patient and the
  * antimicrobial courses, already grouped by the backend (one per drug, daily
  * prescriptions and CPOE orders alike). The page shows the courses in use now
  * as cards and every course as a row of a timeline.
@@ -12,8 +12,9 @@ import { test, expect } from "../support/mockApi";
 
 const ADMISSION = 9200;
 const PATIENT_ID = 4320;
-const PAGE_URL = `/antimicrobianos/${ADMISSION}`;
-const ENDPOINT = "GET /antimicrobial/timeline/:admissionNumber";
+const PAGE_URL = `/controle-infeccao/${ADMISSION}`;
+const ENDPOINT =
+  "GET /infection-control/antimicrobial-timeline/:admissionNumber";
 
 /** A naive ISO date some hours away from now, as the backend sends it */
 const hoursFromNow = (hours: number) =>
@@ -130,7 +131,7 @@ test("shows the patient and the antimicrobials in use now", async ({
   await page.goto(PAGE_URL);
 
   await expect(
-    page.getByRole("heading", { name: "Linha do tempo de antimicrobianos" }),
+    page.getByRole("heading", { name: "Controle de Infecção" }),
   ).toBeVisible({ timeout: 15000 });
   await expect(page.getByText("Ciclano de Tal")).toBeVisible();
   await expect(page.getByText("UTI Adulto")).toBeVisible();
@@ -277,13 +278,13 @@ test("does not call the backend for an invalid admission number", async ({
   page,
   mockApi,
 }) => {
-  await page.goto("/antimicrobianos/abc");
+  await page.goto("/controle-infeccao/abc");
 
   await expect(
     page.getByText("Nenhum registro encontrado para o atendimento abc."),
   ).toBeVisible({ timeout: 15000 });
   expect(
-    mockApi.requests.filter((r) => r.path.startsWith("/antimicrobial")),
+    mockApi.requests.filter((r) => r.path.startsWith("/infection-control")),
   ).toHaveLength(0);
 });
 

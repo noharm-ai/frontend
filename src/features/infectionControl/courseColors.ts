@@ -1,4 +1,4 @@
-import { CourseStatus } from "./AntimicrobialTimelineSlice";
+import { CourseStatus } from "./InfectionControlSlice";
 
 // the solid part of a course bar: what was already given
 export const COURSE_COLORS: Record<CourseStatus, string> = {

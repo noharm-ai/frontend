@@ -111,9 +111,9 @@ export class KnowledgeBasePathEnum {
       pathPattern: /^\/sumario-alta/,
     },
     {
-      value: "Antimicrobianos",
-      label: "Antimicrobianos",
-      pathPattern: /^\/antimicrobianos/,
+      value: "Controle de Infecção",
+      label: "Controle de Infecção",
+      pathPattern: /^\/controle-infeccao/,
     },
   ];
 

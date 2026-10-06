@@ -12,7 +12,7 @@ import {
   ICourse,
   ICourseGap,
   ICourseRegimen,
-} from "../AntimicrobialTimelineSlice";
+} from "../InfectionControlSlice";
 import { formatDose } from "../timeline";
 import { Details } from "./CourseDetails.style";
 
@@ -43,36 +43,36 @@ export function CourseDetails({ course, now, onClose }: CourseDetailsProps) {
 
   const regimenColumns: ColumnsType<ICourseRegimen> = [
     {
-      title: t("antimicrobialTimeline.details.start"),
+      title: t("infectionControl.details.start"),
       key: "start",
       render: (_, regimen) => formatDateTime(regimen.start),
     },
     {
-      title: t("antimicrobialTimeline.details.end"),
+      title: t("infectionControl.details.end"),
       key: "end",
       render: (_, regimen) => formatDateTime(regimen.end),
     },
     {
-      title: t("antimicrobialTimeline.details.dose"),
+      title: t("infectionControl.details.dose"),
       key: "dose",
       render: (_, regimen) => (
         <>
           {formatDose(regimen) ?? "-"}
           {isCurrent(regimen) && (
             <Tag color="blue" className="regimen-current">
-              {t("antimicrobialTimeline.details.current")}
+              {t("infectionControl.details.current")}
             </Tag>
           )}
         </>
       ),
     },
     {
-      title: t("antimicrobialTimeline.details.frequency"),
+      title: t("infectionControl.details.frequency"),
       key: "frequency",
       render: (_, regimen) => regimen.frequency || "-",
     },
     {
-      title: t("antimicrobialTimeline.details.route"),
+      title: t("infectionControl.details.route"),
       key: "route",
       render: (_, regimen) => regimen.route || "-",
     },
@@ -80,12 +80,12 @@ export function CourseDetails({ course, now, onClose }: CourseDetailsProps) {
 
   const gapColumns: ColumnsType<ICourseGap> = [
     {
-      title: t("antimicrobialTimeline.details.start"),
+      title: t("infectionControl.details.start"),
       key: "start",
       render: (_, gap) => formatDateTime(gap.start),
     },
     {
-      title: t("antimicrobialTimeline.details.end"),
+      title: t("infectionControl.details.end"),
       key: "end",
       render: (_, gap) => formatDateTime(gap.end),
     },
@@ -93,37 +93,37 @@ export function CourseDetails({ course, now, onClose }: CourseDetailsProps) {
 
   const summary = [
     {
-      label: t("antimicrobialTimeline.details.start"),
+      label: t("infectionControl.details.start"),
       value: formatDateTime(course.start),
     },
     {
       label: end.isAfter(now)
-        ? t("antimicrobialTimeline.details.prescribedUntil")
-        : t("antimicrobialTimeline.details.end"),
+        ? t("infectionControl.details.prescribedUntil")
+        : t("infectionControl.details.end"),
       value: formatDateTime(course.end),
     },
     {
-      label: t("antimicrobialTimeline.details.plannedEnd"),
+      label: t("infectionControl.details.plannedEnd"),
       value: course.plannedEnd ? formatDateTime(course.plannedEnd) : "-",
     },
     {
-      label: t("antimicrobialTimeline.details.treatment"),
+      label: t("infectionControl.details.treatment"),
       value:
         course.plannedDays != null
-          ? t("antimicrobialTimeline.details.daysPlanned", {
+          ? t("infectionControl.details.daysPlanned", {
               count: course.days,
               planned: course.plannedDays,
             })
-          : t("antimicrobialTimeline.details.days", { count: course.days }),
+          : t("infectionControl.details.days", { count: course.days }),
     },
     {
-      label: t("antimicrobialTimeline.details.prescriptionType"),
+      label: t("infectionControl.details.prescriptionType"),
       value: course.cpoe
-        ? t("antimicrobialTimeline.details.cpoe")
-        : t("antimicrobialTimeline.details.daily"),
+        ? t("infectionControl.details.cpoe")
+        : t("infectionControl.details.daily"),
     },
     {
-      label: t("antimicrobialTimeline.details.prescriptions"),
+      label: t("infectionControl.details.prescriptions"),
       value: course.prescriptionCount,
     },
   ];
@@ -140,15 +140,15 @@ export function CourseDetails({ course, now, onClose }: CourseDetailsProps) {
             href={`/prescricao/${course.lastIdPrescription}`}
             target="_blank"
           >
-            {t("antimicrobialTimeline.details.openPrescription")}
+            {t("infectionControl.details.openPrescription")}
           </Button>
           <Button type="primary" onClick={onClose}>
-            {t("antimicrobialTimeline.details.close")}
+            {t("infectionControl.details.close")}
           </Button>
         </>
       }
     >
-      <Details data-kb="antimicrobialTimeline.details">
+      <Details data-kb="infectionControl.antimicrobials.details">
         <header>
           <div className="details-title">
             <AwareTag level={course.atbLevel} />
@@ -156,7 +156,7 @@ export function CourseDetails({ course, now, onClose }: CourseDetailsProps) {
           </div>
           <div className="details-subtitle">
             <Tag color={STATUS_TAG_COLORS[course.status]}>
-              {t(`antimicrobialTimeline.status.${course.status}`)}
+              {t(`infectionControl.status.${course.status}`)}
             </Tag>
             {course.substance && <span>{course.substance}</span>}
           </div>
@@ -173,7 +173,7 @@ export function CourseDetails({ course, now, onClose }: CourseDetailsProps) {
 
         <section>
           <h4>
-            {t("antimicrobialTimeline.details.regimens")}{" "}
+            {t("infectionControl.details.regimens")}{" "}
             <span className="details-count">({course.regimens.length})</span>
           </h4>
           <Table
@@ -194,7 +194,7 @@ export function CourseDetails({ course, now, onClose }: CourseDetailsProps) {
         {course.gaps.length > 0 && (
           <section>
             <h4>
-              {t("antimicrobialTimeline.details.gapsTitle")}{" "}
+              {t("infectionControl.details.gapsTitle")}{" "}
               <span className="details-count">({course.gaps.length})</span>
             </h4>
             <Table

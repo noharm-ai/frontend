@@ -26,7 +26,7 @@ export interface ICourseGap {
 /**
  * One antimicrobial course: the prescriptions of the same drug merged into a
  * single span, whether the hospital re-prescribes it every day or keeps a CPOE
- * order (backend services/antimicrobial_timeline_service.py)
+ * order (backend services/infection_control/antimicrobial_timeline_service.py)
  */
 export interface ICourse {
   idDrug: number;
@@ -51,7 +51,7 @@ export interface ICourse {
   gaps: ICourseGap[];
 }
 
-export interface ITimelinePatient {
+export interface IInfectionControlPatient {
   idPatient: string;
   admissionNumber: number;
   admissionDate: string | null;
@@ -73,30 +73,30 @@ export interface ITimelinePatient {
 export interface IAntimicrobialTimeline {
   // server time the courses were judged at
   now: string;
-  patient: ITimelinePatient;
+  patient: IInfectionControlPatient;
   courses: ICourse[];
 }
 
 type Status = "idle" | "loading" | "succeeded" | "failed";
 
-interface IAntimicrobialTimelineSlice {
+interface IInfectionControlSlice {
   status: Status;
   data: IAntimicrobialTimeline | null;
   // i18n code of a failed load (errors.invalidRecord: unknown admission)
   errorCode: string | null;
 }
 
-const initialState: IAntimicrobialTimelineSlice = {
+const initialState: IInfectionControlSlice = {
   status: "idle",
   data: null,
   errorCode: null,
 };
 
 export const fetchAntimicrobialTimeline = createAsyncThunk(
-  "antimicrobialTimeline/fetch",
+  "infectionControl/fetchAntimicrobialTimeline",
   async (params: { admissionNumber: string }, thunkAPI) => {
     try {
-      const response = await api.antimicrobial.getTimeline(
+      const response = await api.infectionControl.getAntimicrobialTimeline(
         params.admissionNumber,
       );
       const data: IAntimicrobialTimeline = response.data.data;
@@ -124,8 +124,8 @@ export const fetchAntimicrobialTimeline = createAsyncThunk(
   },
 );
 
-const antimicrobialTimelineSlice = createSlice({
-  name: "antimicrobialTimeline",
+const infectionControlSlice = createSlice({
+  name: "infectionControl",
   initialState,
   reducers: {
     reset() {
@@ -151,6 +151,6 @@ const antimicrobialTimelineSlice = createSlice({
   },
 });
 
-export const { reset } = antimicrobialTimelineSlice.actions;
+export const { reset } = infectionControlSlice.actions;
 
-export const antimicrobialTimelineReducer = antimicrobialTimelineSlice.reducer;
+export const infectionControlReducer = infectionControlSlice.reducer;

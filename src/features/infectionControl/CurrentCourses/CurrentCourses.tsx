@@ -5,7 +5,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { AwareTag } from "components/AwareTag/AwareTag";
 import { formatDate } from "utils/date";
 
-import { ICourse } from "../AntimicrobialTimelineSlice";
+import { ICourse } from "../InfectionControlSlice";
 import { COURSE_COLORS } from "../courseColors";
 import { daysSince, daysUntil, formatRegimen } from "../timeline";
 import { CourseCard, CourseCards, EmptyCurrent } from "./CurrentCourses.style";
@@ -30,7 +30,7 @@ function PlannedEndHint({ course, now }: PlannedEndProps) {
   if (dayjs(course.plannedEnd).isBefore(now)) {
     return (
       <span className="hint hint-overdue">
-        {t("antimicrobialTimeline.current.overdue", {
+        {t("infectionControl.current.overdue", {
           count: Math.max(1, daysSince(course.plannedEnd, now)),
         })}
       </span>
@@ -41,14 +41,14 @@ function PlannedEndHint({ course, now }: PlannedEndProps) {
   if (dayjs(course.plannedEnd).isSame(now, "day")) {
     return (
       <span className="hint hint-soon">
-        {t("antimicrobialTimeline.current.endsToday")}
+        {t("infectionControl.current.endsToday")}
       </span>
     );
   }
 
   return (
     <span className={`hint ${left <= 1 ? "hint-soon" : ""}`}>
-      {t("antimicrobialTimeline.current.endsIn", { count: left })}
+      {t("infectionControl.current.endsIn", { count: left })}
     </span>
   );
 }
@@ -61,9 +61,7 @@ export function CurrentCourses({ courses, now }: CurrentCoursesProps) {
   const { t } = useTranslation();
 
   if (courses.length === 0) {
-    return (
-      <EmptyCurrent>{t("antimicrobialTimeline.current.empty")}</EmptyCurrent>
-    );
+    return <EmptyCurrent>{t("infectionControl.current.empty")}</EmptyCurrent>;
   }
 
   return (
@@ -88,16 +86,16 @@ export function CurrentCourses({ courses, now }: CurrentCoursesProps) {
 
             <div className="course-day">
               <span className="course-day-number">
-                {t("antimicrobialTimeline.timeline.day", {
+                {t("infectionControl.timeline.day", {
                   count: course.days,
                 })}
               </span>
               <span className="course-day-planned">
                 {course.plannedDays != null
-                  ? t("antimicrobialTimeline.current.dayOf", {
+                  ? t("infectionControl.current.dayOf", {
                       count: course.plannedDays,
                     })
-                  : t("antimicrobialTimeline.current.noPlannedEnd")}
+                  : t("infectionControl.current.noPlannedEnd")}
               </span>
             </div>
 
@@ -117,12 +115,12 @@ export function CurrentCourses({ courses, now }: CurrentCoursesProps) {
 
             <dl className="course-dates">
               <div>
-                <dt>{t("antimicrobialTimeline.current.started")}</dt>
+                <dt>{t("infectionControl.current.started")}</dt>
                 <dd>{formatDate(course.start)}</dd>
               </div>
               {course.plannedEnd ? (
                 <div>
-                  <dt>{t("antimicrobialTimeline.current.plannedEnd")}</dt>
+                  <dt>{t("infectionControl.current.plannedEnd")}</dt>
                   <dd>
                     {formatDate(course.plannedEnd)}{" "}
                     <PlannedEndHint course={course} now={now} />
@@ -130,9 +128,9 @@ export function CurrentCourses({ courses, now }: CurrentCoursesProps) {
                 </div>
               ) : (
                 <div>
-                  <dt>{t("antimicrobialTimeline.current.plannedEnd")}</dt>
+                  <dt>{t("infectionControl.current.plannedEnd")}</dt>
                   <dd className="muted">
-                    {t("antimicrobialTimeline.current.validUntil", {
+                    {t("infectionControl.current.validUntil", {
                       date: formatDate(course.end, "DD/MM HH:mm"),
                     })}
                   </dd>
@@ -143,7 +141,7 @@ export function CurrentCourses({ courses, now }: CurrentCoursesProps) {
             {regimen && formatRegimen(regimen) && (
               <div className="course-regimen">
                 <span className="label">
-                  {t("antimicrobialTimeline.current.regimen")}
+                  {t("infectionControl.current.regimen")}
                 </span>
                 {formatRegimen(regimen)}
               </div>

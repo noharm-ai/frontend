@@ -1,6 +1,6 @@
 import dayjs, { Dayjs } from "dayjs";
 
-import { ICourse, ICourseRegimen } from "./AntimicrobialTimelineSlice";
+import { ICourse, ICourseRegimen } from "./InfectionControlSlice";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 

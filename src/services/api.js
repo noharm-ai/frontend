@@ -876,11 +876,11 @@ api.news.getList = (params = {}) =>
   instance.get(`/news`, { params, ...setHeaders() });
 
 /**
- * antimicrobial namespace
+ * infection control namespace
  */
-api.antimicrobial = {};
-api.antimicrobial.getTimeline = (admissionNumber) =>
-  instance.get(`/antimicrobial/timeline/${admissionNumber}`, {
+api.infectionControl = {};
+api.infectionControl.getAntimicrobialTimeline = (admissionNumber) =>
+  instance.get(`/infection-control/antimicrobial-timeline/${admissionNumber}`, {
     ...setHeaders(),
   });
 
