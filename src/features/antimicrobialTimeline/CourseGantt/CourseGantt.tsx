@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Tag, Tooltip } from "antd";
 import dayjs, { Dayjs } from "dayjs";
@@ -12,6 +12,7 @@ import { COURSE_COLORS } from "../courseColors";
 import {
   formatRegimen,
   getTimelineRange,
+  groupCourseRows,
   ITimelineRange,
   toPercent,
 } from "../timeline";
@@ -59,6 +60,10 @@ interface CourseBarsProps {
   course: ICourse;
   range: ITimelineRange;
   now: Dayjs;
+  // start of the next course of the same drug, which its planned end must not
+  // run into
+  nextStart?: string;
+  onOpen: () => void;
 }
 
 /**
@@ -66,36 +71,64 @@ interface CourseBarsProps {
  * prescribed but still ahead, dashed up to the planned end, hatched on the days
  * the drug was not prescribed, with a tick on every regimen change
  */
-function CourseBars({ course, range, now }: CourseBarsProps) {
+function CourseBars({
+  course,
+  range,
+  now,
+  nextStart,
+  onOpen,
+}: CourseBarsProps) {
   const { t } = useTranslation();
+
+  // the given and scheduled bars open the details of the course
+  const clickable = {
+    role: "button",
+    tabIndex: 0,
+    "aria-label": t("antimicrobialTimeline.timeline.openDetails", {
+      drug: course.drug,
+    }),
+    onClick: onOpen,
+    onKeyDown: (event: React.KeyboardEvent) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        onOpen();
+      }
+    },
+  };
 
   const end = dayjs(course.end);
   const givenUntil = end.isAfter(now) ? now : end;
   const plannedEnd = course.plannedEnd ? dayjs(course.plannedEnd) : null;
+  // a past course stops being planned once the drug is prescribed again
+  const plannedUntil =
+    plannedEnd && nextStart && plannedEnd.isAfter(nextStart)
+      ? dayjs(nextStart)
+      : plannedEnd;
 
   return (
     <>
-      {plannedEnd && plannedEnd.isAfter(end) && (
+      {plannedUntil && plannedUntil.isAfter(end) && (
         <Bar
           className="bar-planned"
           $color={COURSE_COLORS[course.status]}
-          style={span(end, plannedEnd, range)}
+          style={span(end, plannedUntil, range)}
         />
       )}
 
-      <Tooltip title={<CourseDetails course={course} />} placement="top">
-        <Bar
-          className="bar-given"
-          data-testid="course-bar"
-          $color={COURSE_COLORS[course.status]}
-          style={span(course.start, givenUntil, range)}
-        />
-      </Tooltip>
+      <Bar
+        className="bar-given"
+        data-testid="course-bar"
+        $color={COURSE_COLORS[course.status]}
+        style={span(course.start, givenUntil, range)}
+        {...clickable}
+      />
 
       {end.isAfter(now) && (
-        <Tooltip title={<CourseDetails course={course} />} placement="top">
-          <Bar className="bar-scheduled" style={span(now, end, range)} />
-        </Tooltip>
+        <Bar
+          className="bar-scheduled"
+          style={span(now, end, range)}
+          {...clickable}
+        />
       )}
 
       {course.gaps.map((gap) => (
@@ -110,7 +143,7 @@ function CourseBars({ course, range, now }: CourseBarsProps) {
         </Tooltip>
       ))}
 
-      {plannedEnd && (
+      {plannedEnd && plannedEnd === plannedUntil && (
         <Tooltip
           title={t("antimicrobialTimeline.timeline.plannedEnd", {
             date: formatDate(course.plannedEnd, "DD/MM HH:mm"),
@@ -155,7 +188,9 @@ function CourseBars({ course, range, now }: CourseBarsProps) {
 export function CourseGantt({ courses, now, dischargeDate }: CourseGanttProps) {
   const { t } = useTranslation();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [selected, setSelected] = useState<ICourse | null>(null);
 
+  const rows = useMemo(() => groupCourseRows(courses), [courses]);
   const range = useMemo(
     () => getTimelineRange(courses, dischargeDate ? dayjs(dischargeDate) : now),
     [courses, now, dischargeDate],
@@ -235,16 +270,19 @@ export function CourseGantt({ courses, now, dischargeDate }: CourseGanttProps) {
             </Track>
           </Row>
 
-          {courses.map((course) => (
-            <Row
-              key={`${course.idDrug}-${course.start}`}
-              data-testid="course-row"
-            >
+          {rows.map(({ idDrug, course, courses: drugCourses }) => (
+            <Row key={idDrug} data-testid="course-row">
               <RowLabel>
                 <div className="label-drug">
                   <AwareTag level={course.atbLevel} />
                   <Tooltip title={course.substance || course.drug}>
-                    <span className="label-name">{course.drug}</span>
+                    <button
+                      type="button"
+                      className="label-name"
+                      onClick={() => setSelected(course)}
+                    >
+                      {course.drug}
+                    </button>
                   </Tooltip>
                 </div>
                 <div className="label-info">
@@ -266,9 +304,25 @@ export function CourseGantt({ courses, now, dischargeDate }: CourseGanttProps) {
                     {formatDate(course.end, "DD/MM")}
                   </span>
                 </div>
+                {drugCourses.length > 1 && (
+                  <div className="label-cycles">
+                    {t("antimicrobialTimeline.timeline.otherCourses", {
+                      count: drugCourses.length - 1,
+                    })}
+                  </div>
+                )}
               </RowLabel>
               <Track $days={range.days.length}>
-                <CourseBars course={course} range={range} now={now} />
+                {drugCourses.map((drugCourse, index) => (
+                  <CourseBars
+                    key={drugCourse.start}
+                    course={drugCourse}
+                    range={range}
+                    now={now}
+                    nextStart={drugCourses[index + 1]?.start}
+                    onOpen={() => setSelected(drugCourse)}
+                  />
+                ))}
                 {markers}
               </Track>
             </Row>
@@ -310,6 +364,12 @@ export function CourseGantt({ courses, now, dischargeDate }: CourseGanttProps) {
           {t("antimicrobialTimeline.timeline.legendChange")}
         </span>
       </Legend>
+
+      <CourseDetails
+        course={selected}
+        now={now}
+        onClose={() => setSelected(null)}
+      />
     </Gantt>
   );
 }

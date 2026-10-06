@@ -1611,7 +1611,10 @@
       "legendGap": "Dia sem prescrição",
       "legendChange": "Mudança de posologia",
       "regimenChange": "Mudança de posologia em {{date}}",
-      "gap": "Sem prescrição de {{start}} a {{end}}"
+      "gap": "Sem prescrição de {{start}} a {{end}}",
+      "openDetails": "Ver detalhes de {{drug}}",
+      "otherCourses_one": "+{{count}} ciclo anterior",
+      "otherCourses_other": "+{{count}} ciclos anteriores"
     },
     "status": {
       "active": "Em uso",
@@ -1619,7 +1622,6 @@
       "finished": "Encerrado"
     },
     "details": {
-      "period": "Período",
       "days_one": "{{count}} dia de tratamento",
       "days_other": "{{count}} dias de tratamento",
       "plannedEnd": "Término previsto",
@@ -1628,8 +1630,19 @@
       "daily": "Prescrição diária",
       "prescriptions": "Prescrições",
       "regimens": "Posologias",
-      "gaps_one": "{{count}} intervalo sem prescrição",
-      "gaps_other": "{{count}} intervalos sem prescrição"
+      "start": "Início",
+      "end": "Fim",
+      "prescribedUntil": "Prescrito até",
+      "treatment": "Tratamento",
+      "daysPlanned_one": "{{count}} de {{planned}} dias",
+      "daysPlanned_other": "{{count}} de {{planned}} dias",
+      "dose": "Dose",
+      "frequency": "Frequência",
+      "route": "Via",
+      "current": "Atual",
+      "gapsTitle": "Intervalos sem prescrição",
+      "openPrescription": "Abrir última prescrição",
+      "close": "Fechar"
     }
   }
 }

@@ -83,15 +83,47 @@ export const sortCourses = (courses: ICourse[]): ICourse[] =>
     return dayjs(b.start).valueOf() - dayjs(a.start).valueOf();
   });
 
-/** "2 g · 8/8h · IV" */
-export const formatRegimen = (regimen: ICourseRegimen): string => {
-  const dose =
-    regimen.dose != null
-      ? `${regimen.dose.toLocaleString("pt-BR")}${regimen.measureUnit ? ` ${regimen.measureUnit}` : ""}`
-      : null;
+export interface ICourseRow {
+  idDrug: number;
+  // the course the row is labelled after: the one in use, or else the latest
+  course: ICourse;
+  // every course of the drug, oldest first
+  courses: ICourse[];
+}
 
-  return [dose, regimen.frequency, regimen.route].filter(Boolean).join(" · ");
+/**
+ * One timeline row per drug: a drug prescribed again after a break shows its
+ * past courses on the same line as the current one. Rows follow sortCourses.
+ */
+export const groupCourseRows = (courses: ICourse[]): ICourseRow[] => {
+  const byDrug = new Map<number, ICourse[]>();
+  courses.forEach((course) => {
+    byDrug.set(course.idDrug, [...(byDrug.get(course.idDrug) ?? []), course]);
+  });
+
+  const rows = [...byDrug.entries()].map(([idDrug, drugCourses]) => ({
+    idDrug,
+    course: sortCourses(drugCourses)[0],
+    courses: [...drugCourses].sort(
+      (a, b) => dayjs(a.start).valueOf() - dayjs(b.start).valueOf(),
+    ),
+  }));
+  const order = sortCourses(rows.map((row) => row.course));
+
+  return rows.sort((a, b) => order.indexOf(a.course) - order.indexOf(b.course));
 };
+
+/** "2 g · 8/8h · IV" */
+/** The dose with its unit, e.g. "2,5 FRASCO AMPOLA" */
+export const formatDose = (regimen: ICourseRegimen): string | null =>
+  regimen.dose != null
+    ? `${regimen.dose.toLocaleString("pt-BR")}${regimen.measureUnit ? ` ${regimen.measureUnit}` : ""}`
+    : null;
+
+export const formatRegimen = (regimen: ICourseRegimen): string =>
+  [formatDose(regimen), regimen.frequency, regimen.route]
+    .filter(Boolean)
+    .join(" · ");
 
 /** The age in whole years, or in months for babies */
 export const getAge = (

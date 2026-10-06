@@ -80,11 +80,21 @@ export const RowLabel = styled.div`
   }
 
   .label-name {
+    background: none;
+    border: 0;
     color: #2e3c5a;
+    cursor: pointer;
+    font: inherit;
     font-weight: 600;
     overflow: hidden;
+    padding: 0;
+    text-align: left;
     text-overflow: ellipsis;
     white-space: nowrap;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 
   .label-info {
@@ -100,6 +110,12 @@ export const RowLabel = styled.div`
 
   .label-day {
     color: #2e3c5a;
+  }
+
+  .label-cycles {
+    color: #8c8c8c;
+    font-size: 12px;
+    margin-top: 2px;
   }
 
   .label-dates {
@@ -225,6 +241,16 @@ export const HeaderDay = styled.div`
 
 export const Bar = styled.div<{ $color?: string }>`
   border-radius: 4px;
+
+  &[role="button"]:hover {
+    filter: brightness(0.9);
+  }
+
+  &[role="button"]:focus-visible {
+    outline: 2px solid #2e3c5a;
+    outline-offset: 2px;
+  }
+
   height: 18px;
   position: absolute;
   top: 50%;
@@ -232,7 +258,7 @@ export const Bar = styled.div<{ $color?: string }>`
 
   &.bar-given {
     background: ${(props) => props.$color};
-    cursor: help;
+    cursor: pointer;
     min-width: 3px;
     z-index: 1;
   }
@@ -240,7 +266,7 @@ export const Bar = styled.div<{ $color?: string }>`
   &.bar-scheduled {
     background: ${SCHEDULED_COLOR};
     border-radius: 0 4px 4px 0;
-    cursor: help;
+    cursor: pointer;
     z-index: 1;
   }
 

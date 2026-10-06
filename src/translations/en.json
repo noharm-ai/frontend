@@ -1601,7 +1601,10 @@
       "legendGap": "Day without prescription",
       "legendChange": "Regimen change",
       "regimenChange": "Regimen changed on {{date}}",
-      "gap": "Not prescribed from {{start}} to {{end}}"
+      "gap": "Not prescribed from {{start}} to {{end}}",
+      "openDetails": "See details of {{drug}}",
+      "otherCourses_one": "+{{count}} earlier course",
+      "otherCourses_other": "+{{count}} earlier courses"
     },
     "status": {
       "active": "In use",
@@ -1609,7 +1612,6 @@
       "finished": "Finished"
     },
     "details": {
-      "period": "Period",
       "days_one": "{{count}} day of treatment",
       "days_other": "{{count}} days of treatment",
       "plannedEnd": "Planned end",
@@ -1618,8 +1620,19 @@
       "daily": "Daily prescription",
       "prescriptions": "Prescriptions",
       "regimens": "Regimens",
-      "gaps_one": "{{count}} gap without prescription",
-      "gaps_other": "{{count}} gaps without prescription"
+      "start": "Start",
+      "end": "End",
+      "prescribedUntil": "Prescribed until",
+      "treatment": "Treatment",
+      "daysPlanned_one": "{{count}} of {{planned}} days",
+      "daysPlanned_other": "{{count}} of {{planned}} days",
+      "dose": "Dose",
+      "frequency": "Frequency",
+      "route": "Route",
+      "current": "Current",
+      "gapsTitle": "Gaps without prescription",
+      "openPrescription": "Open latest prescription",
+      "close": "Close"
     }
   }
 }

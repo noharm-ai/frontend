@@ -181,11 +181,58 @@ test("lists every course on the timeline, the ones in use first", async ({
     rows.filter({ hasText: "AZITROMICINA" }).getByTestId("planned-end"),
   ).toHaveCount(0);
 
-  // the bar tells how the course was prescribed
-  await rows.filter({ hasText: "MEROPENEM" }).getByTestId("course-bar").hover();
+  // clicking the bar opens the details of the course
+  await rows.filter({ hasText: "MEROPENEM" }).getByTestId("course-bar").click();
+  const details = page.getByRole("dialog");
   await expect(
-    page.getByRole("tooltip").getByText("CPOE (prescrição com vigência)"),
+    details.getByText("CPOE (prescrição com vigência)"),
   ).toBeVisible();
+  await expect(details.getByText("Posologias")).toBeVisible();
+
+  await details.getByRole("button", { name: "Fechar" }).click();
+  await expect(details).toHaveCount(0);
+});
+
+test("shows a drug prescribed again on the same row as its past course", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override(ENDPOINT, {
+    json: timeline([
+      course({
+        idDrug: 11,
+        drug: "MEROPENEM 1 g SOL INJ",
+        status: "finished",
+        start: hoursFromNow(-200),
+        end: hoursFromNow(-130),
+        days: 3,
+        regimens: [regimen(-200, -130, 1)],
+      }),
+      course({
+        idDrug: 11,
+        drug: "MEROPENEM 1 g SOL INJ",
+        status: "active",
+        start: hoursFromNow(-48),
+        end: hoursFromNow(20),
+        days: 2,
+        regimens: [regimen(-48, 20, 2)],
+      }),
+    ]),
+  });
+
+  await page.goto(PAGE_URL);
+
+  const rows = page.getByTestId("course-row");
+  await expect(rows).toHaveCount(1, { timeout: 15000 });
+  // the row is labelled after the course in use
+  await expect(rows).toContainText("Em uso");
+  await expect(rows).toContainText("D2");
+  await expect(rows).toContainText("+1 ciclo anterior");
+  await expect(rows.getByTestId("course-bar")).toHaveCount(2);
+
+  // each bar opens its own course
+  await rows.getByTestId("course-bar").first().click();
+  await expect(page.getByRole("dialog")).toContainText("Encerrado");
 });
 
 test("says so when the admission has no antimicrobial", async ({
