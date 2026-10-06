@@ -8,29 +8,31 @@ const mobile = `@media (max-width: ${breakpointsEnum.md - 1}px)`;
 const purple = "#a991d6";
 const BADGE_SIZE = 56;
 const BADGE_SIZE_MOBILE = 44;
+/* the knowledge base hero's rendered height (its search box and suggestions
+   make it taller); matching it keeps the corner shapes in the same proportion */
+const HERO_HEIGHT = 341;
+const HERO_HEIGHT_MOBILE = 358;
 
 export const Hero = styled.section`
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: ${HERO_HEIGHT}px;
   border-radius: 16px;
-  padding: 40px 40px 36px;
+  padding: 48px 40px;
   margin-bottom: 32px;
+  /* same look as the knowledge base hero (KnowledgeBaseHome.style Hero) */
   background: linear-gradient(135deg, #eef6f5 0%, #f7faf9 100%);
   color: ${colors.primary};
 
-  /* a burst of circles at the right edge, behind the text */
+  /* a quarter circle anchored top-left, plus a half circle at the
+     bottom-right; both sized to stay clear of the centered text */
   &::before,
   &::after {
     content: "";
     position: absolute;
-    border-radius: 50%;
-  }
-
-  &::before {
-    top: -60px;
-    right: -40px;
-    width: 220px;
-    height: 220px;
     background: linear-gradient(
       135deg,
       ${colors.accentSecondary},
@@ -38,34 +40,47 @@ export const Hero = styled.section`
     );
   }
 
+  &::before {
+    top: 0;
+    left: 0;
+    width: 24%;
+    height: 80%;
+    border-radius: 0 0 100% 0;
+  }
+
+  /* centered on the bottom edge: the hero clips its lower half */
   &::after {
-    right: 170px;
-    bottom: -36px;
-    width: 90px;
-    height: 90px;
-    background: ${purple};
-    opacity: 0.85;
+    right: 60px;
+    bottom: -100px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
   }
 
   ${mobile} {
+    min-height: ${HERO_HEIGHT_MOBILE}px;
     padding: 28px 18px 24px;
     border-radius: 12px;
 
     &::before {
-      top: -40px;
-      right: -50px;
-      width: 120px;
-      height: 120px;
+      width: 26%;
+      height: 22%;
     }
 
     &::after {
-      display: none;
+      right: 8px;
+      bottom: -32px;
+      width: 64px;
+      height: 64px;
     }
   }
 
   .hero-inner {
     position: relative;
-    max-width: 640px;
+    width: 100%;
+    max-width: 760px;
+    margin: 0 auto;
+    text-align: center;
   }
 
   .hero-eyebrow {
