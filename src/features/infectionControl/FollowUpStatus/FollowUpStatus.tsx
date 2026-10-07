@@ -25,9 +25,6 @@ interface FollowUpStatusProps {
   followUp: IFollowUp;
   drugNames: Record<number, string>;
   now: Dayjs;
-  // opens the review, where the next review date is set; absent when the
-  // user cannot review
-  onSchedule?: () => void;
 }
 
 const STATUS_ICON: Record<number, React.ReactNode> = {
@@ -52,7 +49,6 @@ export function FollowUpStatus({
   followUp,
   drugNames,
   now,
-  onSchedule,
 }: FollowUpStatusProps) {
   const { t } = useTranslation();
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -148,19 +144,6 @@ export function FollowUpStatus({
                   ` (${t("infectionControl.followUp.overdue")})`}
               </div>
             </div>
-            {onSchedule && (
-              <Button
-                type="link"
-                className="follow-up-action"
-                onClick={onSchedule}
-              >
-                {t(
-                  followUp.nextReviewDate
-                    ? "infectionControl.followUp.reschedule"
-                    : "infectionControl.followUp.schedule",
-                )}
-              </Button>
-            )}
           </div>
 
           <div className="follow-up-row" data-testid="follow-up-pendings">

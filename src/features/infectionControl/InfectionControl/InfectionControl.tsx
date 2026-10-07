@@ -201,9 +201,6 @@ export function InfectionControl() {
               followUp={followUp}
               drugNames={drugNames}
               now={now}
-              onSchedule={
-                showReview ? () => dispatch(setReviewOpen(true)) : undefined
-              }
             />
           </Col>
         )}

@@ -1662,8 +1662,6 @@
       "pendingsCount_other": "{{count}} pending items",
       "showPendings": "View pending items",
       "sinceAt": "since {{date}} at {{time}}",
-      "schedule": "Schedule",
-      "reschedule": "Reschedule",
       "showHistory": "View history ({{count}})",
       "pending": {
         "1": "Patient not reviewed yet",

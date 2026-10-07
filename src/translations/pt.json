@@ -1672,8 +1672,6 @@
       "pendingsCount_other": "{{count}} pendências",
       "showPendings": "Ver pendências",
       "sinceAt": "desde {{date}} às {{time}}",
-      "schedule": "Agendar",
-      "reschedule": "Reagendar",
       "showHistory": "Ver histórico ({{count}})",
       "pending": {
         "1": "Paciente ainda não revisado",

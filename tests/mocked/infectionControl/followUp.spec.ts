@@ -254,11 +254,10 @@ test("shows the follow-up status, its pending reasons and each drug's evaluation
     `Conforme em ${shownDate(vancomycinEvaluation.createdAt)}`,
   );
 
-  // the default user cannot register reviews, nor schedule the next one
+  // the default user cannot register reviews
   await expect(
     page.getByRole("button", { name: "Registrar revisão" }),
   ).toHaveCount(0);
-  await expect(box.getByRole("button", { name: "Agendar" })).toHaveCount(0);
 
   // the review history opens from the follow-up, listing what each review
   // evaluated
@@ -748,25 +747,6 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(
       page.getByRole("button", { name: "Registrar revisão" }),
     ).toHaveCount(0);
-  });
-
-  test("schedules the next review through the review modal", async ({
-    page,
-    mockApi,
-  }) => {
-    mockApi.override(FOLLOW_UP, { json: followUp() });
-
-    await page.goto(PAGE_URL);
-    await page
-      .getByTestId("follow-up")
-      .getByRole("button", { name: "Agendar" })
-      .click({ timeout: 15000 });
-
-    await expect(
-      page
-        .getByRole("dialog")
-        .getByRole("heading", { name: "Registrar revisão" }),
-    ).toBeVisible();
   });
 });
 
