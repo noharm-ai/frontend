@@ -198,13 +198,17 @@ test("shows the follow-up status, its pending reasons and each drug's evaluation
   await expect(box).toContainText("Não agendada");
   await expect(box).toContainText("Maria Teste");
 
-  const cards = page.getByTestId("current-course");
+  // each drug's evaluation sits on its course in the timeline
+  const rows = page.getByTestId("course-row");
   await expect(
-    cards.filter({ hasText: "MEROPENEM" }).getByTestId("evaluation-tag"),
-  ).toHaveText("Sem avaliação");
+    rows.filter({ hasText: "MEROPENEM" }).getByTestId("course-evaluation"),
+  ).toHaveCount(0);
   await expect(
-    cards.filter({ hasText: "VANCOMICINA" }).getByTestId("evaluation-tag"),
-  ).toHaveText(`Conforme · até ${shownDate(vancomycinEvaluation.validUntil)}`);
+    rows.filter({ hasText: "VANCOMICINA" }).getByTestId("course-evaluation"),
+  ).toHaveAttribute(
+    "aria-label",
+    `Conforme em ${shownDate(vancomycinEvaluation.createdAt)}`,
+  );
 
   // the default user cannot register reviews, nor schedule the next one
   await expect(
@@ -304,11 +308,11 @@ test("leaves the follow-up out when the schema does not have it", async ({
   // default handler: { enabled: false }
   await page.goto(PAGE_URL);
 
-  await expect(page.getByTestId("current-course")).toHaveCount(2, {
+  await expect(page.getByTestId("course-row")).toHaveCount(2, {
     timeout: 15000,
   });
   await expect(page.getByTestId("follow-up")).toHaveCount(0);
-  await expect(page.getByTestId("evaluation-tag")).toHaveCount(0);
+  await expect(page.getByTestId("course-evaluation")).toHaveCount(0);
 });
 
 test.describe("with WRITE_INFECTION_CONTROL", () => {

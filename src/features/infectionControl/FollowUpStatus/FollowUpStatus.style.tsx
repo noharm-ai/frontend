@@ -11,8 +11,8 @@ export const FollowUpBox = styled.div`
     align-items: center;
     border-bottom: 1px solid #e0e0e0;
     display: flex;
-    gap: 16px;
-    padding: 18px 20px;
+    gap: 12px;
+    padding: 14px 16px;
 
     --status-color: #595959;
     --status-background: #f5f5f5;
@@ -35,31 +35,32 @@ export const FollowUpBox = styled.div`
     color: var(--status-color);
     display: flex;
     flex: 0 0 auto;
-    font-size: 18px;
-    height: 44px;
+    font-size: 14px;
+    height: 32px;
     justify-content: center;
-    width: 44px;
+    width: 32px;
   }
 
   .follow-up-status {
     color: var(--status-color);
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 600;
   }
 
   .follow-up-since {
     color: #8c8c8c;
+    font-size: 12px;
   }
 
   .follow-up-rows {
-    padding: 0 20px;
+    padding: 0 16px;
   }
 
   .follow-up-row {
     align-items: flex-start;
     display: flex;
-    gap: 12px;
-    padding: 14px 0;
+    gap: 10px;
+    padding: 10px 0;
   }
 
   .follow-up-row + .follow-up-row {
@@ -68,7 +69,7 @@ export const FollowUpBox = styled.div`
 
   .follow-up-row-icon {
     color: #8c8c8c;
-    font-size: 16px;
+    font-size: 14px;
     margin-top: 2px;
   }
 
@@ -79,17 +80,18 @@ export const FollowUpBox = styled.div`
 
   .follow-up-label {
     color: #8c8c8c;
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .follow-up-value {
     color: #2e3c5a;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 600;
   }
 
   .follow-up-detail {
     color: #595959;
+    font-size: 13px;
   }
 
   .follow-up-overdue {
@@ -98,11 +100,13 @@ export const FollowUpBox = styled.div`
 
   .follow-up-action {
     align-self: center;
+    font-size: 13px;
     padding: 0;
   }
 
   .follow-up-pendings {
     color: #2e3c5a;
+    font-size: 13px;
     margin: 2px 0 0 0;
     padding-left: 18px;
   }

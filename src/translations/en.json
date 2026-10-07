@@ -1576,21 +1576,6 @@
       "bed": "Bed",
       "dischargeDate": "Discharge"
     },
-    "current": {
-      "title": "Antimicrobials in use now",
-      "empty": "No antimicrobial in use right now.",
-      "dayOf": "of {{count}} planned days",
-      "noPlannedEnd": "No planned end",
-      "started": "Started",
-      "plannedEnd": "Planned end",
-      "endsToday": "ends today",
-      "endsIn_one": "ends in {{count}} day",
-      "endsIn_other": "ends in {{count}} days",
-      "overdue_one": "{{count}} day past the planned end",
-      "overdue_other": "{{count}} days past the planned end",
-      "validUntil": "Prescription valid until {{date}}",
-      "regimen": "Current regimen"
-    },
     "timeline": {
       "title": "Antimicrobial timeline",
       "empty": "No antimicrobial prescribed in this admission.",

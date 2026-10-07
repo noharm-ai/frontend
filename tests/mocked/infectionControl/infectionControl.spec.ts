@@ -122,10 +122,7 @@ test.beforeEach(({ mockApi }) => {
   });
 });
 
-test("shows the patient and the antimicrobials in use now", async ({
-  page,
-  mockApi,
-}) => {
+test("shows the patient and the admission", async ({ page, mockApi }) => {
   mockApi.override(ENDPOINT, { json: timeline(COURSES) });
 
   await page.goto(PAGE_URL);
@@ -142,19 +139,6 @@ test("shows the patient and the antimicrobials in use now", async ({
   await expect(
     page.getByRole("link", { name: "Abrir prescrição", exact: true }),
   ).toHaveCount(0);
-
-  const cards = page.getByTestId("current-course");
-  await expect(cards).toHaveCount(2);
-
-  const meropenem = cards.filter({ hasText: "MEROPENEM" });
-  await expect(meropenem).toContainText("D4");
-  await expect(meropenem).toContainText("de 7 dias previstos");
-  await expect(meropenem).toContainText("termina em 4 dias");
-  await expect(meropenem).toContainText("2 g · 8h/8h · IV");
-
-  const vancomycin = cards.filter({ hasText: "VANCOMICINA" });
-  await expect(vancomycin).toContainText("D8");
-  await expect(vancomycin).toContainText("previsão excedida há 1 dia");
 });
 
 test("lists every course on the timeline, the ones in use first", async ({
@@ -250,11 +234,8 @@ test("says so when the admission has no antimicrobial", async ({
   await page.goto(PAGE_URL);
 
   await expect(
-    page.getByText("Nenhum antimicrobiano em uso no momento."),
-  ).toBeVisible({ timeout: 15000 });
-  await expect(
     page.getByText("Nenhum antimicrobiano prescrito neste atendimento."),
-  ).toBeVisible();
+  ).toBeVisible({ timeout: 15000 });
 });
 
 test("says so when the admission does not exist", async ({ page, mockApi }) => {

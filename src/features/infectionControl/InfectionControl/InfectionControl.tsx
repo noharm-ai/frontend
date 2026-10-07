@@ -17,7 +17,6 @@ import {
   setReviewOpen,
 } from "../InfectionControlSlice";
 import { CourseGantt } from "../CourseGantt/CourseGantt";
-import { CurrentCourses } from "../CurrentCourses/CurrentCourses";
 import { FollowUpStatus } from "../FollowUpStatus/FollowUpStatus";
 import { InfectionControlPatient } from "../InfectionControlPatient/InfectionControlPatient";
 import { ReviewModal } from "../ReviewModal/ReviewModal";
@@ -62,7 +61,6 @@ export function InfectionControl() {
   // the server judged the courses at this time, so the timeline uses it too
   const now = useMemo(() => (data ? dayjs(data.now) : dayjs()), [data]);
   const courses = useMemo(() => sortCourses(data?.courses ?? []), [data]);
-  const activeCourses = courses.filter((c) => c.status === "active");
   const drugNames = useMemo(() => getDrugNames(courses), [courses]);
   const followUpEnabled = !!followUp?.enabled;
   const followUpCourses = useMemo(
@@ -158,7 +156,7 @@ export function InfectionControl() {
           />
         </Col>
         {followUpEnabled && followUp && (
-          <Col xs={24} lg={16}>
+          <Col xs={24} lg={8}>
             <FollowUpStatus
               followUp={followUp}
               drugNames={drugNames}
@@ -170,15 +168,6 @@ export function InfectionControl() {
           </Col>
         )}
       </TopRow>
-
-      <Section data-kb="infectionControl.antimicrobials.current">
-        <h2 className="section-title">{t("infectionControl.current.title")}</h2>
-        <CurrentCourses
-          courses={activeCourses}
-          now={now}
-          followUps={followUpCourses}
-        />
-      </Section>
 
       <Section>
         <h2 className="section-title">

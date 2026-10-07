@@ -1586,21 +1586,6 @@
       "bed": "Leito",
       "dischargeDate": "Alta"
     },
-    "current": {
-      "title": "Antimicrobianos em uso agora",
-      "empty": "Nenhum antimicrobiano em uso no momento.",
-      "dayOf": "de {{count}} dias previstos",
-      "noPlannedEnd": "Sem previsão de término",
-      "started": "Início",
-      "plannedEnd": "Término previsto",
-      "endsToday": "termina hoje",
-      "endsIn_one": "termina em {{count}} dia",
-      "endsIn_other": "termina em {{count}} dias",
-      "overdue_one": "previsão excedida há {{count}} dia",
-      "overdue_other": "previsão excedida há {{count}} dias",
-      "validUntil": "Prescrição válida até {{date}}",
-      "regimen": "Posologia atual"
-    },
     "timeline": {
       "title": "Linha do tempo de antimicrobianos",
       "empty": "Nenhum antimicrobiano prescrito neste atendimento.",
