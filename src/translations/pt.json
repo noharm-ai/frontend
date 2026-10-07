@@ -863,6 +863,7 @@
     "evaluationTime": "TEMPO DE AVALIACAO",
     "interventionReasonArray": "MOTIVOS INTERVENCAO",
     "outcomeResponsible": "RESPONSAVEL DESFECHO",
+    "outcomeAt": "DATA DESFECHO",
     "checkedAt": "DATA CHECAGEM",
     "originCreatedAt": "DATA CRIACAO ORIGEM",
     "tags": "MARCADORES",
