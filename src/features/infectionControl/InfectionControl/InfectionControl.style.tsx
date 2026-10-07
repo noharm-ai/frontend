@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Row } from "antd";
 
 import { PageHeader } from "styles/PageHeader.style";
 
@@ -25,51 +26,9 @@ export const Section = styled.section`
   }
 `;
 
-export const PatientBox = styled.div`
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
+// the patient card and the follow-up, side by side on wide screens
+export const TopRow = styled(Row)`
   margin-bottom: 24px;
-  padding: 14px 20px;
-
-  .patient-name {
-    color: #2e3c5a;
-    font-size: 20px;
-    font-weight: 500;
-    margin-bottom: 10px;
-  }
-
-  .patient-data {
-    display: grid;
-    gap: 10px 24px;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  }
-
-  .patient-data-item {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-  }
-
-  .patient-data-label {
-    color: #8c8c8c;
-    font-size: 12px;
-  }
-
-  .patient-data-value {
-    color: #2e3c5a;
-    font-weight: 500;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .patient-data-extra {
-    color: #8c8c8c;
-    font-size: 12px;
-    font-weight: 400;
-    margin-left: 4px;
-  }
 `;
 
 export const StateBox = styled.div`

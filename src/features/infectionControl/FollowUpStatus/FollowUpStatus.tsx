@@ -1,79 +1,141 @@
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Tag } from "antd";
+import { Button } from "antd";
+import {
+  CalendarOutlined,
+  CheckOutlined,
+  ExclamationOutlined,
+  MinusOutlined,
+  StopOutlined,
+  UserOutlined,
+  WarningOutlined,
+} from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 
+import DefaultModal from "components/Modal";
 import { InfectionControlStatusEnum } from "models/InfectionControlEnum";
-import { formatDate, formatDateTime } from "utils/date";
+import { formatDate } from "utils/date";
 
 import { IFollowUp } from "../InfectionControlSlice";
 import { describePending } from "../followUp";
-import { FollowUpBox } from "./FollowUpStatus.style";
+import { ReviewHistory } from "../ReviewHistory/ReviewHistory";
+import { FollowUpBox, HistoryBody } from "./FollowUpStatus.style";
 
 interface FollowUpStatusProps {
   followUp: IFollowUp;
   drugNames: Record<number, string>;
   now: Dayjs;
+  // opens the review, where the next review date is set; absent when the
+  // user cannot review
+  onSchedule?: () => void;
 }
+
+const STATUS_ICON: Record<number, React.ReactNode> = {
+  [InfectionControlStatusEnum.PENDING]: <ExclamationOutlined />,
+  [InfectionControlStatusEnum.REVISED]: <CheckOutlined />,
+  [InfectionControlStatusEnum.CLOSED]: <StopOutlined />,
+};
+
+const STATUS_CLASS: Record<number, string> = {
+  [InfectionControlStatusEnum.PENDING]: "pending",
+  [InfectionControlStatusEnum.REVISED]: "revised",
+  [InfectionControlStatusEnum.CLOSED]: "closed",
+};
 
 /**
  * Where the admission stands in the infection control follow-up: pending or
- * revised, why it is pending, the last review and the next one scheduled
+ * revised, the last review, the next one scheduled and why it is pending.
+ * Every review is one click away, in a modal
  */
 export function FollowUpStatus({
   followUp,
   drugNames,
   now,
+  onSchedule,
 }: FollowUpStatusProps) {
   const { t } = useTranslation();
+  const [historyOpen, setHistoryOpen] = useState(false);
   const pendings = followUp.pendings ?? [];
-  const lastReview = followUp.reviews?.[0];
+  const reviews = followUp.reviews ?? [];
+  const lastReview = reviews[0];
   const nextReviewOverdue =
     !!followUp.nextReviewDate && dayjs(followUp.nextReviewDate).isBefore(now);
 
+  const status = followUp.followed ? followUp.status : null;
+  const statusClass = (status != null && STATUS_CLASS[status]) || "none";
+
   return (
     <FollowUpBox data-kb="infectionControl.followUp" data-testid="follow-up">
-      <div className="follow-up-header">
-        <div className="follow-up-title">
-          <h2>{t("infectionControl.followUp.title")}</h2>
-          {followUp.followed ? (
-            <>
-              <Tag
-                color={InfectionControlStatusEnum.getColor(followUp.status)}
-                data-testid="follow-up-status"
-              >
-                {t(`infectionControl.followUp.status.${followUp.status}`)}
-              </Tag>
-              {followUp.statusDate && (
-                <span className="follow-up-since">
-                  {t("infectionControl.followUp.since", {
-                    date: formatDateTime(followUp.statusDate),
-                  })}
-                </span>
-              )}
-            </>
-          ) : (
-            <Tag data-testid="follow-up-status">
-              {t("infectionControl.followUp.notFollowed")}
-            </Tag>
-          )}
+      <div className={`follow-up-header ${statusClass}`}>
+        <div className="follow-up-icon">
+          {(status != null && STATUS_ICON[status]) || <MinusOutlined />}
+        </div>
+        <div>
+          <div className="follow-up-status" data-testid="follow-up-status">
+            {followUp.followed
+              ? t(`infectionControl.followUp.status.${followUp.status}`)
+              : t("infectionControl.followUp.notFollowed")}
+          </div>
+          <div className="follow-up-since">
+            {followUp.followed
+              ? followUp.statusDate &&
+                t("infectionControl.followUp.sinceAt", {
+                  date: formatDate(followUp.statusDate),
+                  time: formatDate(followUp.statusDate, "HH:mm"),
+                })
+              : t("infectionControl.followUp.notFollowedHint")}
+          </div>
         </div>
       </div>
 
-      {!followUp.followed && (
-        <p className="follow-up-hint">
-          {t("infectionControl.followUp.notFollowedHint")}
-        </p>
-      )}
-
       {followUp.followed && (
-        <>
-          <div className="follow-up-data">
-            <div className="follow-up-data-item">
-              <span className="follow-up-data-label">
+        <div className="follow-up-rows">
+          <div className="follow-up-row">
+            <UserOutlined className="follow-up-row-icon" />
+            <div className="follow-up-row-content">
+              <div className="follow-up-label">
+                {t("infectionControl.followUp.lastReview")}
+              </div>
+              {lastReview ? (
+                <>
+                  <div className="follow-up-value">
+                    {formatDate(lastReview.createdAt, "DD/MM/YYYY · HH:mm")}
+                  </div>
+                  {lastReview.createdBy && (
+                    <div className="follow-up-detail">
+                      {t("infectionControl.followUp.reviewedBy", {
+                        user: lastReview.createdBy,
+                      })}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="follow-up-value">
+                  {t("infectionControl.followUp.neverReviewed")}
+                </div>
+              )}
+            </div>
+            {reviews.length > 0 && (
+              <Button
+                type="link"
+                className="follow-up-action"
+                onClick={() => setHistoryOpen(true)}
+              >
+                {t("infectionControl.followUp.showHistory", {
+                  count: reviews.length,
+                })}
+              </Button>
+            )}
+          </div>
+
+          <div className="follow-up-row">
+            <CalendarOutlined className="follow-up-row-icon" />
+            <div className="follow-up-row-content">
+              <div className="follow-up-label">
                 {t("infectionControl.followUp.nextReview")}
-              </span>
-              <span
-                className={`follow-up-data-value ${
+              </div>
+              <div
+                className={`follow-up-value ${
                   nextReviewOverdue ? "follow-up-overdue" : ""
                 }`}
               >
@@ -82,43 +144,60 @@ export function FollowUpStatus({
                   : t("infectionControl.followUp.noNextReview")}
                 {nextReviewOverdue &&
                   ` (${t("infectionControl.followUp.overdue")})`}
-              </span>
-            </div>
-            <div className="follow-up-data-item">
-              <span className="follow-up-data-label">
-                {t("infectionControl.followUp.lastReview")}
-              </span>
-              <span className="follow-up-data-value">
-                {lastReview
-                  ? t("infectionControl.followUp.reviewBy", {
-                      date: formatDateTime(lastReview.createdAt),
-                      user: lastReview.createdBy ?? "-",
-                    })
-                  : t("infectionControl.followUp.neverReviewed")}
-              </span>
-            </div>
-          </div>
-
-          <div className="follow-up-pendings" data-testid="follow-up-pendings">
-            <span className="follow-up-data-label">
-              {t("infectionControl.followUp.pendings")}
-            </span>
-            {pendings.length === 0 ? (
-              <div className="muted">
-                {t("infectionControl.followUp.noPendings")}
               </div>
-            ) : (
-              <ul>
-                {pendings.map((pending) => (
-                  <li key={pending.id}>
-                    {describePending(pending, drugNames, t)}
-                  </li>
-                ))}
-              </ul>
+            </div>
+            {onSchedule && (
+              <Button
+                type="link"
+                className="follow-up-action"
+                onClick={onSchedule}
+              >
+                {t(
+                  followUp.nextReviewDate
+                    ? "infectionControl.followUp.reschedule"
+                    : "infectionControl.followUp.schedule",
+                )}
+              </Button>
             )}
           </div>
-        </>
+
+          <div className="follow-up-row" data-testid="follow-up-pendings">
+            <WarningOutlined className="follow-up-row-icon" />
+            <div className="follow-up-row-content">
+              <div className="follow-up-label">
+                {t("infectionControl.followUp.pendings")}
+              </div>
+              {pendings.length === 0 ? (
+                <div className="follow-up-detail">
+                  {t("infectionControl.followUp.noPendings")}
+                </div>
+              ) : (
+                <ul className="follow-up-pendings">
+                  {pendings.map((pending) => (
+                    <li key={pending.id}>
+                      {describePending(pending, drugNames, t)}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+        </div>
       )}
+
+      <DefaultModal
+        open={historyOpen}
+        width={720}
+        centered
+        destroyOnHidden
+        onCancel={() => setHistoryOpen(false)}
+        footer={null}
+      >
+        <HistoryBody data-kb="infectionControl.reviews">
+          <h2 className="modal-title">{t("infectionControl.history.title")}</h2>
+          <ReviewHistory followUp={followUp} drugNames={drugNames} />
+        </HistoryBody>
+      </DefaultModal>
     </FollowUpBox>
   );
 }

@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Button, Empty } from "antd";
+import { Button, Col, Empty } from "antd";
 import { FileDoneOutlined, ReloadOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
@@ -20,11 +20,10 @@ import { CourseGantt } from "../CourseGantt/CourseGantt";
 import { CurrentCourses } from "../CurrentCourses/CurrentCourses";
 import { FollowUpStatus } from "../FollowUpStatus/FollowUpStatus";
 import { InfectionControlPatient } from "../InfectionControlPatient/InfectionControlPatient";
-import { ReviewHistory } from "../ReviewHistory/ReviewHistory";
 import { ReviewModal } from "../ReviewModal/ReviewModal";
 import { getDrugNames, getFollowUpCourses } from "../followUp";
 import { sortCourses } from "../timeline";
-import { Header, Section, StateBox } from "./InfectionControl.style";
+import { Header, Section, StateBox, TopRow } from "./InfectionControl.style";
 
 /**
  * /controle-infeccao/:admissionNumber: the infection control view of an
@@ -147,16 +146,30 @@ export function InfectionControl() {
     <>
       {header}
 
-      <InfectionControlPatient
-        patient={data.patient}
-        reference={
-          data.patient.dischargeDate ? dayjs(data.patient.dischargeDate) : now
-        }
-      />
-
-      {followUpEnabled && followUp && (
-        <FollowUpStatus followUp={followUp} drugNames={drugNames} now={now} />
-      )}
+      <TopRow gutter={[24, 24]}>
+        <Col xs={24} lg={8}>
+          <InfectionControlPatient
+            patient={data.patient}
+            reference={
+              data.patient.dischargeDate
+                ? dayjs(data.patient.dischargeDate)
+                : now
+            }
+          />
+        </Col>
+        {followUpEnabled && followUp && (
+          <Col xs={24} lg={16}>
+            <FollowUpStatus
+              followUp={followUp}
+              drugNames={drugNames}
+              now={now}
+              onSchedule={
+                showReview ? () => dispatch(setReviewOpen(true)) : undefined
+              }
+            />
+          </Col>
+        )}
+      </TopRow>
 
       <Section data-kb="infectionControl.antimicrobials.current">
         <h2 className="section-title">{t("infectionControl.current.title")}</h2>
@@ -187,15 +200,6 @@ export function InfectionControl() {
           />
         )}
       </Section>
-
-      {followUpEnabled && followUp && (
-        <Section data-kb="infectionControl.reviews">
-          <h2 className="section-title">
-            {t("infectionControl.history.title")}
-          </h2>
-          <ReviewHistory followUp={followUp} drugNames={drugNames} />
-        </Section>
-      )}
 
       {followUp && canReview && (
         <ReviewModal

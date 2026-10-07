@@ -1,13 +1,17 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { Tabs, Tooltip } from "antd";
+import { FileOutlined, UserOutlined } from "@ant-design/icons";
 import { Dayjs } from "dayjs";
 
 import PatientNameCache from "components/PatientName/PatientNameCache";
+import { InfoIcon } from "components/Icon";
+import { getCorporalSurface, getIMC } from "utils/index";
 import { formatDate } from "utils/date";
 
 import { IInfectionControlPatient } from "../InfectionControlSlice";
 import { daysSince, getAge } from "../timeline";
-import { PatientBox } from "../InfectionControl/InfectionControl.style";
+import { PatientBox } from "./InfectionControlPatient.style";
 
 interface InfectionControlPatientProps {
   patient: IInfectionControlPatient;
@@ -22,7 +26,24 @@ interface IDataItem {
   extra?: React.ReactNode;
 }
 
-/** Patient and admission header, the same data the screening patient card leads with */
+const DataGrid = ({ items }: { items: IDataItem[] }) => (
+  <div className="patient-data">
+    {items.map((item) => (
+      <div className="patient-data-item" key={item.key}>
+        <div className="patient-data-item-label">{item.label}</div>
+        <div className="patient-data-item-value">
+          {item.value ?? "-"}
+          {item.extra && <span className="small">({item.extra})</span>}
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
+/**
+ * Patient and admission card, laid out like the screening patient card: the
+ * name on top and the patient and admission data in icon tabs
+ */
 export function InfectionControlPatient({
   patient,
   reference,
@@ -36,13 +57,13 @@ export function InfectionControlPatient({
       : patient.gender === "F"
         ? t("infectionControl.patient.female")
         : null;
+  const { weight, height } = patient;
 
-  const items: IDataItem[] = [
-    {
-      key: "admission",
-      label: t("infectionControl.patient.admission"),
-      value: patient.admissionNumber,
-    },
+  // the long names are clipped by the cell, so they show whole on hover
+  const withTooltip = (value: string | null) =>
+    value ? <Tooltip title={value}>{value}</Tooltip> : null;
+
+  const patientItems: IDataItem[] = [
     {
       key: "age",
       label: t("infectionControl.patient.age"),
@@ -54,6 +75,7 @@ export function InfectionControlPatient({
             { count: age.value },
           )
         : null,
+      extra: patient.birthdate ? formatDate(patient.birthdate) : null,
     },
     {
       key: "gender",
@@ -61,10 +83,37 @@ export function InfectionControlPatient({
       value: gender,
     },
     {
+      key: "height",
+      label: t("patientCard.height"),
+      value: height ? `${height} cm` : null,
+    },
+    {
       key: "weight",
       label: t("infectionControl.patient.weight"),
-      value: patient.weight != null ? `${patient.weight} kg` : null,
+      value: weight ? `${weight} kg` : null,
       extra: patient.weightDate ? formatDate(patient.weightDate) : null,
+    },
+    {
+      key: "bmi",
+      label: t("patientCard.bmi"),
+      value:
+        weight && height ? `${getIMC(weight, height).toFixed(2)} kg/m²` : null,
+    },
+    {
+      key: "bodySurface",
+      label: t("patientCard.bodySurface"),
+      value:
+        weight && height
+          ? `${getCorporalSurface(weight, height).toFixed(3)} m²`
+          : null,
+    },
+  ];
+
+  const admissionItems: IDataItem[] = [
+    {
+      key: "admission",
+      label: t("infectionControl.patient.admission"),
+      value: patient.admissionNumber,
     },
     {
       key: "admissionDate",
@@ -79,17 +128,27 @@ export function InfectionControlPatient({
     {
       key: "department",
       label: t("infectionControl.patient.department"),
-      value: patient.department,
+      value: withTooltip(patient.department),
     },
     {
       key: "bed",
       label: t("infectionControl.patient.bed"),
       value: patient.bed,
     },
+    {
+      key: "segment",
+      label: t("patientCard.segment"),
+      value: withTooltip(patient.segment),
+    },
+    {
+      key: "record",
+      label: t("patientCard.medicalRecord"),
+      value: withTooltip(patient.record),
+    },
   ];
 
   if (patient.dischargeDate) {
-    items.push({
+    admissionItems.push({
       key: "dischargeDate",
       label: t("infectionControl.patient.dischargeDate"),
       value: formatDate(patient.dischargeDate),
@@ -97,25 +156,48 @@ export function InfectionControlPatient({
     });
   }
 
+  const tabs = [
+    {
+      key: "patientData",
+      label: (
+        <Tooltip title={t("patientCard.patientData")}>
+          <UserOutlined aria-label={t("patientCard.patientData")} />
+        </Tooltip>
+      ),
+      children: <DataGrid items={patientItems} />,
+    },
+    {
+      key: "admissionData",
+      label: (
+        <Tooltip title={t("patientCard.admissionData")}>
+          <FileOutlined aria-label={t("patientCard.admissionData")} />
+        </Tooltip>
+      ),
+      children: <DataGrid items={admissionItems} />,
+    },
+  ];
+
   return (
     <PatientBox data-kb="infectionControl.patient">
-      <div className="patient-name">
-        <PatientNameCache idPatient={patient.idPatient} />
+      <div className="patient-header">
+        <div className="patient-header-name">
+          <PatientNameCache idPatient={patient.idPatient} />
+          {patient.dischargeDate && " "}
+          {patient.dischargeDate && (
+            <Tooltip
+              title={`${t("infectionControl.patient.dischargeDate")}: ${formatDate(
+                patient.dischargeDate,
+              )}${patient.dischargeReason ? ` (${patient.dischargeReason})` : ""}`}
+            >
+              <span>
+                <InfoIcon />
+              </span>
+            </Tooltip>
+          )}
+        </div>
       </div>
 
-      <div className="patient-data">
-        {items.map((item) => (
-          <div className="patient-data-item" key={item.key}>
-            <span className="patient-data-label">{item.label}</span>
-            <span className="patient-data-value">
-              {item.value ?? "-"}
-              {item.extra && (
-                <span className="patient-data-extra">({item.extra})</span>
-              )}
-            </span>
-          </div>
-        ))}
-      </div>
+      <Tabs defaultActiveKey="patientData" type="card" items={tabs} />
     </PatientBox>
   );
 }

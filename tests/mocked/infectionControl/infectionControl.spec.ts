@@ -134,6 +134,9 @@ test("shows the patient and the antimicrobials in use now", async ({
     page.getByRole("heading", { name: "Controle de Infecção" }),
   ).toBeVisible({ timeout: 15000 });
   await expect(page.getByText("Ciclano de Tal")).toBeVisible();
+  // patient data first, the admission one tab away
+  await expect(page.getByText("82 kg")).toBeVisible();
+  await page.getByRole("tab", { name: "Atendimento" }).click();
   await expect(page.getByText("UTI Adulto")).toBeVisible();
   // the header no longer links to the prescription
   await expect(

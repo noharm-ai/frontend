@@ -206,16 +206,20 @@ test("shows the follow-up status, its pending reasons and each drug's evaluation
     cards.filter({ hasText: "VANCOMICINA" }).getByTestId("evaluation-tag"),
   ).toHaveText(`Conforme · até ${shownDate(vancomycinEvaluation.validUntil)}`);
 
-  // the review history lists what each review evaluated
-  const review = page.getByTestId("review-item");
-  await expect(review).toContainText("Paciente estável, manter vancomicina");
-  await expect(review).toContainText("VANCOMICINA 500 mg SOL INJ");
-  await expect(review).toContainText("Guiado por cultura");
-
-  // the default user cannot register reviews
+  // the default user cannot register reviews, nor schedule the next one
   await expect(
     page.getByRole("button", { name: "Registrar revisão" }),
   ).toHaveCount(0);
+  await expect(box.getByRole("button", { name: "Agendar" })).toHaveCount(0);
+
+  // the review history opens from the follow-up, listing what each review
+  // evaluated
+  await box.getByRole("button", { name: "Ver histórico (1)" }).click();
+  const history = page.getByRole("dialog");
+  const review = history.getByTestId("review-item");
+  await expect(review).toContainText("Paciente estável, manter vancomicina");
+  await expect(review).toContainText("VANCOMICINA 500 mg SOL INJ");
+  await expect(review).toContainText("Guiado por cultura");
 });
 
 test("shows each conformity record on its course in the timeline", async ({
@@ -453,7 +457,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(dialog).toHaveCount(0);
     await expect(page.getByTestId("follow-up-status")).toHaveText("Revisado");
     await expect(page.getByTestId("follow-up-pendings")).toContainText(
-      "Nenhuma pendência.",
+      "Nenhuma pendência",
     );
   });
 
@@ -489,6 +493,25 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     ).toBeVisible();
     await expect(dialog).toBeVisible();
     await expect(page.getByTestId("follow-up-status")).toHaveText("Pendente");
+  });
+
+  test("schedules the next review through the review modal", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override(FOLLOW_UP, { json: followUp() });
+
+    await page.goto(PAGE_URL);
+    await page
+      .getByTestId("follow-up")
+      .getByRole("button", { name: "Agendar" })
+      .click({ timeout: 15000 });
+
+    await expect(
+      page
+        .getByRole("dialog")
+        .getByRole("heading", { name: "Registrar revisão" }),
+    ).toBeVisible();
   });
 });
 
