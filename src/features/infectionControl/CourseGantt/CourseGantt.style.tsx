@@ -10,7 +10,7 @@ import {
 
 // fixed column with the drug of each row (--label-width), narrower on phones
 // and when the timeline is embedded in another view
-const LABEL_WIDTH = 280;
+const LABEL_WIDTH = 360;
 const LABEL_WIDTH_SMALL = 160;
 const LABEL_WIDTH_COMPACT = 84;
 // every day column has this width; long admissions scroll sideways

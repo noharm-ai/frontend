@@ -111,6 +111,9 @@ export interface IAntimicrobialEvaluation {
   notes: string | null;
   posology: IEvaluationPosology;
   validUntil: string;
+  // optional reasons it sends the patient back to pending for
+  // (InfectionControlPendingTypeEnum)
+  triggers: number[];
   // AntimicrobialEvaluationStatusEnum
   status: number;
   closedAt: string | null;
@@ -162,6 +165,7 @@ export interface IReviewEvaluationPayload {
   conforming: boolean;
   notes: string | null;
   validUntil: string;
+  triggers: number[];
 }
 
 export interface IReviewPayload {

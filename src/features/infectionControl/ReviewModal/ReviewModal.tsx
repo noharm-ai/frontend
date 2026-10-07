@@ -12,6 +12,7 @@ import { useAppDispatch, useAppSelector } from "src/store";
 import { formatDate, formatDateTime } from "utils/date";
 import { getErrorMessage } from "utils/errorHandler";
 import { Form } from "styles/Form.style";
+import { InfectionControlPendingTypeEnum } from "models/InfectionControlEnum";
 
 import {
   IAntimicrobialEvaluation,
@@ -29,6 +30,12 @@ import { DrugEvaluation, ReviewBody } from "./ReviewModal.style";
 
 // quick picks for how long an evaluation holds
 const VALIDITY_PRESETS = [3, 7, 14];
+// reasons of a drug that its new evaluation settles
+const DRUG_REASONS = [
+  InfectionControlPendingTypeEnum.NO_EVALUATION,
+  InfectionControlPendingTypeEnum.EXPIRED,
+  InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
+];
 
 interface IDrugEvaluationFields {
   idDrug: number;
@@ -40,6 +47,10 @@ interface IDrugEvaluationFields {
   conforming: boolean | null;
   validUntil: Dayjs | null;
   notes: string;
+  // back to pending when the evaluation expires
+  watchExpiry: boolean;
+  // back to pending when the posology changes
+  watchPosology: boolean;
 }
 
 interface IReviewFields {
@@ -60,12 +71,18 @@ interface ReviewModalProps {
 const futureDate = (value: Dayjs | null | undefined) =>
   !value || value.isAfter(dayjs());
 
+// whether the current evaluation watches a trigger; a new one watches all
+const watches = (
+  evaluation: IAntimicrobialEvaluation | null,
+  trigger: number,
+) => !evaluation || (evaluation.triggers ?? []).includes(trigger);
+
 /**
  * The infectologist's review of the patient, one step per running
  * antimicrobial - its timeline, its current evaluation and a new verdict,
  * conforming or not and valid until a date - and a last step to schedule the
- * next review. Drugs without an evaluation come selected; the ones already
- * evaluated can be evaluated again.
+ * next review. Drugs without an evaluation in force (none, expired or with a
+ * changed posology) come selected; the others can be evaluated again.
  */
 export function ReviewModal({
   followUp,
@@ -88,6 +105,11 @@ export function ReviewModal({
   }, [open]);
 
   const ongoing = (followUp.courses ?? []).filter((course) => course.ongoing);
+  const drugsWithReason = new Set(
+    (followUp.pendings ?? [])
+      .filter((pending) => DRUG_REASONS.includes(pending.type))
+      .map((pending) => pending.idDrug),
+  );
 
   // the timeline of each drug and the follow-up of its courses
   const drugTimelines = useMemo(() => {
@@ -118,10 +140,19 @@ export function ReviewModal({
       courseStart: course.start,
       drug: drugNames[course.idDrug] ?? `${course.idDrug}`,
       current: course.evaluation,
-      evaluate: !course.evaluation,
+      evaluate: !course.evaluation || drugsWithReason.has(course.idDrug),
       conforming: null,
       validUntil: null,
       notes: "",
+      // the choices made last time, on by default
+      watchExpiry: watches(
+        course.evaluation,
+        InfectionControlPendingTypeEnum.EXPIRED,
+      ),
+      watchPosology: watches(
+        course.evaluation,
+        InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
+      ),
     })),
   };
 
@@ -193,6 +224,10 @@ export function ReviewModal({
           notes: e.notes.trim() || null,
           // the evaluation holds through the whole chosen day
           validUntil: e.validUntil!.endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+          triggers: [
+            e.watchExpiry && InfectionControlPendingTypeEnum.EXPIRED,
+            e.watchPosology && InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
+          ].filter((trigger): trigger is number => !!trigger),
         })),
     };
 
@@ -504,6 +539,28 @@ export function ReviewModal({
                         {fieldErrors.validUntil as string}
                       </div>
                     )}
+                  </div>
+
+                  <div className="drug-field-triggers">
+                    <span className="drug-field-label">
+                      {t("infectionControl.review.triggers")}
+                    </span>
+                    <Checkbox
+                      checked={evaluation.watchExpiry}
+                      onChange={(e: any) =>
+                        setFieldValue(field("watchExpiry"), e.target.checked)
+                      }
+                    >
+                      {t("infectionControl.review.triggerExpired")}
+                    </Checkbox>
+                    <Checkbox
+                      checked={evaluation.watchPosology}
+                      onChange={(e: any) =>
+                        setFieldValue(field("watchPosology"), e.target.checked)
+                      }
+                    >
+                      {t("infectionControl.review.triggerPosology")}
+                    </Checkbox>
                   </div>
 
                   <div className="drug-field-notes">

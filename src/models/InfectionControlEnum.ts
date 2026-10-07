@@ -27,6 +27,9 @@ export class InfectionControlPendingTypeEnum {
   static EXPIRED = 3;
   static SCHEDULED_DATE = 4;
   static ALERT_FIRED = 5;
+  // the posology changed from the evaluated one (a trigger the evaluation
+  // opts into)
+  static POSOLOGY_CHANGED = 6;
 }
 
 // status of an antimicrobial evaluation (ci_avaliacao_atm.tp_status)

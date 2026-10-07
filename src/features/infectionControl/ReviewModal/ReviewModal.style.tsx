@@ -126,8 +126,15 @@ export const DrugEvaluation = styled.div<{ $selected: boolean }>`
     padding: 12px 14px;
   }
 
+  .drug-field-triggers,
   .drug-field-notes {
     grid-column: 1 / -1;
+  }
+
+  /* one trigger per line */
+  .drug-field-triggers .ant-checkbox-wrapper {
+    display: flex;
+    margin-inline-start: 0;
   }
 
   .drug-field-label {

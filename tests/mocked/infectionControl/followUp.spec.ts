@@ -21,6 +21,9 @@ const TIMELINE =
 const FOLLOW_UP = "GET /infection-control/admission/:admissionNumber";
 const REVIEW = "POST /infection-control/review";
 const LIST = "POST /infection-control/admissions";
+const EVALUATE_NOW = "Avaliar este antimicrobiano nesta revisão";
+const WATCH_EXPIRY = /Quando a avaliação vencer/;
+const WATCH_POSOLOGY = /Quando a posologia mudar/;
 
 const BASE_PERMISSIONS = [
   "READ_BASIC_FEATURES",
@@ -114,6 +117,7 @@ const vancomycinEvaluation = {
     route: "IV",
   },
   validUntil: hoursFromNow(5 * 24),
+  triggers: [],
   status: 1,
   closedAt: null,
   closingType: null,
@@ -350,13 +354,19 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     const dialog = page.getByRole("dialog");
     const next = dialog.getByRole("button", { name: "Próximo" });
     const drug = dialog.getByTestId("review-drug");
+    const evaluateBox = drug.getByRole("checkbox", { name: EVALUATE_NOW });
+    const expiryBox = drug.getByRole("checkbox", { name: WATCH_EXPIRY });
+    const posologyBox = drug.getByRole("checkbox", { name: WATCH_POSOLOGY });
 
     // one step per running drug, then the patient
     await expect(dialog.locator(".ant-steps-item")).toHaveCount(3);
 
     // step 1: the drug without an evaluation comes selected, with its timeline
     await expect(drug.getByRole("heading")).toHaveText("MEROPENEM 1 g SOL INJ");
-    await expect(drug.getByRole("checkbox")).toBeChecked();
+    await expect(evaluateBox).toBeChecked();
+    // expiry and a posology change send it back to pending unless unchecked
+    await expect(expiryBox).toBeChecked();
+    await expect(posologyBox).toBeChecked();
     const timeline = drug.getByTestId("review-timeline");
     await expect(timeline.getByTestId("course-row")).toHaveCount(1);
     // the step names the drug, its timeline shows only the day of treatment
@@ -396,7 +406,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(drug.getByRole("heading")).toHaveText(
       "VANCOMICINA 500 mg SOL INJ",
     );
-    await expect(drug.getByRole("checkbox")).not.toBeChecked();
+    await expect(evaluateBox).not.toBeChecked();
     await expect(drug).toContainText("Guiado por cultura");
     const vancomycinTimeline = drug.getByTestId("review-timeline");
     const current = vancomycinTimeline.getByTestId("course-evaluation");
@@ -404,7 +414,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(current).not.toHaveClass(/past/);
 
     // evaluating it again previews the new one replacing the current from now
-    await drug.getByRole("checkbox").check();
+    await evaluateBox.check();
     await drug
       .locator(".drug-fields")
       .getByText("Conforme", { exact: true })
@@ -418,7 +428,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       vancomycinTimeline.getByTestId("draft-evaluation"),
     ).toHaveClass(/conforming/);
     await expect(current).toHaveClass(/past/);
-    await drug.getByRole("checkbox").uncheck();
+    await evaluateBox.uncheck();
     await expect(
       vancomycinTimeline.getByTestId("draft-evaluation"),
     ).toHaveCount(0);
@@ -452,6 +462,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
           idDrug: 11,
           conforming: false,
           notes: "Espectro amplo demais",
+          triggers: [3, 6],
         },
       ],
     });
@@ -487,7 +498,10 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     const dialog = page.getByRole("dialog");
     const next = dialog.getByRole("button", { name: "Próximo" });
     // nothing selected: a review that only records the visit
-    await dialog.getByTestId("review-drug").getByRole("checkbox").uncheck();
+    await dialog
+      .getByTestId("review-drug")
+      .getByRole("checkbox", { name: EVALUATE_NOW })
+      .uncheck();
     await next.click();
     await next.click();
     await dialog.getByRole("button", { name: "Salvar" }).click();
@@ -497,6 +511,82 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     ).toBeVisible();
     await expect(dialog).toBeVisible();
     await expect(page.getByTestId("follow-up-status")).toHaveText("Pendente");
+  });
+
+  test("selects the drug whose posology changed and keeps its trigger choice", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override(FOLLOW_UP, {
+      json: followUp({
+        pendings: [
+          {
+            id: "802",
+            type: 6,
+            origin: 2,
+            idDrug: 12,
+            idPrescription: "300",
+            details: { drug: "VANCOMICINA 500 mg SOL INJ" },
+            createdAt: hoursFromNow(-2),
+          },
+        ],
+        courses: [
+          {
+            idDrug: 12,
+            start: VANCOMYCIN_START,
+            ongoing: true,
+            evaluation: { ...vancomycinEvaluation, triggers: [6] },
+            history: [{ ...vancomycinEvaluation, triggers: [6] }],
+          },
+        ],
+      }),
+    });
+    let sent: any = null;
+    mockApi.override(REVIEW, async (route) => {
+      sent = JSON.parse(route.request().postData()!);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(followUp({ status: 2, pendings: [] })),
+      });
+    });
+
+    await page.goto(PAGE_URL);
+    await expect(page.getByTestId("follow-up-pendings")).toContainText(
+      "Posologia de VANCOMICINA 500 mg SOL INJ alterada",
+      { timeout: 15000 },
+    );
+    await page.getByRole("button", { name: "Registrar revisão" }).click();
+
+    // evaluated before, but its posology changed: it comes selected, with
+    // the triggers chosen last time (posology, not expiry)
+    const dialog = page.getByRole("dialog");
+    const drug = dialog.getByTestId("review-drug");
+    await expect(
+      drug.getByRole("checkbox", { name: EVALUATE_NOW }),
+    ).toBeChecked();
+    const posologyBox = drug.getByRole("checkbox", { name: WATCH_POSOLOGY });
+    await expect(posologyBox).toBeChecked();
+    const expiryBox = drug.getByRole("checkbox", { name: WATCH_EXPIRY });
+    await expect(expiryBox).not.toBeChecked();
+
+    await drug
+      .locator(".drug-fields")
+      .getByText("Conforme", { exact: true })
+      .click();
+    await drug.getByLabel("Válida até").click();
+    await page.getByText("7 dias", { exact: true }).click();
+    await posologyBox.uncheck();
+    await expiryBox.check();
+    await dialog.getByRole("button", { name: "Próximo" }).click();
+    await dialog.getByRole("button", { name: "Salvar" }).click();
+
+    await expect(
+      page.getByText("Revisão registrada com sucesso!"),
+    ).toBeVisible();
+    expect(sent.evaluations).toMatchObject([
+      { idDrug: 12, conforming: true, triggers: [3] },
+    ]);
   });
 
   test("schedules the next review through the review modal", async ({

@@ -1675,7 +1675,8 @@
         "2": "{{drug}} sem avaliação",
         "3": "Avaliação de {{drug}} vencida",
         "4": "Data de revisão agendada chegou",
-        "5": "Alerta disparado"
+        "5": "Alerta disparado",
+        "6": "Posologia de {{drug}} alterada"
       },
       "unknownDrug": "Antimicrobiano",
       "register": "Registrar revisão",
@@ -1706,6 +1707,9 @@
       "success": "Revisão registrada com sucesso!",
       "next": "Próximo",
       "evaluateNow": "Avaliar este antimicrobiano nesta revisão",
+      "triggers": "Voltar para pendente",
+      "triggerExpired": "Quando a avaliação vencer",
+      "triggerPosology": "Quando a posologia mudar (dose, frequência ou via)",
       "currentEvaluation": "Avaliação atual",
       "evaluatedBy": "em {{date}} por {{user}}",
       "keepEvaluation": "Mantém a avaliação atual",

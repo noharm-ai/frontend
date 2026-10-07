@@ -1665,7 +1665,8 @@
         "2": "{{drug}} not evaluated",
         "3": "{{drug}} evaluation expired",
         "4": "Scheduled review date reached",
-        "5": "Alert fired"
+        "5": "Alert fired",
+        "6": "{{drug}} posology changed"
       },
       "unknownDrug": "Antimicrobial",
       "register": "Register review",
@@ -1696,6 +1697,9 @@
       "success": "Review registered!",
       "next": "Next",
       "evaluateNow": "Evaluate this antimicrobial in this review",
+      "triggers": "Back to pending",
+      "triggerExpired": "When the evaluation expires",
+      "triggerPosology": "When the posology changes (dose, frequency or route)",
       "currentEvaluation": "Current evaluation",
       "evaluatedBy": "on {{date}} by {{user}}",
       "keepEvaluation": "Keeps the current evaluation",
