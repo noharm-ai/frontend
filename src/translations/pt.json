@@ -1621,7 +1621,18 @@
       "gap": "Sem prescrição de {{start}} a {{end}}",
       "openDetails": "Ver detalhes de {{drug}}",
       "otherCourses_one": "+{{count}} ciclo anterior",
-      "otherCourses_other": "+{{count}} ciclos anteriores"
+      "otherCourses_other": "+{{count}} ciclos anteriores",
+      "legendConforming": "Avaliação conforme (vigência)",
+      "legendNonConforming": "Avaliação não conforme (vigência)",
+      "evaluation": {
+        "label": "{{verdict}} em {{date}}",
+        "by": "Avaliado em {{date}} por {{user}}",
+        "valid": "Válida até {{date}}",
+        "expired": "Vencida em {{date}}",
+        "superseded": "Substituída por nova avaliação em {{date}}",
+        "closed": "Encerrada em {{date}}",
+        "posology": "Posologia avaliada: {{posology}}"
+      }
     },
     "status": {
       "active": "Em uso",

@@ -1611,7 +1611,18 @@
       "gap": "Not prescribed from {{start}} to {{end}}",
       "openDetails": "See details of {{drug}}",
       "otherCourses_one": "+{{count}} earlier course",
-      "otherCourses_other": "+{{count}} earlier courses"
+      "otherCourses_other": "+{{count}} earlier courses",
+      "legendConforming": "Conforming evaluation (validity)",
+      "legendNonConforming": "Non-conforming evaluation (validity)",
+      "evaluation": {
+        "label": "{{verdict}} on {{date}}",
+        "by": "Evaluated on {{date}} by {{user}}",
+        "valid": "Valid until {{date}}",
+        "expired": "Expired on {{date}}",
+        "superseded": "Replaced by a new evaluation on {{date}}",
+        "closed": "Closed on {{date}}",
+        "posology": "Evaluated posology: {{posology}}"
+      }
     },
     "status": {
       "active": "In use",

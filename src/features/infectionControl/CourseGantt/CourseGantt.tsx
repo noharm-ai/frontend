@@ -6,9 +6,15 @@ import dayjs, { Dayjs } from "dayjs";
 import { AwareTag } from "components/AwareTag/AwareTag";
 import { formatDate } from "utils/date";
 
-import { CourseStatus, ICourse } from "../InfectionControlSlice";
+import {
+  CourseStatus,
+  IAntimicrobialEvaluation,
+  ICourse,
+  IFollowUpCourse,
+} from "../InfectionControlSlice";
 import { CourseDetails } from "../CourseDetails/CourseDetails";
 import { COURSE_COLORS } from "../courseColors";
+import { courseKey, getEvaluationPeriod } from "../followUp";
 import {
   formatRegimen,
   getTimelineRange,
@@ -19,6 +25,7 @@ import {
 import {
   Bar,
   DAY_WIDTH,
+  Evaluation,
   Gantt,
   GanttGrid,
   GanttScroll,
@@ -34,6 +41,8 @@ interface CourseGanttProps {
   courses: ICourse[];
   now: Dayjs;
   dischargeDate: string | null;
+  // the follow-up of each course (courseKey), when the schema has the feature
+  followUps?: Record<string, IFollowUpCourse> | null;
 }
 
 const STATUS_TAG_COLORS: Record<CourseStatus, string> = {
@@ -60,6 +69,8 @@ interface CourseBarsProps {
   course: ICourse;
   range: ITimelineRange;
   now: Dayjs;
+  // the conformity records of the course, latest first
+  evaluations: IAntimicrobialEvaluation[];
   // start of the next course of the same drug, which its planned end must not
   // run into
   nextStart?: string;
@@ -75,6 +86,7 @@ function CourseBars({
   course,
   range,
   now,
+  evaluations,
   nextStart,
   onOpen,
 }: CourseBarsProps) {
@@ -177,7 +189,86 @@ function CourseBars({
           />
         </Tooltip>
       ))}
+
+      {/* oldest first, so a newer evaluation is drawn over the one it replaced */}
+      {[...evaluations].reverse().map((evaluation) => (
+        <EvaluationMark
+          key={evaluation.id}
+          evaluation={evaluation}
+          range={range}
+          now={now}
+        />
+      ))}
     </>
+  );
+}
+
+interface EvaluationMarkProps {
+  evaluation: IAntimicrobialEvaluation;
+  range: ITimelineRange;
+  now: Dayjs;
+}
+
+/**
+ * A conformity record on its course: a dot on the day of the review and a band
+ * under the bar for as long as the evaluation was (or is) in force, green when
+ * conforming and red when not
+ */
+function EvaluationMark({ evaluation, range, now }: EvaluationMarkProps) {
+  const { t } = useTranslation();
+  const period = getEvaluationPeriod(evaluation, now);
+  const verdict = t(
+    evaluation.conforming
+      ? "infectionControl.evaluation.conforming"
+      : "infectionControl.evaluation.nonConforming",
+  );
+  const posology = formatRegimen(evaluation.posology);
+
+  return (
+    <Tooltip
+      title={
+        <>
+          <strong>{verdict}</strong>
+          <div>
+            {t("infectionControl.timeline.evaluation.by", {
+              date: formatDate(evaluation.createdAt, "DD/MM HH:mm"),
+              user: evaluation.createdBy ?? "-",
+            })}
+          </div>
+          <div>
+            {t(`infectionControl.timeline.evaluation.${period.outcome}`, {
+              date: formatDate(
+                period.outcome === "valid" || period.outcome === "expired"
+                  ? evaluation.validUntil
+                  : (evaluation.closedAt ?? period.end),
+              ),
+            })}
+          </div>
+          {posology && (
+            <div>
+              {t("infectionControl.timeline.evaluation.posology", {
+                posology,
+              })}
+            </div>
+          )}
+          {evaluation.notes && <em>{evaluation.notes}</em>}
+        </>
+      }
+    >
+      <Evaluation
+        className={[
+          evaluation.conforming ? "conforming" : "non-conforming",
+          period.outcome === "valid" ? "" : "past",
+        ].join(" ")}
+        data-testid="course-evaluation"
+        tabIndex={0}
+        aria-label={t("infectionControl.timeline.evaluation.label", {
+          verdict,
+          date: formatDate(evaluation.createdAt),
+        })}
+        style={span(period.start, period.end, range)}
+      />
+    </Tooltip>
   );
 }
 
@@ -185,15 +276,31 @@ function CourseBars({
  * Gantt of the antimicrobial courses of an admission, one row per course, with
  * a line for today (and the discharge)
  */
-export function CourseGantt({ courses, now, dischargeDate }: CourseGanttProps) {
+export function CourseGantt({
+  courses,
+  now,
+  dischargeDate,
+  followUps,
+}: CourseGanttProps) {
   const { t } = useTranslation();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [selected, setSelected] = useState<ICourse | null>(null);
 
+  const evaluationsOf = (course: ICourse) =>
+    followUps?.[courseKey(course.idDrug, course.start)]?.history ?? [];
+
   const rows = useMemo(() => groupCourseRows(courses), [courses]);
   const range = useMemo(
-    () => getTimelineRange(courses, dischargeDate ? dayjs(dischargeDate) : now),
-    [courses, now, dischargeDate],
+    () =>
+      getTimelineRange(
+        courses,
+        dischargeDate ? dayjs(dischargeDate) : now,
+        // the timeline reaches the end of the evaluations still in force
+        Object.values(followUps ?? {})
+          .map((followUp) => followUp.evaluation?.validUntil)
+          .filter((date): date is string => !!date),
+      ),
+    [courses, now, dischargeDate, followUps],
   );
   const todayPercent = toPercent(now, range);
   const showToday = now.isAfter(range.start) && now.isBefore(range.end);
@@ -319,6 +426,7 @@ export function CourseGantt({ courses, now, dischargeDate }: CourseGanttProps) {
                     course={drugCourse}
                     range={range}
                     now={now}
+                    evaluations={evaluationsOf(drugCourse)}
                     nextStart={drugCourses[index + 1]?.start}
                     onOpen={() => setSelected(drugCourse)}
                   />
@@ -363,6 +471,18 @@ export function CourseGantt({ courses, now, dischargeDate }: CourseGanttProps) {
           <i className="legend-change" />
           {t("infectionControl.timeline.legendChange")}
         </span>
+        {followUps && (
+          <>
+            <span>
+              <i className="legend-evaluation conforming" />
+              {t("infectionControl.timeline.legendConforming")}
+            </span>
+            <span>
+              <i className="legend-evaluation non-conforming" />
+              {t("infectionControl.timeline.legendNonConforming")}
+            </span>
+          </>
+        )}
       </Legend>
 
       <CourseDetails

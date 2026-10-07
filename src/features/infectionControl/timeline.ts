@@ -19,17 +19,19 @@ export interface ITimelineRange {
 
 /**
  * The days the timeline spans: from the day before the first course up to
- * whatever comes last among today (or the discharge), the end of the courses
- * and their planned ends.
+ * whatever comes last among today (or the discharge), the end of the courses,
+ * their planned ends and any other date it must reach (`extraEnds`, e.g. how
+ * long an evaluation stays valid).
  */
 export const getTimelineRange = (
   courses: ICourse[],
   reference: Dayjs,
+  extraEnds: string[] = [],
 ): ITimelineRange => {
   const starts = courses.map((c) => dayjs(c.start).valueOf());
-  const ends = courses.flatMap((c) =>
-    [c.end, c.plannedEnd].filter(Boolean).map((d) => dayjs(d).valueOf()),
-  );
+  const ends = [...courses.flatMap((c) => [c.end, c.plannedEnd]), ...extraEnds]
+    .filter(Boolean)
+    .map((d) => dayjs(d).valueOf());
 
   const first = starts.length ? dayjs(Math.min(...starts)) : reference;
   const last = dayjs(Math.max(reference.valueOf(), ...ends));
@@ -113,14 +115,20 @@ export const groupCourseRows = (courses: ICourse[]): ICourseRow[] => {
   return rows.sort((a, b) => order.indexOf(a.course) - order.indexOf(b.course));
 };
 
-/** "2 g · 8/8h · IV" */
+// what formatRegimen needs: a course regimen or an evaluated posology
+type IPosology = Pick<
+  ICourseRegimen,
+  "dose" | "measureUnit" | "frequency" | "route"
+>;
+
 /** The dose with its unit, e.g. "2,5 FRASCO AMPOLA" */
-export const formatDose = (regimen: ICourseRegimen): string | null =>
+export const formatDose = (regimen: IPosology): string | null =>
   regimen.dose != null
     ? `${regimen.dose.toLocaleString("pt-BR")}${regimen.measureUnit ? ` ${regimen.measureUnit}` : ""}`
     : null;
 
-export const formatRegimen = (regimen: ICourseRegimen): string =>
+/** "2 g · 8/8h · IV" */
+export const formatRegimen = (regimen: IPosology): string =>
   [formatDose(regimen), regimen.frequency, regimen.route]
     .filter(Boolean)
     .join(" · ");

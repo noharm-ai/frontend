@@ -216,6 +216,82 @@ test("shows the follow-up status, its pending reasons and each drug's evaluation
   ).toHaveCount(0);
 });
 
+test("shows each conformity record on its course in the timeline", async ({
+  page,
+  mockApi,
+}) => {
+  // the vancomycin was first judged non-conforming, then conforming
+  const replaced = {
+    ...vancomycinEvaluation,
+    id: "500",
+    idReview: "40",
+    conforming: false,
+    notes: "Aguardar cultura",
+    validUntil: hoursFromNow(48),
+    status: 2,
+    closedAt: vancomycinEvaluation.createdAt,
+    closingType: 1,
+    createdAt: hoursFromNow(-80),
+  };
+  mockApi.override(FOLLOW_UP, {
+    json: followUp({
+      courses: [
+        {
+          idDrug: 11,
+          start: MEROPENEM_START,
+          ongoing: true,
+          evaluation: null,
+          history: [],
+        },
+        {
+          idDrug: 12,
+          start: VANCOMYCIN_START,
+          ongoing: true,
+          evaluation: vancomycinEvaluation,
+          history: [vancomycinEvaluation, replaced],
+        },
+      ],
+    }),
+  });
+
+  await page.goto(PAGE_URL);
+
+  const rows = page.getByTestId("course-row");
+  await expect(rows).toHaveCount(2, { timeout: 15000 });
+  await expect(
+    rows.filter({ hasText: "MEROPENEM" }).getByTestId("course-evaluation"),
+  ).toHaveCount(0);
+
+  const marks = rows
+    .filter({ hasText: "VANCOMICINA" })
+    .getByTestId("course-evaluation");
+  await expect(marks).toHaveCount(2);
+
+  // oldest first; the replaced one stays, in a lighter tone
+  await expect(marks.nth(0)).toHaveAttribute(
+    "aria-label",
+    `Não conforme em ${shownDate(replaced.createdAt)}`,
+  );
+  await expect(marks.nth(0)).toHaveClass(/non-conforming/);
+  await expect(marks.nth(0)).toHaveClass(/past/);
+  await expect(marks.nth(1)).toHaveAttribute(
+    "aria-label",
+    `Conforme em ${shownDate(vancomycinEvaluation.createdAt)}`,
+  );
+  await expect(marks.nth(1)).not.toHaveClass(/past/);
+
+  await marks.nth(1).hover();
+  const tooltip = page.getByRole("tooltip");
+  await expect(tooltip).toContainText("por Maria Teste");
+  await expect(tooltip).toContainText(
+    `Válida até ${shownDate(vancomycinEvaluation.validUntil)}`,
+  );
+  await expect(tooltip).toContainText("Posologia avaliada: 1 g · 12h/12h · IV");
+  await expect(tooltip).toContainText("Guiado por cultura");
+
+  await expect(page.getByText("Avaliação conforme (vigência)")).toBeVisible();
+});
+
 test("leaves the follow-up out when the schema does not have it", async ({
   page,
 }) => {

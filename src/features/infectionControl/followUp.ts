@@ -1,6 +1,8 @@
 import dayjs, { Dayjs } from "dayjs";
 import type { TFunction } from "react-i18next";
 
+import { AntimicrobialEvaluationStatusEnum } from "models/InfectionControlEnum";
+
 import {
   IAntimicrobialEvaluation,
   ICourse,
@@ -44,6 +46,39 @@ export function isEvaluationExpired(
   now: Dayjs,
 ) {
   return dayjs(evaluation.validUntil).isBefore(now);
+}
+
+// how an evaluation stopped being in force, or that it still is
+export type EvaluationOutcome = "valid" | "expired" | "superseded" | "closed";
+
+/**
+ * When an evaluation was in force: from the review that recorded it up to
+ * its valid-until date, or earlier, when a newer evaluation replaced it or its
+ * course ended
+ */
+export function getEvaluationPeriod(
+  evaluation: IAntimicrobialEvaluation,
+  now: Dayjs,
+): { start: string; end: string; outcome: EvaluationOutcome } {
+  const closedEarly =
+    evaluation.status !== AntimicrobialEvaluationStatusEnum.ACTIVE &&
+    !!evaluation.closedAt &&
+    dayjs(evaluation.closedAt).isBefore(evaluation.validUntil);
+
+  let outcome: EvaluationOutcome;
+  if (evaluation.status === AntimicrobialEvaluationStatusEnum.SUPERSEDED) {
+    outcome = "superseded";
+  } else if (evaluation.status === AntimicrobialEvaluationStatusEnum.CLOSED) {
+    outcome = "closed";
+  } else {
+    outcome = isEvaluationExpired(evaluation, now) ? "expired" : "valid";
+  }
+
+  return {
+    start: evaluation.createdAt,
+    end: closedEarly ? evaluation.closedAt! : evaluation.validUntil,
+    outcome,
+  };
 }
 
 /** What a pending reason is about, in words */

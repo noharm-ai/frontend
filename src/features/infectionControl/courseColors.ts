@@ -15,3 +15,9 @@ export const SCHEDULED_COLOR = "#a9cfe8";
 export const TODAY_COLOR = "#e46666";
 
 export const DISCHARGE_COLOR = "#2e3c5a";
+
+// the infectologist's verdict on a course, on the timeline
+export const EVALUATION_COLORS = {
+  conforming: "#389e0d",
+  nonConforming: "#cf1322",
+};

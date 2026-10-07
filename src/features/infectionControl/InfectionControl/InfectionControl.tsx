@@ -183,6 +183,7 @@ export function InfectionControl() {
             courses={courses}
             now={now}
             dischargeDate={data.patient.dischargeDate}
+            followUps={followUpCourses}
           />
         )}
       </Section>

@@ -3,6 +3,7 @@ import styled from "styled-components";
 import {
   COURSE_COLORS,
   DISCHARGE_COLOR,
+  EVALUATION_COLORS,
   SCHEDULED_COLOR,
   TODAY_COLOR,
 } from "../courseColors";
@@ -284,6 +285,54 @@ export const Bar = styled.div<{ $color?: string }>`
   }
 `;
 
+// a conformity record: a band under the course bar for the days it is in
+// force, with a dot where the review recorded it
+export const Evaluation = styled.span`
+  border-radius: 2px;
+  cursor: help;
+  height: 5px;
+  min-width: 4px;
+  position: absolute;
+  top: calc(50% + 13px);
+  z-index: 2;
+
+  &::before {
+    border: 2px solid #fff;
+    border-radius: 50%;
+    content: "";
+    height: 11px;
+    left: -5px;
+    position: absolute;
+    top: -3px;
+    width: 11px;
+  }
+
+  &.conforming,
+  &.conforming::before {
+    background: ${EVALUATION_COLORS.conforming};
+  }
+
+  &.non-conforming,
+  &.non-conforming::before {
+    background: ${EVALUATION_COLORS.nonConforming};
+  }
+
+  /* superseded, closed or expired: kept for the record, in a lighter tone */
+  &.past {
+    opacity: 0.45;
+  }
+
+  &:hover,
+  &:focus-visible {
+    opacity: 1;
+    outline: none;
+  }
+
+  &:focus-visible::before {
+    outline: 2px solid #2e3c5a;
+  }
+`;
+
 export const Marker = styled.div`
   bottom: 0;
   pointer-events: none;
@@ -365,6 +414,33 @@ export const Legend = styled.div`
   .legend-gap {
     background: ${HATCH};
     border: 1px solid rgba(0, 0, 0, 0.15);
+  }
+
+  .legend-evaluation {
+    border-radius: 2px;
+    height: 5px;
+    position: relative;
+
+    &::before {
+      border: 2px solid #fff;
+      border-radius: 50%;
+      content: "";
+      height: 11px;
+      left: -4px;
+      position: absolute;
+      top: -3px;
+      width: 11px;
+    }
+  }
+
+  .legend-evaluation.conforming,
+  .legend-evaluation.conforming::before {
+    background: ${EVALUATION_COLORS.conforming};
+  }
+
+  .legend-evaluation.non-conforming,
+  .legend-evaluation.non-conforming::before {
+    background: ${EVALUATION_COLORS.nonConforming};
   }
 
   .legend-change {
