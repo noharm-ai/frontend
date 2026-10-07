@@ -9,8 +9,10 @@ import {
 } from "../courseColors";
 
 // fixed column with the drug of each row (--label-width), narrower on phones
+// and when the timeline is embedded in another view
 const LABEL_WIDTH = 280;
 const LABEL_WIDTH_SMALL = 160;
+const LABEL_WIDTH_COMPACT = 84;
 // every day column has this width; long admissions scroll sideways
 export const DAY_WIDTH = 34;
 
@@ -20,6 +22,15 @@ const HATCH =
 
 export const Gantt = styled.div`
   --label-width: ${LABEL_WIDTH}px;
+
+  &.compact {
+    --label-width: ${LABEL_WIDTH_COMPACT}px;
+
+    .label-day {
+      font-size: 15px;
+      text-align: center;
+    }
+  }
 
   @media (max-width: 768px) {
     --label-width: ${LABEL_WIDTH_SMALL}px;
@@ -315,6 +326,36 @@ export const Evaluation = styled.span`
   &.non-conforming,
   &.non-conforming::before {
     background: ${EVALUATION_COLORS.nonConforming};
+  }
+
+  /* the evaluation being filled, not saved yet: striped, with a hollow dot */
+  &.draft {
+    background-image: repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.55) 0 3px,
+      transparent 3px 6px
+    );
+    height: 7px;
+    top: calc(50% + 12px);
+  }
+
+  &.draft::before {
+    background: #fff;
+    border: 3px solid currentColor;
+    top: -2px;
+  }
+
+  &.draft.conforming {
+    color: ${EVALUATION_COLORS.conforming};
+  }
+
+  &.draft.non-conforming {
+    color: ${EVALUATION_COLORS.nonConforming};
+  }
+
+  &.undecided {
+    background-color: #bfbfbf;
+    color: #8c8c8c;
   }
 
   /* superseded, closed or expired: kept for the record, in a lighter tone */

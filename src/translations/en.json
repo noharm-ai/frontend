@@ -1615,6 +1615,7 @@
       "legendConforming": "Conforming evaluation (validity)",
       "legendNonConforming": "Non-conforming evaluation (validity)",
       "evaluation": {
+        "draft": "New evaluation (not saved)",
         "label": "{{verdict}} on {{date}}",
         "by": "Evaluated on {{date}} by {{user}}",
         "valid": "Valid until {{date}}",
@@ -1693,8 +1694,6 @@
       "legend": "Evaluate the antimicrobials in use and schedule the patient's next review.",
       "antimicrobials": "Antimicrobials in use",
       "noOngoing": "No antimicrobial in use.",
-      "evaluate": "Evaluate",
-      "current": "Current evaluation: {{status}} until {{date}}",
       "conformity": "Conformity",
       "validUntil": "Valid until",
       "evaluationNotes": "Note",
@@ -1702,8 +1701,19 @@
       "nextReviewDate": "Patient's next review",
       "presetDays_one": "{{count}} day",
       "presetDays_other": "{{count}} days",
+      "presetExpire": "Until the prescription expires ({{date}})",
+      "presetPlannedEnd": "Until the planned end ({{date}})",
       "futureDate": "The date must be in the future",
-      "success": "Review registered!"
+      "success": "Review registered!",
+      "next": "Next",
+      "evaluateNow": "Evaluate this antimicrobial in this review",
+      "currentEvaluation": "Current evaluation",
+      "evaluatedBy": "on {{date}} by {{user}}",
+      "keepEvaluation": "Keeps the current evaluation",
+      "notEvaluated": "Not evaluated",
+      "toEvaluate": "To evaluate",
+      "patientStep": "Patient",
+      "patientStepLegend": "Next review and notes"
     },
     "history": {
       "title": "Reviews",

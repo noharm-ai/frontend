@@ -198,7 +198,13 @@ export function InfectionControl() {
       )}
 
       {followUp && canReview && (
-        <ReviewModal followUp={followUp} drugNames={drugNames} now={now} />
+        <ReviewModal
+          followUp={followUp}
+          courses={courses}
+          dischargeDate={data.patient.dischargeDate}
+          drugNames={drugNames}
+          now={now}
+        />
       )}
     </>
   );

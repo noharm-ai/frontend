@@ -1625,6 +1625,7 @@
       "legendConforming": "Avaliação conforme (vigência)",
       "legendNonConforming": "Avaliação não conforme (vigência)",
       "evaluation": {
+        "draft": "Nova avaliação (não salva)",
         "label": "{{verdict}} em {{date}}",
         "by": "Avaliado em {{date}} por {{user}}",
         "valid": "Válida até {{date}}",
@@ -1703,8 +1704,6 @@
       "legend": "Avalie os antimicrobianos em uso e agende a próxima revisão do paciente.",
       "antimicrobials": "Antimicrobianos em uso",
       "noOngoing": "Nenhum antimicrobiano em uso.",
-      "evaluate": "Avaliar",
-      "current": "Avaliação atual: {{status}} até {{date}}",
       "conformity": "Conformidade",
       "validUntil": "Válida até",
       "evaluationNotes": "Observação",
@@ -1712,8 +1711,19 @@
       "nextReviewDate": "Próxima revisão do paciente",
       "presetDays_one": "{{count}} dia",
       "presetDays_other": "{{count}} dias",
+      "presetExpire": "Até o vencimento da prescrição ({{date}})",
+      "presetPlannedEnd": "Até o término previsto ({{date}})",
       "futureDate": "A data deve ser futura",
-      "success": "Revisão registrada com sucesso!"
+      "success": "Revisão registrada com sucesso!",
+      "next": "Próximo",
+      "evaluateNow": "Avaliar este antimicrobiano nesta revisão",
+      "currentEvaluation": "Avaliação atual",
+      "evaluatedBy": "em {{date}} por {{user}}",
+      "keepEvaluation": "Mantém a avaliação atual",
+      "notEvaluated": "Não avaliado",
+      "toEvaluate": "A avaliar",
+      "patientStep": "Paciente",
+      "patientStepLegend": "Próxima revisão e observações"
     },
     "history": {
       "title": "Revisões",

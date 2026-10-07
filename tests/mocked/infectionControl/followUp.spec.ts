@@ -39,6 +39,8 @@ const shownDate = (isoDate: string) =>
 
 const MEROPENEM_START = hoursFromNow(-48);
 const VANCOMYCIN_START = hoursFromNow(-96);
+const MEROPENEM_END = hoursFromNow(24);
+const VANCOMYCIN_END = hoursFromNow(30);
 
 const course = (overrides: Record<string, unknown>) => ({
   substance: null,
@@ -80,14 +82,14 @@ const TIMELINE_DATA = {
         idDrug: 11,
         drug: "MEROPENEM 1 g SOL INJ",
         start: MEROPENEM_START,
-        end: hoursFromNow(24),
+        end: MEROPENEM_END,
         days: 3,
       }),
       course({
         idDrug: 12,
         drug: "VANCOMICINA 500 mg SOL INJ",
         start: VANCOMYCIN_START,
-        end: hoursFromNow(24),
+        end: VANCOMYCIN_END,
         days: 5,
       }),
     ],
@@ -338,30 +340,96 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       .click({ timeout: 15000 });
 
     const dialog = page.getByRole("dialog");
-    const drugs = dialog.getByTestId("review-drug");
-    await expect(drugs).toHaveCount(2);
+    const next = dialog.getByRole("button", { name: "Próximo" });
+    const drug = dialog.getByTestId("review-drug");
 
-    // the drug without an evaluation comes selected, the evaluated one does not
-    const meropenem = drugs.filter({ hasText: "MEROPENEM" });
-    const vancomycin = drugs.filter({ hasText: "VANCOMICINA" });
-    await expect(meropenem.getByRole("checkbox")).toBeChecked();
-    await expect(vancomycin.getByRole("checkbox")).not.toBeChecked();
+    // one step per running drug, then the patient
+    await expect(dialog.locator(".ant-steps-item")).toHaveCount(3);
 
-    // conformity and validity are required for a selected drug
-    await dialog.getByRole("button", { name: "Salvar" }).click();
-    await expect(meropenem.getByText("Campo obrigatório")).toHaveCount(2);
-    expect(sent).toBeNull();
+    // step 1: the drug without an evaluation comes selected, with its timeline
+    await expect(drug.getByRole("heading")).toHaveText("MEROPENEM 1 g SOL INJ");
+    await expect(drug.getByRole("checkbox")).toBeChecked();
+    const timeline = drug.getByTestId("review-timeline");
+    await expect(timeline.getByTestId("course-row")).toHaveCount(1);
+    // the step names the drug, its timeline shows only the day of treatment
+    await expect(timeline.getByTestId("course-row")).toHaveText(/^D3/);
 
-    await meropenem.getByText("Não conforme").click();
-    await meropenem.getByLabel("Válida até").click();
+    // conformity and validity are required to move on
+    await next.click();
+    await expect(drug.getByText("Campo obrigatório")).toHaveCount(2);
+    await expect(drug.getByRole("heading")).toHaveText("MEROPENEM 1 g SOL INJ");
+
+    // the timeline plots the evaluation as it is filled
+    const draft = timeline.getByTestId("draft-evaluation");
+    await expect(draft).toHaveCount(0);
+    await drug.getByText("Não conforme").click();
+    await expect(draft).toHaveClass(/non-conforming/);
+    await drug.getByLabel("Válida até").click();
+    // besides the day presets, the drug can be held until its prescription expires
+    await expect(
+      page.getByText(
+        `Até o vencimento da prescrição (${shownDate(MEROPENEM_END).slice(0, 5)})`,
+      ),
+    ).toBeVisible();
     await page.getByText("7 dias", { exact: true }).click();
-    await meropenem
+    await draft.hover();
+    await expect(page.getByRole("tooltip")).toContainText(
+      "Nova avaliação (não salva)",
+    );
+    await expect(page.getByRole("tooltip")).toContainText("Válida até");
+    // filling a field clears its error
+    await expect(drug.getByText("Campo obrigatório")).toHaveCount(0);
+    await drug
       .getByLabel("Observação", { exact: true })
       .fill("Espectro amplo demais");
+    await next.click();
+
+    // step 2: the evaluated drug shows its current evaluation, not selected
+    await expect(drug.getByRole("heading")).toHaveText(
+      "VANCOMICINA 500 mg SOL INJ",
+    );
+    await expect(drug.getByRole("checkbox")).not.toBeChecked();
+    await expect(drug).toContainText("Guiado por cultura");
+    const vancomycinTimeline = drug.getByTestId("review-timeline");
+    const current = vancomycinTimeline.getByTestId("course-evaluation");
+    await expect(current).toHaveCount(1);
+    await expect(current).not.toHaveClass(/past/);
+
+    // evaluating it again previews the new one replacing the current from now
+    await drug.getByRole("checkbox").check();
+    await drug
+      .locator(".drug-fields")
+      .getByText("Conforme", { exact: true })
+      .click();
+    await drug.getByLabel("Válida até").click();
+    await page.getByText("Até o vencimento da prescrição").click();
+    await expect(drug.getByLabel("Válida até")).toHaveValue(
+      shownDate(VANCOMYCIN_END),
+    );
+    await expect(
+      vancomycinTimeline.getByTestId("draft-evaluation"),
+    ).toHaveClass(/conforming/);
+    await expect(current).toHaveClass(/past/);
+    await drug.getByRole("checkbox").uncheck();
+    await expect(
+      vancomycinTimeline.getByTestId("draft-evaluation"),
+    ).toHaveCount(0);
+    await expect(current).not.toHaveClass(/past/);
+    await next.click();
+
+    // last step: what the review records, the next review and its notes
+    const summary = dialog.getByTestId("review-summary");
+    await expect(summary).toContainText("Não conforme · até");
+    await expect(summary).toContainText("Mantém a avaliação atual");
+    await expect(next).toHaveCount(0);
+    await expect(dialog.locator(".ant-steps-item").nth(2)).toHaveClass(
+      /ant-steps-item-process/,
+    );
     await dialog
       .getByLabel("Observações da revisão")
       .fill("Sugerido descalonamento");
 
+    expect(sent).toBeNull();
     await dialog.getByRole("button", { name: "Salvar" }).click();
 
     await expect(
@@ -409,12 +477,11 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       .click({ timeout: 15000 });
 
     const dialog = page.getByRole("dialog");
+    const next = dialog.getByRole("button", { name: "Próximo" });
     // nothing selected: a review that only records the visit
-    await dialog
-      .getByTestId("review-drug")
-      .filter({ hasText: "MEROPENEM" })
-      .getByRole("checkbox")
-      .uncheck();
+    await dialog.getByTestId("review-drug").getByRole("checkbox").uncheck();
+    await next.click();
+    await next.click();
     await dialog.getByRole("button", { name: "Salvar" }).click();
 
     await expect(
