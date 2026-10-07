@@ -100,5 +100,11 @@ export interface ChartCreatorProps {
    * first suggestion into the editable draft.
    */
   onGenerateCharts?: (hint: string) => Promise<ChartConfig[]>;
+  /**
+   * Column keys left out of the chart wizard, filters and previews, e.g.
+   * page-local patient names that must not reach saved charts or the LLM.
+   * Pass a memoized array.
+   */
+  excludeKeys?: string[];
   ref?: Ref<ChartCreatorHandle>;
 }
