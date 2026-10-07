@@ -190,6 +190,10 @@ interface IInfectionControlSlice {
     open: boolean;
     status: Status;
   };
+  // starting the follow-up of an admission by hand
+  follow: {
+    status: Status;
+  };
 }
 
 const initialState: IInfectionControlSlice = {
@@ -202,6 +206,9 @@ const initialState: IInfectionControlSlice = {
   },
   review: {
     open: false,
+    status: "idle",
+  },
+  follow: {
     status: "idle",
   },
 };
@@ -264,6 +271,20 @@ export const saveReview = createAsyncThunk(
   },
 );
 
+export const followAdmission = createAsyncThunk(
+  "infectionControl/followAdmission",
+  async (params: { admissionNumber: string }, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.followAdmission(
+        params.admissionNumber,
+      );
+      return response.data.data as IFollowUp;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
 const infectionControlSlice = createSlice({
   name: "infectionControl",
   initialState,
@@ -299,6 +320,17 @@ const infectionControlSlice = createSlice({
       })
       .addCase(saveReview.rejected, (state) => {
         state.review.status = "failed";
+      })
+      .addCase(followAdmission.pending, (state) => {
+        state.follow.status = "loading";
+      })
+      .addCase(followAdmission.fulfilled, (state, action) => {
+        state.follow.status = "succeeded";
+        state.followUp.status = "succeeded";
+        state.followUp.data = action.payload;
+      })
+      .addCase(followAdmission.rejected, (state) => {
+        state.follow.status = "failed";
       })
       .addCase(fetchAntimicrobialTimeline.pending, (state) => {
         state.status = "loading";
