@@ -856,6 +856,7 @@
     "evaluationTime": "EVALUATION TIME",
     "interventionReasonArray": "INTERVENTION REASONS",
     "outcomeResponsible": "OUTCOME RESPONSIBLE",
+    "outcomeAt": "OUTCOME DATE",
     "checkedAt": "CHECK DATE",
     "originCreatedAt": "ORIGIN CREATION DATE",
     "tags": "TAGS",
