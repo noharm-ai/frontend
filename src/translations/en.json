@@ -1647,6 +1647,8 @@
       },
       "notFollowed": "Not followed",
       "notFollowedHint": "This admission is not in the infection control follow-up yet.",
+      "follow": "Start follow-up",
+      "followSuccess": "Follow-up started",
       "since": "since {{date}}",
       "nextReview": "Next review",
       "noNextReview": "Not scheduled",
@@ -1656,6 +1658,9 @@
       "reviewedBy": "by {{user}}",
       "pendings": "Pending items",
       "noPendings": "Nothing pending",
+      "pendingsCount_one": "{{count}} pending item",
+      "pendingsCount_other": "{{count}} pending items",
+      "showPendings": "View pending items",
       "sinceAt": "since {{date}} at {{time}}",
       "schedule": "Schedule",
       "reschedule": "Reschedule",
@@ -1681,7 +1686,7 @@
     },
     "review": {
       "title": "Register review",
-      "legend": "Evaluate the antimicrobials in use and schedule the patient's next review.",
+      "legend": "Evaluate the antimicrobials in use and, if you wish, schedule the patient's next review.",
       "antimicrobials": "Antimicrobials in use",
       "noOngoing": "No antimicrobial in use.",
       "conformity": "Conformity",
@@ -1689,6 +1694,9 @@
       "evaluationNotes": "Note",
       "notes": "Review notes",
       "nextReviewDate": "Patient's next review",
+      "nextReviewDateHelp": "On the scheduled date, the patient goes back to pending. Leave it blank to not schedule one.",
+      "noSchedule": "Not scheduled",
+      "optional": "optional",
       "presetDays_one": "{{count}} day",
       "presetDays_other": "{{count}} days",
       "presetExpire": "Until the prescription expires ({{date}})",
@@ -1706,7 +1714,7 @@
       "notEvaluated": "Not evaluated",
       "toEvaluate": "To evaluate",
       "patientStep": "Patient",
-      "patientStepLegend": "Next review and notes"
+      "patientStepLegend": "Schedule and notes (optional)"
     },
     "history": {
       "title": "Reviews",

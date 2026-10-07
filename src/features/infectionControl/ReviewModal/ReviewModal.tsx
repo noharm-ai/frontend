@@ -612,7 +612,12 @@ export function ReviewModal({
 
             <div className={`form-row ${errors.nextReviewDate ? "error" : ""}`}>
               <div className="form-label">
-                <label>{t("infectionControl.review.nextReviewDate")}</label>
+                <label>
+                  {t("infectionControl.review.nextReviewDate")}{" "}
+                  <span className="form-label-optional">
+                    ({t("infectionControl.review.optional")})
+                  </span>
+                </label>
               </div>
               <div className="form-input">
                 <DatePicker
@@ -623,19 +628,29 @@ export function ReviewModal({
                     setFieldError("nextReviewDate", undefined);
                   }}
                   disabledDate={notAfterToday}
+                  placeholder={t("infectionControl.review.noSchedule")}
                   aria-label={t("infectionControl.review.nextReviewDate")}
                 />
               </div>
-              {errors.nextReviewDate && (
+              {errors.nextReviewDate ? (
                 <div className="form-error">
                   {errors.nextReviewDate as string}
+                </div>
+              ) : (
+                <div className="form-info">
+                  {t("infectionControl.review.nextReviewDateHelp")}
                 </div>
               )}
             </div>
 
             <div className="form-row">
               <div className="form-label">
-                <label>{t("infectionControl.review.notes")}</label>
+                <label>
+                  {t("infectionControl.review.notes")}{" "}
+                  <span className="form-label-optional">
+                    ({t("infectionControl.review.optional")})
+                  </span>
+                </label>
               </div>
               <div className="form-input">
                 <Textarea

@@ -41,6 +41,11 @@ export const ReviewBody = styled.div`
     margin: 0 0 8px 0;
   }
 
+  .form-label-optional {
+    color: #8c8c8c;
+    font-weight: normal;
+  }
+
   .review-empty {
     color: #8c8c8c;
     margin-bottom: 16px;

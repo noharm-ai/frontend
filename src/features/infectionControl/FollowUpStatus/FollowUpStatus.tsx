@@ -19,7 +19,7 @@ import { formatDate } from "utils/date";
 import { IFollowUp } from "../InfectionControlSlice";
 import { describePending } from "../followUp";
 import { ReviewHistory } from "../ReviewHistory/ReviewHistory";
-import { FollowUpBox, HistoryBody } from "./FollowUpStatus.style";
+import { FollowUpBox, HistoryBody, PendingsBody } from "./FollowUpStatus.style";
 
 interface FollowUpStatusProps {
   followUp: IFollowUp;
@@ -44,8 +44,9 @@ const STATUS_CLASS: Record<number, string> = {
 
 /**
  * Where the admission stands in the infection control follow-up: pending or
- * revised, the last review, the next one scheduled and why it is pending.
- * Every review is one click away, in a modal
+ * revised, the last review, the next one scheduled and how many reasons keep
+ * it pending. Every review and every pending reason is one click away, in a
+ * modal
  */
 export function FollowUpStatus({
   followUp,
@@ -55,6 +56,7 @@ export function FollowUpStatus({
 }: FollowUpStatusProps) {
   const { t } = useTranslation();
   const [historyOpen, setHistoryOpen] = useState(false);
+  const [pendingsOpen, setPendingsOpen] = useState(false);
   const pendings = followUp.pendings ?? [];
   const reviews = followUp.reviews ?? [];
   const lastReview = reviews[0];
@@ -172,15 +174,25 @@ export function FollowUpStatus({
                   {t("infectionControl.followUp.noPendings")}
                 </div>
               ) : (
-                <ul className="follow-up-pendings">
-                  {pendings.map((pending) => (
-                    <li key={pending.id}>
-                      {describePending(pending, drugNames, t)}
-                    </li>
-                  ))}
-                </ul>
+                <div
+                  className="follow-up-value"
+                  data-testid="follow-up-pendings-count"
+                >
+                  {t("infectionControl.followUp.pendingsCount", {
+                    count: pendings.length,
+                  })}
+                </div>
               )}
             </div>
+            {pendings.length > 0 && (
+              <Button
+                type="link"
+                className="follow-up-action"
+                onClick={() => setPendingsOpen(true)}
+              >
+                {t("infectionControl.followUp.showPendings")}
+              </Button>
+            )}
           </div>
         </div>
       )}
@@ -197,6 +209,37 @@ export function FollowUpStatus({
           <h2 className="modal-title">{t("infectionControl.history.title")}</h2>
           <ReviewHistory followUp={followUp} drugNames={drugNames} />
         </HistoryBody>
+      </DefaultModal>
+
+      <DefaultModal
+        open={pendingsOpen}
+        width={560}
+        centered
+        destroyOnHidden
+        onCancel={() => setPendingsOpen(false)}
+        footer={null}
+      >
+        <PendingsBody
+          data-kb="infectionControl.pendings"
+          data-testid="follow-up-pendings-list"
+        >
+          <h2 className="modal-title">
+            {t("infectionControl.followUp.pendings")}
+          </h2>
+          <ul>
+            {pendings.map((pending) => (
+              <li key={pending.id}>
+                <WarningOutlined className="pending-icon" />
+                <div>
+                  <div>{describePending(pending, drugNames, t)}</div>
+                  <div className="pending-date">
+                    {formatDate(pending.createdAt, "DD/MM/YYYY · HH:mm")}
+                  </div>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </PendingsBody>
       </DefaultModal>
     </FollowUpBox>
   );

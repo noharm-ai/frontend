@@ -8,7 +8,9 @@ import { loginWithPermissions } from "../support/featureLogin";
  * the admission: its status (pending / revised / closed), the reasons it is
  * pending, the reviews and the evaluation of each antimicrobial course (keyed
  * by drug + course start, like the timeline). Users with
- * WRITE_INFECTION_CONTROL register reviews (POST /infection-control/review).
+ * WRITE_INFECTION_CONTROL register reviews (POST /infection-control/review)
+ * of a followed admission, and start following one that is not yet (POST
+ * /infection-control/admission/:admissionNumber/follow).
  * /controle-infeccao lists the followed admissions
  * (POST /infection-control/admissions).
  */
@@ -20,6 +22,7 @@ const TIMELINE =
   "GET /infection-control/antimicrobial-timeline/:admissionNumber";
 const FOLLOW_UP = "GET /infection-control/admission/:admissionNumber";
 const REVIEW = "POST /infection-control/review";
+const FOLLOW = "POST /infection-control/admission/:admissionNumber/follow";
 const LIST = "POST /infection-control/admissions";
 const EVALUATE_NOW = "Avaliar este antimicrobiano nesta revisão";
 const WATCH_EXPIRY = /Quando a avaliação vencer/;
@@ -178,6 +181,33 @@ const followUp = (overrides: Record<string, unknown> = {}) => ({
   },
 });
 
+/** An admission not followed yet: no status, reasons nor reviews */
+const notFollowed = (ongoing = true) =>
+  followUp({
+    followed: false,
+    status: null,
+    statusDate: null,
+    recalculatedAt: null,
+    pendings: [],
+    reviews: [],
+    courses: [
+      {
+        idDrug: 11,
+        start: MEROPENEM_START,
+        ongoing,
+        evaluation: null,
+        history: [],
+      },
+      {
+        idDrug: 12,
+        start: VANCOMYCIN_START,
+        ongoing,
+        evaluation: null,
+        history: [],
+      },
+    ],
+  });
+
 test.beforeEach(({ mockApi }) => {
   mockApi.override("GET /names/:idPatient", {
     json: { status: "success", idPatient: PATIENT_ID, name: "Fulano Beltrano" },
@@ -196,11 +226,21 @@ test("shows the follow-up status, its pending reasons and each drug's evaluation
   const box = page.getByTestId("follow-up");
   await expect(box).toBeVisible({ timeout: 15000 });
   await expect(box.getByTestId("follow-up-status")).toHaveText("Pendente");
-  await expect(box.getByTestId("follow-up-pendings")).toContainText(
-    "MEROPENEM 1 g SOL INJ sem avaliação",
+  await expect(box.getByTestId("follow-up-pendings-count")).toHaveText(
+    "1 pendência",
   );
   await expect(box).toContainText("Não agendada");
   await expect(box).toContainText("Maria Teste");
+
+  // the card only counts them; the reasons are listed in a modal
+  await expect(box).not.toContainText("MEROPENEM 1 g SOL INJ sem avaliação");
+  await box.getByRole("button", { name: "Ver pendências" }).click();
+  const pendingsList = page.getByTestId("follow-up-pendings-list");
+  await expect(pendingsList).toContainText(
+    "MEROPENEM 1 g SOL INJ sem avaliação",
+  );
+  await page.keyboard.press("Escape");
+  await expect(pendingsList).toHaveCount(0);
 
   // each drug's evaluation sits on its course in the timeline
   const rows = page.getByTestId("course-row");
@@ -317,6 +357,27 @@ test("leaves the follow-up out when the schema does not have it", async ({
   });
   await expect(page.getByTestId("follow-up")).toHaveCount(0);
   await expect(page.getByTestId("course-evaluation")).toHaveCount(0);
+});
+
+test("does not offer to review nor follow an admission not followed without permission", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override(FOLLOW_UP, { json: notFollowed() });
+
+  await page.goto(PAGE_URL);
+
+  const box = page.getByTestId("follow-up");
+  await expect(box.getByTestId("follow-up-status")).toHaveText(
+    "Não acompanhado",
+    { timeout: 15000 },
+  );
+  await expect(
+    page.getByRole("button", { name: "Iniciar acompanhamento" }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Registrar revisão" }),
+  ).toHaveCount(0);
 });
 
 test.describe("with WRITE_INFECTION_CONTROL", () => {
@@ -552,10 +613,13 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     });
 
     await page.goto(PAGE_URL);
-    await expect(page.getByTestId("follow-up-pendings")).toContainText(
+    await page.getByRole("button", { name: "Ver pendências" }).click({
+      timeout: 15000,
+    });
+    await expect(page.getByTestId("follow-up-pendings-list")).toContainText(
       "Posologia de VANCOMICINA 500 mg SOL INJ alterada",
-      { timeout: 15000 },
     );
+    await page.keyboard.press("Escape");
     await page.getByRole("button", { name: "Registrar revisão" }).click();
 
     // evaluated before, but its posology changed: it comes selected, with
@@ -587,6 +651,103 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     expect(sent.evaluations).toMatchObject([
       { idDrug: 12, conforming: true, triggers: [3] },
     ]);
+  });
+
+  test("starts the follow-up of an admission not followed, then offers the review", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override(FOLLOW_UP, { json: notFollowed() });
+    let followed = 0;
+    mockApi.override(FOLLOW, async (route) => {
+      followed += 1;
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(
+          followUp({
+            statusDate: hoursFromNow(0),
+            reviews: [],
+            pendings: [
+              {
+                id: "901",
+                type: 1,
+                origin: 5,
+                idDrug: null,
+                idPrescription: null,
+                details: null,
+                createdAt: hoursFromNow(0),
+              },
+            ],
+            courses: [
+              {
+                idDrug: 11,
+                start: MEROPENEM_START,
+                ongoing: true,
+                evaluation: null,
+                history: [],
+              },
+              {
+                idDrug: 12,
+                start: VANCOMYCIN_START,
+                ongoing: true,
+                evaluation: null,
+                history: [],
+              },
+            ],
+          }),
+        ),
+      });
+    });
+
+    await page.goto(PAGE_URL);
+
+    // not followed: no review, the follow-up is started instead
+    const box = page.getByTestId("follow-up");
+    await expect(box.getByTestId("follow-up-status")).toHaveText(
+      "Não acompanhado",
+      { timeout: 15000 },
+    );
+    await expect(
+      page.getByRole("button", { name: "Registrar revisão" }),
+    ).toHaveCount(0);
+    await page.getByRole("button", { name: "Iniciar acompanhamento" }).click();
+
+    await expect(box.getByTestId("follow-up-status")).toHaveText("Pendente");
+    await expect(box.getByTestId("follow-up-pendings-count")).toHaveText(
+      "1 pendência",
+    );
+    await box.getByRole("button", { name: "Ver pendências" }).click();
+    await expect(page.getByTestId("follow-up-pendings-list")).toContainText(
+      "Paciente ainda não revisado",
+    );
+    await page.keyboard.press("Escape");
+    expect(followed).toBe(1);
+    await expect(
+      page.getByRole("button", { name: "Iniciar acompanhamento" }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByRole("button", { name: "Registrar revisão" }),
+    ).toBeVisible();
+  });
+
+  test("does not start the follow-up without a running antimicrobial", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override(FOLLOW_UP, { json: notFollowed(false) });
+
+    await page.goto(PAGE_URL);
+
+    await expect(
+      page.getByTestId("follow-up").getByTestId("follow-up-status"),
+    ).toHaveText("Não acompanhado", { timeout: 15000 });
+    await expect(
+      page.getByRole("button", { name: "Iniciar acompanhamento" }),
+    ).toHaveCount(0);
+    await expect(
+      page.getByRole("button", { name: "Registrar revisão" }),
+    ).toHaveCount(0);
   });
 
   test("schedules the next review through the review modal", async ({

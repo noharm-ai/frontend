@@ -1657,6 +1657,8 @@
       },
       "notFollowed": "Não acompanhado",
       "notFollowedHint": "Este atendimento ainda não está no acompanhamento do controle de infecção.",
+      "follow": "Iniciar acompanhamento",
+      "followSuccess": "Acompanhamento iniciado",
       "since": "desde {{date}}",
       "nextReview": "Próxima revisão",
       "noNextReview": "Não agendada",
@@ -1666,6 +1668,9 @@
       "reviewedBy": "por {{user}}",
       "pendings": "Pendências",
       "noPendings": "Nenhuma pendência",
+      "pendingsCount_one": "{{count}} pendência",
+      "pendingsCount_other": "{{count}} pendências",
+      "showPendings": "Ver pendências",
       "sinceAt": "desde {{date}} às {{time}}",
       "schedule": "Agendar",
       "reschedule": "Reagendar",
@@ -1691,7 +1696,7 @@
     },
     "review": {
       "title": "Registrar revisão",
-      "legend": "Avalie os antimicrobianos em uso e agende a próxima revisão do paciente.",
+      "legend": "Avalie os antimicrobianos em uso e, se quiser, agende a próxima revisão do paciente.",
       "antimicrobials": "Antimicrobianos em uso",
       "noOngoing": "Nenhum antimicrobiano em uso.",
       "conformity": "Conformidade",
@@ -1699,6 +1704,9 @@
       "evaluationNotes": "Observação",
       "notes": "Observações da revisão",
       "nextReviewDate": "Próxima revisão do paciente",
+      "nextReviewDateHelp": "Na data agendada, o paciente volta para pendente. Deixe em branco para não agendar.",
+      "noSchedule": "Sem agendamento",
+      "optional": "opcional",
       "presetDays_one": "{{count}} dia",
       "presetDays_other": "{{count}} dias",
       "presetExpire": "Até o vencimento da prescrição ({{date}})",
@@ -1716,7 +1724,7 @@
       "notEvaluated": "Não avaliado",
       "toEvaluate": "A avaliar",
       "patientStep": "Paciente",
-      "patientStepLegend": "Próxima revisão e observações"
+      "patientStepLegend": "Agendamento e observações (opcionais)"
     },
     "history": {
       "title": "Revisões",

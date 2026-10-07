@@ -103,13 +103,6 @@ export const FollowUpBox = styled.div`
     font-size: 13px;
     padding: 0;
   }
-
-  .follow-up-pendings {
-    color: #2e3c5a;
-    font-size: 13px;
-    margin: 2px 0 0 0;
-    padding-left: 18px;
-  }
 `;
 
 export const HistoryBody = styled.div`
@@ -120,5 +113,42 @@ export const HistoryBody = styled.div`
   > ul {
     max-height: 65vh;
     overflow-y: auto;
+  }
+`;
+
+export const PendingsBody = styled.div`
+  .modal-title {
+    margin-bottom: 16px;
+  }
+
+  > ul {
+    list-style: none;
+    margin: 0;
+    max-height: 65vh;
+    overflow-y: auto;
+    padding: 0;
+  }
+
+  li {
+    align-items: flex-start;
+    color: #2e3c5a;
+    display: flex;
+    font-size: 14px;
+    gap: 10px;
+    padding: 10px 0;
+  }
+
+  li + li {
+    border-top: 1px solid #f0f0f0;
+  }
+
+  .pending-icon {
+    color: #d46b08;
+    margin-top: 3px;
+  }
+
+  .pending-date {
+    color: #8c8c8c;
+    font-size: 12px;
   }
 `;

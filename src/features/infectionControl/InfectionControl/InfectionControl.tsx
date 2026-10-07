@@ -2,17 +2,24 @@ import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { Button, Col, Empty } from "antd";
-import { FileDoneOutlined, ReloadOutlined } from "@ant-design/icons";
+import {
+  FileDoneOutlined,
+  PlayCircleOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
 import dayjs from "dayjs";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import LoadBox, { LoadContainer } from "components/LoadBox";
+import notification from "components/notification";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
+import { getErrorMessage } from "utils/errorHandler";
 
 import {
   fetchAntimicrobialTimeline,
   fetchFollowUp,
+  followAdmission,
   reset,
   setReviewOpen,
 } from "../InfectionControlSlice";
@@ -39,6 +46,9 @@ export function InfectionControl() {
   );
   const followUp = useAppSelector(
     (state) => state.infectionControl.followUp.data,
+  );
+  const followStatus = useAppSelector(
+    (state) => state.infectionControl.follow.status,
   );
 
   const isValid = /^\d+$/.test(admissionNumber);
@@ -70,13 +80,31 @@ export function InfectionControl() {
   const canReview =
     followUpEnabled &&
     PermissionService().has(Permission.WRITE_INFECTION_CONTROL);
-  // a review needs a followed admission or a running antimicrobial, and the
-  // timeline loaded, since the review modal lives with it
+  // a review needs a followed admission and the timeline loaded, since the
+  // review modal lives with it
   const showReview =
+    canReview && status === "succeeded" && !!followUp?.followed;
+  // an admission prescalc did not follow (e.g. on antimicrobials before the
+  // feature was turned on) is started by hand while a drug is running (none
+  // is, once the patient is discharged)
+  const showFollow =
     canReview &&
     status === "succeeded" &&
-    (!!followUp?.followed ||
-      (followUp?.courses ?? []).some((course) => course.ongoing));
+    !!followUp &&
+    !followUp.followed &&
+    (followUp.courses ?? []).some((course) => course.ongoing);
+
+  const follow = () => {
+    dispatch(followAdmission({ admissionNumber })).then((response: any) => {
+      if (response.error) {
+        notification.error({ message: getErrorMessage(response, t) });
+      } else {
+        notification.success({
+          message: t("infectionControl.followUp.followSuccess"),
+        });
+      }
+    });
+  };
 
   const header = (
     <Header>
@@ -96,6 +124,18 @@ export function InfectionControl() {
             onClick={() => dispatch(setReviewOpen(true))}
           >
             {t("infectionControl.followUp.register")}
+          </Button>
+        </div>
+      )}
+      {showFollow && (
+        <div className="page-header-actions">
+          <Button
+            type="primary"
+            icon={<PlayCircleOutlined />}
+            loading={followStatus === "loading"}
+            onClick={follow}
+          >
+            {t("infectionControl.followUp.follow")}
           </Button>
         </div>
       )}
