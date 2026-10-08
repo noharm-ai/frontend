@@ -19,12 +19,13 @@ import {
   ICourse,
   IFollowUp,
   IFollowUpCourse,
+  IFollowUpPending,
   saveReview,
   setReviewOpen,
 } from "../InfectionControlSlice";
 import { CourseGantt } from "../CourseGantt/CourseGantt";
 import { EvaluationTag } from "../EvaluationTag/EvaluationTag";
-import { courseKey } from "../followUp";
+import { courseKey, getInvalidatedEvaluations } from "../followUp";
 import { formatRegimen } from "../timeline";
 import { DrugEvaluation, ReviewBody } from "./ReviewModal.style";
 
@@ -77,6 +78,74 @@ const watches = (
   trigger: number,
 ) => !evaluation || (evaluation.triggers ?? []).includes(trigger);
 
+interface InvalidationReasonProps {
+  pending: IFollowUpPending;
+  evaluation: IAntimicrobialEvaluation;
+  // the course being evaluated
+  course?: ICourse;
+}
+
+/**
+ * Why the evaluation on record no longer holds: when its validity ended, or
+ * that the posology changed, from what to what
+ */
+function InvalidationReason({
+  pending,
+  evaluation,
+  course,
+}: InvalidationReasonProps) {
+  const { t } = useTranslation();
+
+  if (pending.type === InfectionControlPendingTypeEnum.EXPIRED) {
+    return (
+      <li>
+        {t("infectionControl.review.invalidatedExpired", {
+          date: formatDate(
+            pending.details?.validUntil ?? evaluation.validUntil,
+          ),
+        })}
+      </li>
+    );
+  }
+
+  const evaluated = formatRegimen(
+    pending.details?.evaluated ?? evaluation.posology,
+  );
+  // the reason keeps the posology of when it opened, which a later change
+  // makes stale: what is prescribed now comes from the course
+  const regimen = course?.regimens.at(-1);
+  const current = regimen
+    ? formatRegimen(regimen)
+    : pending.details?.current
+      ? formatRegimen(pending.details.current)
+      : "";
+
+  return (
+    <li>
+      {t("infectionControl.review.invalidatedPosology")}
+      {evaluated && (
+        <div>
+          {t("infectionControl.review.posologyEvaluated", {
+            posology: evaluated,
+          })}
+        </div>
+      )}
+      {current && (
+        <div>
+          {regimen
+            ? t("infectionControl.review.posologyCurrentSince", {
+                posology: current,
+                date: formatDateTime(regimen.start),
+              })
+            : t("infectionControl.review.posologyCurrent", {
+                posology: current,
+              })}
+        </div>
+      )}
+    </li>
+  );
+}
+
 /**
  * The infectologist's review of the patient, one step per running
  * antimicrobial - its timeline, its current evaluation and a new verdict,
@@ -110,6 +179,16 @@ export function ReviewModal({
       .filter((pending) => DRUG_REASONS.includes(pending.type))
       .map((pending) => pending.idDrug),
   );
+
+  // open reasons that make the evaluation on record of a drug no longer hold
+  const invalidatedEvaluations = useMemo(
+    () => getInvalidatedEvaluations(followUp),
+    [followUp],
+  );
+  const invalidatedBy = (
+    evaluation: IAntimicrobialEvaluation | null,
+  ): IFollowUpPending[] =>
+    (evaluation && invalidatedEvaluations[evaluation.id]) || [];
 
   // the timeline of each drug and the follow-up of its courses
   const drugTimelines = useMemo(() => {
@@ -291,6 +370,11 @@ export function ReviewModal({
   // what the review will record for a drug, in words
   const drugSummary = (evaluation: IDrugEvaluationFields) => {
     if (!evaluation.evaluate) {
+      // what is on record no longer holds: its reasons stay open
+      if (invalidatedBy(evaluation.current).length) {
+        return t("infectionControl.review.keepInvalidEvaluation");
+      }
+
       return t(
         evaluation.current
           ? "infectionControl.review.keepEvaluation"
@@ -420,6 +504,7 @@ export function ReviewModal({
               (course) => course.start === evaluation.courseStart,
             ) ?? timeline?.courses.find((course) => course.status === "active");
           const regimen = activeCourse?.regimens.at(-1);
+          const invalidations = invalidatedBy(evaluation.current);
 
           return (
             <DrugEvaluation
@@ -434,7 +519,11 @@ export function ReviewModal({
                     <div className="drug-regimen">{formatRegimen(regimen)}</div>
                   )}
                 </div>
-                <EvaluationTag evaluation={evaluation.current} now={now} />
+                <EvaluationTag
+                  evaluation={evaluation.current}
+                  now={now}
+                  invalidatedBy={invalidations}
+                />
               </div>
 
               {timeline && (
@@ -444,6 +533,7 @@ export function ReviewModal({
                     now={now}
                     dischargeDate={dischargeDate}
                     followUps={timeline.followUps}
+                    invalidatedEvaluations={invalidatedEvaluations}
                     compact
                     // what is being filled shows up as it is chosen
                     draftEvaluation={
@@ -465,13 +555,20 @@ export function ReviewModal({
               )}
 
               {evaluation.current && (
-                <div className="drug-current">
+                <div
+                  className={`drug-current ${invalidations.length ? "invalidated" : ""}`}
+                  data-testid="review-current-evaluation"
+                >
                   <span className="drug-field-label">
                     {t("infectionControl.review.currentEvaluation")}
                   </span>
                   <div>
                     <strong>
-                      {verdictLabel(evaluation.current.conforming)}
+                      {invalidations.length ? (
+                        <s>{verdictLabel(evaluation.current.conforming)}</s>
+                      ) : (
+                        verdictLabel(evaluation.current.conforming)
+                      )}
                     </strong>{" "}
                     {t("infectionControl.review.evaluatedBy", {
                       date: formatDateTime(evaluation.current.createdAt),
@@ -480,6 +577,23 @@ export function ReviewModal({
                   </div>
                   {evaluation.current.notes && (
                     <em>{evaluation.current.notes}</em>
+                  )}
+                  {invalidations.length > 0 && (
+                    <div className="drug-current-invalidated">
+                      <strong>
+                        {t("infectionControl.review.invalidated")}
+                      </strong>
+                      <ul>
+                        {invalidations.map((pending) => (
+                          <InvalidationReason
+                            key={pending.id}
+                            pending={pending}
+                            evaluation={evaluation.current!}
+                            course={activeCourse}
+                          />
+                        ))}
+                      </ul>
+                    </div>
                   )}
                 </div>
               )}

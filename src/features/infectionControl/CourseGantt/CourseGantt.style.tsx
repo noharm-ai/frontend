@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import {
   COURSE_COLORS,
@@ -296,8 +296,71 @@ export const Bar = styled.div<{ $color?: string }>`
   }
 `;
 
+// a stroked glyph drawn on the marker of a conformity record
+const glyph = (path: string, color: string) =>
+  `url("data:image/svg+xml,${encodeURIComponent(
+    `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='${path}' fill='none' stroke='${color}' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>`,
+  )}")`;
+const CHECK = "M2.5 6.3 5 8.7 9.5 3.6";
+const CROSS = "M3.3 3.3 8.7 8.7M8.7 3.3 3.3 8.7";
+
+/**
+ * The marker of a conformity record (its ::before), with a band of the same
+ * color: a circle with a check when conforming and a square with a cross when
+ * not, so the verdict does not depend on telling the colors apart
+ */
+const evaluationMarker = (left: string) => css`
+  &::before {
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 11px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    box-sizing: border-box;
+    content: "";
+    height: 15px;
+    left: ${left};
+    position: absolute;
+    top: -5px;
+    width: 15px;
+  }
+
+  &.conforming,
+  &.conforming::before {
+    background-color: ${EVALUATION_COLORS.conforming};
+  }
+
+  &.conforming::before {
+    background-image: ${glyph(CHECK, "#fff")};
+  }
+
+  &.non-conforming,
+  &.non-conforming::before {
+    background-color: ${EVALUATION_COLORS.nonConforming};
+  }
+
+  &.non-conforming::before {
+    background-image: ${glyph(CROSS, "#fff")};
+    border-radius: 3px;
+  }
+
+  /* no longer holds: in the pending color, keeping the symbol of its verdict */
+  &.invalidated,
+  &.invalidated::before {
+    background-color: ${EVALUATION_COLORS.invalidated};
+  }
+
+  &.invalidated.conforming::before {
+    background-image: ${glyph(CHECK, EVALUATION_COLORS.invalidatedSymbol)};
+  }
+
+  &.invalidated.non-conforming::before {
+    background-image: ${glyph(CROSS, EVALUATION_COLORS.invalidatedSymbol)};
+  }
+`;
+
 // a conformity record: a band under the course bar for the days it is in
-// force, with a dot where the review recorded it
+// force, with a marker where the review recorded it
 export const Evaluation = styled.span`
   border-radius: 2px;
   cursor: help;
@@ -307,28 +370,9 @@ export const Evaluation = styled.span`
   top: calc(50% + 13px);
   z-index: 2;
 
-  &::before {
-    border: 2px solid #fff;
-    border-radius: 50%;
-    content: "";
-    height: 11px;
-    left: -5px;
-    position: absolute;
-    top: -3px;
-    width: 11px;
-  }
+  ${evaluationMarker("-7px")}
 
-  &.conforming,
-  &.conforming::before {
-    background: ${EVALUATION_COLORS.conforming};
-  }
-
-  &.non-conforming,
-  &.non-conforming::before {
-    background: ${EVALUATION_COLORS.nonConforming};
-  }
-
-  /* the evaluation being filled, not saved yet: striped, with a hollow dot */
+  /* the evaluation being filled, not saved yet: striped, with a hollow marker */
   &.draft {
     background-image: repeating-linear-gradient(
       -45deg,
@@ -340,17 +384,25 @@ export const Evaluation = styled.span`
   }
 
   &.draft::before {
-    background: #fff;
-    border: 3px solid currentColor;
-    top: -2px;
+    background-color: #fff;
+    border-color: currentColor;
+    top: -4px;
   }
 
   &.draft.conforming {
     color: ${EVALUATION_COLORS.conforming};
   }
 
+  &.draft.conforming::before {
+    background-image: ${glyph(CHECK, EVALUATION_COLORS.conforming)};
+  }
+
   &.draft.non-conforming {
     color: ${EVALUATION_COLORS.nonConforming};
+  }
+
+  &.draft.non-conforming::before {
+    background-image: ${glyph(CROSS, EVALUATION_COLORS.nonConforming)};
   }
 
   &.undecided {
@@ -460,28 +512,10 @@ export const Legend = styled.div`
   .legend-evaluation {
     border-radius: 2px;
     height: 5px;
+    margin-left: 7px;
     position: relative;
 
-    &::before {
-      border: 2px solid #fff;
-      border-radius: 50%;
-      content: "";
-      height: 11px;
-      left: -4px;
-      position: absolute;
-      top: -3px;
-      width: 11px;
-    }
-  }
-
-  .legend-evaluation.conforming,
-  .legend-evaluation.conforming::before {
-    background: ${EVALUATION_COLORS.conforming};
-  }
-
-  .legend-evaluation.non-conforming,
-  .legend-evaluation.non-conforming::before {
-    background: ${EVALUATION_COLORS.nonConforming};
+    ${evaluationMarker("-7px")}
   }
 
   .legend-change {

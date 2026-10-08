@@ -11,10 +11,16 @@ import {
   IAntimicrobialEvaluation,
   ICourse,
   IFollowUpCourse,
+  IFollowUpPending,
 } from "../InfectionControlSlice";
 import { CourseDetails } from "../CourseDetails/CourseDetails";
 import { COURSE_COLORS } from "../courseColors";
-import { courseKey, getEvaluationPeriod } from "../followUp";
+import {
+  courseKey,
+  describeInvalidation,
+  getEvaluationPeriod,
+  invalidatedSince,
+} from "../followUp";
 import { AntimicrobialEvaluationStatusEnum } from "models/InfectionControlEnum";
 import {
   formatRegimen,
@@ -56,6 +62,9 @@ interface CourseGanttProps {
   dischargeDate: string | null;
   // the follow-up of each course (courseKey), when the schema has the feature
   followUps?: Record<string, IFollowUpCourse> | null;
+  // the open reasons that make an evaluation no longer hold, by evaluation id
+  // (getInvalidatedEvaluations)
+  invalidatedEvaluations?: Record<string, IFollowUpPending[]>;
   // embedded in another view (the review modal): no legend and no details
   compact?: boolean;
   // the evaluation being filled, if any
@@ -88,6 +97,7 @@ interface CourseBarsProps {
   now: Dayjs;
   // the conformity records of the course, latest first
   evaluations: IAntimicrobialEvaluation[];
+  invalidatedEvaluations?: Record<string, IFollowUpPending[]>;
   // the evaluation being filled for this course
   draft?: IDraftEvaluation | null;
   // start of the next course of the same drug, which its planned end must not
@@ -107,6 +117,7 @@ function CourseBars({
   range,
   now,
   evaluations,
+  invalidatedEvaluations,
   draft,
   nextStart,
   onOpen,
@@ -228,6 +239,10 @@ function CourseBars({
                 }
               : evaluation
           }
+          course={course}
+          invalidatedBy={
+            draft ? undefined : invalidatedEvaluations?.[evaluation.id]
+          }
           range={range}
           now={now}
         />
@@ -298,6 +313,9 @@ function DraftEvaluationMark({ draft, range, now }: DraftEvaluationMarkProps) {
 
 interface EvaluationMarkProps {
   evaluation: IAntimicrobialEvaluation;
+  course: ICourse;
+  // open reasons that make it no longer hold
+  invalidatedBy?: IFollowUpPending[];
   range: ITimelineRange;
   now: Dayjs;
 }
@@ -305,11 +323,22 @@ interface EvaluationMarkProps {
 /**
  * A conformity record on its course: a dot on the day of the review and a band
  * under the bar for as long as the evaluation was (or is) in force, green when
- * conforming and red when not
+ * conforming and red when not. One that no longer holds (expired, posology
+ * changed) stops at the first open reason, in the pending color.
  */
-function EvaluationMark({ evaluation, range, now }: EvaluationMarkProps) {
+function EvaluationMark({
+  evaluation,
+  course,
+  invalidatedBy,
+  range,
+  now,
+}: EvaluationMarkProps) {
   const { t } = useTranslation();
   const period = getEvaluationPeriod(evaluation, now);
+  const since = invalidatedBy?.length
+    ? invalidatedSince(invalidatedBy, evaluation, course)
+    : null;
+  const end = since && dayjs(since).isBefore(period.end) ? since : period.end;
   const verdict = t(
     evaluation.conforming
       ? "infectionControl.evaluation.conforming"
@@ -329,13 +358,18 @@ function EvaluationMark({ evaluation, range, now }: EvaluationMarkProps) {
             })}
           </div>
           <div>
-            {t(`infectionControl.timeline.evaluation.${period.outcome}`, {
-              date: formatDate(
-                period.outcome === "valid" || period.outcome === "expired"
-                  ? evaluation.validUntil
-                  : (evaluation.closedAt ?? period.end),
-              ),
-            })}
+            {since
+              ? t("infectionControl.timeline.evaluation.invalidated", {
+                  date: formatDate(since, "DD/MM HH:mm"),
+                  reasons: describeInvalidation(invalidatedBy!, evaluation, t),
+                })
+              : t(`infectionControl.timeline.evaluation.${period.outcome}`, {
+                  date: formatDate(
+                    period.outcome === "valid" || period.outcome === "expired"
+                      ? evaluation.validUntil
+                      : (evaluation.closedAt ?? period.end),
+                  ),
+                })}
           </div>
           {posology && (
             <div>
@@ -351,7 +385,9 @@ function EvaluationMark({ evaluation, range, now }: EvaluationMarkProps) {
       <Evaluation
         className={[
           evaluation.conforming ? "conforming" : "non-conforming",
-          period.outcome === "valid" ? "" : "past",
+          // one that no longer holds takes the pending color instead
+          period.outcome === "valid" || since ? "" : "past",
+          since ? "invalidated" : "",
         ].join(" ")}
         data-testid="course-evaluation"
         tabIndex={0}
@@ -359,7 +395,7 @@ function EvaluationMark({ evaluation, range, now }: EvaluationMarkProps) {
           verdict,
           date: formatDate(evaluation.createdAt),
         })}
-        style={span(period.start, period.end, range)}
+        style={span(period.start, end, range)}
       />
     </Tooltip>
   );
@@ -374,6 +410,7 @@ export function CourseGantt({
   now,
   dischargeDate,
   followUps,
+  invalidatedEvaluations,
   compact = false,
   draftEvaluation,
 }: CourseGanttProps) {
@@ -541,6 +578,7 @@ export function CourseGantt({
                       range={range}
                       now={now}
                       evaluations={evaluationsOf(drugCourse)}
+                      invalidatedEvaluations={invalidatedEvaluations}
                       draft={
                         draftEvaluation &&
                         draftEvaluation.idDrug === drugCourse.idDrug &&
@@ -605,6 +643,10 @@ export function CourseGantt({
               <span>
                 <i className="legend-evaluation non-conforming" />
                 {t("infectionControl.timeline.legendNonConforming")}
+              </span>
+              <span>
+                <i className="legend-evaluation conforming invalidated" />
+                {t("infectionControl.timeline.legendInvalidated")}
               </span>
             </>
           )}

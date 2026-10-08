@@ -4,19 +4,29 @@ import { Dayjs } from "dayjs";
 
 import { formatDate } from "utils/date";
 
-import { IAntimicrobialEvaluation } from "../InfectionControlSlice";
-import { isEvaluationExpired } from "../followUp";
+import {
+  IAntimicrobialEvaluation,
+  IFollowUpPending,
+} from "../InfectionControlSlice";
+import { describeInvalidation, isEvaluationExpired } from "../followUp";
 
 interface EvaluationTagProps {
   evaluation: IAntimicrobialEvaluation | null;
   now: Dayjs;
+  // open reasons that make the evaluation no longer hold
+  invalidatedBy?: IFollowUpPending[];
 }
 
 /**
  * The infectologist's verdict on a course: conforming or not and until when,
- * or that nobody evaluated it yet
+ * struck through with the reason when it no longer holds, or that nobody
+ * evaluated it yet
  */
-export function EvaluationTag({ evaluation, now }: EvaluationTagProps) {
+export function EvaluationTag({
+  evaluation,
+  now,
+  invalidatedBy = [],
+}: EvaluationTagProps) {
   const { t } = useTranslation();
 
   if (!evaluation) {
@@ -33,6 +43,19 @@ export function EvaluationTag({ evaluation, now }: EvaluationTagProps) {
       ? "infectionControl.evaluation.conforming"
       : "infectionControl.evaluation.nonConforming",
   );
+
+  if (invalidatedBy.length) {
+    return (
+      <Tag
+        color="orange"
+        data-testid="evaluation-tag"
+        title={t("infectionControl.evaluation.noLongerValid")}
+      >
+        <s>{verdict}</s> · {describeInvalidation(invalidatedBy, evaluation, t)}
+      </Tag>
+    );
+  }
+
   const validity = t(
     expired
       ? "infectionControl.evaluation.expired"

@@ -577,6 +577,44 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     page,
     mockApi,
   }) => {
+    // changed twice since the evaluation: the reason kept the first change,
+    // the course has the posology prescribed now
+    const POSOLOGY_CHANGE = hoursFromNow(-3);
+    mockApi.override(TIMELINE, {
+      json: {
+        ...TIMELINE_DATA,
+        data: {
+          ...TIMELINE_DATA.data,
+          courses: [
+            course({
+              idDrug: 12,
+              drug: "VANCOMICINA 500 mg SOL INJ",
+              start: VANCOMYCIN_START,
+              end: VANCOMYCIN_END,
+              days: 5,
+              regimens: [
+                {
+                  start: VANCOMYCIN_START,
+                  end: POSOLOGY_CHANGE,
+                  dose: 1,
+                  measureUnit: "g",
+                  frequency: "12h/12h",
+                  route: "IV",
+                },
+                {
+                  start: POSOLOGY_CHANGE,
+                  end: VANCOMYCIN_END,
+                  dose: 2,
+                  measureUnit: "g",
+                  frequency: "6h/6h",
+                  route: "IV",
+                },
+              ],
+            }),
+          ],
+        },
+      },
+    });
     mockApi.override(FOLLOW_UP, {
       json: followUp({
         pendings: [
@@ -586,7 +624,18 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
             origin: 2,
             idDrug: 12,
             idPrescription: "300",
-            details: { drug: "VANCOMICINA 500 mg SOL INJ" },
+            details: {
+              drug: "VANCOMICINA 500 mg SOL INJ",
+              evaluated: vancomycinEvaluation.posology,
+              current: {
+                ...vancomycinEvaluation.posology,
+                idPrescriptionDrug: "300001",
+                dose: 2,
+                doseconv: 2,
+                frequency: "8h/8h",
+                dailyFrequency: 3,
+              },
+            },
             createdAt: hoursFromNow(-2),
           },
         ],
@@ -619,6 +668,22 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       "Posologia de VANCOMICINA 500 mg SOL INJ alterada",
     );
     await page.keyboard.press("Escape");
+
+    // the conforming verdict no longer holds: the timeline band stops when
+    // the posology changed, in the pending color
+    const mark = page
+      .getByTestId("course-row")
+      .filter({ hasText: "VANCOMICINA" })
+      .getByTestId("course-evaluation");
+    await expect(mark).toHaveClass(/invalidated/);
+    await expect(mark).not.toHaveClass(/past/);
+    await expect(mark).toHaveCSS("background-color", "rgb(255, 169, 64)");
+    await mark.hover();
+    await expect(page.getByRole("tooltip")).toContainText(
+      "Não vale mais desde",
+    );
+    await expect(page.getByRole("tooltip")).toContainText("posologia alterada");
+
     await page.getByRole("button", { name: "Registrar revisão" }).click();
 
     // evaluated before, but its posology changed: it comes selected, with
@@ -628,6 +693,17 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(
       drug.getByRole("checkbox", { name: EVALUATE_NOW }),
     ).toBeChecked();
+
+    // the verdict on record shows it no longer holds, and why
+    const tag = drug.getByTestId("evaluation-tag");
+    await expect(tag).toHaveText("Conforme · posologia alterada");
+    await expect(tag.locator("s")).toHaveText("Conforme");
+    const current = drug.getByTestId("review-current-evaluation");
+    await expect(current).toContainText(
+      "Esta avaliação não vale mais e mantém o paciente pendente",
+    );
+    await expect(current).toContainText("Avaliada: 1 g · 12h/12h · IV");
+    await expect(current).toContainText("Prescrita agora: 2 g · 6h/6h · IV");
     const posologyBox = drug.getByRole("checkbox", { name: WATCH_POSOLOGY });
     await expect(posologyBox).toBeChecked();
     const expiryBox = drug.getByRole("checkbox", { name: WATCH_EXPIRY });
@@ -650,6 +726,62 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     expect(sent.evaluations).toMatchObject([
       { idDrug: 12, conforming: true, triggers: [3] },
     ]);
+  });
+
+  test("shows an expired evaluation no longer holds and keeps the patient pending when it is not evaluated again", async ({
+    page,
+    mockApi,
+  }) => {
+    const expired = {
+      ...vancomycinEvaluation,
+      validUntil: hoursFromNow(-6),
+      triggers: [3],
+    };
+    mockApi.override(FOLLOW_UP, {
+      json: followUp({
+        pendings: [
+          {
+            id: "803",
+            type: 3,
+            origin: 2,
+            idDrug: 12,
+            idPrescription: null,
+            details: { validUntil: expired.validUntil },
+            createdAt: hoursFromNow(-5),
+          },
+        ],
+        courses: [
+          {
+            idDrug: 12,
+            start: VANCOMYCIN_START,
+            ongoing: true,
+            evaluation: expired,
+            history: [expired],
+          },
+        ],
+      }),
+    });
+
+    await page.goto(PAGE_URL);
+    await page
+      .getByRole("button", { name: "Registrar revisão" })
+      .click({ timeout: 15000 });
+
+    const dialog = page.getByRole("dialog");
+    const drug = dialog.getByTestId("review-drug");
+    await expect(drug.getByTestId("evaluation-tag")).toHaveText(
+      `Conforme · vencida em ${shownDate(expired.validUntil)}`,
+    );
+    await expect(drug.getByTestId("review-current-evaluation")).toContainText(
+      `A validade terminou em ${shownDate(expired.validUntil)}`,
+    );
+
+    // leaving it out of the review does not keep a verdict that holds
+    await drug.getByRole("checkbox", { name: EVALUATE_NOW }).uncheck();
+    await dialog.getByRole("button", { name: "Próximo" }).click();
+    await expect(dialog.getByTestId("review-summary")).toContainText(
+      "Avaliação atual não vale mais · continua pendente",
+    );
   });
 
   test("starts the follow-up of an admission not followed, then offers the review", async ({

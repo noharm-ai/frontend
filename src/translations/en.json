@@ -1599,6 +1599,7 @@
       "otherCourses_other": "+{{count}} earlier courses",
       "legendConforming": "Conforming evaluation (validity)",
       "legendNonConforming": "Non-conforming evaluation (validity)",
+      "legendInvalidated": "Evaluation that no longer holds (open pending reason)",
       "evaluation": {
         "draft": "New evaluation (not saved)",
         "label": "{{verdict}} on {{date}}",
@@ -1607,7 +1608,8 @@
         "expired": "Expired on {{date}}",
         "superseded": "Replaced by a new evaluation on {{date}}",
         "closed": "Closed on {{date}}",
-        "posology": "Evaluated posology: {{posology}}"
+        "posology": "Evaluated posology: {{posology}}",
+        "invalidated": "No longer holds since {{date}}: {{reasons}}"
       }
     },
     "status": {
@@ -1680,7 +1682,12 @@
       "nonConforming": "Non-conforming",
       "none": "Not evaluated",
       "until": "until {{date}}",
-      "expired": "expired on {{date}}"
+      "expired": "expired on {{date}}",
+      "noLongerValid": "No longer holds",
+      "invalidated": {
+        "3": "expired on {{date}}",
+        "6": "posology changed"
+      }
     },
     "review": {
       "title": "Register review",
@@ -1712,7 +1719,14 @@
       "notEvaluated": "Not evaluated",
       "toEvaluate": "To evaluate",
       "patientStep": "Patient",
-      "patientStepLegend": "Schedule and notes (optional)"
+      "patientStepLegend": "Schedule and notes (optional)",
+      "invalidated": "This evaluation no longer holds and keeps the patient pending:",
+      "invalidatedExpired": "Its validity ended on {{date}}",
+      "invalidatedPosology": "The posology changed",
+      "posologyEvaluated": "Evaluated: {{posology}}",
+      "posologyCurrent": "Prescribed now: {{posology}}",
+      "posologyCurrentSince": "Prescribed now: {{posology}}, since {{date}}",
+      "keepInvalidEvaluation": "Current evaluation no longer holds · stays pending"
     },
     "history": {
       "title": "Reviews",

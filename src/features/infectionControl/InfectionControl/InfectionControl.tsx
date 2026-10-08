@@ -27,7 +27,11 @@ import { CourseGantt } from "../CourseGantt/CourseGantt";
 import { FollowUpStatus } from "../FollowUpStatus/FollowUpStatus";
 import { InfectionControlPatient } from "../InfectionControlPatient/InfectionControlPatient";
 import { ReviewModal } from "../ReviewModal/ReviewModal";
-import { getDrugNames, getFollowUpCourses } from "../followUp";
+import {
+  getDrugNames,
+  getFollowUpCourses,
+  getInvalidatedEvaluations,
+} from "../followUp";
 import { sortCourses } from "../timeline";
 import { Header, Section, StateBox, TopRow } from "./InfectionControl.style";
 
@@ -76,6 +80,10 @@ export function InfectionControl() {
   const followUpCourses = useMemo(
     () => (followUpEnabled ? getFollowUpCourses(followUp) : null),
     [followUp, followUpEnabled],
+  );
+  const invalidatedEvaluations = useMemo(
+    () => getInvalidatedEvaluations(followUp),
+    [followUp],
   );
   const canReview =
     followUpEnabled &&
@@ -223,6 +231,7 @@ export function InfectionControl() {
             now={now}
             dischargeDate={data.patient.dischargeDate}
             followUps={followUpCourses}
+            invalidatedEvaluations={invalidatedEvaluations}
           />
         )}
       </Section>

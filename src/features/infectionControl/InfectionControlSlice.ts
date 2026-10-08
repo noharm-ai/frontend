@@ -85,7 +85,15 @@ export interface IFollowUpPending {
   origin: number;
   idDrug: number | null;
   idPrescription: string | null;
-  details: { drug?: string; courseStart?: string } | null;
+  details: {
+    drug?: string;
+    courseStart?: string;
+    // EXPIRED: when the evaluation stopped holding
+    validUntil?: string;
+    // POSOLOGY_CHANGED: the posology evaluated and the one prescribed now
+    evaluated?: IEvaluationPosology;
+    current?: IEvaluationPosology;
+  } | null;
   createdAt: string;
 }
 

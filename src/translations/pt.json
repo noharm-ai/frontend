@@ -1609,6 +1609,7 @@
       "otherCourses_other": "+{{count}} ciclos anteriores",
       "legendConforming": "Avaliação conforme (vigência)",
       "legendNonConforming": "Avaliação não conforme (vigência)",
+      "legendInvalidated": "Avaliação que não vale mais (pendência aberta)",
       "evaluation": {
         "draft": "Nova avaliação (não salva)",
         "label": "{{verdict}} em {{date}}",
@@ -1617,7 +1618,8 @@
         "expired": "Vencida em {{date}}",
         "superseded": "Substituída por nova avaliação em {{date}}",
         "closed": "Encerrada em {{date}}",
-        "posology": "Posologia avaliada: {{posology}}"
+        "posology": "Posologia avaliada: {{posology}}",
+        "invalidated": "Não vale mais desde {{date}}: {{reasons}}"
       }
     },
     "status": {
@@ -1690,7 +1692,12 @@
       "nonConforming": "Não conforme",
       "none": "Sem avaliação",
       "until": "até {{date}}",
-      "expired": "vencida em {{date}}"
+      "expired": "vencida em {{date}}",
+      "noLongerValid": "Não vale mais",
+      "invalidated": {
+        "3": "vencida em {{date}}",
+        "6": "posologia alterada"
+      }
     },
     "review": {
       "title": "Registrar revisão",
@@ -1722,7 +1729,14 @@
       "notEvaluated": "Não avaliado",
       "toEvaluate": "A avaliar",
       "patientStep": "Paciente",
-      "patientStepLegend": "Agendamento e observações (opcionais)"
+      "patientStepLegend": "Agendamento e observações (opcionais)",
+      "invalidated": "Esta avaliação não vale mais e mantém o paciente pendente:",
+      "invalidatedExpired": "A validade terminou em {{date}}",
+      "invalidatedPosology": "A posologia mudou",
+      "posologyEvaluated": "Avaliada: {{posology}}",
+      "posologyCurrent": "Prescrita agora: {{posology}}",
+      "posologyCurrentSince": "Prescrita agora: {{posology}}, desde {{date}}",
+      "keepInvalidEvaluation": "Avaliação atual não vale mais · continua pendente"
     },
     "history": {
       "title": "Revisões",

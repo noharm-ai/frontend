@@ -20,4 +20,9 @@ export const DISCHARGE_COLOR = "#2e3c5a";
 export const EVALUATION_COLORS = {
   conforming: "#389e0d",
   nonConforming: "#cf1322",
+  // on record, but an open reason made it no longer hold: the orange of a
+  // pending follow-up (FollowUpStatus), lighter so it is not taken for red,
+  // with a dark symbol on it
+  invalidated: "#ffa940",
+  invalidatedSymbol: "#873800",
 };

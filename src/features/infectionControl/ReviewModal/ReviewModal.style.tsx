@@ -118,6 +118,24 @@ export const DrugEvaluation = styled.div<{ $selected: boolean }>`
       display: block;
       margin-top: 2px;
     }
+
+    /* an evaluation on record that no longer holds */
+    &.invalidated {
+      background: #fff7e6;
+      border-color: #ffd591;
+    }
+  }
+
+  .drug-current-invalidated {
+    border-top: 1px solid #ffd591;
+    color: #d46b08;
+    margin-top: 8px;
+    padding-top: 6px;
+
+    ul {
+      margin: 2px 0 0;
+      padding-left: 18px;
+    }
   }
 
   .drug-fields {
