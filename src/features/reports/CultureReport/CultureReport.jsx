@@ -45,7 +45,7 @@ export default function CultureReport({ idPatient, prescription }) {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Relatório: Culturas </h1>
+          <h1 className="page-header-title" data-kb="reports.culture.title">Relatório: Culturas </h1>
         </div>
       </PageHeader>
 

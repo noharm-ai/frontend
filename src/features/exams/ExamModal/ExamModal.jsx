@@ -176,6 +176,7 @@ export default function ExamsModal({ idSegment }) {
 
   return (
     <DefaultModal
+      data-kb="exams.modal"
       destroyOnHidden
       open={admissionNumber}
       onCancel={() => dispatch(setExamsModalAdmissionNumber(null))}

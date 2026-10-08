@@ -27,6 +27,7 @@ import { UserManagerList } from "./UserManagerList/UserManagerList";
 import { PageHeader } from "styles/PageHeader.style";
 import { PageCard } from "styles/Utils.style";
 import { ExtraFilters } from "styles/PageHeader.style";
+import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
 
 const filterList = (ds, filter) => {
   if (!ds) return [];
@@ -112,7 +113,13 @@ function UserAdminList() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Cadastro de Usuários</h1>
+          <h1 className="page-header-title" data-kb="userAdmin.title">
+            Cadastro de Usuários
+            <KnowledgeBaseIcon
+              anchor="userAdmin.articles"
+              label="Cadastro de Usuários"
+            />
+          </h1>
           <div className="page-header-legend">
             Lista de usuários com acesso à NoHarm
           </div>

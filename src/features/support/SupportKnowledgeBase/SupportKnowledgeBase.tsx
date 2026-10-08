@@ -1,17 +1,20 @@
 import { useState } from "react";
 import { Button, Input, Skeleton, Typography, Space } from "antd";
-import { BookOutlined, LinkOutlined } from "@ant-design/icons";
+import { BookOutlined, BulbOutlined, LinkOutlined } from "@ant-design/icons";
 
 import { useAppSelector } from "src/store";
 import { trackSupportAction, TrackedSupportAction } from "utils/tracker";
+import { useArticleModal } from "features/knowledgeBase/useArticleModal";
+
+import { useScreenArticles } from "../useScreenArticles";
 
 const { Text, Paragraph } = Typography;
 
 export function SupportKnowledgeBase() {
-  const { status, list } = useAppSelector(
-    (state) => state.support.knowledgeBase,
-  );
+  const status = useAppSelector((state) => state.support.knowledgeBase.status);
+  const list = useScreenArticles();
   const [query, setQuery] = useState("");
+  const { openArticle } = useArticleModal();
 
   const isLoading = status === "loading" || status === "idle";
 
@@ -99,7 +102,7 @@ export function SupportKnowledgeBase() {
                         {article.description}
                       </Paragraph>
                     )}
-                    {article.link && (
+                    {(article.id || article.link) && (
                       <div style={{ marginLeft: 24 }}>
                         <Button
                           type="link"
@@ -108,7 +111,13 @@ export function SupportKnowledgeBase() {
                             trackSupportAction(
                               TrackedSupportAction.OPEN_ARTICLE,
                             );
-                            window.open(article.link, "_blank");
+                            // the modal keeps the screen the user asked for
+                            // help on; only the old external copy leaves it
+                            if (article.id) {
+                              openArticle(article.id);
+                            } else {
+                              window.open(article.link, "_blank");
+                            }
                           }}
                           style={{ padding: 0, height: "auto", fontSize: 13 }}
                         >
@@ -127,6 +136,20 @@ export function SupportKnowledgeBase() {
           </Text>
         )}
       </div>
+      {!isLoading && (
+        <Button
+          type="link"
+          icon={<BulbOutlined />}
+          onClick={() => {
+            trackSupportAction(TrackedSupportAction.OPEN_KNOWLEDGE_BASE);
+            // a new tab keeps the screen the user asked for help on
+            window.open("/base-de-conhecimento", "_blank");
+          }}
+          style={{ alignSelf: "flex-start", padding: 0, fontSize: 13 }}
+        >
+          Ver base de conhecimento completa
+        </Button>
+      )}
     </div>
   );
 }

@@ -32,7 +32,7 @@ export default function PrescriptionHistoryReport({ prescription }) {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">
+          <h1 className="page-header-title" data-kb="reports.prescriptionHistory.title">
             Relatório: Histórico de Eventos{" "}
           </h1>
         </div>

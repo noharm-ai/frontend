@@ -39,7 +39,9 @@ import {
   getTypeTagColor,
   getTypeTagLabel,
 } from "./DataViewer.utils";
-import { DataRow } from "./types";
+import { getColumnHref } from "./DataViewer.links";
+import { LinkCell } from "./LinkCell/LinkCell";
+import { ColumnMeta, DataRow } from "./types";
 
 export interface DataViewerProps {
   data: DataRow[];
@@ -50,6 +52,13 @@ export interface DataViewerProps {
   loading?: boolean;
   showFilters?: boolean;
 }
+
+const renderLink = (col: ColumnMeta, value: unknown, record: DataRow) => {
+  const href = getColumnHref(col.link, value, record);
+  if (!href || !col.link) return null;
+
+  return <LinkCell href={href} id={String(value).trim()} link={col.link} />;
+};
 
 export const DataViewer: React.FC<DataViewerProps> = ({
   data,
@@ -101,8 +110,11 @@ export const DataViewer: React.FC<DataViewerProps> = ({
           key: col.key,
           sorter: true,
           ellipsis: true,
-          width: col.type === "number" ? 120 : 180,
-          render: (value: unknown) => {
+          width: col.link ? 150 : col.type === "number" ? 120 : 180,
+          render: (value: unknown, record: DataRow) => {
+            const link = renderLink(col, value, record);
+            if (link) return link;
+
             const formatted = formatValue(value);
 
             if (col.type === "number" && typeof value === "number") {
@@ -203,8 +215,11 @@ export const DataViewer: React.FC<DataViewerProps> = ({
           >
             {col.title}
           </Checkbox>
-          <TypeTag $type={col.type} color={getTypeTagColor(col.type)}>
-            {getTypeTagLabel(col.type)}
+          <TypeTag
+            $type={col.type}
+            color={getTypeTagColor(col.link ? "link" : col.type)}
+          >
+            {getTypeTagLabel(col.link ? "link" : col.type)}
           </TypeTag>
         </CheckboxItem>
       ))}
@@ -326,7 +341,9 @@ export const DataViewer: React.FC<DataViewerProps> = ({
             return (
               <FieldItem key={col.key}>
                 <FieldLabel>{col.title}</FieldLabel>
-                <FieldValue $type={col.type}>{formatValue(value)}</FieldValue>
+                <FieldValue $type={col.type}>
+                  {renderLink(col, value, selectedRecord) ?? formatValue(value)}
+                </FieldValue>
               </FieldItem>
             );
           })}

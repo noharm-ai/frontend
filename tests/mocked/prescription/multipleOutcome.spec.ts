@@ -3,7 +3,7 @@ import type { Page, Route } from "@playwright/test";
 import { test, expect } from "../support/mockApi";
 import type { MockApi } from "../support/mockApi";
 import { loadFixture } from "../support/defaultHandlers";
-import { pickOption } from "../support/antd";
+import { pickMenuItem, pickOption } from "../support/antd";
 
 /**
  * Bulk intervention outcome ("Desfecho múltiplo",
@@ -79,20 +79,19 @@ async function openInterventionsTab(page: Page) {
   await page.getByRole("tab", { name: /Intervenções/ }).click();
 }
 
-/** The three-dot trigger on the right side of the bulk Dropdown.Button. */
-const openBulkMenu = (page: Page) =>
-  page.locator(".bulk-outcome-actions .ant-dropdown-trigger").click();
+/** Picks `item` from the three-dot menu of the bulk Dropdown.Button. */
+const pickBulkAction = (page: Page, item: string) =>
+  pickMenuItem(
+    page,
+    page.locator(".bulk-outcome-actions .ant-dropdown-trigger"),
+    item,
+  );
 
-async function selectAllPending(page: Page) {
-  await openBulkMenu(page);
-  await page
-    .getByRole("menuitem", { name: "Selecionar todas pendentes" })
-    .click();
-}
+const selectAllPending = (page: Page) =>
+  pickBulkAction(page, "Selecionar todas pendentes");
 
 async function applyOutcome(page: Page, outcomeLabel: string) {
-  await openBulkMenu(page);
-  await page.getByRole("menuitem", { name: outcomeLabel, exact: true }).click();
+  await pickBulkAction(page, outcomeLabel);
 
   // confirm stage of the bulk modal
   const modal = page.locator(".ant-modal", { hasText: "Desfecho múltiplo" });
@@ -502,12 +501,14 @@ test("saving a multiple intervention with an outcome runs the bulk flow", async 
     .click();
 
   // send the multiple intervention
-  await page
-    .locator(".ant-dropdown-trigger", { hasText: "" })
-    .filter({ has: page.locator(".anticon-ellipsis") })
-    .first()
-    .click();
-  await page.getByRole("menuitem", { name: "Enviar intervenção" }).click();
+  await pickMenuItem(
+    page,
+    page
+      .locator(".ant-dropdown-trigger", { hasText: "" })
+      .filter({ has: page.locator(".anticon-ellipsis") })
+      .first(),
+    /Enviar intervenção/,
+  );
 
   const interventionModal = page.locator(".ant-modal", {
     hasText: "Intervenção Múltipla",
@@ -522,13 +523,13 @@ test("saving a multiple intervention with an outcome runs the bulk flow", async 
   await page.locator("#reason").click(); // close dropdown
 
   // save with an outcome — previously disabled in multiple mode
-  await interventionModal
-    .locator(".ant-dropdown-trigger")
-    .filter({ has: page.locator(".anticon-ellipsis") })
-    .click();
-  await page
-    .getByRole("menuitem", { name: "Salvar e marcar como Não Aceita", exact: true })
-    .click();
+  await pickMenuItem(
+    page,
+    interventionModal
+      .locator(".ant-dropdown-trigger")
+      .filter({ has: page.locator(".anticon-ellipsis") }),
+    "Salvar e marcar como Não Aceita",
+  );
 
   // bulk flow runs straight away (no confirm stage)
   const bulkModal = page.locator(".ant-modal", {

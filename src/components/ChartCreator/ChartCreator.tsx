@@ -10,7 +10,13 @@ import {
   RadarChartOutlined,
 } from "@ant-design/icons";
 import { ChartConfig, ChartCreatorProps } from "./types";
-import { ChartItem } from "./ChartItem";
+import { ChartItem, ChartLayoutHandlers } from "./ChartItem";
+import {
+  CHART_GUTTER,
+  DropSide,
+  moveChartBy,
+  moveChartTo,
+} from "./chartLayout";
 import { ChartWizard } from "./ChartWizard";
 import { detectColumnSchema } from "src/utils/dataFilters";
 
@@ -21,6 +27,7 @@ export function ChartCreator({
   readOnly,
   extraActions,
   onGenerateCharts,
+  excludeKeys,
   ref,
 }: ChartCreatorProps) {
   const [charts, setCharts] = useState<ChartConfig[]>(initialCharts ?? []);
@@ -28,6 +35,11 @@ export function ChartCreator({
   const [editingChart, setEditingChart] = useState<ChartConfig | null>(null);
   const [wizardInitialType, setWizardInitialType] = useState<ChartConfig["type"] | null>(null);
   const [wizardToAgent, setWizardToAgent] = useState(false);
+  const [draggingId, setDraggingId] = useState<string | null>(null);
+  const [dropTarget, setDropTarget] = useState<{
+    id: string;
+    side: DropSide;
+  } | null>(null);
 
   useEffect(() => {
     onChartsChange?.(charts);
@@ -42,7 +54,12 @@ export function ChartCreator({
     [],
   );
 
-  const schema = useMemo(() => detectColumnSchema(data), [data]);
+  const schema = useMemo(() => {
+    const detected = detectColumnSchema(data);
+    return excludeKeys?.length
+      ? detected.filter((column) => !excludeKeys.includes(column.key))
+      : detected;
+  }, [data, excludeKeys]);
   const keys = useMemo(() => schema.map((s) => s.key), [schema]);
 
   const openWithType = (type: ChartConfig["type"]) => {
@@ -88,13 +105,49 @@ export function ChartCreator({
     setCharts((prev) => prev.filter((c) => c.id !== id));
   }, []);
 
+  const layout = useMemo<ChartLayoutHandlers>(() => {
+    const endDrag = () => {
+      setDraggingId(null);
+      setDropTarget(null);
+    };
+
+    return {
+      onMove: (id, offset) => setCharts((prev) => moveChartBy(prev, id, offset)),
+      onDragStart: setDraggingId,
+      onDragOver: (id, side) =>
+        setDropTarget((prev) =>
+          prev?.id === id && prev.side === side ? prev : { id, side },
+        ),
+      onDragLeave: (id) =>
+        setDropTarget((prev) => (prev?.id === id ? null : prev)),
+      onDrop: (id, targetId, side) => {
+        setCharts((prev) => moveChartTo(prev, id, targetId, side));
+        endDrag();
+      },
+      onDragEnd: endDrag,
+      onResize: (id, size) =>
+        setCharts((prev) =>
+          prev.map((chart) => (chart.id === id ? { ...chart, ...size } : chart)),
+        ),
+    };
+  }, []);
+
+  // the bar only shows where dropping would change the order
+  const dropSideAt = (index: number): DropSide | null => {
+    if (!draggingId || dropTarget?.id !== charts[index].id) return null;
+    const neighbour = charts[index + (dropTarget.side === "before" ? -1 : 1)];
+    return charts[index].id === draggingId || neighbour?.id === draggingId
+      ? null
+      : dropTarget.side;
+  };
+
   if (!data || data.length === 0)
     return <Empty description="Sem dados para gerar gráficos" />;
 
   return (
     <div style={{ marginTop: "20px" }}>
-      <Row gutter={[16, 16]}>
-        {charts.map((chart) => (
+      <Row gutter={[CHART_GUTTER, CHART_GUTTER]}>
+        {charts.map((chart, index) => (
           <ChartItem
             key={chart.id}
             chart={chart}
@@ -103,6 +156,11 @@ export function ChartCreator({
             onEdit={startEditing}
             onRemove={handleRemoveChart}
             readOnly={readOnly}
+            layout={layout}
+            isFirst={index === 0}
+            isLast={index === charts.length - 1}
+            dragging={chart.id === draggingId}
+            dropSide={dropSideAt(index)}
           />
         ))}
 

@@ -1,6 +1,13 @@
-import { useState, useEffect, useMemo, useRef } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useTranslation } from "react-i18next";
-import { Spin, notification, FloatButton, Tag, Alert, Tabs } from "antd";
+import {
+  Spin,
+  notification,
+  FloatButton,
+  Tag,
+  Alert,
+  Tabs,
+} from "antd";
 import { useParams } from "react-router-dom";
 import {
   DeleteOutlined,
@@ -8,12 +15,11 @@ import {
   MenuOutlined,
   DownloadOutlined,
   SyncOutlined,
-  FileTextOutlined,
-  FileExcelOutlined,
   SaveOutlined,
   TableOutlined,
   BarChartOutlined,
   CopyOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
@@ -21,21 +27,21 @@ import { DataViewer } from "src/components/DataViewer/DataViewer";
 import { formatDate } from "src/utils/date";
 import { getFileReport } from "../ReportsSlice";
 import Button from "src/components/Button";
+import Tooltip from "src/components/Tooltip";
 import { FloatButtonGroup } from "src/components/FloatButton";
 import {
-  TrackedReport,
-  trackReport,
   trackCustomReportAction,
   TrackedCustomReportAction,
 } from "src/utils/tracker";
 import {
-  downloadReport,
   updateReportGraphs,
   suggestReportGraphs,
 } from "src/features/reports/ReportsSlice";
 import { getErrorMessage } from "src/utils/errorHandler";
 import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
+import { FeatureService } from "src/services/FeatureService";
+import Feature from "src/models/Feature";
 
 import { PageHeader } from "src/styles/PageHeader.style";
 import {
@@ -44,7 +50,6 @@ import {
   FilterList,
   ContentContainer,
 } from "./FileReport.style";
-import Modal from "src/components/Modal";
 import { ChartCreator } from "src/components/ChartCreator/ChartCreator";
 import { ChartConfig, ChartCreatorHandle } from "src/components/ChartCreator/types";
 import {
@@ -57,6 +62,17 @@ import { FilterRow } from "./FilterRow";
 import { ErrorBoundary } from "react-error-boundary";
 import { withChartDefaults } from "src/components/ChartCreator/chartRemap";
 import { CopyCharts, CopySummary } from "./CopyCharts/CopyCharts";
+import { LoadPatientNames } from "./LoadPatientNames/LoadPatientNames";
+import { ExportNames, ExportReport } from "./ExportReport/ExportReport";
+import {
+  collectDistinctPatientIds,
+  enrichRowsWithNames,
+  findPatientIdColumn,
+  PatientNames,
+  resolveNameColumnKey,
+} from "./patientNames/patientNames.utils";
+import { LoadResult } from "./patientNames/loadPatientNames";
+import { ReportNames } from "./patientNames/usePatientNamesLoad";
 
 const ChartCreatorFallback = ({
   resetErrorBoundary,
@@ -94,6 +110,13 @@ export function FileReport() {
   const [currentCharts, setCurrentCharts] = useState<ChartConfig[]>([]);
   const [isSavingCharts, setIsSavingCharts] = useState(false);
   const [showCopyCharts, setShowCopyCharts] = useState(false);
+  // Patient names live only in this page, never in the shared name cache.
+  // They are loaded on demand ("Carregar nomes" or an export with names) and
+  // written into the rows, so the table, sorting and filters use them.
+  const [patientNames, setPatientNames] = useState<PatientNames>({});
+  const [notFoundIds, setNotFoundIds] = useState<ReadonlySet<string>>(
+    () => new Set(),
+  );
   const chartCreatorRef = useRef<ChartCreatorHandle>(null);
   const currentSchema = useAppSelector(
     (state: any) => state.user.account.schema,
@@ -125,6 +148,8 @@ export function FileReport() {
         const decompressedResponse = new Response(cacheReadableStream);
         const cache = await decompressedResponse.json();
 
+        setPatientNames({});
+        setNotFoundIds(new Set());
         setData(cache);
         setTitle(response.payload.data.data.title);
         if (response.payload.data.data.graphs) {
@@ -150,16 +175,88 @@ export function FileReport() {
     fetchData();
   }, [type, id_report, filename, dispatch]);
 
+  // Patient names are offered only when the report has a patient id column
+  // and name lookup is enabled for the session.
+  const canLoadPatientNames =
+    !FeatureService.has(Feature.DISABLE_GETNAME) &&
+    !FeatureService.has(Feature.HIDE_NAMES);
+  const patientIdKey = useMemo(
+    () => (canLoadPatientNames ? findPatientIdColumn(data[0]) : null),
+    [data, canLoadPatientNames],
+  );
+  // Maintainers run with name lookup disabled: they see the button, disabled,
+  // so they know the report offers patient names to the hospital's users.
+  const showMaintainerNamesNotice = useMemo(
+    () =>
+      FeatureService.has(Feature.DISABLE_GETNAME) &&
+      PermissionService().has(Permission.MAINTAINER) &&
+      findPatientIdColumn(data[0]) !== null,
+    [data],
+  );
+  const nameColumnKey = useMemo(
+    () =>
+      patientIdKey ? resolveNameColumnKey(Object.keys(data[0] ?? {})) : null,
+    [data, patientIdKey],
+  );
+  const patientIds = useMemo(
+    () => (patientIdKey ? collectDistinctPatientIds(data, patientIdKey) : []),
+    [data, patientIdKey],
+  );
+  // the name column shows up once a load has answered some patient
+  const hasNameAnswers =
+    Object.keys(patientNames).length > 0 || notFoundIds.size > 0;
+  const enrichedData = useMemo(
+    () =>
+      hasNameAnswers && patientIdKey && nameColumnKey
+        ? enrichRowsWithNames(data, patientIdKey, nameColumnKey, patientNames)
+        : data,
+    [data, hasNameAnswers, patientIdKey, nameColumnKey, patientNames],
+  );
+
+  const handleNamesLoaded = useCallback((result: LoadResult) => {
+    if (Object.keys(result.names).length > 0) {
+      setPatientNames((current) => ({ ...current, ...result.names }));
+    }
+    if (result.notFound.length > 0) {
+      setNotFoundIds((current) => new Set([...current, ...result.notFound]));
+    }
+  }, []);
+
+  const reportNames = useMemo<ReportNames | null>(
+    () =>
+      nameColumnKey && patientIds.length > 0
+        ? {
+            ids: patientIds,
+            known: patientNames,
+            notFound: notFoundIds,
+            onLoaded: handleNamesLoaded,
+          }
+        : null,
+    [nameColumnKey, patientIds, patientNames, notFoundIds, handleNamesLoaded],
+  );
+
   useEffect(() => {
-    if (data.length > 0) {
-      const detectedSchema = detectColumnSchema(data);
+    if (enrichedData.length > 0) {
+      const detectedSchema = detectColumnSchema(enrichedData);
       setSchema(detectedSchema);
     }
-  }, [data]);
+  }, [enrichedData]);
 
   const filteredData = useMemo(() => {
-    return applyFilters(data, filters, schema);
-  }, [data, filters, schema]);
+    return applyFilters(enrichedData, filters, schema);
+  }, [enrichedData, filters, schema]);
+
+  // The name column stays out of everything charts touch: saved charts are
+  // shared and persisted, and chart suggestions are generated by an LLM.
+  const chartExcludeKeys = useMemo(
+    () => (nameColumnKey ? [nameColumnKey] : []),
+    [nameColumnKey],
+  );
+  const chartSchema = useMemo(
+    () =>
+      nameColumnKey ? schema.filter((c) => c.key !== nameColumnKey) : schema,
+    [schema, nameColumnKey],
+  );
 
   const addFilter = () => {
     setFilters([...filters, { id: generateId(), field: "", value: null }]);
@@ -219,16 +316,18 @@ export function FileReport() {
     hint: string,
   ): Promise<ChartConfig[]> => {
     const payload = {
-      columns: schema.map(({ key, label, type: columnType, options }) => ({
+      columns: chartSchema.map(({ key, label, type: columnType, options }) => ({
         key,
         label,
         type: columnType,
         options: options?.slice(0, 20),
         distinctCount: options?.length,
       })),
+      // only the chart columns: page-local data (patient names) never leaves
       sampleRows: filteredData.slice(0, 5).map((row) => {
         const truncatedRow: Record<string, any> = {};
-        Object.entries(row).forEach(([key, value]) => {
+        chartSchema.forEach(({ key }) => {
+          const value = row[key];
           truncatedRow[key] =
             typeof value === "string" && value.length > 120
               ? value.slice(0, 120)
@@ -261,48 +360,20 @@ export function FileReport() {
     });
   };
 
-  const executeDownloadWithFormat = (
-    filename: string,
-    format: "csv" | "xlsx",
-  ) => {
-    setIsExporting(true);
-    trackReport(TrackedReport.CUSTOM, {
-      title: `exportar: ${title} - ${format}`,
-    });
-
-    const formatExtension = format === "csv" ? ".csv" : ".xlsx";
-    const formattedFilename = filename.includes(".")
-      ? filename.replace(/\.[^/.]+$/, formatExtension)
-      : filename + formatExtension;
-
-    const payload = {
-      idReport: id_report,
-      filename: formattedFilename,
-    };
-
-    // @ts-expect-error ts 2554 (legacy code)
-    dispatch(downloadReport(payload)).then((response: any) => {
-      if (response.error) {
-        notification.error({
-          message: getErrorMessage(response, t),
-        });
-      } else {
-        if (response.payload.data.data.url) {
-          window.open(response.payload.data.data.url);
-        }
-      }
-
-      setIsExporting(false);
-      setShowExportModal(false);
-    });
-  };
+  const exportNames = useMemo<ExportNames | undefined>(
+    () =>
+      reportNames && patientIdKey && nameColumnKey
+        ? { report: reportNames, idKey: patientIdKey, nameKey: nameColumnKey }
+        : undefined,
+    [reportNames, patientIdKey, nameColumnKey],
+  );
 
   return (
     <>
       <Spin spinning={isLoading}>
         <PageHeader>
           <div>
-            <h1 className="page-header-title">Relatório: {title}</h1>
+            <h1 className="page-header-title" data-kb="reports.file.title">Relatório: {title}</h1>
             <div className="page-header-legend">
               Data de geração: {formatDate(filename)}
             </div>
@@ -360,6 +431,21 @@ export function FileReport() {
 
           <ContentContainer>
           <Tabs
+            tabBarExtraContent={
+              isLoading ? null : reportNames ? (
+                <LoadPatientNames names={reportNames} />
+              ) : showMaintainerNamesNotice ? (
+                <Tooltip title="getname desabilitado para mantenedores do sistema">
+                  <Button
+                    icon={<UserOutlined />}
+                    disabled
+                    data-kb="reports.file.patientNames"
+                  >
+                    Carregar nomes
+                  </Button>
+                </Tooltip>
+              ) : null
+            }
             // Remount when the tab set changes (e.g. charts load) so the
             // correct default tab (Gráficos first when present) takes effect.
             key={showChartsTab ? "with-charts" : "table-only"}
@@ -384,11 +470,12 @@ export function FileReport() {
                               onChartsChange={setCurrentCharts}
                               readOnly={!canWriteGraphs}
                               onGenerateCharts={requestChartSuggestions}
+                              excludeKeys={chartExcludeKeys}
                               extraActions={
                                 <Button
                                   icon={<CopyOutlined />}
                                   onClick={() => setShowCopyCharts(true)}
-                                  disabled={schema.length === 0}
+                                  disabled={chartSchema.length === 0}
                                 >
                                   Copiar de outro relatório
                                 </Button>
@@ -458,45 +545,16 @@ export function FileReport() {
           />
         </FloatButtonGroup>
       )}
-      <Modal
-        title="Escolha o formato de exportação"
+      <ExportReport
         open={showExportModal}
-        onCancel={() => setShowExportModal(false)}
-        footer={null}
-        destroyOnHidden
-        width={400}
-      >
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            gap: "20px",
-            padding: "20px 0",
-          }}
-        >
-          <Button
-            size="large"
-            icon={<FileTextOutlined />}
-            onClick={() => executeDownloadWithFormat(filename!, "csv")}
-            loading={isExporting}
-          >
-            CSV
-          </Button>
-          <Button
-            size="large"
-            type="primary"
-            icon={<FileExcelOutlined />}
-            onClick={() => executeDownloadWithFormat(filename!, "xlsx")}
-            loading={isExporting}
-          >
-            XLSX
-          </Button>
-        </div>
-        <p>
-          *Os filtros não são aplicados no arquivo exportado. Ele sempre possui
-          os dados completos.
-        </p>
-      </Modal>
+        onClose={() => setShowExportModal(false)}
+        idReport={id_report!}
+        filename={filename!}
+        title={title}
+        rows={data}
+        names={exportNames}
+        onExportingChange={setIsExporting}
+      />
       {!isLoading && filteredData.length > 0 && canWriteGraphs && (
         <>
           {hasUnsavedChanges && (
@@ -532,7 +590,7 @@ export function FileReport() {
         <CopyCharts
           open={showCopyCharts}
           onClose={() => setShowCopyCharts(false)}
-          targetSchema={schema}
+          targetSchema={chartSchema}
           existingTitles={currentCharts.map((chart) => chart.title)}
           currentSchemaName={currentSchema}
           onImport={handleCopiedCharts}

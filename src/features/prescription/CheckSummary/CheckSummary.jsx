@@ -286,6 +286,7 @@ export default function CheckSummary({
     <Formik enableReinitialize onSubmit={onSave} initialValues={initialValues}>
       {({ handleSubmit }) => (
         <DefaultModal
+          data-kb="prescription.checkSummary"
           open={prescription}
           width={highRiskAlerts.length > 0 ? 900 : 350}
           centered

@@ -101,9 +101,14 @@ export default defineConfig({
     // },
   ],
 
-  /* Run your local dev server before starting the tests */
+  /* Run your local dev server before starting the tests. E2E_PREVIEW=1
+   * serves a prebuilt dist/ instead (vite build first): the dev server
+   * transforms hundreds of unbundled modules on every fresh browser context,
+   * which made each mocked test ~3x slower on CI. */
   webServer: {
-    command: "npm run dev",
+    command: process.env.E2E_PREVIEW
+      ? "npx vite preview --port 3000 --strictPort"
+      : "npm run dev",
     url: "http://localhost:3000",
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,

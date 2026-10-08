@@ -41,11 +41,6 @@ const initialState = {
       error: null,
       data: null,
     },
-    relatedArticles: {
-      status: "idle",
-      error: null,
-      list: [],
-    },
   },
   fetchRequesters: {
     list: [],
@@ -159,19 +154,6 @@ export const fetchN0Form = createAsyncThunk(
   async (params, thunkAPI) => {
     try {
       const response = await api.support.fetchN0Form(params);
-
-      return response.data;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
-    }
-  }
-);
-
-export const fetchRelatedArticles = createAsyncThunk(
-  "support/fetch-related-articles",
-  async (params, thunkAPI) => {
-    try {
-      const response = await api.support.fetchRelatedArticles(params);
 
       return response.data;
     } catch (err) {
@@ -309,19 +291,6 @@ const supportSlice = createSlice({
         state.aiform.n0form.status = "failed";
         state.aiform.n0form.error = action.error.message;
         state.aiform.n0form.data = null;
-      })
-
-      .addCase(fetchRelatedArticles.pending, (state, action) => {
-        state.aiform.relatedArticles.status = "loading";
-      })
-      .addCase(fetchRelatedArticles.fulfilled, (state, action) => {
-        state.aiform.relatedArticles.status = "succeeded";
-        state.aiform.relatedArticles.list = action.payload.data;
-      })
-      .addCase(fetchRelatedArticles.rejected, (state, action) => {
-        state.aiform.relatedArticles.status = "failed";
-        state.aiform.relatedArticles.error = action.error.message;
-        state.aiform.relatedArticles.list = [];
       })
 
       .addCase(fetchKnowledgeBaseArticles.pending, (state) => {

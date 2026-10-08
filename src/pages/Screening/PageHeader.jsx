@@ -355,7 +355,7 @@ export default function PageHeader({
     <Affix onChange={(value) => setAffixed(value)}>
       <ScreeningHeader className={`${affixed ? "affixed" : ""}`}>
         <Row type="flex">
-          <Col span={24} md={10}>
+          <Col span={24} md={10} data-kb="prescription.title">
             <Title content={prescription.content} type={type} small={affixed} />
           </Col>
           <Col
@@ -367,6 +367,7 @@ export default function PageHeader({
               justifyContent: "flex-end",
               flexWrap: "wrap",
             }}
+            data-kb="prescription.actions"
           >
             {prescription.content.status === "0" && (
               <Button

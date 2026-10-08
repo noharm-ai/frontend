@@ -794,7 +794,10 @@ const dose = (bag) => ({
   render: (text, prescription) => <DoseCell record={prescription} bag={bag} />,
 });
 
+// `kb` names a column for the help mode anchors (see Table.jsx); the others
+// go by their dataIndex
 const drug = (bag, addkey, title) => ({
+  kb: "drug",
   key: addkey ? "idPrescriptionDrug" : null,
   title: title ? title : bag.t("tableHeader.drug"),
   ellipsis: bag.condensed,
@@ -901,6 +904,7 @@ const score = (bag) => ({
 });
 
 const period = (bag) => ({
+  kb: "period",
   title: <Tooltip title={bag.t("tableHeader.period")}>Per.</Tooltip>,
   width: 65,
   align: "left",
@@ -1073,6 +1077,7 @@ const route = (bag) => ({
 });
 
 const tags = (bag) => ({
+  kb: "tags",
   title: "Tags",
   align: "center",
   width: 90,
@@ -1135,6 +1140,7 @@ const filterOption = (input, option) => {
 };
 
 const alertsColumn = (bag) => ({
+  kb: "alerts",
   title: "Alertas",
   align: "left",
   ellipsis: true,
@@ -1150,6 +1156,7 @@ const alertsColumn = (bag) => ({
 });
 
 const relationColumn = (bag) => ({
+  kb: "relation",
   title: bag.conciliationChecked ? (
     <Tooltip title="Conciliação checada: esta coluna mostra a prescrição que estava vigente no momento da checagem. Para ver a prescrição vigente atual, desfaça a checagem.">
       Prescrição vigente na checagem <InfoIcon />

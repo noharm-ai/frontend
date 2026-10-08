@@ -326,7 +326,12 @@ export default function Screening({
         />
       ),
       children: (
-        <Col span={24} md={24} style={{ paddingTop: "20px" }}>
+        <Col
+          span={24}
+          md={24}
+          style={{ paddingTop: "20px" }}
+          data-kb="prescription.drugs"
+        >
           <PrescriptionList
             emptyMessage="Nenhum medicamento encontrado."
             hasFilter

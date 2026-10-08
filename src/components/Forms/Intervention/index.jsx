@@ -19,6 +19,7 @@ import FeaturesService from "services/features";
 import { setSelectedIntervention as setSelectedInterventionOutcome } from "features/intervention/InterventionOutcome/InterventionOutcomeSlice";
 import { startMultipleOutcome } from "features/intervention/MultipleOutcome/MultipleOutcomeSlice";
 import { setSelectedRowsActive } from "features/prescription/PrescriptionSlice";
+import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
 import { getErrorMessageFromException } from "utils/errorHandler";
 import {
   trackInterventionAction,
@@ -395,6 +396,7 @@ export default function Intervention({
     >
       {({ handleSubmit, setFieldValue }) => (
         <DefaultModal
+          data-kb="intervention.form"
           open={!isEmpty(item)}
           width={700}
           centered
@@ -409,10 +411,18 @@ export default function Intervention({
           {...props}
         >
           <header>
-            <Heading $margin="0 0 11px">
+            <Heading
+              $margin="0 0 11px"
+              style={{ display: "flex", alignItems: "center", gap: "10px" }}
+            >
               {item.idPrescriptionDrugList
                 ? t("interventionForm.titleMultiple")
                 : t("interventionForm.title")}
+              <KnowledgeBaseIcon
+                anchor="intervention.form.articles"
+                label={t("interventionForm.title")}
+                global
+              />
             </Heading>
           </header>
           {item.idPrescriptionDrugList ? (

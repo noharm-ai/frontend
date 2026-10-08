@@ -133,7 +133,7 @@ export default function PatientNameCache({ idPatient }: Props) {
             </p>
             <Button
               type="default"
-              href={`${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/182`}
+              href={`/base-de-conhecimento/28`}
               target="_blank"
               size="large"
               block

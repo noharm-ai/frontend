@@ -106,7 +106,7 @@ function MemoryRoutes() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Vias</h1>
+          <h1 className="page-header-title" data-kb="admin.routes.title">Vias</h1>
           <div className="page-header-legend">Configurações das vias</div>
         </div>
       </PageHeader>

@@ -185,7 +185,7 @@ export default function PrescriptionConsolidatedReport() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">
+          <h1 className="page-header-title" data-kb="reports.prescriptionConsolidated.title">
             Relatório: Prescrições Anual
             <Tooltip title="Informações sobre este relatório">
               <Button

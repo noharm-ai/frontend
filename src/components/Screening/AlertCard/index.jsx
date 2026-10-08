@@ -177,6 +177,7 @@ export default function AlertCard({ stats, prescription }) {
         </AlertContainer>
       </div>
       <DefaultModal
+        data-kb="prescription.alerts.modal"
         destroyOnHidden
         open={modal}
         onCancel={() => setModal(false)}

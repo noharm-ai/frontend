@@ -102,7 +102,7 @@ export default function EconomyReport() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">
+          <h1 className="page-header-title" data-kb="reports.economy.title">
             Relatório: Farmacoeconomia{" "}
             <Tooltip title="Informações sobre este relatório">
               <Button

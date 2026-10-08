@@ -89,7 +89,7 @@ export function UserManagerList() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Cadastro de Usuários</h1>
+          <h1 className="page-header-title" data-kb="userAdmin.title">Cadastro de Usuários</h1>
         </div>
       </PageHeader>
 

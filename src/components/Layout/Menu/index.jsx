@@ -2,6 +2,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import {
   TableOutlined,
   FileTextOutlined,
@@ -25,7 +26,7 @@ import {
   LayoutOutlined,
   ReadOutlined,
 } from "@ant-design/icons";
-import { Menu as Navigator } from "antd";
+import { Badge, Menu as Navigator } from "antd";
 import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
 
 import Feature from "models/Feature";
@@ -34,8 +35,9 @@ import PermissionService from "services/PermissionService";
 import { FeatureService } from "services/FeatureService";
 import { getStorageItem } from "utils/storage";
 
-export default function Menu({ segments }) {
+export default function Menu({ segments, collapsed }) {
   const location = useLocation();
+  const recentNews = useSelector((state) => state.user.account.recentNews);
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -161,17 +163,40 @@ export default function Menu({ segments }) {
       permission: [Permission.READ_REPORTS],
     },
     {
-      key: `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/39`,
-      link: `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/39`,
+      key: "/base-de-conhecimento",
+      link: "/base-de-conhecimento",
       label: t("menu.knowledgeBase"),
       icon: <BulbOutlined />,
       id: "gtm-lnk-knowledgeBase",
+      permission: [Permission.READ_BASIC_FEATURES],
     },
     {
-      key: `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/137`,
-      link: `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/137`,
-      label: t("menu.news"),
-      icon: <ThunderboltOutlined />,
+      key: "/novidades",
+      link: "/novidades",
+      label: recentNews ? (
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+          {t("menu.news")}
+          <Badge
+            count={recentNews}
+            size="small"
+            color="#a991d6"
+            title={t("news.recentBadge", { count: recentNews })}
+          />
+        </span>
+      ) : (
+        t("menu.news")
+      ),
+      // with the sider collapsed only the icon shows: it carries the badge
+      icon:
+        recentNews && collapsed ? (
+          // the collapsed menu gives icons a 40px line height, which puts the
+          // dot high above the bolt and under the item's clipping
+          <Badge dot color="#a991d6">
+            <ThunderboltOutlined style={{ lineHeight: 1 }} />
+          </Badge>
+        ) : (
+          <ThunderboltOutlined />
+        ),
       id: "gtm-lnk-news",
     },
     {
@@ -320,7 +345,12 @@ export default function Menu({ segments }) {
     <Navigator
       mode="vertical"
       theme="dark"
-      selectedKeys={[location.pathname]}
+      selectedKeys={[
+        // an article page still belongs to the knowledge base entry
+        location.pathname.startsWith("/base-de-conhecimento/")
+          ? "/base-de-conhecimento"
+          : location.pathname,
+      ]}
       items={getItems(items)}
       onClick={linkTo}
     />

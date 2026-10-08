@@ -18,6 +18,7 @@ import { canCreateTags } from "./tagPermissions";
 import { ConfigManagerContact } from "features/admin/ConfigManagerContact/ConfigManagerContact";
 
 import { PageContainer } from "styles/Utils.style";
+import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
 
 const emptyText = (
   <Empty
@@ -38,7 +39,13 @@ export function Tag() {
     <PageContainer>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">{t("menu.tag")}</h1>
+          <h1 className="page-header-title" data-kb="admin.tags.title">
+            {t("menu.tag")}
+            <KnowledgeBaseIcon
+              anchor="admin.tags.articles"
+              label={t("menu.tag")}
+            />
+          </h1>
         </div>
         <div className="page-header-actions">
           {canCreateTags() && (

@@ -2,7 +2,6 @@ import { Drawer, Avatar, Typography, Card, Row, Col } from "antd";
 import {
   RobotOutlined,
   CustomerServiceOutlined,
-  LinkOutlined,
   ArrowLeftOutlined,
 } from "@ant-design/icons";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -16,10 +15,8 @@ import {
   setSupportOpen,
   fetchKnowledgeBaseArticles,
   resetKnowledgeBase,
-  resetAIForm,
 } from "features/support/SupportSlice";
 import Permission from "src/models/Permission";
-import DefaultModal from "components/Modal";
 import { trackSupportAction, TrackedSupportAction } from "utils/tracker";
 
 import { ChatHeader } from "src/features/support/SupportFormAI/SupportFormAI.style";
@@ -27,8 +24,10 @@ import { SupportInfo } from "./SupportInfo/SupportInfo";
 import { PendingTrainingNotice } from "./PendingTrainingNotice/PendingTrainingNotice";
 import { useTicketCreationBlock } from "./useTicketCreationBlock";
 import { SupportKnowledgeBase } from "./SupportKnowledgeBase/SupportKnowledgeBase";
-import { SupportFormAI } from "./SupportFormAI/SupportFormAI";
+import { SupportAIModal } from "./SupportAIModal/SupportAIModal";
 import { KnowledgeBasePathEnum } from "src/models/KnowledgeBasePathEnum";
+import { HelpModeDrawerAction } from "features/knowledgeBase/HelpMode/HelpModeDrawerAction/HelpModeDrawerAction";
+import { useScreenArticles } from "./useScreenArticles";
 
 const { Text } = Typography;
 
@@ -43,7 +42,7 @@ export function SupportDrawer() {
   const kbStatus = useAppSelector(
     (state) => state.support.knowledgeBase.status,
   );
-  const kbList = useAppSelector((state) => state.support.knowledgeBase.list);
+  const kbList = useScreenArticles();
   const [showForm, setShowForm] = useState(false);
   const [aiModalOpen, setAiModalOpen] = useState(false);
   const { blocked, requiresUrgent } = useTicketCreationBlock();
@@ -109,7 +108,10 @@ export function SupportDrawer() {
       }
     >
       {!showForm ? (
-        <SupportKnowledgeBase />
+        <>
+          <HelpModeDrawerAction />
+          <SupportKnowledgeBase />
+        </>
       ) : (
         <>
           <Button
@@ -204,44 +206,13 @@ export function SupportDrawer() {
               <PendingTrainingNotice canOpenUrgent={requiresUrgent} />
             </div>
           )}
-          <div style={{ textAlign: "center", marginTop: 12 }}>
-            <Button
-              type="link"
-              onClick={() => {
-                trackSupportAction(TrackedSupportAction.OPEN_KNOWLEDGE_BASE);
-                window.open(
-                  `${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/39`,
-                  "_blank",
-                );
-              }}
-              icon={<LinkOutlined />}
-              style={{ fontSize: 12, color: "#8c8c8c" }}
-            >
-              Consultar base de conhecimento completa
-            </Button>
-          </div>
         </div>
       )}
 
-      <DefaultModal
-        width={850}
-        centered
-        footer={null}
+      <SupportAIModal
         open={aiModalOpen}
-        destroyOnHidden
-        onCancel={() => {
-          dispatch(resetAIForm());
-          setAiModalOpen(false);
-        }}
-      >
-        <header>
-          <h2 className="modal-title">Agente de Suporte (IA)</h2>
-        </header>
-        <p>
-          Tem alguma dúvida? Descreva no campo abaixo e a IA tentará ajudar:
-        </p>
-        <SupportFormAI mode="simple" />
-      </DefaultModal>
+        onClose={() => setAiModalOpen(false)}
+      />
     </Drawer>
   );
 }

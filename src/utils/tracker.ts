@@ -68,6 +68,16 @@ export const trackSupportAction = (
   });
 };
 
+export const trackKnowledgeBaseAction = (
+  trackedAction: TrackedKnowledgeBaseAction,
+  details: any = {},
+) => {
+  track(CustomEvent.KNOWLEDGE_BASE_ACTION, {
+    custom_event: trackedAction,
+    ...details,
+  });
+};
+
 const track = (customEvent: CustomEvent, details: any = {}) => {
   if (!(window as any).cwr) {
     console.log("tracking error: cwr undefined");
@@ -90,6 +100,7 @@ enum CustomEvent {
   INTERVENTION_OUTCOME_ACTION = "InterventionOutcomeAction", // action in intervention outcome form
   CUSTOM_REPORT_ACTION = "CustomReportAction", // action in custom report
   SUPPORT_ACTION = "SupportAction", // action in support drawer
+  KNOWLEDGE_BASE_ACTION = "KnowledgeBaseAction", // knowledge base and help mode
 }
 
 export enum TrackedReport {
@@ -196,6 +207,7 @@ export enum TrackedCustomReportAction {
   REMOVE_FILTER = "remove-filter",
   CLEAR_FILTERS = "clear-filters",
   COPY_CHARTS = "copy-charts",
+  LOAD_PATIENT_NAMES = "load-patient-names",
 }
 
 export enum TrackedPrescriptionPrioritizationAction {
@@ -226,4 +238,10 @@ export enum TrackedSupportAction {
   ASK_AI = "perguntar-ia",
   AI_RESPONSE_POSITIVE = "resposta-ia-positiva",
   AI_RESPONSE_NEGATIVE = "resposta-ia-negativa",
+}
+
+export enum TrackedKnowledgeBaseAction {
+  ACCESS_HOME = "acessar-base-conhecimento",
+  VIEW_ARTICLE = "ver-artigo",
+  ACTIVATE_HELP_MODE = "ativar-modo-ajuda",
 }

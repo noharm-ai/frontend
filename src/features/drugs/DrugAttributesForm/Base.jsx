@@ -6,9 +6,11 @@ import { Divider } from "antd";
 import { InputNumber, Select, Checkbox } from "components/Inputs";
 import Tooltip from "components/Tooltip";
 import { HelpButton } from "components/Button";
+import { useArticleModal } from "features/knowledgeBase/useArticleModal";
 
 function BaseForm({ data }) {
   const { t } = useTranslation();
+  const { openArticle } = useArticleModal();
   const { values, errors, touched, setFieldValue } = useFormikContext();
   const maxValue = 999999999;
 
@@ -303,7 +305,7 @@ function BaseForm({ data }) {
                 <HelpButton
                   type="primary"
                   className="gtm-medication-btn-help-nefro"
-                  href={`${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/179`}
+                  onClick={() => openArticle(49)}
                 />
               </Tooltip>
             </div>
@@ -339,7 +341,7 @@ function BaseForm({ data }) {
                 <HelpButton
                   type="primary"
                   className="gtm-medication-btn-help-hepa"
-                  href={`${import.meta.env.VITE_APP_ODOO_LINK}/knowledge/article/180`}
+                  onClick={() => openArticle(50)}
                 />
               </Tooltip>
             </div>

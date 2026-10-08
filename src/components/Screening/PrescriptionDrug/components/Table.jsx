@@ -140,10 +140,33 @@ function Table({
     }
   };
 
+  // help mode anchors: each column, header and cells, e.g.
+  // data-kb="prescription.column.dose"
+  const withAnchors = (columns) =>
+    columns.map((column) => {
+      const name = column.kb ?? column.dataIndex;
+      if (!name) return column;
+
+      const kb = `${listType}.column.${name}`;
+      const { kb: _kb, ...antdColumn } = column;
+
+      return {
+        ...antdColumn,
+        onHeaderCell: (col) => ({
+          ...column.onHeaderCell?.(col),
+          "data-kb": kb,
+        }),
+        onCell: (record, index) => ({
+          ...column.onCell?.(record, index),
+          "data-kb": kb,
+        }),
+      };
+    });
+
   return (
     <ExpandableTable
       showHeader={showHeader}
-      columns={getColumns()}
+      columns={withAnchors(getColumns())}
       pagination={false}
       loading={isFetching}
       locale={{

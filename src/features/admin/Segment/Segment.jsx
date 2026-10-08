@@ -92,7 +92,7 @@ export default function AdminSegment() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">Segmentos</h1>
+          <h1 className="page-header-title" data-kb="admin.segments.title">Segmentos</h1>
           <h1 className="page-header-legend">Administração de Segmentos</h1>
         </div>
         <div className="page-header-actions">

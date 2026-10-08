@@ -12,10 +12,10 @@ import { fetchRequesters } from "../SupportSlice";
 export function SupportInfo() {
   const dispatch = useAppDispatch();
   const listRequesters = useAppSelector(
-    (state) => state.support.fetchRequesters.list
+    (state) => state.support.fetchRequesters.list,
   );
   const status = useAppSelector(
-    (state) => state.support.fetchRequesters.status
+    (state) => state.support.fetchRequesters.status,
   );
   const supportDrawerOpen = useAppSelector((state) => state.support.open);
 
@@ -65,9 +65,7 @@ export function SupportInfo() {
         <ActionSection>
           <Button
             type="default"
-            href={`${
-              import.meta.env.VITE_APP_ODOO_LINK
-            }/knowledge/article/39`}
+            href="/base-de-conhecimento"
             target="_blank"
             rel="noreferer noopener"
           >

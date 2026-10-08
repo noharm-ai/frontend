@@ -154,7 +154,7 @@ export default function DrugAttributes({ mode = DEFAULT_MODE }) {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">{config.pageTitle}</h1>
+          <h1 className="page-header-title" data-kb="admin.drugAttributes.title">{config.pageTitle}</h1>
         </div>
         <div className="page-header-actions"></div>
       </PageHeader>

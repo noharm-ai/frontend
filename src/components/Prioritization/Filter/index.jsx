@@ -335,7 +335,7 @@ export default function Filter({
 
   const hiddenFieldCount = countHiddenFilters(filter);
   return (
-    <FilterCard>
+    <FilterCard data-kb="prioritization.filter">
       <SearchBox className={open ? "open" : ""}>
         <Row gutter={[16, 24]} type="flex">
           <Col xs={24} md={8}>

@@ -8,6 +8,7 @@ import {
 
 import CustomIcon from "components/Icon";
 import DefaultModal from "components/Modal";
+import Tag from "components/Tag";
 import { IconGerm } from "components/Icon/svgs/IconGerm";
 import {
   RESULT_RESISTANT,
@@ -54,6 +55,18 @@ const predictionClass = (item: ICultureItem): string => {
     : "unknown";
 };
 
+// the tag colour of a released result, the same the row uses (CultureTab): a
+// result the backend could not classify is not a sensitivity, so it gets no
+// colour at all
+const resultTagColor = (item: ICultureItem): string | undefined => {
+  const type = resultTypeOf(item);
+
+  if (type === RESULT_RESISTANT) return "red";
+  if (type === RESULT_SUSCEPTIBLE) return "green";
+
+  return undefined;
+};
+
 // the antibiogram of a released collection: the reading the drug is grouped
 // by, and what the modal is opened for, so each one keeps a full card
 const CultureReleasedItems = ({ items, t }: ICultureItemsProps) => (
@@ -75,7 +88,14 @@ const CultureReleasedItems = ({ items, t }: ICultureItemsProps) => (
           {t("culture.collectionDate")}: {formatDate(item.collectionDate)}
         </div>
         <div>
-          {t("culture.result")}: {item.result}
+          {t("culture.result")}:{" "}
+          <Tag
+            className="culture-detail-result"
+            variant="filled"
+            color={resultTagColor(item)}
+          >
+            {item.result || "-"}
+          </Tag>
         </div>
         {/* not every lab reports it: a line of "-" would only be noise */}
         {item.mic && (

@@ -174,7 +174,7 @@ export default function PatientDayConsolidatedReport() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">
+          <h1 className="page-header-title" data-kb="reports.patientDayConsolidated.title">
             Relatório: Pacientes-Dia Anual
             <Tooltip title="Informações sobre este relatório">
               <Button

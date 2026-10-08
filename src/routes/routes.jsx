@@ -21,6 +21,7 @@ import UserAdmin from "pages/UserAdmin";
 import { OutpatientPrioritizationPage } from "pages/OutpatientPrioritization/OutpatientPrioritizationPage";
 import Prioritization from "pages/Prioritization";
 import ClinicalNotes from "pages/Screening/ClinicalNotes";
+import { AdmissionPrescriptionPage } from "pages/AdmissionPrescription/AdmissionPrescription";
 import Summary from "pages/Summary";
 import SummarySearch from "pages/Summary/SummarySearch";
 import SupportCenter from "pages/SupportCenter";
@@ -32,6 +33,9 @@ import MemoryEditorPage from "pages/Memory/MemoryEditorPage";
 import TrainingCentral from "pages/TrainingCentral";
 import { CertificateValidationPage } from "pages/CertificateValidation/CertificateValidationPage";
 import TrainingPlayer from "pages/TrainingPlayer";
+import { KnowledgeBasePage } from "pages/KnowledgeBase/KnowledgeBasePage";
+import { KnowledgeBaseArticlePage } from "pages/KnowledgeBase/KnowledgeBaseArticlePage";
+import { NewsPage } from "pages/News/NewsPage";
 
 import AdminTag from "pages/Admin/Tag";
 import AdminMemory from "pages/Admin/Memory";
@@ -149,6 +153,11 @@ const routes = [
     exact: true,
     path: "/prescricao/evolucao/:admissionNumber",
     element: <WithAuth component={ClinicalNotes} />,
+  },
+  {
+    exact: true,
+    path: "/prescricao/atendimento/:admissionNumber",
+    element: <WithAuth component={AdmissionPrescriptionPage} />,
   },
   {
     exact: true,
@@ -314,6 +323,21 @@ const routes = [
     exact: true,
     path: "/treinamento/:id/aula/:lessonId",
     element: <WithAuth component={TrainingPlayer} />,
+  },
+  {
+    exact: true,
+    path: "/base-de-conhecimento",
+    element: <WithAuth component={KnowledgeBasePage} />,
+  },
+  {
+    exact: true,
+    path: "/base-de-conhecimento/:id",
+    element: <WithAuth component={KnowledgeBaseArticlePage} />,
+  },
+  {
+    exact: true,
+    path: "/novidades",
+    element: <WithAuth component={NewsPage} />,
   },
   {
     exact: true,

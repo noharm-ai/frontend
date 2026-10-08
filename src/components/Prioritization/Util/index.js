@@ -215,6 +215,11 @@ export const filterByPrescriptionDates = (list, config) => {
   });
 };
 
+// how many records the prescription dates filter alone leaves out, so the
+// control can tell the user the list is not complete
+export const countHiddenByPrescriptionDates = (list, config) =>
+  (list || []).length - filterByPrescriptionDates(list || [], config).length;
+
 export const filterList = (list, filter) => {
   let newList = [...list];
   if (filter.status) {

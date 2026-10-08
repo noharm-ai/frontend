@@ -74,7 +74,7 @@ export default function PatientDayReport() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">
+          <h1 className="page-header-title" data-kb="reports.patientDay.title">
             Relatório: Pacientes-Dia{" "}
             <Tooltip title="Informações sobre este relatório">
               <Button

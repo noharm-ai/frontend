@@ -94,12 +94,12 @@ export function OutpatientPrioritization() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">{t("menu.patients")}</h1>
+          <h1 className="page-header-title" data-kb="patients.title">{t("menu.patients")}</h1>
           <div className="page-header-legend">Lista de pacientes.</div>
         </div>
       </PageHeader>
       <Filter />
-      <ExtraFilters>
+      <ExtraFilters data-kb="patients.search">
         <div className="filter-field">
           <Input
             placeholder={t("screeningList.iptSearchPlaceholder")}
@@ -110,7 +110,7 @@ export function OutpatientPrioritization() {
           />
         </div>
       </ExtraFilters>
-      <PageCard>
+      <PageCard data-kb="patients.table">
         <ExpandableTable
           columns={columns(sortOrder, filter, t) as any}
           pagination={{

@@ -85,7 +85,7 @@ export default function PrescriptionReport() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title">
+          <h1 className="page-header-title" data-kb="reports.prescription.title">
             Relatório: Prescrições{" "}
             <Tooltip title="Informações sobre este relatório">
               <Button

@@ -24,6 +24,7 @@ import {
   ProgressGroup,
   ProgressNote,
 } from "./TrainingCentral.style";
+import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
 
 type TrainingModuleStatus = "completed" | "current";
 
@@ -55,7 +56,13 @@ export function TrainingCentral() {
     <>
       <CentralHeader>
         <div>
-          <h1 className="page-header-title">{t("trainingCentral.title")}</h1>
+          <h1 className="page-header-title" data-kb="training.title">
+            {t("trainingCentral.title")}
+            <KnowledgeBaseIcon
+              anchor="training.articles"
+              label={t("trainingCentral.title")}
+            />
+          </h1>
           <h1 className="page-header-legend">
             {t("trainingCentral.subtitle")}
           </h1>

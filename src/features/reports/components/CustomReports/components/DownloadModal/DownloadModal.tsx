@@ -88,13 +88,13 @@ export function DownloadModal() {
       data.processed_at &&
       !PermissionService().has(Permission.READ_CUSTOM_REPORTS)
     ) {
-      const diff = dayjs().diff(dayjs(data.processed_at), "hours");
+      const diff = dayjs().diff(dayjs(data.processed_at), "minutes");
 
-      if (diff < 1) {
+      if (diff < 30) {
         Modal.warning({
           title: "Processamento recente",
           content:
-            "Este relatório foi processado há menos de uma hora. Você deve esperar pelo menos uma hora antes de processá-lo novamente.",
+            "Este relatório foi processado há menos de 30 minutos. Você deve esperar pelo menos 30 minutos antes de processá-lo novamente.",
           okText: "Ok",
         });
         return;
