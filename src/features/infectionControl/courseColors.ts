@@ -1,3 +1,5 @@
+import colors from "styles/colors";
+
 import { CourseStatus } from "./InfectionControlSlice";
 
 // the solid part of a course bar: what was already given
@@ -11,8 +13,8 @@ export const COURSE_COLORS: Record<CourseStatus, string> = {
 // CPOE order)
 export const SCHEDULED_COLOR = "#a9cfe8";
 
-// the line marking the current moment across the timeline
-export const TODAY_COLOR = "#e46666";
+// the line marking the current moment across the timeline: NoHarm teal
+export const TODAY_COLOR = colors.accentSecondary;
 
 export const DISCHARGE_COLOR = "#2e3c5a";
 
