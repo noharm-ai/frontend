@@ -862,6 +862,15 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     );
     await expect(current).not.toHaveClass(/past/);
     await expect(drug.getByTestId("review-end-past")).toHaveCount(0);
+    // they do not overlap: one line for both
+    const draftBox = (await drug
+      .getByTestId("draft-evaluation")
+      .boundingBox())!;
+    const currentBox = (await current.boundingBox())!;
+    expect(draftBox.y + draftBox.height / 2).toBeCloseTo(
+      currentBox.y + currentBox.height / 2,
+      0,
+    );
 
     await dialog.getByRole("button", { name: "Próximo" }).click();
     await dialog.getByRole("button", { name: "Salvar" }).click();
@@ -885,6 +894,10 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(marks).toHaveCount(2);
     await expect(marks.nth(1)).not.toHaveClass(/past/);
     await expect(marks.nth(0)).toHaveClass(/past/);
+    // on the same line, as they do not overlap
+    const retroBox = (await marks.nth(0).boundingBox())!;
+    const inForceBox = (await marks.nth(1).boundingBox())!;
+    expect(retroBox.y).toBe(inForceBox.y);
     await marks.nth(0).hover();
     await expect(page.getByRole("tooltip")).toContainText(
       `Registro retroativo, válida até ${shownDate(PAST_END)}`,

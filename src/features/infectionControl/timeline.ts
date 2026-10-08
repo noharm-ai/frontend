@@ -75,6 +75,35 @@ export const daysSince = (date: string, reference: Dayjs): number =>
     Math.floor((reference.valueOf() - dayjs(date).valueOf()) / DAY_MS),
   );
 
+/**
+ * The line of each span, placed in the order given: each goes on the first
+ * line where it keeps more than `gapMs` from every span already there, so
+ * spans that overlap or touch stack and the others share a line
+ */
+export const packLanes = (
+  spans: { start: string; end: string }[],
+  gapMs: number,
+): number[] => {
+  const lanes: { start: number; end: number }[][] = [];
+
+  return spans.map((span) => {
+    const start = dayjs(span.start).valueOf();
+    const end = Math.max(start, dayjs(span.end).valueOf());
+    let lane = lanes.findIndex((placed) =>
+      placed.every(
+        (other) => end + gapMs < other.start || start > other.end + gapMs,
+      ),
+    );
+    if (lane < 0) {
+      lane = lanes.length;
+      lanes.push([]);
+    }
+    lanes[lane].push({ start, end });
+
+    return lane;
+  });
+};
+
 /** Active courses first, then the most recent ones */
 export const sortCourses = (courses: ICourse[]): ICourse[] =>
   [...courses].sort((a, b) => {

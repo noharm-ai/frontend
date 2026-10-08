@@ -28,6 +28,7 @@ import {
   getTimelineRange,
   groupCourseRows,
   ITimelineRange,
+  packLanes,
   toPercent,
 } from "../timeline";
 import {
@@ -98,15 +99,108 @@ const span = (
 const evaluationLaneStyle = (lane: number) =>
   ({ "--lane": lane }) as React.CSSProperties;
 
+// records closer than this do not share a line, so their markers never
+// collide and one replacing another (ending where it starts) stacks
+const LANE_GAP_MS = 12 * 60 * 60 * 1000;
+
+/**
+ * Where an evaluation is drawn: from its start up to its end, or up to the
+ * first open reason that made it no longer hold (`since`)
+ */
+const getMarkSpan = (
+  evaluation: IAntimicrobialEvaluation,
+  invalidatedBy: IFollowUpPending[] | undefined,
+  course: ICourse,
+  now: Dayjs,
+) => {
+  const period = getEvaluationPeriod(evaluation, now);
+  const since = invalidatedBy?.length
+    ? invalidatedSince(invalidatedBy, evaluation, course)
+    : null;
+
+  return {
+    period,
+    since,
+    start: period.start,
+    end: since && dayjs(since).isBefore(period.end) ? since : period.end,
+  };
+};
+
+interface IEvaluationMarkLayout {
+  // as drawn: replaced from now on by the one being filled, when it is
+  evaluation: IAntimicrobialEvaluation;
+  invalidatedBy?: IFollowUpPending[];
+  lane: number;
+}
+
+/**
+ * The conformity records of a course on their lines, latest first: the one
+ * being filled, then the newest saved and so on, each on the first line it
+ * does not overlap
+ */
+const layoutEvaluations = (
+  course: ICourse,
+  evaluations: IAntimicrobialEvaluation[],
+  draft: IDraftEvaluation | null | undefined,
+  invalidatedEvaluations: Record<string, IFollowUpPending[]> | undefined,
+  now: Dayjs,
+): { marks: IEvaluationMarkLayout[]; draftLane: number; lanes: number } => {
+  const marks = evaluations.map((evaluation) => {
+    // the evaluation being filled replaces the one in force from now on,
+    // unless it is over before that one starts (then it is history)
+    const replaced =
+      !!draft &&
+      evaluation.status === AntimicrobialEvaluationStatusEnum.ACTIVE &&
+      !(draft.validUntil && endsBeforeInForce(draft.validUntil, evaluation));
+
+    return {
+      evaluation: replaced
+        ? {
+            ...evaluation,
+            status: AntimicrobialEvaluationStatusEnum.SUPERSEDED,
+            closedAt: now.format("YYYY-MM-DDTHH:mm:ss"),
+          }
+        : evaluation,
+      invalidatedBy: replaced
+        ? undefined
+        : invalidatedEvaluations?.[evaluation.id],
+    };
+  });
+
+  const spans = marks.map((mark) =>
+    getMarkSpan(mark.evaluation, mark.invalidatedBy, course, now),
+  );
+  const nowIso = now.format("YYYY-MM-DDTHH:mm:ss");
+  const lanes = packLanes(
+    draft
+      ? [
+          {
+            start: draft.validFrom ?? nowIso,
+            end: draft.validUntil ?? nowIso,
+          },
+          ...spans,
+        ]
+      : spans,
+    LANE_GAP_MS,
+  );
+  const markLanes = draft ? lanes.slice(1) : lanes;
+
+  return {
+    marks: marks.map((mark, index) => ({ ...mark, lane: markLanes[index] })),
+    draftLane: draft ? lanes[0] : 0,
+    lanes: Math.max(1, ...lanes.map((lane) => lane + 1)),
+  };
+};
+
 interface CourseBarsProps {
   course: ICourse;
   range: ITimelineRange;
   now: Dayjs;
-  // the conformity records of the course, latest first
-  evaluations: IAntimicrobialEvaluation[];
-  invalidatedEvaluations?: Record<string, IFollowUpPending[]>;
-  // the evaluation being filled for this course
+  // the conformity records of the course on their lines (layoutEvaluations)
+  evaluations: IEvaluationMarkLayout[];
+  // the evaluation being filled for this course, and its line
   draft?: IDraftEvaluation | null;
+  draftLane?: number;
   // start of the next course of the same drug, which its planned end must not
   // run into
   nextStart?: string;
@@ -124,8 +218,8 @@ function CourseBars({
   range,
   now,
   evaluations,
-  invalidatedEvaluations,
   draft,
+  draftLane = 0,
   nextStart,
   onOpen,
 }: CourseBarsProps) {
@@ -231,43 +325,25 @@ function CourseBars({
         </Tooltip>
       ))}
 
-      {/* latest first, each on its own line under the bar: the one being
-          filled on top, then the one it replaces and so on */}
-      {evaluations.map((evaluation, index) => {
-        // the evaluation being filled replaces the one in force from now on,
-        // unless it is over before that one starts (then it is history)
-        const replaced =
-          !!draft &&
-          evaluation.status === AntimicrobialEvaluationStatusEnum.ACTIVE &&
-          !(
-            draft.validUntil && endsBeforeInForce(draft.validUntil, evaluation)
-          );
-
-        return (
-          <EvaluationMark
-            key={evaluation.id}
-            lane={draft ? index + 1 : index}
-            evaluation={
-              replaced
-                ? {
-                    ...evaluation,
-                    status: AntimicrobialEvaluationStatusEnum.SUPERSEDED,
-                    closedAt: now.format("YYYY-MM-DDTHH:mm:ss"),
-                  }
-                : evaluation
-            }
-            course={course}
-            invalidatedBy={
-              replaced ? undefined : invalidatedEvaluations?.[evaluation.id]
-            }
-            range={range}
-            now={now}
-          />
-        );
-      })}
+      {evaluations.map(({ evaluation, invalidatedBy, lane }) => (
+        <EvaluationMark
+          key={evaluation.id}
+          lane={lane}
+          evaluation={evaluation}
+          course={course}
+          invalidatedBy={invalidatedBy}
+          range={range}
+          now={now}
+        />
+      ))}
 
       {draft && (
-        <DraftEvaluationMark draft={draft} lane={0} range={range} now={now} />
+        <DraftEvaluationMark
+          draft={draft}
+          lane={draftLane}
+          range={range}
+          now={now}
+        />
       )}
     </>
   );
@@ -374,11 +450,12 @@ function EvaluationMark({
   now,
 }: EvaluationMarkProps) {
   const { t } = useTranslation();
-  const period = getEvaluationPeriod(evaluation, now);
-  const since = invalidatedBy?.length
-    ? invalidatedSince(invalidatedBy, evaluation, course)
-    : null;
-  const end = since && dayjs(since).isBefore(period.end) ? since : period.end;
+  const { period, since, end } = getMarkSpan(
+    evaluation,
+    invalidatedBy,
+    course,
+    now,
+  );
   // dated back to before the review that recorded it
   const backdated = dayjs(evaluation.validFrom).isBefore(
     dayjs(evaluation.createdAt).subtract(1, "minute"),
@@ -592,16 +669,17 @@ export function CourseGantt({
               </strong>
             );
 
-            // the row grows to fit the evaluations of its busiest course,
-            // one line each
-            const lanes = Math.max(
-              1,
-              ...drugCourses.map(
-                (drugCourse) =>
-                  evaluationsOf(drugCourse).length +
-                  (draftOf(drugCourse) ? 1 : 0),
+            const layouts = drugCourses.map((drugCourse) =>
+              layoutEvaluations(
+                drugCourse,
+                evaluationsOf(drugCourse),
+                draftOf(drugCourse),
+                invalidatedEvaluations,
+                now,
               ),
             );
+            // the row grows to fit the lines of its busiest course
+            const lanes = Math.max(...layouts.map((layout) => layout.lanes));
 
             return (
               <Row
@@ -654,9 +732,9 @@ export function CourseGantt({
                       course={drugCourse}
                       range={range}
                       now={now}
-                      evaluations={evaluationsOf(drugCourse)}
-                      invalidatedEvaluations={invalidatedEvaluations}
+                      evaluations={layouts[index].marks}
                       draft={draftOf(drugCourse)}
+                      draftLane={layouts[index].draftLane}
                       nextStart={drugCourses[index + 1]?.start}
                       onOpen={
                         compact ? undefined : () => setSelected(drugCourse)
