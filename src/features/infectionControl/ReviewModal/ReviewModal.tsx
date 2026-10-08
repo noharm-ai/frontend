@@ -29,14 +29,20 @@ import { courseKey, getInvalidatedEvaluations } from "../followUp";
 import { formatRegimen } from "../timeline";
 import { DrugEvaluation, ReviewBody } from "./ReviewModal.style";
 
-// quick picks for how long an evaluation holds
-const VALIDITY_PRESETS = [3, 7, 14];
+// how many days from its start an evaluation can be quickly held for
+const VALIDITY_DAYS = [7, 10];
 // reasons of a drug that its new evaluation settles
 const DRUG_REASONS = [
   InfectionControlPendingTypeEnum.NO_EVALUATION,
   InfectionControlPendingTypeEnum.EXPIRED,
   InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
 ];
+
+// where an evaluation starts: now, at the course start or on a chosen day
+type EvaluationStart = "now" | "courseStart" | "date";
+// until when it holds: the end of the treatment, some days from its start
+// ("days7") or a chosen day
+type EvaluationEnd = "treatmentEnd" | `days${number}` | "date";
 
 interface IDrugEvaluationFields {
   idDrug: number;
@@ -46,7 +52,14 @@ interface IDrugEvaluationFields {
   current: IAntimicrobialEvaluation | null;
   evaluate: boolean;
   conforming: boolean | null;
-  validUntil: Dayjs | null;
+  start: EvaluationStart;
+  // the day chosen when it starts on a date
+  startDate: Dayjs | null;
+  // when the treatment is due to stop, null when that day has passed
+  treatmentEnd: string | null;
+  end: EvaluationEnd;
+  // the day chosen when it holds until a date
+  endDate: Dayjs | null;
   notes: string;
   // back to pending when the evaluation expires
   watchExpiry: boolean;
@@ -71,6 +84,79 @@ interface ReviewModalProps {
 
 const futureDate = (value: Dayjs | null | undefined) =>
   !value || value.isAfter(dayjs());
+
+/**
+ * When an evaluation starts, as saved: null from now, the course start, or
+ * the beginning of the chosen day (not before the course started)
+ */
+const getValidFrom = (evaluation: IDrugEvaluationFields): string | null => {
+  const courseStart = dayjs(evaluation.courseStart);
+
+  if (evaluation.start === "courseStart") {
+    return courseStart.format("YYYY-MM-DDTHH:mm:ss");
+  }
+  if (evaluation.start === "date" && evaluation.startDate) {
+    const day = evaluation.startDate.startOf("day");
+    return (day.isBefore(courseStart) ? courseStart : day).format(
+      "YYYY-MM-DDTHH:mm:ss",
+    );
+  }
+
+  return null;
+};
+
+/**
+ * When a course is due to stop: its planned end when the hospital sends one
+ * past the prescription expiry, else that expiry; null once that day passed
+ */
+const getTreatmentEnd = (course: ICourse | undefined): string | null => {
+  if (!course) return null;
+
+  const end =
+    course.plannedEnd && dayjs(course.plannedEnd).isAfter(course.end)
+      ? course.plannedEnd
+      : course.end;
+
+  return dayjs(end).isBefore(dayjs(), "day") ? null : end;
+};
+
+/**
+ * The day an evaluation holds until, as chosen: some days are counted from
+ * its start. It holds through that day.
+ */
+const getValidUntil = (
+  evaluation: IDrugEvaluationFields,
+  end: EvaluationEnd = evaluation.end,
+): Dayjs | null => {
+  if (end === "treatmentEnd") {
+    return evaluation.treatmentEnd ? dayjs(evaluation.treatmentEnd) : null;
+  }
+  if (end === "date") {
+    return evaluation.endDate;
+  }
+
+  return dayjs(getValidFrom(evaluation) ?? undefined).add(
+    Number(end.replace("days", "")),
+    "day",
+  );
+};
+
+// a day that is already over can no longer be held until
+const isOver = (day: Dayjs) => day.endOf("day").isBefore(dayjs());
+
+/**
+ * Until when an evaluation holds unless chosen otherwise: the end of the
+ * treatment, else the first number of days from its start not already over
+ */
+const getDefaultEnd = (evaluation: IDrugEvaluationFields): EvaluationEnd => {
+  if (evaluation.treatmentEnd) return "treatmentEnd";
+
+  const days = VALIDITY_DAYS.map((d): EvaluationEnd => `days${d}`).find(
+    (end) => !isOver(getValidUntil(evaluation, end)!),
+  );
+
+  return days ?? "date";
+};
 
 // whether the current evaluation watches a trigger; a new one watches all
 const watches = (
@@ -214,49 +300,85 @@ export function ReviewModal({
   const initialValues: IReviewFields = {
     notes: "",
     nextReviewDate: null,
-    evaluations: ongoing.map((course) => ({
-      idDrug: course.idDrug,
-      courseStart: course.start,
-      drug: drugNames[course.idDrug] ?? `${course.idDrug}`,
-      current: course.evaluation,
-      evaluate: !course.evaluation || drugsWithReason.has(course.idDrug),
-      conforming: null,
-      validUntil: null,
-      notes: "",
-      // the choices made last time, on by default
-      watchExpiry: watches(
-        course.evaluation,
-        InfectionControlPendingTypeEnum.EXPIRED,
-      ),
-      watchPosology: watches(
-        course.evaluation,
-        InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
-      ),
-    })),
+    evaluations: ongoing.map((course) => {
+      const treatmentEnd = getTreatmentEnd(
+        courses.find(
+          (c) => c.idDrug === course.idDrug && c.start === course.start,
+        ),
+      );
+
+      const fields: IDrugEvaluationFields = {
+        idDrug: course.idDrug,
+        courseStart: course.start,
+        drug: drugNames[course.idDrug] ?? `${course.idDrug}`,
+        current: course.evaluation,
+        evaluate: !course.evaluation || drugsWithReason.has(course.idDrug),
+        conforming: null,
+        start: "courseStart" as EvaluationStart,
+        startDate: null,
+        treatmentEnd,
+        end: "treatmentEnd",
+        endDate: null,
+        notes: "",
+        // the choices made last time, on by default
+        watchExpiry: watches(
+          course.evaluation,
+          InfectionControlPendingTypeEnum.EXPIRED,
+        ),
+        watchPosology: watches(
+          course.evaluation,
+          InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
+        ),
+      };
+
+      return { ...fields, end: getDefaultEnd(fields) };
+    }),
   };
 
-  const evaluationSchema = Yup.object().shape({
-    evaluate: Yup.boolean(),
-    conforming: Yup.boolean()
-      .nullable()
-      .when("evaluate", {
-        is: true,
-        then: (schema) => schema.required(t("validation.requiredField")),
-      }),
-    validUntil: Yup.mixed<Dayjs>()
-      .nullable()
-      .when("evaluate", {
-        is: true,
-        then: (schema) =>
-          schema
-            .required(t("validation.requiredField"))
-            .test(
-              "future",
-              t("infectionControl.review.futureDate"),
-              futureDate,
-            ),
-      }),
-  });
+  const evaluationSchema = Yup.object()
+    .shape({
+      evaluate: Yup.boolean(),
+      conforming: Yup.boolean()
+        .nullable()
+        .when("evaluate", {
+          is: true,
+          then: (schema) => schema.required(t("validation.requiredField")),
+        }),
+      startDate: Yup.mixed<Dayjs>()
+        .nullable()
+        .when(["evaluate", "start"], {
+          is: (evaluate: boolean, start: EvaluationStart) =>
+            evaluate && start === "date",
+          then: (schema) => schema.required(t("validation.requiredField")),
+        }),
+      endDate: Yup.mixed<Dayjs>()
+        .nullable()
+        .when(["evaluate", "end"], {
+          is: (evaluate: boolean, end: EvaluationEnd) =>
+            evaluate && end === "date",
+          then: (schema) =>
+            schema
+              .required(t("validation.requiredField"))
+              .test(
+                "future",
+                t("infectionControl.review.futureDate"),
+                (value) => futureDate(value?.endOf("day")),
+              ),
+        }),
+    })
+    // days counted from a start moved further back may already be over
+    .test("validUntil", function (value) {
+      const evaluation = value as unknown as IDrugEvaluationFields;
+      const validUntil = evaluation.evaluate && getValidUntil(evaluation);
+      if (!validUntil || evaluation.end === "date" || !isOver(validUntil)) {
+        return true;
+      }
+
+      return this.createError({
+        path: this.path ? `${this.path}.end` : "end",
+        message: t("infectionControl.review.futureDate"),
+      });
+    });
 
   const validationSchema = Yup.object().shape({
     nextReviewDate: Yup.mixed<Dayjs>()
@@ -301,8 +423,11 @@ export function ReviewModal({
           idDrug: e.idDrug,
           conforming: !!e.conforming,
           notes: e.notes.trim() || null,
+          validFrom: getValidFrom(e),
           // the evaluation holds through the whole chosen day
-          validUntil: e.validUntil!.endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+          validUntil: getValidUntil(e)!
+            .endOf("day")
+            .format("YYYY-MM-DDTHH:mm:ss"),
           triggers: [
             e.watchExpiry && InfectionControlPendingTypeEnum.EXPIRED,
             e.watchPosology && InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
@@ -321,40 +446,6 @@ export function ReviewModal({
     });
   };
 
-  const dayPresets = VALIDITY_PRESETS.map((days) => ({
-    label: t("infectionControl.review.presetDays", { count: days }),
-    value: dayjs().add(days, "day"),
-  }));
-
-  // the day presets plus the dates the course itself is due to stop: the
-  // expire date of its prescription and, when the hospital sends one later,
-  // its planned end
-  const coursePresets = (course: ICourse | undefined) => {
-    const presets = [...dayPresets];
-    if (!course) return presets;
-
-    const end = dayjs(course.end);
-    if (!end.isBefore(dayjs(), "day")) {
-      presets.push({
-        label: t("infectionControl.review.presetExpire", {
-          date: formatDate(course.end, "DD/MM"),
-        }),
-        value: end,
-      });
-    }
-
-    const plannedEnd = course.plannedEnd ? dayjs(course.plannedEnd) : null;
-    if (plannedEnd && plannedEnd.isAfter(end, "day")) {
-      presets.push({
-        label: t("infectionControl.review.presetPlannedEnd", {
-          date: formatDate(course.plannedEnd, "DD/MM"),
-        }),
-        value: plannedEnd,
-      });
-    }
-
-    return presets;
-  };
   const beforeToday = (current: Dayjs) =>
     !!current && current.isBefore(dayjs(), "day");
   const notAfterToday = (current: Dayjs) =>
@@ -385,11 +476,16 @@ export function ReviewModal({
       return t("infectionControl.review.toEvaluate");
     }
 
+    const validFrom = getValidFrom(evaluation);
+    const validUntil = getValidUntil(evaluation);
+
     return [
       verdictLabel(evaluation.conforming),
-      evaluation.validUntil &&
+      validFrom &&
+        t("infectionControl.review.since", { date: formatDate(validFrom) }),
+      validUntil &&
         t("infectionControl.evaluation.until", {
-          date: formatDate(evaluation.validUntil),
+          date: formatDate(validUntil),
         }),
     ]
       .filter(Boolean)
@@ -467,7 +563,7 @@ export function ReviewModal({
         const stepItems = [
           ...values.evaluations.map((evaluation, index) => {
             const done = evaluation.evaluate
-              ? evaluation.conforming != null && !!evaluation.validUntil
+              ? evaluation.conforming != null && !!getValidUntil(evaluation)
               : index < step;
             let stepStatus: "wait" | "process" | "finish" | "error" = "wait";
             if (index === step) stepStatus = "process";
@@ -542,11 +638,11 @@ export function ReviewModal({
                             idDrug: evaluation.idDrug,
                             courseStart: evaluation.courseStart,
                             conforming: evaluation.conforming,
-                            validUntil: evaluation.validUntil
-                              ? evaluation.validUntil
-                                  .endOf("day")
-                                  .format("YYYY-MM-DDTHH:mm:ss")
-                              : null,
+                            validFrom: getValidFrom(evaluation),
+                            validUntil:
+                              getValidUntil(evaluation)
+                                ?.endOf("day")
+                                .format("YYYY-MM-DDTHH:mm:ss") ?? null,
                           }
                         : null
                     }
@@ -609,7 +705,7 @@ export function ReviewModal({
 
               {evaluation.evaluate && (
                 <div className="drug-fields">
-                  <div>
+                  <div className="drug-field-conformity">
                     <span className="drug-field-label">
                       {t("infectionControl.review.conformity")}
                     </span>
@@ -633,24 +729,134 @@ export function ReviewModal({
                     )}
                   </div>
 
-                  <div>
+                  <div className="drug-field-start">
+                    <span className="drug-field-label">
+                      {t("infectionControl.review.start")}
+                    </span>
+                    <div className="drug-field-choice">
+                      <Radio.Group
+                        optionType="button"
+                        buttonStyle="solid"
+                        value={evaluation.start}
+                        aria-label={t("infectionControl.review.start")}
+                        onChange={(e) => {
+                          setFieldValue(field("start"), e.target.value);
+                          setFieldError(field("startDate"), undefined);
+                          setFieldError(field("end"), undefined);
+                        }}
+                        options={[
+                          {
+                            value: "now",
+                            label: t("infectionControl.review.startNow"),
+                          },
+                          {
+                            value: "courseStart",
+                            label: t("infectionControl.review.startCourse", {
+                              date: formatDate(evaluation.courseStart, "DD/MM"),
+                            }),
+                          },
+                          {
+                            value: "date",
+                            label: t("infectionControl.review.startDate"),
+                          },
+                        ]}
+                      />
+                      {evaluation.start === "date" && (
+                        <DatePicker
+                          format="DD/MM/YYYY"
+                          value={evaluation.startDate}
+                          onChange={(value: Dayjs | null) => {
+                            setFieldValue(field("startDate"), value);
+                            setFieldError(field("startDate"), undefined);
+                            setFieldError(field("end"), undefined);
+                          }}
+                          // from the day the course started up to today
+                          disabledDate={(current: Dayjs) =>
+                            !!current &&
+                            (current.isBefore(evaluation.courseStart, "day") ||
+                              current.isAfter(dayjs(), "day"))
+                          }
+                          aria-label={t("infectionControl.review.start")}
+                        />
+                      )}
+                    </div>
+                    {fieldErrors.startDate && (
+                      <div className="drug-field-error">
+                        {fieldErrors.startDate as string}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="drug-field-end">
                     <span className="drug-field-label">
                       {t("infectionControl.review.validUntil")}
                     </span>
-                    <DatePicker
-                      format="DD/MM/YYYY"
-                      value={evaluation.validUntil}
-                      onChange={(value: Dayjs | null) => {
-                        setFieldValue(field("validUntil"), value);
-                        setFieldError(field("validUntil"), undefined);
-                      }}
-                      presets={coursePresets(activeCourse)}
-                      disabledDate={beforeToday}
-                      aria-label={t("infectionControl.review.validUntil")}
-                    />
-                    {fieldErrors.validUntil && (
+                    <div className="drug-field-choice">
+                      <Radio.Group
+                        optionType="button"
+                        buttonStyle="solid"
+                        value={evaluation.end}
+                        aria-label={t("infectionControl.review.validUntil")}
+                        onChange={(e) => {
+                          setFieldValue(field("end"), e.target.value);
+                          setFieldError(field("endDate"), undefined);
+                          setFieldError(field("end"), undefined);
+                        }}
+                        options={[
+                          ...(evaluation.treatmentEnd
+                            ? [
+                                {
+                                  value: "treatmentEnd",
+                                  label: t(
+                                    "infectionControl.review.endTreatment",
+                                    {
+                                      date: formatDate(
+                                        evaluation.treatmentEnd,
+                                        "DD/MM",
+                                      ),
+                                    },
+                                  ),
+                                },
+                              ]
+                            : []),
+                          ...VALIDITY_DAYS.map((days) => {
+                            const until = getValidUntil(
+                              evaluation,
+                              `days${days}`,
+                            )!;
+
+                            return {
+                              value: `days${days}`,
+                              label: t("infectionControl.review.endDays", {
+                                count: days,
+                                date: until.format("DD/MM"),
+                              }),
+                              // counted from a start too far back
+                              disabled: isOver(until),
+                            };
+                          }),
+                          {
+                            value: "date",
+                            label: t("infectionControl.review.endDate"),
+                          },
+                        ]}
+                      />
+                      {evaluation.end === "date" && (
+                        <DatePicker
+                          format="DD/MM/YYYY"
+                          value={evaluation.endDate}
+                          onChange={(value: Dayjs | null) => {
+                            setFieldValue(field("endDate"), value);
+                            setFieldError(field("endDate"), undefined);
+                          }}
+                          disabledDate={beforeToday}
+                          aria-label={t("infectionControl.review.validUntil")}
+                        />
+                      )}
+                    </div>
+                    {(fieldErrors.endDate || fieldErrors.end) && (
                       <div className="drug-field-error">
-                        {fieldErrors.validUntil as string}
+                        {(fieldErrors.endDate || fieldErrors.end) as string}
                       </div>
                     )}
                   </div>

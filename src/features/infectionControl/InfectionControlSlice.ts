@@ -118,6 +118,8 @@ export interface IAntimicrobialEvaluation {
   conforming: boolean;
   notes: string | null;
   posology: IEvaluationPosology;
+  // when the verdict starts to apply: the review, or earlier when backdated
+  validFrom: string;
   validUntil: string;
   // optional reasons it sends the patient back to pending for
   // (InfectionControlPendingTypeEnum)
@@ -172,6 +174,8 @@ export interface IReviewEvaluationPayload {
   idDrug: number;
   conforming: boolean;
   notes: string | null;
+  // between the course start and now; null applies it from the review
+  validFrom: string | null;
   validUntil: string;
   triggers: number[];
 }

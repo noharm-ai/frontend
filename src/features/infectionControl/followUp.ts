@@ -131,9 +131,9 @@ export function isEvaluationExpired(
 export type EvaluationOutcome = "valid" | "expired" | "superseded" | "closed";
 
 /**
- * When an evaluation was in force: from the review that recorded it up to
- * its valid-until date, or earlier, when a newer evaluation replaced it or its
- * course ended
+ * When an evaluation was in force: from its start (the review that recorded
+ * it, or earlier when backdated) up to its valid-until date, or earlier, when
+ * a newer evaluation replaced it or its course ended
  */
 export function getEvaluationPeriod(
   evaluation: IAntimicrobialEvaluation,
@@ -154,7 +154,7 @@ export function getEvaluationPeriod(
   }
 
   return {
-    start: evaluation.createdAt,
+    start: evaluation.validFrom,
     end: closedEarly ? evaluation.closedAt! : evaluation.validUntil,
     outcome,
   };

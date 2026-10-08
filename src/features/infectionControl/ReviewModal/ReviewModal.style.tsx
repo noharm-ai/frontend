@@ -149,9 +149,23 @@ export const DrugEvaluation = styled.div<{ $selected: boolean }>`
     padding: 12px 14px;
   }
 
+  .drug-field-conformity,
+  .drug-field-start,
+  .drug-field-end,
   .drug-field-triggers,
   .drug-field-notes {
     grid-column: 1 / -1;
+  }
+
+  .drug-field-choice {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    .ant-picker {
+      width: 160px;
+    }
   }
 
   /* one trigger per line */

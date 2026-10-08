@@ -43,6 +43,14 @@ const hoursFromNow = (hours: number) =>
 const shownDate = (isoDate: string) =>
   isoDate.slice(0, 10).split("-").reverse().join("/");
 
+/** yyyy-mm-dd of a day + offset days (today by default), in local time */
+const localDay = (offset: number, from?: string) => {
+  const date = from ? new Date(`${from.slice(0, 10)}T12:00:00`) : new Date();
+  date.setDate(date.getDate() + offset);
+  const pad = (n: number) => `${n}`.padStart(2, "0");
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+};
+
 const MEROPENEM_START = hoursFromNow(-48);
 const VANCOMYCIN_START = hoursFromNow(-96);
 const MEROPENEM_END = hoursFromNow(24);
@@ -119,6 +127,7 @@ const vancomycinEvaluation = {
     dailyFrequency: 2,
     route: "IV",
   },
+  validFrom: hoursFromNow(-30),
   validUntil: hoursFromNow(5 * 24),
   triggers: [],
   status: 1,
@@ -280,6 +289,7 @@ test("shows each conformity record on its course in the timeline", async ({
     idReview: "40",
     conforming: false,
     notes: "Aguardar cultura",
+    validFrom: hoursFromNow(-80),
     validUntil: hoursFromNow(48),
     status: 2,
     closedAt: vancomycinEvaluation.createdAt,
@@ -442,29 +452,46 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     // the step names the drug, its timeline shows only the day of treatment
     await expect(timeline.getByTestId("course-row")).toHaveText(/^D3/);
 
-    // conformity and validity are required to move on
+    // the conformity is required to move on
+    const MEROPENEM_PLUS_7 = localDay(7, MEROPENEM_START);
     await next.click();
-    await expect(drug.getByText("Campo obrigatório")).toHaveCount(2);
+    await expect(drug.getByText("Campo obrigatório")).toHaveCount(1);
     await expect(drug.getByRole("heading")).toHaveText("MEROPENEM 1 g SOL INJ");
 
-    // the timeline plots the evaluation as it is filled
+    // it starts at the course start and holds until the treatment ends,
+    // unless chosen otherwise
+    await expect(
+      drug
+        .getByRole("radiogroup", { name: "Inicia em" })
+        .getByRole("radio", { checked: true }),
+    ).toHaveAccessibleName(
+      `Início do tratamento (${shownDate(MEROPENEM_START).slice(0, 5)})`,
+    );
+    const validity = drug.getByRole("radiogroup", {
+      name: "Conformidade válida até",
+    });
+    await expect(
+      validity.getByRole("radio", { checked: true }),
+    ).toHaveAccessibleName(
+      `Fim do tratamento (${shownDate(MEROPENEM_END).slice(0, 5)})`,
+    );
+
+    // the timeline plots the evaluation as it is filled: grey until the
+    // verdict comes
     const draft = timeline.getByTestId("draft-evaluation");
-    await expect(draft).toHaveCount(0);
+    await expect(draft).toHaveClass(/undecided/);
     await drug.getByText("Não conforme").click();
     await expect(draft).toHaveClass(/non-conforming/);
-    await drug.getByLabel("Válida até").click();
-    // besides the day presets, the drug can be held until its prescription expires
-    await expect(
-      page.getByText(
-        `Até o vencimento da prescrição (${shownDate(MEROPENEM_END).slice(0, 5)})`,
-      ),
-    ).toBeVisible();
-    await page.getByText("7 dias", { exact: true }).click();
+    await validity
+      .getByText(`+7 dias (${shownDate(MEROPENEM_PLUS_7).slice(0, 5)})`)
+      .click();
     await draft.hover();
     await expect(page.getByRole("tooltip")).toContainText(
       "Nova avaliação (não salva)",
     );
-    await expect(page.getByRole("tooltip")).toContainText("Válida até");
+    await expect(page.getByRole("tooltip")).toContainText(
+      `Válida até ${shownDate(MEROPENEM_PLUS_7)}`,
+    );
     // filling a field clears its error
     await expect(drug.getByText("Campo obrigatório")).toHaveCount(0);
     await drug
@@ -489,10 +516,10 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       .locator(".drug-fields")
       .getByText("Conforme", { exact: true })
       .click();
-    await drug.getByLabel("Válida até").click();
-    await page.getByText("Até o vencimento da prescrição").click();
-    await expect(drug.getByLabel("Válida até")).toHaveValue(
-      shownDate(VANCOMYCIN_END),
+    await expect(
+      validity.getByRole("radio", { checked: true }),
+    ).toHaveAccessibleName(
+      `Fim do tratamento (${shownDate(VANCOMYCIN_END).slice(0, 5)})`,
     );
     await expect(
       vancomycinTimeline.getByTestId("draft-evaluation"),
@@ -507,7 +534,9 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
 
     // last step: what the review records, the next review and its notes
     const summary = dialog.getByTestId("review-summary");
-    await expect(summary).toContainText("Não conforme · até");
+    await expect(summary).toContainText(
+      `Não conforme · desde ${shownDate(MEROPENEM_START)} · até ${shownDate(MEROPENEM_PLUS_7)}`,
+    );
     await expect(summary).toContainText("Mantém a avaliação atual");
     await expect(next).toHaveCount(0);
     await expect(dialog.locator(".ant-steps-item").nth(2)).toHaveClass(
@@ -532,11 +561,13 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
           idDrug: 11,
           conforming: false,
           notes: "Espectro amplo demais",
+          validFrom: MEROPENEM_START,
+          // through the whole day
+          validUntil: `${MEROPENEM_PLUS_7}T23:59:59`,
           triggers: [3, 6],
         },
       ],
     });
-    expect(sent.evaluations[0].validUntil).toMatch(/T23:59:59$/);
 
     // the page shows the follow-up the save returned
     await expect(dialog).toHaveCount(0);
@@ -544,6 +575,183 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(page.getByTestId("follow-up-pendings")).toContainText(
       "Nenhuma pendência",
     );
+  });
+
+  test("chooses when an evaluation starts and until when it holds", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override(FOLLOW_UP, { json: followUp() });
+    let sent: any = null;
+    mockApi.override(REVIEW, async (route) => {
+      sent = JSON.parse(route.request().postData()!);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(followUp({ status: 2, pendings: [] })),
+      });
+    });
+
+    await page.goto(PAGE_URL);
+    await page
+      .getByRole("button", { name: "Registrar revisão" })
+      .click({ timeout: 15000 });
+
+    const dialog = page.getByRole("dialog");
+    const next = dialog.getByRole("button", { name: "Próximo" });
+    const drug = dialog.getByTestId("review-drug");
+    const fields = drug.locator(".drug-fields");
+    const start = drug.getByRole("radiogroup", { name: "Inicia em" });
+    const validity = drug.getByRole("radiogroup", {
+      name: "Conformidade válida até",
+    });
+    const draft = drug.getByTestId("draft-evaluation");
+
+    // meropenem: the defaults, from the course start to the treatment end
+    await fields.getByText("Conforme", { exact: true }).click();
+    await draft.hover();
+    await expect(page.getByRole("tooltip")).toContainText("Vale desde");
+    await next.click();
+
+    // vancomycin: now, until a chosen day
+    await expect(drug.getByRole("heading")).toHaveText(
+      "VANCOMICINA 500 mg SOL INJ",
+    );
+    await drug.getByRole("checkbox", { name: EVALUATE_NOW }).check();
+    await fields.getByText("Não conforme", { exact: true }).click();
+    await start.getByText("Agora", { exact: true }).click();
+    await validity.getByText("Outra data", { exact: true }).click();
+    // a chosen day is required once picked
+    await next.click();
+    await expect(drug.getByText("Campo obrigatório")).toHaveCount(1);
+    const until = drug.getByRole("textbox", {
+      name: "Conformidade válida até",
+    });
+    await until.fill(shownDate(localDay(3)));
+    // Enter takes the typed day and moves on
+    await until.press("Enter");
+
+    const summary = dialog.getByTestId("review-summary");
+    await expect(summary).toContainText(
+      `Conforme · desde ${shownDate(MEROPENEM_START)} · até ${shownDate(MEROPENEM_END)}`,
+    );
+    await expect(summary).toContainText(
+      `Não conforme · até ${shownDate(localDay(3))}`,
+    );
+    await dialog.getByRole("button", { name: "Salvar" }).click();
+
+    await expect(
+      page.getByText("Revisão registrada com sucesso!"),
+    ).toBeVisible();
+    expect(sent.evaluations).toMatchObject([
+      {
+        idDrug: 11,
+        validFrom: MEROPENEM_START,
+        validUntil: `${MEROPENEM_END.slice(0, 10)}T23:59:59`,
+      },
+      {
+        idDrug: 12,
+        validFrom: null,
+        validUntil: `${localDay(3)}T23:59:59`,
+      },
+    ]);
+  });
+
+  test("counts the days an evaluation holds from its start", async ({
+    page,
+    mockApi,
+  }) => {
+    // started 12 days ago and expired: no treatment end ahead to hold until
+    const OLD_START = hoursFromNow(-12 * 24);
+    mockApi.override(TIMELINE, {
+      json: {
+        ...TIMELINE_DATA,
+        data: {
+          ...TIMELINE_DATA.data,
+          courses: [
+            course({
+              idDrug: 12,
+              drug: "VANCOMICINA 500 mg SOL INJ",
+              start: OLD_START,
+              end: hoursFromNow(-30),
+              days: 12,
+            }),
+          ],
+        },
+      },
+    });
+    mockApi.override(FOLLOW_UP, {
+      json: followUp({
+        courses: [
+          {
+            idDrug: 12,
+            start: OLD_START,
+            ongoing: true,
+            evaluation: null,
+            history: [],
+          },
+        ],
+      }),
+    });
+
+    await page.goto(PAGE_URL);
+    await page
+      .getByRole("button", { name: "Registrar revisão" })
+      .click({ timeout: 15000 });
+
+    const drug = page.getByRole("dialog").getByTestId("review-drug");
+    const validity = drug.getByRole("radiogroup", {
+      name: "Conformidade válida até",
+    });
+    const plus7 = validity.getByRole("radio", { name: /^\+7 dias/ });
+    const plus10 = validity.getByRole("radio", { name: /^\+10 dias/ });
+
+    // from the course start, 7 and 10 days are already over: the date is
+    // left to choose
+    await expect(
+      validity.getByRole("radio", { name: /^Fim do tratamento/ }),
+    ).toHaveCount(0);
+    await expect(plus7).toHaveAccessibleName(
+      `+7 dias (${shownDate(localDay(7, OLD_START)).slice(0, 5)})`,
+    );
+    await expect(plus7).toBeDisabled();
+    await expect(plus10).toBeDisabled();
+    await expect(
+      validity.getByRole("radio", { name: "Outra data" }),
+    ).toBeChecked();
+
+    // starting now, they count from today
+    await drug
+      .getByRole("radiogroup", { name: "Inicia em" })
+      .getByText("Agora", { exact: true })
+      .click();
+    await expect(plus7).toBeEnabled();
+    await expect(plus7).toHaveAccessibleName(
+      `+7 dias (${shownDate(localDay(7)).slice(0, 5)})`,
+    );
+    await expect(plus10).toBeEnabled();
+
+    // picked, then the start moved back: it is over and holds no one back
+    await drug
+      .locator(".drug-fields")
+      .getByText("Conforme", { exact: true })
+      .click();
+    await validity.getByText(/^\+7 dias/).click();
+    await drug
+      .getByRole("radiogroup", { name: /Inicia em/ })
+      .getByText(/^Início do tratamento/)
+      .click();
+    await expect(plus7).toBeChecked();
+    await expect(plus7).toBeDisabled();
+    await page
+      .getByRole("dialog")
+      .getByRole("button", { name: "Próximo" })
+      .click();
+    await expect(drug.getByText("A data deve ser futura")).toBeVisible();
+
+    // choosing a date clears it
+    await validity.getByText("Outra data", { exact: true }).click();
+    await expect(drug.getByText("A data deve ser futura")).toHaveCount(0);
   });
 
   test("keeps the modal open and shows the error when the save fails", async ({
@@ -723,18 +931,34 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       .locator(".drug-fields")
       .getByText("Conforme", { exact: true })
       .click();
-    await drug.getByLabel("Válida até").click();
-    await page.getByText("7 dias", { exact: true }).click();
+    await drug
+      .getByRole("radiogroup", { name: "Conformidade válida até" })
+      .getByText(/^\+10 dias/)
+      .click();
     await posologyBox.uncheck();
     await expiryBox.check();
-    await dialog.getByRole("button", { name: "Próximo" }).click();
+    // from a chosen day; Enter takes it and moves on
+    await drug
+      .getByRole("radiogroup", { name: "Inicia em" })
+      .getByText("Outra data", { exact: true })
+      .click();
+    const from = drug.getByRole("textbox", { name: "Inicia em" });
+    await from.fill(shownDate(localDay(-1)));
+    await from.press("Enter");
     await dialog.getByRole("button", { name: "Salvar" }).click();
 
     await expect(
       page.getByText("Revisão registrada com sucesso!"),
     ).toBeVisible();
     expect(sent.evaluations).toMatchObject([
-      { idDrug: 12, conforming: true, triggers: [3] },
+      {
+        idDrug: 12,
+        conforming: true,
+        validFrom: `${localDay(-1)}T00:00:00`,
+        // 10 days from its start
+        validUntil: `${localDay(9)}T23:59:59`,
+        triggers: [3],
+      },
     ]);
   });
 

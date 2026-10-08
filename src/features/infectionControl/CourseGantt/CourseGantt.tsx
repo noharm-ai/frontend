@@ -46,12 +46,14 @@ import {
 
 /**
  * An evaluation being filled in the review modal, plotted before it is saved:
- * from now up to its valid-until date
+ * from its start (now unless backdated) up to its valid-until date
  */
 export interface IDraftEvaluation {
   idDrug: number;
   courseStart: string;
   conforming: boolean | null;
+  // null starts it now
+  validFrom: string | null;
   // end of the chosen day, as it will be saved
   validUntil: string | null;
 }
@@ -305,6 +307,13 @@ function DraftEvaluationMark({
         <>
           <strong>{t("infectionControl.timeline.evaluation.draft")}</strong>
           {verdict && <div>{verdict}</div>}
+          {draft.validFrom && (
+            <div>
+              {t("infectionControl.timeline.evaluation.from", {
+                date: formatDate(draft.validFrom, "DD/MM HH:mm"),
+              })}
+            </div>
+          )}
           {draft.validUntil && (
             <div>
               {t("infectionControl.timeline.evaluation.valid", {
@@ -321,7 +330,7 @@ function DraftEvaluationMark({
         tabIndex={0}
         aria-label={t("infectionControl.timeline.evaluation.draft")}
         style={{
-          ...span(now, draft.validUntil ?? now, range),
+          ...span(draft.validFrom ?? now, draft.validUntil ?? now, range),
           ...evaluationLaneStyle(lane),
         }}
       />
@@ -360,6 +369,10 @@ function EvaluationMark({
     ? invalidatedSince(invalidatedBy, evaluation, course)
     : null;
   const end = since && dayjs(since).isBefore(period.end) ? since : period.end;
+  // dated back to before the review that recorded it
+  const backdated = dayjs(evaluation.validFrom).isBefore(
+    dayjs(evaluation.createdAt).subtract(1, "minute"),
+  );
   const verdict = t(
     evaluation.conforming
       ? "infectionControl.evaluation.conforming"
@@ -378,6 +391,13 @@ function EvaluationMark({
               user: evaluation.createdBy ?? "-",
             })}
           </div>
+          {backdated && (
+            <div>
+              {t("infectionControl.timeline.evaluation.from", {
+                date: formatDate(evaluation.validFrom, "DD/MM HH:mm"),
+              })}
+            </div>
+          )}
           <div>
             {since
               ? t("infectionControl.timeline.evaluation.invalidated", {
