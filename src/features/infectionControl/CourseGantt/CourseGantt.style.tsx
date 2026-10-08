@@ -15,6 +15,13 @@ const LABEL_WIDTH_SMALL = 160;
 const LABEL_WIDTH_COMPACT = 84;
 // every day column has this width; long admissions scroll sideways
 export const DAY_WIDTH = 34;
+// conformity records stack under the course bar, one line each (--lane), and
+// a row grows by this much for every line past the first (--lanes)
+const EVALUATION_LANE = 17;
+const ROW_HEIGHT = 64;
+// the bars sit this far down the track: halfway, raised by half the extra
+// lines so the bar and its records stay centered in the row
+const BAR_CENTER = "var(--bar-center, 50%)";
 
 const GRID_LINE = "#f0f0f0";
 const HATCH =
@@ -52,9 +59,13 @@ export const GanttGrid = styled.div`
 `;
 
 export const Row = styled.div`
+  --bar-center: calc(50% - (var(--lanes, 1) - 1) * ${EVALUATION_LANE / 2}px);
+
   border-bottom: 1px solid ${GRID_LINE};
   display: flex;
-  min-height: 64px;
+  min-height: calc(
+    ${ROW_HEIGHT}px + (var(--lanes, 1) - 1) * ${EVALUATION_LANE}px
+  );
 
   &:last-child {
     border-bottom: 0;
@@ -185,7 +196,7 @@ export const Track = styled.div<{ $days: number }>`
     cursor: help;
     height: 30px;
     position: absolute;
-    top: 50%;
+    top: ${BAR_CENTER};
     transform: translate(-1px, -50%);
     width: 8px;
     z-index: 2;
@@ -208,7 +219,7 @@ export const Track = styled.div<{ $days: number }>`
     cursor: help;
     height: 10px;
     position: absolute;
-    top: 50%;
+    top: ${BAR_CENTER};
     transform: translate(-50%, -50%) rotate(45deg);
     width: 10px;
     z-index: 2;
@@ -265,7 +276,7 @@ export const Bar = styled.div<{ $color?: string }>`
 
   height: 18px;
   position: absolute;
-  top: 50%;
+  top: ${BAR_CENTER};
   transform: translateY(-50%);
 
   &.bar-given {
@@ -367,7 +378,7 @@ export const Evaluation = styled.span`
   height: 5px;
   min-width: 4px;
   position: absolute;
-  top: calc(50% + 13px);
+  top: calc(${BAR_CENTER} + 13px + var(--lane, 0) * ${EVALUATION_LANE}px);
   z-index: 2;
 
   ${evaluationMarker("-7px")}
@@ -380,7 +391,7 @@ export const Evaluation = styled.span`
       transparent 3px 6px
     );
     height: 7px;
-    top: calc(50% + 12px);
+    top: calc(${BAR_CENTER} + 12px + var(--lane, 0) * ${EVALUATION_LANE}px);
   }
 
   &.draft::before {

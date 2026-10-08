@@ -320,20 +320,30 @@ test("shows each conformity record on its course in the timeline", async ({
     .getByTestId("course-evaluation");
   await expect(marks).toHaveCount(2);
 
-  // oldest first; the replaced one stays, in a lighter tone
+  // latest first, on the line right under the bar; the replaced one stays,
+  // in a lighter tone, on the line below it
   await expect(marks.nth(0)).toHaveAttribute(
-    "aria-label",
-    `Não conforme em ${shownDate(replaced.createdAt)}`,
-  );
-  await expect(marks.nth(0)).toHaveClass(/non-conforming/);
-  await expect(marks.nth(0)).toHaveClass(/past/);
-  await expect(marks.nth(1)).toHaveAttribute(
     "aria-label",
     `Conforme em ${shownDate(vancomycinEvaluation.createdAt)}`,
   );
-  await expect(marks.nth(1)).not.toHaveClass(/past/);
+  await expect(marks.nth(0)).not.toHaveClass(/past/);
+  await expect(marks.nth(1)).toHaveAttribute(
+    "aria-label",
+    `Não conforme em ${shownDate(replaced.createdAt)}`,
+  );
+  await expect(marks.nth(1)).toHaveClass(/non-conforming/);
+  await expect(marks.nth(1)).toHaveClass(/past/);
 
-  await marks.nth(1).hover();
+  const bar = (await rows
+    .filter({ hasText: "VANCOMICINA" })
+    .getByTestId("course-bar")
+    .boundingBox())!;
+  const latest = (await marks.nth(0).boundingBox())!;
+  const older = (await marks.nth(1).boundingBox())!;
+  expect(latest.y).toBeGreaterThan(bar.y + bar.height);
+  expect(older.y).toBeGreaterThanOrEqual(latest.y + latest.height);
+
+  await marks.nth(0).hover();
   const tooltip = page.getByRole("tooltip");
   await expect(tooltip).toContainText("por Maria Teste");
   await expect(tooltip).toContainText(

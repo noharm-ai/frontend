@@ -91,6 +91,10 @@ const span = (
   };
 };
 
+// the line under the course bar an evaluation is drawn on (0 is the first)
+const evaluationLaneStyle = (lane: number) =>
+  ({ "--lane": lane }) as React.CSSProperties;
+
 interface CourseBarsProps {
   course: ICourse;
   range: ITimelineRange;
@@ -224,10 +228,12 @@ function CourseBars({
         </Tooltip>
       ))}
 
-      {/* oldest first, so a newer evaluation is drawn over the one it replaced */}
-      {[...evaluations].reverse().map((evaluation) => (
+      {/* latest first, each on its own line under the bar: the one being
+          filled on top, then the one it replaces and so on */}
+      {evaluations.map((evaluation, index) => (
         <EvaluationMark
           key={evaluation.id}
+          lane={draft ? index + 1 : index}
           // the evaluation being filled replaces the one in force from now on
           evaluation={
             draft &&
@@ -248,13 +254,17 @@ function CourseBars({
         />
       ))}
 
-      {draft && <DraftEvaluationMark draft={draft} range={range} now={now} />}
+      {draft && (
+        <DraftEvaluationMark draft={draft} lane={0} range={range} now={now} />
+      )}
     </>
   );
 }
 
 interface DraftEvaluationMarkProps {
   draft: IDraftEvaluation;
+  // its line under the course bar (evaluationLaneStyle)
+  lane: number;
   range: ITimelineRange;
   now: Dayjs;
 }
@@ -264,7 +274,12 @@ interface DraftEvaluationMarkProps {
  * is a verdict, a band up to the valid-until date once there is one, grey
  * until the verdict comes
  */
-function DraftEvaluationMark({ draft, range, now }: DraftEvaluationMarkProps) {
+function DraftEvaluationMark({
+  draft,
+  lane,
+  range,
+  now,
+}: DraftEvaluationMarkProps) {
   const { t } = useTranslation();
 
   if (draft.conforming == null && !draft.validUntil) return null;
@@ -305,7 +320,10 @@ function DraftEvaluationMark({ draft, range, now }: DraftEvaluationMarkProps) {
         data-testid="draft-evaluation"
         tabIndex={0}
         aria-label={t("infectionControl.timeline.evaluation.draft")}
-        style={span(now, draft.validUntil ?? now, range)}
+        style={{
+          ...span(now, draft.validUntil ?? now, range),
+          ...evaluationLaneStyle(lane),
+        }}
       />
     </Tooltip>
   );
@@ -313,6 +331,8 @@ function DraftEvaluationMark({ draft, range, now }: DraftEvaluationMarkProps) {
 
 interface EvaluationMarkProps {
   evaluation: IAntimicrobialEvaluation;
+  // its line under the course bar (evaluationLaneStyle)
+  lane: number;
   course: ICourse;
   // open reasons that make it no longer hold
   invalidatedBy?: IFollowUpPending[];
@@ -328,6 +348,7 @@ interface EvaluationMarkProps {
  */
 function EvaluationMark({
   evaluation,
+  lane,
   course,
   invalidatedBy,
   range,
@@ -395,7 +416,10 @@ function EvaluationMark({
           verdict,
           date: formatDate(evaluation.createdAt),
         })}
-        style={span(period.start, end, range)}
+        style={{
+          ...span(period.start, end, range),
+          ...evaluationLaneStyle(lane),
+        }}
       />
     </Tooltip>
   );
@@ -420,6 +444,12 @@ export function CourseGantt({
 
   const evaluationsOf = (course: ICourse) =>
     followUps?.[courseKey(course.idDrug, course.start)]?.history ?? [];
+  const draftOf = (course: ICourse) =>
+    draftEvaluation &&
+    draftEvaluation.idDrug === course.idDrug &&
+    draftEvaluation.courseStart === course.start
+      ? draftEvaluation
+      : null;
 
   const rows = useMemo(() => groupCourseRows(courses), [courses]);
   const range = useMemo(
@@ -530,8 +560,23 @@ export function CourseGantt({
               </strong>
             );
 
+            // the row grows to fit the evaluations of its busiest course,
+            // one line each
+            const lanes = Math.max(
+              1,
+              ...drugCourses.map(
+                (drugCourse) =>
+                  evaluationsOf(drugCourse).length +
+                  (draftOf(drugCourse) ? 1 : 0),
+              ),
+            );
+
             return (
-              <Row key={idDrug} data-testid="course-row">
+              <Row
+                key={idDrug}
+                data-testid="course-row"
+                style={{ "--lanes": lanes } as React.CSSProperties}
+              >
                 <RowLabel>
                   {compact ? (
                     // the view around it already names the drug
@@ -579,13 +624,7 @@ export function CourseGantt({
                       now={now}
                       evaluations={evaluationsOf(drugCourse)}
                       invalidatedEvaluations={invalidatedEvaluations}
-                      draft={
-                        draftEvaluation &&
-                        draftEvaluation.idDrug === drugCourse.idDrug &&
-                        draftEvaluation.courseStart === drugCourse.start
-                          ? draftEvaluation
-                          : null
-                      }
+                      draft={draftOf(drugCourse)}
                       nextStart={drugCourses[index + 1]?.start}
                       onOpen={
                         compact ? undefined : () => setSelected(drugCourse)
