@@ -447,6 +447,39 @@ test("is not offered when name resolution is disabled", async ({
   expect(nameRequests(mockApi)).toEqual([]);
 });
 
+test("a maintainer without name resolution sees the button disabled", async ({
+  page,
+  mockApi,
+}) => {
+  installReportHandlers(mockApi, rowsFor(3));
+  await loginWithAuth(page, mockApi, {
+    permissions: [...PERMISSIONS, "MAINTAINER"],
+    features: ["DISABLE_GETNAME"],
+  });
+  await openReport(page, mockApi);
+
+  await expect(namesButton(page)).toBeDisabled();
+  await namesButton(page).hover({ force: true });
+  await expect(
+    page.getByText("getname desabilitado para mantenedores do sistema"),
+  ).toBeVisible();
+  expect(nameRequests(mockApi)).toEqual([]);
+});
+
+test("a maintainer without fkpessoa in the report sees no button", async ({
+  page,
+  mockApi,
+}) => {
+  installReportHandlers(mockApi, [{ setor: "UTI", dose: 10 }]);
+  await loginWithAuth(page, mockApi, {
+    permissions: [...PERMISSIONS, "MAINTAINER"],
+    features: ["DISABLE_GETNAME"],
+  });
+  await openReport(page, mockApi);
+
+  await expect(namesButton(page)).toHaveCount(0);
+});
+
 test("is not offered when names are hidden", async ({ page, mockApi }) => {
   installReportHandlers(mockApi, rowsFor(3));
   // HIDE_NAMES masks the user name in the header

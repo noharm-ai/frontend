@@ -19,6 +19,7 @@ import {
   TableOutlined,
   BarChartOutlined,
   CopyOutlined,
+  UserOutlined,
 } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
@@ -26,6 +27,7 @@ import { DataViewer } from "src/components/DataViewer/DataViewer";
 import { formatDate } from "src/utils/date";
 import { getFileReport } from "../ReportsSlice";
 import Button from "src/components/Button";
+import Tooltip from "src/components/Tooltip";
 import { FloatButtonGroup } from "src/components/FloatButton";
 import {
   trackCustomReportAction,
@@ -181,6 +183,15 @@ export function FileReport() {
   const patientIdKey = useMemo(
     () => (canLoadPatientNames ? findPatientIdColumn(data[0]) : null),
     [data, canLoadPatientNames],
+  );
+  // Maintainers run with name lookup disabled: they see the button, disabled,
+  // so they know the report offers patient names to the hospital's users.
+  const showMaintainerNamesNotice = useMemo(
+    () =>
+      FeatureService.has(Feature.DISABLE_GETNAME) &&
+      PermissionService().has(Permission.MAINTAINER) &&
+      findPatientIdColumn(data[0]) !== null,
+    [data],
   );
   const nameColumnKey = useMemo(
     () =>
@@ -421,8 +432,18 @@ export function FileReport() {
           <ContentContainer>
           <Tabs
             tabBarExtraContent={
-              !isLoading && reportNames ? (
+              isLoading ? null : reportNames ? (
                 <LoadPatientNames names={reportNames} />
+              ) : showMaintainerNamesNotice ? (
+                <Tooltip title="getname desabilitado para mantenedores do sistema">
+                  <Button
+                    icon={<UserOutlined />}
+                    disabled
+                    data-kb="reports.file.patientNames"
+                  >
+                    Carregar nomes
+                  </Button>
+                </Tooltip>
               ) : null
             }
             // Remount when the tab set changes (e.g. charts load) so the
