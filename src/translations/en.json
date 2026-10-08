@@ -1600,6 +1600,9 @@
       "legendConforming": "Conforming evaluation (validity)",
       "legendNonConforming": "Non-conforming evaluation (validity)",
       "legendInvalidated": "Evaluation that no longer holds (open pending reason)",
+      "showSuperseded_one": "Show {{count}} replaced evaluation",
+      "showSuperseded_other": "Show {{count}} replaced evaluations",
+      "hideSuperseded": "Hide replaced evaluations",
       "evaluation": {
         "draft": "New evaluation (not saved)",
         "label": "{{verdict}} on {{date}}",

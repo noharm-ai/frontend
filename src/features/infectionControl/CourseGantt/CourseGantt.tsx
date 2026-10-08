@@ -1,6 +1,6 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Tag, Tooltip } from "antd";
+import { Button, Tag, Tooltip } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 
 import { AwareTag } from "components/AwareTag/AwareTag";
@@ -550,9 +550,25 @@ export function CourseGantt({
   const { t } = useTranslation();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [selected, setSelected] = useState<ICourse | null>(null);
+  const [showSuperseded, setShowSuperseded] = useState(false);
 
-  const evaluationsOf = (course: ICourse) =>
+  const isSuperseded = (evaluation: IAntimicrobialEvaluation) =>
+    evaluation.status === AntimicrobialEvaluationStatusEnum.SUPERSEDED;
+  const historyOf = (course: ICourse) =>
     followUps?.[courseKey(course.idDrug, course.start)]?.history ?? [];
+  // the main timeline leaves out the records a newer one replaced, unless
+  // asked for them; embedded, it shows them all
+  const supersededCount = compact
+    ? 0
+    : courses.reduce(
+        (count, course) =>
+          count + historyOf(course).filter(isSuperseded).length,
+        0,
+      );
+  const evaluationsOf = (course: ICourse) =>
+    supersededCount > 0 && !showSuperseded
+      ? historyOf(course).filter((evaluation) => !isSuperseded(evaluation))
+      : historyOf(course);
   const draftOf = (course: ICourse) =>
     draftEvaluation &&
     draftEvaluation.idDrug === course.idDrug &&
@@ -798,6 +814,22 @@ export function CourseGantt({
                 {t("infectionControl.timeline.legendInvalidated")}
               </span>
             </>
+          )}
+          {supersededCount > 0 && (
+            <Button
+              type="link"
+              size="small"
+              className="legend-toggle"
+              data-testid="toggle-superseded"
+              aria-pressed={showSuperseded}
+              onClick={() => setShowSuperseded((shown) => !shown)}
+            >
+              {showSuperseded
+                ? t("infectionControl.timeline.hideSuperseded")
+                : t("infectionControl.timeline.showSuperseded", {
+                    count: supersededCount,
+                  })}
+            </Button>
           )}
         </Legend>
       )}

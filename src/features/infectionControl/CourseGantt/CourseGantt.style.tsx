@@ -529,6 +529,12 @@ export const Legend = styled.div`
     ${evaluationMarker("-7px")}
   }
 
+  .legend-toggle {
+    height: auto;
+    margin-left: auto;
+    padding: 0;
+  }
+
   .legend-change {
     background: #fff;
     border: 2px solid #2e3c5a;

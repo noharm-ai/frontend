@@ -1610,6 +1610,9 @@
       "legendConforming": "Avaliação conforme (vigência)",
       "legendNonConforming": "Avaliação não conforme (vigência)",
       "legendInvalidated": "Avaliação que não vale mais (pendência aberta)",
+      "showSuperseded_one": "Mostrar {{count}} avaliação substituída",
+      "showSuperseded_other": "Mostrar {{count}} avaliações substituídas",
+      "hideSuperseded": "Ocultar avaliações substituídas",
       "evaluation": {
         "draft": "Nova avaliação (não salva)",
         "label": "{{verdict}} em {{date}}",

@@ -328,7 +328,13 @@ test("shows each conformity record on its course in the timeline", async ({
   const marks = rows
     .filter({ hasText: "VANCOMICINA" })
     .getByTestId("course-evaluation");
+  // the replaced one is left out until asked for
+  await expect(marks).toHaveCount(1);
+  const toggle = page.getByTestId("toggle-superseded");
+  await expect(toggle).toHaveText("Mostrar 1 avaliação substituída");
+  await toggle.click();
   await expect(marks).toHaveCount(2);
+  await expect(toggle).toHaveText("Ocultar avaliações substituídas");
 
   // latest first, on the line right under the bar; the replaced one stays,
   // in a lighter tone, on the line below it
