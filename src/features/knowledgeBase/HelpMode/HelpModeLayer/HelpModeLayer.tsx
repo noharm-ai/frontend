@@ -91,13 +91,17 @@ export function HelpModeLayer({ routes }: IHelpModeLayerProps) {
   const elements = cached?.list ?? EMPTY;
   // modals opened from the help mode go over it, so it steps aside meanwhile
   const shown = active && canRead && !editorOpen && !articleOpen;
+  // the support drawer, opened from the bar, sits under the layer: the
+  // highlights would cover it, so they step aside too (the bar stays)
+  const highlighted = shown && !supportOpen;
 
   const [container, setContainer] = useState<HTMLDivElement | null>(null);
   // the list of the screen's articles, a modal of its own
   const [articlesOpen, setArticlesOpen] = useState(false);
   // a popover only stays open on the screen, and while the layer is shown
   const [opened, setOpened] = useState<{ key: string; page: string | null }>();
-  const openKey = shown && opened && opened.page === page ? opened.key : null;
+  const openKey =
+    highlighted && opened && opened.page === page ? opened.key : null;
   const setOpenKey = useCallback(
     (key: string | null) => setOpened(key ? { key, page } : undefined),
     [page],
@@ -109,7 +113,7 @@ export function HelpModeLayer({ routes }: IHelpModeLayerProps) {
     page: string | null;
   }>();
   const asideKey =
-    shown && stepAside && stepAside.page === page ? stepAside.key : null;
+    highlighted && stepAside && stepAside.page === page ? stepAside.key : null;
   // "Use the element" sits in the popover, off the element: the highlight
   // only comes back once the pointer has been over the element and left it
   const asideEntered = useRef(false);
@@ -308,7 +312,7 @@ export function HelpModeLayer({ routes }: IHelpModeLayerProps) {
           >
             {/* the bar stays while a modal opened from it is over the page,
                 or the page would jump up and down under the modal */}
-            {shown &&
+            {highlighted &&
               matched.map(({ item, rect }) => {
                 const key = elementKey(item);
 
@@ -346,7 +350,11 @@ export function HelpModeLayer({ routes }: IHelpModeLayerProps) {
               elements={elements}
               hidden={unmatched}
               container={container}
-              onPick={(value) => dispatch(setHelpModePicking(value))}
+              onPick={(value) => {
+                dispatch(setHelpModePicking(value));
+                // elements are picked on the screen, which the drawer covers
+                if (value) dispatch(setSupportOpen(false));
+              }}
               onEdit={edit}
               onOpenArticle={openArticle}
               articlesOpen={articlesOpen}

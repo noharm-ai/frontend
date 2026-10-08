@@ -151,6 +151,13 @@ test("the drawer lists the pinned articles with the screen's own", async ({
   await page.getByRole("button", { name: "Mais ajuda" }).click();
   const drawer = supportDrawer(page);
   await expect(drawer).toContainText("Modo ajuda ligado");
+  // the highlights step aside, or they would cover the drawer; the bar and
+  // its counts stay
+  await expect(highlight(page, CARD)).toHaveCount(0);
+  await expect(highlight(page, KB_LINK)).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: /artigos nesta tela/ }),
+  ).toBeVisible();
 
   // the category's first, then the pinned ones it left out, once each
   await expect(drawer.locator("strong")).toHaveText([
@@ -540,6 +547,20 @@ test.describe("curator", () => {
     ]);
     // the screen's elements are fetched again
     await expect.poll(() => pages.length).toBeGreaterThan(before);
+  });
+
+  test("picking closes the support drawer", async ({ page, mockApi }) => {
+    mockElements(mockApi);
+    await loginAsCurator(page, mockApi);
+    await openCards(page);
+    await enableHelpMode(page);
+
+    await page.getByRole("button", { name: "Mais ajuda" }).click();
+    await expect(supportDrawer(page)).toBeVisible();
+
+    await page.getByRole("button", { name: "Adicionar ajuda" }).click();
+    await expect(supportDrawer(page)).toBeHidden();
+    await expect(page.getByTestId("help-mode-picker")).toBeVisible();
   });
 
   test("an element picked exactly is flagged as fragile", async ({
