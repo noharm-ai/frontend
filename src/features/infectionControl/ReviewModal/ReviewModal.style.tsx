@@ -181,6 +181,12 @@ export const DrugEvaluation = styled.div<{ $selected: boolean }>`
     margin-bottom: 4px;
   }
 
+  .drug-field-info {
+    color: #595959;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
   .drug-field-error {
     color: #cf1322;
     font-size: 12px;

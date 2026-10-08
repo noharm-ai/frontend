@@ -107,7 +107,7 @@ const getValidFrom = (evaluation: IDrugEvaluationFields): string | null => {
 
 /**
  * When a course is due to stop: its planned end when the hospital sends one
- * past the prescription expiry, else that expiry; null once that day passed
+ * past the prescription expiry, else that expiry (which may have passed)
  */
 const getTreatmentEnd = (course: ICourse | undefined): string | null => {
   if (!course) return null;
@@ -117,7 +117,7 @@ const getTreatmentEnd = (course: ICourse | undefined): string | null => {
       ? course.plannedEnd
       : course.end;
 
-  return dayjs(end).isBefore(dayjs(), "day") ? null : end;
+  return end;
 };
 
 /**
@@ -135,28 +135,19 @@ const getValidUntil = (
     return evaluation.endDate;
   }
 
-  return dayjs(getValidFrom(evaluation) ?? undefined).add(
-    Number(end.replace("days", "")),
-    "day",
-  );
+  return getStartMoment(evaluation).add(Number(end.replace("days", "")), "day");
 };
 
-// a day that is already over can no longer be held until
+// the moment an evaluation starts: its chosen start, or now
+const getStartMoment = (evaluation: IDrugEvaluationFields) =>
+  dayjs(getValidFrom(evaluation) ?? undefined);
+
+// a validity (held through its day) that ends before the evaluation starts
+const endsBeforeStart = (evaluation: IDrugEvaluationFields, until: Dayjs) =>
+  until.endOf("day").isBefore(getStartMoment(evaluation));
+
+// a validity already over: the evaluation is recorded expired
 const isOver = (day: Dayjs) => day.endOf("day").isBefore(dayjs());
-
-/**
- * Until when an evaluation holds unless chosen otherwise: the end of the
- * treatment, else the first number of days from its start not already over
- */
-const getDefaultEnd = (evaluation: IDrugEvaluationFields): EvaluationEnd => {
-  if (evaluation.treatmentEnd) return "treatmentEnd";
-
-  const days = VALIDITY_DAYS.map((d): EvaluationEnd => `days${d}`).find(
-    (end) => !isOver(getValidUntil(evaluation, end)!),
-  );
-
-  return days ?? "date";
-};
 
 // whether the current evaluation watches a trigger; a new one watches all
 const watches = (
@@ -331,7 +322,7 @@ export function ReviewModal({
         ),
       };
 
-      return { ...fields, end: getDefaultEnd(fields) };
+      return { ...fields, end: treatmentEnd ? "treatmentEnd" : "days7" };
     }),
   };
 
@@ -356,27 +347,21 @@ export function ReviewModal({
         .when(["evaluate", "end"], {
           is: (evaluate: boolean, end: EvaluationEnd) =>
             evaluate && end === "date",
-          then: (schema) =>
-            schema
-              .required(t("validation.requiredField"))
-              .test(
-                "future",
-                t("infectionControl.review.futureDate"),
-                (value) => futureDate(value?.endOf("day")),
-              ),
+          then: (schema) => schema.required(t("validation.requiredField")),
         }),
     })
-    // days counted from a start moved further back may already be over
+    // the validity may be over already (a retroactive record), but it ends
+    // after the evaluation starts
     .test("validUntil", function (value) {
       const evaluation = value as unknown as IDrugEvaluationFields;
       const validUntil = evaluation.evaluate && getValidUntil(evaluation);
-      if (!validUntil || evaluation.end === "date" || !isOver(validUntil)) {
+      if (!validUntil || !endsBeforeStart(evaluation, validUntil)) {
         return true;
       }
 
       return this.createError({
         path: this.path ? `${this.path}.end` : "end",
-        message: t("infectionControl.review.futureDate"),
+        message: t("infectionControl.review.endBeforeStart"),
       });
     });
 
@@ -446,8 +431,6 @@ export function ReviewModal({
     });
   };
 
-  const beforeToday = (current: Dayjs) =>
-    !!current && current.isBefore(dayjs(), "day");
   const notAfterToday = (current: Dayjs) =>
     !!current && !current.isAfter(dayjs(), "day");
 
@@ -601,6 +584,7 @@ export function ReviewModal({
             ) ?? timeline?.courses.find((course) => course.status === "active");
           const regimen = activeCourse?.regimens.at(-1);
           const invalidations = invalidatedBy(evaluation.current);
+          const validUntil = getValidUntil(evaluation);
 
           return (
             <DrugEvaluation
@@ -807,6 +791,11 @@ export function ReviewModal({
                             ? [
                                 {
                                   value: "treatmentEnd",
+                                  // over before an evaluation starting later
+                                  disabled: endsBeforeStart(
+                                    evaluation,
+                                    dayjs(evaluation.treatmentEnd),
+                                  ),
                                   label: t(
                                     "infectionControl.review.endTreatment",
                                     {
@@ -831,8 +820,6 @@ export function ReviewModal({
                                 count: days,
                                 date: until.format("DD/MM"),
                               }),
-                              // counted from a start too far back
-                              disabled: isOver(until),
                             };
                           }),
                           {
@@ -849,15 +836,33 @@ export function ReviewModal({
                             setFieldValue(field("endDate"), value);
                             setFieldError(field("endDate"), undefined);
                           }}
-                          disabledDate={beforeToday}
+                          // from the day it starts, even if already over
+                          disabledDate={(current: Dayjs) =>
+                            !!current &&
+                            current.isBefore(getStartMoment(evaluation), "day")
+                          }
                           aria-label={t("infectionControl.review.validUntil")}
                         />
                       )}
                     </div>
-                    {(fieldErrors.endDate || fieldErrors.end) && (
+                    {fieldErrors.endDate || fieldErrors.end ? (
                       <div className="drug-field-error">
                         {(fieldErrors.endDate || fieldErrors.end) as string}
                       </div>
+                    ) : (
+                      validUntil &&
+                      isOver(validUntil) && (
+                        <div
+                          className="drug-field-info"
+                          data-testid="review-end-past"
+                        >
+                          {t(
+                            evaluation.watchExpiry
+                              ? "infectionControl.review.endPastPending"
+                              : "infectionControl.review.endPast",
+                          )}
+                        </div>
+                      )
                     )}
                   </div>
 

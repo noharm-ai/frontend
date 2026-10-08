@@ -657,12 +657,13 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     ]);
   });
 
-  test("counts the days an evaluation holds from its start", async ({
+  test("records a conformity whose validity is already over", async ({
     page,
     mockApi,
   }) => {
-    // started 12 days ago and expired: no treatment end ahead to hold until
+    // started 12 days ago, its prescription expired yesterday
     const OLD_START = hoursFromNow(-12 * 24);
+    const OLD_END = hoursFromNow(-30);
     mockApi.override(TIMELINE, {
       json: {
         ...TIMELINE_DATA,
@@ -673,7 +674,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
               idDrug: 12,
               drug: "VANCOMICINA 500 mg SOL INJ",
               start: OLD_START,
-              end: hoursFromNow(-30),
+              end: OLD_END,
               days: 12,
             }),
           ],
@@ -693,65 +694,80 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
         ],
       }),
     });
+    let sent: any = null;
+    mockApi.override(REVIEW, async (route) => {
+      sent = JSON.parse(route.request().postData()!);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(followUp()),
+      });
+    });
 
     await page.goto(PAGE_URL);
     await page
       .getByRole("button", { name: "Registrar revisão" })
       .click({ timeout: 15000 });
 
-    const drug = page.getByRole("dialog").getByTestId("review-drug");
+    const dialog = page.getByRole("dialog");
+    const drug = dialog.getByTestId("review-drug");
+    const start = drug.getByRole("radiogroup", { name: "Inicia em" });
     const validity = drug.getByRole("radiogroup", {
       name: "Conformidade válida até",
     });
+    const treatmentEnd = validity.getByRole("radio", {
+      name: /^Fim do tratamento/,
+    });
     const plus7 = validity.getByRole("radio", { name: /^\+7 dias/ });
-    const plus10 = validity.getByRole("radio", { name: /^\+10 dias/ });
-
-    // from the course start, 7 and 10 days are already over: the date is
-    // left to choose
-    await expect(
-      validity.getByRole("radio", { name: /^Fim do tratamento/ }),
-    ).toHaveCount(0);
-    await expect(plus7).toHaveAccessibleName(
-      `+7 dias (${shownDate(localDay(7, OLD_START)).slice(0, 5)})`,
-    );
-    await expect(plus7).toBeDisabled();
-    await expect(plus10).toBeDisabled();
-    await expect(
-      validity.getByRole("radio", { name: "Outra data" }),
-    ).toBeChecked();
-
-    // starting now, they count from today
-    await drug
-      .getByRole("radiogroup", { name: "Inicia em" })
-      .getByText("Agora", { exact: true })
-      .click();
-    await expect(plus7).toBeEnabled();
-    await expect(plus7).toHaveAccessibleName(
-      `+7 dias (${shownDate(localDay(7)).slice(0, 5)})`,
-    );
-    await expect(plus10).toBeEnabled();
-
-    // picked, then the start moved back: it is over and holds no one back
+    const pastNotice = drug.getByTestId("review-end-past");
     await drug
       .locator(".drug-fields")
       .getByText("Conforme", { exact: true })
       .click();
-    await validity.getByText(/^\+7 dias/).click();
-    await drug
-      .getByRole("radiogroup", { name: /Inicia em/ })
-      .getByText(/^Início do tratamento/)
-      .click();
-    await expect(plus7).toBeChecked();
-    await expect(plus7).toBeDisabled();
-    await page
-      .getByRole("dialog")
-      .getByRole("button", { name: "Próximo" })
-      .click();
-    await expect(drug.getByText("A data deve ser futura")).toBeVisible();
 
-    // choosing a date clears it
-    await validity.getByText("Outra data", { exact: true }).click();
-    await expect(drug.getByText("A data deve ser futura")).toHaveCount(0);
+    // from the course start to the treatment end, both past: recorded
+    // already expired, which keeps the patient pending while it watches
+    // the expiry
+    await expect(treatmentEnd).toBeChecked();
+    await expect(pastNotice).toContainText("o paciente continua pendente");
+    await drug.getByRole("checkbox", { name: WATCH_EXPIRY }).uncheck();
+    await expect(pastNotice).toHaveText(
+      "Esta data já passou: a conformidade é registrada já vencida.",
+    );
+    await expect(plus7).toHaveAccessibleName(
+      `+7 dias (${shownDate(localDay(7, OLD_START)).slice(0, 5)})`,
+    );
+
+    // starting now, the treatment end is behind it
+    await start.getByText("Agora", { exact: true }).click();
+    await expect(treatmentEnd).toBeDisabled();
+    await dialog.getByRole("button", { name: "Próximo" }).click();
+    await expect(
+      drug.getByText("A validade deve terminar depois do início"),
+    ).toBeVisible();
+    await validity.getByText(/^\+7 dias/).click();
+    await expect(
+      drug.getByText("A validade deve terminar depois do início"),
+    ).toHaveCount(0);
+    await expect(pastNotice).toHaveCount(0);
+
+    // back to the course start, 7 days from it are over too
+    await start.getByText(/^Início do tratamento/).click();
+    await expect(pastNotice).toBeVisible();
+    await dialog.getByRole("button", { name: "Próximo" }).click();
+    await dialog.getByRole("button", { name: "Salvar" }).click();
+
+    await expect(
+      page.getByText("Revisão registrada com sucesso!"),
+    ).toBeVisible();
+    expect(sent.evaluations).toMatchObject([
+      {
+        idDrug: 12,
+        validFrom: OLD_START,
+        validUntil: `${localDay(7, OLD_START)}T23:59:59`,
+        triggers: [6],
+      },
+    ]);
   });
 
   test("keeps the modal open and shows the error when the save fails", async ({
