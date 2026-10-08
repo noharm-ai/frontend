@@ -1618,6 +1618,7 @@
         "expired": "Vencida em {{date}}",
         "superseded": "Substituída por nova avaliação em {{date}}",
         "closed": "Encerrada em {{date}}",
+        "retroactive": "Registro retroativo, válida até {{date}}",
         "posology": "Posologia avaliada: {{posology}}",
         "from": "Vale desde {{date}}",
         "invalidated": "Não vale mais desde {{date}}: {{reasons}}"
@@ -1738,6 +1739,8 @@
       "endBeforeStart": "A validade deve terminar depois do início",
       "endPast": "Esta data já passou: a conformidade é registrada já vencida.",
       "endPastPending": "Esta data já passou: a conformidade é registrada já vencida e, como volta para pendente quando vencer, o paciente continua pendente.",
+      "endHistory": "Termina antes da avaliação atual (desde {{date}}): fica só no histórico e a atual continua valendo.",
+      "historyOnly": "só no histórico",
       "since": "desde {{date}}",
       "invalidated": "Esta avaliação não vale mais e mantém o paciente pendente:",
       "invalidatedExpired": "A validade terminou em {{date}}",

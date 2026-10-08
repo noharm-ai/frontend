@@ -4,6 +4,7 @@ import type { TFunction } from "react-i18next";
 import { formatDate } from "utils/date";
 
 import {
+  AntimicrobialEvaluationClosingEnum,
   AntimicrobialEvaluationStatusEnum,
   InfectionControlPendingTypeEnum,
 } from "models/InfectionControlEnum";
@@ -128,7 +129,18 @@ export function isEvaluationExpired(
 }
 
 // how an evaluation stopped being in force, or that it still is
-export type EvaluationOutcome = "valid" | "expired" | "superseded" | "closed";
+// (retroactive: recorded for a period before the one in force, history only)
+export type EvaluationOutcome =
+  "valid" | "expired" | "superseded" | "closed" | "retroactive";
+
+/**
+ * Whether an evaluation over before the one in force starts: it is recorded
+ * as history and leaves that one in force (backend save_review)
+ */
+export const endsBeforeInForce = (
+  validUntil: string,
+  inForce: IAntimicrobialEvaluation,
+) => dayjs(validUntil).isBefore(inForce.validFrom);
 
 /**
  * When an evaluation was in force: from its start (the review that recorded
@@ -147,6 +159,10 @@ export function getEvaluationPeriod(
   let outcome: EvaluationOutcome;
   if (evaluation.status === AntimicrobialEvaluationStatusEnum.SUPERSEDED) {
     outcome = "superseded";
+  } else if (
+    evaluation.closingType === AntimicrobialEvaluationClosingEnum.RETROACTIVE
+  ) {
+    outcome = "retroactive";
   } else if (evaluation.status === AntimicrobialEvaluationStatusEnum.CLOSED) {
     outcome = "closed";
   } else {

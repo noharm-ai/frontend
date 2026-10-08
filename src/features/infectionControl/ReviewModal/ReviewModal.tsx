@@ -25,7 +25,11 @@ import {
 } from "../InfectionControlSlice";
 import { CourseGantt } from "../CourseGantt/CourseGantt";
 import { EvaluationTag } from "../EvaluationTag/EvaluationTag";
-import { courseKey, getInvalidatedEvaluations } from "../followUp";
+import {
+  courseKey,
+  endsBeforeInForce,
+  getInvalidatedEvaluations,
+} from "../followUp";
 import { formatRegimen } from "../timeline";
 import { DrugEvaluation, ReviewBody } from "./ReviewModal.style";
 
@@ -148,6 +152,23 @@ const endsBeforeStart = (evaluation: IDrugEvaluationFields, until: Dayjs) =>
 
 // a validity already over: the evaluation is recorded expired
 const isOver = (day: Dayjs) => day.endOf("day").isBefore(dayjs());
+
+/**
+ * Whether the evaluation is over before the one in force starts: it is
+ * recorded as history and leaves that one in force
+ */
+const isHistoryOnly = (evaluation: IDrugEvaluationFields) => {
+  const validUntil = getValidUntil(evaluation);
+
+  return (
+    !!evaluation.current &&
+    !!validUntil &&
+    endsBeforeInForce(
+      validUntil.endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
+      evaluation.current,
+    )
+  );
+};
 
 // whether the current evaluation watches a trigger; a new one watches all
 const watches = (
@@ -470,6 +491,7 @@ export function ReviewModal({
         t("infectionControl.evaluation.until", {
           date: formatDate(validUntil),
         }),
+      isHistoryOnly(evaluation) && t("infectionControl.review.historyOnly"),
     ]
       .filter(Boolean)
       .join(" · ");
@@ -848,6 +870,17 @@ export function ReviewModal({
                     {fieldErrors.endDate || fieldErrors.end ? (
                       <div className="drug-field-error">
                         {(fieldErrors.endDate || fieldErrors.end) as string}
+                      </div>
+                    ) : isHistoryOnly(evaluation) ? (
+                      // over before the evaluation in force: it neither
+                      // replaces it nor settles its reasons
+                      <div
+                        className="drug-field-info"
+                        data-testid="review-end-history"
+                      >
+                        {t("infectionControl.review.endHistory", {
+                          date: formatDate(evaluation.current!.validFrom),
+                        })}
                       </div>
                     ) : (
                       validUntil &&

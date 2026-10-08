@@ -770,6 +770,127 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     ]);
   });
 
+  test("keeps the conformity in force when recording one over before it", async ({
+    page,
+    mockApi,
+  }) => {
+    const vancomycinOnly = (history: unknown[]) =>
+      followUp({
+        pendings: [],
+        courses: [
+          {
+            idDrug: 12,
+            start: VANCOMYCIN_START,
+            ongoing: true,
+            evaluation: vancomycinEvaluation,
+            history,
+          },
+        ],
+      });
+    const PAST_END = localDay(-3);
+    // as the backend saves it: straight to the history, closed as retroactive
+    const retroactive = {
+      ...vancomycinEvaluation,
+      id: "502",
+      idReview: "42",
+      conforming: false,
+      validFrom: VANCOMYCIN_START,
+      validUntil: `${PAST_END}T23:59:59`,
+      status: 3,
+      closedAt: hoursFromNow(0),
+      closingType: 4,
+      createdAt: hoursFromNow(0),
+    };
+    mockApi.override(FOLLOW_UP, {
+      json: vancomycinOnly([vancomycinEvaluation]),
+    });
+    let sent: any = null;
+    mockApi.override(REVIEW, async (route) => {
+      sent = JSON.parse(route.request().postData()!);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(
+          vancomycinOnly([retroactive, vancomycinEvaluation]),
+        ),
+      });
+    });
+
+    await page.goto(PAGE_URL);
+    await page
+      .getByRole("button", { name: "Registrar revisão" })
+      .click({ timeout: 15000 });
+
+    const dialog = page.getByRole("dialog");
+    const drug = dialog.getByTestId("review-drug");
+    const validity = drug.getByRole("radiogroup", {
+      name: "Conformidade válida até",
+    });
+    const current = drug
+      .getByTestId("review-timeline")
+      .getByTestId("course-evaluation");
+    const historyNotice = drug.getByTestId("review-end-history");
+
+    await drug.getByRole("checkbox", { name: EVALUATE_NOW }).check();
+    await drug
+      .locator(".drug-fields")
+      .getByText("Não conforme", { exact: true })
+      .click();
+    // overlapping the current one, the new one replaces it
+    await expect(current).toHaveClass(/past/);
+    await expect(historyNotice).toHaveCount(0);
+
+    // from the course start up to a day before the current one started
+    await validity.getByText("Outra data", { exact: true }).click();
+    const until = drug.getByRole("textbox", {
+      name: "Conformidade válida até",
+    });
+    await until.fill(shownDate(PAST_END));
+    await until.press("Enter");
+
+    const summary = dialog.getByTestId("review-summary");
+    await expect(summary).toContainText(
+      `Não conforme · desde ${shownDate(VANCOMYCIN_START)} · até ${shownDate(PAST_END)} · só no histórico`,
+    );
+
+    // back on the drug: the current one stays in force
+    await summary
+      .getByRole("button", { name: "VANCOMICINA 500 mg SOL INJ" })
+      .click();
+    await expect(historyNotice).toContainText(
+      `Termina antes da avaliação atual (desde ${shownDate(vancomycinEvaluation.validFrom)})`,
+    );
+    await expect(current).not.toHaveClass(/past/);
+    await expect(drug.getByTestId("review-end-past")).toHaveCount(0);
+
+    await dialog.getByRole("button", { name: "Próximo" }).click();
+    await dialog.getByRole("button", { name: "Salvar" }).click();
+    await expect(
+      page.getByText("Revisão registrada com sucesso!"),
+    ).toBeVisible();
+    expect(sent.evaluations).toMatchObject([
+      {
+        idDrug: 12,
+        conforming: false,
+        validFrom: VANCOMYCIN_START,
+        validUntil: `${PAST_END}T23:59:59`,
+      },
+    ]);
+
+    // the timeline keeps the current one and shows the retroactive record
+    const marks = page
+      .getByTestId("course-row")
+      .filter({ hasText: "VANCOMICINA" })
+      .getByTestId("course-evaluation");
+    await expect(marks).toHaveCount(2);
+    await expect(marks.nth(1)).not.toHaveClass(/past/);
+    await expect(marks.nth(0)).toHaveClass(/past/);
+    await marks.nth(0).hover();
+    await expect(page.getByRole("tooltip")).toContainText(
+      `Registro retroativo, válida até ${shownDate(PAST_END)}`,
+    );
+  });
+
   test("keeps the modal open and shows the error when the save fails", async ({
     page,
     mockApi,

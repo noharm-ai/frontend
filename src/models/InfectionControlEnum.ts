@@ -38,3 +38,14 @@ export class AntimicrobialEvaluationStatusEnum {
   static SUPERSEDED = 2;
   static CLOSED = 3;
 }
+
+// why an antimicrobial evaluation stopped being active
+// (ci_avaliacao_atm.tp_encerramento)
+export class AntimicrobialEvaluationClosingEnum {
+  static SUPERSEDED = 1;
+  static COURSE_ENDED = 2;
+  static DISCHARGE = 3;
+  // recorded for a period over before the evaluation in force started: it
+  // went straight to the history
+  static RETROACTIVE = 4;
+}

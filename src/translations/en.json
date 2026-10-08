@@ -1608,6 +1608,7 @@
         "expired": "Expired on {{date}}",
         "superseded": "Replaced by a new evaluation on {{date}}",
         "closed": "Closed on {{date}}",
+        "retroactive": "Retroactive record, valid until {{date}}",
         "posology": "Evaluated posology: {{posology}}",
         "from": "Applies since {{date}}",
         "invalidated": "No longer holds since {{date}}: {{reasons}}"
@@ -1728,6 +1729,8 @@
       "endBeforeStart": "The validity must end after the start",
       "endPast": "This date has passed: the conformity is recorded already expired.",
       "endPastPending": "This date has passed: the conformity is recorded already expired and, as it goes back to pending when it expires, the patient stays pending.",
+      "endHistory": "Ends before the current evaluation (since {{date}}): it only goes to the history and the current one stays in force.",
+      "historyOnly": "history only",
       "since": "since {{date}}",
       "invalidated": "This evaluation no longer holds and keeps the patient pending:",
       "invalidatedExpired": "Its validity ended on {{date}}",

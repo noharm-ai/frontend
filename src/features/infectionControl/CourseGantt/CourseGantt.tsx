@@ -18,6 +18,7 @@ import { COURSE_COLORS } from "../courseColors";
 import {
   courseKey,
   describeInvalidation,
+  endsBeforeInForce,
   getEvaluationPeriod,
   invalidatedSince,
 } from "../followUp";
@@ -232,29 +233,38 @@ function CourseBars({
 
       {/* latest first, each on its own line under the bar: the one being
           filled on top, then the one it replaces and so on */}
-      {evaluations.map((evaluation, index) => (
-        <EvaluationMark
-          key={evaluation.id}
-          lane={draft ? index + 1 : index}
-          // the evaluation being filled replaces the one in force from now on
-          evaluation={
-            draft &&
-            evaluation.status === AntimicrobialEvaluationStatusEnum.ACTIVE
-              ? {
-                  ...evaluation,
-                  status: AntimicrobialEvaluationStatusEnum.SUPERSEDED,
-                  closedAt: now.format("YYYY-MM-DDTHH:mm:ss"),
-                }
-              : evaluation
-          }
-          course={course}
-          invalidatedBy={
-            draft ? undefined : invalidatedEvaluations?.[evaluation.id]
-          }
-          range={range}
-          now={now}
-        />
-      ))}
+      {evaluations.map((evaluation, index) => {
+        // the evaluation being filled replaces the one in force from now on,
+        // unless it is over before that one starts (then it is history)
+        const replaced =
+          !!draft &&
+          evaluation.status === AntimicrobialEvaluationStatusEnum.ACTIVE &&
+          !(
+            draft.validUntil && endsBeforeInForce(draft.validUntil, evaluation)
+          );
+
+        return (
+          <EvaluationMark
+            key={evaluation.id}
+            lane={draft ? index + 1 : index}
+            evaluation={
+              replaced
+                ? {
+                    ...evaluation,
+                    status: AntimicrobialEvaluationStatusEnum.SUPERSEDED,
+                    closedAt: now.format("YYYY-MM-DDTHH:mm:ss"),
+                  }
+                : evaluation
+            }
+            course={course}
+            invalidatedBy={
+              replaced ? undefined : invalidatedEvaluations?.[evaluation.id]
+            }
+            range={range}
+            now={now}
+          />
+        );
+      })}
 
       {draft && (
         <DraftEvaluationMark draft={draft} lane={0} range={range} now={now} />
@@ -406,7 +416,9 @@ function EvaluationMark({
                 })
               : t(`infectionControl.timeline.evaluation.${period.outcome}`, {
                   date: formatDate(
-                    period.outcome === "valid" || period.outcome === "expired"
+                    period.outcome === "valid" ||
+                      period.outcome === "expired" ||
+                      period.outcome === "retroactive"
                       ? evaluation.validUntil
                       : (evaluation.closedAt ?? period.end),
                   ),
