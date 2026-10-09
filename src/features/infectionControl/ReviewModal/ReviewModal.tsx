@@ -25,6 +25,7 @@ import {
 } from "../InfectionControlSlice";
 import { CourseGantt } from "../CourseGantt/CourseGantt";
 import { EvaluationTag } from "../EvaluationTag/EvaluationTag";
+import { InvalidationReason } from "../InvalidationReason/InvalidationReason";
 import {
   courseKey,
   endsBeforeInForce,
@@ -175,74 +176,6 @@ const watches = (
   evaluation: IAntimicrobialEvaluation | null,
   trigger: number,
 ) => !evaluation || (evaluation.triggers ?? []).includes(trigger);
-
-interface InvalidationReasonProps {
-  pending: IFollowUpPending;
-  evaluation: IAntimicrobialEvaluation;
-  // the course being evaluated
-  course?: ICourse;
-}
-
-/**
- * Why the evaluation on record no longer holds: when its validity ended, or
- * that the posology changed, from what to what
- */
-function InvalidationReason({
-  pending,
-  evaluation,
-  course,
-}: InvalidationReasonProps) {
-  const { t } = useTranslation();
-
-  if (pending.type === InfectionControlPendingTypeEnum.EXPIRED) {
-    return (
-      <li>
-        {t("infectionControl.review.invalidatedExpired", {
-          date: formatDate(
-            pending.details?.validUntil ?? evaluation.validUntil,
-          ),
-        })}
-      </li>
-    );
-  }
-
-  const evaluated = formatRegimen(
-    pending.details?.evaluated ?? evaluation.posology,
-  );
-  // the reason keeps the posology of when it opened, which a later change
-  // makes stale: what is prescribed now comes from the course
-  const regimen = course?.regimens.at(-1);
-  const current = regimen
-    ? formatRegimen(regimen)
-    : pending.details?.current
-      ? formatRegimen(pending.details.current)
-      : "";
-
-  return (
-    <li>
-      {t("infectionControl.review.invalidatedPosology")}
-      {evaluated && (
-        <div>
-          {t("infectionControl.review.posologyEvaluated", {
-            posology: evaluated,
-          })}
-        </div>
-      )}
-      {current && (
-        <div>
-          {regimen
-            ? t("infectionControl.review.posologyCurrentSince", {
-                posology: current,
-                date: formatDateTime(regimen.start),
-              })
-            : t("infectionControl.review.posologyCurrent", {
-                posology: current,
-              })}
-        </div>
-      )}
-    </li>
-  );
-}
 
 /**
  * The infectologist's review of the patient, one step per running

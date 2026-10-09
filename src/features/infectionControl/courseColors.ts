@@ -22,9 +22,10 @@ export const DISCHARGE_COLOR = "#2e3c5a";
 export const EVALUATION_COLORS = {
   conforming: "#389e0d",
   nonConforming: "#cf1322",
-  // on record, but an open reason made it no longer hold: the orange of a
-  // pending follow-up (FollowUpStatus), lighter so it is not taken for red,
-  // with a dark symbol on it
+  // on record, but an open reason made it no longer hold, from then on: the
+  // orange of a pending follow-up (FollowUpStatus), lighter so it is not taken
+  // for red
   invalidated: "#ffa940",
+  // the symbol on the mark of where it turned pending
   invalidatedSymbol: "#873800",
 };

@@ -1614,7 +1614,8 @@
         "retroactive": "Retroactive record, valid until {{date}}",
         "posology": "Evaluated posology: {{posology}}",
         "from": "Applies since {{date}}",
-        "invalidated": "No longer holds since {{date}}: {{reasons}}"
+        "invalidated": "No longer holds since {{date}}: {{reasons}}",
+        "pendingSince": "Pending since {{date}}"
       }
     },
     "status": {

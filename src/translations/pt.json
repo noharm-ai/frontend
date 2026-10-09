@@ -1624,7 +1624,8 @@
         "retroactive": "Registro retroativo, válida até {{date}}",
         "posology": "Posologia avaliada: {{posology}}",
         "from": "Vale desde {{date}}",
-        "invalidated": "Não vale mais desde {{date}}: {{reasons}}"
+        "invalidated": "Não vale mais desde {{date}}: {{reasons}}",
+        "pendingSince": "Pendente desde {{date}}"
       }
     },
     "status": {

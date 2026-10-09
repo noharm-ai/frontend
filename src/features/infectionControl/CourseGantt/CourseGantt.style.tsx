@@ -314,6 +314,7 @@ const glyph = (path: string, color: string) =>
   )}")`;
 const CHECK = "M2.5 6.3 5 8.7 9.5 3.6";
 const CROSS = "M3.3 3.3 8.7 8.7M8.7 3.3 3.3 8.7";
+const EXCLAMATION = "M6 2.8v4.2M6 9.2v.1";
 
 /**
  * The marker of a conformity record (its ::before), with a band of the same
@@ -355,18 +356,14 @@ const evaluationMarker = (left: string) => css`
     border-radius: 3px;
   }
 
-  /* no longer holds: in the pending color, keeping the symbol of its verdict */
-  &.invalidated,
-  &.invalidated::before {
-    background-color: ${EVALUATION_COLORS.invalidated};
-  }
-
-  &.invalidated.conforming::before {
-    background-image: ${glyph(CHECK, EVALUATION_COLORS.invalidatedSymbol)};
-  }
-
-  &.invalidated.non-conforming::before {
-    background-image: ${glyph(CROSS, EVALUATION_COLORS.invalidatedSymbol)};
+  /* no longer holds: its verdict up to the first open reason (--split), the
+     pending color from then on */
+  &.invalidated {
+    background-image: linear-gradient(
+      to right,
+      transparent var(--split, 50%),
+      ${EVALUATION_COLORS.invalidated} var(--split, 50%)
+    );
   }
 `;
 
@@ -433,6 +430,28 @@ export const Evaluation = styled.span`
   }
 
   &:focus-visible::before {
+    outline: 2px solid #2e3c5a;
+  }
+`;
+
+// where a conformity record turned pending: a mark with an exclamation on the
+// band, at the first open reason
+export const EvaluationPending = styled.span`
+  background: ${EVALUATION_COLORS.invalidated}
+    ${glyph(EXCLAMATION, EVALUATION_COLORS.invalidatedSymbol)} center / 11px
+    no-repeat;
+  border: 2px solid #fff;
+  border-radius: 50%;
+  box-sizing: border-box;
+  cursor: help;
+  height: 15px;
+  position: absolute;
+  top: calc(${BAR_CENTER} + 8px + var(--lane, 0) * ${EVALUATION_LANE}px);
+  transform: translateX(-50%);
+  width: 15px;
+  z-index: 3;
+
+  &:focus-visible {
     outline: 2px solid #2e3c5a;
   }
 `;

@@ -22,6 +22,7 @@ import {
   getEvaluationPeriod,
   invalidatedSince,
 } from "../followUp";
+import { InvalidationReason } from "../InvalidationReason/InvalidationReason";
 import { AntimicrobialEvaluationStatusEnum } from "models/InfectionControlEnum";
 import {
   formatRegimen,
@@ -35,6 +36,7 @@ import {
   Bar,
   DAY_WIDTH,
   Evaluation,
+  EvaluationPending,
   Gantt,
   GanttGrid,
   GanttScroll,
@@ -104,8 +106,9 @@ const evaluationLaneStyle = (lane: number) =>
 const LANE_GAP_MS = 12 * 60 * 60 * 1000;
 
 /**
- * Where an evaluation is drawn: from its start up to its end, or up to the
- * first open reason that made it no longer hold (`since`)
+ * Where an evaluation is drawn: from its start up to its end. One that no
+ * longer holds keeps its verdict up to the first open reason (`since`) and is
+ * pending from then on.
  */
 const getMarkSpan = (
   evaluation: IAntimicrobialEvaluation,
@@ -122,8 +125,16 @@ const getMarkSpan = (
     period,
     since,
     start: period.start,
-    end: since && dayjs(since).isBefore(period.end) ? since : period.end,
+    end: period.end,
   };
+};
+
+// how far along the band the verdict holds, before the pending part
+const verdictSplit = (start: string, since: string, end: string) => {
+  const total = dayjs(end).diff(start);
+  const held = Math.min(dayjs(since).diff(start), total);
+
+  return total > 0 ? `${(Math.max(0, held) / total) * 100}%` : "0%";
 };
 
 interface IEvaluationMarkLayout {
@@ -439,7 +450,8 @@ interface EvaluationMarkProps {
  * A conformity record on its course: a dot on the day of the review and a band
  * under the bar for as long as the evaluation was (or is) in force, green when
  * conforming and red when not. One that no longer holds (expired, posology
- * changed) stops at the first open reason, in the pending color.
+ * changed) keeps that color up to the first open reason and takes the pending
+ * color from then on, with a marker there telling what made it pending.
  */
 function EvaluationMark({
   evaluation,
@@ -468,69 +480,117 @@ function EvaluationMark({
   const posology = formatRegimen(evaluation.posology);
 
   return (
-    <Tooltip
-      title={
-        <>
-          <strong>{verdict}</strong>
-          <div>
-            {t("infectionControl.timeline.evaluation.by", {
-              date: formatDate(evaluation.createdAt, "DD/MM HH:mm"),
-              user: evaluation.createdBy ?? "-",
-            })}
-          </div>
-          {backdated && (
+    <>
+      <Tooltip
+        title={
+          <>
+            <strong>{verdict}</strong>
             <div>
-              {t("infectionControl.timeline.evaluation.from", {
-                date: formatDate(evaluation.validFrom, "DD/MM HH:mm"),
+              {t("infectionControl.timeline.evaluation.by", {
+                date: formatDate(evaluation.createdAt, "DD/MM HH:mm"),
+                user: evaluation.createdBy ?? "-",
               })}
             </div>
-          )}
-          <div>
-            {since
-              ? t("infectionControl.timeline.evaluation.invalidated", {
-                  date: formatDate(since, "DD/MM HH:mm"),
-                  reasons: describeInvalidation(invalidatedBy!, evaluation, t),
-                })
-              : t(`infectionControl.timeline.evaluation.${period.outcome}`, {
-                  date: formatDate(
-                    period.outcome === "valid" ||
-                      period.outcome === "expired" ||
-                      period.outcome === "retroactive"
-                      ? evaluation.validUntil
-                      : (evaluation.closedAt ?? period.end),
-                  ),
+            {backdated && (
+              <div>
+                {t("infectionControl.timeline.evaluation.from", {
+                  date: formatDate(evaluation.validFrom, "DD/MM HH:mm"),
                 })}
-          </div>
-          {posology && (
+              </div>
+            )}
             <div>
-              {t("infectionControl.timeline.evaluation.posology", {
-                posology,
-              })}
+              {since
+                ? t("infectionControl.timeline.evaluation.invalidated", {
+                    date: formatDate(since, "DD/MM HH:mm"),
+                    reasons: describeInvalidation(
+                      invalidatedBy!,
+                      evaluation,
+                      t,
+                    ),
+                  })
+                : t(`infectionControl.timeline.evaluation.${period.outcome}`, {
+                    date: formatDate(
+                      period.outcome === "valid" ||
+                        period.outcome === "expired" ||
+                        period.outcome === "retroactive"
+                        ? evaluation.validUntil
+                        : (evaluation.closedAt ?? period.end),
+                    ),
+                  })}
             </div>
-          )}
-          {evaluation.notes && <em>{evaluation.notes}</em>}
-        </>
-      }
-    >
-      <Evaluation
-        className={[
-          evaluation.conforming ? "conforming" : "non-conforming",
-          // one that no longer holds takes the pending color instead
-          period.outcome === "valid" || since ? "" : "past",
-          since ? "invalidated" : "",
-        ].join(" ")}
-        data-testid="course-evaluation"
-        tabIndex={0}
-        aria-label={t("infectionControl.timeline.evaluation.label", {
-          verdict,
-          date: formatDate(evaluation.createdAt),
-        })}
-        style={{
-          ...span(period.start, end, range),
-          ...evaluationLaneStyle(lane),
-        }}
-      />
-    </Tooltip>
+            {posology && (
+              <div>
+                {t("infectionControl.timeline.evaluation.posology", {
+                  posology,
+                })}
+              </div>
+            )}
+            {evaluation.notes && <em>{evaluation.notes}</em>}
+          </>
+        }
+      >
+        <Evaluation
+          className={[
+            evaluation.conforming ? "conforming" : "non-conforming",
+            // one that no longer holds turns to the pending color from then on
+            period.outcome === "valid" || since ? "" : "past",
+            since ? "invalidated" : "",
+          ].join(" ")}
+          data-testid="course-evaluation"
+          tabIndex={0}
+          aria-label={t("infectionControl.timeline.evaluation.label", {
+            verdict,
+            date: formatDate(evaluation.createdAt),
+          })}
+          style={{
+            ...span(period.start, end, range),
+            ...evaluationLaneStyle(lane),
+            ...(since
+              ? ({
+                  "--split": verdictSplit(period.start, since, end),
+                } as React.CSSProperties)
+              : {}),
+          }}
+        />
+      </Tooltip>
+      {since && (
+        <Tooltip
+          title={
+            <>
+              <strong>
+                {t("infectionControl.timeline.evaluation.pendingSince", {
+                  date: formatDate(since, "DD/MM HH:mm"),
+                })}
+              </strong>
+              <div>{t("infectionControl.review.invalidated")}</div>
+              {/* the tooltip renders outside the timeline, out of its styles */}
+              <ul style={{ margin: "2px 0 0", paddingLeft: 18 }}>
+                {invalidatedBy!.map((pending) => (
+                  <InvalidationReason
+                    key={pending.id}
+                    pending={pending}
+                    evaluation={evaluation}
+                    course={course}
+                  />
+                ))}
+              </ul>
+            </>
+          }
+        >
+          <EvaluationPending
+            data-testid="evaluation-pending"
+            tabIndex={0}
+            aria-label={t("infectionControl.timeline.evaluation.pendingSince", {
+              date: formatDate(since, "DD/MM HH:mm"),
+            })}
+            style={{
+              left: `${toPercent(since, range)}%`,
+              ...evaluationLaneStyle(lane),
+            }}
+          />
+        </Tooltip>
+      )}
+    </>
   );
 }
 

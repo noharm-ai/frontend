@@ -1043,20 +1043,39 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     );
     await page.keyboard.press("Escape");
 
-    // the conforming verdict no longer holds: the timeline band stops when
-    // the posology changed, in the pending color
+    // the conforming verdict no longer holds: the timeline band stays green
+    // up to when the posology changed, in the pending color from then on
     const mark = page
       .getByTestId("course-row")
       .filter({ hasText: "VANCOMICINA" })
       .getByTestId("course-evaluation");
     await expect(mark).toHaveClass(/invalidated/);
     await expect(mark).not.toHaveClass(/past/);
-    await expect(mark).toHaveCSS("background-color", "rgb(255, 169, 64)");
+    await expect(mark).toHaveCSS("background-color", "rgb(56, 158, 13)");
+    await expect(mark).toHaveCSS(
+      "background-image",
+      /linear-gradient\(to right, rgba\(0, 0, 0, 0\) \d+(\.\d+)?%, rgb\(255, 169, 64\)/,
+    );
     await mark.hover();
     await expect(page.getByRole("tooltip")).toContainText(
       "Não vale mais desde",
     );
     await expect(page.getByRole("tooltip")).toContainText("posologia alterada");
+
+    // a mark where it turned pending tells what changed
+    const pendingMark = page
+      .getByTestId("course-row")
+      .filter({ hasText: "VANCOMICINA" })
+      .getByTestId("evaluation-pending");
+    await expect(pendingMark).toHaveCount(1);
+    await pendingMark.hover();
+    const pendingTooltip = page
+      .getByRole("tooltip")
+      .filter({ hasText: "Pendente desde" });
+    await expect(pendingTooltip).toContainText("A posologia mudou");
+    await expect(pendingTooltip).toContainText("Avaliada:");
+    await expect(pendingTooltip).toContainText("Prescrita agora:");
+    await page.mouse.move(0, 0);
 
     await page.getByRole("button", { name: "Registrar revisão" }).click();
 
@@ -1153,6 +1172,18 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     });
 
     await page.goto(PAGE_URL);
+
+    // the mark where it turned pending, at the end of its validity
+    const pendingMark = page
+      .getByTestId("course-row")
+      .filter({ hasText: "VANCOMICINA" })
+      .getByTestId("evaluation-pending");
+    await pendingMark.hover({ timeout: 15000 });
+    await expect(
+      page.getByRole("tooltip").filter({ hasText: "Pendente desde" }),
+    ).toContainText(`A validade terminou em ${shownDate(expired.validUntil)}`);
+    await page.mouse.move(0, 0);
+
     await page
       .getByRole("button", { name: "Registrar revisão" })
       .click({ timeout: 15000 });
