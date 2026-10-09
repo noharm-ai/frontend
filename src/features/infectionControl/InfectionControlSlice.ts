@@ -194,9 +194,13 @@ interface IInfectionControlSlice {
   data: IAntimicrobialTimeline | null;
   // i18n code of a failed load (errors.invalidRecord: unknown admission)
   errorCode: string | null;
+  // the latest load: a response to an older one (another admission, or a
+  // retry overtaken) is dropped
+  requestId: string | null;
   followUp: {
     status: Status;
     data: IFollowUp | null;
+    requestId: string | null;
   };
   review: {
     open: boolean;
@@ -212,9 +216,11 @@ const initialState: IInfectionControlSlice = {
   status: "idle",
   data: null,
   errorCode: null,
+  requestId: null,
   followUp: {
     status: "idle",
     data: null,
+    requestId: null,
   },
   review: {
     open: false,
@@ -297,6 +303,11 @@ export const followAdmission = createAsyncThunk(
   },
 );
 
+// a review or a follow-up start saved for the admission on screen, not one the
+// page has left (reset) while it was saving
+const isShownAdmission = (state: IInfectionControlSlice, followUp: IFollowUp) =>
+  state.followUp.data?.admissionNumber === followUp.admissionNumber;
+
 const infectionControlSlice = createSlice({
   name: "infectionControl",
   initialState,
@@ -310,14 +321,17 @@ const infectionControlSlice = createSlice({
   },
   extraReducers(builder) {
     builder
-      .addCase(fetchFollowUp.pending, (state) => {
+      .addCase(fetchFollowUp.pending, (state, action) => {
         state.followUp.status = "loading";
+        state.followUp.requestId = action.meta.requestId;
       })
       .addCase(fetchFollowUp.fulfilled, (state, action) => {
+        if (state.followUp.requestId !== action.meta.requestId) return;
         state.followUp.status = "succeeded";
         state.followUp.data = action.payload;
       })
-      .addCase(fetchFollowUp.rejected, (state) => {
+      .addCase(fetchFollowUp.rejected, (state, action) => {
+        if (state.followUp.requestId !== action.meta.requestId) return;
         state.followUp.status = "failed";
         state.followUp.data = null;
       })
@@ -326,6 +340,7 @@ const infectionControlSlice = createSlice({
       })
       .addCase(saveReview.fulfilled, (state, action) => {
         state.review.status = "succeeded";
+        if (!isShownAdmission(state, action.payload)) return;
         state.review.open = false;
         state.followUp.status = "succeeded";
         state.followUp.data = action.payload;
@@ -338,21 +353,25 @@ const infectionControlSlice = createSlice({
       })
       .addCase(followAdmission.fulfilled, (state, action) => {
         state.follow.status = "succeeded";
+        if (!isShownAdmission(state, action.payload)) return;
         state.followUp.status = "succeeded";
         state.followUp.data = action.payload;
       })
       .addCase(followAdmission.rejected, (state) => {
         state.follow.status = "failed";
       })
-      .addCase(fetchAntimicrobialTimeline.pending, (state) => {
+      .addCase(fetchAntimicrobialTimeline.pending, (state, action) => {
         state.status = "loading";
         state.errorCode = null;
+        state.requestId = action.meta.requestId;
       })
       .addCase(fetchAntimicrobialTimeline.fulfilled, (state, action) => {
+        if (state.requestId !== action.meta.requestId) return;
         state.status = "succeeded";
         state.data = action.payload;
       })
       .addCase(fetchAntimicrobialTimeline.rejected, (state, action) => {
+        if (state.requestId !== action.meta.requestId) return;
         state.status = "failed";
         state.data = null;
         state.errorCode =

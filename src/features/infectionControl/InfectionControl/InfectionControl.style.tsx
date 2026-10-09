@@ -35,3 +35,16 @@ export const StateBox = styled.div`
   padding: 40px 0;
   text-align: center;
 `;
+
+// in place of the follow-up card when it failed to load
+export const FollowUpError = styled.div`
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  padding: 24px 16px;
+`;

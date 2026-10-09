@@ -33,7 +33,13 @@ import {
   getInvalidatedEvaluations,
 } from "../followUp";
 import { sortCourses } from "../timeline";
-import { Header, Section, StateBox, TopRow } from "./InfectionControl.style";
+import {
+  FollowUpError,
+  Header,
+  Section,
+  StateBox,
+  TopRow,
+} from "./InfectionControl.style";
 
 /**
  * /controle-infeccao/:admissionNumber: the infection control view of an
@@ -48,8 +54,8 @@ export function InfectionControl() {
   const { status, data, errorCode } = useAppSelector(
     (state) => state.infectionControl,
   );
-  const followUp = useAppSelector(
-    (state) => state.infectionControl.followUp.data,
+  const { data: followUp, status: followUpStatus } = useAppSelector(
+    (state) => state.infectionControl.followUp,
   );
   const followStatus = useAppSelector(
     (state) => state.infectionControl.follow.status,
@@ -57,10 +63,14 @@ export function InfectionControl() {
 
   const isValid = /^\d+$/.test(admissionNumber);
 
+  const loadFollowUp = () => {
+    dispatch(fetchFollowUp({ admissionNumber }));
+  };
+
   const load = () => {
     if (isValid) {
       dispatch(fetchAntimicrobialTimeline({ admissionNumber }));
-      dispatch(fetchFollowUp({ admissionNumber }));
+      loadFollowUp();
     }
   };
 
@@ -210,6 +220,20 @@ export function InfectionControl() {
               drugNames={drugNames}
               now={now}
             />
+          </Col>
+        )}
+        {followUpStatus === "failed" && (
+          // without it the page would look like the schema has no follow-up
+          <Col xs={24} lg={8}>
+            <FollowUpError data-testid="follow-up-error">
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={t("infectionControl.followUp.loadError")}
+              />
+              <Button icon={<ReloadOutlined />} onClick={loadFollowUp}>
+                {t("infectionControl.retry")}
+              </Button>
+            </FollowUpError>
           </Col>
         )}
       </TopRow>

@@ -36,6 +36,9 @@ interface IInfectionControlListSlice {
   // InfectionControlStatusEnum shown
   filterStatus: number;
   page: number;
+  // the latest load: switching filters or pages quickly drops the responses
+  // to the earlier ones
+  requestId: string | null;
 }
 
 const initialState: IInfectionControlListSlice = {
@@ -44,6 +47,7 @@ const initialState: IInfectionControlListSlice = {
   count: 0,
   filterStatus: InfectionControlStatusEnum.PENDING,
   page: 1,
+  requestId: null,
 };
 
 export const fetchFollowedAdmissions = createAsyncThunk(
@@ -92,15 +96,18 @@ const infectionControlListSlice = createSlice({
   },
   extraReducers(builder) {
     builder
-      .addCase(fetchFollowedAdmissions.pending, (state) => {
+      .addCase(fetchFollowedAdmissions.pending, (state, action) => {
         state.status = "loading";
+        state.requestId = action.meta.requestId;
       })
       .addCase(fetchFollowedAdmissions.fulfilled, (state, action) => {
+        if (state.requestId !== action.meta.requestId) return;
         state.status = "succeeded";
         state.list = action.payload.admissions;
         state.count = action.payload.count;
       })
-      .addCase(fetchFollowedAdmissions.rejected, (state) => {
+      .addCase(fetchFollowedAdmissions.rejected, (state, action) => {
+        if (state.requestId !== action.meta.requestId) return;
         state.status = "failed";
         state.list = [];
         state.count = 0;

@@ -385,6 +385,30 @@ test("leaves the follow-up out when the schema does not have it", async ({
   await expect(page.getByTestId("course-evaluation")).toHaveCount(0);
 });
 
+test("says so when the follow-up fails to load and can retry", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override(FOLLOW_UP, { status: 500, json: { status: "error" } });
+
+  await page.goto(PAGE_URL);
+
+  // not taken for a schema without the follow-up: the timeline still shows,
+  // next to the error
+  const error = page.getByTestId("follow-up-error");
+  await expect(error).toContainText(
+    "Não foi possível carregar o acompanhamento do controle de infecção.",
+    { timeout: 15000 },
+  );
+  await expect(page.getByTestId("course-row")).toHaveCount(2);
+
+  mockApi.override(FOLLOW_UP, { json: followUp() });
+  await error.getByRole("button", { name: "Tentar novamente" }).click();
+
+  await expect(page.getByTestId("follow-up-status")).toHaveText("Pendente");
+  await expect(error).toHaveCount(0);
+});
+
 test("does not offer to review nor follow an admission not followed without permission", async ({
   page,
   mockApi,
@@ -1367,6 +1391,54 @@ test.describe("worklist", () => {
     await expect
       .poll(() => lists().at(-1))
       .toMatchObject({ status: [2], offset: 0 });
+  });
+
+  test("keeps the filter picked last when an earlier list answers late", async ({
+    page,
+    mockApi,
+  }) => {
+    // the pending list answers only after the revised one
+    let answerPending = () => {};
+    const pendingHeld = new Promise<void>((resolve) => {
+      answerPending = resolve;
+    });
+    mockApi.override(LIST, async (route) => {
+      const { status } = JSON.parse(route.request().postData()!);
+      if (status[0] === 1) {
+        await pendingHeld;
+        return route.fulfill({
+          json: {
+            status: "success",
+            data: { count: 1, admissions: [admission] },
+          },
+        });
+      }
+      return route.fulfill({
+        json: { status: "success", data: { count: 0, admissions: [] } },
+      });
+    });
+
+    await page.goto("/controle-infeccao");
+    await expect(
+      page.getByRole("heading", { name: "Controle de Infecção" }),
+    ).toBeVisible({ timeout: 15000 });
+
+    await page.getByText("Revisados", { exact: true }).click();
+    const empty = page.getByText("Nenhum paciente nesta situação.");
+    await expect(empty).toBeVisible();
+
+    const latePending = page.waitForResponse(
+      (response) =>
+        response.url().endsWith("/infection-control/admissions") &&
+        JSON.parse(response.request().postData()!).status[0] === 1,
+    );
+    answerPending();
+    await latePending;
+
+    await expect(empty).toBeVisible();
+    await expect(
+      page.getByRole("row", { name: new RegExp(`${ADMISSION}`) }),
+    ).toHaveCount(0);
   });
 });
 
