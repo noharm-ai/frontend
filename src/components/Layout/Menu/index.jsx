@@ -25,10 +25,11 @@ import {
   FormOutlined,
   LayoutOutlined,
   ReadOutlined,
-  SafetyCertificateOutlined,
 } from "@ant-design/icons";
 import { Badge, Menu as Navigator } from "antd";
 import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
+import CustomIcon from "components/Icon";
+import { IconBacteria } from "components/Icon/svgs/IconBacteria";
 
 import Feature from "models/Feature";
 import Permission from "models/Permission";
@@ -159,7 +160,7 @@ export default function Menu({ segments, collapsed }) {
       key: "/controle-infeccao",
       link: "/controle-infeccao",
       label: t("menu.infectionControl"),
-      icon: <SafetyCertificateOutlined />,
+      icon: <CustomIcon component={IconBacteria} />,
       id: "gtm-lnk-controle-infeccao",
       feature: Feature.INFECTION_CONTROL,
       permission: [Permission.READ_INFECTION_CONTROL],
