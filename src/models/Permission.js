@@ -84,5 +84,6 @@ export default class Permission {
 
   static WRITE_HELP_TEXT = "WRITE_HELP_TEXT";
 
+  static READ_INFECTION_CONTROL = "READ_INFECTION_CONTROL";
   static WRITE_INFECTION_CONTROL = "WRITE_INFECTION_CONTROL";
 }

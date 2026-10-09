@@ -162,7 +162,7 @@ export default function Menu({ segments, collapsed }) {
       icon: <SafetyCertificateOutlined />,
       id: "gtm-lnk-controle-infeccao",
       feature: Feature.INFECTION_CONTROL,
-      permission: [Permission.READ_PRESCRIPTION],
+      permission: [Permission.READ_INFECTION_CONTROL],
     },
     {
       key: "/relatorios",

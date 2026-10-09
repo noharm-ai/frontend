@@ -1,5 +1,5 @@
 import { test, expect } from "../support/mockApi";
-import { loginWithPermissions } from "../support/featureLogin";
+import { loginWithAuth, loginWithPermissions } from "../support/featureLogin";
 
 /**
  * Infection control follow-up (src/features/infectionControl).
@@ -12,7 +12,8 @@ import { loginWithPermissions } from "../support/featureLogin";
  * of a followed admission, and start following one that is not yet (POST
  * /infection-control/admission/:admissionNumber/follow).
  * /controle-infeccao lists the followed admissions
- * (POST /infection-control/admissions).
+ * (POST /infection-control/admissions); its menu entry needs
+ * READ_INFECTION_CONTROL, READ_PRESCRIPTION alone does not reach it.
  */
 
 const ADMISSION = 9300;
@@ -1366,5 +1367,41 @@ test.describe("worklist", () => {
     await expect
       .poll(() => lists().at(-1))
       .toMatchObject({ status: [2], offset: 0 });
+  });
+});
+
+test.describe("menu", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  const MENU_ITEM = "#gtm-lnk-controle-infeccao";
+
+  test("opens the worklist with READ_INFECTION_CONTROL", async ({
+    page,
+    mockApi,
+  }) => {
+    await loginWithAuth(page, mockApi, {
+      features: ["INFECTION_CONTROL"],
+      permissions: [...BASE_PERMISSIONS, "READ_INFECTION_CONTROL"],
+    });
+
+    await page.locator(MENU_ITEM).click();
+
+    await expect(page).toHaveURL(/\/controle-infeccao$/);
+    await expect(
+      page.getByRole("heading", { name: "Controle de Infecção" }),
+    ).toBeVisible({ timeout: 15000 });
+  });
+
+  test("is not offered with READ_PRESCRIPTION alone", async ({
+    page,
+    mockApi,
+  }) => {
+    await loginWithAuth(page, mockApi, {
+      features: ["INFECTION_CONTROL"],
+      permissions: BASE_PERMISSIONS,
+    });
+
+    await expect(page.locator("#gtm-lnk-intervencoes")).toBeVisible();
+    await expect(page.locator(MENU_ITEM)).toHaveCount(0);
   });
 });
