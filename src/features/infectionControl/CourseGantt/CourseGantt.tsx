@@ -172,9 +172,8 @@ const layoutEvaluations = (
             closedAt: now.format("YYYY-MM-DDTHH:mm:ss"),
           }
         : evaluation,
-      invalidatedBy: replaced
-        ? undefined
-        : invalidatedEvaluations?.[evaluation.id],
+      // what made it pending still shows, up to where the new one takes over
+      invalidatedBy: invalidatedEvaluations?.[evaluation.id],
     };
   });
 

@@ -1097,6 +1097,19 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     );
     await expect(current).toContainText("Avaliada: 1 g · 12h/12h · IV");
     await expect(current).toContainText("Prescrita agora: 2 g · 6h/6h · IV");
+
+    // the mini timeline shows it as the page does, even while the new one
+    // being filled takes over from now on
+    const modalMark = drug.getByTestId("course-evaluation");
+    await expect(modalMark).toHaveClass(/invalidated/);
+    await expect(modalMark).not.toHaveClass(/past/);
+    await expect(drug.getByTestId("evaluation-pending")).toHaveCount(1);
+    await drug.getByTestId("evaluation-pending").hover();
+    await expect(
+      page.getByRole("tooltip").filter({ hasText: "Pendente desde" }),
+    ).toContainText("A posologia mudou");
+    await page.mouse.move(0, 0);
+
     const posologyBox = drug.getByRole("checkbox", { name: WATCH_POSOLOGY });
     await expect(posologyBox).toBeChecked();
     const expiryBox = drug.getByRole("checkbox", { name: WATCH_EXPIRY });
