@@ -36,6 +36,8 @@ import TrainingPlayer from "pages/TrainingPlayer";
 import { KnowledgeBasePage } from "pages/KnowledgeBase/KnowledgeBasePage";
 import { KnowledgeBaseArticlePage } from "pages/KnowledgeBase/KnowledgeBaseArticlePage";
 import { NewsPage } from "pages/News/NewsPage";
+import { InfectionControlPage } from "pages/InfectionControl/InfectionControl";
+import { InfectionControlListPage } from "pages/InfectionControlList/InfectionControlList";
 
 import AdminTag from "pages/Admin/Tag";
 import AdminMemory from "pages/Admin/Memory";
@@ -338,6 +340,16 @@ const routes = [
     exact: true,
     path: "/novidades",
     element: <WithAuth component={NewsPage} />,
+  },
+  {
+    exact: true,
+    path: "/controle-infeccao",
+    element: <WithAuth component={InfectionControlListPage} />,
+  },
+  {
+    exact: true,
+    path: "/controle-infeccao/:admissionNumber",
+    element: <WithAuth component={InfectionControlPage} />,
   },
   {
     exact: true,

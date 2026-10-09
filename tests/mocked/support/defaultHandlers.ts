@@ -91,6 +91,18 @@ export function defaultHandlers(): Record<string, Handler> {
     "GET /prescriptions/:id/update": { json: { status: "success", data: {} } },
     "GET /prescriptions/:id/cultures": emptyList,
 
+    // antimicrobial timeline (/controle-infeccao/:admissionNumber)
+    "GET /infection-control/antimicrobial-timeline/:admissionNumber": json(
+      "infectionControl/antimicrobialTimeline.json",
+    ),
+    // follow-up of the admission: off unless a test turns it on
+    "GET /infection-control/admission/:admissionNumber": {
+      json: { status: "success", data: { enabled: false, admissionNumber: 0 } },
+    },
+    "POST /infection-control/admissions": {
+      json: { status: "success", data: { count: 0, admissions: [] } },
+    },
+
     // async job polling: always terminal so the UI never polls forever
     "GET /queue/status/:id": {
       json: { status: "success", data: { status: "completed", url: null } },
