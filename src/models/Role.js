@@ -10,6 +10,8 @@ export default class Role {
   static SUPPORT_REQUESTER = "SUPPORT_REQUESTER";
   static SUPPORT_MANAGER = "SUPPORT_MANAGER";
   static DISCHARGE_MANAGER = "DISCHARGE_MANAGER";
+  // still in tests: not offered in getNewRoles, and the backend
+  // (user_admin_service._has_valid_roles) does not accept it yet
   static INFECTION_CONTROLLER = "INFECTION_CONTROLLER";
 
   static getNewRoles(t, features) {
@@ -52,14 +54,6 @@ export default class Role {
         id: Role.DISCHARGE_MANAGER,
         label: t(`roles.${Role.DISCHARGE_MANAGER}`),
         description: t(`rolesDescription.${Role.DISCHARGE_MANAGER}`),
-      });
-    }
-
-    if (!features || features.indexOf(Feature.INFECTION_CONTROL) !== -1) {
-      roles.push({
-        id: Role.INFECTION_CONTROLLER,
-        label: t(`roles.${Role.INFECTION_CONTROLLER}`),
-        description: t(`rolesDescription.${Role.INFECTION_CONTROLLER}`),
       });
     }
 
