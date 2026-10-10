@@ -78,6 +78,22 @@ test("pending training shows the header indicator with the remaining count", asy
   ).toBeVisible();
 });
 
+test("pending training shows no indicator while the schema is not in production", async ({
+  page,
+  mockApi,
+}) => {
+  // IntegrationStatus.INTEGRATION
+  await loginWithAuth(page, mockApi, {
+    ...training(3, 1),
+    integrationStatus: 0,
+  });
+
+  await expect(
+    page.getByRole("menuitem", { name: "Treinamento" }),
+  ).toBeVisible();
+  await expect(page.locator(PILL)).toHaveCount(0);
+});
+
 test("completed training shows the avatar badge and no indicator", async ({
   page,
   mockApi,
