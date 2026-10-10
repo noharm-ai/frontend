@@ -1,7 +1,7 @@
 import { FormikErrors } from "formik";
 import * as Yup from "yup";
 import dayjs, { Dayjs } from "dayjs";
-import type { TFunction } from "react-i18next";
+import type { TFunction } from "i18next";
 
 import { formatDate } from "utils/date";
 import { InfectionControlPendingTypeEnum } from "models/InfectionControlEnum";

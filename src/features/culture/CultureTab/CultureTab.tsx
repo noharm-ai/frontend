@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import type { TFunction } from "react-i18next";
+import type { TFunction } from "i18next";
 import { Flex, Spin } from "antd";
 import {
   RobotOutlined,
