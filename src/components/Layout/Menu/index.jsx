@@ -28,6 +28,8 @@ import {
 } from "@ant-design/icons";
 import { Badge, Menu as Navigator } from "antd";
 import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
+import CustomIcon from "components/Icon";
+import { IconBacteria } from "components/Icon/svgs/IconBacteria";
 
 import Feature from "models/Feature";
 import Permission from "models/Permission";
@@ -153,6 +155,15 @@ export default function Menu({ segments, collapsed }) {
       icon: <WarningOutlined />,
       id: "gtm-lnk-intervencoes",
       permission: [Permission.READ_PRESCRIPTION],
+    },
+    {
+      key: "/controle-infeccao",
+      link: "/controle-infeccao",
+      label: t("menu.infectionControl"),
+      icon: <CustomIcon component={IconBacteria} />,
+      id: "gtm-lnk-controle-infeccao",
+      feature: Feature.INFECTION_CONTROL,
+      permission: [Permission.READ_INFECTION_CONTROL],
     },
     {
       key: "/relatorios",

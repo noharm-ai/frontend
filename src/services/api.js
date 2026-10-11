@@ -876,6 +876,29 @@ api.news.getList = (params = {}) =>
   instance.get(`/news`, { params, ...setHeaders() });
 
 /**
+ * infection control namespace
+ */
+api.infectionControl = {};
+api.infectionControl.getAntimicrobialTimeline = (admissionNumber) =>
+  instance.get(`/infection-control/antimicrobial-timeline/${admissionNumber}`, {
+    ...setHeaders(),
+  });
+api.infectionControl.getAdmission = (admissionNumber) =>
+  instance.get(`/infection-control/admission/${admissionNumber}`, {
+    ...setHeaders(),
+  });
+api.infectionControl.followAdmission = (admissionNumber) =>
+  instance.post(
+    `/infection-control/admission/${admissionNumber}/follow`,
+    {},
+    setHeaders(),
+  );
+api.infectionControl.saveReview = (params = {}) =>
+  instance.post(`/infection-control/review`, params, setHeaders());
+api.infectionControl.listAdmissions = (params = {}) =>
+  instance.post(`/infection-control/admissions`, params, setHeaders());
+
+/**
  * training namespace
  */
 api.training = {};

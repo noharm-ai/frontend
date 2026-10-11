@@ -1,0 +1,51 @@
+{
+  "status": "success",
+  "data": {
+    "now": "__DATE_NOW__",
+    "patient": {
+      "idPatient": "99",
+      "admissionNumber": 5,
+      "admissionDate": "__DATE_ADMISSION__",
+      "dischargeDate": null,
+      "dischargeReason": null,
+      "birthdate": "__DATE_BIRTH__",
+      "gender": "F",
+      "weight": 70,
+      "weightDate": "__DATE_ADMISSION__",
+      "height": 165,
+      "idPrescription": "199",
+      "bed": "101",
+      "record": null,
+      "department": "UTI Adulto",
+      "segment": "Segmento Adulto"
+    },
+    "courses": [
+      {
+        "idDrug": 1,
+        "drug": "AMPICILINA + SULBACTAM 2 g + 1 g SOL INJ",
+        "substance": "Ampicilina + sulbactam",
+        "atbLevel": 1,
+        "cpoe": false,
+        "status": "active",
+        "start": "__DATE_ADMISSION__",
+        "end": "__DATE_EXPIRE__",
+        "plannedEnd": null,
+        "plannedDays": null,
+        "days": 5,
+        "lastIdPrescription": "199",
+        "prescriptionCount": 5,
+        "regimens": [
+          {
+            "start": "__DATE_ADMISSION__",
+            "end": "__DATE_EXPIRE__",
+            "dose": 3,
+            "measureUnit": "g",
+            "frequency": "6h/6h",
+            "route": "IV"
+          }
+        ],
+        "gaps": []
+      }
+    ]
+  }
+}
