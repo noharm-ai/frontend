@@ -1,14 +1,15 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Empty, Segmented, Table, Tag } from "antd";
+import { Button, Empty, Table, Tag, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { ReloadOutlined } from "@ant-design/icons";
+import { ReloadOutlined, SearchOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import PatientNameCache from "components/PatientName/PatientNameCache";
 import { InfectionControlStatusEnum } from "models/InfectionControlEnum";
 import { formatDate, formatDateTime } from "utils/date";
+import { PageCard } from "styles/Utils.style";
 
 import {
   fetchFollowedAdmissions,
@@ -19,9 +20,10 @@ import {
 } from "../InfectionControlListSlice";
 import { describePending } from "../followUp";
 import { Header, StateBox } from "../InfectionControl/InfectionControl.style";
-import { ListBox } from "./InfectionControlList.style";
+import { WorklistFilter } from "./WorklistFilter/WorklistFilter";
+import { ListBox, StatusFilter } from "./InfectionControlList.style";
 
-const FILTERS = [
+const STATUSES = [
   InfectionControlStatusEnum.PENDING,
   InfectionControlStatusEnum.REVISED,
   InfectionControlStatusEnum.CLOSED,
@@ -34,17 +36,21 @@ const FILTERS = [
 export function InfectionControlList() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { status, list, count, filterStatus, page } = useAppSelector(
-    (state) => state.infectionControlList,
-  );
+  const { status, list, count, countByStatus, filterStatus, filters, page } =
+    useAppSelector((state) => state.infectionControlList);
 
   const load = () => {
-    dispatch(fetchFollowedAdmissions({ status: filterStatus, page }));
+    dispatch(fetchFollowedAdmissions({ status: filterStatus, page, filters }));
   };
 
   useEffect(() => {
     load();
-  }, [filterStatus, page]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [filterStatus, page, filters]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // the patient page opens in a new tab, so the worklist keeps its order,
+  // filters and page
+  const patientUrl = (admission: IFollowedAdmission) =>
+    `/controle-infeccao/${admission.admissionNumber}`;
 
   const now = dayjs();
   const isPast = (date: string | null) => !!date && dayjs(date).isBefore(now);
@@ -62,8 +68,12 @@ export function InfectionControlList() {
     },
     {
       title: t("infectionControl.worklist.admission"),
-      dataIndex: "admissionNumber",
       key: "admissionNumber",
+      render: (_, admission) => (
+        <a href={patientUrl(admission)} target="_blank" rel="noreferrer">
+          {admission.admissionNumber}
+        </a>
+      ),
     },
     {
       title: t("infectionControl.worklist.department"),
@@ -140,9 +150,15 @@ export function InfectionControlList() {
       key: "actions",
       align: "right",
       render: (_, admission) => (
-        <Button href={`/controle-infeccao/${admission.admissionNumber}`}>
-          {t("infectionControl.worklist.open")}
-        </Button>
+        <Tooltip title={t("infectionControl.worklist.openNewTab")}>
+          <Button
+            href={patientUrl(admission)}
+            target="_blank"
+            rel="noreferrer"
+            icon={<SearchOutlined />}
+            aria-label={t("infectionControl.worklist.open")}
+          />
+        </Tooltip>
       ),
     },
   ];
@@ -163,46 +179,54 @@ export function InfectionControlList() {
         </div>
       </Header>
 
-      <ListBox>
-        <div className="list-filters">
-          <Segmented
-            value={filterStatus}
-            onChange={(value) => dispatch(setFilterStatus(value as number))}
-            options={FILTERS.map((value) => ({
-              value,
-              label: t(`infectionControl.worklist.filter.${value}`),
-            }))}
-          />
-        </div>
+      <WorklistFilter />
 
-        {status === "failed" ? (
-          <StateBox>
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={t("infectionControl.worklist.loadError")}
-            />
-            <Button icon={<ReloadOutlined />} onClick={load}>
-              {t("infectionControl.retry")}
+      <ListBox>
+        <StatusFilter data-kb="infectionControl.worklist.status">
+          {STATUSES.map((value) => (
+            <Button
+              key={value}
+              className={value === filterStatus ? "active" : ""}
+              onClick={() => dispatch(setFilterStatus(value))}
+            >
+              {t(`infectionControl.worklist.filter.${value}`)}
+              <Tag color={InfectionControlStatusEnum.getColor(value)}>
+                {countByStatus[value] ?? 0}
+              </Tag>
             </Button>
-          </StateBox>
-        ) : (
-          <Table
-            data-kb="infectionControl.worklist.list"
-            rowKey="admissionNumber"
-            columns={columns}
-            dataSource={list}
-            loading={status === "loading" || status === "idle"}
-            locale={{ emptyText: t("infectionControl.worklist.empty") }}
-            pagination={{
-              current: page,
-              pageSize: PAGE_SIZE,
-              total: count,
-              showSizeChanger: false,
-              hideOnSinglePage: true,
-              onChange: (value) => dispatch(setPage(value)),
-            }}
-          />
-        )}
+          ))}
+        </StatusFilter>
+
+        <PageCard>
+          {status === "failed" ? (
+            <StateBox>
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={t("infectionControl.worklist.loadError")}
+              />
+              <Button icon={<ReloadOutlined />} onClick={load}>
+                {t("infectionControl.retry")}
+              </Button>
+            </StateBox>
+          ) : (
+            <Table
+              data-kb="infectionControl.worklist.list"
+              rowKey="admissionNumber"
+              columns={columns}
+              dataSource={list}
+              loading={status === "loading" || status === "idle"}
+              locale={{ emptyText: t("infectionControl.worklist.empty") }}
+              pagination={{
+                current: page,
+                pageSize: PAGE_SIZE,
+                total: count,
+                showSizeChanger: false,
+                hideOnSinglePage: true,
+                onChange: (value) => dispatch(setPage(value)),
+              }}
+            />
+          )}
+        </PageCard>
       </ListBox>
     </>
   );

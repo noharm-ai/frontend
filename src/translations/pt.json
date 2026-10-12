@@ -1778,8 +1778,25 @@
       "nextReview": "Próxima revisão",
       "validity": "Avaliação vence em",
       "open": "Abrir",
+      "openNewTab": "Abrir em nova aba",
       "empty": "Nenhum paciente nesta situação.",
-      "loadError": "Não foi possível carregar a lista de pacientes."
+      "loadError": "Não foi possível carregar a lista de pacientes.",
+      "filters": {
+        "allSegments": "Todos os segmentos",
+        "pendingTypes": "Motivo da pendência",
+        "pendingTypesPlaceholder": "Selecione os motivos",
+        "admissionNumbers": "Atendimentos",
+        "admissionNumbersPlaceholder": "Digite o número do atendimento e pressione enter",
+        "overdueReview": "Somente com revisão atrasada"
+      },
+      "pendingType": {
+        "1": "Paciente ainda não revisado",
+        "2": "Antimicrobiano sem avaliação",
+        "3": "Avaliação vencida",
+        "4": "Data de revisão agendada chegou",
+        "5": "Alerta disparado",
+        "6": "Posologia alterada"
+      }
     }
   }
 }

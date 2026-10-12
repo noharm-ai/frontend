@@ -1768,8 +1768,25 @@
       "nextReview": "Next review",
       "validity": "Evaluation expires",
       "open": "Open",
+      "openNewTab": "Open in a new tab",
       "empty": "No patient in this status.",
-      "loadError": "Could not load the patient list."
+      "loadError": "Could not load the patient list.",
+      "filters": {
+        "allSegments": "All segments",
+        "pendingTypes": "Pending reason",
+        "pendingTypesPlaceholder": "Select reasons",
+        "admissionNumbers": "Admissions",
+        "admissionNumbersPlaceholder": "Type the admission number and press enter",
+        "overdueReview": "Only with overdue review"
+      },
+      "pendingType": {
+        "1": "Patient not reviewed yet",
+        "2": "Antimicrobial not evaluated",
+        "3": "Evaluation expired",
+        "4": "Scheduled review date reached",
+        "5": "Alert fired",
+        "6": "Posology changed"
+      }
     }
   }
 }
