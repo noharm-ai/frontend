@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Button, Col, Empty } from "antd";
+import { Affix, Button, Col, Empty } from "antd";
 import {
   ExperimentOutlined,
   FileDoneOutlined,
@@ -13,6 +13,7 @@ import dayjs from "dayjs";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import LoadBox, { LoadContainer } from "components/LoadBox";
+import PatientNameCache from "components/PatientName/PatientNameCache";
 import notification from "components/notification";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
@@ -67,6 +68,7 @@ export function InfectionControl() {
   );
 
   const [clinicalNotesOpen, setClinicalNotesOpen] = useState(false);
+  const [affixed, setAffixed] = useState(false);
 
   const isValid = /^\d+$/.test(admissionNumber);
 
@@ -134,55 +136,63 @@ export function InfectionControl() {
   };
 
   const header = (
-    <Header>
-      <div>
-        <h1 className="page-header-title" data-kb="infectionControl.title">
-          {t("infectionControl.title")}
-        </h1>
-        <div className="page-header-legend">
-          {t("infectionControl.legend", { admissionNumber })}
+    <Affix onChange={(value) => setAffixed(!!value)}>
+      <Header className={affixed ? "affixed" : ""}>
+        <div>
+          <h1 className="page-header-title" data-kb="infectionControl.title">
+            {t("infectionControl.title")}
+          </h1>
+          <div className="page-header-legend">
+            {t("infectionControl.legend", { admissionNumber })}
+            {affixed && data && (
+              <>
+                {" - "}
+                <PatientNameCache idPatient={data.patient.idPatient} />
+              </>
+            )}
+          </div>
         </div>
-      </div>
-      {status === "succeeded" && data && (
-        <div className="page-header-actions">
-          <Button
-            icon={<FileTextOutlined />}
-            onClick={() => setClinicalNotesOpen(true)}
-          >
-            {t("infectionControl.clinicalNotes")}
-          </Button>
-          <Button
-            icon={<ExperimentOutlined />}
-            onClick={() =>
-              dispatch(
-                setExamsModalAdmissionNumber(data.patient.admissionNumber),
-              )
-            }
-          >
-            {t("infectionControl.exams")}
-          </Button>
-          {showReview && (
+        {status === "succeeded" && data && (
+          <div className="page-header-actions">
             <Button
-              type="primary"
-              icon={<FileDoneOutlined />}
-              onClick={() => dispatch(setReviewOpen(true))}
+              icon={<FileTextOutlined />}
+              onClick={() => setClinicalNotesOpen(true)}
             >
-              {t("infectionControl.followUp.register")}
+              {t("infectionControl.clinicalNotes")}
             </Button>
-          )}
-          {showFollow && (
             <Button
-              type="primary"
-              icon={<PlayCircleOutlined />}
-              loading={followStatus === "loading"}
-              onClick={follow}
+              icon={<ExperimentOutlined />}
+              onClick={() =>
+                dispatch(
+                  setExamsModalAdmissionNumber(data.patient.admissionNumber),
+                )
+              }
             >
-              {t("infectionControl.followUp.follow")}
+              {t("infectionControl.exams")}
             </Button>
-          )}
-        </div>
-      )}
-    </Header>
+            {showReview && (
+              <Button
+                type="primary"
+                icon={<FileDoneOutlined />}
+                onClick={() => dispatch(setReviewOpen(true))}
+              >
+                {t("infectionControl.followUp.register")}
+              </Button>
+            )}
+            {showFollow && (
+              <Button
+                type="primary"
+                icon={<PlayCircleOutlined />}
+                loading={followStatus === "loading"}
+                onClick={follow}
+              >
+                {t("infectionControl.followUp.follow")}
+              </Button>
+            )}
+          </div>
+        )}
+      </Header>
+    </Affix>
   );
 
   const notFound =
