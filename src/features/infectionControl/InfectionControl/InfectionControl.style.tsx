@@ -1,10 +1,31 @@
 import styled from "styled-components";
 import { Row } from "antd";
+import { timingFunctions } from "polished";
 
 import { PageHeader } from "styles/PageHeader.style";
 
-// the shared page header, wrapping its action below the title on phones
+// the shared page header, wrapping its action below the title on phones.
+// Once scrolled past it sticks to the top, compact and translucent like the
+// screening header
 export const Header = styled(PageHeader)`
+  transition: all 0.5s ${timingFunctions("easeOutQuint")};
+
+  &.affixed {
+    align-items: center;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 6px 12px;
+    margin-bottom: 0;
+    box-shadow:
+      0 1px 2px 0 rgba(0, 0, 0, 0.03),
+      0 1px 6px -1px rgba(0, 0, 0, 0.02),
+      0 2px 4px 0 rgba(0, 0, 0, 0.02);
+    backdrop-filter: blur(8px);
+
+    .page-header-title {
+      font-size: 18px;
+    }
+  }
+
   @media (max-width: 768px) {
     flex-wrap: wrap;
     gap: 12px;

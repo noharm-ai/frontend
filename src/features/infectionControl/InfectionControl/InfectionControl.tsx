@@ -1,9 +1,11 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
-import { Button, Col, Empty } from "antd";
+import { Affix, Button, Col, Empty } from "antd";
 import {
+  ExperimentOutlined,
   FileDoneOutlined,
+  FileTextOutlined,
   PlayCircleOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
@@ -11,10 +13,13 @@ import dayjs from "dayjs";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import LoadBox, { LoadContainer } from "components/LoadBox";
+import PatientNameCache from "components/PatientName/PatientNameCache";
 import notification from "components/notification";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
 import { getErrorMessage } from "utils/errorHandler";
+import ExamsModal from "features/exams/ExamModal/ExamModal";
+import { setExamsModalAdmissionNumber } from "features/exams/ExamModal/ExamModalSlice";
 
 import {
   fetchAntimicrobialTimeline,
@@ -25,6 +30,7 @@ import {
 } from "../InfectionControlSlice";
 import { CourseGantt } from "../CourseGantt/CourseGantt";
 import { FollowUpStatus } from "../FollowUpStatus/FollowUpStatus";
+import { InfectionControlClinicalNotes } from "../InfectionControlClinicalNotes/InfectionControlClinicalNotes";
 import { InfectionControlPatient } from "../InfectionControlPatient/InfectionControlPatient";
 import { ReviewModal } from "../ReviewModal/ReviewModal";
 import {
@@ -61,6 +67,9 @@ export function InfectionControl() {
     (state) => state.infectionControl.follow.status,
   );
 
+  const [clinicalNotesOpen, setClinicalNotesOpen] = useState(false);
+  const [affixed, setAffixed] = useState(false);
+
   const isValid = /^\d+$/.test(admissionNumber);
 
   const loadFollowUp = () => {
@@ -79,6 +88,8 @@ export function InfectionControl() {
 
     return () => {
       dispatch(reset());
+      setClinicalNotesOpen(false);
+      dispatch(setExamsModalAdmissionNumber(null));
     };
   }, [admissionNumber]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -125,39 +136,63 @@ export function InfectionControl() {
   };
 
   const header = (
-    <Header>
-      <div>
-        <h1 className="page-header-title" data-kb="infectionControl.title">
-          {t("infectionControl.title")}
-        </h1>
-        <div className="page-header-legend">
-          {t("infectionControl.legend", { admissionNumber })}
+    <Affix onChange={(value) => setAffixed(!!value)}>
+      <Header className={affixed ? "affixed" : ""}>
+        <div>
+          <h1 className="page-header-title" data-kb="infectionControl.title">
+            {t("infectionControl.title")}
+          </h1>
+          <div className="page-header-legend">
+            {t("infectionControl.legend", { admissionNumber })}
+            {affixed && data && (
+              <>
+                {" - "}
+                <PatientNameCache idPatient={data.patient.idPatient} />
+              </>
+            )}
+          </div>
         </div>
-      </div>
-      {showReview && (
-        <div className="page-header-actions">
-          <Button
-            type="primary"
-            icon={<FileDoneOutlined />}
-            onClick={() => dispatch(setReviewOpen(true))}
-          >
-            {t("infectionControl.followUp.register")}
-          </Button>
-        </div>
-      )}
-      {showFollow && (
-        <div className="page-header-actions">
-          <Button
-            type="primary"
-            icon={<PlayCircleOutlined />}
-            loading={followStatus === "loading"}
-            onClick={follow}
-          >
-            {t("infectionControl.followUp.follow")}
-          </Button>
-        </div>
-      )}
-    </Header>
+        {status === "succeeded" && data && (
+          <div className="page-header-actions">
+            <Button
+              icon={<FileTextOutlined />}
+              onClick={() => setClinicalNotesOpen(true)}
+            >
+              {t("infectionControl.clinicalNotes")}
+            </Button>
+            <Button
+              icon={<ExperimentOutlined />}
+              onClick={() =>
+                dispatch(
+                  setExamsModalAdmissionNumber(data.patient.admissionNumber),
+                )
+              }
+            >
+              {t("infectionControl.exams")}
+            </Button>
+            {showReview && (
+              <Button
+                type="primary"
+                icon={<FileDoneOutlined />}
+                onClick={() => dispatch(setReviewOpen(true))}
+              >
+                {t("infectionControl.followUp.register")}
+              </Button>
+            )}
+            {showFollow && (
+              <Button
+                type="primary"
+                icon={<PlayCircleOutlined />}
+                loading={followStatus === "loading"}
+                onClick={follow}
+              >
+                {t("infectionControl.followUp.follow")}
+              </Button>
+            )}
+          </div>
+        )}
+      </Header>
+    </Affix>
   );
 
   const notFound =
@@ -259,6 +294,13 @@ export function InfectionControl() {
           />
         )}
       </Section>
+
+      <InfectionControlClinicalNotes
+        admissionNumber={data.patient.admissionNumber}
+        open={clinicalNotesOpen}
+        onClose={() => setClinicalNotesOpen(false)}
+      />
+      <ExamsModal idSegment={data.patient.idSegment ?? undefined} />
 
       {followUp && canReview && (
         <ReviewModal

@@ -1569,6 +1569,8 @@
     "notFound": "Nenhum registro encontrado para o atendimento {{admissionNumber}}.",
     "loadError": "Não foi possível carregar os antimicrobianos do atendimento {{admissionNumber}}.",
     "retry": "Tentar novamente",
+    "clinicalNotes": "Evoluções",
+    "exams": "Exames",
     "patient": {
       "admission": "Atendimento",
       "age": "Idade",

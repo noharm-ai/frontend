@@ -111,6 +111,7 @@ const timeline = (courses: unknown[]) => ({
       record: null,
       department: "UTI Adulto",
       segment: "Segmento Adulto",
+      idSegment: 3,
     },
     courses,
   },
@@ -139,6 +140,39 @@ test("shows the patient and the admission", async ({ page, mockApi }) => {
   await expect(
     page.getByRole("link", { name: "Abrir prescrição", exact: true }),
   ).toHaveCount(0);
+});
+
+test("opens the clinical notes and the exams of the admission", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override(ENDPOINT, { json: timeline(COURSES) });
+
+  await page.goto(PAGE_URL);
+
+  const notesRequest = page.waitForRequest((r) =>
+    r.url().includes(`/notes/${ADMISSION}/v2`),
+  );
+  await page
+    .getByRole("button", { name: "Evoluções" })
+    .click({ timeout: 15000 });
+  await notesRequest;
+  const notes = page.getByRole("dialog");
+  await expect(notes).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(notes).toBeHidden();
+
+  // the exams use the reference values of the patient's segment
+  const examsRequest = page.waitForRequest(
+    (r) =>
+      r.url().includes(`/exams/${ADMISSION}`) &&
+      new URL(r.url()).searchParams.get("idSegment") === "3",
+  );
+  await page.getByRole("button", { name: "Exames" }).click();
+  await examsRequest;
+  await expect(
+    page.getByRole("tab", { name: "Exames numéricos" }),
+  ).toBeVisible();
 });
 
 test("lists every course on the timeline, the ones in use first", async ({

@@ -68,6 +68,7 @@ export interface IInfectionControlPatient {
   record: string | null;
   department: string | null;
   segment: string | null;
+  idSegment: number | null;
 }
 
 export interface IAntimicrobialTimeline {
