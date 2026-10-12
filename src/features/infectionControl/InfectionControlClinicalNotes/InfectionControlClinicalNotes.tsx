@@ -41,7 +41,6 @@ export function InfectionControlClinicalNotes({
 
   return (
     <DefaultModal
-      data-kb="infectionControl.clinicalNotes"
       title={t("tableHeader.clinicalNotes")}
       destroyOnHidden
       open={open}
@@ -52,31 +51,33 @@ export function InfectionControlClinicalNotes({
       styles={{ body: { padding: 0 } }}
       maskClosable={false}
     >
-      <ClinicalNotes
-        isFetching={clinicalNotes.isFetching}
-        isFetchingExtra={clinicalNotes.isFetchingExtra}
-        list={clinicalNotes.list}
-        dates={clinicalNotes.dates}
-        positionList={clinicalNotes.positionList}
-        previousAdmissions={clinicalNotes.previousAdmissions}
-        selected={clinicalNotes.single}
-        saveStatus={clinicalNotes.save}
-        userId={account.userId}
-        features={account.features}
-        admissionNumber={admissionNumber}
-        admissionNumberPopup={null}
-        popup={false}
-        visibleState={open}
-        fetchByDate={(...args: any[]) =>
-          dispatch((fetchExtraClinicalNotesListThunk as any)(...args))
-        }
-        select={(...args: any[]) =>
-          dispatch((selectClinicalNoteThunk as any)(...args))
-        }
-        update={(...args: any[]) =>
-          dispatch((updateClinicalNoteThunk as any)(...args))
-        }
-      />
+      <div data-kb="infectionControl.clinicalNotes">
+        <ClinicalNotes
+          isFetching={clinicalNotes.isFetching}
+          isFetchingExtra={clinicalNotes.isFetchingExtra}
+          list={clinicalNotes.list}
+          dates={clinicalNotes.dates}
+          positionList={clinicalNotes.positionList}
+          previousAdmissions={clinicalNotes.previousAdmissions}
+          selected={clinicalNotes.single}
+          saveStatus={clinicalNotes.save}
+          userId={account.userId}
+          features={account.features}
+          admissionNumber={admissionNumber}
+          admissionNumberPopup={null}
+          popup={false}
+          visibleState={open}
+          fetchByDate={(...args: any[]) =>
+            dispatch((fetchExtraClinicalNotesListThunk as any)(...args))
+          }
+          select={(...args: any[]) =>
+            dispatch((selectClinicalNoteThunk as any)(...args))
+          }
+          update={(...args: any[]) =>
+            dispatch((updateClinicalNoteThunk as any)(...args))
+          }
+        />
+      </div>
     </DefaultModal>
   );
 }
