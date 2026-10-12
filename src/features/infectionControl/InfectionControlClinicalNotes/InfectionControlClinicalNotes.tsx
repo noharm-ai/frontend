@@ -28,6 +28,8 @@ export function InfectionControlClinicalNotes({
 }: InfectionControlClinicalNotesProps) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+  // the clinical notes and user ducks and their thunks are untyped legacy JS,
+  // hence the any below
   const clinicalNotes = useAppSelector((state: any) => state.clinicalNotes);
   const account = useAppSelector((state: any) => state.user.account);
 
