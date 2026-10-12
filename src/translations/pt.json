@@ -1764,11 +1764,6 @@
     "worklist": {
       "title": "Controle de Infecção",
       "legend": "Pacientes em uso de antimicrobianos",
-      "filter": {
-        "1": "Pendentes",
-        "2": "Revisados",
-        "3": "Encerrados"
-      },
       "patient": "Paciente",
       "admission": "Atendimento",
       "bed": "Leito",
@@ -1778,8 +1773,29 @@
       "nextReview": "Próxima revisão",
       "validity": "Avaliação vence em",
       "open": "Abrir",
-      "empty": "Nenhum paciente nesta situação.",
-      "loadError": "Não foi possível carregar a lista de pacientes."
+      "openNewTab": "Abrir em nova aba",
+      "empty": "Nenhum paciente encontrado.",
+      "searchPlaceholder": "Buscar por paciente ou nº atendimento",
+      "patients": "Pacientes",
+      "limited": "A lista foi limitada em {{limit}} registros.",
+      "limitedHint": "{{count}} pacientes atendem aos filtros. Utilize mais filtros para direcionar a sua análise.",
+      "loadError": "Não foi possível carregar a lista de pacientes.",
+      "filters": {
+        "allStatuses": "Todas as situações",
+        "pendingTypes": "Motivo da pendência",
+        "pendingTypesPlaceholder": "Selecione os motivos",
+        "admissionNumbers": "Atendimentos",
+        "admissionNumbersPlaceholder": "Digite o número do atendimento e pressione enter",
+        "overdueReview": "Somente com revisão atrasada"
+      },
+      "pendingType": {
+        "1": "Paciente ainda não revisado",
+        "2": "Antimicrobiano sem avaliação",
+        "3": "Avaliação vencida",
+        "4": "Data de revisão agendada chegou",
+        "5": "Alerta disparado",
+        "6": "Posologia alterada"
+      }
     }
   }
 }

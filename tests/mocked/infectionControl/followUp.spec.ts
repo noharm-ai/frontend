@@ -1,3 +1,5 @@
+import type { Page } from "@playwright/test";
+
 import { test, expect } from "../support/mockApi";
 import { loginWithAuth, loginWithPermissions } from "../support/featureLogin";
 
@@ -1357,7 +1359,23 @@ test.describe("worklist", () => {
     pendings: followUp().data.pendings,
   };
 
-  test("lists the followed patients and filters them by status", async ({
+  const lists = (mockApi: {
+    requests: { path: string; postData?: string | null }[];
+  }) =>
+    mockApi.requests
+      .filter((r) => r.path === "/infection-control/admissions")
+      .map((r) => JSON.parse(r.postData!));
+
+  const pickOption = async (page: Page, field: string, option: string) => {
+    await page.locator(field).click();
+    await page
+      .locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)")
+      .getByText(option, { exact: true })
+      .click();
+    await page.keyboard.press("Escape");
+  };
+
+  test("lists the followed patients, the pending ones by default", async ({
     page,
     mockApi,
   }) => {
@@ -1376,21 +1394,220 @@ test.describe("worklist", () => {
     await expect(row).toContainText("UTI Adulto");
     await expect(row).toContainText("Pendente");
     await expect(row).toContainText("MEROPENEM 1 g SOL INJ sem avaliação");
-    await expect(row.getByRole("link", { name: "Abrir" })).toHaveAttribute(
-      "href",
-      PAGE_URL,
+    await expect(page.locator(".list-count")).toHaveText(/Pacientes\s*1/);
+
+    // up to 500 at once, paged in the browser
+    expect(lists(mockApi)[0]).toMatchObject({
+      status: [1],
+      limit: 500,
+      offset: 0,
+    });
+    await expect(page.getByText(/A lista foi limitada/)).toHaveCount(0);
+  });
+
+  test("warns when the list was limited", async ({ page, mockApi }) => {
+    mockApi.override(LIST, {
+      json: {
+        status: "success",
+        data: { count: 734, admissions: [admission] },
+      },
+    });
+
+    await page.goto("/controle-infeccao");
+
+    await expect(
+      page.getByText("A lista foi limitada em 500 registros."),
+    ).toBeVisible({
+      timeout: 15000,
+    });
+    await expect(
+      page.getByText(/734 pacientes atendem aos filtros/),
+    ).toBeVisible();
+  });
+
+  test("searches the loaded list by patient name or admission", async ({
+    page,
+    mockApi,
+  }) => {
+    const other = {
+      ...admission,
+      admissionNumber: ADMISSION + 1,
+      idPatient: `${PATIENT_ID + 1}`,
+    };
+    mockApi.override(LIST, {
+      json: {
+        status: "success",
+        data: { count: 2, admissions: [admission, other] },
+      },
+    });
+    const names: Record<string, string> = {
+      [PATIENT_ID]: "Fulano Beltrano",
+      [PATIENT_ID + 1]: "Maria Teste",
+    };
+    mockApi.override("GET /names/:idPatient", (route) => {
+      const idPatient = new URL(route.request().url()).pathname
+        .split("/")
+        .pop()!;
+      return route.fulfill({
+        json: { status: "success", idPatient, name: names[idPatient] },
+      });
+    });
+
+    await page.goto("/controle-infeccao");
+    const rows = page.locator(".ant-table-tbody tr.ant-table-row");
+    await expect(rows).toHaveCount(2, { timeout: 15000 });
+    await expect(page.getByText("Maria Teste")).toBeVisible();
+    const listsBefore = lists(mockApi).length;
+
+    const search = page.getByPlaceholder(
+      "Buscar por paciente ou nº atendimento",
     );
+    // case and accents do not matter
+    await search.fill("MARÍA");
+    await expect(rows).toHaveCount(1);
+    await expect(rows).toContainText("Maria Teste");
+    await expect(page.locator(".list-count")).toHaveText(/1 \/ 2/);
 
-    const lists = () =>
-      mockApi.requests
-        .filter((r) => r.path === "/infection-control/admissions")
-        .map((r) => JSON.parse(r.postData!));
-    expect(lists()[0]).toMatchObject({ status: [1], offset: 0 });
+    await search.fill(`${ADMISSION}`);
+    await expect(rows).toHaveCount(1);
+    await expect(rows).toContainText("Fulano Beltrano");
 
-    await page.getByText("Revisados", { exact: true }).click();
+    await search.fill("Ciclano");
+    await expect(page.getByText("Nenhum paciente encontrado.")).toBeVisible();
+
+    await search.fill("");
+    await expect(rows).toHaveCount(2);
+
+    // the search never goes to the backend
+    expect(lists(mockApi).length).toBe(listsBefore);
+  });
+
+  test("pages the list in the browser, 50 patients per page", async ({
+    page,
+    mockApi,
+  }) => {
+    const admissions = Array.from({ length: 120 }, (_, index) => ({
+      ...admission,
+      admissionNumber: ADMISSION + index,
+    }));
+    mockApi.override(LIST, {
+      json: { status: "success", data: { count: 120, admissions } },
+    });
+
+    await page.goto("/controle-infeccao");
+    const rows = page.locator(".ant-table-tbody tr.ant-table-row");
+    await expect(rows).toHaveCount(50, { timeout: 15000 });
+    await expect(rows.first()).toContainText(`${ADMISSION}`);
+    const listsBefore = lists(mockApi).length;
+
+    // above and below the list
+    const pagers = page.locator(".ant-table-pagination");
+    await expect(pagers).toHaveCount(2);
+
+    await pagers.last().getByTitle("3", { exact: true }).click();
+    await expect(rows).toHaveCount(20);
+    await expect(rows.first()).toContainText(`${ADMISSION + 100}`);
+
+    // a search starts again from the first page
+    await page
+      .getByPlaceholder("Buscar por paciente ou nº atendimento")
+      .fill(`${ADMISSION + 1}`);
+    await expect(rows.first()).toContainText(`${ADMISSION + 1}`);
+
+    // the pages never go to the backend
+    expect(lists(mockApi).length).toBe(listsBefore);
+  });
+
+  test("opens the patient in a new tab, keeping the worklist", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override(LIST, {
+      json: { status: "success", data: { count: 1, admissions: [admission] } },
+    });
+
+    await page.goto("/controle-infeccao");
+
+    const row = page.getByRole("row", { name: new RegExp(`${ADMISSION}`) });
+    for (const link of [
+      row.getByRole("link", { name: "Abrir" }),
+      row.getByRole("link", { name: `${ADMISSION}`, exact: true }),
+    ]) {
+      await expect(link).toHaveAttribute("href", PAGE_URL);
+      await expect(link).toHaveAttribute("target", "_blank");
+    }
+
+    const [patientPage] = await Promise.all([
+      page.context().waitForEvent("page"),
+      row.getByRole("link", { name: "Abrir" }).click(),
+    ]);
+    await expect(patientPage).toHaveURL(new RegExp(`${PAGE_URL}$`));
+    await expect(page).toHaveURL(/\/controle-infeccao$/);
+    await patientPage.close();
+  });
+
+  test("filters by status, department, pending reason and the other filters", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override("GET /segments/departments", {
+      json: {
+        status: "success",
+        data: [
+          { idDepartment: 10, idSegment: 1, label: "UTI Adulto" },
+          { idDepartment: 20, idSegment: 1, label: "Clínica Médica" },
+        ],
+      },
+    });
+
+    await page.goto("/controle-infeccao");
+    await expect(
+      page.getByRole("heading", { name: "Controle de Infecção" }),
+    ).toBeVisible({ timeout: 15000 });
+    await expect.poll(() => lists(mockApi).length).toBeGreaterThan(0);
+
+    // status, department and pending reason, always in sight
+    await pickOption(page, "#status", "Revisado");
+    await pickOption(page, "#departments", "UTI Adulto");
+    await pickOption(page, "#pendingTypes", "Antimicrobiano sem avaliação");
+
+    // overdue review, under "see more"
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
+    await page.locator("#overdueReview").click();
+
+    await page.locator(".gtm-btn-search").click();
+
     await expect
-      .poll(() => lists().at(-1))
-      .toMatchObject({ status: [2], offset: 0 });
+      .poll(() => lists(mockApi).at(-1))
+      .toMatchObject({
+        status: [1, 2],
+        limit: 500,
+        offset: 0,
+        idDepartment: [10],
+        pendingTypes: [2],
+        admissionNumbers: [],
+        overdueReview: true,
+      });
+
+    // no status picked: every status
+    await pickOption(page, "#status", "Pendente");
+    await pickOption(page, "#status", "Revisado");
+    await page.locator(".gtm-btn-search").click();
+    await expect
+      .poll(() => lists(mockApi).at(-1))
+      .toMatchObject({ status: [1, 2, 3], idDepartment: [10] });
+
+    // reset goes back to the pending ones, without the other filters
+    await page.locator(".gtm-btn-reset").click();
+    await expect
+      .poll(() => lists(mockApi).at(-1))
+      .toMatchObject({
+        status: [1],
+        idDepartment: [],
+        pendingTypes: [],
+        overdueReview: false,
+      });
   });
 
   test("keeps the filter picked last when an earlier list answers late", async ({
@@ -1423,8 +1640,11 @@ test.describe("worklist", () => {
       page.getByRole("heading", { name: "Controle de Infecção" }),
     ).toBeVisible({ timeout: 15000 });
 
-    await page.getByText("Revisados", { exact: true }).click();
-    const empty = page.getByText("Nenhum paciente nesta situação.");
+    // pending (held) -> revised
+    await pickOption(page, "#status", "Pendente");
+    await pickOption(page, "#status", "Revisado");
+    await page.locator(".gtm-btn-search").click();
+    const empty = page.getByText("Nenhum paciente encontrado.");
     await expect(empty).toBeVisible();
 
     const latePending = page.waitForResponse(
