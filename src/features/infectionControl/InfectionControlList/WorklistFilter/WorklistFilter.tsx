@@ -11,7 +11,8 @@ import { SecondaryFilters } from "./SecondaryFilters/SecondaryFilters";
 
 /**
  * The worklist filter card, the same one the prescription prioritization
- * shows: segment and department up front, the other filters under "see more"
+ * shows: segment, department and pending reason up front, the other filters
+ * under "see more"
  */
 export function WorklistFilter() {
   const dispatch = useAppDispatch();
@@ -32,7 +33,7 @@ export function WorklistFilter() {
       onChangeValues={undefined}
       memoryType={undefined}
       loading={status === "loading"}
-      skipFilterList={["idSegment", "idDepartment"]}
+      skipFilterList={["idSegment", "idDepartment", "pendingTypes"]}
     />
   );
 }

@@ -9,6 +9,16 @@ import { AdvancedFilterContext } from "components/AdvancedFilter";
 import { getSegmentDepartments } from "features/lists/ListsSlice";
 import { fetchSegmentsListThunk } from "store/ducks/segments/thunk";
 import { getUniqBy } from "utils/report";
+import { InfectionControlPendingTypeEnum } from "models/InfectionControlEnum";
+
+const PENDING_TYPES = [
+  InfectionControlPendingTypeEnum.NEVER_REVIEWED,
+  InfectionControlPendingTypeEnum.NO_EVALUATION,
+  InfectionControlPendingTypeEnum.EXPIRED,
+  InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
+  InfectionControlPendingTypeEnum.SCHEDULED_DATE,
+  InfectionControlPendingTypeEnum.ALERT_FIRED,
+];
 
 interface ISegmentDepartment {
   idDepartment: number;
@@ -28,7 +38,7 @@ const filterDepartments = (
     "idDepartment",
   );
 
-/** Segment and department, always in sight */
+/** Segment, department and pending reason, always in sight */
 export function MainFilters() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
@@ -46,7 +56,7 @@ export function MainFilters() {
 
   return (
     <>
-      <Col xs={24} md={8}>
+      <Col xs={24} md={6}>
         <Heading
           {...({ as: "label", htmlFor: "segments", $size: "14px" } as any)}
         >
@@ -74,7 +84,7 @@ export function MainFilters() {
           ))}
         </Select>
       </Col>
-      <Col xs={24} md={8}>
+      <Col xs={24} md={6}>
         <Heading
           {...({ as: "label", htmlFor: "departments", $size: "14px" } as any)}
         >
@@ -103,6 +113,32 @@ export function MainFilters() {
               </Select.Option>
             ),
           )}
+        </Select>
+      </Col>
+      <Col xs={24} md={6}>
+        <Heading
+          {...({ as: "label", htmlFor: "pendingTypes", $size: "14px" } as any)}
+        >
+          {t("infectionControl.worklist.filters.pendingTypes")}:
+        </Heading>
+        <Select
+          id="pendingTypes"
+          style={{ width: "100%" }}
+          mode="multiple"
+          allowClear
+          maxTagCount="responsive"
+          optionFilterProp="children"
+          placeholder={t(
+            "infectionControl.worklist.filters.pendingTypesPlaceholder",
+          )}
+          value={values.pendingTypes}
+          onChange={(pendingTypes: any) => setFieldValue({ pendingTypes })}
+        >
+          {PENDING_TYPES.map((type) => (
+            <Select.Option key={type} value={type}>
+              {t(`infectionControl.worklist.pendingType.${type}`)}
+            </Select.Option>
+          ))}
         </Select>
       </Col>
     </>

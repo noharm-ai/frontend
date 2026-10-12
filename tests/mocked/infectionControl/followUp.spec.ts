@@ -1438,7 +1438,7 @@ test.describe("worklist", () => {
     await patientPage.close();
   });
 
-  test("filters by segment, department and the other filters", async ({
+  test("filters by segment, department, pending reason and the other filters", async ({
     page,
     mockApi,
   }) => {
@@ -1466,15 +1466,17 @@ test.describe("worklist", () => {
       .click();
     await page.keyboard.press("Escape");
 
-    // pending reason and overdue review, under "see more"
-    await page.getByRole("button", { name: /Ver mais/ }).click();
-    await page.waitForTimeout(800);
+    // pending reason, also in sight
     await page.locator("#pendingTypes").click();
     await page
       .locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)")
       .getByText("Antimicrobiano sem avaliação", { exact: true })
       .click();
     await page.keyboard.press("Escape");
+
+    // overdue review, under "see more"
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
     await page.locator("#overdueReview").click();
 
     await page.locator(".gtm-btn-search").click();

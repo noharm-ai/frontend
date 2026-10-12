@@ -6,50 +6,14 @@ import { Col, Row } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
 import { Select } from "components/Inputs";
 import Switch from "components/Switch";
-import { InfectionControlPendingTypeEnum } from "models/InfectionControlEnum";
 
-const PENDING_TYPES = [
-  InfectionControlPendingTypeEnum.NEVER_REVIEWED,
-  InfectionControlPendingTypeEnum.NO_EVALUATION,
-  InfectionControlPendingTypeEnum.EXPIRED,
-  InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
-  InfectionControlPendingTypeEnum.SCHEDULED_DATE,
-  InfectionControlPendingTypeEnum.ALERT_FIRED,
-];
-
-/** The filters under "see more": pending reasons, admissions, overdue review */
+/** The filters under "see more": admissions and overdue review */
 export function SecondaryFilters() {
   const { t } = useTranslation();
   const { values, setFieldValue } = useContext(AdvancedFilterContext) as any;
 
   return (
     <Row gutter={[20, 20]}>
-      <Col md={24} xl={18} xxl={14}>
-        <Heading
-          {...({ as: "label", htmlFor: "pendingTypes", $size: "14px" } as any)}
-        >
-          {t("infectionControl.worklist.filters.pendingTypes")}:
-        </Heading>
-        <Select
-          id="pendingTypes"
-          style={{ width: "100%" }}
-          mode="multiple"
-          allowClear
-          optionFilterProp="children"
-          placeholder={t(
-            "infectionControl.worklist.filters.pendingTypesPlaceholder",
-          )}
-          value={values.pendingTypes}
-          onChange={(pendingTypes: any) => setFieldValue({ pendingTypes })}
-        >
-          {PENDING_TYPES.map((type) => (
-            <Select.Option key={type} value={type}>
-              {t(`infectionControl.worklist.pendingType.${type}`)}
-            </Select.Option>
-          ))}
-        </Select>
-      </Col>
-
       <Col md={24} xl={18} xxl={14}>
         <Heading
           {...({
