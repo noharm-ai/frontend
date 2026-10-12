@@ -1482,6 +1482,42 @@ test.describe("worklist", () => {
     expect(lists(mockApi).length).toBe(listsBefore);
   });
 
+  test("pages the list in the browser, 50 patients per page", async ({
+    page,
+    mockApi,
+  }) => {
+    const admissions = Array.from({ length: 120 }, (_, index) => ({
+      ...admission,
+      admissionNumber: ADMISSION + index,
+    }));
+    mockApi.override(LIST, {
+      json: { status: "success", data: { count: 120, admissions } },
+    });
+
+    await page.goto("/controle-infeccao");
+    const rows = page.locator(".ant-table-tbody tr.ant-table-row");
+    await expect(rows).toHaveCount(50, { timeout: 15000 });
+    await expect(rows.first()).toContainText(`${ADMISSION}`);
+    const listsBefore = lists(mockApi).length;
+
+    // above and below the list
+    const pagers = page.locator(".ant-table-pagination");
+    await expect(pagers).toHaveCount(2);
+
+    await pagers.last().getByTitle("3", { exact: true }).click();
+    await expect(rows).toHaveCount(20);
+    await expect(rows.first()).toContainText(`${ADMISSION + 100}`);
+
+    // a search starts again from the first page
+    await page
+      .getByPlaceholder("Buscar por paciente ou nº atendimento")
+      .fill(`${ADMISSION + 1}`);
+    await expect(rows.first()).toContainText(`${ADMISSION + 1}`);
+
+    // the pages never go to the backend
+    expect(lists(mockApi).length).toBe(listsBefore);
+  });
+
   test("opens the patient in a new tab, keeping the worklist", async ({
     page,
     mockApi,

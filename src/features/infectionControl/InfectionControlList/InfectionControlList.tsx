@@ -274,9 +274,12 @@ export function InfectionControlList() {
               dataSource={shownList}
               loading={status === "loading" || status === "idle"}
               locale={{ emptyText: t("infectionControl.worklist.empty") }}
+              // paged in the browser, above and below the list as in the
+              // prescription prioritization
               pagination={{
                 current: page,
                 pageSize: PAGE_SIZE,
+                position: ["topRight", "bottomRight"],
                 showSizeChanger: false,
                 hideOnSinglePage: true,
                 onChange: setPage,
