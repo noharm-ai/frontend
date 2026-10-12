@@ -7,9 +7,17 @@ import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
 import { getSegmentDepartments } from "features/lists/ListsSlice";
-import { fetchSegmentsListThunk } from "store/ducks/segments/thunk";
 import { getUniqBy } from "utils/report";
-import { InfectionControlPendingTypeEnum } from "models/InfectionControlEnum";
+import {
+  InfectionControlPendingTypeEnum,
+  InfectionControlStatusEnum,
+} from "models/InfectionControlEnum";
+
+const STATUSES = [
+  InfectionControlStatusEnum.PENDING,
+  InfectionControlStatusEnum.REVISED,
+  InfectionControlStatusEnum.CLOSED,
+];
 
 const PENDING_TYPES = [
   InfectionControlPendingTypeEnum.NEVER_REVIEWED,
@@ -26,31 +34,17 @@ interface ISegmentDepartment {
   label: string;
 }
 
-/** The departments of the chosen segments (all of them when none is chosen) */
-const filterDepartments = (
-  idSegmentList: number[],
-  list: ISegmentDepartment[],
-): ISegmentDepartment[] =>
-  getUniqBy(
-    list.filter(
-      (d) => !idSegmentList?.length || idSegmentList.includes(d.idSegment),
-    ),
-    "idDepartment",
-  );
-
-/** Segment, department and pending reason, always in sight */
+/** Status, department and pending reason, always in sight */
 export function MainFilters() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const { values, setFieldValue } = useContext(AdvancedFilterContext) as any;
 
-  const segments = useAppSelector((state: any) => state.segments);
   const departments = useAppSelector(
     (state: any) => state.lists.getSegmentDepartments,
   );
 
   useEffect(() => {
-    dispatch(fetchSegmentsListThunk() as any);
     dispatch(getSegmentDepartments() as any);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -58,28 +52,23 @@ export function MainFilters() {
     <>
       <Col xs={24} md={6}>
         <Heading
-          {...({ as: "label", htmlFor: "segments", $size: "14px" } as any)}
+          {...({ as: "label", htmlFor: "status", $size: "14px" } as any)}
         >
-          {t("screeningList.segment")}:
+          {t("infectionControl.worklist.status")}:
         </Heading>
         <Select
-          id="segments"
+          id="status"
           style={{ width: "100%" }}
           mode="multiple"
           allowClear
           maxTagCount="responsive"
-          optionFilterProp="children"
-          placeholder={t("infectionControl.worklist.filters.allSegments")}
-          loading={segments.isFetching}
-          value={values.idSegment}
-          // the departments depend on the segments
-          onChange={(idSegment: any) =>
-            setFieldValue({ idSegment, idDepartment: [] })
-          }
+          placeholder={t("infectionControl.worklist.filters.allStatuses")}
+          value={values.status}
+          onChange={(status: any) => setFieldValue({ status })}
         >
-          {segments.list.map(({ id, description }: any) => (
-            <Select.Option key={id} value={id}>
-              {description}
+          {STATUSES.map((value) => (
+            <Select.Option key={value} value={value}>
+              {t(`infectionControl.followUp.status.${value}`)}
             </Select.Option>
           ))}
         </Select>
@@ -103,16 +92,16 @@ export function MainFilters() {
           value={values.idDepartment}
           onChange={(idDepartment: any) => setFieldValue({ idDepartment })}
         >
-          {filterDepartments(values.idSegment, departments.list).map(
-            ({ idDepartment, idSegment, label }) => (
-              <Select.Option
-                key={`${idSegment}-${idDepartment}`}
-                value={idDepartment}
-              >
-                {label}
-              </Select.Option>
-            ),
-          )}
+          {(
+            getUniqBy(departments.list, "idDepartment") as ISegmentDepartment[]
+          ).map(({ idDepartment, idSegment, label }) => (
+            <Select.Option
+              key={`${idSegment}-${idDepartment}`}
+              value={idDepartment}
+            >
+              {label}
+            </Select.Option>
+          ))}
         </Select>
       </Col>
       <Col xs={24} md={6}>

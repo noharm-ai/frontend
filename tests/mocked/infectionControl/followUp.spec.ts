@@ -1,3 +1,5 @@
+import type { Page } from "@playwright/test";
+
 import { test, expect } from "../support/mockApi";
 import { loginWithAuth, loginWithPermissions } from "../support/featureLogin";
 
@@ -1364,19 +1366,21 @@ test.describe("worklist", () => {
       .filter((r) => r.path === "/infection-control/admissions")
       .map((r) => JSON.parse(r.postData!));
 
-  test("lists the followed patients and filters them by status", async ({
+  const pickOption = async (page: Page, field: string, option: string) => {
+    await page.locator(field).click();
+    await page
+      .locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)")
+      .getByText(option, { exact: true })
+      .click();
+    await page.keyboard.press("Escape");
+  };
+
+  test("lists the followed patients, the pending ones by default", async ({
     page,
     mockApi,
   }) => {
     mockApi.override(LIST, {
-      json: {
-        status: "success",
-        data: {
-          count: 1,
-          countByStatus: { 1: 1, 2: 4, 3: 9 },
-          admissions: [admission],
-        },
-      },
+      json: { status: "success", data: { count: 1, admissions: [admission] } },
     });
 
     await page.goto("/controle-infeccao");
@@ -1390,24 +1394,92 @@ test.describe("worklist", () => {
     await expect(row).toContainText("UTI Adulto");
     await expect(row).toContainText("Pendente");
     await expect(row).toContainText("MEROPENEM 1 g SOL INJ sem avaliação");
+    await expect(page.locator(".list-count")).toHaveText(/Pacientes\s*1/);
 
-    // each status shows how many patients it holds, as in the prioritization
-    await expect(
-      page.getByRole("button", { name: /Pendentes\s*1/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /Revisados\s*4/ }),
-    ).toBeVisible();
-    await expect(
-      page.getByRole("button", { name: /Encerrados\s*9/ }),
-    ).toBeVisible();
+    // up to 500 at once, paged in the browser
+    expect(lists(mockApi)[0]).toMatchObject({
+      status: [1],
+      limit: 500,
+      offset: 0,
+    });
+    await expect(page.getByText(/A lista foi limitada/)).toHaveCount(0);
+  });
 
-    expect(lists(mockApi)[0]).toMatchObject({ status: [1], offset: 0 });
+  test("warns when the list was limited", async ({ page, mockApi }) => {
+    mockApi.override(LIST, {
+      json: {
+        status: "success",
+        data: { count: 734, admissions: [admission] },
+      },
+    });
 
-    await page.getByRole("button", { name: /Revisados/ }).click();
-    await expect
-      .poll(() => lists(mockApi).at(-1))
-      .toMatchObject({ status: [2], offset: 0 });
+    await page.goto("/controle-infeccao");
+
+    await expect(
+      page.getByText("A lista foi limitada em 500 registros."),
+    ).toBeVisible({
+      timeout: 15000,
+    });
+    await expect(
+      page.getByText(/734 pacientes atendem aos filtros/),
+    ).toBeVisible();
+  });
+
+  test("searches the loaded list by patient name or admission", async ({
+    page,
+    mockApi,
+  }) => {
+    const other = {
+      ...admission,
+      admissionNumber: ADMISSION + 1,
+      idPatient: `${PATIENT_ID + 1}`,
+    };
+    mockApi.override(LIST, {
+      json: {
+        status: "success",
+        data: { count: 2, admissions: [admission, other] },
+      },
+    });
+    const names: Record<string, string> = {
+      [PATIENT_ID]: "Fulano Beltrano",
+      [PATIENT_ID + 1]: "Maria Teste",
+    };
+    mockApi.override("GET /names/:idPatient", (route) => {
+      const idPatient = new URL(route.request().url()).pathname
+        .split("/")
+        .pop()!;
+      return route.fulfill({
+        json: { status: "success", idPatient, name: names[idPatient] },
+      });
+    });
+
+    await page.goto("/controle-infeccao");
+    const rows = page.locator(".ant-table-tbody tr.ant-table-row");
+    await expect(rows).toHaveCount(2, { timeout: 15000 });
+    await expect(page.getByText("Maria Teste")).toBeVisible();
+    const listsBefore = lists(mockApi).length;
+
+    const search = page.getByPlaceholder(
+      "Buscar por paciente ou nº atendimento",
+    );
+    // case and accents do not matter
+    await search.fill("MARÍA");
+    await expect(rows).toHaveCount(1);
+    await expect(rows).toContainText("Maria Teste");
+    await expect(page.locator(".list-count")).toHaveText(/1 \/ 2/);
+
+    await search.fill(`${ADMISSION}`);
+    await expect(rows).toHaveCount(1);
+    await expect(rows).toContainText("Fulano Beltrano");
+
+    await search.fill("Ciclano");
+    await expect(page.getByText("Nenhum paciente encontrado.")).toBeVisible();
+
+    await search.fill("");
+    await expect(rows).toHaveCount(2);
+
+    // the search never goes to the backend
+    expect(lists(mockApi).length).toBe(listsBefore);
   });
 
   test("opens the patient in a new tab, keeping the worklist", async ({
@@ -1438,7 +1510,7 @@ test.describe("worklist", () => {
     await patientPage.close();
   });
 
-  test("filters by segment, department, pending reason and the other filters", async ({
+  test("filters by status, department, pending reason and the other filters", async ({
     page,
     mockApi,
   }) => {
@@ -1458,21 +1530,10 @@ test.describe("worklist", () => {
     ).toBeVisible({ timeout: 15000 });
     await expect.poll(() => lists(mockApi).length).toBeGreaterThan(0);
 
-    // department, always in sight
-    await page.locator("#departments").click();
-    await page
-      .locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)")
-      .getByText("UTI Adulto", { exact: true })
-      .click();
-    await page.keyboard.press("Escape");
-
-    // pending reason, also in sight
-    await page.locator("#pendingTypes").click();
-    await page
-      .locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)")
-      .getByText("Antimicrobiano sem avaliação", { exact: true })
-      .click();
-    await page.keyboard.press("Escape");
+    // status, department and pending reason, always in sight
+    await pickOption(page, "#status", "Revisado");
+    await pickOption(page, "#departments", "UTI Adulto");
+    await pickOption(page, "#pendingTypes", "Antimicrobiano sem avaliação");
 
     // overdue review, under "see more"
     await page.getByRole("button", { name: /Ver mais/ }).click();
@@ -1484,27 +1545,29 @@ test.describe("worklist", () => {
     await expect
       .poll(() => lists(mockApi).at(-1))
       .toMatchObject({
-        status: [1],
+        status: [1, 2],
+        limit: 500,
         offset: 0,
-        idSegment: [],
         idDepartment: [10],
         pendingTypes: [2],
         admissionNumbers: [],
         overdueReview: true,
       });
 
-    // the status keeps the filters
-    await page.getByRole("button", { name: /Revisados/ }).click();
+    // no status picked: every status
+    await pickOption(page, "#status", "Pendente");
+    await pickOption(page, "#status", "Revisado");
+    await page.locator(".gtm-btn-search").click();
     await expect
       .poll(() => lists(mockApi).at(-1))
-      .toMatchObject({ status: [2], idDepartment: [10], overdueReview: true });
+      .toMatchObject({ status: [1, 2, 3], idDepartment: [10] });
 
-    // reset clears them
+    // reset goes back to the pending ones, without the other filters
     await page.locator(".gtm-btn-reset").click();
     await expect
       .poll(() => lists(mockApi).at(-1))
       .toMatchObject({
-        status: [2],
+        status: [1],
         idDepartment: [],
         pendingTypes: [],
         overdueReview: false,
@@ -1541,8 +1604,11 @@ test.describe("worklist", () => {
       page.getByRole("heading", { name: "Controle de Infecção" }),
     ).toBeVisible({ timeout: 15000 });
 
-    await page.getByRole("button", { name: /Revisados/ }).click();
-    const empty = page.getByText("Nenhum paciente nesta situação.");
+    // pending (held) -> revised
+    await pickOption(page, "#status", "Pendente");
+    await pickOption(page, "#status", "Revisado");
+    await page.locator(".gtm-btn-search").click();
+    const empty = page.getByText("Nenhum paciente encontrado.");
     await expect(empty).toBeVisible();
 
     const latePending = page.waitForResponse(

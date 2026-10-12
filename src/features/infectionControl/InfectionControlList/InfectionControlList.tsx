@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useDeferredValue, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Empty, Table, Tag, Tooltip } from "antd";
+import { Alert, Button, Empty, Input, Table, Tag, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { ReloadOutlined, SearchOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -9,25 +9,40 @@ import { useAppDispatch, useAppSelector } from "src/store";
 import PatientNameCache from "components/PatientName/PatientNameCache";
 import { InfectionControlStatusEnum } from "models/InfectionControlEnum";
 import { formatDate, formatDateTime } from "utils/date";
+import { peekPatient, subscribe } from "utils/patientCache";
 import { PageCard } from "styles/Utils.style";
 
 import {
   fetchFollowedAdmissions,
   IFollowedAdmission,
+  LIST_LIMIT,
   PAGE_SIZE,
-  setFilterStatus,
-  setPage,
 } from "../InfectionControlListSlice";
 import { describePending } from "../followUp";
 import { Header, StateBox } from "../InfectionControl/InfectionControl.style";
 import { WorklistFilter } from "./WorklistFilter/WorklistFilter";
-import { ListBox, StatusFilter } from "./InfectionControlList.style";
+import { ListBox, ListInfo } from "./InfectionControlList.style";
 
-const STATUSES = [
-  InfectionControlStatusEnum.PENDING,
-  InfectionControlStatusEnum.REVISED,
-  InfectionControlStatusEnum.CLOSED,
-];
+/** Lower case without accents, to compare names as typed */
+const normalize = (text: string) =>
+  text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+
+/**
+ * Renders again as patient names arrive while `active`: the names come from
+ * the hospital name service, after the list
+ */
+function usePatientNameUpdates(active: boolean) {
+  const [, setVersion] = useState(0);
+
+  useEffect(() => {
+    if (!active) return;
+    return subscribe(() => setVersion((version) => version + 1));
+  }, [active]);
+}
 
 /**
  * /controle-infeccao: the patients the infection control follows, the ones
@@ -36,16 +51,43 @@ const STATUSES = [
 export function InfectionControlList() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { status, list, count, countByStatus, filterStatus, filters, page } =
-    useAppSelector((state) => state.infectionControlList);
+  const { status, list, count, filters } = useAppSelector(
+    (state) => state.infectionControlList,
+  );
+  const [searchText, setSearchText] = useState("");
+  const [page, setPage] = useState(1);
+  const search = normalize(useDeferredValue(searchText));
 
   const load = () => {
-    dispatch(fetchFollowedAdmissions({ status: filterStatus, page, filters }));
+    dispatch(fetchFollowedAdmissions(filters));
   };
 
   useEffect(() => {
     load();
-  }, [filterStatus, page, filters]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [filters]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // back to the first page when the list or the search changes
+  const [pagedFor, setPagedFor] = useState({ list, search });
+  if (pagedFor.list !== list || pagedFor.search !== search) {
+    setPagedFor({ list, search });
+    setPage(1);
+  }
+
+  // the patient name is only known here (the backend does not have it), so
+  // the search runs on the loaded list
+  usePatientNameUpdates(!!search);
+  const shownList = search
+    ? list.filter(
+        (admission) =>
+          `${admission.admissionNumber}`.includes(search) ||
+          (!!admission.idPatient &&
+            normalize(peekPatient(admission.idPatient)?.name ?? "").includes(
+              search,
+            )),
+      )
+    : list;
+  // the backend counts every match, the list holds up to LIST_LIMIT of them
+  const isLimited = status === "succeeded" && count > list.length;
 
   // the patient page opens in a new tab, so the worklist keeps its order,
   // filters and page
@@ -182,20 +224,36 @@ export function InfectionControlList() {
       <WorklistFilter />
 
       <ListBox>
-        <StatusFilter data-kb="infectionControl.worklist.status">
-          {STATUSES.map((value) => (
-            <Button
-              key={value}
-              className={value === filterStatus ? "active" : ""}
-              onClick={() => dispatch(setFilterStatus(value))}
-            >
-              {t(`infectionControl.worklist.filter.${value}`)}
-              <Tag color={InfectionControlStatusEnum.getColor(value)}>
-                {countByStatus[value] ?? 0}
-              </Tag>
-            </Button>
-          ))}
-        </StatusFilter>
+        <ListInfo data-kb="infectionControl.worklist.search">
+          <Input
+            placeholder={t("infectionControl.worklist.searchPlaceholder")}
+            style={{ width: 300 }}
+            allowClear
+            value={searchText}
+            onChange={(event) => setSearchText(event.target.value)}
+            className={search ? "active" : ""}
+          />
+          <span className="list-count">
+            {t("infectionControl.worklist.patients")}
+            <Tag>
+              {search ? `${shownList.length} / ${list.length}` : list.length}
+            </Tag>
+          </span>
+        </ListInfo>
+
+        {isLimited && (
+          <Alert
+            className="limit-alert"
+            type="warning"
+            showIcon
+            message={t("infectionControl.worklist.limited", {
+              limit: LIST_LIMIT,
+            })}
+            description={t("infectionControl.worklist.limitedHint", {
+              count,
+            })}
+          />
+        )}
 
         <PageCard>
           {status === "failed" ? (
@@ -213,16 +271,15 @@ export function InfectionControlList() {
               data-kb="infectionControl.worklist.list"
               rowKey="admissionNumber"
               columns={columns}
-              dataSource={list}
+              dataSource={shownList}
               loading={status === "loading" || status === "idle"}
               locale={{ emptyText: t("infectionControl.worklist.empty") }}
               pagination={{
                 current: page,
                 pageSize: PAGE_SIZE,
-                total: count,
                 showSizeChanger: false,
                 hideOnSinglePage: true,
-                onChange: (value) => dispatch(setPage(value)),
+                onChange: setPage,
               }}
             />
           )}

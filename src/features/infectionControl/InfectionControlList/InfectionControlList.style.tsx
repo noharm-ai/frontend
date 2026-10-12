@@ -1,6 +1,10 @@
 import styled from "styled-components";
 
 export const ListBox = styled.div`
+  .limit-alert {
+    margin-bottom: 15px;
+  }
+
   .muted {
     color: #8c8c8c;
     font-size: 12px;
@@ -17,28 +21,25 @@ export const ListBox = styled.div`
   }
 `;
 
-// the status buttons above the list, with how many patients each holds, as in
-// the prescription prioritization
-export const StatusFilter = styled.div`
+// the search and how many patients are listed, above the list, as in the
+// prescription prioritization
+export const ListInfo = styled.div`
+  align-items: center;
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 15px;
 
-  .ant-tag {
-    margin-left: 10px;
-    margin-inline-end: 0;
+  .ant-input-affix-wrapper.active {
+    border-color: #096dd9;
+    background-color: #eee;
+
+    input {
+      background-color: #eee;
+    }
   }
 
-  button.active {
-    background-color: #70bdc3;
-    border-color: #70bdc3;
-    color: #fff;
-
-    &:hover {
-      background-color: #70bdc3 !important;
-      border-color: #70bdc3 !important;
-      color: #fff !important;
-    }
+  .list-count .ant-tag {
+    margin-left: 10px;
   }
 `;

@@ -8,6 +8,15 @@ import { InfectionControlStatusEnum } from "models/InfectionControlEnum";
 import { IFollowUpPending } from "./InfectionControlSlice";
 
 export const PAGE_SIZE = 50;
+// the worklist loads at most this many admissions and pages them in the
+// browser, where the patient names are
+export const LIST_LIMIT = 500;
+
+const ALL_STATUSES = [
+  InfectionControlStatusEnum.PENDING,
+  InfectionControlStatusEnum.REVISED,
+  InfectionControlStatusEnum.CLOSED,
+];
 
 // one followed admission of the worklist
 export interface IFollowedAdmission {
@@ -27,10 +36,11 @@ export interface IFollowedAdmission {
   pendings: IFollowUpPending[];
 }
 
-// the worklist filters besides the status, as the backend takes them
+// the worklist filters, as the backend takes them
 export interface IInfectionControlListFilters {
-  // segment and department of the latest prescription of the admission
-  idSegment: number[];
+  // InfectionControlStatusEnum shown; none means every status
+  status: number[];
+  // department of the latest prescription of the admission
   idDepartment: number[];
   // InfectionControlPendingTypeEnum: admissions with any of these open
   pendingTypes: number[];
@@ -39,8 +49,8 @@ export interface IInfectionControlListFilters {
   overdueReview: boolean;
 }
 
-export const EMPTY_FILTERS: IInfectionControlListFilters = {
-  idSegment: [],
+export const DEFAULT_FILTERS: IInfectionControlListFilters = {
+  status: [InfectionControlStatusEnum.PENDING],
   idDepartment: [],
   pendingTypes: [],
   admissionNumbers: [],
@@ -52,15 +62,12 @@ type Status = "idle" | "loading" | "succeeded" | "failed";
 interface IInfectionControlListSlice {
   status: Status;
   list: IFollowedAdmission[];
+  // every admission matching the filters: more than the list holds when the
+  // limit cut it
   count: number;
-  // admissions matching the filters in each InfectionControlStatusEnum
-  countByStatus: Record<number, number>;
-  // InfectionControlStatusEnum shown
-  filterStatus: number;
   filters: IInfectionControlListFilters;
-  page: number;
-  // the latest load: switching filters or pages quickly drops the responses
-  // to the earlier ones
+  // the latest load: switching filters quickly drops the responses to the
+  // earlier ones
   requestId: string | null;
 }
 
@@ -68,35 +75,22 @@ const initialState: IInfectionControlListSlice = {
   status: "idle",
   list: [],
   count: 0,
-  countByStatus: {},
-  filterStatus: InfectionControlStatusEnum.PENDING,
-  filters: EMPTY_FILTERS,
-  page: 1,
+  filters: DEFAULT_FILTERS,
   requestId: null,
 };
 
 export const fetchFollowedAdmissions = createAsyncThunk(
   "infectionControlList/fetchFollowedAdmissions",
-  async (
-    params: {
-      status: number;
-      page: number;
-      filters: IInfectionControlListFilters;
-    },
-    thunkAPI,
-  ) => {
+  async (filters: IInfectionControlListFilters, thunkAPI) => {
     try {
       const response = await api.infectionControl.listAdmissions({
-        ...params.filters,
-        status: [params.status],
-        limit: PAGE_SIZE,
-        offset: (params.page - 1) * PAGE_SIZE,
+        ...filters,
+        status: filters.status.length ? filters.status : ALL_STATUSES,
+        limit: LIST_LIMIT,
+        offset: 0,
       });
-      const data: {
-        count: number;
-        countByStatus?: Record<number, number>;
-        admissions: IFollowedAdmission[];
-      } = response.data.data;
+      const data: { count: number; admissions: IFollowedAdmission[] } =
+        response.data.data;
 
       // names come from the hospital name service; PatientNameCache shows them
       // once they arrive, so the list does not wait for them
@@ -122,16 +116,8 @@ const infectionControlListSlice = createSlice({
   name: "infectionControlList",
   initialState,
   reducers: {
-    setFilterStatus(state, action: PayloadAction<number>) {
-      state.filterStatus = action.payload;
-      state.page = 1;
-    },
     setFilters(state, action: PayloadAction<IInfectionControlListFilters>) {
       state.filters = action.payload;
-      state.page = 1;
-    },
-    setPage(state, action: PayloadAction<number>) {
-      state.page = action.payload;
     },
   },
   extraReducers(builder) {
@@ -145,19 +131,16 @@ const infectionControlListSlice = createSlice({
         state.status = "succeeded";
         state.list = action.payload.admissions;
         state.count = action.payload.count;
-        state.countByStatus = action.payload.countByStatus ?? {};
       })
       .addCase(fetchFollowedAdmissions.rejected, (state, action) => {
         if (state.requestId !== action.meta.requestId) return;
         state.status = "failed";
         state.list = [];
         state.count = 0;
-        state.countByStatus = {};
       });
   },
 });
 
-export const { setFilterStatus, setFilters, setPage } =
-  infectionControlListSlice.actions;
+export const { setFilters } = infectionControlListSlice.actions;
 
 export const infectionControlListReducer = infectionControlListSlice.reducer;

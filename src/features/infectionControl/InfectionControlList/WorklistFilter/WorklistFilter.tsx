@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from "src/store";
 import AdvancedFilter from "components/AdvancedFilter";
 
 import {
-  EMPTY_FILTERS,
+  DEFAULT_FILTERS,
   IInfectionControlListFilters,
   setFilters,
 } from "../../InfectionControlListSlice";
@@ -11,29 +11,29 @@ import { SecondaryFilters } from "./SecondaryFilters/SecondaryFilters";
 
 /**
  * The worklist filter card, the same one the prescription prioritization
- * shows: segment, department and pending reason up front, the other filters
+ * shows: status, department and pending reason up front, the other filters
  * under "see more"
  */
 export function WorklistFilter() {
   const dispatch = useAppDispatch();
-  const { status, filters } = useAppSelector(
-    (state) => state.infectionControlList,
-  );
+  const filters = useAppSelector((state) => state.infectionControlList.filters);
 
   return (
     <AdvancedFilter
       // the filters in use when the page opens again
       initialValues={filters}
-      resetValues={EMPTY_FILTERS}
+      resetValues={DEFAULT_FILTERS}
       mainFilters={<MainFilters />}
       secondaryFilters={<SecondaryFilters />}
       onSearch={(values: IInfectionControlListFilters) =>
-        dispatch(setFilters({ ...EMPTY_FILTERS, ...values }))
+        dispatch(setFilters({ ...DEFAULT_FILTERS, ...values }))
       }
       onChangeValues={undefined}
       memoryType={undefined}
-      loading={status === "loading"}
-      skipFilterList={["idSegment", "idDepartment", "pendingTypes"]}
+      // the list shows it is loading; the filters can change meanwhile, the
+      // latest search wins
+      loading={false}
+      skipFilterList={["status", "idDepartment", "pendingTypes"]}
     />
   );
 }

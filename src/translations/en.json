@@ -1754,11 +1754,6 @@
     "worklist": {
       "title": "Infection Control",
       "legend": "Patients on antimicrobials",
-      "filter": {
-        "1": "Pending",
-        "2": "Revised",
-        "3": "Closed"
-      },
       "patient": "Patient",
       "admission": "Admission",
       "bed": "Bed",
@@ -1769,10 +1764,14 @@
       "validity": "Evaluation expires",
       "open": "Open",
       "openNewTab": "Open in a new tab",
-      "empty": "No patient in this status.",
+      "empty": "No patient found.",
+      "searchPlaceholder": "Search by patient or admission number",
+      "patients": "Patients",
+      "limited": "The list was limited to {{limit}} records.",
+      "limitedHint": "{{count}} patients match the filters. Use more filters to narrow your analysis.",
       "loadError": "Could not load the patient list.",
       "filters": {
-        "allSegments": "All segments",
+        "allStatuses": "All statuses",
         "pendingTypes": "Pending reason",
         "pendingTypesPlaceholder": "Select reasons",
         "admissionNumbers": "Admissions",
