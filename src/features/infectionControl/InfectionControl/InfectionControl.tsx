@@ -31,6 +31,7 @@ import {
 import { CourseGantt } from "../CourseGantt/CourseGantt";
 import { FollowUpStatus } from "../FollowUpStatus/FollowUpStatus";
 import { InfectionControlClinicalNotes } from "../InfectionControlClinicalNotes/InfectionControlClinicalNotes";
+import { InfectionControlExams } from "../InfectionControlExams/InfectionControlExams";
 import { InfectionControlPatient } from "../InfectionControlPatient/InfectionControlPatient";
 import { ReviewModal } from "../ReviewModal/ReviewModal";
 import {
@@ -237,7 +238,7 @@ export function InfectionControl() {
     <>
       {header}
 
-      <TopRow gutter={[24, 24]}>
+      <TopRow gutter={[12, 12]}>
         <Col xs={24} lg={8}>
           <InfectionControlPatient
             patient={data.patient}
@@ -248,8 +249,20 @@ export function InfectionControl() {
             }
           />
         </Col>
+        {data.patient.idPrescription && (
+          // an admission with no prescription has no segment to read the
+          // exam references from, nor drugs to flag the cultures against
+          <Col xs={24} lg={10} data-kb="infectionControl.exams">
+            <InfectionControlExams
+              patient={data.patient}
+              idPrescription={data.patient.idPrescription}
+              exams={data.exams}
+              alertExams={data.alertExams}
+            />
+          </Col>
+        )}
         {followUpEnabled && followUp && (
-          <Col xs={24} lg={8}>
+          <Col xs={24} lg={6}>
             <FollowUpStatus
               followUp={followUp}
               drugNames={drugNames}
@@ -259,7 +272,7 @@ export function InfectionControl() {
         )}
         {followUpStatus === "failed" && (
           // without it the page would look like the schema has no follow-up
-          <Col xs={24} lg={8}>
+          <Col xs={24} lg={6}>
             <FollowUpError data-testid="follow-up-error">
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}

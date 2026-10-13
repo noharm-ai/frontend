@@ -974,6 +974,86 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(page.getByTestId("follow-up-status")).toHaveText("Pendente");
   });
 
+  test("shows the posology with the dose per Kg, like the screening", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override(TIMELINE, {
+      json: {
+        ...TIMELINE_DATA,
+        data: {
+          ...TIMELINE_DATA.data,
+          courses: [
+            course({
+              idDrug: 11,
+              drug: "MEROPENEM 1 g SOL INJ",
+              start: MEROPENEM_START,
+              end: MEROPENEM_END,
+              days: 3,
+              regimens: [
+                {
+                  start: MEROPENEM_START,
+                  end: MEROPENEM_END,
+                  dose: 2,
+                  measureUnit: "FRASCO AMPOLA",
+                  frequency: "8h/8h",
+                  route: "IV",
+                  doseWeight: "0,03 FRASCO AMPOLA/Kg ou 31,25 mg/Kg",
+                  doseWeightDay: "0,09 FRASCO AMPOLA/Kg/Dia ou 93,75 mg/Kg/Dia",
+                },
+              ],
+            }),
+            // no patient weight on record: no dose per Kg
+            course({
+              idDrug: 12,
+              drug: "VANCOMICINA 500 mg SOL INJ",
+              start: VANCOMYCIN_START,
+              end: VANCOMYCIN_END,
+              days: 5,
+              regimens: [
+                {
+                  start: VANCOMYCIN_START,
+                  end: VANCOMYCIN_END,
+                  dose: 1,
+                  measureUnit: "g",
+                  frequency: "12h/12h",
+                  route: "IV",
+                  doseWeight: null,
+                  doseWeightDay: null,
+                },
+              ],
+            }),
+          ],
+        },
+      },
+    });
+    mockApi.override(FOLLOW_UP, { json: followUp() });
+
+    await page.goto(PAGE_URL);
+    await page
+      .getByRole("button", { name: "Registrar revisão" })
+      .click({ timeout: 15000 });
+
+    const dialog = page.getByRole("dialog");
+    const drug = dialog.getByTestId("review-drug");
+    await expect(drug.getByRole("heading")).toHaveText("MEROPENEM 1 g SOL INJ");
+    await expect(drug.getByText("2 FRASCO AMPOLA · 8h/8h · IV")).toBeVisible();
+    await expect(drug.getByTestId("review-dose-weight")).toHaveText(
+      "0,03 FRASCO AMPOLA/Kg ou 31,25 mg/Kg · 0,09 FRASCO AMPOLA/Kg/Dia ou 93,75 mg/Kg/Dia",
+    );
+
+    await drug
+      .locator(".drug-fields")
+      .getByText("Conforme", { exact: true })
+      .click();
+    await dialog.getByRole("button", { name: "Próximo" }).click();
+    await expect(drug.getByRole("heading")).toHaveText(
+      "VANCOMICINA 500 mg SOL INJ",
+    );
+    await expect(drug.getByText("1 g · 12h/12h · IV")).toBeVisible();
+    await expect(drug.getByTestId("review-dose-weight")).toHaveCount(0);
+  });
+
   test("selects the drug whose posology changed and keeps its trigger choice", async ({
     page,
     mockApi,

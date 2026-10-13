@@ -15,6 +15,10 @@ export interface ICourseRegimen {
   measureUnit: string | null;
   frequency: string | null;
   route: string | null;
+  // dose per Kg and per Kg a day, as the screening shows them
+  // ("0,04 g/Kg ou 40,00 mg/Kg"); null without a patient weight
+  doseWeight?: string | null;
+  doseWeightDay?: string | null;
 }
 
 // a break inside a course: a day the drug was not prescribed
@@ -71,11 +75,32 @@ export interface IInfectionControlPatient {
   idSegment: number | null;
 }
 
+// one exam of the screening exam card
+// (backend prescription_view_service._build_exams_card)
+export interface IExamCardItem {
+  key: string;
+  value: {
+    value: number | null;
+    unit: string | null;
+    alert: boolean;
+    date: string | null;
+    ref: string | null;
+    initials: string | null;
+    name: string | null;
+    delta: number | null;
+  };
+}
+
 export interface IAntimicrobialTimeline {
   // server time the courses were judged at
   now: string;
   patient: IInfectionControlPatient;
   courses: ICourse[];
+  // the exam card of the screening, for the latest prescription (empty when
+  // the admission has none)
+  exams: IExamCardItem[];
+  // how many of them are out of range
+  alertExams: number;
 }
 
 // an open reason that keeps the admission pending
