@@ -114,6 +114,8 @@ const timeline = (courses: unknown[]) => ({
       idSegment: 3,
     },
     courses,
+    exams: [],
+    alertExams: 0,
   },
 });
 

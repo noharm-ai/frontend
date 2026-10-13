@@ -71,11 +71,32 @@ export interface IInfectionControlPatient {
   idSegment: number | null;
 }
 
+// one exam of the screening exam card
+// (backend prescription_view_service._build_exams_card)
+export interface IExamCardItem {
+  key: string;
+  value: {
+    value: number | null;
+    unit: string | null;
+    alert: boolean;
+    date: string | null;
+    ref: string | null;
+    initials: string | null;
+    name: string | null;
+    delta: number | null;
+  };
+}
+
 export interface IAntimicrobialTimeline {
   // server time the courses were judged at
   now: string;
   patient: IInfectionControlPatient;
   courses: ICourse[];
+  // the exam card of the screening, for the latest prescription (empty when
+  // the admission has none)
+  exams: IExamCardItem[];
+  // how many of them are out of range
+  alertExams: number;
 }
 
 // an open reason that keeps the admission pending

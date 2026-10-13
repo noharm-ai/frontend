@@ -46,6 +46,8 @@
         ],
         "gaps": []
       }
-    ]
+    ],
+    "exams": [],
+    "alertExams": 0
   }
 }
