@@ -15,6 +15,10 @@ export interface ICourseRegimen {
   measureUnit: string | null;
   frequency: string | null;
   route: string | null;
+  // dose per Kg and per Kg a day, as the screening shows them
+  // ("0,04 g/Kg ou 40,00 mg/Kg"); null without a patient weight
+  doseWeight?: string | null;
+  doseWeightDay?: string | null;
 }
 
 // a break inside a course: a day the drug was not prescribed

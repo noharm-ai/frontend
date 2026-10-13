@@ -71,6 +71,9 @@ export function DrugEvaluationStep({
       (course) => course.start === evaluation.courseStart,
     ) ?? timeline?.courses.find((course) => course.status === "active");
   const regimen = activeCourse?.regimens.at(-1);
+  const doseWeight = [regimen?.doseWeight, regimen?.doseWeightDay]
+    .filter(Boolean)
+    .join(" · ");
   const invalidations = invalidatedBy(
     evaluation.current,
     invalidatedEvaluations,
@@ -84,6 +87,11 @@ export function DrugEvaluationStep({
           <h3 className="drug-name">{evaluation.drug}</h3>
           {regimen && formatRegimen(regimen) && (
             <div className="drug-regimen">{formatRegimen(regimen)}</div>
+          )}
+          {doseWeight && (
+            <div className="drug-regimen" data-testid="review-dose-weight">
+              {doseWeight}
+            </div>
           )}
         </div>
         <EvaluationTag

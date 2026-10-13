@@ -41,7 +41,9 @@
             "dose": 3,
             "measureUnit": "g",
             "frequency": "6h/6h",
-            "route": "IV"
+            "route": "IV",
+            "doseWeight": "0,04 g/Kg",
+            "doseWeightDay": "0,17 g/Kg/Dia"
           }
         ],
         "gaps": []
