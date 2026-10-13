@@ -6,10 +6,9 @@ import { loginWithFeatures } from "../support/featureLogin";
  * (src/features/infectionControl/InfectionControlExams).
  *
  * It is the card of the screening, for the latest prescription of the
- * admission. The exams come with the antimicrobial timeline; the screening
- * gets the culture summary with the prescription, which this page does not
- * load, so the cultures come from GET /prescriptions/:id/cultures as soon as
- * the page opens.
+ * admission. The exams come with the antimicrobial timeline; the cultures
+ * come from GET /prescriptions/:id/cultures only when the culture tab is
+ * opened.
  */
 
 const ADMISSION = 9200;
@@ -176,16 +175,26 @@ test.describe("with the culture feature", () => {
 
     await page.goto(PAGE_URL);
 
-    // the screening reads the count from the prescription; here it comes
-    // from the cultures, loaded with the page
-    await expect(card(page).locator(".culture-tab-alert")).toBeVisible({
+    // the cultures wait for their tab
+    await expect(card(page).getByText("Cultura", { exact: true })).toBeVisible({
       timeout: 15000,
     });
+    expect(mockApi.requests.some((r) => r.path.endsWith("/cultures"))).toBe(
+      false,
+    );
+    await expect(card(page).locator(".culture-tab-alert")).toHaveCount(0);
 
+    const culturesRequest = page.waitForRequest((r) =>
+      r.url().includes("/prescriptions/199/cultures"),
+    );
     await card(page).getByText("Cultura", { exact: true }).click();
+    await culturesRequest;
     await expect(
       card(page).locator(".culture-item.culture-row-resistantInUse"),
     ).toHaveCount(1);
+    // the screening reads the count from the prescription; here it comes
+    // from the cultures, once the tab has loaded them
+    await expect(card(page).locator(".culture-tab-alert")).toBeVisible();
 
     // the full report, for the patient on the page
     mockApi.override("GET /reports/culture", {

@@ -1,11 +1,9 @@
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
-import { useAppDispatch, useAppSelector } from "src/store";
+import { useAppSelector } from "src/store";
 import ExamCard from "components/Screening/Exam/Card";
-import FeaturesService from "services/features";
 import { usePatientName } from "hooks/usePatientName";
 import { formatDate } from "utils/date";
-import { fetchCultures } from "features/culture/CultureSlice";
 import { isResistantInUse } from "features/culture/cultureResistance";
 
 import {
@@ -24,9 +22,8 @@ interface InfectionControlExamsProps {
 
 /**
  * The exams and culture card of the screening, for the admission's latest
- * prescription. The exams come with the antimicrobial timeline; the screening
- * gets the culture summary with the prescription, which is not loaded here, so
- * the cultures are requested on their own
+ * prescription. The exams come with the antimicrobial timeline; the cultures
+ * are requested by the card when its culture tab is opened
  */
 export function InfectionControlExams({
   patient,
@@ -34,27 +31,17 @@ export function InfectionControlExams({
   exams,
   alertExams,
 }: InfectionControlExamsProps) {
-  const dispatch = useAppDispatch();
   const cultures = useAppSelector((state) => state.cultures);
   // the legacy ducks are persisted untyped
-  const features = useAppSelector((state: any) => state.user.account.features);
   const siderCollapsed = useAppSelector(
     (state: any) => state.app.sider.collapsed,
   );
   const { name } = usePatientName(patient.idPatient);
 
-  const hasCulture = FeaturesService(features).hasCulture();
-
   // the culture tab says when a resistant drug is in use, a count the
-  // screening gets with the prescription (cultureStats). On an antimicrobial
-  // page it is the point of the card, so the cultures are loaded up front
-  // instead of when the tab is opened
-  useEffect(() => {
-    if (hasCulture) {
-      dispatch(fetchCultures({ idPrescription }));
-    }
-  }, [hasCulture, idPrescription, dispatch]);
-
+  // screening gets with the prescription (cultureStats). This page does not
+  // load the prescription, so it is counted from the cultures once the tab
+  // has loaded them
   const resistantInUse =
     `${cultures.idPrescription}` === `${idPrescription}`
       ? cultures.list.filter(isResistantInUse).length
