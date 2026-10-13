@@ -1,13 +1,15 @@
 import type { Page } from "@playwright/test";
 
-import { test, expect } from "../support/mockApi";
+import { test, expect, type MockApi } from "../support/mockApi";
 import { loginWithAuth, loginWithPermissions } from "../support/featureLogin";
 
 /**
  * Infection control follow-up (src/features/infectionControl).
  *
- * GET /infection-control/admission/:admissionNumber brings the follow-up of
- * the admission: its status (pending / revised / closed), the reasons it is
+ * GET /infection-control/antimicrobial-timeline/:admissionNumber brings, with
+ * the timeline, the follow-up of the admission (GET
+ * /infection-control/admission/:admissionNumber brings it alone, to retry it
+ * when it failed): its status (pending / revised / closed), the reasons it is
  * pending, the reviews and the evaluation of each antimicrobial course (keyed
  * by drug + course start, like the timeline). Users with
  * WRITE_INFECTION_CONTROL register reviews (POST /infection-control/review)
@@ -110,6 +112,7 @@ const TIMELINE_DATA = {
         days: 5,
       }),
     ],
+    followUp: { enabled: false, admissionNumber: ADMISSION },
   },
 };
 
@@ -220,6 +223,22 @@ const notFollowed = (ongoing = true) =>
     ],
   });
 
+/**
+ * The page loads the follow-up inside the timeline response (null when it
+ * failed on the server); FOLLOW_UP alone only answers its retry
+ */
+const mockPage = (
+  mockApi: MockApi,
+  followUpResponse: { data: unknown },
+  timeline = TIMELINE_DATA,
+) =>
+  mockApi.override(TIMELINE, {
+    json: {
+      ...timeline,
+      data: { ...timeline.data, followUp: followUpResponse.data },
+    },
+  });
+
 test.beforeEach(({ mockApi }) => {
   mockApi.override("GET /names/:idPatient", {
     json: { status: "success", idPatient: PATIENT_ID, name: "Fulano Beltrano" },
@@ -231,7 +250,7 @@ test("shows the follow-up status, its pending reasons and each drug's evaluation
   page,
   mockApi,
 }) => {
-  mockApi.override(FOLLOW_UP, { json: followUp() });
+  mockPage(mockApi, followUp());
 
   await page.goto(PAGE_URL);
 
@@ -299,8 +318,9 @@ test("shows each conformity record on its course in the timeline", async ({
     closingType: 1,
     createdAt: hoursFromNow(-80),
   };
-  mockApi.override(FOLLOW_UP, {
-    json: followUp({
+  mockPage(
+    mockApi,
+    followUp({
       courses: [
         {
           idDrug: 11,
@@ -318,7 +338,7 @@ test("shows each conformity record on its course in the timeline", async ({
         },
       ],
     }),
-  });
+  );
 
   await page.goto(PAGE_URL);
 
@@ -377,7 +397,7 @@ test("shows each conformity record on its course in the timeline", async ({
 test("leaves the follow-up out when the schema does not have it", async ({
   page,
 }) => {
-  // default handler: { enabled: false }
+  // TIMELINE_DATA: { enabled: false }
   await page.goto(PAGE_URL);
 
   await expect(page.getByTestId("course-row")).toHaveCount(2, {
@@ -391,7 +411,17 @@ test("says so when the follow-up fails to load and can retry", async ({
   page,
   mockApi,
 }) => {
-  mockApi.override(FOLLOW_UP, { status: 500, json: { status: "error" } });
+  // the follow-up failed on the server: the timeline comes without it
+  mockPage(mockApi, { data: null });
+  let retried = 0;
+  mockApi.override(FOLLOW_UP, async (route) => {
+    retried += 1;
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(followUp()),
+    });
+  });
 
   await page.goto(PAGE_URL);
 
@@ -404,18 +434,20 @@ test("says so when the follow-up fails to load and can retry", async ({
   );
   await expect(page.getByTestId("course-row")).toHaveCount(2);
 
-  mockApi.override(FOLLOW_UP, { json: followUp() });
+  // the retry loads the follow-up alone
+  expect(retried).toBe(0);
   await error.getByRole("button", { name: "Tentar novamente" }).click();
 
   await expect(page.getByTestId("follow-up-status")).toHaveText("Pendente");
   await expect(error).toHaveCount(0);
+  expect(retried).toBe(1);
 });
 
 test("does not offer to review nor follow an admission not followed without permission", async ({
   page,
   mockApi,
 }) => {
-  mockApi.override(FOLLOW_UP, { json: notFollowed() });
+  mockPage(mockApi, notFollowed());
 
   await page.goto(PAGE_URL);
 
@@ -446,7 +478,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     page,
     mockApi,
   }) => {
-    mockApi.override(FOLLOW_UP, { json: followUp() });
+    mockPage(mockApi, followUp());
     let sent: any = null;
     mockApi.override(REVIEW, async (route) => {
       sent = JSON.parse(route.request().postData()!);
@@ -614,7 +646,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     page,
     mockApi,
   }) => {
-    mockApi.override(FOLLOW_UP, { json: followUp() });
+    mockPage(mockApi, followUp());
     let sent: any = null;
     mockApi.override(REVIEW, async (route) => {
       sent = JSON.parse(route.request().postData()!);
@@ -697,25 +729,24 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     // started 12 days ago, its prescription expired yesterday
     const OLD_START = hoursFromNow(-12 * 24);
     const OLD_END = hoursFromNow(-30);
-    mockApi.override(TIMELINE, {
-      json: {
-        ...TIMELINE_DATA,
-        data: {
-          ...TIMELINE_DATA.data,
-          courses: [
-            course({
-              idDrug: 12,
-              drug: "VANCOMICINA 500 mg SOL INJ",
-              start: OLD_START,
-              end: OLD_END,
-              days: 12,
-            }),
-          ],
-        },
+    const timeline = {
+      ...TIMELINE_DATA,
+      data: {
+        ...TIMELINE_DATA.data,
+        courses: [
+          course({
+            idDrug: 12,
+            drug: "VANCOMICINA 500 mg SOL INJ",
+            start: OLD_START,
+            end: OLD_END,
+            days: 12,
+          }),
+        ],
       },
-    });
-    mockApi.override(FOLLOW_UP, {
-      json: followUp({
+    };
+    mockPage(
+      mockApi,
+      followUp({
         courses: [
           {
             idDrug: 12,
@@ -726,7 +757,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
           },
         ],
       }),
-    });
+      timeline,
+    );
     let sent: any = null;
     mockApi.override(REVIEW, async (route) => {
       sent = JSON.parse(route.request().postData()!);
@@ -834,9 +866,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       closingType: 4,
       createdAt: hoursFromNow(0),
     };
-    mockApi.override(FOLLOW_UP, {
-      json: vancomycinOnly([vancomycinEvaluation]),
-    });
+    mockPage(mockApi, vancomycinOnly([vancomycinEvaluation]));
     let sent: any = null;
     mockApi.override(REVIEW, async (route) => {
       sent = JSON.parse(route.request().postData()!);
@@ -941,7 +971,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     page,
     mockApi,
   }) => {
-    mockApi.override(FOLLOW_UP, { json: followUp() });
+    mockPage(mockApi, followUp());
     mockApi.override(REVIEW, {
       status: 400,
       json: {
@@ -978,56 +1008,54 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     page,
     mockApi,
   }) => {
-    mockApi.override(TIMELINE, {
-      json: {
-        ...TIMELINE_DATA,
-        data: {
-          ...TIMELINE_DATA.data,
-          courses: [
-            course({
-              idDrug: 11,
-              drug: "MEROPENEM 1 g SOL INJ",
-              start: MEROPENEM_START,
-              end: MEROPENEM_END,
-              days: 3,
-              regimens: [
-                {
-                  start: MEROPENEM_START,
-                  end: MEROPENEM_END,
-                  dose: 2,
-                  measureUnit: "FRASCO AMPOLA",
-                  frequency: "8h/8h",
-                  route: "IV",
-                  doseWeight: "0,03 FRASCO AMPOLA/Kg ou 31,25 mg/Kg",
-                  doseWeightDay: "0,09 FRASCO AMPOLA/Kg/Dia ou 93,75 mg/Kg/Dia",
-                },
-              ],
-            }),
-            // no patient weight on record: no dose per Kg
-            course({
-              idDrug: 12,
-              drug: "VANCOMICINA 500 mg SOL INJ",
-              start: VANCOMYCIN_START,
-              end: VANCOMYCIN_END,
-              days: 5,
-              regimens: [
-                {
-                  start: VANCOMYCIN_START,
-                  end: VANCOMYCIN_END,
-                  dose: 1,
-                  measureUnit: "g",
-                  frequency: "12h/12h",
-                  route: "IV",
-                  doseWeight: null,
-                  doseWeightDay: null,
-                },
-              ],
-            }),
-          ],
-        },
+    const timeline = {
+      ...TIMELINE_DATA,
+      data: {
+        ...TIMELINE_DATA.data,
+        courses: [
+          course({
+            idDrug: 11,
+            drug: "MEROPENEM 1 g SOL INJ",
+            start: MEROPENEM_START,
+            end: MEROPENEM_END,
+            days: 3,
+            regimens: [
+              {
+                start: MEROPENEM_START,
+                end: MEROPENEM_END,
+                dose: 2,
+                measureUnit: "FRASCO AMPOLA",
+                frequency: "8h/8h",
+                route: "IV",
+                doseWeight: "0,03 FRASCO AMPOLA/Kg ou 31,25 mg/Kg",
+                doseWeightDay: "0,09 FRASCO AMPOLA/Kg/Dia ou 93,75 mg/Kg/Dia",
+              },
+            ],
+          }),
+          // no patient weight on record: no dose per Kg
+          course({
+            idDrug: 12,
+            drug: "VANCOMICINA 500 mg SOL INJ",
+            start: VANCOMYCIN_START,
+            end: VANCOMYCIN_END,
+            days: 5,
+            regimens: [
+              {
+                start: VANCOMYCIN_START,
+                end: VANCOMYCIN_END,
+                dose: 1,
+                measureUnit: "g",
+                frequency: "12h/12h",
+                route: "IV",
+                doseWeight: null,
+                doseWeightDay: null,
+              },
+            ],
+          }),
+        ],
       },
-    });
-    mockApi.override(FOLLOW_UP, { json: followUp() });
+    };
+    mockPage(mockApi, followUp(), timeline);
 
     await page.goto(PAGE_URL);
     await page
@@ -1061,43 +1089,42 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     // changed twice since the evaluation: the reason kept the first change,
     // the course has the posology prescribed now
     const POSOLOGY_CHANGE = hoursFromNow(-3);
-    mockApi.override(TIMELINE, {
-      json: {
-        ...TIMELINE_DATA,
-        data: {
-          ...TIMELINE_DATA.data,
-          courses: [
-            course({
-              idDrug: 12,
-              drug: "VANCOMICINA 500 mg SOL INJ",
-              start: VANCOMYCIN_START,
-              end: VANCOMYCIN_END,
-              days: 5,
-              regimens: [
-                {
-                  start: VANCOMYCIN_START,
-                  end: POSOLOGY_CHANGE,
-                  dose: 1,
-                  measureUnit: "g",
-                  frequency: "12h/12h",
-                  route: "IV",
-                },
-                {
-                  start: POSOLOGY_CHANGE,
-                  end: VANCOMYCIN_END,
-                  dose: 2,
-                  measureUnit: "g",
-                  frequency: "6h/6h",
-                  route: "IV",
-                },
-              ],
-            }),
-          ],
-        },
+    const timeline = {
+      ...TIMELINE_DATA,
+      data: {
+        ...TIMELINE_DATA.data,
+        courses: [
+          course({
+            idDrug: 12,
+            drug: "VANCOMICINA 500 mg SOL INJ",
+            start: VANCOMYCIN_START,
+            end: VANCOMYCIN_END,
+            days: 5,
+            regimens: [
+              {
+                start: VANCOMYCIN_START,
+                end: POSOLOGY_CHANGE,
+                dose: 1,
+                measureUnit: "g",
+                frequency: "12h/12h",
+                route: "IV",
+              },
+              {
+                start: POSOLOGY_CHANGE,
+                end: VANCOMYCIN_END,
+                dose: 2,
+                measureUnit: "g",
+                frequency: "6h/6h",
+                route: "IV",
+              },
+            ],
+          }),
+        ],
       },
-    });
-    mockApi.override(FOLLOW_UP, {
-      json: followUp({
+    };
+    mockPage(
+      mockApi,
+      followUp({
         pendings: [
           {
             id: "802",
@@ -1130,7 +1157,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
           },
         ],
       }),
-    });
+      timeline,
+    );
     let sent: any = null;
     mockApi.override(REVIEW, async (route) => {
       sent = JSON.parse(route.request().postData()!);
@@ -1266,8 +1294,9 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       validUntil: hoursFromNow(-6),
       triggers: [3],
     };
-    mockApi.override(FOLLOW_UP, {
-      json: followUp({
+    mockPage(
+      mockApi,
+      followUp({
         pendings: [
           {
             id: "803",
@@ -1289,7 +1318,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
           },
         ],
       }),
-    });
+    );
 
     await page.goto(PAGE_URL);
 
@@ -1329,7 +1358,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     page,
     mockApi,
   }) => {
-    mockApi.override(FOLLOW_UP, { json: notFollowed() });
+    mockPage(mockApi, notFollowed());
     let followed = 0;
     mockApi.override(FOLLOW, async (route) => {
       followed += 1;
@@ -1407,7 +1436,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     page,
     mockApi,
   }) => {
-    mockApi.override(FOLLOW_UP, { json: notFollowed(false) });
+    mockPage(mockApi, notFollowed(false));
 
     await page.goto(PAGE_URL);
 

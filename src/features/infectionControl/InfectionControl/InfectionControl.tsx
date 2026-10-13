@@ -73,15 +73,15 @@ export function InfectionControl() {
 
   const isValid = /^\d+$/.test(admissionNumber);
 
-  const loadFollowUp = () => {
-    dispatch(fetchFollowUp({ admissionNumber }));
-  };
-
+  // the follow-up comes with the timeline; it is loaded alone only to retry it
   const load = () => {
     if (isValid) {
       dispatch(fetchAntimicrobialTimeline({ admissionNumber }));
-      loadFollowUp();
     }
+  };
+
+  const loadFollowUp = () => {
+    dispatch(fetchFollowUp({ admissionNumber }));
   };
 
   useEffect(() => {

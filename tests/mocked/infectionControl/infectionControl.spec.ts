@@ -116,6 +116,7 @@ const timeline = (courses: unknown[]) => ({
     courses,
     exams: [],
     alertExams: 0,
+    followUp: { enabled: false, admissionNumber: ADMISSION },
   },
 });
 
