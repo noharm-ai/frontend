@@ -394,6 +394,68 @@ test("shows each conformity record on its course in the timeline", async ({
   await expect(page.getByText("Avaliação conforme (vigência)")).toBeVisible();
 });
 
+test("keeps consecutive conformity records on the same line", async ({
+  page,
+  mockApi,
+}) => {
+  // non-conforming from today on, and a past period recorded afterwards as
+  // conforming up to the end of yesterday: one follows the other
+  const current = {
+    ...vancomycinEvaluation,
+    conforming: false,
+    validFrom: `${localDay(0)}T00:00:00`,
+    validUntil: hoursFromNow(48),
+    createdAt: hoursFromNow(-2),
+  };
+  const past = {
+    ...vancomycinEvaluation,
+    id: "502",
+    idReview: "42",
+    validFrom: hoursFromNow(-90),
+    validUntil: `${localDay(-1)}T23:59:59`,
+    status: 3,
+    closedAt: hoursFromNow(-1),
+    closingType: 4,
+    createdAt: hoursFromNow(-1),
+  };
+  mockPage(
+    mockApi,
+    followUp({
+      courses: [
+        {
+          idDrug: 11,
+          start: MEROPENEM_START,
+          ongoing: true,
+          evaluation: null,
+          history: [],
+        },
+        {
+          idDrug: 12,
+          start: VANCOMYCIN_START,
+          ongoing: true,
+          evaluation: current,
+          history: [past, current],
+        },
+      ],
+    }),
+  );
+
+  await page.goto(PAGE_URL);
+
+  const marks = page
+    .getByTestId("course-row")
+    .filter({ hasText: "VANCOMICINA" })
+    .getByTestId("course-evaluation");
+  await expect(marks).toHaveCount(2, { timeout: 15000 });
+  await expect(marks.nth(0)).not.toHaveClass(/non-conforming/);
+  await expect(marks.nth(1)).toHaveClass(/non-conforming/);
+
+  const pastBox = (await marks.nth(0).boundingBox())!;
+  const currentBox = (await marks.nth(1).boundingBox())!;
+  expect(currentBox.y).toBe(pastBox.y);
+  expect(currentBox.x).toBeGreaterThanOrEqual(pastBox.x + pastBox.width - 1);
+});
+
 test("leaves the follow-up out when the schema does not have it", async ({
   page,
 }) => {
