@@ -76,6 +76,7 @@ const timeline = (idPrescription: string | null) => ({
     // the backend sends no exam without a prescription
     exams: idPrescription ? EXAMS : [],
     alertExams: idPrescription ? 1 : 0,
+    followUp: { enabled: false, admissionNumber: ADMISSION },
   },
 });
 

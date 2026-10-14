@@ -24,6 +24,10 @@ const ROW_HEIGHT = 64;
 const BAR_CENTER = "var(--bar-center, 50%)";
 
 const GRID_LINE = "#f0f0f0";
+// under the pointer: the row of its drug and the column of its day (the label
+// is sticky over the track, so its tint has to be opaque)
+const HOVER_ROW = "#f4f8fb";
+const HOVER_DAY = "rgba(46, 60, 90, 0.06)";
 const HATCH =
   "repeating-linear-gradient(-45deg, #fff 0 3px, rgba(0, 0, 0, 0.12) 3px 6px)";
 
@@ -53,6 +57,8 @@ export const GanttScroll = styled.div`
   overflow-x: auto;
 `;
 
+// --hover-day: the index of the day column under the pointer, set while the
+// pointer is over a track (.hovering-day)
 export const GanttGrid = styled.div`
   display: flex;
   flex-direction: column;
@@ -72,8 +78,12 @@ export const Row = styled.div`
   }
 
   &.row-header {
-    background: #fafafa;
+    background: #fff;
     min-height: 50px;
+  }
+
+  &:not(.row-header):hover {
+    background-color: ${HOVER_ROW};
   }
 `;
 
@@ -91,8 +101,8 @@ export const RowLabel = styled.div`
   position: sticky;
   z-index: 3;
 
-  .row-header & {
-    background-color: #fafafa;
+  ${Row}:not(.row-header):hover & {
+    background-color: ${HOVER_ROW};
   }
 
   .label-drug {
@@ -165,6 +175,23 @@ export const Track = styled.div<{ $days: number }>`
 
   &.track-header {
     background-image: none;
+  }
+
+  /* the column of the day under the pointer, behind the bars */
+  &::before {
+    background: ${HOVER_DAY};
+    bottom: 0;
+    content: "";
+    display: none;
+    left: calc(var(--hover-day, 0) * ${DAY_WIDTH}px);
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    width: ${DAY_WIDTH}px;
+  }
+
+  .hovering-day &::before {
+    display: block;
   }
 
   .marker-label {
@@ -250,10 +277,6 @@ export const HeaderDay = styled.div`
 
   &.month-start .day-month {
     visibility: visible;
-  }
-
-  &.weekend {
-    background: #f5f5f5;
   }
 
   &.today .day-number {
@@ -473,25 +496,81 @@ export const Marker = styled.div`
   }
 `;
 
-export const Legend = styled.div`
-  border-top: 1px solid #e0e0e0;
-  color: #595959;
+// title and actions of the timeline, fixed above the grid that scrolls sideways
+export const GanttHeader = styled.div`
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
   display: flex;
   flex-wrap: wrap;
-  font-size: 12px;
-  gap: 6px 18px;
-  padding: 10px 12px;
+  gap: 8px 16px;
+  justify-content: space-between;
+  padding: 10px 12px 10px 16px;
 
+  .gantt-title {
+    color: #2e3c5a;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .gantt-actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin-left: auto;
+  }
+
+  .gantt-toggle {
+    align-items: center;
+    color: #595959;
+    cursor: pointer;
+    display: inline-flex;
+    gap: 8px;
+  }
+`;
+
+// the body of the legend popover: the symbols of the timeline, by group
+export const Legend = styled.div`
+  color: #595959;
+  display: grid;
+  gap: 16px 40px;
+  grid-template-columns: repeat(2, auto);
+  max-width: min(640px, calc(100vw - 48px));
+  padding: 4px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  h4 {
+    color: #2e3c5a;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  /* every symbol centered in a slot of the same width, so the labels line up */
   span {
     align-items: center;
-    display: inline-flex;
-    gap: 6px;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 28px 1fr;
   }
 
   i {
     border-radius: 3px;
     display: inline-block;
     height: 10px;
+    justify-self: center;
     width: 18px;
   }
 
@@ -546,12 +625,6 @@ export const Legend = styled.div`
     position: relative;
 
     ${evaluationMarker("-7px")}
-  }
-
-  .legend-toggle {
-    height: auto;
-    margin-left: auto;
-    padding: 0;
   }
 
   .legend-change {

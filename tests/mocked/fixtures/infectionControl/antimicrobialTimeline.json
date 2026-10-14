@@ -50,6 +50,7 @@
       }
     ],
     "exams": [],
-    "alertExams": 0
+    "alertExams": 0,
+    "followUp": { "enabled": false, "admissionNumber": 5 }
   }
 }

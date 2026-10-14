@@ -77,8 +77,9 @@ export const daysSince = (date: string, reference: Dayjs): number =>
 
 /**
  * The line of each span, placed in the order given: each goes on the first
- * line where it keeps more than `gapMs` from every span already there, so
- * spans that overlap or touch stack and the others share a line
+ * line where it overlaps no span already there and starts more than `gapMs`
+ * from each of their starts, so spans that overlap (or share an instant) and
+ * spans whose starts are too close stack, and consecutive ones share a line
  */
 export const packLanes = (
   spans: { start: string; end: string }[],
@@ -91,7 +92,9 @@ export const packLanes = (
     const end = Math.max(start, dayjs(span.end).valueOf());
     let lane = lanes.findIndex((placed) =>
       placed.every(
-        (other) => end + gapMs < other.start || start > other.end + gapMs,
+        (other) =>
+          (end < other.start || start > other.end) &&
+          Math.abs(start - other.start) > gapMs,
       ),
     );
     if (lane < 0) {

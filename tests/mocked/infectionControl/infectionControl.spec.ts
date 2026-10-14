@@ -55,7 +55,10 @@ const COURSES = [
     plannedDays: 7,
     days: 4,
     prescriptionCount: 2,
-    regimens: [regimen(-72, -24, 1), regimen(-24, 96, 2)],
+    regimens: [
+      regimen(-72, -24, 1),
+      { ...regimen(-24, 96, 2), notes: "Infundir em 3 horas" },
+    ],
   }),
   // daily prescriber, already past the planned 7 days, with a missing day
   course({
@@ -116,6 +119,7 @@ const timeline = (courses: unknown[]) => ({
     courses,
     exams: [],
     alertExams: 0,
+    followUp: { enabled: false, admissionNumber: ADMISSION },
   },
 });
 
@@ -144,7 +148,7 @@ test("shows the patient and the admission", async ({ page, mockApi }) => {
   ).toHaveCount(0);
 });
 
-test("opens the clinical notes and the exams of the admission", async ({
+test("opens the clinical notes of the admission", async ({
   page,
   mockApi,
 }) => {
@@ -164,17 +168,8 @@ test("opens the clinical notes and the exams of the admission", async ({
   await page.keyboard.press("Escape");
   await expect(notes).toBeHidden();
 
-  // the exams use the reference values of the patient's segment
-  const examsRequest = page.waitForRequest(
-    (r) =>
-      r.url().includes(`/exams/${ADMISSION}`) &&
-      new URL(r.url()).searchParams.get("idSegment") === "3",
-  );
-  await page.getByRole("button", { name: "Exames" }).click();
-  await examsRequest;
-  await expect(
-    page.getByRole("tab", { name: "Exames numéricos" }),
-  ).toBeVisible();
+  // the exams live in their own card, not behind a header button
+  await expect(page.getByRole("button", { name: "Exames" })).toHaveCount(0);
 });
 
 test("lists every course on the timeline, the ones in use first", async ({
@@ -213,6 +208,8 @@ test("lists every course on the timeline, the ones in use first", async ({
     details.getByText("CPOE (prescrição com vigência)"),
   ).toBeVisible();
   await expect(details.getByText("Posologias")).toBeVisible();
+  // the observation of the prescribed item shows under its regimen
+  await expect(details.getByText("Infundir em 3 horas")).toBeVisible();
 
   // the footer button (the corner X is labeled "Fechar" too)
   await details.locator("button.ant-btn", { hasText: "Fechar" }).click();

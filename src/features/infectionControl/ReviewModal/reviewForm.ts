@@ -25,6 +25,20 @@ const DRUG_REASONS = [
   InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
 ];
 
+// how many days from today the next review can be quickly scheduled for
+export const NEXT_REVIEW_DAYS = [1, 3];
+
+// the verdict on a drug: conforming, not conforming or left out of the review
+export type EvaluationDecision = "conforming" | "nonConforming" | "skip";
+
+// when the patient is reviewed again: not scheduled, some days from today
+// ("days3"), when the treatments end or on a chosen day
+export type NextReview = "none" | `days${number}` | "treatmentEnd" | "date";
+
+// what leaving a drug out of the review keeps: the evaluation in force, one
+// that no longer holds (still pending) or no evaluation at all
+export type SkipOutcome = "keep" | "keepInvalid" | "none";
+
 // where an evaluation starts: now, at the course start or on a chosen day
 export type EvaluationStart = "now" | "courseStart" | "date";
 // until when it holds: the end of the treatment, some days from its start
@@ -56,6 +70,8 @@ export interface IDrugEvaluationFields {
 
 export interface IReviewFields {
   notes: string;
+  nextReview: NextReview;
+  // the day chosen when the next review is on a date
   nextReviewDate: Dayjs | null;
   evaluations: IDrugEvaluationFields[];
 }
@@ -172,6 +188,7 @@ export const getInitialValues = (
 
   return {
     notes: "",
+    nextReview: "none",
     nextReviewDate: null,
     evaluations: ongoing.map((course) => {
       const treatmentEnd = getTreatmentEnd(
@@ -234,6 +251,17 @@ export const getEvaluationSchema = (t: TFunction) =>
             evaluate && end === "date",
           then: (schema) => schema.required(t("validation.requiredField")),
         }),
+      // a non-conformity is justified
+      notes: Yup.string().when(["evaluate", "conforming"], {
+        is: (evaluate: boolean, conforming: boolean | null) =>
+          evaluate && conforming === false,
+        then: (schema) =>
+          schema.test(
+            "justified",
+            t("infectionControl.review.justificationRequired"),
+            (value) => !!value?.trim(),
+          ),
+      }),
     })
     // the validity may be over already (a retroactive record), but it ends
     // after the evaluation starts
@@ -257,6 +285,10 @@ export const getValidationSchema = (
   Yup.object().shape({
     nextReviewDate: Yup.mixed<Dayjs>()
       .nullable()
+      .when("nextReview", {
+        is: "date",
+        then: (schema) => schema.required(t("validation.requiredField")),
+      })
       .test("future", t("infectionControl.review.futureDate"), futureDate),
     evaluations: Yup.array().of(evaluationSchema),
   });
@@ -288,9 +320,9 @@ export const toReviewPayload = (
   admissionNumber,
   notes: values.notes.trim() || null,
   // the patient is due from the start of the scheduled day
-  nextReviewDate: values.nextReviewDate
-    ? values.nextReviewDate.startOf("day").format("YYYY-MM-DDTHH:mm:ss")
-    : null,
+  nextReviewDate:
+    getNextReviewDate(values)?.startOf("day").format("YYYY-MM-DDTHH:mm:ss") ??
+    null,
   evaluations: values.evaluations
     .filter((e) => e.evaluate)
     .map((e) => ({
@@ -338,39 +370,113 @@ export const invalidatedBy = (
 ): IFollowUpPending[] =>
   (evaluation && invalidatedEvaluations[evaluation.id]) || [];
 
+/** The verdict chosen for a drug, null while it is still to be evaluated */
+export const getDecision = (
+  evaluation: IDrugEvaluationFields,
+): EvaluationDecision | null => {
+  if (!evaluation.evaluate) return "skip";
+  if (evaluation.conforming == null) return null;
+
+  return evaluation.conforming ? "conforming" : "nonConforming";
+};
+
+/** The fields a verdict sets: leaving a drug out keeps what is on record */
+export const decisionFields = (decision: EvaluationDecision) => ({
+  evaluate: decision !== "skip",
+  conforming: decision === "skip" ? null : decision === "conforming",
+});
+
+/** What leaving a drug out of the review keeps */
+export const getSkipOutcome = (
+  evaluation: IDrugEvaluationFields,
+  invalidatedEvaluations: Record<string, IFollowUpPending[]>,
+): SkipOutcome => {
+  if (!evaluation.current) return "none";
+
+  return invalidatedBy(evaluation.current, invalidatedEvaluations).length
+    ? "keepInvalid"
+    : "keep";
+};
+
+/**
+ * The days an evaluation covers, as chosen: from its start (today when it
+ * starts now) through its last day. Null ends while a chosen day is missing.
+ */
+export const getValidityPeriod = (evaluation: IDrugEvaluationFields) => {
+  const from =
+    evaluation.start === "date" && !evaluation.startDate
+      ? null
+      : getStartMoment(evaluation).startOf("day");
+  const until = getValidUntil(evaluation)?.startOf("day") ?? null;
+
+  return {
+    from,
+    until,
+    days: from && until ? until.diff(from, "day") + 1 : null,
+  };
+};
+
+/** The running course of a drug being evaluated, from its timeline */
+export const findEvaluatedCourse = (
+  courses: ICourse[] | undefined,
+  evaluation: IDrugEvaluationFields,
+) =>
+  courses?.find((course) => course.start === evaluation.courseStart) ??
+  courses?.find((course) => course.status === "active");
+
+/**
+ * When the running treatments are due to end, if still ahead: a day the next
+ * review can be scheduled for
+ */
+export const getTreatmentsEnd = (values: IReviewFields): Dayjs | null => {
+  const ends = values.evaluations
+    .map((evaluation) => evaluation.treatmentEnd)
+    .filter((end): end is string => !!end)
+    .map((end) => dayjs(end));
+  const last = ends.reduce<Dayjs | null>(
+    (latest, end) => (!latest || end.isAfter(latest) ? end : latest),
+    null,
+  );
+
+  return last && last.isAfter(dayjs(), "day") ? last : null;
+};
+
+/** The day the patient is reviewed again, as chosen */
+export const getNextReviewDate = (
+  values: IReviewFields,
+  nextReview: NextReview = values.nextReview,
+): Dayjs | null => {
+  if (nextReview === "none") return null;
+  if (nextReview === "date") return values.nextReviewDate;
+  if (nextReview === "treatmentEnd") return getTreatmentsEnd(values);
+
+  return dayjs().add(Number(nextReview.replace("days", "")), "day");
+};
+
 /** What the review will record for a drug, in words */
 export const describeDrugEvaluation = (
   evaluation: IDrugEvaluationFields,
   invalidatedEvaluations: Record<string, IFollowUpPending[]>,
   t: TFunction,
 ) => {
-  if (!evaluation.evaluate) {
-    // what is on record no longer holds: its reasons stay open
-    if (invalidatedBy(evaluation.current, invalidatedEvaluations).length) {
-      return t("infectionControl.review.keepInvalidEvaluation");
-    }
-
+  const decision = getDecision(evaluation);
+  if (decision === "skip") {
     return t(
-      evaluation.current
-        ? "infectionControl.review.keepEvaluation"
-        : "infectionControl.review.notEvaluated",
+      `infectionControl.review.skip.${getSkipOutcome(evaluation, invalidatedEvaluations)}.description`,
     );
   }
-  if (evaluation.conforming == null) {
-    return t("infectionControl.review.toEvaluate");
+  if (decision == null) {
+    return t("infectionControl.review.notFilled");
   }
 
-  const validFrom = getValidFrom(evaluation);
-  const validUntil = getValidUntil(evaluation);
+  const { from, until, days } = getValidityPeriod(evaluation);
 
   return [
-    verdictLabel(evaluation.conforming, t),
-    validFrom &&
-      t("infectionControl.review.since", { date: formatDate(validFrom) }),
-    validUntil &&
-      t("infectionControl.evaluation.until", {
-        date: formatDate(validUntil),
-      }),
+    t("infectionControl.review.validity", {
+      from: from ? formatDate(from) : "-",
+      until: until ? formatDate(until) : "-",
+      count: days ?? 0,
+    }),
     isHistoryOnly(evaluation) && t("infectionControl.review.historyOnly"),
   ]
     .filter(Boolean)

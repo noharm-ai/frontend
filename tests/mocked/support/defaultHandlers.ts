@@ -92,11 +92,12 @@ export function defaultHandlers(): Record<string, Handler> {
     "GET /prescriptions/:id/update": { json: { status: "success", data: {} } },
     "GET /prescriptions/:id/cultures": emptyList,
 
-    // antimicrobial timeline (/controle-infeccao/:admissionNumber)
+    // antimicrobial timeline (/controle-infeccao/:admissionNumber), with the
+    // follow-up in it: off unless a test turns it on
     "GET /infection-control/antimicrobial-timeline/:admissionNumber": json(
       "infectionControl/antimicrobialTimeline.json",
     ),
-    // follow-up of the admission: off unless a test turns it on
+    // the follow-up alone, only loaded to retry it
     "GET /infection-control/admission/:admissionNumber": {
       json: { status: "success", data: { enabled: false, admissionNumber: 0 } },
     },

@@ -19,6 +19,8 @@ export interface ICourseRegimen {
   // ("0,04 g/Kg ou 40,00 mg/Kg"); null without a patient weight
   doseWeight?: string | null;
   doseWeightDay?: string | null;
+  // the observation of the regimen's latest prescribed item (complemento)
+  notes?: string | null;
 }
 
 // a break inside a course: a day the drug was not prescribed
@@ -101,6 +103,12 @@ export interface IAntimicrobialTimeline {
   exams: IExamCardItem[];
   // how many of them are out of range
   alertExams: number;
+}
+
+// the antimicrobial timeline comes with the follow-up, judged from the same
+// courses at the same time; null when the follow-up failed to load
+interface IAntimicrobialTimelineResponse extends IAntimicrobialTimeline {
+  followUp: IFollowUp | null;
 }
 
 // an open reason that keeps the admission pending
@@ -264,7 +272,7 @@ export const fetchAntimicrobialTimeline = createAsyncThunk(
       const response = await api.infectionControl.getAntimicrobialTimeline(
         params.admissionNumber,
       );
-      const data: IAntimicrobialTimeline = response.data.data;
+      const data: IAntimicrobialTimelineResponse = response.data.data;
 
       // the name comes from the hospital name service; PatientNameCache shows
       // it once it arrives, so the timeline does not wait for it
@@ -289,6 +297,7 @@ export const fetchAntimicrobialTimeline = createAsyncThunk(
   },
 );
 
+// the follow-up alone, to retry it when it failed to come with the timeline
 export const fetchFollowUp = createAsyncThunk(
   "infectionControl/fetchFollowUp",
   async (params: { admissionNumber: string }, thunkAPI) => {
@@ -390,11 +399,18 @@ const infectionControlSlice = createSlice({
         state.status = "loading";
         state.errorCode = null;
         state.requestId = action.meta.requestId;
+        // the follow-up comes with it: a follow-up retry still running is
+        // dropped when it arrives
+        state.followUp.status = "loading";
+        state.followUp.requestId = action.meta.requestId;
       })
       .addCase(fetchAntimicrobialTimeline.fulfilled, (state, action) => {
         if (state.requestId !== action.meta.requestId) return;
+        const { followUp, ...data } = action.payload;
         state.status = "succeeded";
-        state.data = action.payload;
+        state.data = data;
+        state.followUp.status = followUp ? "succeeded" : "failed";
+        state.followUp.data = followUp;
       })
       .addCase(fetchAntimicrobialTimeline.rejected, (state, action) => {
         if (state.requestId !== action.meta.requestId) return;
@@ -402,6 +418,8 @@ const infectionControlSlice = createSlice({
         state.data = null;
         state.errorCode =
           (action.payload as { code?: string } | undefined)?.code ?? null;
+        state.followUp.status = "failed";
+        state.followUp.data = null;
       });
   },
 });

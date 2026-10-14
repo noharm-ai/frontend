@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Affix, Button, Col, Empty } from "antd";
 import {
-  ExperimentOutlined,
+  ArrowRightOutlined,
   FileDoneOutlined,
   FileTextOutlined,
   PlayCircleOutlined,
@@ -28,6 +28,10 @@ import {
   reset,
   setReviewOpen,
 } from "../InfectionControlSlice";
+import {
+  fetchNextPending,
+  filtersFromSearch,
+} from "../InfectionControlListSlice";
 import { CourseGantt } from "../CourseGantt/CourseGantt";
 import { FollowUpStatus } from "../FollowUpStatus/FollowUpStatus";
 import { InfectionControlClinicalNotes } from "../InfectionControlClinicalNotes/InfectionControlClinicalNotes";
@@ -57,7 +61,10 @@ import {
 export function InfectionControl() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { admissionNumber = "" } = useParams();
+  // the worklist filters the page was opened with (filtersToSearch)
+  const [searchParams] = useSearchParams();
   const { status, data, errorCode } = useAppSelector(
     (state) => state.infectionControl,
   );
@@ -70,18 +77,19 @@ export function InfectionControl() {
 
   const [clinicalNotesOpen, setClinicalNotesOpen] = useState(false);
   const [affixed, setAffixed] = useState(false);
+  const [nextLoading, setNextLoading] = useState(false);
 
   const isValid = /^\d+$/.test(admissionNumber);
 
-  const loadFollowUp = () => {
-    dispatch(fetchFollowUp({ admissionNumber }));
-  };
-
+  // the follow-up comes with the timeline; it is loaded alone only to retry it
   const load = () => {
     if (isValid) {
       dispatch(fetchAntimicrobialTimeline({ admissionNumber }));
-      loadFollowUp();
     }
+  };
+
+  const loadFollowUp = () => {
+    dispatch(fetchFollowUp({ admissionNumber }));
   };
 
   useEffect(() => {
@@ -124,6 +132,34 @@ export function InfectionControl() {
     !followUp.followed &&
     (followUp.courses ?? []).some((course) => course.ongoing);
 
+  // the next one of the worklist the page came from, by its filters
+  const showNextPending =
+    followUpEnabled &&
+    PermissionService().has(Permission.READ_INFECTION_CONTROL);
+
+  const goToNextPending = () => {
+    setNextLoading(true);
+    dispatch(
+      fetchNextPending({
+        admissionNumber: Number(admissionNumber),
+        filters: filtersFromSearch(searchParams),
+      }),
+    ).then((response: any) => {
+      setNextLoading(false);
+      if (response.error) {
+        notification.error({ message: getErrorMessage(response, t) });
+      } else if (response.payload === null) {
+        notification.info({ message: t("infectionControl.nextPendingEmpty") });
+      } else {
+        navigate({
+          pathname: `/controle-infeccao/${response.payload}`,
+          search: searchParams.toString(),
+        });
+        window.scrollTo({ top: 0 });
+      }
+    });
+  };
+
   const follow = () => {
     dispatch(followAdmission({ admissionNumber })).then((response: any) => {
       if (response.error) {
@@ -155,22 +191,6 @@ export function InfectionControl() {
         </div>
         {status === "succeeded" && data && (
           <div className="page-header-actions">
-            <Button
-              icon={<FileTextOutlined />}
-              onClick={() => setClinicalNotesOpen(true)}
-            >
-              {t("infectionControl.clinicalNotes")}
-            </Button>
-            <Button
-              icon={<ExperimentOutlined />}
-              onClick={() =>
-                dispatch(
-                  setExamsModalAdmissionNumber(data.patient.admissionNumber),
-                )
-              }
-            >
-              {t("infectionControl.exams")}
-            </Button>
             {showReview && (
               <Button
                 type="primary"
@@ -180,6 +200,12 @@ export function InfectionControl() {
                 {t("infectionControl.followUp.register")}
               </Button>
             )}
+            <Button
+              icon={<FileTextOutlined />}
+              onClick={() => setClinicalNotesOpen(true)}
+            >
+              {t("infectionControl.clinicalNotes")}
+            </Button>
             {showFollow && (
               <Button
                 type="primary"
@@ -188,6 +214,17 @@ export function InfectionControl() {
                 onClick={follow}
               >
                 {t("infectionControl.followUp.follow")}
+              </Button>
+            )}
+            {showNextPending && (
+              <Button
+                data-kb="infectionControl.nextPending"
+                icon={<ArrowRightOutlined />}
+                iconPlacement="end"
+                loading={nextLoading}
+                onClick={goToNextPending}
+              >
+                {t("infectionControl.nextPending")}
               </Button>
             )}
           </div>
@@ -287,17 +324,20 @@ export function InfectionControl() {
       </TopRow>
 
       <Section>
-        <h2 className="section-title">
-          {t("infectionControl.timeline.title")}
-        </h2>
         {courses.length === 0 ? (
-          <StateBox>
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={t("infectionControl.timeline.empty")}
-            />
-          </StateBox>
+          <>
+            <h2 className="section-title">
+              {t("infectionControl.timeline.title")}
+            </h2>
+            <StateBox>
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={t("infectionControl.timeline.empty")}
+              />
+            </StateBox>
+          </>
         ) : (
+          // the timeline carries its own title, next to its actions
           <CourseGantt
             courses={courses}
             now={now}
