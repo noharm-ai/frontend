@@ -1578,7 +1578,10 @@
       "lengthOfStay_other": "{{count}} days",
       "department": "Department",
       "bed": "Bed",
-      "dischargeDate": "Discharge"
+      "dischargeDate": "Discharge",
+      "title": "Patient",
+      "fullData": "Full data",
+      "bodySurface": "Body surface"
     },
     "cultures": {
       "title": "Cultures",
@@ -1697,7 +1700,6 @@
       "noPendings": "Nothing pending",
       "pendingsCount_one": "{{count}} pending item",
       "pendingsCount_other": "{{count}} pending items",
-      "showPendings": "View pending items",
       "sinceAt": "since {{date}} at {{time}}",
       "showHistory": "View history ({{count}})",
       "pending": {

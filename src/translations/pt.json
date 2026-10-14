@@ -1588,7 +1588,10 @@
       "lengthOfStay_other": "{{count}} dias",
       "department": "Setor",
       "bed": "Leito",
-      "dischargeDate": "Alta"
+      "dischargeDate": "Alta",
+      "title": "Paciente",
+      "fullData": "Dados completos",
+      "bodySurface": "Sup. corporal"
     },
     "cultures": {
       "title": "Culturas",
@@ -1707,7 +1710,6 @@
       "noPendings": "Nenhuma pendência",
       "pendingsCount_one": "{{count}} pendência",
       "pendingsCount_other": "{{count}} pendências",
-      "showPendings": "Ver pendências",
       "sinceAt": "desde {{date}} às {{time}}",
       "showHistory": "Ver histórico ({{count}})",
       "pending": {

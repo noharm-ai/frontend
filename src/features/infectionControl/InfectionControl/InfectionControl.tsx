@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { Affix, Button, Col, Empty } from "antd";
+import { Affix, Button, Empty } from "antd";
 import {
   ArrowRightOutlined,
   FileDoneOutlined,
@@ -51,7 +51,7 @@ import {
   Header,
   Section,
   StateBox,
-  TopRow,
+  SummaryCard,
 } from "./InfectionControl.style";
 
 /**
@@ -279,52 +279,30 @@ export function InfectionControl() {
     <>
       {header}
 
-      <TopRow gutter={[12, 12]}>
-        <Col xs={24} lg={8}>
-          <InfectionControlPatient
-            patient={data.patient}
-            reference={
-              data.patient.dischargeDate
-                ? dayjs(data.patient.dischargeDate)
-                : now
-            }
-          />
-        </Col>
-        {data.patient.idPrescription && (
-          // an admission with no prescription has no segment to read the
-          // exam references from
-          <Col xs={24} lg={10} data-kb="infectionControl.exams">
-            <InfectionControlExams
-              patient={data.patient}
-              exams={data.exams}
-              alertExams={data.alertExams}
-            />
-          </Col>
-        )}
+      <SummaryCard>
+        <InfectionControlPatient
+          patient={data.patient}
+          reference={
+            data.patient.dischargeDate ? dayjs(data.patient.dischargeDate) : now
+          }
+        />
         {followUpEnabled && followUp && (
-          <Col xs={24} lg={6}>
-            <FollowUpStatus
-              followUp={followUp}
-              drugNames={drugNames}
-              now={now}
-            />
-          </Col>
+          <FollowUpStatus followUp={followUp} drugNames={drugNames} now={now} />
         )}
         {followUpStatus === "failed" && (
           // without it the page would look like the schema has no follow-up
-          <Col xs={24} lg={6}>
-            <FollowUpError data-testid="follow-up-error">
-              <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={t("infectionControl.followUp.loadError")}
-              />
-              <Button icon={<ReloadOutlined />} onClick={loadFollowUp}>
-                {t("infectionControl.retry")}
-              </Button>
-            </FollowUpError>
-          </Col>
+          <FollowUpError data-testid="follow-up-error">
+            <span>{t("infectionControl.followUp.loadError")}</span>
+            <Button
+              size="small"
+              icon={<ReloadOutlined />}
+              onClick={loadFollowUp}
+            >
+              {t("infectionControl.retry")}
+            </Button>
+          </FollowUpError>
         )}
-      </TopRow>
+      </SummaryCard>
 
       <Section>
         {courses.length === 0 ? (
@@ -350,6 +328,18 @@ export function InfectionControl() {
           />
         )}
       </Section>
+
+      {data.patient.idPrescription && (
+        // an admission with no prescription has no segment to read the exam
+        // references from
+        <Section data-kb="infectionControl.exams">
+          <InfectionControlExams
+            patient={data.patient}
+            exams={data.exams}
+            alertExams={data.alertExams}
+          />
+        </Section>
+      )}
 
       <Section data-kb="infectionControl.cultures">
         <InfectionControlCultures

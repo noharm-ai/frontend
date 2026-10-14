@@ -138,10 +138,12 @@ test("shows the patient and the admission", async ({ page, mockApi }) => {
     page.getByRole("heading", { name: "Controle de Infecção" }),
   ).toBeVisible({ timeout: 15000 });
   await expect(page.getByText("Ciclano de Tal")).toBeVisible();
-  // patient data first, the admission one tab away
+  // the patient's measures on the card, the admission data in a modal
   await expect(page.getByText("82 kg")).toBeVisible();
-  await page.getByRole("tab", { name: "Atendimento" }).click();
-  await expect(page.getByText("UTI Adulto")).toBeVisible();
+  await expect(page.getByText("UTI Adulto")).toHaveCount(0);
+  await page.getByRole("button", { name: "Dados completos" }).click();
+  await expect(page.getByRole("dialog")).toContainText("UTI Adulto");
+  await page.keyboard.press("Escape");
   // the header no longer links to the prescription
   await expect(
     page.getByRole("link", { name: "Abrir prescrição", exact: true }),

@@ -5,6 +5,7 @@ import {
   IExamCardItem,
   IInfectionControlPatient,
 } from "../InfectionControlSlice";
+import { ExamsBox } from "./InfectionControlExams.style";
 
 interface InfectionControlExamsProps {
   patient: IInfectionControlPatient;
@@ -29,12 +30,14 @@ export function InfectionControlExams({
   );
 
   return (
-    <ExamCard
-      exams={exams}
-      count={alertExams}
-      admissionNumber={patient.admissionNumber}
-      siderCollapsed={siderCollapsed}
-      hideCulture
-    />
+    <ExamsBox>
+      <ExamCard
+        exams={exams}
+        count={alertExams}
+        admissionNumber={patient.admissionNumber}
+        siderCollapsed={siderCollapsed}
+        hideCulture
+      />
+    </ExamsBox>
   );
 }
