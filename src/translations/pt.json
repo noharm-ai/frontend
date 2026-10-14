@@ -1588,7 +1588,39 @@
       "lengthOfStay_other": "{{count}} dias",
       "department": "Setor",
       "bed": "Leito",
-      "dischargeDate": "Alta"
+      "dischargeDate": "Alta",
+      "title": "Paciente",
+      "fullData": "Dados completos",
+      "bodySurface": "Sup. corporal"
+    },
+    "exams": {
+      "showAll": "Ver todos",
+      "empty": "Nenhum exame encontrado",
+      "up": "alta",
+      "down": "queda",
+      "stable": "estável",
+      "noResult": "sem resultado"
+    },
+    "cultures": {
+      "title": "Culturas",
+      "legend": "Última coleta de cada exame e material, liberada nos últimos 60 dias",
+      "summary": "Resumo",
+      "byDrug": "Por medicamento",
+      "byDrugLegend": "Antibiograma de cada medicamento, com os em uso nesta prescrição em destaque",
+      "empty": "Nenhuma cultura liberada nos últimos 60 dias.",
+      "loadError": "Não foi possível carregar as culturas.",
+      "exam": "Exame",
+      "collectionDate": "Coleta",
+      "releaseDate": "Liberação",
+      "gram": "Gram",
+      "microorganism": "Microrganismo",
+      "result": "Resultado",
+      "openHistory": "Ver todas as coletas deste exame e material",
+      "history": {
+        "legend": "Todas as coletas deste exame e material, da mais recente para a mais antiga",
+        "empty": "Nenhuma coleta encontrada.",
+        "loadError": "Não foi possível carregar as coletas desta cultura."
+      }
     },
     "timeline": {
       "title": "Linha do tempo de antimicrobianos",
@@ -1686,7 +1718,6 @@
       "noPendings": "Nenhuma pendência",
       "pendingsCount_one": "{{count}} pendência",
       "pendingsCount_other": "{{count}} pendências",
-      "showPendings": "Ver pendências",
       "sinceAt": "desde {{date}} às {{time}}",
       "showHistory": "Ver histórico ({{count}})",
       "pending": {

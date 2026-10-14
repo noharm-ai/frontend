@@ -1,13 +1,9 @@
-import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import moment from "moment";
 
-import Button from "components/Button";
-import DefaultModal from "components/Modal";
-import CultureReport from "features/reports/CultureReport/CultureReport";
 import { isPrediction } from "features/culture/cultureResistance";
-import { trackReport, TrackedReport } from "src/utils/tracker";
 import type { ICultureDrug } from "features/culture/cultureTypes";
+import { CultureReportButton } from "features/culture/CultureReportButton/CultureReportButton";
 
 import { LastRelease } from "./CultureCardFooter.style";
 
@@ -15,6 +11,9 @@ interface ICultureCardFooterProps {
   cultures?: ICultureDrug[] | null;
   // the prescription being screened (store/ducks/prescriptions), untyped
   prescription?: any;
+  // a card that offers the full report elsewhere (the infection control
+  // cultures, in its header) keeps the footer to the last release
+  withReport?: boolean;
 }
 
 // the newest release across every culture of the patient. A pending collection
@@ -42,16 +41,11 @@ const lastReleaseDate = (cultures?: ICultureDrug[] | null): string | null => {
 export function CultureCardFooter({
   cultures,
   prescription,
+  withReport = true,
 }: ICultureCardFooterProps) {
   const { t } = useTranslation();
-  const [reportOpen, setReportOpen] = useState(false);
 
   const lastRelease = lastReleaseDate(cultures);
-
-  const openReport = () => {
-    setReportOpen(true);
-    trackReport(TrackedReport.CULTURES);
-  };
 
   return (
     <>
@@ -64,26 +58,11 @@ export function CultureCardFooter({
           </LastRelease>
         )}
       </div>
-      <div className="action">
-        <Button type="link" onClick={openReport}>
-          Ver todos
-        </Button>
-      </div>
-
-      <DefaultModal
-        title={null}
-        destroyOnHidden
-        open={reportOpen}
-        onCancel={() => setReportOpen(false)}
-        width="min(1440px, 100%)"
-        footer={null}
-        style={{ top: "10px", height: "100vh" }}
-      >
-        <CultureReport
-          idPatient={prescription?.idPatient}
-          prescription={prescription}
-        />
-      </DefaultModal>
+      {withReport && (
+        <div className="action">
+          <CultureReportButton prescription={prescription} />
+        </div>
+      )}
     </>
   );
 }

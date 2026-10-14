@@ -7,7 +7,7 @@ import {
   type IAccentProps,
 } from "features/culture/cultureColors";
 
-export const Container = styled.div`
+export const Container = styled.div<{ $maxHeight?: number }>`
   display: flex;
   flex-direction: column;
   width: 100%;
@@ -17,7 +17,7 @@ export const Container = styled.div`
   height: 100%;
   min-height: 0;
   /* below the card's own max-height breakpoint nothing caps the list */
-  max-height: 222px;
+  max-height: ${({ $maxHeight }) => $maxHeight ?? 222}px;
 `;
 
 export const Scroll = styled.div`

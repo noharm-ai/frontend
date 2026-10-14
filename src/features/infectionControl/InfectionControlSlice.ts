@@ -221,6 +221,38 @@ export interface IReviewPayload {
   evaluations: IReviewEvaluationPayload[];
 }
 
+/**
+ * The latest culture of an exam and material of the patient, released in the
+ * last 60 days (backend services/infection_control/recent_cultures_service.py).
+ * The latest is the newest collection, so it may still be waiting for the lab
+ */
+export interface IRecentCulture {
+  id: string;
+  examName: string | null;
+  material: string | null;
+  collectionDate: string | null;
+  releaseDate: string | null;
+  gram: string | null;
+  // as the lab wrote it: HTML from some hospitals, plain text from others
+  previousResult: string | null;
+  // named by the antibiogram rows of the culture
+  microorganisms: string[];
+}
+
+export interface IRecentCultures {
+  admissionNumber: number;
+  releasedSince: string;
+  cultures: IRecentCulture[];
+}
+
+// every culture of the patient with the exam and material of one culture
+export interface ICultureHistory {
+  admissionNumber: number;
+  examName: string | null;
+  material: string | null;
+  cultures: IRecentCulture[];
+}
+
 type Status = "idle" | "loading" | "succeeded" | "failed";
 
 interface IInfectionControlSlice {
@@ -244,6 +276,20 @@ interface IInfectionControlSlice {
   follow: {
     status: Status;
   };
+  // only informative: loaded apart, so a failure here leaves the page whole
+  cultures: {
+    status: Status;
+    data: IRecentCultures | null;
+    requestId: string | null;
+  };
+  // the history behind a row of the recent cultures, opened on click
+  cultureHistory: {
+    // the culture whose row was clicked, null while it is closed
+    culture: IRecentCulture | null;
+    status: Status;
+    data: ICultureHistory | null;
+    requestId: string | null;
+  };
 }
 
 const initialState: IInfectionControlSlice = {
@@ -262,6 +308,17 @@ const initialState: IInfectionControlSlice = {
   },
   follow: {
     status: "idle",
+  },
+  cultures: {
+    status: "idle",
+    data: null,
+    requestId: null,
+  },
+  cultureHistory: {
+    culture: null,
+    status: "idle",
+    data: null,
+    requestId: null,
   },
 };
 
@@ -312,6 +369,38 @@ export const fetchFollowUp = createAsyncThunk(
   },
 );
 
+export const fetchRecentCultures = createAsyncThunk(
+  "infectionControl/fetchRecentCultures",
+  async (params: { admissionNumber: string }, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.getRecentCultures(
+        params.admissionNumber,
+      );
+      return response.data.data as IRecentCultures;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
+export const fetchCultureHistory = createAsyncThunk(
+  "infectionControl/fetchCultureHistory",
+  async (
+    params: { admissionNumber: string; culture: IRecentCulture },
+    thunkAPI,
+  ) => {
+    try {
+      const response = await api.infectionControl.getCultureHistory(
+        params.admissionNumber,
+        params.culture.id,
+      );
+      return response.data.data as ICultureHistory;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
 export const saveReview = createAsyncThunk(
   "infectionControl/saveReview",
   async (params: IReviewPayload, thunkAPI) => {
@@ -353,6 +442,9 @@ const infectionControlSlice = createSlice({
     setReviewOpen(state, action: PayloadAction<boolean>) {
       state.review.open = action.payload;
     },
+    closeCultureHistory(state) {
+      state.cultureHistory = initialState.cultureHistory;
+    },
   },
   extraReducers(builder) {
     builder
@@ -369,6 +461,36 @@ const infectionControlSlice = createSlice({
         if (state.followUp.requestId !== action.meta.requestId) return;
         state.followUp.status = "failed";
         state.followUp.data = null;
+      })
+      .addCase(fetchRecentCultures.pending, (state, action) => {
+        state.cultures.status = "loading";
+        state.cultures.requestId = action.meta.requestId;
+      })
+      .addCase(fetchRecentCultures.fulfilled, (state, action) => {
+        if (state.cultures.requestId !== action.meta.requestId) return;
+        state.cultures.status = "succeeded";
+        state.cultures.data = action.payload;
+      })
+      .addCase(fetchRecentCultures.rejected, (state, action) => {
+        if (state.cultures.requestId !== action.meta.requestId) return;
+        state.cultures.status = "failed";
+        state.cultures.data = null;
+      })
+      .addCase(fetchCultureHistory.pending, (state, action) => {
+        state.cultureHistory.culture = action.meta.arg.culture;
+        state.cultureHistory.status = "loading";
+        state.cultureHistory.data = null;
+        state.cultureHistory.requestId = action.meta.requestId;
+      })
+      .addCase(fetchCultureHistory.fulfilled, (state, action) => {
+        if (state.cultureHistory.requestId !== action.meta.requestId) return;
+        state.cultureHistory.status = "succeeded";
+        state.cultureHistory.data = action.payload;
+      })
+      .addCase(fetchCultureHistory.rejected, (state, action) => {
+        if (state.cultureHistory.requestId !== action.meta.requestId) return;
+        state.cultureHistory.status = "failed";
+        state.cultureHistory.data = null;
       })
       .addCase(saveReview.pending, (state) => {
         state.review.status = "loading";
@@ -424,6 +546,7 @@ const infectionControlSlice = createSlice({
   },
 });
 
-export const { reset, setReviewOpen } = infectionControlSlice.actions;
+export const { reset, setReviewOpen, closeCultureHistory } =
+  infectionControlSlice.actions;
 
 export const infectionControlReducer = infectionControlSlice.reducer;

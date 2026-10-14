@@ -887,6 +887,15 @@ api.infectionControl.getAdmission = (admissionNumber) =>
   instance.get(`/infection-control/admission/${admissionNumber}`, {
     ...setHeaders(),
   });
+api.infectionControl.getRecentCultures = (admissionNumber) =>
+  instance.get(`/infection-control/admission/${admissionNumber}/cultures`, {
+    ...setHeaders(),
+  });
+api.infectionControl.getCultureHistory = (admissionNumber, idCulture) =>
+  instance.get(
+    `/infection-control/admission/${admissionNumber}/cultures/${idCulture}`,
+    { ...setHeaders() },
+  );
 api.infectionControl.followAdmission = (admissionNumber) =>
   instance.post(
     `/infection-control/admission/${admissionNumber}/follow`,

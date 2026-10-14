@@ -1,15 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button } from "antd";
-import {
-  CalendarOutlined,
-  CheckOutlined,
-  ExclamationOutlined,
-  MinusOutlined,
-  StopOutlined,
-  UserOutlined,
-  WarningOutlined,
-} from "@ant-design/icons";
+import { Button, Tooltip } from "antd";
+import { WarningOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 
 import DefaultModal from "components/Modal";
@@ -26,12 +18,6 @@ interface FollowUpStatusProps {
   drugNames: Record<number, string>;
   now: Dayjs;
 }
-
-const STATUS_ICON: Record<number, React.ReactNode> = {
-  [InfectionControlStatusEnum.PENDING]: <ExclamationOutlined />,
-  [InfectionControlStatusEnum.REVISED]: <CheckOutlined />,
-  [InfectionControlStatusEnum.CLOSED]: <StopOutlined />,
-};
 
 const STATUS_CLASS: Record<number, string> = {
   [InfectionControlStatusEnum.PENDING]: "pending",
@@ -63,120 +49,118 @@ export function FollowUpStatus({
   const statusClass = (status != null && STATUS_CLASS[status]) || "none";
 
   return (
-    <FollowUpBox data-kb="infectionControl.followUp" data-testid="follow-up">
-      <div className={`follow-up-header ${statusClass}`}>
-        <div className="follow-up-icon">
-          {(status != null && STATUS_ICON[status]) || <MinusOutlined />}
-        </div>
-        <div>
-          <div className="follow-up-status" data-testid="follow-up-status">
-            {followUp.followed
-              ? t(`infectionControl.followUp.status.${followUp.status}`)
-              : t("infectionControl.followUp.notFollowed")}
-          </div>
-          <div className="follow-up-since">
-            {followUp.followed
-              ? followUp.statusDate &&
-                t("infectionControl.followUp.sinceAt", {
-                  date: formatDate(followUp.statusDate),
-                  time: formatDate(followUp.statusDate, "HH:mm"),
-                })
-              : t("infectionControl.followUp.notFollowedHint")}
-          </div>
-        </div>
+    <FollowUpBox
+      className={statusClass}
+      data-kb="infectionControl.followUp"
+      data-testid="follow-up"
+    >
+      <div className="follow-up-header">
+        <span className="follow-up-dot" />
+        <span className="follow-up-status" data-testid="follow-up-status">
+          {followUp.followed
+            ? t(`infectionControl.followUp.status.${followUp.status}`)
+            : t("infectionControl.followUp.notFollowed")}
+        </span>
+        {followUp.followed && followUp.statusDate && (
+          <span className="follow-up-since">
+            {t("infectionControl.followUp.sinceAt", {
+              date: formatDate(followUp.statusDate),
+              time: formatDate(followUp.statusDate, "HH:mm"),
+            })}
+          </span>
+        )}
       </div>
 
-      {followUp.followed && (
-        <div className="follow-up-rows">
-          <div className="follow-up-row">
-            <UserOutlined className="follow-up-row-icon" />
-            <div className="follow-up-row-content">
-              <div className="follow-up-label">
-                {t("infectionControl.followUp.lastReview")}
-              </div>
-              {lastReview ? (
-                <>
-                  <div className="follow-up-value">
-                    {formatDate(lastReview.createdAt, "DD/MM/YYYY · HH:mm")}
-                  </div>
-                  {lastReview.createdBy && (
-                    <div className="follow-up-detail">
-                      {t("infectionControl.followUp.reviewedBy", {
-                        user: lastReview.createdBy,
-                      })}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="follow-up-value">
-                  {t("infectionControl.followUp.neverReviewed")}
-                </div>
-              )}
+      {followUp.followed ? (
+        <div className="follow-up-columns">
+          <div className="follow-up-column">
+            <div className="follow-up-label">
+              {t("infectionControl.followUp.lastReview")}
             </div>
-            {reviews.length > 0 && (
-              <Button
-                type="link"
-                className="follow-up-action"
-                onClick={() => setHistoryOpen(true)}
-              >
-                {t("infectionControl.followUp.showHistory", {
-                  count: reviews.length,
-                })}
-              </Button>
+            {lastReview ? (
+              // the date opens every review of the admission, with its time
+              <div className="follow-up-value">
+                <Tooltip
+                  title={t("infectionControl.followUp.showHistory", {
+                    count: reviews.length,
+                  })}
+                >
+                  <Button
+                    type="link"
+                    className="follow-up-link"
+                    data-testid="follow-up-last-review"
+                    onClick={() => setHistoryOpen(true)}
+                  >
+                    {formatDate(lastReview.createdAt)}
+                  </Button>
+                </Tooltip>
+                {lastReview.createdBy && (
+                  // clipped when the panel is narrow, whole on hover
+                  <span
+                    className="follow-up-detail"
+                    title={lastReview.createdBy}
+                  >
+                    {t("infectionControl.followUp.reviewedBy", {
+                      user: lastReview.createdBy,
+                    })}
+                  </span>
+                )}
+              </div>
+            ) : (
+              <div className="follow-up-value">
+                {t("infectionControl.followUp.neverReviewed")}
+              </div>
             )}
           </div>
 
-          <div className="follow-up-row">
-            <CalendarOutlined className="follow-up-row-icon" />
-            <div className="follow-up-row-content">
-              <div className="follow-up-label">
-                {t("infectionControl.followUp.nextReview")}
-              </div>
-              <div
-                className={`follow-up-value ${
-                  nextReviewOverdue ? "follow-up-overdue" : ""
-                }`}
-              >
-                {followUp.nextReviewDate
-                  ? formatDate(followUp.nextReviewDate)
-                  : t("infectionControl.followUp.noNextReview")}
-                {nextReviewOverdue &&
-                  ` (${t("infectionControl.followUp.overdue")})`}
-              </div>
+          <div className="follow-up-column">
+            <div className="follow-up-label">
+              {t("infectionControl.followUp.nextReview")}
+            </div>
+            <div
+              className={`follow-up-value ${
+                nextReviewOverdue ? "follow-up-overdue" : ""
+              }`}
+            >
+              {followUp.nextReviewDate
+                ? formatDate(followUp.nextReviewDate)
+                : t("infectionControl.followUp.noNextReview")}
+              {nextReviewOverdue && (
+                <span className="follow-up-detail">
+                  {t("infectionControl.followUp.overdue")}
+                </span>
+              )}
             </div>
           </div>
 
-          <div className="follow-up-row" data-testid="follow-up-pendings">
-            <WarningOutlined className="follow-up-row-icon" />
-            <div className="follow-up-row-content">
-              <div className="follow-up-label">
-                {t("infectionControl.followUp.pendings")}
+          <div className="follow-up-column" data-testid="follow-up-pendings">
+            <div className="follow-up-label">
+              {t("infectionControl.followUp.pendings")}
+            </div>
+            {pendings.length === 0 ? (
+              <div className="follow-up-value">
+                {t("infectionControl.followUp.noPendings")}
               </div>
-              {pendings.length === 0 ? (
-                <div className="follow-up-detail">
-                  {t("infectionControl.followUp.noPendings")}
-                </div>
-              ) : (
-                <div
-                  className="follow-up-value"
+            ) : (
+              // the card only counts them; the reasons are listed in a modal
+              <div className="follow-up-value">
+                <Button
+                  type="link"
+                  className="follow-up-link"
                   data-testid="follow-up-pendings-count"
+                  onClick={() => setPendingsOpen(true)}
                 >
                   {t("infectionControl.followUp.pendingsCount", {
                     count: pendings.length,
                   })}
-                </div>
-              )}
-            </div>
-            {pendings.length > 0 && (
-              <Button
-                type="link"
-                className="follow-up-action"
-                onClick={() => setPendingsOpen(true)}
-              >
-                {t("infectionControl.followUp.showPendings")}
-              </Button>
+                </Button>
+              </div>
             )}
           </div>
+        </div>
+      ) : (
+        <div className="follow-up-hint">
+          {t("infectionControl.followUp.notFollowedHint")}
         </div>
       )}
 

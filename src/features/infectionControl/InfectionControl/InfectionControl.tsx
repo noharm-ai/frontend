@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { Affix, Button, Col, Empty } from "antd";
+import { Affix, Button, Empty } from "antd";
 import {
   ArrowRightOutlined,
   FileDoneOutlined,
@@ -24,6 +24,7 @@ import { setExamsModalAdmissionNumber } from "features/exams/ExamModal/ExamModal
 import {
   fetchAntimicrobialTimeline,
   fetchFollowUp,
+  fetchRecentCultures,
   followAdmission,
   reset,
   setReviewOpen,
@@ -35,6 +36,7 @@ import {
 import { CourseGantt } from "../CourseGantt/CourseGantt";
 import { FollowUpStatus } from "../FollowUpStatus/FollowUpStatus";
 import { InfectionControlClinicalNotes } from "../InfectionControlClinicalNotes/InfectionControlClinicalNotes";
+import { InfectionControlCultures } from "../InfectionControlCultures/InfectionControlCultures";
 import { InfectionControlExams } from "../InfectionControlExams/InfectionControlExams";
 import { InfectionControlPatient } from "../InfectionControlPatient/InfectionControlPatient";
 import { ReviewModal } from "../ReviewModal/ReviewModal";
@@ -45,11 +47,12 @@ import {
 } from "../followUp";
 import { sortCourses } from "../timeline";
 import {
+  CulturesAndExams,
   FollowUpError,
   Header,
   Section,
   StateBox,
-  TopRow,
+  SummaryCard,
 } from "./InfectionControl.style";
 
 /**
@@ -81,10 +84,12 @@ export function InfectionControl() {
 
   const isValid = /^\d+$/.test(admissionNumber);
 
-  // the follow-up comes with the timeline; it is loaded alone only to retry it
+  // the follow-up comes with the timeline; it is loaded alone only to retry
+  // it. The cultures are loaded apart, alongside, and retried by their section
   const load = () => {
     if (isValid) {
       dispatch(fetchAntimicrobialTimeline({ admissionNumber }));
+      dispatch(fetchRecentCultures({ admissionNumber }));
     }
   };
 
@@ -131,6 +136,10 @@ export function InfectionControl() {
     !!followUp &&
     !followUp.followed &&
     (followUp.courses ?? []).some((course) => course.ongoing);
+
+  // an admission with no prescription has no segment to read the exam
+  // references from
+  const hasExams = !!data?.patient.idPrescription;
 
   // the next one of the worklist the page came from, by its filters
   const showNextPending =
@@ -275,53 +284,30 @@ export function InfectionControl() {
     <>
       {header}
 
-      <TopRow gutter={[12, 12]}>
-        <Col xs={24} lg={8}>
-          <InfectionControlPatient
-            patient={data.patient}
-            reference={
-              data.patient.dischargeDate
-                ? dayjs(data.patient.dischargeDate)
-                : now
-            }
-          />
-        </Col>
-        {data.patient.idPrescription && (
-          // an admission with no prescription has no segment to read the
-          // exam references from, nor drugs to flag the cultures against
-          <Col xs={24} lg={10} data-kb="infectionControl.exams">
-            <InfectionControlExams
-              patient={data.patient}
-              idPrescription={data.patient.idPrescription}
-              exams={data.exams}
-              alertExams={data.alertExams}
-            />
-          </Col>
-        )}
+      <SummaryCard>
+        <InfectionControlPatient
+          patient={data.patient}
+          reference={
+            data.patient.dischargeDate ? dayjs(data.patient.dischargeDate) : now
+          }
+        />
         {followUpEnabled && followUp && (
-          <Col xs={24} lg={6}>
-            <FollowUpStatus
-              followUp={followUp}
-              drugNames={drugNames}
-              now={now}
-            />
-          </Col>
+          <FollowUpStatus followUp={followUp} drugNames={drugNames} now={now} />
         )}
         {followUpStatus === "failed" && (
           // without it the page would look like the schema has no follow-up
-          <Col xs={24} lg={6}>
-            <FollowUpError data-testid="follow-up-error">
-              <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={t("infectionControl.followUp.loadError")}
-              />
-              <Button icon={<ReloadOutlined />} onClick={loadFollowUp}>
-                {t("infectionControl.retry")}
-              </Button>
-            </FollowUpError>
-          </Col>
+          <FollowUpError data-testid="follow-up-error">
+            <span>{t("infectionControl.followUp.loadError")}</span>
+            <Button
+              size="small"
+              icon={<ReloadOutlined />}
+              onClick={loadFollowUp}
+            >
+              {t("infectionControl.retry")}
+            </Button>
+          </FollowUpError>
         )}
-      </TopRow>
+      </SummaryCard>
 
       <Section>
         {courses.length === 0 ? (
@@ -347,6 +333,28 @@ export function InfectionControl() {
           />
         )}
       </Section>
+
+      <CulturesAndExams className={hasExams ? "with-exams" : ""}>
+        <div className="panes">
+          <div data-kb="infectionControl.cultures">
+            <InfectionControlCultures
+              admissionNumber={admissionNumber}
+              patient={data.patient}
+              idPrescription={data.patient.idPrescription}
+              stackDates={hasExams}
+            />
+          </div>
+          {hasExams && (
+            <div data-kb="infectionControl.exams">
+              <InfectionControlExams
+                patient={data.patient}
+                exams={data.exams}
+                alertExams={data.alertExams}
+              />
+            </div>
+          )}
+        </div>
+      </CulturesAndExams>
 
       <InfectionControlClinicalNotes
         admissionNumber={data.patient.admissionNumber}
