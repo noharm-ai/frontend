@@ -72,7 +72,7 @@ export const Row = styled.div`
   }
 
   &.row-header {
-    background: #fafafa;
+    background: #fff;
     min-height: 50px;
   }
 `;
@@ -90,10 +90,6 @@ export const RowLabel = styled.div`
   padding: 6px 12px;
   position: sticky;
   z-index: 3;
-
-  .row-header & {
-    background-color: #fafafa;
-  }
 
   .label-drug {
     align-items: center;
@@ -250,10 +246,6 @@ export const HeaderDay = styled.div`
 
   &.month-start .day-month {
     visibility: visible;
-  }
-
-  &.weekend {
-    background: #f5f5f5;
   }
 
   &.today .day-number {

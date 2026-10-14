@@ -260,7 +260,6 @@ export function CourseGantt({
                   key={day.valueOf()}
                   className={[
                     day.isSame(now, "day") ? "today" : "",
-                    day.day() === 0 || day.day() === 6 ? "weekend" : "",
                     index === 0 || day.date() === 1 ? "month-start" : "",
                   ].join(" ")}
                 >
