@@ -57,6 +57,42 @@ export const DEFAULT_FILTERS: IInfectionControlListFilters = {
   overdueReview: false,
 };
 
+/**
+ * The worklist filters, but the status, as a query string: the patient page
+ * opens in a new tab, without the worklist state, and takes them from its URL
+ * to go to the next pending patient of the same worklist. Empty with no filter
+ */
+export const filtersToSearch = (filters: IInfectionControlListFilters) => {
+  const params = new URLSearchParams();
+  (["idDepartment", "pendingTypes", "admissionNumbers"] as const).forEach(
+    (key) => {
+      if (filters[key].length) params.set(key, filters[key].join(","));
+    },
+  );
+  if (filters.overdueReview) params.set("overdueReview", "1");
+
+  return params.toString();
+};
+
+/** The worklist filters of a filtersToSearch query string */
+export const filtersFromSearch = (
+  params: URLSearchParams,
+): IInfectionControlListFilters => {
+  const numbers = (key: string) =>
+    (params.get(key) ?? "")
+      .split(",")
+      .filter((value) => /^\d+$/.test(value))
+      .map(Number);
+
+  return {
+    ...DEFAULT_FILTERS,
+    idDepartment: numbers("idDepartment"),
+    pendingTypes: numbers("pendingTypes"),
+    admissionNumbers: numbers("admissionNumbers"),
+    overdueReview: params.get("overdueReview") === "1",
+  };
+};
+
 type Status = "idle" | "loading" | "succeeded" | "failed";
 
 interface IInfectionControlListSlice {
@@ -106,6 +142,45 @@ export const fetchFollowedAdmissions = createAsyncThunk(
       }).catch(() => {});
 
       return data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
+/**
+ * The pending admission after `admissionNumber` in the worklist order (the
+ * ones pending longest first), within the worklist filters; null when it is
+ * the only one. One that left the pending ones (just reviewed) is followed by
+ * the first, and the last by the first, back to the ones skipped earlier.
+ * Leaves the worklist state alone: the patient page asks for it
+ */
+export const fetchNextPending = createAsyncThunk(
+  "infectionControlList/fetchNextPending",
+  async (
+    params: {
+      admissionNumber: number;
+      filters: IInfectionControlListFilters;
+    },
+    thunkAPI,
+  ) => {
+    try {
+      const response = await api.infectionControl.listAdmissions({
+        ...params.filters,
+        status: [InfectionControlStatusEnum.PENDING],
+        limit: LIST_LIMIT,
+        offset: 0,
+      });
+      const admissions: number[] = (
+        response.data.data.admissions as IFollowedAdmission[]
+      ).map((admission) => admission.admissionNumber);
+
+      const index = admissions.indexOf(params.admissionNumber);
+      const next = admissions[(index + 1) % admissions.length];
+
+      return next !== undefined && next !== params.admissionNumber
+        ? next
+        : null;
     } catch (err) {
       return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
     }

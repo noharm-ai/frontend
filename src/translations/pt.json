@@ -1570,6 +1570,8 @@
     "loadError": "Não foi possível carregar os antimicrobianos do atendimento {{admissionNumber}}.",
     "retry": "Tentar novamente",
     "clinicalNotes": "Evoluções",
+    "nextPending": "Próximo pendente",
+    "nextPendingEmpty": "Não há outro paciente pendente.",
     "patient": {
       "admission": "Atendimento",
       "age": "Idade",
@@ -1696,7 +1698,7 @@
         "6": "Posologia de {{drug}} alterada"
       },
       "unknownDrug": "Antimicrobiano",
-      "register": "Registrar revisão",
+      "register": "Revisar",
       "loadError": "Não foi possível carregar o acompanhamento do controle de infecção."
     },
     "evaluation": {

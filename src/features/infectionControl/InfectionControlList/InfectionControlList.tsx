@@ -14,6 +14,7 @@ import { PageCard } from "styles/Utils.style";
 
 import {
   fetchFollowedAdmissions,
+  filtersToSearch,
   IFollowedAdmission,
   LIST_LIMIT,
   PAGE_SIZE,
@@ -90,9 +91,10 @@ export function InfectionControlList() {
   const isLimited = status === "succeeded" && count > list.length;
 
   // the patient page opens in a new tab, so the worklist keeps its order,
-  // filters and page
+  // filters and page; the filters go along for its next pending patient
+  const filtersSearch = filtersToSearch(filters);
   const patientUrl = (admission: IFollowedAdmission) =>
-    `/controle-infeccao/${admission.admissionNumber}`;
+    `/controle-infeccao/${admission.admissionNumber}${filtersSearch ? `?${filtersSearch}` : ""}`;
 
   const now = dayjs();
   const isPast = (date: string | null) => !!date && dayjs(date).isBefore(now);

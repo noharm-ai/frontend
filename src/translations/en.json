@@ -1560,6 +1560,8 @@
     "loadError": "Could not load the antimicrobials of admission {{admissionNumber}}.",
     "retry": "Try again",
     "clinicalNotes": "Clinical notes",
+    "nextPending": "Next pending",
+    "nextPendingEmpty": "There is no other pending patient.",
     "patient": {
       "admission": "Admission",
       "age": "Age",
@@ -1686,7 +1688,7 @@
         "6": "{{drug}} posology changed"
       },
       "unknownDrug": "Antimicrobial",
-      "register": "Register review",
+      "register": "Review",
       "loadError": "Could not load the infection control follow-up."
     },
     "evaluation": {
