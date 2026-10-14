@@ -1560,7 +1560,6 @@
     "loadError": "Could not load the antimicrobials of admission {{admissionNumber}}.",
     "retry": "Try again",
     "clinicalNotes": "Clinical notes",
-    "exams": "Exams",
     "patient": {
       "admission": "Admission",
       "age": "Age",

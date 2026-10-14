@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { Affix, Button, Col, Empty } from "antd";
 import {
-  ExperimentOutlined,
   FileDoneOutlined,
   FileTextOutlined,
   PlayCircleOutlined,
@@ -160,16 +159,6 @@ export function InfectionControl() {
               onClick={() => setClinicalNotesOpen(true)}
             >
               {t("infectionControl.clinicalNotes")}
-            </Button>
-            <Button
-              icon={<ExperimentOutlined />}
-              onClick={() =>
-                dispatch(
-                  setExamsModalAdmissionNumber(data.patient.admissionNumber),
-                )
-              }
-            >
-              {t("infectionControl.exams")}
             </Button>
             {showReview && (
               <Button
