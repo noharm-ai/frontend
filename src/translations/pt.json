@@ -1658,6 +1658,7 @@
       "frequency": "Frequência",
       "route": "Via",
       "current": "Atual",
+      "notes": "Observação",
       "gapsTitle": "Intervalos sem prescrição",
       "openPrescription": "Abrir última prescrição",
       "close": "Fechar"

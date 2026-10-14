@@ -19,6 +19,8 @@ export interface ICourseRegimen {
   // ("0,04 g/Kg ou 40,00 mg/Kg"); null without a patient weight
   doseWeight?: string | null;
   doseWeightDay?: string | null;
+  // the observation of the regimen's latest prescribed item (complemento)
+  notes?: string | null;
 }
 
 // a break inside a course: a day the drug was not prescribed

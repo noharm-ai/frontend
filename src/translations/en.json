@@ -1648,6 +1648,7 @@
       "frequency": "Frequency",
       "route": "Route",
       "current": "Current",
+      "notes": "Observation",
       "gapsTitle": "Gaps without prescription",
       "openPrescription": "Open latest prescription",
       "close": "Close"

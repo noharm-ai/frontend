@@ -76,4 +76,18 @@ export const Details = styled.div`
   .regimen-row-current > td {
     background: #f0f7fc;
   }
+
+  .regimen-notes {
+    display: flex;
+    gap: 6px;
+
+    p {
+      margin: 0 !important;
+    }
+  }
+
+  .regimen-notes-label {
+    color: #8c8c8c;
+    flex-shrink: 0;
+  }
 `;

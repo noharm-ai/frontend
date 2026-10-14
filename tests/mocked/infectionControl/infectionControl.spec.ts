@@ -55,7 +55,10 @@ const COURSES = [
     plannedDays: 7,
     days: 4,
     prescriptionCount: 2,
-    regimens: [regimen(-72, -24, 1), regimen(-24, 96, 2)],
+    regimens: [
+      regimen(-72, -24, 1),
+      { ...regimen(-24, 96, 2), notes: "Infundir em 3 horas" },
+    ],
   }),
   // daily prescriber, already past the planned 7 days, with a missing day
   course({
@@ -214,6 +217,8 @@ test("lists every course on the timeline, the ones in use first", async ({
     details.getByText("CPOE (prescrição com vigência)"),
   ).toBeVisible();
   await expect(details.getByText("Posologias")).toBeVisible();
+  // the observation of the prescribed item shows under its regimen
+  await expect(details.getByText("Infundir em 3 horas")).toBeVisible();
 
   // the footer button (the corner X is labeled "Fechar" too)
   await details.locator("button.ant-btn", { hasText: "Fechar" }).click();
