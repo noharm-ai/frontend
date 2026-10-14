@@ -132,6 +132,25 @@ export function CourseGantt({
     el.scrollLeft = Math.max(0, todayX - el.clientWidth * 0.7);
   }, [showToday, todayPercent, range.days.length]);
 
+  // the day under the pointer, as a CSS variable so moving it does not
+  // re-render the timeline
+  const highlightDay = (event: React.MouseEvent<HTMLDivElement>) => {
+    const grid = event.currentTarget;
+    const label = grid.querySelector<HTMLElement>("[data-row-label]");
+    const track = grid.querySelector<HTMLElement>(".track-header");
+    if (!label || !track) return;
+
+    const x = event.clientX - track.getBoundingClientRect().left;
+    const day = Math.floor(x / DAY_WIDTH);
+    const overTrack =
+      event.clientX > label.getBoundingClientRect().right &&
+      day >= 0 &&
+      day < range.days.length;
+
+    grid.classList.toggle("hovering-day", overTrack);
+    if (overTrack) grid.style.setProperty("--hover-day", String(day));
+  };
+
   const markers = (
     <>
       {showToday && (
@@ -251,6 +270,10 @@ export function CourseGantt({
           style={{
             minWidth: `calc(var(--label-width) + ${range.days.length * DAY_WIDTH}px)`,
           }}
+          onMouseMove={highlightDay}
+          onMouseLeave={(event) =>
+            event.currentTarget.classList.remove("hovering-day")
+          }
         >
           <Row className="row-header">
             <RowLabel data-row-label />

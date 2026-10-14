@@ -24,6 +24,10 @@ const ROW_HEIGHT = 64;
 const BAR_CENTER = "var(--bar-center, 50%)";
 
 const GRID_LINE = "#f0f0f0";
+// under the pointer: the row of its drug and the column of its day (the label
+// is sticky over the track, so its tint has to be opaque)
+const HOVER_ROW = "#f4f8fb";
+const HOVER_DAY = "rgba(46, 60, 90, 0.06)";
 const HATCH =
   "repeating-linear-gradient(-45deg, #fff 0 3px, rgba(0, 0, 0, 0.12) 3px 6px)";
 
@@ -53,6 +57,8 @@ export const GanttScroll = styled.div`
   overflow-x: auto;
 `;
 
+// --hover-day: the index of the day column under the pointer, set while the
+// pointer is over a track (.hovering-day)
 export const GanttGrid = styled.div`
   display: flex;
   flex-direction: column;
@@ -75,6 +81,10 @@ export const Row = styled.div`
     background: #fff;
     min-height: 50px;
   }
+
+  &:not(.row-header):hover {
+    background-color: ${HOVER_ROW};
+  }
 `;
 
 export const RowLabel = styled.div`
@@ -90,6 +100,10 @@ export const RowLabel = styled.div`
   padding: 6px 12px;
   position: sticky;
   z-index: 3;
+
+  ${Row}:not(.row-header):hover & {
+    background-color: ${HOVER_ROW};
+  }
 
   .label-drug {
     align-items: center;
@@ -161,6 +175,23 @@ export const Track = styled.div<{ $days: number }>`
 
   &.track-header {
     background-image: none;
+  }
+
+  /* the column of the day under the pointer, behind the bars */
+  &::before {
+    background: ${HOVER_DAY};
+    bottom: 0;
+    content: "";
+    display: none;
+    left: calc(var(--hover-day, 0) * ${DAY_WIDTH}px);
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    width: ${DAY_WIDTH}px;
+  }
+
+  .hovering-day &::before {
+    display: block;
   }
 
   .marker-label {
