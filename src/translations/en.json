@@ -1580,6 +1580,27 @@
       "bed": "Bed",
       "dischargeDate": "Discharge"
     },
+    "cultures": {
+      "title": "Cultures",
+      "legend": "Latest collection of each exam and material, released in the last 60 days",
+      "byExam": "By exam",
+      "byDrug": "By drug",
+      "byDrugLegend": "Antibiogram of each drug, the ones in use in this prescription flagged",
+      "empty": "No culture released in the last 60 days.",
+      "loadError": "Could not load the cultures.",
+      "exam": "Exam",
+      "collectionDate": "Collected",
+      "releaseDate": "Released",
+      "gram": "Gram",
+      "microorganism": "Microorganism",
+      "result": "Result",
+      "openHistory": "See every collection of this exam and material",
+      "history": {
+        "legend": "Every collection of this exam and material, newest first",
+        "empty": "No collection found.",
+        "loadError": "Could not load the collections of this culture."
+      }
+    },
     "timeline": {
       "title": "Antimicrobial timeline",
       "empty": "No antimicrobial prescribed in this admission.",

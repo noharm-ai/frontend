@@ -2,13 +2,13 @@ import { test, expect } from "../support/mockApi";
 import { loginWithFeatures } from "../support/featureLogin";
 
 /**
- * Exams and culture card of the infection control page
+ * Exams card of the infection control page
  * (src/features/infectionControl/InfectionControlExams).
  *
  * It is the card of the screening, for the latest prescription of the
- * admission. The exams come with the antimicrobial timeline; the cultures
- * come from GET /prescriptions/:id/cultures only when the culture tab is
- * opened.
+ * admission, with the exams that come with the antimicrobial timeline. Its
+ * culture tab is left out: the page shows the cultures by drug in the culture
+ * section (recentCultures.spec.ts).
  */
 
 const ADMISSION = 9200;
@@ -16,6 +16,11 @@ const PATIENT_ID = 4320;
 const PAGE_URL = `/controle-infeccao/${ADMISSION}`;
 const TIMELINE =
   "GET /infection-control/antimicrobial-timeline/:admissionNumber";
+
+// the request of the cultures by drug; the page's recent cultures
+// (/infection-control/admission/:n/cultures) load on their own
+const isPrescriptionCultures = (r: { path: string }) =>
+  /\/prescriptions\/[^/]+\/cultures$/.test(r.path);
 
 /** A naive ISO date some hours away from now, as the backend sends it */
 const hoursFromNow = (hours: number) =>
@@ -105,9 +110,7 @@ test.describe("without the culture feature", () => {
     // the exams out of range, as the screening card counts them
     await expect(card(page).locator(".footer .stats")).toHaveText("1");
     // the cultures are behind a feature the schema does not have
-    expect(mockApi.requests.some((r) => r.path.endsWith("/cultures"))).toBe(
-      false,
-    );
+    expect(mockApi.requests.some(isPrescriptionCultures)).toBe(false);
 
     // "Ver todos" opens every exam of the admission
     const examsRequest = page.waitForRequest((r) =>
@@ -140,80 +143,25 @@ test.describe("with the culture feature", () => {
     await loginWithFeatures(page, mockApi, ["CULTURE"]);
   });
 
-  test("flags a resistant drug in use on the culture tab", async ({
+  test("keeps to the exams: the cultures have their own section", async ({
     page,
     mockApi,
   }) => {
     mockApi.override(TIMELINE, { json: timeline("199") });
-    mockApi.override("GET /prescriptions/:id/cultures", {
-      json: {
-        status: "success",
-        data: [
-          {
-            drug: "OXACILINA",
-            prescribed: true,
-            atbLevel: 1,
-            items: [
-              {
-                key: "SANGUE TOTAL#MICROORGANISMO TESTE#OXACILINA",
-                idExamItem: 900001,
-                microorganism: "Microorganismo Teste",
-                material: "Sangue Total",
-                result: "Resistente",
-                resultType: "R",
-                resultDetail: null,
-                prediction: null,
-                predictionType: null,
-                probability: null,
-                collectionDate: "2024-03-01T12:17:03",
-                releaseDate: "2024-03-08T07:17:02",
-              },
-            ],
-          },
-        ],
-      },
-    });
 
     await page.goto(PAGE_URL);
 
-    // the cultures wait for their tab
-    await expect(card(page).getByText("Cultura", { exact: true })).toBeVisible({
+    await expect(card(page).getByText("Cr", { exact: true })).toBeVisible({
       timeout: 15000,
     });
-    expect(mockApi.requests.some((r) => r.path.endsWith("/cultures"))).toBe(
-      false,
+    // no tab bar: the card is titled by the exams alone
+    await expect(card(page).locator(".ant-segmented")).toHaveCount(0);
+    await expect(card(page).getByText("Cultura", { exact: true })).toHaveCount(
+      0,
     );
-    await expect(card(page).locator(".culture-tab-alert")).toHaveCount(0);
-
-    const culturesRequest = page.waitForRequest((r) =>
-      r.url().includes("/prescriptions/199/cultures"),
-    );
-    await card(page).getByText("Cultura", { exact: true }).click();
-    await culturesRequest;
-    await expect(
-      card(page).locator(".culture-item.culture-row-resistantInUse"),
-    ).toHaveCount(1);
-    // the screening reads the count from the prescription; here it comes
-    // from the cultures, once the tab has loaded them
-    await expect(card(page).locator(".culture-tab-alert")).toBeVisible();
-
-    // the full report, for the patient on the page
-    mockApi.override("GET /reports/culture", {
-      json: { status: "success", data: [] },
-    });
-    const reportRequest = page.waitForRequest(
-      (r) =>
-        r.url().includes("/reports/culture") &&
-        new URL(r.url()).searchParams.get("idPatient") === `${PATIENT_ID}`,
-    );
-    await card(page).getByRole("button", { name: "Ver todos" }).click();
-    await reportRequest;
-    const report = page.getByRole("dialog");
-    await expect(
-      report.getByRole("heading", { name: "Relatório: Culturas" }),
-    ).toBeVisible();
-    // the patient is named on the printed report only
-    await expect(report).toContainText("Ciclano de Tal");
-    await expect(report).toContainText("10/05/1980");
+    // the cultures by drug are in the cultures section, out of the card
+    await expect(card(page).getByTestId("cultures-by-drug")).toHaveCount(0);
+    await expect(page.getByTestId("cultures-by-drug")).toBeVisible();
+    expect(mockApi.requests.some(isPrescriptionCultures)).toBe(true);
   });
 });

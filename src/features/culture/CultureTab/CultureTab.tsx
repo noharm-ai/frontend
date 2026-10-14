@@ -63,6 +63,9 @@ interface ICultureTabProps {
   loading?: boolean;
   error?: boolean;
   onRetry?: () => void;
+  // the list scrolls past this height: the screening card is short, a page
+  // section has room for more (px)
+  maxHeight?: number;
 }
 
 const GROUP_RESISTANT_IN_USE = "resistantInUse";
@@ -330,6 +333,7 @@ export function CultureTab({
   loading,
   error,
   onRetry,
+  maxHeight,
 }: ICultureTabProps) {
   const { t } = useTranslation();
   const [details, setDetails] = useState<ICultureDrug | null>(null);
@@ -439,7 +443,7 @@ export function CultureTab({
       ?.drugs.length ?? 0;
 
   return (
-    <Container>
+    <Container $maxHeight={maxHeight}>
       <Scroll ref={scrollRef}>
         {releasedGroups.length > 0 && (
           <CultureTable

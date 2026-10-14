@@ -31,7 +31,10 @@ export default function ExamCard({
   siderCollapsed,
   count,
   admissionNumber,
-  prescription,
+  prescription = null,
+  // a page that shows the cultures elsewhere (the infection control page)
+  // keeps the card to the exams
+  hideCulture = false,
 }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -45,7 +48,7 @@ export default function ExamCard({
   // the culture card depends on the antibiogram integration, so it is offered
   // per schema (models/Feature.CULTURE). Without it the card is the exams one
   // it has always been: no tab bar, and nothing of the culture is requested
-  const hasCulture = FeaturesService(features).hasCulture();
+  const hasCulture = !hideCulture && FeaturesService(features).hasCulture();
   const cultureTab = hasCulture && tab === TAB_CULTURE;
 
   // the culture card sits behind a tab, so a resistant drug the patient is on

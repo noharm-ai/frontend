@@ -24,6 +24,7 @@ import { setExamsModalAdmissionNumber } from "features/exams/ExamModal/ExamModal
 import {
   fetchAntimicrobialTimeline,
   fetchFollowUp,
+  fetchRecentCultures,
   followAdmission,
   reset,
   setReviewOpen,
@@ -35,6 +36,7 @@ import {
 import { CourseGantt } from "../CourseGantt/CourseGantt";
 import { FollowUpStatus } from "../FollowUpStatus/FollowUpStatus";
 import { InfectionControlClinicalNotes } from "../InfectionControlClinicalNotes/InfectionControlClinicalNotes";
+import { InfectionControlCultures } from "../InfectionControlCultures/InfectionControlCultures";
 import { InfectionControlExams } from "../InfectionControlExams/InfectionControlExams";
 import { InfectionControlPatient } from "../InfectionControlPatient/InfectionControlPatient";
 import { ReviewModal } from "../ReviewModal/ReviewModal";
@@ -81,10 +83,12 @@ export function InfectionControl() {
 
   const isValid = /^\d+$/.test(admissionNumber);
 
-  // the follow-up comes with the timeline; it is loaded alone only to retry it
+  // the follow-up comes with the timeline; it is loaded alone only to retry
+  // it. The cultures are loaded apart, alongside, and retried by their section
   const load = () => {
     if (isValid) {
       dispatch(fetchAntimicrobialTimeline({ admissionNumber }));
+      dispatch(fetchRecentCultures({ admissionNumber }));
     }
   };
 
@@ -288,11 +292,10 @@ export function InfectionControl() {
         </Col>
         {data.patient.idPrescription && (
           // an admission with no prescription has no segment to read the
-          // exam references from, nor drugs to flag the cultures against
+          // exam references from
           <Col xs={24} lg={10} data-kb="infectionControl.exams">
             <InfectionControlExams
               patient={data.patient}
-              idPrescription={data.patient.idPrescription}
               exams={data.exams}
               alertExams={data.alertExams}
             />
@@ -346,6 +349,14 @@ export function InfectionControl() {
             invalidatedEvaluations={invalidatedEvaluations}
           />
         )}
+      </Section>
+
+      <Section data-kb="infectionControl.cultures">
+        <InfectionControlCultures
+          admissionNumber={admissionNumber}
+          patient={data.patient}
+          idPrescription={data.patient.idPrescription}
+        />
       </Section>
 
       <InfectionControlClinicalNotes
