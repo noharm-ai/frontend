@@ -5,10 +5,11 @@ import { loginWithFeatures } from "../support/featureLogin";
  * Exams card of the infection control page
  * (src/features/infectionControl/InfectionControlExams).
  *
- * It is the card of the screening, for the latest prescription of the
- * admission, with the exams that come with the antimicrobial timeline. Its
- * culture tab is left out: the page shows the cultures by drug in the culture
- * section (recentCultures.spec.ts).
+ * The exams of the screening card, for the latest prescription of the
+ * admission, with the exams that come with the antimicrobial timeline, as a
+ * list of its own: the ones out of range first, the ones without a result
+ * last. The cultures are not in it: the page shows them in their own card
+ * (recentCultures.spec.ts).
  */
 
 const ADMISSION = 9200;
@@ -26,18 +27,20 @@ const isPrescriptionCultures = (r: { path: string }) =>
 const hoursFromNow = (hours: number) =>
   new Date(Date.now() + hours * 60 * 60 * 1000).toISOString().slice(0, 19);
 
+// out of the card's order on purpose: the card puts the one out of range
+// first and the one with no result last
 const EXAMS = [
   {
-    key: "cr",
+    key: "ur",
     value: {
-      value: 1.8,
+      value: null,
       unit: "mg/dL",
-      alert: true,
-      date: hoursFromNow(-5),
-      ref: "0,6 a 1,2 mg/dL",
-      initials: "Cr",
-      name: "Creatinina",
-      delta: 20,
+      alert: false,
+      date: null,
+      ref: null,
+      initials: "Ur",
+      name: "Ureia",
+      delta: null,
     },
   },
   {
@@ -51,6 +54,19 @@ const EXAMS = [
       initials: "PCR",
       name: "Proteína C reativa",
       delta: null,
+    },
+  },
+  {
+    key: "cr",
+    value: {
+      value: 1.8,
+      unit: "mg/dL",
+      alert: true,
+      date: hoursFromNow(-5),
+      ref: "0,6 a 1,2 mg/dL",
+      initials: "Cr",
+      name: "Creatinina",
+      delta: 20,
     },
   },
 ];
@@ -103,12 +119,16 @@ test.describe("without the culture feature", () => {
 
     await page.goto(PAGE_URL);
 
-    await expect(card(page).getByText("Cr", { exact: true })).toBeVisible({
-      timeout: 15000,
-    });
-    await expect(card(page).getByText("PCR", { exact: true })).toBeVisible();
+    // by name, out of range first and with no result last
+    const rows = card(page).getByTestId("exam-row");
+    await expect(rows).toHaveCount(3, { timeout: 15000 });
+    await expect(rows.nth(0)).toHaveText("Creatinina1,8");
+    await expect(rows.nth(0)).toHaveClass(/alert/);
+    await expect(rows.nth(1)).toHaveText("Proteína C reativa3");
+    await expect(rows.nth(1)).not.toHaveClass(/alert/);
+    await expect(rows.nth(2)).toHaveText("Ureia--");
     // the exams out of range, as the screening card counts them
-    await expect(card(page).locator(".footer .stats")).toHaveText("1");
+    await expect(card(page).getByTestId("exams-alerts")).toHaveText("1");
     // the cultures are behind a feature the schema does not have
     expect(mockApi.requests.some(isPrescriptionCultures)).toBe(false);
 
@@ -151,7 +171,7 @@ test.describe("with the culture feature", () => {
 
     await page.goto(PAGE_URL);
 
-    await expect(card(page).getByText("Cr", { exact: true })).toBeVisible({
+    await expect(card(page).getByTestId("exam-row")).toHaveCount(3, {
       timeout: 15000,
     });
     // no tab bar: the card is titled by the exams alone
@@ -159,9 +179,13 @@ test.describe("with the culture feature", () => {
     await expect(card(page).getByText("Cultura", { exact: true })).toHaveCount(
       0,
     );
-    // the cultures by drug are in the cultures section, out of the card
+    // the cultures by drug are a tab of the cultures card, out of this one
     await expect(card(page).getByTestId("cultures-by-drug")).toHaveCount(0);
-    await expect(page.getByTestId("cultures-by-drug")).toBeVisible();
-    expect(mockApi.requests.some(isPrescriptionCultures)).toBe(true);
+    await expect(
+      page.getByRole("tab", { name: "Por medicamento" }),
+    ).toBeVisible();
+    await expect
+      .poll(() => mockApi.requests.some(isPrescriptionCultures))
+      .toBe(true);
   });
 });

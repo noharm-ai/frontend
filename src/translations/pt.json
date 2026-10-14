@@ -1593,10 +1593,18 @@
       "fullData": "Dados completos",
       "bodySurface": "Sup. corporal"
     },
+    "exams": {
+      "showAll": "Ver todos",
+      "empty": "Nenhum exame encontrado",
+      "up": "alta",
+      "down": "queda",
+      "stable": "estável",
+      "noResult": "sem resultado"
+    },
     "cultures": {
       "title": "Culturas",
       "legend": "Última coleta de cada exame e material, liberada nos últimos 60 dias",
-      "byExam": "Por exame",
+      "summary": "Resumo",
       "byDrug": "Por medicamento",
       "byDrugLegend": "Antibiograma de cada medicamento, com os em uso nesta prescrição em destaque",
       "empty": "Nenhuma cultura liberada nos últimos 60 dias.",

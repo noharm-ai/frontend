@@ -47,6 +47,7 @@ import {
 } from "../followUp";
 import { sortCourses } from "../timeline";
 import {
+  CulturesAndExams,
   FollowUpError,
   Header,
   Section,
@@ -135,6 +136,10 @@ export function InfectionControl() {
     !!followUp &&
     !followUp.followed &&
     (followUp.courses ?? []).some((course) => course.ongoing);
+
+  // an admission with no prescription has no segment to read the exam
+  // references from
+  const hasExams = !!data?.patient.idPrescription;
 
   // the next one of the worklist the page came from, by its filters
   const showNextPending =
@@ -329,25 +334,27 @@ export function InfectionControl() {
         )}
       </Section>
 
-      {data.patient.idPrescription && (
-        // an admission with no prescription has no segment to read the exam
-        // references from
-        <Section data-kb="infectionControl.exams">
-          <InfectionControlExams
-            patient={data.patient}
-            exams={data.exams}
-            alertExams={data.alertExams}
-          />
-        </Section>
-      )}
-
-      <Section data-kb="infectionControl.cultures">
-        <InfectionControlCultures
-          admissionNumber={admissionNumber}
-          patient={data.patient}
-          idPrescription={data.patient.idPrescription}
-        />
-      </Section>
+      <CulturesAndExams className={hasExams ? "with-exams" : ""}>
+        <div className="panes">
+          <div data-kb="infectionControl.cultures">
+            <InfectionControlCultures
+              admissionNumber={admissionNumber}
+              patient={data.patient}
+              idPrescription={data.patient.idPrescription}
+              stackDates={hasExams}
+            />
+          </div>
+          {hasExams && (
+            <div data-kb="infectionControl.exams">
+              <InfectionControlExams
+                patient={data.patient}
+                exams={data.exams}
+                alertExams={data.alertExams}
+              />
+            </div>
+          )}
+        </div>
+      </CulturesAndExams>
 
       <InfectionControlClinicalNotes
         admissionNumber={data.patient.admissionNumber}

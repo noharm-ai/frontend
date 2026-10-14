@@ -335,7 +335,7 @@ test.describe("by drug", () => {
       await expect(page.getByText("Por medicamento")).toHaveCount(0);
     });
 
-    test("sits beside the cultures by exam, flags a resistant drug in use and opens the full report", async ({
+    test("is a tab beside the summary, flags a resistant drug in use and opens the full report", async ({
       page,
       mockApi,
     }) => {
@@ -375,21 +375,23 @@ test.describe("by drug", () => {
       await page.goto(PAGE_URL);
       await culturesRequest;
 
-      // both views at once
+      // one card: the summary by exam first, the cultures by drug a tab away.
+      // They are loaded with the page, so the tab flags the resistant drug in
+      // use before it is opened
       const byDrug = page.getByTestId("cultures-by-drug");
       await expect(page.getByTestId("recent-cultures")).toBeVisible({
         timeout: 15000,
       });
+      await expect(page.getByRole("tab", { name: "Resumo" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+      await expect(byDrug).toBeHidden();
+      await expect(page.getByTestId("cultures-by-drug-alert")).toBeVisible();
+
+      await page.getByRole("tab", { name: "Por medicamento" }).click();
       await expect(byDrug).toBeVisible();
-      await expect(
-        page.locator('[data-kb="infectionControl.cultures"] .ant-segmented'),
-      ).toHaveCount(0);
-      await expect(
-        page.getByRole("heading", { name: "Por exame", exact: true }),
-      ).toBeVisible();
-      await expect(
-        page.getByRole("heading", { name: "Por medicamento", exact: true }),
-      ).toBeVisible();
+      await expect(page.getByTestId("recent-cultures")).toBeHidden();
       await expect(
         byDrug.locator(".culture-item.culture-row-resistantInUse"),
       ).toHaveCount(1);
@@ -406,7 +408,14 @@ test.describe("by drug", () => {
           r.url().includes("/reports/culture") &&
           new URL(r.url()).searchParams.get("idPatient") === `${PATIENT_ID}`,
       );
-      await byDrug.getByRole("button", { name: "Ver todos" }).click();
+      // in the card's header, out of the by drug footer
+      await expect(
+        byDrug.getByRole("button", { name: "Ver todos" }),
+      ).toHaveCount(0);
+      await page
+        .locator('[data-kb="infectionControl.cultures"]')
+        .getByRole("button", { name: "Ver todos" })
+        .click();
       await reportRequest;
       const report = page.getByRole("dialog");
       await expect(

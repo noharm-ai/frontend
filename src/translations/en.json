@@ -1583,10 +1583,18 @@
       "fullData": "Full data",
       "bodySurface": "Body surface"
     },
+    "exams": {
+      "showAll": "View all",
+      "empty": "No exams found",
+      "up": "rising",
+      "down": "falling",
+      "stable": "stable",
+      "noResult": "no result"
+    },
     "cultures": {
       "title": "Cultures",
       "legend": "Latest collection of each exam and material, released in the last 60 days",
-      "byExam": "By exam",
+      "summary": "Summary",
       "byDrug": "By drug",
       "byDrugLegend": "Antibiogram of each drug, the ones in use in this prescription flagged",
       "empty": "No culture released in the last 60 days.",

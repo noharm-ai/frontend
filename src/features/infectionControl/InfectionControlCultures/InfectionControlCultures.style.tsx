@@ -1,13 +1,86 @@
 import styled from "styled-components";
 
+// one card for the cultures: the title beside the tabs of its two views, the
+// summary by exam and the antibiogram by drug
 export const CulturesBox = styled.div`
   background: #fff;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
+  box-shadow:
+    0 1px 2px 0 rgba(0, 0, 0, 0.03),
+    0 1px 6px -1px rgba(0, 0, 0, 0.02),
+    0 2px 4px 0 rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   overflow: hidden;
 
-  &.by-drug {
-    padding: 8px 12px;
+  /* the title and the tab bar stay, the open view fills the rest when the
+     card is given a height (beside the exams card): the summary scrolls in
+     it, the list by drug scrolls on its own, under its sticky header */
+  .ant-tabs {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .ant-tabs-body-holder,
+  .cultures-body {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+  }
+
+  .ant-tabs-body,
+  .ant-tabs-content-active {
+    height: 100%;
+  }
+
+  /* the page's section title, as the timeline's */
+  .section-title {
+    color: #2e3c5a;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 24px 0 0;
+  }
+
+  .cultures-header {
+    border-bottom: 1px solid #f0f0f0;
+    padding: 12px 16px;
+  }
+
+  .ant-tabs-nav {
+    margin: 0;
+    padding: 0 16px;
+  }
+
+  .legend {
+    color: #8c8c8c;
+    padding: 8px 16px;
+  }
+
+  /* padded rather than its content given margins: the culture list is as
+     wide as its parent, and a margin pushed it past the right edge */
+  .culture-pane.by-drug {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 0 12px 8px;
+
+    /* the screening caps the list (CultureTab maxHeight); here it takes what
+       the card leaves it */
+    .by-drug-list {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+
+      > div {
+        max-height: none;
+      }
+    }
+
+    .legend {
+      padding: 8px 4px;
+    }
   }
 
   .muted {
@@ -44,84 +117,6 @@ export const CulturesBox = styled.div`
   .culture-microorganism {
     color: #2e3c5a;
     font-style: italic;
-  }
-`;
-
-export const CulturesHeading = styled.div`
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-  margin-bottom: 12px;
-
-  .section-title,
-  .pane-title {
-    margin: 0;
-  }
-
-  .pane-title {
-    color: #2e3c5a;
-    font-size: 15px;
-    font-weight: 600;
-  }
-
-  .legend {
-    color: #8c8c8c;
-  }
-`;
-
-// the two views of the cultures side by side, the headings on a row of their
-// own so the boxes line up however a heading wraps. The width is the
-// section's, not the screen's: the sider takes a share of the screen when open.
-// Stacked when narrower than both views need
-export const CulturesPanes = styled.div`
-  container-type: inline-size;
-
-  .panes {
-    display: grid;
-    gap: 0 16px;
-    grid-template-areas: "exam-heading" "exam" "drug-heading" "drug";
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .pane-exam-heading {
-    grid-area: exam-heading;
-  }
-
-  .pane-exam {
-    grid-area: exam;
-  }
-
-  .pane-drug-heading {
-    grid-area: drug-heading;
-    margin-top: 16px;
-  }
-
-  .pane-drug {
-    grid-area: drug;
-  }
-
-  .pane-exam-heading,
-  .pane-drug-heading {
-    align-self: end;
-  }
-
-  .pane-exam,
-  .pane-drug {
-    align-self: start;
-  }
-
-  @container (min-width: 1100px) {
-    .panes {
-      grid-template-areas:
-        "exam-heading drug-heading"
-        "exam drug";
-      grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
-    }
-
-    .pane-drug-heading {
-      margin-top: 0;
-    }
   }
 `;
 

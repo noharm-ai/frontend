@@ -1,12 +1,10 @@
 import styled from "styled-components";
 
-// the right side of the summary card, tinted by the status: a dot and the
-// status on top, then the last review, the next one and the pending reasons
+// the right side of the summary card: a dot and the status on top, colored
+// by it, then the last review, the next one and the pending reasons
 export const FollowUpBox = styled.div`
   --status-color: #595959;
-  --status-background: #fafafa;
 
-  background: var(--status-background);
   border-left: 1px solid #f0f0f0;
   flex: 0 0 42%;
   min-width: 0;
@@ -14,12 +12,10 @@ export const FollowUpBox = styled.div`
 
   &.pending {
     --status-color: #f5222d;
-    --status-background: #fffbe6;
   }
 
   &.revised {
     --status-color: #389e0d;
-    --status-background: #f6ffed;
   }
 
   @media (max-width: 992px) {

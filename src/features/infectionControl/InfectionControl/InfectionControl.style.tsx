@@ -65,6 +65,32 @@ export const SummaryCard = styled.div`
   }
 `;
 
+// the cultures and, when the admission has a prescription, the exams card
+// beside them, both as tall: each scrolls within. The width is the page's,
+// not the screen's: the sider takes a share of the screen when open. Stacked,
+// each as tall as its content, when narrower than both need
+export const CulturesAndExams = styled.div`
+  container-type: inline-size;
+  margin-bottom: 24px;
+
+  > .panes {
+    display: grid;
+    gap: 16px;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  @container (min-width: 1100px) {
+    &.with-exams > .panes {
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+      grid-template-rows: 420px;
+
+      > * {
+        min-height: 0;
+      }
+    }
+  }
+`;
+
 export const StateBox = styled.div`
   padding: 40px 0;
   text-align: center;
