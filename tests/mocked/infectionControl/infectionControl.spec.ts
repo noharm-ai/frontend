@@ -320,3 +320,73 @@ test("can retry after a server error", async ({ page, mockApi }) => {
 
   await expect(page.getByTestId("course-row")).toHaveCount(4);
 });
+
+test("shows the screening alerts of the courses in use", async ({
+  page,
+  mockApi,
+}) => {
+  const alert = (type: string, level: string, text: string) => ({
+    idPrescriptionDrug: "199001",
+    key: "",
+    type,
+    level,
+    text,
+    handling: false,
+  });
+
+  mockApi.override(ENDPOINT, {
+    json: timeline([
+      course({
+        idDrug: 11,
+        drug: "MEROPENEM 1 g SOL INJ",
+        status: "active",
+        start: hoursFromNow(-48),
+        end: hoursFromNow(20),
+        days: 2,
+        regimens: [regimen(-48, 20, 2)],
+        idSubstance: null,
+        alerts: [
+          alert(
+            "it",
+            "high",
+            "Interação Medicamentosa: reduz o nível sérico (MEROPENEM e ÁCIDO VALPROICO)",
+          ),
+          alert("kidney", "medium", "Medicamento deve sofrer ajuste renal"),
+        ],
+      }),
+      course({
+        idDrug: 14,
+        drug: "AZITROMICINA 500 mg CP",
+        status: "finished",
+        start: hoursFromNow(-200),
+        end: hoursFromNow(-130),
+        days: 3,
+        regimens: [regimen(-200, -130, 0.5)],
+        idSubstance: null,
+        alerts: [],
+      }),
+    ]),
+  });
+
+  await page.goto(PAGE_URL);
+
+  const rows = page.getByTestId("course-row");
+  await expect(rows).toHaveCount(2, { timeout: 15000 });
+  // the row counts the alerts; a course out of the screening has none
+  const meropenemAlerts = rows
+    .filter({ hasText: "MEROPENEM" })
+    .getByTestId("course-alerts");
+  await expect(meropenemAlerts).toHaveText("2");
+  await expect(
+    rows.filter({ hasText: "AZITROMICINA" }).getByTestId("course-alerts"),
+  ).toHaveCount(0);
+
+  // the count opens the details, which list the alerts by level
+  await meropenemAlerts.getByText("2").click();
+  const details = page.getByRole("dialog");
+  await expect(details.getByText("Alertas da triagem")).toBeVisible();
+  await expect(details.getByText("Alertas Nível Alto")).toBeVisible();
+  await expect(
+    details.getByText("Medicamento deve sofrer ajuste renal"),
+  ).toBeVisible();
+});

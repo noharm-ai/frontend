@@ -535,6 +535,49 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     ]);
   });
 
+  test("shows the screening alerts of the drug being evaluated", async ({
+    page,
+    mockApi,
+  }) => {
+    const [meropenem, vancomycin] = TIMELINE_DATA.data.courses;
+    mockPage(mockApi, followUp(), {
+      ...TIMELINE_DATA,
+      data: {
+        ...TIMELINE_DATA.data,
+        courses: [
+          {
+            ...meropenem,
+            idSubstance: null,
+            alerts: [
+              {
+                idPrescriptionDrug: "299001",
+                key: "",
+                type: "kidney",
+                level: "medium",
+                text: "Medicamento deve sofrer ajuste renal",
+                handling: false,
+              },
+            ],
+          },
+          { ...vancomycin, idSubstance: null, alerts: [] },
+        ],
+      },
+    });
+
+    await page.goto(PAGE_URL);
+    await page
+      .getByRole("button", { name: "Revisar" })
+      .click({ timeout: 15000 });
+
+    const drug = page.getByRole("dialog").getByTestId("review-drug");
+    await expect(drug.getByRole("heading", { level: 3 })).toHaveText(
+      "MEROPENEM 1 g SOL INJ",
+    );
+    const alerts = drug.getByTestId("review-alerts");
+    await expect(alerts).toContainText("Alertas da triagem");
+    await expect(alerts).toContainText("Medicamento deve sofrer ajuste renal");
+  });
+
   test("registers a review evaluating the drug without evaluation", async ({
     page,
     mockApi,

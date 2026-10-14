@@ -6,6 +6,7 @@ import dayjs, { Dayjs } from "dayjs";
 import DefaultModal from "components/Modal";
 import { AwareTag } from "components/AwareTag/AwareTag";
 import RichTextView from "components/RichTextView";
+import DrugAlerts from "components/Screening/PrescriptionDrug/components/DrugAlerts";
 import { formatDateTime } from "utils/date";
 
 import {
@@ -173,6 +174,19 @@ export function CourseDetails({ course, now, onClose }: CourseDetailsProps) {
             </div>
           ))}
         </dl>
+
+        {!!course.alerts?.length && (
+          <section data-kb="infectionControl.antimicrobials.alerts">
+            <h4>
+              {t("infectionControl.details.alerts")}{" "}
+              <span className="details-count">({course.alerts.length})</span>
+            </h4>
+            <DrugAlerts
+              alerts={course.alerts}
+              idSubstance={course.idSubstance}
+            />
+          </section>
+        )}
 
         <section>
           <h4>

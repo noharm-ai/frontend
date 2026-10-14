@@ -6,6 +6,7 @@ import { InfoCircleOutlined, SyncOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 
 import { Checkbox, DatePicker, Textarea } from "components/Inputs";
+import DrugAlerts from "components/Screening/PrescriptionDrug/components/DrugAlerts";
 import { formatDate, formatDateTime } from "utils/date";
 
 import {
@@ -125,6 +126,22 @@ export function DrugEvaluationStep({
           </div>
         )}
       </div>
+
+      {!!activeCourse?.alerts?.length && (
+        <section
+          className="drug-section"
+          data-kb="infectionControl.review.alerts"
+          data-testid="review-alerts"
+        >
+          <h4 className="drug-section-title">
+            {t("infectionControl.review.alerts")}
+          </h4>
+          <DrugAlerts
+            alerts={activeCourse.alerts}
+            idSubstance={activeCourse.idSubstance}
+          />
+        </section>
+      )}
 
       {timeline && (
         <div className="drug-timeline" data-testid="review-timeline">
