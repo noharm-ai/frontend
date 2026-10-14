@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { Formik, FormikErrors } from "formik";
+import { Formik } from "formik";
 import { useTranslation } from "react-i18next";
-import { Button, Steps } from "antd";
+import { LeftOutlined } from "@ant-design/icons";
+import { Button } from "antd";
 import { Dayjs } from "dayjs";
 
 import DefaultModal from "components/Modal";
@@ -19,14 +20,15 @@ import {
 } from "../InfectionControlSlice";
 import { courseKey, getInvalidatedEvaluations } from "../followUp";
 import { DrugEvaluationStep } from "./DrugEvaluationStep/DrugEvaluationStep";
+import { ReviewRail } from "./ReviewRail/ReviewRail";
 import { ReviewSummaryStep } from "./ReviewSummaryStep/ReviewSummaryStep";
 import {
-  describeDrugEvaluation,
+  findEvaluatedCourse,
+  getDecision,
   getEvaluationSchema,
   getInitialValues,
+  getSkipOutcome,
   getValidationSchema,
-  getValidUntil,
-  IDrugEvaluationFields,
   IReviewFields,
   toReviewPayload,
   validateDrug,
@@ -45,9 +47,10 @@ interface ReviewModalProps {
 /**
  * The infectologist's review of the patient, one step per running
  * antimicrobial - its timeline, its current evaluation and a new verdict,
- * conforming or not and valid until a date - and a last step to schedule the
- * next review. Drugs without an evaluation in force (none, expired or with a
- * changed posology) come selected; the others can be evaluated again.
+ * conforming, not conforming or left out, valid until a date - and a last
+ * step to schedule the next review. Drugs without an evaluation in force
+ * (none, expired or with a changed posology) are to be evaluated; the others
+ * keep it unless evaluated again.
  */
 export function ReviewModal({
   followUp,
@@ -134,150 +137,146 @@ export function ReviewModal({
       validateOnChange={false}
       validateOnBlur={false}
     >
-      {({ values, errors, setErrors, submitForm, validateForm }) => {
+      {({ values, submitForm, validateForm }) => {
         const drugCount = values.evaluations.length;
         const lastStep = drugCount;
         const isReviewStep = step === lastStep;
 
-        // flags (or clears) the errors of one drug, keeping the others
-        const setDrugErrors = (
-          index: number,
-          drugErrors: FormikErrors<IDrugEvaluationFields> | null,
-        ) => {
-          const list = [
-            ...((errors.evaluations as FormikErrors<IDrugEvaluationFields>[]) ??
-              []),
-          ];
-          list[index] = drugErrors ?? (undefined as any);
-          setErrors({
-            ...errors,
-            evaluations: list.some(Boolean) ? (list as any) : undefined,
-          });
-        };
+        // what keeps each drug from being done, checked as it is filled
+        const drugErrors = values.evaluations.map((evaluation) =>
+          validateDrug(evaluationSchema, evaluation),
+        );
+        const allDrugsDone = drugErrors.every((drugError) => !drugError);
 
-        // moving forward checks the drug being left
-        const goTo = (target: number) => {
-          if (target > step && step < lastStep) {
-            const drugErrors = validateDrug(
-              evaluationSchema,
-              values.evaluations[step],
-            );
-            setDrugErrors(step, drugErrors);
-            if (drugErrors) return;
+        // what is chosen for each drug, as a tag
+        const drugStatus = values.evaluations.map((evaluation) => {
+          const decision = getDecision(evaluation);
+          if (decision === "skip") {
+            const outcome = getSkipOutcome(evaluation, invalidatedEvaluations);
+            return {
+              label: t(`infectionControl.review.skip.${outcome}.tag`),
+              color: outcome === "keepInvalid" ? "orange" : "default",
+            };
           }
-          setStep(target);
-        };
+          if (decision == null) {
+            return {
+              label: t("infectionControl.review.toEvaluate"),
+              color: "orange",
+            };
+          }
+
+          return decision === "conforming"
+            ? {
+                label: t("infectionControl.evaluation.conforming"),
+                color: "green",
+              }
+            : {
+                label: t("infectionControl.evaluation.nonConforming"),
+                color: "red",
+              };
+        });
+
+        const railDrugs = values.evaluations.map((evaluation, index) => {
+          const course = findEvaluatedCourse(
+            drugTimelines[evaluation.idDrug]?.courses,
+            evaluation,
+          );
+
+          return {
+            key: evaluation.idDrug,
+            title: evaluation.drug,
+            day:
+              course &&
+              (course.plannedDays != null
+                ? t("infectionControl.timeline.dayPlanned", {
+                    count: course.days,
+                    planned: course.plannedDays,
+                  })
+                : t("infectionControl.timeline.day", { count: course.days })),
+            status: drugStatus[index],
+            done: index !== step && !drugErrors[index],
+          };
+        });
 
         const save = () => {
           validateForm().then((formErrors) => {
-            const evaluationsWithError = (formErrors.evaluations ??
-              []) as unknown[];
-            const firstDrugWithError = values.evaluations.findIndex(
-              (_, index) => !!evaluationsWithError[index],
-            );
-            if (firstDrugWithError >= 0) {
-              setStep(firstDrugWithError);
-            } else if (!formErrors.nextReviewDate) {
+            if (!formErrors.evaluations && !formErrors.nextReviewDate) {
               submitForm();
             }
           });
         };
 
-        const stepItems = [
-          ...values.evaluations.map((evaluation, index) => {
-            const done = evaluation.evaluate
-              ? evaluation.conforming != null && !!getValidUntil(evaluation)
-              : index < step;
-            let stepStatus: "wait" | "process" | "finish" | "error" = "wait";
-            if (index === step) stepStatus = "process";
-            else if (errors.evaluations?.[index]) stepStatus = "error";
-            else if (done) stepStatus = "finish";
-
-            return {
-              key: evaluation.idDrug,
-              title: (
-                <span className="step-title" title={evaluation.drug}>
-                  {evaluation.drug}
-                </span>
-              ),
-              content: describeDrugEvaluation(
-                evaluation,
-                invalidatedEvaluations,
-                t,
-              ),
-              status: stepStatus,
+        // why the step cannot move on yet
+        let hint: { text: string; error: boolean } | null = null;
+        if (isReviewStep) {
+          if (!allDrugsDone) {
+            hint = {
+              text: t("infectionControl.review.hintAllDrugs"),
+              error: true,
             };
-          }),
-          {
-            key: "review",
-            title: t("infectionControl.review.patientStep"),
-            content: t("infectionControl.review.patientStepLegend"),
-            status: (isReviewStep ? "process" : "wait") as "process" | "wait",
-          },
-        ];
-
-        const footer = [
-          <Button key="cancel" onClick={onClose} disabled={isSaving}>
-            {t("actions.cancel")}
-          </Button>,
-          <Button
-            key="back"
-            onClick={() => setStep(step - 1)}
-            disabled={step === 0 || isSaving}
-          >
-            {t("actions.back")}
-          </Button>,
-          isReviewStep ? (
-            <Button key="save" type="primary" onClick={save} loading={isSaving}>
-              {t("actions.save")}
-            </Button>
-          ) : (
-            <Button key="next" type="primary" onClick={() => goTo(step + 1)}>
-              {t("infectionControl.review.next")}
-            </Button>
-          ),
-        ];
+          }
+        } else {
+          const stepErrors = drugErrors[step];
+          if (stepErrors?.conforming) {
+            hint = {
+              text: t("infectionControl.review.hintDecision"),
+              error: false,
+            };
+          } else if (stepErrors?.notes) {
+            hint = {
+              text: t("infectionControl.review.hintJustification"),
+              error: true,
+            };
+          } else if (stepErrors) {
+            hint = {
+              text: t("infectionControl.review.hintValidity"),
+              error: true,
+            };
+          }
+        }
+        const canMoveOn = isReviewStep ? allDrugsDone : !drugErrors[step];
+        const moveOn = () => {
+          if (!canMoveOn) return;
+          if (isReviewStep) save();
+          else setStep(step + 1);
+        };
 
         return (
           <DefaultModal
             open={open}
-            width={1040}
+            width={1120}
             centered
             destroyOnHidden
             onCancel={onClose}
-            footer={footer}
+            footer={null}
             maskClosable={false}
+            styles={{ container: { padding: 0, overflow: "hidden" } }}
           >
             <ReviewBody data-kb="infectionControl.review">
-              <h2 className="modal-title">
-                {t("infectionControl.review.title")}
-              </h2>
-              <p className="review-legend">
-                {t("infectionControl.review.legend")}
-              </p>
+              <header className="review-header">
+                <h2 className="review-title">
+                  {t("infectionControl.review.title")}
+                </h2>
+                <p className="review-legend">
+                  {t("infectionControl.review.legend")}
+                </p>
+              </header>
 
               <div className="review-layout">
-                <Steps
-                  className="review-steps"
-                  orientation="vertical"
-                  size="small"
-                  current={step}
-                  onChange={goTo}
-                  items={stepItems}
-                />
+                <ReviewRail drugs={railDrugs} step={step} onSelect={setStep} />
 
                 <Form
                   className="review-step"
                   onSubmit={(event: React.FormEvent) => {
                     // Enter moves on, the save is only on the last step
                     event.preventDefault();
-                    if (isReviewStep) save();
-                    else goTo(step + 1);
+                    moveOn();
                   }}
                 >
                   {isReviewStep ? (
                     <ReviewSummaryStep
                       invalidatedEvaluations={invalidatedEvaluations}
+                      drugStatus={drugStatus}
                       onSelectStep={setStep}
                     />
                   ) : (
@@ -286,12 +285,60 @@ export function ReviewModal({
                       index={step}
                       timeline={drugTimelines[values.evaluations[step].idDrug]}
                       invalidatedEvaluations={invalidatedEvaluations}
+                      drugErrors={drugErrors[step]}
                       dischargeDate={dischargeDate}
                       now={now}
                     />
                   )}
                 </Form>
               </div>
+
+              <footer className="review-footer">
+                <div className="review-footer-status">
+                  <span className="review-footer-step">
+                    {t("infectionControl.review.stepOf", {
+                      step: step + 1,
+                      total: drugCount + 1,
+                    })}
+                  </span>
+                  {hint && (
+                    <span
+                      className={`review-footer-hint ${hint.error ? "error" : ""}`}
+                      data-testid="review-hint"
+                    >
+                      {hint.text}
+                    </span>
+                  )}
+                </div>
+                <div className="review-footer-actions">
+                  <Button type="text" onClick={onClose} disabled={isSaving}>
+                    {t("actions.cancel")}
+                  </Button>
+                  {step > 0 && (
+                    <Button
+                      icon={<LeftOutlined />}
+                      onClick={() => setStep(step - 1)}
+                      disabled={isSaving}
+                    >
+                      {t("actions.back")}
+                    </Button>
+                  )}
+                  <Button
+                    type="primary"
+                    onClick={moveOn}
+                    disabled={!canMoveOn}
+                    loading={isReviewStep && isSaving}
+                  >
+                    {t(
+                      isReviewStep
+                        ? "infectionControl.review.save"
+                        : step === lastStep - 1
+                          ? "infectionControl.review.nextPatient"
+                          : "infectionControl.review.nextDrug",
+                    )}
+                  </Button>
+                </div>
+              </footer>
             </ReviewBody>
           </DefaultModal>
         );
