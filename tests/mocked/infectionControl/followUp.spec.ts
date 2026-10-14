@@ -354,10 +354,11 @@ test("shows each conformity record on its course in the timeline", async ({
   // the replaced one is left out until asked for
   await expect(marks).toHaveCount(1);
   const toggle = page.getByTestId("toggle-superseded");
-  await expect(toggle).toHaveText("Mostrar 1 avaliação substituída");
+  await expect(page.getByText("Avaliações substituídas (1)")).toBeVisible();
+  await expect(toggle).toHaveAttribute("aria-checked", "false");
   await toggle.click();
   await expect(marks).toHaveCount(2);
-  await expect(toggle).toHaveText("Ocultar avaliações substituídas");
+  await expect(toggle).toHaveAttribute("aria-checked", "true");
 
   // latest first, on the line right under the bar; the replaced one stays,
   // in a lighter tone, on the line below it
@@ -391,6 +392,8 @@ test("shows each conformity record on its course in the timeline", async ({
   await expect(tooltip).toContainText("Posologia avaliada: 1 g · 12h/12h · IV");
   await expect(tooltip).toContainText("Guiado por cultura");
 
+  // the legend opens from the timeline header
+  await page.getByRole("button", { name: "Legenda" }).click();
   await expect(page.getByText("Avaliação conforme (vigência)")).toBeVisible();
 });
 

@@ -1,6 +1,7 @@
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Tag, Tooltip } from "antd";
+import { Button, Popover, Switch, Tag, Tooltip } from "antd";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 
 import { AwareTag } from "components/AwareTag/AwareTag";
@@ -23,6 +24,7 @@ import {
   DAY_WIDTH,
   Gantt,
   GanttGrid,
+  GanttHeader,
   GanttScroll,
   HeaderDay,
   Legend,
@@ -144,11 +146,106 @@ export function CourseGantt({
     </>
   );
 
+  const legend = (
+    <Legend data-kb="infectionControl.antimicrobials.legend">
+      <section>
+        <h4>{t("infectionControl.timeline.legendGroupPrescription")}</h4>
+        <span>
+          <i className="legend-given" />
+          {t("infectionControl.timeline.legendActive")}
+        </span>
+        <span>
+          <i className="legend-scheduled" />
+          {t("infectionControl.timeline.legendScheduled")}
+        </span>
+        <span>
+          <i className="legend-planned" />
+          {t("infectionControl.timeline.legendPlanned")}
+        </span>
+        <span>
+          <i className="legend-gap" />
+          {t("infectionControl.timeline.legendGap")}
+        </span>
+      </section>
+      <section>
+        <h4>{t("infectionControl.timeline.legendGroupStatus")}</h4>
+        <span>
+          <i className="legend-suspended" />
+          {t("infectionControl.timeline.legendSuspended")}
+        </span>
+        <span>
+          <i className="legend-finished" />
+          {t("infectionControl.timeline.legendFinished")}
+        </span>
+      </section>
+      <section>
+        <h4>{t("infectionControl.timeline.legendGroupMilestones")}</h4>
+        <span>
+          <i className="legend-planned-end" />
+          {t("infectionControl.timeline.legendPlannedEnd")}
+        </span>
+        <span>
+          <i className="legend-change" />
+          {t("infectionControl.timeline.legendChange")}
+        </span>
+      </section>
+      {followUps && (
+        <section>
+          <h4>{t("infectionControl.timeline.legendGroupEvaluation")}</h4>
+          <span>
+            <i className="legend-evaluation conforming" />
+            {t("infectionControl.timeline.legendConforming")}
+          </span>
+          <span>
+            <i className="legend-evaluation non-conforming" />
+            {t("infectionControl.timeline.legendNonConforming")}
+          </span>
+          <span>
+            <i className="legend-evaluation conforming invalidated" />
+            {t("infectionControl.timeline.legendInvalidated")}
+          </span>
+        </section>
+      )}
+    </Legend>
+  );
+
   return (
     <Gantt
       className={compact ? "compact" : undefined}
       data-kb={compact ? undefined : "infectionControl.antimicrobials.timeline"}
     >
+      {!compact && (
+        <GanttHeader>
+          <h2 className="gantt-title">
+            {t("infectionControl.timeline.title")}
+          </h2>
+          <div className="gantt-actions">
+            {supersededCount > 0 && (
+              <label className="gantt-toggle">
+                <Switch
+                  size="small"
+                  data-testid="toggle-superseded"
+                  checked={showSuperseded}
+                  onChange={setShowSuperseded}
+                />
+                {t("infectionControl.timeline.superseded", {
+                  count: supersededCount,
+                })}
+              </label>
+            )}
+            <Popover
+              content={legend}
+              trigger="click"
+              placement="bottomRight"
+              arrow={false}
+            >
+              <Button icon={<QuestionCircleOutlined />}>
+                {t("infectionControl.timeline.legend")}
+              </Button>
+            </Popover>
+          </div>
+        </GanttHeader>
+      )}
       <GanttScroll ref={scrollRef}>
         <GanttGrid
           style={{
@@ -282,75 +379,6 @@ export function CourseGantt({
           })}
         </GanttGrid>
       </GanttScroll>
-
-      {!compact && (
-        <Legend>
-          <span>
-            <i className="legend-given" />
-            {t("infectionControl.timeline.legendActive")}
-          </span>
-          <span>
-            <i className="legend-scheduled" />
-            {t("infectionControl.timeline.legendScheduled")}
-          </span>
-          <span>
-            <i className="legend-planned" />
-            {t("infectionControl.timeline.legendPlanned")}
-          </span>
-          <span>
-            <i className="legend-planned-end" />
-            {t("infectionControl.timeline.legendPlannedEnd")}
-          </span>
-          <span>
-            <i className="legend-suspended" />
-            {t("infectionControl.timeline.legendSuspended")}
-          </span>
-          <span>
-            <i className="legend-finished" />
-            {t("infectionControl.timeline.legendFinished")}
-          </span>
-          <span>
-            <i className="legend-gap" />
-            {t("infectionControl.timeline.legendGap")}
-          </span>
-          <span>
-            <i className="legend-change" />
-            {t("infectionControl.timeline.legendChange")}
-          </span>
-          {followUps && (
-            <>
-              <span>
-                <i className="legend-evaluation conforming" />
-                {t("infectionControl.timeline.legendConforming")}
-              </span>
-              <span>
-                <i className="legend-evaluation non-conforming" />
-                {t("infectionControl.timeline.legendNonConforming")}
-              </span>
-              <span>
-                <i className="legend-evaluation conforming invalidated" />
-                {t("infectionControl.timeline.legendInvalidated")}
-              </span>
-            </>
-          )}
-          {supersededCount > 0 && (
-            <Button
-              type="link"
-              size="small"
-              className="legend-toggle"
-              data-testid="toggle-superseded"
-              aria-pressed={showSuperseded}
-              onClick={() => setShowSuperseded((shown) => !shown)}
-            >
-              {showSuperseded
-                ? t("infectionControl.timeline.hideSuperseded")
-                : t("infectionControl.timeline.showSuperseded", {
-                    count: supersededCount,
-                  })}
-            </Button>
-          )}
-        </Legend>
-      )}
 
       {!compact && (
         <CourseDetails

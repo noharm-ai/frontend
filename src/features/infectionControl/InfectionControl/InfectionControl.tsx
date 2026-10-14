@@ -287,17 +287,20 @@ export function InfectionControl() {
       </TopRow>
 
       <Section>
-        <h2 className="section-title">
-          {t("infectionControl.timeline.title")}
-        </h2>
         {courses.length === 0 ? (
-          <StateBox>
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={t("infectionControl.timeline.empty")}
-            />
-          </StateBox>
+          <>
+            <h2 className="section-title">
+              {t("infectionControl.timeline.title")}
+            </h2>
+            <StateBox>
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={t("infectionControl.timeline.empty")}
+              />
+            </StateBox>
+          </>
         ) : (
+          // the timeline carries its own title, next to its actions
           <CourseGantt
             courses={courses}
             now={now}

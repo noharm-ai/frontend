@@ -473,25 +473,81 @@ export const Marker = styled.div`
   }
 `;
 
-export const Legend = styled.div`
-  border-top: 1px solid #e0e0e0;
-  color: #595959;
+// title and actions of the timeline, fixed above the grid that scrolls sideways
+export const GanttHeader = styled.div`
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
   display: flex;
   flex-wrap: wrap;
-  font-size: 12px;
-  gap: 6px 18px;
-  padding: 10px 12px;
+  gap: 8px 16px;
+  justify-content: space-between;
+  padding: 10px 12px 10px 16px;
 
+  .gantt-title {
+    color: #2e3c5a;
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .gantt-actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin-left: auto;
+  }
+
+  .gantt-toggle {
+    align-items: center;
+    color: #595959;
+    cursor: pointer;
+    display: inline-flex;
+    gap: 8px;
+  }
+`;
+
+// the body of the legend popover: the symbols of the timeline, by group
+export const Legend = styled.div`
+  color: #595959;
+  display: grid;
+  gap: 16px 40px;
+  grid-template-columns: repeat(2, auto);
+  max-width: min(640px, calc(100vw - 48px));
+  padding: 4px;
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  h4 {
+    color: #2e3c5a;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    margin: 0;
+    text-transform: uppercase;
+  }
+
+  /* every symbol centered in a slot of the same width, so the labels line up */
   span {
     align-items: center;
-    display: inline-flex;
-    gap: 6px;
+    display: grid;
+    gap: 10px;
+    grid-template-columns: 28px 1fr;
   }
 
   i {
     border-radius: 3px;
     display: inline-block;
     height: 10px;
+    justify-self: center;
     width: 18px;
   }
 
@@ -546,12 +602,6 @@ export const Legend = styled.div`
     position: relative;
 
     ${evaluationMarker("-7px")}
-  }
-
-  .legend-toggle {
-    height: auto;
-    margin-left: auto;
-    padding: 0;
   }
 
   .legend-change {
