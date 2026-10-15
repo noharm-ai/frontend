@@ -2,21 +2,11 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { DownOutlined, UpOutlined } from "@ant-design/icons";
 
-import { useAppDispatch } from "src/store";
-import DefaultModal from "components/Modal";
-import notification from "components/notification";
 import RichTextView from "components/RichTextView";
-import { getErrorMessage } from "utils/errorHandler";
-import { getSubstanceHandling } from "features/serverActions/ServerActionsSlice";
-import {
-  trackPrescriptionAction,
-  TrackedPrescriptionAction,
-} from "src/utils/tracker";
 
-import { IDrugAlert } from "../InfectionControlSlice";
+import { ALERT_LEVELS, IDrugAlert } from "../InfectionControlSlice";
 import { AlertsCard } from "./ScreeningAlerts.style";
-
-const LEVELS: IDrugAlert["level"][] = ["high", "medium", "low"];
+import { useAlertHandling } from "./useAlertHandling";
 
 interface ScreeningAlertsProps {
   alerts: IDrugAlert[];
@@ -37,49 +27,17 @@ export function ScreeningAlerts({
   ...rest
 }: ScreeningAlertsProps) {
   const { t } = useTranslation();
-  const dispatch = useAppDispatch();
   const [open, setOpen] = useState(false);
-  // the type of the alert whose handling is loading
-  const [loadingType, setLoadingType] = useState<string | null>(null);
+  const { loadingType, showHandling } = useAlertHandling(idSubstance);
 
   if (!alerts.length) {
     return null;
   }
 
-  const groups = LEVELS.map((level) => ({
+  const groups = ALERT_LEVELS.map((level) => ({
     level,
     alerts: alerts.filter((alert) => alert.level === level),
   })).filter((group) => group.alerts.length);
-
-  const showHandling = (alertType: string) => {
-    trackPrescriptionAction(TrackedPrescriptionAction.CLICK_ALERT_HANDLING);
-
-    setLoadingType(alertType);
-    // the thunk is untyped (ServerActionsSlice.js)
-    const fetchHandling = getSubstanceHandling as any;
-    dispatch(fetchHandling({ sctid: idSubstance, alertType })).then(
-      (response: any) => {
-        setLoadingType(null);
-
-        if (response.error) {
-          notification.error({ message: getErrorMessage(response, t) });
-        } else if (response.payload.data) {
-          DefaultModal.info({
-            title: t("infectionControl.alerts.handlingTitle"),
-            content: (
-              <RichTextView text={response.payload.data} maxWidth="100%" />
-            ),
-            icon: null,
-            width: 550,
-            okText: t("infectionControl.alerts.close"),
-            okButtonProps: { type: "default" },
-            wrapClassName: "default-modal",
-            mask: { blur: false },
-          });
-        }
-      },
-    );
-  };
 
   return (
     <AlertsCard {...rest}>

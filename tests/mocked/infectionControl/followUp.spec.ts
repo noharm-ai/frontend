@@ -573,11 +573,22 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(drug.getByRole("heading", { level: 3 })).toHaveText(
       "MEROPENEM 1 g SOL INJ",
     );
-    const alerts = drug.getByTestId("review-alerts");
-    await expect(alerts).toContainText("Alertas da triagem");
-    await expect(alerts.getByTestId("alerts-pill-medium")).toHaveText("1Médio");
-    await alerts.getByRole("button", { name: /Alertas da triagem/ }).click();
-    await expect(alerts).toContainText("Medicamento deve sofrer ajuste renal");
+    // a chip beside the drug counts them by level, the drawer lists them
+    const chip = drug.getByTestId("review-alerts-chip");
+    await expect(chip).toContainText("Alertas");
+    await expect(chip.getByTestId("review-alerts-chip-medium")).toHaveText("1");
+    await expect(drug.getByTestId("review-pendings-chip")).toHaveCount(0);
+    await chip.click();
+    const alerts = page.getByTestId("review-alerts");
+    const alert = alerts.getByTestId("review-alert");
+    await expect(alert).toContainText("Médio");
+    await expect(alert).toContainText("Ajuste Renal");
+    await expect(alert).toContainText("Medicamento deve sofrer ajuste renal");
+
+    // Escape closes the drawer, not the review
+    await page.keyboard.press("Escape");
+    await expect(alerts).toHaveCount(0);
+    await expect(drug).toBeVisible();
   });
 
   test("registers a review evaluating the drug without evaluation", async ({
@@ -1362,22 +1373,24 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       0,
     );
 
-    // the verdict on record shows it no longer holds, and why
-    const tag = drug.getByTestId("evaluation-tag");
-    await expect(tag).toHaveText("Conforme · posologia alterada");
-    await expect(tag.locator("s")).toHaveText("Conforme");
-    // collapsed to a line counting the reasons, opened to the verdict and why
-    const pendings = drug.getByTestId("review-pendings");
-    const current = drug.getByTestId("review-current-evaluation");
-    await expect(pendings).toHaveText(/^Pendências\s*1\s*pendência\s*Mostrar$/);
-    await expect(current).toHaveCount(0);
-    await pendings.getByRole("button", { name: /Pendências/ }).click();
+    // the header leaves the verdict on record to the drawer
+    await expect(drug.getByTestId("evaluation-tag")).toHaveCount(0);
+    // a chip beside the drug counts the reasons, the drawer has the verdict
+    // and why
+    const chip = drug.getByTestId("review-pendings-chip");
+    await expect(chip).toHaveText("1 pendência");
+    await chip.click();
+    const pendings = page.getByTestId("review-pendings");
+    const current = pendings.getByTestId("review-current-evaluation");
     await expect(current).toContainText("Avaliação atual");
-    await expect(current).toContainText(
+    await expect(current.locator("s")).toHaveText("Conforme");
+    await expect(pendings).toContainText(
       "Esta avaliação não vale mais e mantém o paciente pendente",
     );
-    await expect(current).toContainText("Avaliada: 1 g · 12h/12h · IV");
-    await expect(current).toContainText("Prescrita agora: 2 g · 6h/6h · IV");
+    await expect(pendings).toContainText("Avaliada: 1 g · 12h/12h · IV");
+    await expect(pendings).toContainText("Prescrita agora: 2 g · 6h/6h · IV");
+    await page.keyboard.press("Escape");
+    await expect(pendings).toHaveCount(0);
 
     // the mini timeline shows it as the page does, even while the new one
     // being filled takes over from now on
@@ -1487,19 +1500,16 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
 
     const dialog = page.getByRole("dialog");
     const drug = dialog.getByTestId("review-drug");
-    await expect(drug.getByTestId("evaluation-tag")).toHaveText(
-      `Conforme · vencida em ${shownDate(expired.validUntil)}`,
+    await expect(drug.getByTestId("review-pendings-chip")).toHaveText(
+      "1 pendência",
     );
-    await expect(drug.getByTestId("review-pendings")).toContainText(
-      /1\s*pendência/,
-    );
-    await drug
-      .getByTestId("review-pendings")
-      .getByRole("button", { name: /Pendências/ })
-      .click();
-    await expect(drug.getByTestId("review-current-evaluation")).toContainText(
+    await drug.getByTestId("review-pendings-chip").click();
+    const pendings = page.getByTestId("review-pendings");
+    await expect(pendings).toContainText(
       `A validade terminou em ${shownDate(expired.validUntil)}`,
     );
+    await page.keyboard.press("Escape");
+    await expect(pendings).toHaveCount(0);
 
     // leaving it out of the review does not keep a verdict that holds
     await drug.getByText(SKIP, { exact: true }).click();

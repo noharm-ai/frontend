@@ -2,11 +2,23 @@ import styled, { css } from "styled-components";
 
 import { get } from "styles/utils";
 
-import { AlertsCard } from "../ScreeningAlerts/ScreeningAlerts.style";
+import { ALERT_LEVEL_COLORS } from "../ScreeningAlerts/ScreeningAlerts.style";
 
 const muted = "#898685";
 const border = "#f0f0f0";
 const danger = "#cf1322";
+const chipBorder = "#e8e8e8";
+
+// the level dots of the alerts chip, as the screening alerts
+const levelDots = Object.entries(ALERT_LEVEL_COLORS)
+  .map(
+    ([level, { color }]) => `
+      .drug-chip-level.${level} .drug-chip-dot {
+        background: ${color};
+      }
+    `,
+  )
+  .join("");
 
 // a button that reads as a link: "Alterar", "Editar"
 const linkButton = css`
@@ -129,27 +141,85 @@ export const DrugEvaluation = styled.div`
 
   ${linkButton}
 
+  /* the drug on the left, its pendings and alerts on the right */
   .drug-header {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  .drug-header-title {
-    align-items: flex-start;
+    align-items: center;
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 12px 24px;
     justify-content: space-between;
+  }
 
-    .ant-tag {
-      margin: 0;
+  .drug-header-main {
+    display: flex;
+    flex: 1 1 360px;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .drug-header-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .drug-chip {
+    align-items: center;
+    background: #fff;
+    border: 1px solid ${chipBorder};
+    border-radius: 8px;
+    color: ${get("colors.primary")};
+    cursor: pointer;
+    display: inline-flex;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    gap: 8px;
+    padding: 6px 12px;
+
+    &:hover {
+      border-color: ${get("colors.accentSecondary")};
+    }
+
+    > .anticon {
+      color: ${muted};
+      font-size: 10px;
+    }
+
+    &.pendings {
+      background: #fff7e6;
+      border-color: #ffd591;
+
+      .drug-chip-dot {
+        background: #fa8c16;
+      }
+
+      &:hover {
+        border-color: #fa8c16;
+      }
     }
   }
 
+  .drug-chip-dot {
+    border-radius: 50%;
+    display: inline-block;
+    flex-shrink: 0;
+    height: 7px;
+    width: 7px;
+  }
+
+  .drug-chip-level {
+    align-items: center;
+    display: inline-flex;
+    font-weight: 400;
+    gap: 4px;
+  }
+
+  ${levelDots}
+
   .drug-name {
     color: ${get("colors.primary")};
-    flex: 1 1 360px;
     font-size: 18px;
     font-weight: 600;
     line-height: 1.35;
@@ -201,17 +271,6 @@ export const DrugEvaluation = styled.div`
     display: block;
     font-size: 12px;
     margin-bottom: 2px;
-  }
-
-  .drug-current-invalidated {
-    border-top: 1px solid #e8e8e8;
-    margin-top: 8px;
-    padding-top: 6px;
-
-    ul {
-      margin: 2px 0 0;
-      padding-left: 18px;
-    }
   }
 
   .drug-section {
@@ -481,25 +540,5 @@ export const ReviewSummary = styled.div`
     .ant-tag {
       margin: 0;
     }
-  }
-`;
-
-// the reasons the evaluation on record no longer holds, as the screening alerts
-export const PendingsCard = styled(AlertsCard)`
-  .alerts-pill.pending {
-    background: #fff7e6;
-  }
-
-  .pending .alerts-dot {
-    background: #fa8c16;
-  }
-
-  .alerts-group {
-    gap: 0;
-  }
-
-  .drug-current-notes {
-    display: block;
-    margin-top: 2px;
   }
 `;

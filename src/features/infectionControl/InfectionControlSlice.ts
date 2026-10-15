@@ -43,6 +43,9 @@ export interface IDrugAlert {
   handling?: boolean;
 }
 
+// the levels of the screening alerts, the most severe first
+export const ALERT_LEVELS: IDrugAlert["level"][] = ["high", "medium", "low"];
+
 /**
  * One antimicrobial course: the prescriptions of the same drug merged into a
  * single span, whether the hospital re-prescribes it every day or keeps a CPOE

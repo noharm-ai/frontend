@@ -3,10 +3,9 @@ import { useTranslation } from "react-i18next";
 import { useFormikContext } from "formik";
 import type { FormikErrors } from "formik";
 import {
-  DownOutlined,
   InfoCircleOutlined,
+  RightOutlined,
   SyncOutlined,
-  UpOutlined,
 } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 
@@ -17,14 +16,16 @@ import {
   ICourse,
   IFollowUpCourse,
   IFollowUpPending,
+  ALERT_LEVELS,
 } from "../../InfectionControlSlice";
 import { CourseGantt } from "../../CourseGantt/CourseGantt";
-import { EvaluationTag } from "../../EvaluationTag/EvaluationTag";
-import { InvalidationReason } from "../../InvalidationReason/InvalidationReason";
-import { ScreeningAlerts } from "../../ScreeningAlerts/ScreeningAlerts";
 import { formatRegimen } from "../../timeline";
 import { ChoiceChips } from "../ChoiceChips/ChoiceChips";
 import { DecisionCards } from "../DecisionCards/DecisionCards";
+import {
+  ReviewDetailsDrawer,
+  ReviewDetailsTab,
+} from "../ReviewDetailsDrawer/ReviewDetailsDrawer";
 import {
   decisionFields,
   EvaluationEnd,
@@ -45,7 +46,7 @@ import {
   VALIDITY_DAYS,
   verdictLabel,
 } from "../reviewForm";
-import { DrugEvaluation, PendingsCard } from "../ReviewModal.style";
+import { DrugEvaluation } from "../ReviewModal.style";
 
 interface DrugEvaluationStepProps {
   // the drug of the review form
@@ -85,8 +86,8 @@ export function DrugEvaluationStep({
   const [triggersOpen, setTriggersOpen] = useState(false);
   // the dose by weight is a detail of the regimen, shown on demand
   const [doseWeightOpen, setDoseWeightOpen] = useState(false);
-  // why the evaluation on record no longer holds: counted, open to details
-  const [pendingsOpen, setPendingsOpen] = useState(false);
+  // the drawer with the pendings and the alerts of the drug, by its tab
+  const [detailsTab, setDetailsTab] = useState<ReviewDetailsTab | null>(null);
 
   const evaluation = values.evaluations[index];
   const field = (name: string) => `evaluations.${index}.${name}`;
@@ -103,6 +104,21 @@ export function DrugEvaluationStep({
     evaluation.current,
     invalidatedEvaluations,
   );
+  const hasPendings = !!evaluation.current && invalidations.length > 0;
+  const alerts = activeCourse?.alerts ?? [];
+  // a dot and a count for each level the alerts reach
+  const alertLevels = ALERT_LEVELS.map((level) => ({
+    level,
+    count: alerts.filter((alert) => alert.level === level).length,
+  })).filter(({ count }) => count > 0);
+  const day =
+    activeCourse &&
+    (activeCourse.plannedDays != null
+      ? t("infectionControl.timeline.dayPlanned", {
+          count: activeCourse.days,
+          planned: activeCourse.plannedDays,
+        })
+      : t("infectionControl.timeline.day", { count: activeCourse.days }));
   const validUntil = getValidUntil(evaluation);
   const period = getValidityPeriod(evaluation);
   const periodError = drugErrors?.end ?? null;
@@ -118,41 +134,90 @@ export function DrugEvaluationStep({
   return (
     <DrugEvaluation data-testid="review-drug">
       <div className="drug-header">
-        <div className="drug-header-title">
+        <div className="drug-header-main">
           <h3 className="drug-name">{evaluation.drug}</h3>
-          <EvaluationTag
-            evaluation={evaluation.current}
-            now={now}
-            invalidatedBy={invalidations}
-          />
+          {((regimen && formatRegimen(regimen)) || doseWeight) && (
+            <div className="drug-regimen">
+              {regimen && formatRegimen(regimen) && (
+                <span>{formatRegimen(regimen)}</span>
+              )}
+              {doseWeight && (
+                <button
+                  type="button"
+                  className="link-button"
+                  aria-expanded={doseWeightOpen}
+                  onClick={() => setDoseWeightOpen(!doseWeightOpen)}
+                >
+                  {t(
+                    doseWeightOpen
+                      ? "infectionControl.review.doseWeightHide"
+                      : "infectionControl.review.doseWeightShow",
+                  )}
+                </button>
+              )}
+            </div>
+          )}
+          {doseWeight && doseWeightOpen && (
+            <div className="drug-dose-weight" data-testid="review-dose-weight">
+              {doseWeight}
+            </div>
+          )}
         </div>
-        {((regimen && formatRegimen(regimen)) || doseWeight) && (
-          <div className="drug-regimen">
-            {regimen && formatRegimen(regimen) && (
-              <span>{formatRegimen(regimen)}</span>
-            )}
-            {doseWeight && (
+
+        {(hasPendings || alerts.length > 0) && (
+          // the details of the drug open in a drawer, a tab each
+          <div className="drug-header-chips">
+            {hasPendings && (
               <button
                 type="button"
-                className="link-button"
-                aria-expanded={doseWeightOpen}
-                onClick={() => setDoseWeightOpen(!doseWeightOpen)}
+                className="drug-chip pendings"
+                data-testid="review-pendings-chip"
+                onClick={() => setDetailsTab("pendings")}
               >
-                {t(
-                  doseWeightOpen
-                    ? "infectionControl.review.doseWeightHide"
-                    : "infectionControl.review.doseWeightShow",
-                )}
+                <span className="drug-chip-dot" />
+                {t("infectionControl.review.pendingsCount", {
+                  count: invalidations.length,
+                })}
+                <RightOutlined />
+              </button>
+            )}
+            {alerts.length > 0 && (
+              <button
+                type="button"
+                className="drug-chip"
+                data-testid="review-alerts-chip"
+                onClick={() => setDetailsTab("alerts")}
+              >
+                {t("infectionControl.review.alertsChip")}
+                {alertLevels.map(({ level, count }) => (
+                  <span
+                    key={level}
+                    className={`drug-chip-level ${level}`}
+                    data-testid={`review-alerts-chip-${level}`}
+                  >
+                    <span className="drug-chip-dot" />
+                    {count}
+                  </span>
+                ))}
+                <RightOutlined />
               </button>
             )}
           </div>
         )}
-        {doseWeight && doseWeightOpen && (
-          <div className="drug-dose-weight" data-testid="review-dose-weight">
-            {doseWeight}
-          </div>
-        )}
       </div>
+
+      <ReviewDetailsDrawer
+        tab={detailsTab}
+        onTabChange={setDetailsTab}
+        onClose={() => setDetailsTab(null)}
+        drug={evaluation.drug}
+        subtitle={[day, regimen && formatRegimen(regimen)]
+          .filter(Boolean)
+          .join(" · ")}
+        course={activeCourse}
+        evaluation={evaluation.current}
+        invalidations={invalidations}
+      />
 
       {timeline && (
         <div className="drug-timeline" data-testid="review-timeline">
@@ -169,15 +234,6 @@ export function DrugEvaluationStep({
         </div>
       )}
 
-      {!!activeCourse?.alerts?.length && (
-        <ScreeningAlerts
-          alerts={activeCourse.alerts}
-          idSubstance={activeCourse.idSubstance}
-          data-kb="infectionControl.review.alerts"
-          data-testid="review-alerts"
-        />
-      )}
-
       {evaluation.current && !invalidations.length && (
         <div className="drug-current" data-testid="review-current-evaluation">
           <span className="drug-current-label">
@@ -192,78 +248,6 @@ export function DrugEvaluationStep({
           </div>
           {evaluation.current.notes && <em>{evaluation.current.notes}</em>}
         </div>
-      )}
-
-      {evaluation.current && invalidations.length > 0 && (
-        // the evaluation on record no longer holds: a line with how many
-        // reasons keep the patient pending, opened to the verdict and why
-        <PendingsCard
-          data-kb="infectionControl.review.pendings"
-          data-testid="review-pendings"
-        >
-          <button
-            type="button"
-            className="alerts-header"
-            aria-expanded={pendingsOpen}
-            onClick={() => setPendingsOpen(!pendingsOpen)}
-          >
-            <span className="alerts-title">
-              {t("infectionControl.review.pendings")}
-            </span>
-            <span className="alerts-summary">
-              <span className="alerts-pill pending">
-                <span className="alerts-dot" />
-                <strong>{invalidations.length}</strong>
-                {t("infectionControl.review.pendingsLabel", {
-                  count: invalidations.length,
-                })}
-              </span>
-            </span>
-            <span className="alerts-toggle">
-              {pendingsOpen
-                ? t("infectionControl.alerts.hide")
-                : t("infectionControl.alerts.show")}
-              {pendingsOpen ? <UpOutlined /> : <DownOutlined />}
-            </span>
-          </button>
-          {pendingsOpen && (
-            <div
-              className="alerts-group"
-              data-testid="review-current-evaluation"
-            >
-              <div>
-                <span className="drug-current-label">
-                  {t("infectionControl.review.currentEvaluation")}
-                </span>
-                <strong>
-                  <s>{verdictLabel(evaluation.current.conforming, t)}</s>
-                </strong>{" "}
-                {t("infectionControl.review.evaluatedBy", {
-                  date: formatDateTime(evaluation.current.createdAt),
-                  user: evaluation.current.createdBy ?? "-",
-                })}
-                {evaluation.current.notes && (
-                  <em className="drug-current-notes">
-                    {evaluation.current.notes}
-                  </em>
-                )}
-              </div>
-              <div className="drug-current-invalidated">
-                <strong>{t("infectionControl.review.invalidated")}</strong>
-                <ul>
-                  {invalidations.map((pending) => (
-                    <InvalidationReason
-                      key={pending.id}
-                      pending={pending}
-                      evaluation={evaluation.current!}
-                      course={activeCourse}
-                    />
-                  ))}
-                </ul>
-              </div>
-            </div>
-          )}
-        </PendingsCard>
       )}
 
       <section

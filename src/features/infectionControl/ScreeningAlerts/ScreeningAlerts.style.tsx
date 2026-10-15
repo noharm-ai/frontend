@@ -4,13 +4,13 @@ const border = "#e8e8e8";
 const muted = "#595959";
 
 // the level colors of the screening (DrugAlertLevelTag)
-const levels = {
+export const ALERT_LEVEL_COLORS = {
   high: { color: "#f44336", background: "#fdecea" },
   medium: { color: "#f4795b", background: "#fdeee9" },
   low: { color: "#ffb300", background: "#fff8e1" },
 };
 
-const levelColors = Object.entries(levels)
+const levelColors = Object.entries(ALERT_LEVEL_COLORS)
   .map(
     ([level, { color, background }]) => `
       .alerts-pill.${level} {
