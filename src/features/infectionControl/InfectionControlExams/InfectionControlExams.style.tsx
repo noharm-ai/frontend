@@ -27,7 +27,7 @@ export const ExamsBox = styled.div`
 
   .exams-title {
     color: #2e3c5a;
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 600;
     margin: 0;
   }

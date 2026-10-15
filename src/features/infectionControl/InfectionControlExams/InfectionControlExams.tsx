@@ -111,7 +111,7 @@ export function InfectionControlExams({
   return (
     <ExamsBox data-testid="exams-card">
       <div className="exams-header">
-        <h3 className="exams-title">{t("tableHeader.exams")}</h3>
+        <h2 className="exams-title">{t("tableHeader.exams")}</h2>
         <Tooltip title={t("screeningList.clExamHint")}>
           <span className="exams-alerts" data-testid="exams-alerts">
             <BellOutlined /> {alertExams}
