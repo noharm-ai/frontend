@@ -26,6 +26,7 @@ import {
 } from "components/ProtocolDescription/protocolOptions";
 
 import { VariableContainer, VariableGrid } from "../Protocol.style";
+import { CONTAINS_EXPRESSION_HINT } from "src/components/ProtocolDescription/containsExpression";
 
 export function VariableTab() {
   const { values, errors, setFieldValue } =
@@ -542,6 +543,7 @@ export function VariableTab() {
                         setConfig(idx, "observation", target.value)
                       }
                     />
+                    <div className="form-info">{CONTAINS_EXPRESSION_HINT}</div>
                   </div>
                 </div>
               </>
@@ -674,6 +676,11 @@ export function VariableTab() {
                           Use ponto (.) como separador decimal. Ex: 1.5
                         </div>
                       )}
+                    {v.operator === "CONTAINS" && (
+                      <div className="form-info">
+                        {CONTAINS_EXPRESSION_HINT}
+                      </div>
+                    )}
                     {v.field === ProtocolVariableFieldEnum.AGE &&
                       v.operator !== "IN" &&
                       v.operator !== "NOTIN" && (
