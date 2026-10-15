@@ -2,6 +2,8 @@ import styled, { css } from "styled-components";
 
 import { get } from "styles/utils";
 
+import { AlertsCard } from "../ScreeningAlerts/ScreeningAlerts.style";
+
 const muted = "#898685";
 const border = "#f0f0f0";
 const danger = "#cf1322";
@@ -192,12 +194,6 @@ export const DrugEvaluation = styled.div`
       display: block;
       margin-top: 2px;
     }
-
-    /* an evaluation on record that no longer holds */
-    &.invalidated {
-      background: #fff7e6;
-      border-color: #ffd591;
-    }
   }
 
   .drug-current-label {
@@ -208,8 +204,7 @@ export const DrugEvaluation = styled.div`
   }
 
   .drug-current-invalidated {
-    border-top: 1px solid #ffd591;
-    color: #d46b08;
+    border-top: 1px solid #e8e8e8;
     margin-top: 8px;
     padding-top: 6px;
 
@@ -486,5 +481,25 @@ export const ReviewSummary = styled.div`
     .ant-tag {
       margin: 0;
     }
+  }
+`;
+
+// the reasons the evaluation on record no longer holds, as the screening alerts
+export const PendingsCard = styled(AlertsCard)`
+  .alerts-pill.pending {
+    background: #fff7e6;
+  }
+
+  .pending .alerts-dot {
+    background: #fa8c16;
+  }
+
+  .alerts-group {
+    gap: 0;
+  }
+
+  .drug-current-notes {
+    display: block;
+    margin-top: 2px;
   }
 `;

@@ -1366,7 +1366,13 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     const tag = drug.getByTestId("evaluation-tag");
     await expect(tag).toHaveText("Conforme · posologia alterada");
     await expect(tag.locator("s")).toHaveText("Conforme");
+    // collapsed to a line counting the reasons, opened to the verdict and why
+    const pendings = drug.getByTestId("review-pendings");
     const current = drug.getByTestId("review-current-evaluation");
+    await expect(pendings).toHaveText(/^Pendências\s*1\s*pendência\s*Mostrar$/);
+    await expect(current).toHaveCount(0);
+    await pendings.getByRole("button", { name: /Pendências/ }).click();
+    await expect(current).toContainText("Avaliação atual");
     await expect(current).toContainText(
       "Esta avaliação não vale mais e mantém o paciente pendente",
     );
@@ -1484,6 +1490,13 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(drug.getByTestId("evaluation-tag")).toHaveText(
       `Conforme · vencida em ${shownDate(expired.validUntil)}`,
     );
+    await expect(drug.getByTestId("review-pendings")).toContainText(
+      /1\s*pendência/,
+    );
+    await drug
+      .getByTestId("review-pendings")
+      .getByRole("button", { name: /Pendências/ })
+      .click();
     await expect(drug.getByTestId("review-current-evaluation")).toContainText(
       `A validade terminou em ${shownDate(expired.validUntil)}`,
     );
