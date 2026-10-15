@@ -1,5 +1,5 @@
 import { CheckOutlined, CloseOutlined, MinusOutlined } from "@ant-design/icons";
-import { Radio } from "antd";
+import { Radio, Tooltip } from "antd";
 import styled from "styled-components";
 
 import { get } from "styles/utils";
@@ -35,20 +35,21 @@ const DECISION_ICONS: Record<EvaluationDecision, React.ReactNode> = {
   skip: <MinusOutlined />,
 };
 
-const Cards = styled(Radio.Group)`
-  &.ant-radio-group {
-    display: grid;
-    gap: 10px;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+/* compact choices in a row, each telling what it means on hover */
+const Cards = styled.div`
+  .ant-radio-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
   && .ant-radio-wrapper {
-    align-items: flex-start;
+    align-items: center;
     background: #fff;
     border: 1px solid #d9d9d9;
-    border-radius: 8px;
+    border-radius: 999px;
     margin: 0;
-    padding: 12px 14px;
+    padding: 5px 14px 5px 8px;
     position: relative;
 
     &:hover {
@@ -97,9 +98,9 @@ const Cards = styled(Radio.Group)`
   )}
 
   .decision-card {
-    align-items: flex-start;
+    align-items: center;
     display: flex;
-    gap: 10px;
+    gap: 8px;
   }
 
   .decision-icon {
@@ -108,32 +109,24 @@ const Cards = styled(Radio.Group)`
     border-radius: 999px;
     display: flex;
     flex: none;
-    font-size: 10px;
-    height: 20px;
+    font-size: 9px;
+    height: 18px;
     justify-content: center;
-    margin-top: 1px;
-    width: 20px;
-  }
-
-  .decision-text {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
+    width: 18px;
   }
 
   .decision-label {
     color: ${get("colors.primary")};
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 500;
-  }
-
-  .decision-description {
-    color: #898685;
-    font-size: 12px;
+    white-space: nowrap;
   }
 `;
 
-/** The verdict on a drug, as cards: conforming, not conforming or left out */
+/**
+ * The verdict on a drug: conforming, not conforming or left out. Each choice
+ * tells what it means on hover
+ */
 export function DecisionCards({
   options,
   value,
@@ -141,25 +134,26 @@ export function DecisionCards({
   "aria-label": ariaLabel,
 }: DecisionCardsProps) {
   return (
-    <Cards
-      value={value}
-      aria-label={ariaLabel}
-      onChange={(e) => onChange(e.target.value)}
-      options={options.map((option) => ({
-        value: option.value,
-        className: `decision-${option.value}`,
-        label: (
-          <span className="decision-card">
-            <span className="decision-icon" aria-hidden="true">
-              {DECISION_ICONS[option.value]}
-            </span>
-            <span className="decision-text">
-              <span className="decision-label">{option.label}</span>
-              <span className="decision-description">{option.description}</span>
-            </span>
-          </span>
-        ),
-      }))}
-    />
+    <Cards>
+      <Radio.Group
+        value={value}
+        aria-label={ariaLabel}
+        onChange={(e) => onChange(e.target.value)}
+        options={options.map((option) => ({
+          value: option.value,
+          className: `decision-${option.value}`,
+          label: (
+            <Tooltip title={option.description}>
+              <span className="decision-card">
+                <span className="decision-icon" aria-hidden="true">
+                  {DECISION_ICONS[option.value]}
+                </span>
+                <span className="decision-label">{option.label}</span>
+              </span>
+            </Tooltip>
+          ),
+        }))}
+      />
+    </Cards>
   );
 }

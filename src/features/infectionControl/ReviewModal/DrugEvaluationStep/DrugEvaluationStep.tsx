@@ -128,13 +128,11 @@ export function DrugEvaluationStep({
   // dates that do not make a period keep the choices in sight
   const validityShown = validityOpen || !!periodError;
 
-  const triggers = [
-    evaluation.watchExpiry &&
-      t("infectionControl.review.reopenExpiry", {
-        date: shortDate(validUntil) ?? "-",
-      }),
-    evaluation.watchPosology && t("infectionControl.review.reopenPosology"),
-  ].filter(Boolean);
+  // how many reasons send the patient back to pending
+  const activeTriggers = [
+    evaluation.watchExpiry,
+    evaluation.watchPosology,
+  ].filter(Boolean).length;
 
   return (
     <DrugEvaluation data-testid="review-drug">
@@ -302,7 +300,7 @@ export function DrugEvaluationStep({
       )}
 
       {evaluation.evaluate && decision !== null && (
-        <>
+        <div className="drug-options">
           <section
             className="drug-option-box"
             data-kb="infectionControl.review.validity"
@@ -473,13 +471,17 @@ export function DrugEvaluationStep({
             <div className="drug-option-summary">
               <SyncOutlined className="drug-option-icon" />
               <span>
-                {triggers.length
-                  ? t("infectionControl.review.reopenWhen", {
-                      when: triggers.join(
-                        ` ${t("infectionControl.review.reopenOr")} `,
-                      ),
-                    })
-                  : t("infectionControl.review.reopenNever")}
+                {t("infectionControl.review.triggersTitle")}:{" "}
+                <span
+                  className={`drug-period ${activeTriggers ? "" : "empty"}`}
+                  data-testid="review-triggers-count"
+                >
+                  {activeTriggers
+                    ? t("infectionControl.review.triggersActive", {
+                        count: activeTriggers,
+                      })
+                    : t("infectionControl.review.triggersNone")}
+                </span>
               </span>
               <button
                 type="button"
@@ -549,7 +551,7 @@ export function DrugEvaluationStep({
               }
             />
           </div>
-        </>
+        </div>
       )}
     </DrugEvaluation>
   );

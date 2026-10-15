@@ -352,6 +352,13 @@ export const DrugEvaluation = styled.div`
     }
   }
 
+  /* the period, the triggers and the notes of the verdict, kept together */
+  .drug-options {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
   /* a choice told in a line, opened to change it: the period, the triggers */
   .drug-option-box {
     background: #fafafa;

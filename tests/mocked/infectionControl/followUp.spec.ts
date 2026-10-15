@@ -661,6 +661,10 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(draft).toHaveClass(/undecided/);
     await decisions.getByText("Não conforme", { exact: true }).click();
     await expect(draft).toHaveClass(/non-conforming/);
+    // what each verdict means is told on hover
+    await decisions.getByText("Não conforme", { exact: true }).hover();
+    await expect(page.getByRole("tooltip")).toHaveText("Exige justificativa");
+    await page.mouse.move(0, 0);
 
     // it starts at the course start and holds until the treatment ends,
     // told in a line until chosen otherwise
@@ -685,19 +689,26 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       `Fim do tratamento ${shownDate(MEROPENEM_END).slice(0, 5)}`,
     );
 
-    // expiry and a posology change send it back to pending unless unchecked
+    // expiry and a posology change send it back to pending unless unchecked,
+    // counted until opened
+    const triggersCount = drug.getByTestId("review-triggers-count");
     await expect(drug.getByTestId("review-triggers")).toContainText(
-      "Volta para pendente ao vencer",
+      "Gatilhos de pendência:",
     );
-    await expect(drug.getByTestId("review-triggers")).toContainText(
-      "ou se a posologia mudar",
-    );
+    await expect(triggersCount).toHaveText("2 ativos");
+    await expect(expiryBox).toHaveCount(0);
     await drug
       .getByTestId("review-triggers")
       .getByRole("button", { name: "Alterar" })
       .click();
     await expect(expiryBox).toBeChecked();
     await expect(posologyBox).toBeChecked();
+    await expiryBox.uncheck();
+    await expect(triggersCount).toHaveText("1 ativo");
+    await posologyBox.uncheck();
+    await expect(triggersCount).toHaveText("Nenhum ativo");
+    await expiryBox.check();
+    await posologyBox.check();
 
     await validity.getByText("+7 dias", { exact: true }).click();
     await expect(drug.getByTestId("review-period")).toHaveText(
@@ -1427,8 +1438,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
 
     await decisions.getByText("Conforme", { exact: true }).click();
     const triggers = drug.getByTestId("review-triggers");
-    await expect(triggers).toHaveText(
-      /Volta para pendente se a posologia mudar/,
+    await expect(triggers.getByTestId("review-triggers-count")).toHaveText(
+      "1 ativo",
     );
     await triggers.getByRole("button", { name: "Alterar" }).click();
     const posologyBox = drug.getByRole("checkbox", { name: WATCH_POSOLOGY });
