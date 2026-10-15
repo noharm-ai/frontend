@@ -130,7 +130,7 @@ export const DrugEvaluation = styled.div`
   .drug-header {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 2px;
   }
 
   .drug-header-title {
@@ -155,12 +155,31 @@ export const DrugEvaluation = styled.div`
   }
 
   .drug-regimen {
+    align-items: baseline;
     color: ${get("colors.primary")};
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    line-height: 1.4;
+
+    > span {
+      opacity: 0.75;
+    }
+
+    .link-button {
+      color: ${muted};
+      font-size: 12px;
+
+      &:hover {
+        color: ${get("colors.accentSecondary")};
+      }
+    }
   }
 
   .drug-dose-weight {
     color: ${muted};
     font-size: 13px;
+    line-height: 1.4;
   }
 
   .drug-current {

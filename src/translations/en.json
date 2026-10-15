@@ -1824,6 +1824,8 @@
       "reopenNever": "Does not go back to pending automatically",
       "reopenChange": "Change",
       "reopenHide": "Hide",
+      "doseWeightShow": "Dose/kg",
+      "doseWeightHide": "Hide dose/kg",
       "evaluationNotesPlaceholder": "Note about this antimicrobial",
       "justification": "Justification",
       "justificationPlaceholder": "Describe why it does not conform and the suggested conduct",

@@ -1834,6 +1834,8 @@
       "reopenNever": "Não volta para pendente automaticamente",
       "reopenChange": "Alterar",
       "reopenHide": "Ocultar",
+      "doseWeightShow": "Dose/kg",
+      "doseWeightHide": "Ocultar dose/kg",
       "evaluationNotesPlaceholder": "Anotação sobre este antimicrobiano",
       "justification": "Justificativa",
       "justificationPlaceholder": "Descreva o motivo da não conformidade e a conduta sugerida",

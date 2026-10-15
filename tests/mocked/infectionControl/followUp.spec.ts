@@ -1201,6 +1201,9 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       "MEROPENEM 1 g SOL INJ",
     );
     await expect(drug.getByText("2 FRASCO AMPOLA · 8h/8h · IV")).toBeVisible();
+    // the dose by weight is shown on demand
+    await expect(drug.getByTestId("review-dose-weight")).toHaveCount(0);
+    await drug.getByRole("button", { name: "Dose/kg" }).click();
     await expect(drug.getByTestId("review-dose-weight")).toHaveText(
       "0,03 FRASCO AMPOLA/Kg ou 31,25 mg/Kg · 0,09 FRASCO AMPOLA/Kg/Dia ou 93,75 mg/Kg/Dia",
     );
@@ -1215,6 +1218,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     );
     await expect(drug.getByText("1 g · 12h/12h · IV")).toBeVisible();
     await expect(drug.getByTestId("review-dose-weight")).toHaveCount(0);
+    await expect(drug.getByRole("button", { name: "Dose/kg" })).toHaveCount(0);
   });
 
   test("selects the drug whose posology changed and keeps its trigger choice", async ({

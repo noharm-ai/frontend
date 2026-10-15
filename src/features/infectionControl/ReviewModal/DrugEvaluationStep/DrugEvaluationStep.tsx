@@ -78,6 +78,8 @@ export function DrugEvaluationStep({
   const { values, setFieldValue } = useFormikContext<IReviewFields>();
   // what sends the patient back to pending is told in a line, open to change
   const [triggersOpen, setTriggersOpen] = useState(false);
+  // the dose by weight is a detail of the regimen, shown on demand
+  const [doseWeightOpen, setDoseWeightOpen] = useState(false);
 
   const evaluation = values.evaluations[index];
   const field = (name: string) => `evaluations.${index}.${name}`;
@@ -117,10 +119,28 @@ export function DrugEvaluationStep({
             invalidatedBy={invalidations}
           />
         </div>
-        {regimen && formatRegimen(regimen) && (
-          <div className="drug-regimen">{formatRegimen(regimen)}</div>
+        {((regimen && formatRegimen(regimen)) || doseWeight) && (
+          <div className="drug-regimen">
+            {regimen && formatRegimen(regimen) && (
+              <span>{formatRegimen(regimen)}</span>
+            )}
+            {doseWeight && (
+              <button
+                type="button"
+                className="link-button"
+                aria-expanded={doseWeightOpen}
+                onClick={() => setDoseWeightOpen(!doseWeightOpen)}
+              >
+                {t(
+                  doseWeightOpen
+                    ? "infectionControl.review.doseWeightHide"
+                    : "infectionControl.review.doseWeightShow",
+                )}
+              </button>
+            )}
+          </div>
         )}
-        {doseWeight && (
+        {doseWeight && doseWeightOpen && (
           <div className="drug-dose-weight" data-testid="review-dose-weight">
             {doseWeight}
           </div>
