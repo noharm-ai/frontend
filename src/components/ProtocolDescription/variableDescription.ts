@@ -9,6 +9,10 @@ import {
   findOptionLabel,
 } from "./protocolOptions";
 import { LabelKind, LabelLookup, fieldLabelKind } from "./labels";
+import {
+  describeContainsExpression,
+  isContainsExpression,
+} from "./containsExpression";
 
 export interface IDescriptionItem {
   id: string;
@@ -249,7 +253,11 @@ function combinationDescription(
   const notes: string[] = [];
 
   if (isFilled(variable.observation)) {
-    notes.push(`Observação: ${variable.observation}`);
+    notes.push(
+      isContainsExpression(variable.observation)
+        ? `Observação contém ${describeContainsExpression(variable.observation)}`
+        : `Observação: ${variable.observation}`,
+    );
   }
 
   return {
@@ -359,9 +367,11 @@ export function buildVariableDescription(
   }
 
   const unit = UNITS[field];
-  const text = isFilled(variable.value)
-    ? scalarText(field, variable.value, unit)
-    : MISSING_VALUE;
+  const text = !isFilled(variable.value)
+    ? MISSING_VALUE
+    : variable.operator === "CONTAINS" && isContainsExpression(variable.value)
+      ? describeContainsExpression(variable.value)
+      : scalarText(field, variable.value, unit);
 
   return {
     subject,

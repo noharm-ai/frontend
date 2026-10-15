@@ -5,6 +5,7 @@ import dayjs, { Dayjs } from "dayjs";
 
 import DefaultModal from "components/Modal";
 import { AwareTag } from "components/AwareTag/AwareTag";
+import RichTextView from "components/RichTextView";
 import { formatDateTime } from "utils/date";
 
 import {
@@ -14,6 +15,7 @@ import {
   ICourseRegimen,
 } from "../InfectionControlSlice";
 import { formatDose } from "../timeline";
+import { ScreeningAlerts } from "../ScreeningAlerts/ScreeningAlerts";
 import { Details } from "./CourseDetails.style";
 
 interface CourseDetailsProps {
@@ -40,6 +42,8 @@ export function CourseDetails({ course, now, onClose }: CourseDetailsProps) {
   const end = dayjs(course.end);
   const isCurrent = (regimen: ICourseRegimen) =>
     course.status === "active" && dayjs(regimen.end).isAfter(now);
+  const regimenKey = (regimen: ICourseRegimen) =>
+    `${regimen.start}-${course.regimens.indexOf(regimen)}`;
 
   const regimenColumns: ColumnsType<ICourseRegimen> = [
     {
@@ -171,6 +175,16 @@ export function CourseDetails({ course, now, onClose }: CourseDetailsProps) {
           ))}
         </dl>
 
+        {!!course.alerts?.length && (
+          <section>
+            <ScreeningAlerts
+              alerts={course.alerts}
+              idSubstance={course.idSubstance}
+              data-kb="infectionControl.antimicrobials.alerts"
+            />
+          </section>
+        )}
+
         <section>
           <h4>
             {t("infectionControl.details.regimens")}{" "}
@@ -181,12 +195,26 @@ export function CourseDetails({ course, now, onClose }: CourseDetailsProps) {
             pagination={false}
             columns={regimenColumns}
             dataSource={course.regimens}
-            rowKey={(regimen) =>
-              `${regimen.start}-${course.regimens.indexOf(regimen)}`
-            }
+            rowKey={regimenKey}
             rowClassName={(regimen) =>
               isCurrent(regimen) ? "regimen-row-current" : ""
             }
+            expandable={{
+              // the notes always show under their regimen, with no toggle
+              showExpandColumn: false,
+              expandedRowKeys: course.regimens
+                .filter((regimen) => regimen.notes)
+                .map(regimenKey),
+              rowExpandable: (regimen) => !!regimen.notes,
+              expandedRowRender: (regimen) => (
+                <div className="regimen-notes">
+                  <span className="regimen-notes-label">
+                    {t("infectionControl.details.notes")}:
+                  </span>
+                  <RichTextView text={regimen.notes} maxWidth="100%" />
+                </div>
+              ),
+            }}
             scroll={{ y: 280 }}
           />
         </section>

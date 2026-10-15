@@ -1554,11 +1554,27 @@
     }
   },
   "infectionControl": {
+    "alerts": {
+      "title": "Screening alerts",
+      "show": "Show",
+      "hide": "Hide",
+      "handling": "See handling",
+      "handlingTitle": "Handling",
+      "close": "Close",
+      "level": {
+        "high": "High",
+        "medium": "Medium",
+        "low": "Low"
+      }
+    },
     "title": "Infection control",
     "legend": "Admission {{admissionNumber}}",
     "notFound": "No record found for admission {{admissionNumber}}.",
     "loadError": "Could not load the antimicrobials of admission {{admissionNumber}}.",
     "retry": "Try again",
+    "clinicalNotes": "Clinical notes",
+    "nextPending": "Next pending",
+    "nextPendingEmpty": "There is no other pending patient.",
     "patient": {
       "admission": "Admission",
       "age": "Age",
@@ -1575,7 +1591,39 @@
       "lengthOfStay_other": "{{count}} days",
       "department": "Department",
       "bed": "Bed",
-      "dischargeDate": "Discharge"
+      "dischargeDate": "Discharge",
+      "title": "Patient",
+      "fullData": "Full data",
+      "bodySurface": "Body surface"
+    },
+    "exams": {
+      "showAll": "View all",
+      "empty": "No exams found",
+      "up": "rising",
+      "down": "falling",
+      "stable": "stable",
+      "noResult": "no result"
+    },
+    "cultures": {
+      "title": "Cultures",
+      "legend": "Latest collection of each exam and material, released in the last 60 days",
+      "summary": "Summary",
+      "byDrug": "By drug",
+      "byDrugLegend": "Antibiogram of each drug, the ones in use in this prescription flagged",
+      "empty": "No culture released in the last 60 days.",
+      "loadError": "Could not load the cultures.",
+      "exam": "Exam",
+      "collectionDate": "Collected",
+      "releaseDate": "Released",
+      "gram": "Gram",
+      "microorganism": "Microorganism",
+      "result": "Result",
+      "openHistory": "See every collection of this exam and material",
+      "history": {
+        "legend": "Every collection of this exam and material, newest first",
+        "empty": "No collection found.",
+        "loadError": "Could not load the collections of this culture."
+      }
     },
     "timeline": {
       "title": "Antimicrobial timeline",
@@ -1601,9 +1649,12 @@
       "legendConforming": "Conforming evaluation (validity)",
       "legendNonConforming": "Non-conforming evaluation (validity)",
       "legendInvalidated": "Evaluation that no longer holds (open pending reason)",
-      "showSuperseded_one": "Show {{count}} replaced evaluation",
-      "showSuperseded_other": "Show {{count}} replaced evaluations",
-      "hideSuperseded": "Hide replaced evaluations",
+      "legend": "Legend",
+      "legendGroupPrescription": "Prescription",
+      "legendGroupStatus": "Status",
+      "legendGroupMilestones": "Milestones",
+      "legendGroupEvaluation": "Evaluation",
+      "superseded": "Replaced evaluations ({{count}})",
       "evaluation": {
         "draft": "New evaluation (not saved)",
         "label": "{{verdict}} on {{date}}",
@@ -1643,6 +1694,7 @@
       "frequency": "Frequency",
       "route": "Route",
       "current": "Current",
+      "notes": "Observation",
       "gapsTitle": "Gaps without prescription",
       "openPrescription": "Open latest prescription",
       "close": "Close"
@@ -1669,7 +1721,6 @@
       "noPendings": "Nothing pending",
       "pendingsCount_one": "{{count}} pending item",
       "pendingsCount_other": "{{count}} pending items",
-      "showPendings": "View pending items",
       "sinceAt": "since {{date}} at {{time}}",
       "showHistory": "View history ({{count}})",
       "pending": {
@@ -1681,7 +1732,7 @@
         "6": "{{drug}} posology changed"
       },
       "unknownDrug": "Antimicrobial",
-      "register": "Register review",
+      "register": "Review",
       "loadError": "Could not load the infection control follow-up."
     },
     "evaluation": {
@@ -1698,52 +1749,109 @@
     },
     "review": {
       "title": "Register review",
-      "legend": "Evaluate the antimicrobials in use and, if you wish, schedule the patient's next review.",
-      "antimicrobials": "Antimicrobials in use",
+      "legend": "Evaluate each antimicrobial in use. Scheduling the patient's next review is optional.",
+      "antimicrobials": "Antimicrobials · {{count}}",
       "noOngoing": "No antimicrobial in use.",
-      "conformity": "Conformity",
-      "validUntil": "Conformity valid until",
+      "validUntil": "Valid until",
       "evaluationNotes": "Note",
-      "notes": "Review notes",
-      "nextReviewDate": "Patient's next review",
-      "nextReviewDateHelp": "On the scheduled date, the patient goes back to pending. Leave it blank to not schedule one.",
-      "noSchedule": "Not scheduled",
+      "notes": "Note about the patient",
+      "nextReviewDate": "Schedule next review",
+      "nextReviewDateHelp": "On the scheduled date, the patient goes back to pending.",
       "optional": "optional",
       "futureDate": "The date must be in the future",
       "success": "Review registered!",
-      "next": "Next",
-      "evaluateNow": "Evaluate this antimicrobial in this review",
-      "triggers": "Back to pending",
       "triggerExpired": "When the evaluation expires",
       "triggerPosology": "When the posology changes (dose, frequency or route)",
       "currentEvaluation": "Current evaluation",
       "evaluatedBy": "on {{date}} by {{user}}",
-      "keepEvaluation": "Keeps the current evaluation",
-      "notEvaluated": "Not evaluated",
       "toEvaluate": "To evaluate",
       "patientStep": "Patient",
-      "patientStepLegend": "Schedule and notes (optional)",
-      "start": "Starts on",
+      "patientStepLegend": "Optional. Set when the patient goes back to the review list.",
+      "start": "Start",
       "startNow": "Now",
-      "startCourse": "Treatment start ({{date}})",
+      "startCourse": "Treatment start",
       "startDate": "Other date",
-      "endTreatment": "Treatment end ({{date}})",
-      "endDays_one": "+{{count}} day ({{date}})",
-      "endDays_other": "+{{count}} days ({{date}})",
+      "endTreatment": "Treatment end",
+      "endDays_one": "+{{count}} day",
+      "endDays_other": "+{{count}} days",
       "endDate": "Other date",
-      "endBeforeStart": "The validity must end after the start",
+      "endBeforeStart": "End date before the start",
       "endPast": "This date has passed: the conformity is recorded already expired.",
       "endPastPending": "This date has passed: the conformity is recorded already expired and, as it goes back to pending when it expires, the patient stays pending.",
       "endHistory": "Ends before the current evaluation (since {{date}}): it only goes to the history and the current one stays in force.",
       "historyOnly": "history only",
-      "since": "since {{date}}",
       "invalidated": "This evaluation no longer holds and keeps the patient pending:",
       "invalidatedExpired": "Its validity ended on {{date}}",
       "invalidatedPosology": "The posology changed",
       "posologyEvaluated": "Evaluated: {{posology}}",
       "posologyCurrent": "Prescribed now: {{posology}}",
       "posologyCurrentSince": "Prescribed now: {{posology}}, since {{date}}",
-      "keepInvalidEvaluation": "Current evaluation no longer holds · stays pending"
+      "steps": "Review steps",
+      "patientStepTitle": "Next review and summary",
+      "optionalTag": "Optional",
+      "decision": "Evaluation",
+      "conformingDescription": "Appropriate use in the set period",
+      "nonConformingDescription": "Requires a justification",
+      "skipLabel": "Don't evaluate now",
+      "skip": {
+        "none": {
+          "description": "Stays as “To evaluate”",
+          "notice": "This antimicrobial is left out of this review and stays as “To evaluate”.",
+          "tag": "Not evaluated"
+        },
+        "keep": {
+          "description": "Keeps the current evaluation",
+          "notice": "This antimicrobial is left out of this review and keeps the current evaluation.",
+          "tag": "Keeps current"
+        },
+        "keepInvalid": {
+          "description": "Stays pending",
+          "notice": "This antimicrobial is left out of this review and stays pending: the current evaluation no longer holds.",
+          "tag": "Stays pending"
+        }
+      },
+      "notFilled": "Evaluation not filled",
+      "validityTitle": "Evaluation validity",
+      "period_one": "{{from}} → {{until}} · {{count}} day",
+      "period_other": "{{from}} → {{until}} · {{count}} days",
+      "periodEmpty": "Select the dates",
+      "validity_one": "Valid {{from}} → {{until}} · {{count}} day",
+      "validity_other": "Valid {{from}} → {{until}} · {{count}} days",
+      "triggersTitle": "Pending triggers",
+      "triggersActive_one": "{{count}} active",
+      "triggersActive_other": "{{count}} active",
+      "triggersNone": "None active",
+      "reopenChange": "Change",
+      "reopenHide": "Hide",
+      "doseWeightShow": "Dose/kg",
+      "doseWeightHide": "Hide dose/kg",
+      "pendings": "Pending items",
+      "pendingsCount_one": "{{count}} pending item",
+      "pendingsCount_other": "{{count}} pending items",
+      "alertsChip": "Alerts",
+      "evaluationNotesPlaceholder": "Note about this antimicrobial",
+      "justification": "Justification",
+      "justificationPlaceholder": "Describe why it does not conform and the suggested conduct",
+      "justificationRequired": "Enter the justification",
+      "required": "required",
+      "nextReview": {
+        "none": "Don't schedule",
+        "treatmentEnd": "Treatment end",
+        "date": "Other date"
+      },
+      "nextReviewDays_one": "Tomorrow",
+      "nextReviewDays_other": "In {{count}} days",
+      "notesPlaceholder": "E.g.: wait for the culture result before de-escalating",
+      "summary": "Review summary",
+      "editDrug": "Edit {{drug}}",
+      "stepOf": "Step {{step}} of {{total}}",
+      "hintDecision": "Select an evaluation to continue",
+      "hintJustification": "Enter the justification",
+      "hintValidity": "Check the validity",
+      "hintAllDrugs": "Finish evaluating all antimicrobials",
+      "nextDrug": "Next antimicrobial",
+      "nextPatient": "Next: patient",
+      "save": "Register review"
     },
     "history": {
       "title": "Reviews",
@@ -1754,11 +1862,6 @@
     "worklist": {
       "title": "Infection Control",
       "legend": "Patients on antimicrobials",
-      "filter": {
-        "1": "Pending",
-        "2": "Revised",
-        "3": "Closed"
-      },
       "patient": "Patient",
       "admission": "Admission",
       "bed": "Bed",
@@ -1768,8 +1871,29 @@
       "nextReview": "Next review",
       "validity": "Evaluation expires",
       "open": "Open",
-      "empty": "No patient in this status.",
-      "loadError": "Could not load the patient list."
+      "openNewTab": "Open in a new tab",
+      "empty": "No patient found.",
+      "searchPlaceholder": "Search by patient or admission number",
+      "patients": "Patients",
+      "limited": "The list was limited to {{limit}} records.",
+      "limitedHint": "{{count}} patients match the filters. Use more filters to narrow your analysis.",
+      "loadError": "Could not load the patient list.",
+      "filters": {
+        "allStatuses": "All statuses",
+        "pendingTypes": "Pending reason",
+        "pendingTypesPlaceholder": "Select reasons",
+        "admissionNumbers": "Admissions",
+        "admissionNumbersPlaceholder": "Type the admission number and press enter",
+        "overdueReview": "Only with overdue review"
+      },
+      "pendingType": {
+        "1": "Patient not reviewed yet",
+        "2": "Antimicrobial not evaluated",
+        "3": "Evaluation expired",
+        "4": "Scheduled review date reached",
+        "5": "Alert fired",
+        "6": "Posology changed"
+      }
     }
   }
 }

@@ -1,11 +1,15 @@
-import { test, expect } from "../support/mockApi";
+import type { Locator, Page } from "@playwright/test";
+
+import { test, expect, type MockApi } from "../support/mockApi";
 import { loginWithAuth, loginWithPermissions } from "../support/featureLogin";
 
 /**
  * Infection control follow-up (src/features/infectionControl).
  *
- * GET /infection-control/admission/:admissionNumber brings the follow-up of
- * the admission: its status (pending / revised / closed), the reasons it is
+ * GET /infection-control/antimicrobial-timeline/:admissionNumber brings, with
+ * the timeline, the follow-up of the admission (GET
+ * /infection-control/admission/:admissionNumber brings it alone, to retry it
+ * when it failed): its status (pending / revised / closed), the reasons it is
  * pending, the reviews and the evaluation of each antimicrobial course (keyed
  * by drug + course start, like the timeline). Users with
  * WRITE_INFECTION_CONTROL register reviews (POST /infection-control/review)
@@ -25,7 +29,7 @@ const FOLLOW_UP = "GET /infection-control/admission/:admissionNumber";
 const REVIEW = "POST /infection-control/review";
 const FOLLOW = "POST /infection-control/admission/:admissionNumber/follow";
 const LIST = "POST /infection-control/admissions";
-const EVALUATE_NOW = "Avaliar este antimicrobiano nesta revisão";
+const SKIP = "Não avaliar agora";
 const WATCH_EXPIRY = /Quando a avaliação vencer/;
 const WATCH_POSOLOGY = /Quando a posologia mudar/;
 
@@ -35,6 +39,13 @@ const BASE_PERMISSIONS = [
   "READ_PRESCRIPTION",
   "READ_SUPPORT",
 ];
+
+/** Opens the period of the evaluation, told in a line until changed */
+const openValidity = (drug: Locator) =>
+  drug
+    .getByTestId("review-validity")
+    .getByRole("button", { name: "Alterar" })
+    .click();
 
 /** A naive ISO date some hours away from now, as the backend sends it */
 const hoursFromNow = (hours: number) =>
@@ -108,6 +119,7 @@ const TIMELINE_DATA = {
         days: 5,
       }),
     ],
+    followUp: { enabled: false, admissionNumber: ADMISSION },
   },
 };
 
@@ -218,6 +230,22 @@ const notFollowed = (ongoing = true) =>
     ],
   });
 
+/**
+ * The page loads the follow-up inside the timeline response (null when it
+ * failed on the server); FOLLOW_UP alone only answers its retry
+ */
+const mockPage = (
+  mockApi: MockApi,
+  followUpResponse: { data: unknown },
+  timeline = TIMELINE_DATA,
+) =>
+  mockApi.override(TIMELINE, {
+    json: {
+      ...timeline,
+      data: { ...timeline.data, followUp: followUpResponse.data },
+    },
+  });
+
 test.beforeEach(({ mockApi }) => {
   mockApi.override("GET /names/:idPatient", {
     json: { status: "success", idPatient: PATIENT_ID, name: "Fulano Beltrano" },
@@ -229,7 +257,7 @@ test("shows the follow-up status, its pending reasons and each drug's evaluation
   page,
   mockApi,
 }) => {
-  mockApi.override(FOLLOW_UP, { json: followUp() });
+  mockPage(mockApi, followUp());
 
   await page.goto(PAGE_URL);
 
@@ -244,7 +272,7 @@ test("shows the follow-up status, its pending reasons and each drug's evaluation
 
   // the card only counts them; the reasons are listed in a modal
   await expect(box).not.toContainText("MEROPENEM 1 g SOL INJ sem avaliação");
-  await box.getByRole("button", { name: "Ver pendências" }).click();
+  await box.getByTestId("follow-up-pendings-count").click();
   const pendingsList = page.getByTestId("follow-up-pendings-list");
   await expect(pendingsList).toContainText(
     "MEROPENEM 1 g SOL INJ sem avaliação",
@@ -265,13 +293,11 @@ test("shows the follow-up status, its pending reasons and each drug's evaluation
   );
 
   // the default user cannot register reviews
-  await expect(
-    page.getByRole("button", { name: "Registrar revisão" }),
-  ).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Revisar" })).toHaveCount(0);
 
-  // the review history opens from the follow-up, listing what each review
+  // the review history opens from the last review, listing what each review
   // evaluated
-  await box.getByRole("button", { name: "Ver histórico (1)" }).click();
+  await box.getByTestId("follow-up-last-review").click();
   const history = page.getByRole("dialog");
   const review = history.getByTestId("review-item");
   await expect(review).toContainText("Paciente estável, manter vancomicina");
@@ -297,8 +323,9 @@ test("shows each conformity record on its course in the timeline", async ({
     closingType: 1,
     createdAt: hoursFromNow(-80),
   };
-  mockApi.override(FOLLOW_UP, {
-    json: followUp({
+  mockPage(
+    mockApi,
+    followUp({
       courses: [
         {
           idDrug: 11,
@@ -316,7 +343,7 @@ test("shows each conformity record on its course in the timeline", async ({
         },
       ],
     }),
-  });
+  );
 
   await page.goto(PAGE_URL);
 
@@ -332,10 +359,11 @@ test("shows each conformity record on its course in the timeline", async ({
   // the replaced one is left out until asked for
   await expect(marks).toHaveCount(1);
   const toggle = page.getByTestId("toggle-superseded");
-  await expect(toggle).toHaveText("Mostrar 1 avaliação substituída");
+  await expect(page.getByText("Avaliações substituídas (1)")).toBeVisible();
+  await expect(toggle).toHaveAttribute("aria-checked", "false");
   await toggle.click();
   await expect(marks).toHaveCount(2);
-  await expect(toggle).toHaveText("Ocultar avaliações substituídas");
+  await expect(toggle).toHaveAttribute("aria-checked", "true");
 
   // latest first, on the line right under the bar; the replaced one stays,
   // in a lighter tone, on the line below it
@@ -369,13 +397,77 @@ test("shows each conformity record on its course in the timeline", async ({
   await expect(tooltip).toContainText("Posologia avaliada: 1 g · 12h/12h · IV");
   await expect(tooltip).toContainText("Guiado por cultura");
 
+  // the legend opens from the timeline header
+  await page.getByRole("button", { name: "Legenda" }).click();
   await expect(page.getByText("Avaliação conforme (vigência)")).toBeVisible();
+});
+
+test("keeps consecutive conformity records on the same line", async ({
+  page,
+  mockApi,
+}) => {
+  // non-conforming from today on, and a past period recorded afterwards as
+  // conforming up to the end of yesterday: one follows the other
+  const current = {
+    ...vancomycinEvaluation,
+    conforming: false,
+    validFrom: `${localDay(0)}T00:00:00`,
+    validUntil: hoursFromNow(48),
+    createdAt: hoursFromNow(-2),
+  };
+  const past = {
+    ...vancomycinEvaluation,
+    id: "502",
+    idReview: "42",
+    validFrom: hoursFromNow(-90),
+    validUntil: `${localDay(-1)}T23:59:59`,
+    status: 3,
+    closedAt: hoursFromNow(-1),
+    closingType: 4,
+    createdAt: hoursFromNow(-1),
+  };
+  mockPage(
+    mockApi,
+    followUp({
+      courses: [
+        {
+          idDrug: 11,
+          start: MEROPENEM_START,
+          ongoing: true,
+          evaluation: null,
+          history: [],
+        },
+        {
+          idDrug: 12,
+          start: VANCOMYCIN_START,
+          ongoing: true,
+          evaluation: current,
+          history: [past, current],
+        },
+      ],
+    }),
+  );
+
+  await page.goto(PAGE_URL);
+
+  const marks = page
+    .getByTestId("course-row")
+    .filter({ hasText: "VANCOMICINA" })
+    .getByTestId("course-evaluation");
+  await expect(marks).toHaveCount(2, { timeout: 15000 });
+  await expect(marks.nth(0)).not.toHaveClass(/non-conforming/);
+  await expect(marks.nth(1)).toHaveClass(/non-conforming/);
+
+  const pastBox = (await marks.nth(0).boundingBox())!;
+  const currentBox = (await marks.nth(1).boundingBox())!;
+  expect(currentBox.y).toBe(pastBox.y);
+  expect(currentBox.x).toBeGreaterThanOrEqual(pastBox.x + pastBox.width - 1);
 });
 
 test("leaves the follow-up out when the schema does not have it", async ({
   page,
 }) => {
-  // default handler: { enabled: false }
+  // TIMELINE_DATA: { enabled: false }
   await page.goto(PAGE_URL);
 
   await expect(page.getByTestId("course-row")).toHaveCount(2, {
@@ -389,7 +481,17 @@ test("says so when the follow-up fails to load and can retry", async ({
   page,
   mockApi,
 }) => {
-  mockApi.override(FOLLOW_UP, { status: 500, json: { status: "error" } });
+  // the follow-up failed on the server: the timeline comes without it
+  mockPage(mockApi, { data: null });
+  let retried = 0;
+  mockApi.override(FOLLOW_UP, async (route) => {
+    retried += 1;
+    await route.fulfill({
+      status: 200,
+      contentType: "application/json",
+      body: JSON.stringify(followUp()),
+    });
+  });
 
   await page.goto(PAGE_URL);
 
@@ -402,18 +504,20 @@ test("says so when the follow-up fails to load and can retry", async ({
   );
   await expect(page.getByTestId("course-row")).toHaveCount(2);
 
-  mockApi.override(FOLLOW_UP, { json: followUp() });
+  // the retry loads the follow-up alone
+  expect(retried).toBe(0);
   await error.getByRole("button", { name: "Tentar novamente" }).click();
 
   await expect(page.getByTestId("follow-up-status")).toHaveText("Pendente");
   await expect(error).toHaveCount(0);
+  expect(retried).toBe(1);
 });
 
 test("does not offer to review nor follow an admission not followed without permission", async ({
   page,
   mockApi,
 }) => {
-  mockApi.override(FOLLOW_UP, { json: notFollowed() });
+  mockPage(mockApi, notFollowed());
 
   await page.goto(PAGE_URL);
 
@@ -425,9 +529,7 @@ test("does not offer to review nor follow an admission not followed without perm
   await expect(
     page.getByRole("button", { name: "Iniciar acompanhamento" }),
   ).toHaveCount(0);
-  await expect(
-    page.getByRole("button", { name: "Registrar revisão" }),
-  ).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Revisar" })).toHaveCount(0);
 });
 
 test.describe("with WRITE_INFECTION_CONTROL", () => {
@@ -440,11 +542,67 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     ]);
   });
 
+  test("shows the screening alerts of the drug being evaluated", async ({
+    page,
+    mockApi,
+  }) => {
+    const [meropenem, vancomycin] = TIMELINE_DATA.data.courses;
+    mockPage(mockApi, followUp(), {
+      ...TIMELINE_DATA,
+      data: {
+        ...TIMELINE_DATA.data,
+        courses: [
+          {
+            ...meropenem,
+            idSubstance: null,
+            alerts: [
+              {
+                idPrescriptionDrug: "299001",
+                key: "",
+                type: "kidney",
+                level: "medium",
+                text: "Medicamento deve sofrer ajuste renal",
+                handling: false,
+              },
+            ],
+          },
+          { ...vancomycin, idSubstance: null, alerts: [] },
+        ],
+      },
+    });
+
+    await page.goto(PAGE_URL);
+    await page
+      .getByRole("button", { name: "Revisar" })
+      .click({ timeout: 15000 });
+
+    const drug = page.getByRole("dialog").getByTestId("review-drug");
+    await expect(drug.getByRole("heading", { level: 3 })).toHaveText(
+      "MEROPENEM 1 g SOL INJ",
+    );
+    // a chip beside the drug counts them by level, the drawer lists them
+    const chip = drug.getByTestId("review-alerts-chip");
+    await expect(chip).toContainText("Alertas");
+    await expect(chip.getByTestId("review-alerts-chip-medium")).toHaveText("1");
+    await expect(drug.getByTestId("review-pendings-chip")).toHaveCount(0);
+    await chip.click();
+    const alerts = page.getByTestId("review-alerts");
+    const alert = alerts.getByTestId("review-alert");
+    await expect(alert).toContainText("Médio");
+    await expect(alert).toContainText("Ajuste Renal");
+    await expect(alert).toContainText("Medicamento deve sofrer ajuste renal");
+
+    // Escape closes the drawer, not the review
+    await page.keyboard.press("Escape");
+    await expect(alerts).toHaveCount(0);
+    await expect(drug).toBeVisible();
+  });
+
   test("registers a review evaluating the drug without evaluation", async ({
     page,
     mockApi,
   }) => {
-    mockApi.override(FOLLOW_UP, { json: followUp() });
+    mockPage(mockApi, followUp());
     let sent: any = null;
     mockApi.override(REVIEW, async (route) => {
       sent = JSON.parse(route.request().postData()!);
@@ -459,63 +617,103 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
 
     await page.goto(PAGE_URL);
     await page
-      .getByRole("button", { name: "Registrar revisão" })
+      .getByRole("button", { name: "Revisar" })
       .click({ timeout: 15000 });
 
     const dialog = page.getByRole("dialog");
     const next = dialog.getByRole("button", { name: "Próximo" });
     const drug = dialog.getByTestId("review-drug");
-    const evaluateBox = drug.getByRole("checkbox", { name: EVALUATE_NOW });
+    const decisions = drug.getByRole("radiogroup", { name: "Avaliação" });
+    const skip = decisions.getByRole("radio", { name: new RegExp(`^${SKIP}`) });
     const expiryBox = drug.getByRole("checkbox", { name: WATCH_EXPIRY });
     const posologyBox = drug.getByRole("checkbox", { name: WATCH_POSOLOGY });
+    const hint = dialog.getByTestId("review-hint");
 
     // one step per running drug, then the patient
-    await expect(dialog.locator(".ant-steps-item")).toHaveCount(3);
+    await expect(dialog.getByTestId("review-rail-drug")).toHaveCount(2);
+    await expect(dialog.getByTestId("review-rail-patient")).toHaveCount(1);
+    await expect(dialog.getByText("Etapa 1 de 3")).toBeVisible();
 
-    // step 1: the drug without an evaluation comes selected, with its timeline
-    await expect(drug.getByRole("heading")).toHaveText("MEROPENEM 1 g SOL INJ");
-    await expect(evaluateBox).toBeChecked();
-    // expiry and a posology change send it back to pending unless unchecked
-    await expect(expiryBox).toBeChecked();
-    await expect(posologyBox).toBeChecked();
+    // step 1: the drug without an evaluation is to be evaluated, with its
+    // timeline
+    await expect(drug.getByRole("heading", { level: 3 })).toHaveText(
+      "MEROPENEM 1 g SOL INJ",
+    );
+    await expect(decisions.getByRole("radio", { checked: true })).toHaveCount(
+      0,
+    );
+    await expect(dialog.getByTestId("review-rail-drug").first()).toContainText(
+      "A avaliar",
+    );
     const timeline = drug.getByTestId("review-timeline");
     await expect(timeline.getByTestId("course-row")).toHaveCount(1);
     // the step names the drug, its timeline shows only the day of treatment
     await expect(timeline.getByTestId("course-row")).toHaveText(/^D3/);
 
-    // the conformity is required to move on
+    // the verdict is required to move on
     const MEROPENEM_PLUS_7 = localDay(7, MEROPENEM_START);
-    await next.click();
-    await expect(drug.getByText("Campo obrigatório")).toHaveCount(1);
-    await expect(drug.getByRole("heading")).toHaveText("MEROPENEM 1 g SOL INJ");
-
-    // it starts at the course start and holds until the treatment ends,
-    // unless chosen otherwise
-    await expect(
-      drug
-        .getByRole("radiogroup", { name: "Inicia em" })
-        .getByRole("radio", { checked: true }),
-    ).toHaveAccessibleName(
-      `Início do tratamento (${shownDate(MEROPENEM_START).slice(0, 5)})`,
-    );
-    const validity = drug.getByRole("radiogroup", {
-      name: "Conformidade válida até",
-    });
-    await expect(
-      validity.getByRole("radio", { checked: true }),
-    ).toHaveAccessibleName(
-      `Fim do tratamento (${shownDate(MEROPENEM_END).slice(0, 5)})`,
-    );
+    await expect(next).toBeDisabled();
+    await expect(hint).toHaveText("Selecione uma avaliação para continuar");
 
     // the timeline plots the evaluation as it is filled: grey until the
     // verdict comes
     const draft = timeline.getByTestId("draft-evaluation");
     await expect(draft).toHaveClass(/undecided/);
-    await drug.getByText("Não conforme").click();
+    await decisions.getByText("Não conforme", { exact: true }).click();
     await expect(draft).toHaveClass(/non-conforming/);
-    await validity
-      .getByText(`+7 dias (${shownDate(MEROPENEM_PLUS_7).slice(0, 5)})`)
+    // what each verdict means is told on hover
+    await decisions.getByText("Não conforme", { exact: true }).hover();
+    await expect(page.getByRole("tooltip")).toHaveText("Exige justificativa");
+    await page.mouse.move(0, 0);
+
+    // it starts at the course start and holds until the treatment ends,
+    // told in a line until chosen otherwise
+    await expect(drug.getByTestId("review-validity")).toContainText(
+      `Vigência da avaliação: ${shownDate(MEROPENEM_START).slice(0, 5)} → ${shownDate(MEROPENEM_END).slice(0, 5)}`,
+    );
+    await expect(drug.getByRole("radiogroup", { name: "Início" })).toHaveCount(
+      0,
+    );
+    await openValidity(drug);
+    await expect(
+      drug
+        .getByRole("radiogroup", { name: "Início" })
+        .getByRole("radio", { checked: true }),
+    ).toHaveAccessibleName(
+      `Início do tratamento ${shownDate(MEROPENEM_START).slice(0, 5)}`,
+    );
+    const validity = drug.getByRole("radiogroup", { name: "Válida até" });
+    await expect(
+      validity.getByRole("radio", { checked: true }),
+    ).toHaveAccessibleName(
+      `Fim do tratamento ${shownDate(MEROPENEM_END).slice(0, 5)}`,
+    );
+
+    // expiry and a posology change send it back to pending unless unchecked,
+    // counted until opened
+    const triggersCount = drug.getByTestId("review-triggers-count");
+    await expect(drug.getByTestId("review-triggers")).toContainText(
+      "Gatilhos de pendência:",
+    );
+    await expect(triggersCount).toHaveText("2 ativos");
+    await expect(expiryBox).toHaveCount(0);
+    await drug
+      .getByTestId("review-triggers")
+      .getByRole("button", { name: "Alterar" })
       .click();
+    await expect(expiryBox).toBeChecked();
+    await expect(posologyBox).toBeChecked();
+    await expiryBox.uncheck();
+    await expect(triggersCount).toHaveText("1 ativo");
+    await posologyBox.uncheck();
+    await expect(triggersCount).toHaveText("Nenhum ativo");
+    await expiryBox.check();
+    await posologyBox.check();
+
+    await validity.getByText("+7 dias", { exact: true }).click();
+    await expect(drug.getByTestId("review-period")).toHaveText(
+      `${shownDate(MEROPENEM_START).slice(0, 5)} → ${shownDate(MEROPENEM_PLUS_7).slice(0, 5)} · 8 dias`,
+    );
     await draft.hover();
     await expect(page.getByRole("tooltip")).toContainText(
       "Nova avaliação (não salva)",
@@ -523,18 +721,23 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(page.getByRole("tooltip")).toContainText(
       `Válida até ${shownDate(MEROPENEM_PLUS_7)}`,
     );
-    // filling a field clears its error
-    await expect(drug.getByText("Campo obrigatório")).toHaveCount(0);
+    // a non-conformity is justified
+    await expect(next).toBeDisabled();
+    await expect(hint).toHaveText("Informe a justificativa");
     await drug
-      .getByLabel("Observação", { exact: true })
+      .getByLabel("Justificativa", { exact: true })
       .fill("Espectro amplo demais");
+    await expect(hint).toHaveCount(0);
     await next.click();
 
-    // step 2: the evaluated drug shows its current evaluation, not selected
-    await expect(drug.getByRole("heading")).toHaveText(
+    // step 2: the evaluated drug shows its current evaluation, kept
+    await expect(drug.getByRole("heading", { level: 3 })).toHaveText(
       "VANCOMICINA 500 mg SOL INJ",
     );
-    await expect(evaluateBox).not.toBeChecked();
+    await expect(skip).toBeChecked();
+    await expect(drug.getByTestId("review-skip-notice")).toContainText(
+      "mantém a avaliação atual",
+    );
     await expect(drug).toContainText("Guiado por cultura");
     const vancomycinTimeline = drug.getByTestId("review-timeline");
     const current = vancomycinTimeline.getByTestId("course-evaluation");
@@ -542,43 +745,43 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(current).not.toHaveClass(/past/);
 
     // evaluating it again previews the new one replacing the current from now
-    await evaluateBox.check();
-    await drug
-      .locator(".drug-fields")
-      .getByText("Conforme", { exact: true })
-      .click();
-    await expect(
-      validity.getByRole("radio", { checked: true }),
-    ).toHaveAccessibleName(
-      `Fim do tratamento (${shownDate(VANCOMYCIN_END).slice(0, 5)})`,
+    await decisions.getByText("Conforme", { exact: true }).click();
+    await expect(drug.getByTestId("review-period")).toContainText(
+      `→ ${shownDate(VANCOMYCIN_END).slice(0, 5)}`,
     );
     await expect(
       vancomycinTimeline.getByTestId("draft-evaluation"),
     ).toHaveClass(/conforming/);
     await expect(current).toHaveClass(/past/);
-    await evaluateBox.uncheck();
+    await decisions.getByText(SKIP, { exact: true }).click();
     await expect(
       vancomycinTimeline.getByTestId("draft-evaluation"),
     ).toHaveCount(0);
     await expect(current).not.toHaveClass(/past/);
     await next.click();
 
-    // last step: what the review records, the next review and its notes
+    // last step: the next review, its notes and what the review records
     const summary = dialog.getByTestId("review-summary");
     await expect(summary).toContainText(
-      `Não conforme · desde ${shownDate(MEROPENEM_START)} · até ${shownDate(MEROPENEM_PLUS_7)}`,
+      `Vigência ${shownDate(MEROPENEM_START)} → ${shownDate(MEROPENEM_PLUS_7)} · 8 dias`,
     );
+    await expect(summary).toContainText("Não conforme");
     await expect(summary).toContainText("Mantém a avaliação atual");
     await expect(next).toHaveCount(0);
-    await expect(dialog.locator(".ant-steps-item").nth(2)).toHaveClass(
-      /ant-steps-item-process/,
+    await expect(dialog.getByTestId("review-rail-patient")).toHaveAttribute(
+      "aria-current",
+      "step",
     );
+    // both drugs are done
+    await expect(
+      dialog.getByTestId("review-rail-drug").locator(".anticon-check"),
+    ).toHaveCount(2);
     await dialog
-      .getByLabel("Observações da revisão")
+      .getByLabel("Observação sobre o paciente")
       .fill("Sugerido descalonamento");
 
     expect(sent).toBeNull();
-    await dialog.getByRole("button", { name: "Salvar" }).click();
+    await dialog.getByRole("button", { name: "Registrar revisão" }).click();
 
     await expect(
       page.getByText("Revisão registrada com sucesso!"),
@@ -612,7 +815,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     page,
     mockApi,
   }) => {
-    mockApi.override(FOLLOW_UP, { json: followUp() });
+    mockPage(mockApi, followUp());
     let sent: any = null;
     mockApi.override(REVIEW, async (route) => {
       sent = JSON.parse(route.request().postData()!);
@@ -625,51 +828,55 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
 
     await page.goto(PAGE_URL);
     await page
-      .getByRole("button", { name: "Registrar revisão" })
+      .getByRole("button", { name: "Revisar" })
       .click({ timeout: 15000 });
 
     const dialog = page.getByRole("dialog");
     const next = dialog.getByRole("button", { name: "Próximo" });
     const drug = dialog.getByTestId("review-drug");
-    const fields = drug.locator(".drug-fields");
-    const start = drug.getByRole("radiogroup", { name: "Inicia em" });
-    const validity = drug.getByRole("radiogroup", {
-      name: "Conformidade válida até",
-    });
+    const decisions = drug.getByRole("radiogroup", { name: "Avaliação" });
+    const start = drug.getByRole("radiogroup", { name: "Início" });
+    const validity = drug.getByRole("radiogroup", { name: "Válida até" });
     const draft = drug.getByTestId("draft-evaluation");
 
     // meropenem: the defaults, from the course start to the treatment end
-    await fields.getByText("Conforme", { exact: true }).click();
+    await decisions.getByText("Conforme", { exact: true }).click();
     await draft.hover();
     await expect(page.getByRole("tooltip")).toContainText("Vale desde");
     await next.click();
 
     // vancomycin: now, until a chosen day
-    await expect(drug.getByRole("heading")).toHaveText(
+    await expect(drug.getByRole("heading", { level: 3 })).toHaveText(
       "VANCOMICINA 500 mg SOL INJ",
     );
-    await drug.getByRole("checkbox", { name: EVALUATE_NOW }).check();
-    await fields.getByText("Não conforme", { exact: true }).click();
+    await decisions.getByText("Não conforme", { exact: true }).click();
+    await drug.getByLabel("Justificativa", { exact: true }).fill("Sem cultura");
+    await openValidity(drug);
     await start.getByText("Agora", { exact: true }).click();
     await validity.getByText("Outra data", { exact: true }).click();
     // a chosen day is required once picked
-    await next.click();
-    await expect(drug.getByText("Campo obrigatório")).toHaveCount(1);
-    const until = drug.getByRole("textbox", {
-      name: "Conformidade válida até",
-    });
+    await expect(next).toBeDisabled();
+    await expect(drug.getByTestId("review-period")).toHaveText(
+      "Selecione as datas",
+    );
+    await expect(dialog.getByTestId("review-hint")).toHaveText(
+      "Revise a vigência",
+    );
+    const until = drug.getByRole("textbox", { name: "Válida até" });
     await until.fill(shownDate(localDay(3)));
     // Enter takes the typed day and moves on
     await until.press("Enter");
 
     const summary = dialog.getByTestId("review-summary");
     await expect(summary).toContainText(
-      `Conforme · desde ${shownDate(MEROPENEM_START)} · até ${shownDate(MEROPENEM_END)}`,
+      new RegExp(
+        `Vigência ${shownDate(MEROPENEM_START)} → ${shownDate(MEROPENEM_END)} · \\d+ dias?`,
+      ),
     );
     await expect(summary).toContainText(
-      `Não conforme · até ${shownDate(localDay(3))}`,
+      `Vigência ${shownDate(localDay(0))} → ${shownDate(localDay(3))} · 4 dias`,
     );
-    await dialog.getByRole("button", { name: "Salvar" }).click();
+    await dialog.getByRole("button", { name: "Registrar revisão" }).click();
 
     await expect(
       page.getByText("Revisão registrada com sucesso!"),
@@ -695,25 +902,24 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     // started 12 days ago, its prescription expired yesterday
     const OLD_START = hoursFromNow(-12 * 24);
     const OLD_END = hoursFromNow(-30);
-    mockApi.override(TIMELINE, {
-      json: {
-        ...TIMELINE_DATA,
-        data: {
-          ...TIMELINE_DATA.data,
-          courses: [
-            course({
-              idDrug: 12,
-              drug: "VANCOMICINA 500 mg SOL INJ",
-              start: OLD_START,
-              end: OLD_END,
-              days: 12,
-            }),
-          ],
-        },
+    const timeline = {
+      ...TIMELINE_DATA,
+      data: {
+        ...TIMELINE_DATA.data,
+        courses: [
+          course({
+            idDrug: 12,
+            drug: "VANCOMICINA 500 mg SOL INJ",
+            start: OLD_START,
+            end: OLD_END,
+            days: 12,
+          }),
+        ],
       },
-    });
-    mockApi.override(FOLLOW_UP, {
-      json: followUp({
+    };
+    mockPage(
+      mockApi,
+      followUp({
         courses: [
           {
             idDrug: 12,
@@ -724,7 +930,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
           },
         ],
       }),
-    });
+      timeline,
+    );
     let sent: any = null;
     mockApi.override(REVIEW, async (route) => {
       sent = JSON.parse(route.request().postData()!);
@@ -737,56 +944,58 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
 
     await page.goto(PAGE_URL);
     await page
-      .getByRole("button", { name: "Registrar revisão" })
+      .getByRole("button", { name: "Revisar" })
       .click({ timeout: 15000 });
 
     const dialog = page.getByRole("dialog");
     const drug = dialog.getByTestId("review-drug");
-    const start = drug.getByRole("radiogroup", { name: "Inicia em" });
-    const validity = drug.getByRole("radiogroup", {
-      name: "Conformidade válida até",
-    });
+    const next = dialog.getByRole("button", { name: "Próximo" });
+    const start = drug.getByRole("radiogroup", { name: "Início" });
+    const validity = drug.getByRole("radiogroup", { name: "Válida até" });
     const treatmentEnd = validity.getByRole("radio", {
       name: /^Fim do tratamento/,
     });
     const plus7 = validity.getByRole("radio", { name: /^\+7 dias/ });
     const pastNotice = drug.getByTestId("review-end-past");
     await drug
-      .locator(".drug-fields")
+      .getByRole("radiogroup", { name: "Avaliação" })
       .getByText("Conforme", { exact: true })
       .click();
 
     // from the course start to the treatment end, both past: recorded
     // already expired, which keeps the patient pending while it watches
     // the expiry
-    await expect(treatmentEnd).toBeChecked();
     await expect(pastNotice).toContainText("o paciente continua pendente");
+    await openValidity(drug);
+    await expect(treatmentEnd).toBeChecked();
+    await drug
+      .getByTestId("review-triggers")
+      .getByRole("button", { name: "Alterar" })
+      .click();
     await drug.getByRole("checkbox", { name: WATCH_EXPIRY }).uncheck();
     await expect(pastNotice).toHaveText(
       "Esta data já passou: a conformidade é registrada já vencida.",
     );
     await expect(plus7).toHaveAccessibleName(
-      `+7 dias (${shownDate(localDay(7, OLD_START)).slice(0, 5)})`,
+      `+7 dias ${shownDate(localDay(7, OLD_START)).slice(0, 5)}`,
     );
 
     // starting now, the treatment end is behind it
     await start.getByText("Agora", { exact: true }).click();
     await expect(treatmentEnd).toBeDisabled();
-    await dialog.getByRole("button", { name: "Próximo" }).click();
-    await expect(
-      drug.getByText("A validade deve terminar depois do início"),
-    ).toBeVisible();
-    await validity.getByText(/^\+7 dias/).click();
-    await expect(
-      drug.getByText("A validade deve terminar depois do início"),
-    ).toHaveCount(0);
+    await expect(drug.getByTestId("review-period")).toHaveText(
+      "Data final antes do início",
+    );
+    await expect(next).toBeDisabled();
+    await validity.getByText("+7 dias", { exact: true }).click();
+    await expect(drug.getByTestId("review-period")).toHaveText(/· 8 dias$/);
     await expect(pastNotice).toHaveCount(0);
 
     // back to the course start, 7 days from it are over too
-    await start.getByText(/^Início do tratamento/).click();
+    await start.getByText("Início do tratamento", { exact: true }).click();
     await expect(pastNotice).toBeVisible();
-    await dialog.getByRole("button", { name: "Próximo" }).click();
-    await dialog.getByRole("button", { name: "Salvar" }).click();
+    await next.click();
+    await dialog.getByRole("button", { name: "Registrar revisão" }).click();
 
     await expect(
       page.getByText("Revisão registrada com sucesso!"),
@@ -832,9 +1041,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       closingType: 4,
       createdAt: hoursFromNow(0),
     };
-    mockApi.override(FOLLOW_UP, {
-      json: vancomycinOnly([vancomycinEvaluation]),
-    });
+    mockPage(mockApi, vancomycinOnly([vancomycinEvaluation]));
     let sent: any = null;
     mockApi.override(REVIEW, async (route) => {
       sent = JSON.parse(route.request().postData()!);
@@ -849,44 +1056,45 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
 
     await page.goto(PAGE_URL);
     await page
-      .getByRole("button", { name: "Registrar revisão" })
+      .getByRole("button", { name: "Revisar" })
       .click({ timeout: 15000 });
 
     const dialog = page.getByRole("dialog");
     const drug = dialog.getByTestId("review-drug");
-    const validity = drug.getByRole("radiogroup", {
-      name: "Conformidade válida até",
-    });
+    const validity = drug.getByRole("radiogroup", { name: "Válida até" });
     const current = drug
       .getByTestId("review-timeline")
       .getByTestId("course-evaluation");
     const historyNotice = drug.getByTestId("review-end-history");
 
-    await drug.getByRole("checkbox", { name: EVALUATE_NOW }).check();
     await drug
-      .locator(".drug-fields")
+      .getByRole("radiogroup", { name: "Avaliação" })
       .getByText("Não conforme", { exact: true })
       .click();
+    await drug
+      .getByLabel("Justificativa", { exact: true })
+      .fill("Sem indicação no período");
     // overlapping the current one, the new one replaces it
     await expect(current).toHaveClass(/past/);
     await expect(historyNotice).toHaveCount(0);
 
     // from the course start up to a day before the current one started
+    await openValidity(drug);
     await validity.getByText("Outra data", { exact: true }).click();
-    const until = drug.getByRole("textbox", {
-      name: "Conformidade válida até",
-    });
+    const until = drug.getByRole("textbox", { name: "Válida até" });
     await until.fill(shownDate(PAST_END));
     await until.press("Enter");
 
     const summary = dialog.getByTestId("review-summary");
     await expect(summary).toContainText(
-      `Não conforme · desde ${shownDate(VANCOMYCIN_START)} · até ${shownDate(PAST_END)} · só no histórico`,
+      new RegExp(
+        `Vigência ${shownDate(VANCOMYCIN_START)} → ${shownDate(PAST_END)} · \\d+ dias? · só no histórico`,
+      ),
     );
 
     // back on the drug: the current one stays in force
     await summary
-      .getByRole("button", { name: "VANCOMICINA 500 mg SOL INJ" })
+      .getByRole("button", { name: "Editar VANCOMICINA 500 mg SOL INJ" })
       .click();
     await expect(historyNotice).toContainText(
       `Termina antes da avaliação atual (desde ${shownDate(vancomycinEvaluation.validFrom)})`,
@@ -904,7 +1112,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     );
 
     await dialog.getByRole("button", { name: "Próximo" }).click();
-    await dialog.getByRole("button", { name: "Salvar" }).click();
+    await dialog.getByRole("button", { name: "Registrar revisão" }).click();
     await expect(
       page.getByText("Revisão registrada com sucesso!"),
     ).toBeVisible();
@@ -939,7 +1147,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     page,
     mockApi,
   }) => {
-    mockApi.override(FOLLOW_UP, { json: followUp() });
+    mockPage(mockApi, followUp());
     mockApi.override(REVIEW, {
       status: 400,
       json: {
@@ -951,25 +1159,109 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
 
     await page.goto(PAGE_URL);
     await page
-      .getByRole("button", { name: "Registrar revisão" })
+      .getByRole("button", { name: "Revisar" })
       .click({ timeout: 15000 });
 
     const dialog = page.getByRole("dialog");
     const next = dialog.getByRole("button", { name: "Próximo" });
-    // nothing selected: a review that only records the visit
+    // nothing evaluated: a review that only records the visit
     await dialog
       .getByTestId("review-drug")
-      .getByRole("checkbox", { name: EVALUATE_NOW })
-      .uncheck();
+      .getByText(SKIP, { exact: true })
+      .click();
     await next.click();
     await next.click();
-    await dialog.getByRole("button", { name: "Salvar" }).click();
+    await dialog.getByRole("button", { name: "Registrar revisão" }).click();
 
     await expect(
       page.getByText("Antimicrobiano não está em uso neste atendimento"),
     ).toBeVisible();
     await expect(dialog).toBeVisible();
     await expect(page.getByTestId("follow-up-status")).toHaveText("Pendente");
+  });
+
+  test("shows the posology with the dose per Kg, like the screening", async ({
+    page,
+    mockApi,
+  }) => {
+    const timeline = {
+      ...TIMELINE_DATA,
+      data: {
+        ...TIMELINE_DATA.data,
+        courses: [
+          course({
+            idDrug: 11,
+            drug: "MEROPENEM 1 g SOL INJ",
+            start: MEROPENEM_START,
+            end: MEROPENEM_END,
+            days: 3,
+            regimens: [
+              {
+                start: MEROPENEM_START,
+                end: MEROPENEM_END,
+                dose: 2,
+                measureUnit: "FRASCO AMPOLA",
+                frequency: "8h/8h",
+                route: "IV",
+                doseWeight: "0,03 FRASCO AMPOLA/Kg ou 31,25 mg/Kg",
+                doseWeightDay: "0,09 FRASCO AMPOLA/Kg/Dia ou 93,75 mg/Kg/Dia",
+              },
+            ],
+          }),
+          // no patient weight on record: no dose per Kg
+          course({
+            idDrug: 12,
+            drug: "VANCOMICINA 500 mg SOL INJ",
+            start: VANCOMYCIN_START,
+            end: VANCOMYCIN_END,
+            days: 5,
+            regimens: [
+              {
+                start: VANCOMYCIN_START,
+                end: VANCOMYCIN_END,
+                dose: 1,
+                measureUnit: "g",
+                frequency: "12h/12h",
+                route: "IV",
+                doseWeight: null,
+                doseWeightDay: null,
+              },
+            ],
+          }),
+        ],
+      },
+    };
+    mockPage(mockApi, followUp(), timeline);
+
+    await page.goto(PAGE_URL);
+    await page
+      .getByRole("button", { name: "Revisar" })
+      .click({ timeout: 15000 });
+
+    const dialog = page.getByRole("dialog");
+    const drug = dialog.getByTestId("review-drug");
+    await expect(drug.getByRole("heading", { level: 3 })).toHaveText(
+      "MEROPENEM 1 g SOL INJ",
+    );
+    await expect(drug.getByText("2 FRASCO AMPOLA · 8h/8h · IV")).toBeVisible();
+    // the dose by weight is shown on demand
+    await expect(drug.getByTestId("review-dose-weight")).toHaveCount(0);
+    await drug.getByRole("button", { name: "Dose/kg" }).click();
+    await expect(drug.getByTestId("review-dose-weight")).toHaveText(
+      "0,03 FRASCO AMPOLA/Kg ou 31,25 mg/Kg · 0,09 FRASCO AMPOLA/Kg/Dia ou 93,75 mg/Kg/Dia",
+    );
+
+    await drug
+      .getByRole("radiogroup", { name: "Avaliação" })
+      .getByText("Conforme", { exact: true })
+      .click();
+    await dialog.getByRole("button", { name: "Próximo" }).click();
+    await expect(drug.getByRole("heading", { level: 3 })).toHaveText(
+      "VANCOMICINA 500 mg SOL INJ",
+    );
+    await expect(drug.getByText("1 g · 12h/12h · IV")).toBeVisible();
+    await expect(drug.getByTestId("review-dose-weight")).toHaveCount(0);
+    await expect(drug.getByRole("button", { name: "Dose/kg" })).toHaveCount(0);
   });
 
   test("selects the drug whose posology changed and keeps its trigger choice", async ({
@@ -979,43 +1271,42 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     // changed twice since the evaluation: the reason kept the first change,
     // the course has the posology prescribed now
     const POSOLOGY_CHANGE = hoursFromNow(-3);
-    mockApi.override(TIMELINE, {
-      json: {
-        ...TIMELINE_DATA,
-        data: {
-          ...TIMELINE_DATA.data,
-          courses: [
-            course({
-              idDrug: 12,
-              drug: "VANCOMICINA 500 mg SOL INJ",
-              start: VANCOMYCIN_START,
-              end: VANCOMYCIN_END,
-              days: 5,
-              regimens: [
-                {
-                  start: VANCOMYCIN_START,
-                  end: POSOLOGY_CHANGE,
-                  dose: 1,
-                  measureUnit: "g",
-                  frequency: "12h/12h",
-                  route: "IV",
-                },
-                {
-                  start: POSOLOGY_CHANGE,
-                  end: VANCOMYCIN_END,
-                  dose: 2,
-                  measureUnit: "g",
-                  frequency: "6h/6h",
-                  route: "IV",
-                },
-              ],
-            }),
-          ],
-        },
+    const timeline = {
+      ...TIMELINE_DATA,
+      data: {
+        ...TIMELINE_DATA.data,
+        courses: [
+          course({
+            idDrug: 12,
+            drug: "VANCOMICINA 500 mg SOL INJ",
+            start: VANCOMYCIN_START,
+            end: VANCOMYCIN_END,
+            days: 5,
+            regimens: [
+              {
+                start: VANCOMYCIN_START,
+                end: POSOLOGY_CHANGE,
+                dose: 1,
+                measureUnit: "g",
+                frequency: "12h/12h",
+                route: "IV",
+              },
+              {
+                start: POSOLOGY_CHANGE,
+                end: VANCOMYCIN_END,
+                dose: 2,
+                measureUnit: "g",
+                frequency: "6h/6h",
+                route: "IV",
+              },
+            ],
+          }),
+        ],
       },
-    });
-    mockApi.override(FOLLOW_UP, {
-      json: followUp({
+    };
+    mockPage(
+      mockApi,
+      followUp({
         pendings: [
           {
             id: "802",
@@ -1048,7 +1339,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
           },
         ],
       }),
-    });
+      timeline,
+    );
     let sent: any = null;
     mockApi.override(REVIEW, async (route) => {
       sent = JSON.parse(route.request().postData()!);
@@ -1060,7 +1352,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     });
 
     await page.goto(PAGE_URL);
-    await page.getByRole("button", { name: "Ver pendências" }).click({
+    await page.getByTestId("follow-up-pendings-count").click({
       timeout: 15000,
     });
     await expect(page.getByTestId("follow-up-pendings-list")).toContainText(
@@ -1102,26 +1394,35 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(pendingTooltip).toContainText("Prescrita agora:");
     await page.mouse.move(0, 0);
 
-    await page.getByRole("button", { name: "Registrar revisão" }).click();
+    await page.getByRole("button", { name: "Revisar" }).click();
 
-    // evaluated before, but its posology changed: it comes selected, with
-    // the triggers chosen last time (posology, not expiry)
+    // evaluated before, but its posology changed: it is to be evaluated,
+    // with the triggers chosen last time (posology, not expiry)
     const dialog = page.getByRole("dialog");
     const drug = dialog.getByTestId("review-drug");
-    await expect(
-      drug.getByRole("checkbox", { name: EVALUATE_NOW }),
-    ).toBeChecked();
+    const decisions = drug.getByRole("radiogroup", { name: "Avaliação" });
+    await expect(decisions.getByRole("radio", { checked: true })).toHaveCount(
+      0,
+    );
 
-    // the verdict on record shows it no longer holds, and why
-    const tag = drug.getByTestId("evaluation-tag");
-    await expect(tag).toHaveText("Conforme · posologia alterada");
-    await expect(tag.locator("s")).toHaveText("Conforme");
-    const current = drug.getByTestId("review-current-evaluation");
-    await expect(current).toContainText(
+    // the header leaves the verdict on record to the drawer
+    await expect(drug.getByTestId("evaluation-tag")).toHaveCount(0);
+    // a chip beside the drug counts the reasons, the drawer has the verdict
+    // and why
+    const chip = drug.getByTestId("review-pendings-chip");
+    await expect(chip).toHaveText("1 pendência");
+    await chip.click();
+    const pendings = page.getByTestId("review-pendings");
+    const current = pendings.getByTestId("review-current-evaluation");
+    await expect(current).toContainText("Avaliação atual");
+    await expect(current.locator("s")).toHaveText("Conforme");
+    await expect(pendings).toContainText(
       "Esta avaliação não vale mais e mantém o paciente pendente",
     );
-    await expect(current).toContainText("Avaliada: 1 g · 12h/12h · IV");
-    await expect(current).toContainText("Prescrita agora: 2 g · 6h/6h · IV");
+    await expect(pendings).toContainText("Avaliada: 1 g · 12h/12h · IV");
+    await expect(pendings).toContainText("Prescrita agora: 2 g · 6h/6h · IV");
+    await page.keyboard.press("Escape");
+    await expect(pendings).toHaveCount(0);
 
     // the mini timeline shows it as the page does, even while the new one
     // being filled takes over from now on
@@ -1135,30 +1436,33 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     ).toContainText("A posologia mudou");
     await page.mouse.move(0, 0);
 
+    await decisions.getByText("Conforme", { exact: true }).click();
+    const triggers = drug.getByTestId("review-triggers");
+    await expect(triggers.getByTestId("review-triggers-count")).toHaveText(
+      "1 ativo",
+    );
+    await triggers.getByRole("button", { name: "Alterar" }).click();
     const posologyBox = drug.getByRole("checkbox", { name: WATCH_POSOLOGY });
     await expect(posologyBox).toBeChecked();
     const expiryBox = drug.getByRole("checkbox", { name: WATCH_EXPIRY });
     await expect(expiryBox).not.toBeChecked();
 
+    await openValidity(drug);
     await drug
-      .locator(".drug-fields")
-      .getByText("Conforme", { exact: true })
-      .click();
-    await drug
-      .getByRole("radiogroup", { name: "Conformidade válida até" })
-      .getByText(/^\+10 dias/)
+      .getByRole("radiogroup", { name: "Válida até" })
+      .getByText("+10 dias", { exact: true })
       .click();
     await posologyBox.uncheck();
     await expiryBox.check();
     // from a chosen day; Enter takes it and moves on
     await drug
-      .getByRole("radiogroup", { name: "Inicia em" })
+      .getByRole("radiogroup", { name: "Início" })
       .getByText("Outra data", { exact: true })
       .click();
-    const from = drug.getByRole("textbox", { name: "Inicia em" });
+    const from = drug.getByRole("textbox", { name: "Início" });
     await from.fill(shownDate(localDay(-1)));
     await from.press("Enter");
-    await dialog.getByRole("button", { name: "Salvar" }).click();
+    await dialog.getByRole("button", { name: "Registrar revisão" }).click();
 
     await expect(
       page.getByText("Revisão registrada com sucesso!"),
@@ -1184,8 +1488,9 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       validUntil: hoursFromNow(-6),
       triggers: [3],
     };
-    mockApi.override(FOLLOW_UP, {
-      json: followUp({
+    mockPage(
+      mockApi,
+      followUp({
         pendings: [
           {
             id: "803",
@@ -1207,7 +1512,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
           },
         ],
       }),
-    });
+    );
 
     await page.goto(PAGE_URL);
 
@@ -1223,23 +1528,30 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await page.mouse.move(0, 0);
 
     await page
-      .getByRole("button", { name: "Registrar revisão" })
+      .getByRole("button", { name: "Revisar" })
       .click({ timeout: 15000 });
 
     const dialog = page.getByRole("dialog");
     const drug = dialog.getByTestId("review-drug");
-    await expect(drug.getByTestId("evaluation-tag")).toHaveText(
-      `Conforme · vencida em ${shownDate(expired.validUntil)}`,
+    await expect(drug.getByTestId("review-pendings-chip")).toHaveText(
+      "1 pendência",
     );
-    await expect(drug.getByTestId("review-current-evaluation")).toContainText(
+    await drug.getByTestId("review-pendings-chip").click();
+    const pendings = page.getByTestId("review-pendings");
+    await expect(pendings).toContainText(
       `A validade terminou em ${shownDate(expired.validUntil)}`,
     );
+    await page.keyboard.press("Escape");
+    await expect(pendings).toHaveCount(0);
 
     // leaving it out of the review does not keep a verdict that holds
-    await drug.getByRole("checkbox", { name: EVALUATE_NOW }).uncheck();
+    await drug.getByText(SKIP, { exact: true }).click();
+    await expect(drug.getByTestId("review-skip-notice")).toContainText(
+      "continua pendente: a avaliação atual não vale mais",
+    );
     await dialog.getByRole("button", { name: "Próximo" }).click();
     await expect(dialog.getByTestId("review-summary")).toContainText(
-      "Avaliação atual não vale mais · continua pendente",
+      "Continua pendente",
     );
   });
 
@@ -1247,7 +1559,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     page,
     mockApi,
   }) => {
-    mockApi.override(FOLLOW_UP, { json: notFollowed() });
+    mockPage(mockApi, notFollowed());
     let followed = 0;
     mockApi.override(FOLLOW, async (route) => {
       followed += 1;
@@ -1298,16 +1610,14 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       "Não acompanhado",
       { timeout: 15000 },
     );
-    await expect(
-      page.getByRole("button", { name: "Registrar revisão" }),
-    ).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Revisar" })).toHaveCount(0);
     await page.getByRole("button", { name: "Iniciar acompanhamento" }).click();
 
     await expect(box.getByTestId("follow-up-status")).toHaveText("Pendente");
     await expect(box.getByTestId("follow-up-pendings-count")).toHaveText(
       "1 pendência",
     );
-    await box.getByRole("button", { name: "Ver pendências" }).click();
+    await box.getByTestId("follow-up-pendings-count").click();
     await expect(page.getByTestId("follow-up-pendings-list")).toContainText(
       "Paciente ainda não revisado",
     );
@@ -1316,16 +1626,14 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(
       page.getByRole("button", { name: "Iniciar acompanhamento" }),
     ).toHaveCount(0);
-    await expect(
-      page.getByRole("button", { name: "Registrar revisão" }),
-    ).toBeVisible();
+    await expect(page.getByRole("button", { name: "Revisar" })).toBeVisible();
   });
 
   test("does not start the follow-up without a running antimicrobial", async ({
     page,
     mockApi,
   }) => {
-    mockApi.override(FOLLOW_UP, { json: notFollowed(false) });
+    mockPage(mockApi, notFollowed(false));
 
     await page.goto(PAGE_URL);
 
@@ -1335,9 +1643,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(
       page.getByRole("button", { name: "Iniciar acompanhamento" }),
     ).toHaveCount(0);
-    await expect(
-      page.getByRole("button", { name: "Registrar revisão" }),
-    ).toHaveCount(0);
+    await expect(page.getByRole("button", { name: "Revisar" })).toHaveCount(0);
   });
 });
 
@@ -1357,7 +1663,23 @@ test.describe("worklist", () => {
     pendings: followUp().data.pendings,
   };
 
-  test("lists the followed patients and filters them by status", async ({
+  const lists = (mockApi: {
+    requests: { path: string; postData?: string | null }[];
+  }) =>
+    mockApi.requests
+      .filter((r) => r.path === "/infection-control/admissions")
+      .map((r) => JSON.parse(r.postData!));
+
+  const pickOption = async (page: Page, field: string, option: string) => {
+    await page.locator(field).click();
+    await page
+      .locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)")
+      .getByText(option, { exact: true })
+      .click();
+    await page.keyboard.press("Escape");
+  };
+
+  test("lists the followed patients, the pending ones by default", async ({
     page,
     mockApi,
   }) => {
@@ -1376,21 +1698,251 @@ test.describe("worklist", () => {
     await expect(row).toContainText("UTI Adulto");
     await expect(row).toContainText("Pendente");
     await expect(row).toContainText("MEROPENEM 1 g SOL INJ sem avaliação");
-    await expect(row.getByRole("link", { name: "Abrir" })).toHaveAttribute(
-      "href",
-      PAGE_URL,
+    await expect(page.locator(".list-count")).toHaveText(/Pacientes\s*1/);
+
+    // up to 500 at once, paged in the browser
+    expect(lists(mockApi)[0]).toMatchObject({
+      status: [1],
+      limit: 500,
+      offset: 0,
+    });
+    await expect(page.getByText(/A lista foi limitada/)).toHaveCount(0);
+  });
+
+  test("warns when the list was limited", async ({ page, mockApi }) => {
+    mockApi.override(LIST, {
+      json: {
+        status: "success",
+        data: { count: 734, admissions: [admission] },
+      },
+    });
+
+    await page.goto("/controle-infeccao");
+
+    await expect(
+      page.getByText("A lista foi limitada em 500 registros."),
+    ).toBeVisible({
+      timeout: 15000,
+    });
+    await expect(
+      page.getByText(/734 pacientes atendem aos filtros/),
+    ).toBeVisible();
+  });
+
+  test("searches the loaded list by patient name or admission", async ({
+    page,
+    mockApi,
+  }) => {
+    const other = {
+      ...admission,
+      admissionNumber: ADMISSION + 1,
+      idPatient: `${PATIENT_ID + 1}`,
+    };
+    mockApi.override(LIST, {
+      json: {
+        status: "success",
+        data: { count: 2, admissions: [admission, other] },
+      },
+    });
+    const names: Record<string, string> = {
+      [PATIENT_ID]: "Fulano Beltrano",
+      [PATIENT_ID + 1]: "Maria Teste",
+    };
+    mockApi.override("GET /names/:idPatient", (route) => {
+      const idPatient = new URL(route.request().url()).pathname
+        .split("/")
+        .pop()!;
+      return route.fulfill({
+        json: { status: "success", idPatient, name: names[idPatient] },
+      });
+    });
+
+    await page.goto("/controle-infeccao");
+    const rows = page.locator(".ant-table-tbody tr.ant-table-row");
+    await expect(rows).toHaveCount(2, { timeout: 15000 });
+    await expect(page.getByText("Maria Teste")).toBeVisible();
+    const listsBefore = lists(mockApi).length;
+
+    const search = page.getByPlaceholder(
+      "Buscar por paciente ou nº atendimento",
     );
+    // case and accents do not matter
+    await search.fill("MARÍA");
+    await expect(rows).toHaveCount(1);
+    await expect(rows).toContainText("Maria Teste");
+    await expect(page.locator(".list-count")).toHaveText(/1 \/ 2/);
 
-    const lists = () =>
-      mockApi.requests
-        .filter((r) => r.path === "/infection-control/admissions")
-        .map((r) => JSON.parse(r.postData!));
-    expect(lists()[0]).toMatchObject({ status: [1], offset: 0 });
+    await search.fill(`${ADMISSION}`);
+    await expect(rows).toHaveCount(1);
+    await expect(rows).toContainText("Fulano Beltrano");
 
-    await page.getByText("Revisados", { exact: true }).click();
+    await search.fill("Ciclano");
+    await expect(page.getByText("Nenhum paciente encontrado.")).toBeVisible();
+
+    await search.fill("");
+    await expect(rows).toHaveCount(2);
+
+    // the search never goes to the backend
+    expect(lists(mockApi).length).toBe(listsBefore);
+  });
+
+  test("pages the list in the browser, 50 patients per page", async ({
+    page,
+    mockApi,
+  }) => {
+    const admissions = Array.from({ length: 120 }, (_, index) => ({
+      ...admission,
+      admissionNumber: ADMISSION + index,
+    }));
+    mockApi.override(LIST, {
+      json: { status: "success", data: { count: 120, admissions } },
+    });
+
+    await page.goto("/controle-infeccao");
+    const rows = page.locator(".ant-table-tbody tr.ant-table-row");
+    await expect(rows).toHaveCount(50, { timeout: 15000 });
+    await expect(rows.first()).toContainText(`${ADMISSION}`);
+    const listsBefore = lists(mockApi).length;
+
+    // above and below the list
+    const pagers = page.locator(".ant-table-pagination");
+    await expect(pagers).toHaveCount(2);
+
+    await pagers.last().getByTitle("3", { exact: true }).click();
+    await expect(rows).toHaveCount(20);
+    await expect(rows.first()).toContainText(`${ADMISSION + 100}`);
+
+    // a search starts again from the first page
+    await page
+      .getByPlaceholder("Buscar por paciente ou nº atendimento")
+      .fill(`${ADMISSION + 1}`);
+    await expect(rows.first()).toContainText(`${ADMISSION + 1}`);
+
+    // the pages never go to the backend
+    expect(lists(mockApi).length).toBe(listsBefore);
+  });
+
+  test("opens the patient in a new tab, keeping the worklist", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override(LIST, {
+      json: { status: "success", data: { count: 1, admissions: [admission] } },
+    });
+
+    await page.goto("/controle-infeccao");
+
+    const row = page.getByRole("row", { name: new RegExp(`${ADMISSION}`) });
+    for (const link of [
+      row.getByRole("link", { name: "Abrir" }),
+      row.getByRole("link", { name: `${ADMISSION}`, exact: true }),
+    ]) {
+      await expect(link).toHaveAttribute("href", PAGE_URL);
+      await expect(link).toHaveAttribute("target", "_blank");
+    }
+
+    const [patientPage] = await Promise.all([
+      page.context().waitForEvent("page"),
+      row.getByRole("link", { name: "Abrir" }).click(),
+    ]);
+    await expect(patientPage).toHaveURL(new RegExp(`${PAGE_URL}$`));
+    await expect(page).toHaveURL(/\/controle-infeccao$/);
+    await patientPage.close();
+  });
+
+  test("filters by status, department, pending reason and the other filters", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override("GET /segments/departments", {
+      json: {
+        status: "success",
+        data: [
+          { idDepartment: 10, idSegment: 1, label: "UTI Adulto" },
+          { idDepartment: 20, idSegment: 1, label: "Clínica Médica" },
+        ],
+      },
+    });
+
+    await page.goto("/controle-infeccao");
+    await expect(
+      page.getByRole("heading", { name: "Controle de Infecção" }),
+    ).toBeVisible({ timeout: 15000 });
+    await expect.poll(() => lists(mockApi).length).toBeGreaterThan(0);
+
+    // status, department and pending reason, always in sight
+    await pickOption(page, "#status", "Revisado");
+    await pickOption(page, "#departments", "UTI Adulto");
+    await pickOption(page, "#pendingTypes", "Antimicrobiano sem avaliação");
+
+    // overdue review, under "see more"
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
+    await page.locator("#overdueReview").click();
+
+    await page.locator(".gtm-btn-search").click();
+
     await expect
-      .poll(() => lists().at(-1))
-      .toMatchObject({ status: [2], offset: 0 });
+      .poll(() => lists(mockApi).at(-1))
+      .toMatchObject({
+        status: [1, 2],
+        limit: 500,
+        offset: 0,
+        idDepartment: [10],
+        pendingTypes: [2],
+        admissionNumbers: [],
+        overdueReview: true,
+      });
+
+    // no status picked: every status
+    await pickOption(page, "#status", "Pendente");
+    await pickOption(page, "#status", "Revisado");
+    await page.locator(".gtm-btn-search").click();
+    await expect
+      .poll(() => lists(mockApi).at(-1))
+      .toMatchObject({ status: [1, 2, 3], idDepartment: [10] });
+
+    // reset goes back to the pending ones, without the other filters
+    await page.locator(".gtm-btn-reset").click();
+    await expect
+      .poll(() => lists(mockApi).at(-1))
+      .toMatchObject({
+        status: [1],
+        idDepartment: [],
+        pendingTypes: [],
+        overdueReview: false,
+      });
+  });
+
+  test("takes the filters to the patient page, for its next pending patient", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override("GET /segments/departments", {
+      json: {
+        status: "success",
+        data: [{ idDepartment: 10, idSegment: 1, label: "UTI Adulto" }],
+      },
+    });
+    mockApi.override(LIST, {
+      json: { status: "success", data: { count: 1, admissions: [admission] } },
+    });
+
+    await page.goto("/controle-infeccao");
+    const link = page
+      .getByRole("row", { name: new RegExp(`${ADMISSION}`) })
+      .getByRole("link", { name: "Abrir" });
+    await expect(link).toHaveAttribute("href", PAGE_URL, { timeout: 15000 });
+
+    await pickOption(page, "#departments", "UTI Adulto");
+    await pickOption(page, "#pendingTypes", "Antimicrobiano sem avaliação");
+    await page.locator(".gtm-btn-search").click();
+
+    // the status stays behind: the next one is always a pending one
+    await expect(link).toHaveAttribute(
+      "href",
+      `${PAGE_URL}?idDepartment=10&pendingTypes=2`,
+    );
   });
 
   test("keeps the filter picked last when an earlier list answers late", async ({
@@ -1423,8 +1975,11 @@ test.describe("worklist", () => {
       page.getByRole("heading", { name: "Controle de Infecção" }),
     ).toBeVisible({ timeout: 15000 });
 
-    await page.getByText("Revisados", { exact: true }).click();
-    const empty = page.getByText("Nenhum paciente nesta situação.");
+    // pending (held) -> revised
+    await pickOption(page, "#status", "Pendente");
+    await pickOption(page, "#status", "Revisado");
+    await page.locator(".gtm-btn-search").click();
+    const empty = page.getByText("Nenhum paciente encontrado.");
     await expect(empty).toBeVisible();
 
     const latePending = page.waitForResponse(
@@ -1438,6 +1993,160 @@ test.describe("worklist", () => {
     await expect(empty).toBeVisible();
     await expect(
       page.getByRole("row", { name: new RegExp(`${ADMISSION}`) }),
+    ).toHaveCount(0);
+  });
+});
+
+test.describe("next pending", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  const NEXT = "Próximo pendente";
+
+  /** The pending admissions of the worklist, in its order */
+  const mockPendings = (mockApi: MockApi, admissionNumbers: number[]) =>
+    mockApi.override(LIST, {
+      json: {
+        status: "success",
+        data: {
+          count: admissionNumbers.length,
+          admissions: admissionNumbers.map((admissionNumber) => ({
+            admissionNumber,
+            idPatient: null,
+            birthdate: null,
+            gender: null,
+            admissionDate: null,
+            bed: null,
+            department: null,
+            status: 1,
+            statusDate: hoursFromNow(-20),
+            nextReviewDate: null,
+            earliestValidUntil: null,
+            pendings: [],
+          })),
+        },
+      },
+    });
+
+  const lists = (mockApi: MockApi) =>
+    mockApi.requests
+      .filter((r) => r.path === "/infection-control/admissions")
+      .map((r) => JSON.parse(r.postData!));
+
+  test.beforeEach(async ({ page, mockApi }) => {
+    await loginWithPermissions(page, mockApi, [
+      ...BASE_PERMISSIONS,
+      "READ_INFECTION_CONTROL",
+    ]);
+    mockPage(mockApi, followUp());
+  });
+
+  test("goes to the pending patient after this one in the worklist", async ({
+    page,
+    mockApi,
+  }) => {
+    mockPendings(mockApi, [ADMISSION - 1, ADMISSION, ADMISSION + 7]);
+
+    await page.goto(PAGE_URL);
+    await page.getByRole("button", { name: NEXT }).click({ timeout: 15000 });
+
+    await expect(page).toHaveURL(
+      new RegExp(`/controle-infeccao/${ADMISSION + 7}$`),
+    );
+    await expect(page.getByRole("button", { name: NEXT })).toBeVisible({
+      timeout: 15000,
+    });
+    // the pending ones only, without the worklist filters
+    expect(lists(mockApi)[0]).toMatchObject({
+      status: [1],
+      idDepartment: [],
+      pendingTypes: [],
+      admissionNumbers: [],
+      overdueReview: false,
+      limit: 500,
+      offset: 0,
+    });
+
+    // back to the start of the worklist, for the ones skipped before
+    mockPendings(mockApi, [ADMISSION - 1, ADMISSION, ADMISSION + 7]);
+    await page.getByRole("button", { name: NEXT }).click();
+    await expect(page).toHaveURL(
+      new RegExp(`/controle-infeccao/${ADMISSION - 1}$`),
+    );
+  });
+
+  test("goes to the first one when this patient is no longer pending", async ({
+    page,
+    mockApi,
+  }) => {
+    // just reviewed: out of the pending ones
+    mockPendings(mockApi, [ADMISSION + 3, ADMISSION + 5]);
+
+    await page.goto(PAGE_URL);
+    await page.getByRole("button", { name: NEXT }).click({ timeout: 15000 });
+
+    await expect(page).toHaveURL(
+      new RegExp(`/controle-infeccao/${ADMISSION + 3}$`),
+    );
+  });
+
+  test("stays when no other patient is pending", async ({ page, mockApi }) => {
+    mockPendings(mockApi, [ADMISSION]);
+
+    await page.goto(PAGE_URL);
+    await page.getByRole("button", { name: NEXT }).click({ timeout: 15000 });
+
+    await expect(
+      page.getByText("Não há outro paciente pendente."),
+    ).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`${PAGE_URL}$`));
+  });
+
+  test("keeps to the worklist filters the page was opened with", async ({
+    page,
+    mockApi,
+  }) => {
+    mockPendings(mockApi, [ADMISSION, ADMISSION + 2]);
+    const search = "idDepartment=10,20&pendingTypes=2&overdueReview=1";
+
+    await page.goto(`${PAGE_URL}?${search}`);
+    await page.getByRole("button", { name: NEXT }).click({ timeout: 15000 });
+
+    expect(lists(mockApi)[0]).toMatchObject({
+      status: [1],
+      idDepartment: [10, 20],
+      pendingTypes: [2],
+      admissionNumbers: [],
+      overdueReview: true,
+    });
+    // and takes them along to the next one
+    await expect(page).toHaveURL(
+      `/controle-infeccao/${ADMISSION + 2}?${new URLSearchParams(search)}`,
+    );
+  });
+
+  test("is not offered without the follow-up", async ({ page, mockApi }) => {
+    mockPage(mockApi, { data: { enabled: false, admissionNumber: ADMISSION } });
+
+    await page.goto(PAGE_URL);
+
+    await expect(page.getByTestId("course-row")).toHaveCount(2, {
+      timeout: 15000,
+    });
+    await expect(page.getByRole("button", { name: NEXT })).toHaveCount(0);
+  });
+});
+
+test.describe("next pending without READ_INFECTION_CONTROL", () => {
+  test("is not offered", async ({ page, mockApi }) => {
+    mockPage(mockApi, followUp());
+
+    await page.goto(PAGE_URL);
+
+    await expect(page.getByTestId("follow-up")).toBeVisible({
+      timeout: 15000,
+    });
+    await expect(
+      page.getByRole("button", { name: "Próximo pendente" }),
     ).toHaveCount(0);
   });
 });

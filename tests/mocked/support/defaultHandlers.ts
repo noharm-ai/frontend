@@ -63,6 +63,7 @@ export function defaultHandlers(): Record<string, Handler> {
 
     // base data
     "GET /segments": json("segments/list.json"),
+    "GET /segments/departments": emptyList,
     "GET /memory": emptyList,
     "GET /memory/:type": emptyList,
     "GET /support/list-pending": emptyList,
@@ -91,13 +92,37 @@ export function defaultHandlers(): Record<string, Handler> {
     "GET /prescriptions/:id/update": { json: { status: "success", data: {} } },
     "GET /prescriptions/:id/cultures": emptyList,
 
-    // antimicrobial timeline (/controle-infeccao/:admissionNumber)
+    // antimicrobial timeline (/controle-infeccao/:admissionNumber), with the
+    // follow-up in it: off unless a test turns it on
     "GET /infection-control/antimicrobial-timeline/:admissionNumber": json(
       "infectionControl/antimicrobialTimeline.json",
     ),
-    // follow-up of the admission: off unless a test turns it on
+    // the follow-up alone, only loaded to retry it
     "GET /infection-control/admission/:admissionNumber": {
       json: { status: "success", data: { enabled: false, admissionNumber: 0 } },
+    },
+    // the recent cultures, loaded apart from the timeline: none by default
+    "GET /infection-control/admission/:admissionNumber/cultures": {
+      json: {
+        status: "success",
+        data: {
+          admissionNumber: 0,
+          releasedSince: "2026-01-01T00:00:00",
+          cultures: [],
+        },
+      },
+    },
+    // every collection of one culture's exam and material, opened from its row
+    "GET /infection-control/admission/:admissionNumber/cultures/:idCulture": {
+      json: {
+        status: "success",
+        data: {
+          admissionNumber: 0,
+          examName: null,
+          material: null,
+          cultures: [],
+        },
+      },
     },
     "POST /infection-control/admissions": {
       json: { status: "success", data: { count: 0, admissions: [] } },

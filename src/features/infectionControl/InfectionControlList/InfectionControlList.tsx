@@ -1,31 +1,49 @@
-import { useEffect } from "react";
+import { useDeferredValue, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Empty, Segmented, Table, Tag } from "antd";
+import { Alert, Button, Empty, Input, Table, Tag, Tooltip } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { ReloadOutlined } from "@ant-design/icons";
+import { ReloadOutlined, SearchOutlined } from "@ant-design/icons";
 import dayjs from "dayjs";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import PatientNameCache from "components/PatientName/PatientNameCache";
 import { InfectionControlStatusEnum } from "models/InfectionControlEnum";
 import { formatDate, formatDateTime } from "utils/date";
+import { peekPatient, subscribe } from "utils/patientCache";
+import { PageCard } from "styles/Utils.style";
 
 import {
   fetchFollowedAdmissions,
+  filtersToSearch,
   IFollowedAdmission,
+  LIST_LIMIT,
   PAGE_SIZE,
-  setFilterStatus,
-  setPage,
 } from "../InfectionControlListSlice";
 import { describePending } from "../followUp";
 import { Header, StateBox } from "../InfectionControl/InfectionControl.style";
-import { ListBox } from "./InfectionControlList.style";
+import { WorklistFilter } from "./WorklistFilter/WorklistFilter";
+import { ListBox, ListInfo } from "./InfectionControlList.style";
 
-const FILTERS = [
-  InfectionControlStatusEnum.PENDING,
-  InfectionControlStatusEnum.REVISED,
-  InfectionControlStatusEnum.CLOSED,
-];
+/** Lower case without accents, to compare names as typed */
+const normalize = (text: string) =>
+  text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+
+/**
+ * Renders again as patient names arrive while `active`: the names come from
+ * the hospital name service, after the list
+ */
+function usePatientNameUpdates(active: boolean) {
+  const [, setVersion] = useState(0);
+
+  useEffect(() => {
+    if (!active) return;
+    return subscribe(() => setVersion((version) => version + 1));
+  }, [active]);
+}
 
 /**
  * /controle-infeccao: the patients the infection control follows, the ones
@@ -34,17 +52,49 @@ const FILTERS = [
 export function InfectionControlList() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { status, list, count, filterStatus, page } = useAppSelector(
+  const { status, list, count, filters } = useAppSelector(
     (state) => state.infectionControlList,
   );
+  const [searchText, setSearchText] = useState("");
+  const [page, setPage] = useState(1);
+  const search = normalize(useDeferredValue(searchText));
 
   const load = () => {
-    dispatch(fetchFollowedAdmissions({ status: filterStatus, page }));
+    dispatch(fetchFollowedAdmissions(filters));
   };
 
   useEffect(() => {
     load();
-  }, [filterStatus, page]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [filters]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // back to the first page when the list or the search changes
+  const [pagedFor, setPagedFor] = useState({ list, search });
+  if (pagedFor.list !== list || pagedFor.search !== search) {
+    setPagedFor({ list, search });
+    setPage(1);
+  }
+
+  // the patient name is only known here (the backend does not have it), so
+  // the search runs on the loaded list
+  usePatientNameUpdates(!!search);
+  const shownList = search
+    ? list.filter(
+        (admission) =>
+          `${admission.admissionNumber}`.includes(search) ||
+          (!!admission.idPatient &&
+            normalize(peekPatient(admission.idPatient)?.name ?? "").includes(
+              search,
+            )),
+      )
+    : list;
+  // the backend counts every match, the list holds up to LIST_LIMIT of them
+  const isLimited = status === "succeeded" && count > list.length;
+
+  // the patient page opens in a new tab, so the worklist keeps its order,
+  // filters and page; the filters go along for its next pending patient
+  const filtersSearch = filtersToSearch(filters);
+  const patientUrl = (admission: IFollowedAdmission) =>
+    `/controle-infeccao/${admission.admissionNumber}${filtersSearch ? `?${filtersSearch}` : ""}`;
 
   const now = dayjs();
   const isPast = (date: string | null) => !!date && dayjs(date).isBefore(now);
@@ -62,8 +112,12 @@ export function InfectionControlList() {
     },
     {
       title: t("infectionControl.worklist.admission"),
-      dataIndex: "admissionNumber",
       key: "admissionNumber",
+      render: (_, admission) => (
+        <a href={patientUrl(admission)} target="_blank" rel="noreferrer">
+          {admission.admissionNumber}
+        </a>
+      ),
     },
     {
       title: t("infectionControl.worklist.department"),
@@ -140,9 +194,15 @@ export function InfectionControlList() {
       key: "actions",
       align: "right",
       render: (_, admission) => (
-        <Button href={`/controle-infeccao/${admission.admissionNumber}`}>
-          {t("infectionControl.worklist.open")}
-        </Button>
+        <Tooltip title={t("infectionControl.worklist.openNewTab")}>
+          <Button
+            href={patientUrl(admission)}
+            target="_blank"
+            rel="noreferrer"
+            icon={<SearchOutlined />}
+            aria-label={t("infectionControl.worklist.open")}
+          />
+        </Tooltip>
       ),
     },
   ];
@@ -163,46 +223,72 @@ export function InfectionControlList() {
         </div>
       </Header>
 
-      <ListBox>
-        <div className="list-filters">
-          <Segmented
-            value={filterStatus}
-            onChange={(value) => dispatch(setFilterStatus(value as number))}
-            options={FILTERS.map((value) => ({
-              value,
-              label: t(`infectionControl.worklist.filter.${value}`),
-            }))}
-          />
-        </div>
+      <WorklistFilter />
 
-        {status === "failed" ? (
-          <StateBox>
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={t("infectionControl.worklist.loadError")}
-            />
-            <Button icon={<ReloadOutlined />} onClick={load}>
-              {t("infectionControl.retry")}
-            </Button>
-          </StateBox>
-        ) : (
-          <Table
-            data-kb="infectionControl.worklist.list"
-            rowKey="admissionNumber"
-            columns={columns}
-            dataSource={list}
-            loading={status === "loading" || status === "idle"}
-            locale={{ emptyText: t("infectionControl.worklist.empty") }}
-            pagination={{
-              current: page,
-              pageSize: PAGE_SIZE,
-              total: count,
-              showSizeChanger: false,
-              hideOnSinglePage: true,
-              onChange: (value) => dispatch(setPage(value)),
-            }}
+      <ListBox>
+        <ListInfo data-kb="infectionControl.worklist.search">
+          <Input
+            placeholder={t("infectionControl.worklist.searchPlaceholder")}
+            style={{ width: 300 }}
+            allowClear
+            value={searchText}
+            onChange={(event) => setSearchText(event.target.value)}
+            className={search ? "active" : ""}
+          />
+          <span className="list-count">
+            {t("infectionControl.worklist.patients")}
+            <Tag>
+              {search ? `${shownList.length} / ${list.length}` : list.length}
+            </Tag>
+          </span>
+        </ListInfo>
+
+        {isLimited && (
+          <Alert
+            className="limit-alert"
+            type="warning"
+            showIcon
+            message={t("infectionControl.worklist.limited", {
+              limit: LIST_LIMIT,
+            })}
+            description={t("infectionControl.worklist.limitedHint", {
+              count,
+            })}
           />
         )}
+
+        <PageCard>
+          {status === "failed" ? (
+            <StateBox>
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={t("infectionControl.worklist.loadError")}
+              />
+              <Button icon={<ReloadOutlined />} onClick={load}>
+                {t("infectionControl.retry")}
+              </Button>
+            </StateBox>
+          ) : (
+            <Table
+              data-kb="infectionControl.worklist.list"
+              rowKey="admissionNumber"
+              columns={columns}
+              dataSource={shownList}
+              loading={status === "loading" || status === "idle"}
+              locale={{ emptyText: t("infectionControl.worklist.empty") }}
+              // paged in the browser, above and below the list as in the
+              // prescription prioritization
+              pagination={{
+                current: page,
+                pageSize: PAGE_SIZE,
+                position: ["topRight", "bottomRight"],
+                showSizeChanger: false,
+                hideOnSinglePage: true,
+                onChange: setPage,
+              }}
+            />
+          )}
+        </PageCard>
       </ListBox>
     </>
   );

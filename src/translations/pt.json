@@ -1564,11 +1564,27 @@
     }
   },
   "infectionControl": {
+    "alerts": {
+      "title": "Alertas da triagem",
+      "show": "Mostrar",
+      "hide": "Ocultar",
+      "handling": "Ver manejo",
+      "handlingTitle": "Manejo",
+      "close": "Fechar",
+      "level": {
+        "high": "Alto",
+        "medium": "Médio",
+        "low": "Baixo"
+      }
+    },
     "title": "Controle de Infecção",
     "legend": "Atendimento {{admissionNumber}}",
     "notFound": "Nenhum registro encontrado para o atendimento {{admissionNumber}}.",
     "loadError": "Não foi possível carregar os antimicrobianos do atendimento {{admissionNumber}}.",
     "retry": "Tentar novamente",
+    "clinicalNotes": "Evoluções",
+    "nextPending": "Próximo pendente",
+    "nextPendingEmpty": "Não há outro paciente pendente.",
     "patient": {
       "admission": "Atendimento",
       "age": "Idade",
@@ -1585,7 +1601,39 @@
       "lengthOfStay_other": "{{count}} dias",
       "department": "Setor",
       "bed": "Leito",
-      "dischargeDate": "Alta"
+      "dischargeDate": "Alta",
+      "title": "Paciente",
+      "fullData": "Dados completos",
+      "bodySurface": "Sup. corporal"
+    },
+    "exams": {
+      "showAll": "Ver todos",
+      "empty": "Nenhum exame encontrado",
+      "up": "alta",
+      "down": "queda",
+      "stable": "estável",
+      "noResult": "sem resultado"
+    },
+    "cultures": {
+      "title": "Culturas",
+      "legend": "Última coleta de cada exame e material, liberada nos últimos 60 dias",
+      "summary": "Resumo",
+      "byDrug": "Por medicamento",
+      "byDrugLegend": "Antibiograma de cada medicamento, com os em uso nesta prescrição em destaque",
+      "empty": "Nenhuma cultura liberada nos últimos 60 dias.",
+      "loadError": "Não foi possível carregar as culturas.",
+      "exam": "Exame",
+      "collectionDate": "Coleta",
+      "releaseDate": "Liberação",
+      "gram": "Gram",
+      "microorganism": "Microrganismo",
+      "result": "Resultado",
+      "openHistory": "Ver todas as coletas deste exame e material",
+      "history": {
+        "legend": "Todas as coletas deste exame e material, da mais recente para a mais antiga",
+        "empty": "Nenhuma coleta encontrada.",
+        "loadError": "Não foi possível carregar as coletas desta cultura."
+      }
     },
     "timeline": {
       "title": "Linha do tempo de antimicrobianos",
@@ -1611,9 +1659,12 @@
       "legendConforming": "Avaliação conforme (vigência)",
       "legendNonConforming": "Avaliação não conforme (vigência)",
       "legendInvalidated": "Avaliação que não vale mais (pendência aberta)",
-      "showSuperseded_one": "Mostrar {{count}} avaliação substituída",
-      "showSuperseded_other": "Mostrar {{count}} avaliações substituídas",
-      "hideSuperseded": "Ocultar avaliações substituídas",
+      "legend": "Legenda",
+      "legendGroupPrescription": "Prescrição",
+      "legendGroupStatus": "Status",
+      "legendGroupMilestones": "Marcos",
+      "legendGroupEvaluation": "Avaliação",
+      "superseded": "Avaliações substituídas ({{count}})",
       "evaluation": {
         "draft": "Nova avaliação (não salva)",
         "label": "{{verdict}} em {{date}}",
@@ -1653,6 +1704,7 @@
       "frequency": "Frequência",
       "route": "Via",
       "current": "Atual",
+      "notes": "Observação",
       "gapsTitle": "Intervalos sem prescrição",
       "openPrescription": "Abrir última prescrição",
       "close": "Fechar"
@@ -1679,7 +1731,6 @@
       "noPendings": "Nenhuma pendência",
       "pendingsCount_one": "{{count}} pendência",
       "pendingsCount_other": "{{count}} pendências",
-      "showPendings": "Ver pendências",
       "sinceAt": "desde {{date}} às {{time}}",
       "showHistory": "Ver histórico ({{count}})",
       "pending": {
@@ -1691,7 +1742,7 @@
         "6": "Posologia de {{drug}} alterada"
       },
       "unknownDrug": "Antimicrobiano",
-      "register": "Registrar revisão",
+      "register": "Revisar",
       "loadError": "Não foi possível carregar o acompanhamento do controle de infecção."
     },
     "evaluation": {
@@ -1708,52 +1759,109 @@
     },
     "review": {
       "title": "Registrar revisão",
-      "legend": "Avalie os antimicrobianos em uso e, se quiser, agende a próxima revisão do paciente.",
-      "antimicrobials": "Antimicrobianos em uso",
+      "legend": "Avalie cada antimicrobiano em uso. Agendar a próxima revisão do paciente é opcional.",
+      "antimicrobials": "Antimicrobianos · {{count}}",
       "noOngoing": "Nenhum antimicrobiano em uso.",
-      "conformity": "Conformidade",
-      "validUntil": "Conformidade válida até",
+      "validUntil": "Válida até",
       "evaluationNotes": "Observação",
-      "notes": "Observações da revisão",
-      "nextReviewDate": "Próxima revisão do paciente",
-      "nextReviewDateHelp": "Na data agendada, o paciente volta para pendente. Deixe em branco para não agendar.",
-      "noSchedule": "Sem agendamento",
+      "notes": "Observação sobre o paciente",
+      "nextReviewDate": "Agendar próxima revisão",
+      "nextReviewDateHelp": "Na data agendada, o paciente volta para pendente.",
       "optional": "opcional",
       "futureDate": "A data deve ser futura",
       "success": "Revisão registrada com sucesso!",
-      "next": "Próximo",
-      "evaluateNow": "Avaliar este antimicrobiano nesta revisão",
-      "triggers": "Voltar para pendente",
       "triggerExpired": "Quando a avaliação vencer",
       "triggerPosology": "Quando a posologia mudar (dose, frequência ou via)",
       "currentEvaluation": "Avaliação atual",
       "evaluatedBy": "em {{date}} por {{user}}",
-      "keepEvaluation": "Mantém a avaliação atual",
-      "notEvaluated": "Não avaliado",
       "toEvaluate": "A avaliar",
       "patientStep": "Paciente",
-      "patientStepLegend": "Agendamento e observações (opcionais)",
-      "start": "Inicia em",
+      "patientStepLegend": "Opcional. Defina quando o paciente volta para a lista de revisão.",
+      "start": "Início",
       "startNow": "Agora",
-      "startCourse": "Início do tratamento ({{date}})",
+      "startCourse": "Início do tratamento",
       "startDate": "Outra data",
-      "endTreatment": "Fim do tratamento ({{date}})",
-      "endDays_one": "+{{count}} dia ({{date}})",
-      "endDays_other": "+{{count}} dias ({{date}})",
+      "endTreatment": "Fim do tratamento",
+      "endDays_one": "+{{count}} dia",
+      "endDays_other": "+{{count}} dias",
       "endDate": "Outra data",
-      "endBeforeStart": "A validade deve terminar depois do início",
+      "endBeforeStart": "Data final antes do início",
       "endPast": "Esta data já passou: a conformidade é registrada já vencida.",
       "endPastPending": "Esta data já passou: a conformidade é registrada já vencida e, como volta para pendente quando vencer, o paciente continua pendente.",
       "endHistory": "Termina antes da avaliação atual (desde {{date}}): fica só no histórico e a atual continua valendo.",
       "historyOnly": "só no histórico",
-      "since": "desde {{date}}",
       "invalidated": "Esta avaliação não vale mais e mantém o paciente pendente:",
       "invalidatedExpired": "A validade terminou em {{date}}",
       "invalidatedPosology": "A posologia mudou",
       "posologyEvaluated": "Avaliada: {{posology}}",
       "posologyCurrent": "Prescrita agora: {{posology}}",
       "posologyCurrentSince": "Prescrita agora: {{posology}}, desde {{date}}",
-      "keepInvalidEvaluation": "Avaliação atual não vale mais · continua pendente"
+      "steps": "Etapas da revisão",
+      "patientStepTitle": "Próxima revisão e resumo",
+      "optionalTag": "Opcional",
+      "decision": "Avaliação",
+      "conformingDescription": "Uso adequado no período definido",
+      "nonConformingDescription": "Exige justificativa",
+      "skipLabel": "Não avaliar agora",
+      "skip": {
+        "none": {
+          "description": "Permanece como “A avaliar”",
+          "notice": "Este antimicrobiano não entra nesta revisão e continua como “A avaliar”.",
+          "tag": "Não avaliado"
+        },
+        "keep": {
+          "description": "Mantém a avaliação atual",
+          "notice": "Este antimicrobiano não entra nesta revisão e mantém a avaliação atual.",
+          "tag": "Mantém atual"
+        },
+        "keepInvalid": {
+          "description": "Continua pendente",
+          "notice": "Este antimicrobiano não entra nesta revisão e continua pendente: a avaliação atual não vale mais.",
+          "tag": "Continua pendente"
+        }
+      },
+      "notFilled": "Avaliação não preenchida",
+      "validityTitle": "Vigência da avaliação",
+      "period_one": "{{from}} → {{until}} · {{count}} dia",
+      "period_other": "{{from}} → {{until}} · {{count}} dias",
+      "periodEmpty": "Selecione as datas",
+      "validity_one": "Vigência {{from}} → {{until}} · {{count}} dia",
+      "validity_other": "Vigência {{from}} → {{until}} · {{count}} dias",
+      "triggersTitle": "Gatilhos de pendência",
+      "triggersActive_one": "{{count}} ativo",
+      "triggersActive_other": "{{count}} ativos",
+      "triggersNone": "Nenhum ativo",
+      "reopenChange": "Alterar",
+      "reopenHide": "Ocultar",
+      "doseWeightShow": "Dose/kg",
+      "doseWeightHide": "Ocultar dose/kg",
+      "pendings": "Pendências",
+      "pendingsCount_one": "{{count}} pendência",
+      "pendingsCount_other": "{{count}} pendências",
+      "alertsChip": "Alertas",
+      "evaluationNotesPlaceholder": "Anotação sobre este antimicrobiano",
+      "justification": "Justificativa",
+      "justificationPlaceholder": "Descreva o motivo da não conformidade e a conduta sugerida",
+      "justificationRequired": "Informe a justificativa",
+      "required": "obrigatória",
+      "nextReview": {
+        "none": "Não agendar",
+        "treatmentEnd": "Fim do tratamento",
+        "date": "Outra data"
+      },
+      "nextReviewDays_one": "Amanhã",
+      "nextReviewDays_other": "Em {{count}} dias",
+      "notesPlaceholder": "Ex.: aguardar resultado de cultura antes de descalonar",
+      "summary": "Resumo da revisão",
+      "editDrug": "Editar {{drug}}",
+      "stepOf": "Etapa {{step}} de {{total}}",
+      "hintDecision": "Selecione uma avaliação para continuar",
+      "hintJustification": "Informe a justificativa",
+      "hintValidity": "Revise a vigência",
+      "hintAllDrugs": "Conclua a avaliação de todos os antimicrobianos",
+      "nextDrug": "Próximo antimicrobiano",
+      "nextPatient": "Próximo: paciente",
+      "save": "Registrar revisão"
     },
     "history": {
       "title": "Revisões",
@@ -1764,11 +1872,6 @@
     "worklist": {
       "title": "Controle de Infecção",
       "legend": "Pacientes em uso de antimicrobianos",
-      "filter": {
-        "1": "Pendentes",
-        "2": "Revisados",
-        "3": "Encerrados"
-      },
       "patient": "Paciente",
       "admission": "Atendimento",
       "bed": "Leito",
@@ -1778,8 +1881,29 @@
       "nextReview": "Próxima revisão",
       "validity": "Avaliação vence em",
       "open": "Abrir",
-      "empty": "Nenhum paciente nesta situação.",
-      "loadError": "Não foi possível carregar a lista de pacientes."
+      "openNewTab": "Abrir em nova aba",
+      "empty": "Nenhum paciente encontrado.",
+      "searchPlaceholder": "Buscar por paciente ou nº atendimento",
+      "patients": "Pacientes",
+      "limited": "A lista foi limitada em {{limit}} registros.",
+      "limitedHint": "{{count}} pacientes atendem aos filtros. Utilize mais filtros para direcionar a sua análise.",
+      "loadError": "Não foi possível carregar a lista de pacientes.",
+      "filters": {
+        "allStatuses": "Todas as situações",
+        "pendingTypes": "Motivo da pendência",
+        "pendingTypesPlaceholder": "Selecione os motivos",
+        "admissionNumbers": "Atendimentos",
+        "admissionNumbersPlaceholder": "Digite o número do atendimento e pressione enter",
+        "overdueReview": "Somente com revisão atrasada"
+      },
+      "pendingType": {
+        "1": "Paciente ainda não revisado",
+        "2": "Antimicrobiano sem avaliação",
+        "3": "Avaliação vencida",
+        "4": "Data de revisão agendada chegou",
+        "5": "Alerta disparado",
+        "6": "Posologia alterada"
+      }
     }
   }
 }

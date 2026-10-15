@@ -1,9 +1,11 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useParams } from "react-router-dom";
-import { Button, Col, Empty } from "antd";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { Affix, Button, Empty } from "antd";
 import {
+  ArrowRightOutlined,
   FileDoneOutlined,
+  FileTextOutlined,
   PlayCircleOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
@@ -11,20 +13,31 @@ import dayjs from "dayjs";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import LoadBox, { LoadContainer } from "components/LoadBox";
+import PatientNameCache from "components/PatientName/PatientNameCache";
 import notification from "components/notification";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
 import { getErrorMessage } from "utils/errorHandler";
+import ExamsModal from "features/exams/ExamModal/ExamModal";
+import { setExamsModalAdmissionNumber } from "features/exams/ExamModal/ExamModalSlice";
 
 import {
   fetchAntimicrobialTimeline,
   fetchFollowUp,
+  fetchRecentCultures,
   followAdmission,
   reset,
   setReviewOpen,
 } from "../InfectionControlSlice";
+import {
+  fetchNextPending,
+  filtersFromSearch,
+} from "../InfectionControlListSlice";
 import { CourseGantt } from "../CourseGantt/CourseGantt";
 import { FollowUpStatus } from "../FollowUpStatus/FollowUpStatus";
+import { InfectionControlClinicalNotes } from "../InfectionControlClinicalNotes/InfectionControlClinicalNotes";
+import { InfectionControlCultures } from "../InfectionControlCultures/InfectionControlCultures";
+import { InfectionControlExams } from "../InfectionControlExams/InfectionControlExams";
 import { InfectionControlPatient } from "../InfectionControlPatient/InfectionControlPatient";
 import { ReviewModal } from "../ReviewModal/ReviewModal";
 import {
@@ -34,11 +47,12 @@ import {
 } from "../followUp";
 import { sortCourses } from "../timeline";
 import {
+  CulturesAndExams,
   FollowUpError,
   Header,
   Section,
   StateBox,
-  TopRow,
+  SummaryCard,
 } from "./InfectionControl.style";
 
 /**
@@ -50,7 +64,10 @@ import {
 export function InfectionControl() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { admissionNumber = "" } = useParams();
+  // the worklist filters the page was opened with (filtersToSearch)
+  const [searchParams] = useSearchParams();
   const { status, data, errorCode } = useAppSelector(
     (state) => state.infectionControl,
   );
@@ -61,17 +78,23 @@ export function InfectionControl() {
     (state) => state.infectionControl.follow.status,
   );
 
+  const [clinicalNotesOpen, setClinicalNotesOpen] = useState(false);
+  const [affixed, setAffixed] = useState(false);
+  const [nextLoading, setNextLoading] = useState(false);
+
   const isValid = /^\d+$/.test(admissionNumber);
 
-  const loadFollowUp = () => {
-    dispatch(fetchFollowUp({ admissionNumber }));
-  };
-
+  // the follow-up comes with the timeline; it is loaded alone only to retry
+  // it. The cultures are loaded apart, alongside, and retried by their section
   const load = () => {
     if (isValid) {
       dispatch(fetchAntimicrobialTimeline({ admissionNumber }));
-      loadFollowUp();
+      dispatch(fetchRecentCultures({ admissionNumber }));
     }
+  };
+
+  const loadFollowUp = () => {
+    dispatch(fetchFollowUp({ admissionNumber }));
   };
 
   useEffect(() => {
@@ -79,6 +102,8 @@ export function InfectionControl() {
 
     return () => {
       dispatch(reset());
+      setClinicalNotesOpen(false);
+      dispatch(setExamsModalAdmissionNumber(null));
     };
   }, [admissionNumber]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -112,6 +137,38 @@ export function InfectionControl() {
     !followUp.followed &&
     (followUp.courses ?? []).some((course) => course.ongoing);
 
+  // an admission with no prescription has no segment to read the exam
+  // references from
+  const hasExams = !!data?.patient.idPrescription;
+
+  // the next one of the worklist the page came from, by its filters
+  const showNextPending =
+    followUpEnabled &&
+    PermissionService().has(Permission.READ_INFECTION_CONTROL);
+
+  const goToNextPending = () => {
+    setNextLoading(true);
+    dispatch(
+      fetchNextPending({
+        admissionNumber: Number(admissionNumber),
+        filters: filtersFromSearch(searchParams),
+      }),
+    ).then((response: any) => {
+      setNextLoading(false);
+      if (response.error) {
+        notification.error({ message: getErrorMessage(response, t) });
+      } else if (response.payload === null) {
+        notification.info({ message: t("infectionControl.nextPendingEmpty") });
+      } else {
+        navigate({
+          pathname: `/controle-infeccao/${response.payload}`,
+          search: searchParams.toString(),
+        });
+        window.scrollTo({ top: 0 });
+      }
+    });
+  };
+
   const follow = () => {
     dispatch(followAdmission({ admissionNumber })).then((response: any) => {
       if (response.error) {
@@ -125,39 +182,64 @@ export function InfectionControl() {
   };
 
   const header = (
-    <Header>
-      <div>
-        <h1 className="page-header-title" data-kb="infectionControl.title">
-          {t("infectionControl.title")}
-        </h1>
-        <div className="page-header-legend">
-          {t("infectionControl.legend", { admissionNumber })}
+    <Affix onChange={(value) => setAffixed(!!value)}>
+      <Header className={affixed ? "affixed" : ""}>
+        <div>
+          <h1 className="page-header-title" data-kb="infectionControl.title">
+            {t("infectionControl.title")}
+          </h1>
+          <div className="page-header-legend">
+            {t("infectionControl.legend", { admissionNumber })}
+            {affixed && data && (
+              <>
+                {" - "}
+                <PatientNameCache idPatient={data.patient.idPatient} />
+              </>
+            )}
+          </div>
         </div>
-      </div>
-      {showReview && (
-        <div className="page-header-actions">
-          <Button
-            type="primary"
-            icon={<FileDoneOutlined />}
-            onClick={() => dispatch(setReviewOpen(true))}
-          >
-            {t("infectionControl.followUp.register")}
-          </Button>
-        </div>
-      )}
-      {showFollow && (
-        <div className="page-header-actions">
-          <Button
-            type="primary"
-            icon={<PlayCircleOutlined />}
-            loading={followStatus === "loading"}
-            onClick={follow}
-          >
-            {t("infectionControl.followUp.follow")}
-          </Button>
-        </div>
-      )}
-    </Header>
+        {status === "succeeded" && data && (
+          <div className="page-header-actions">
+            {showReview && (
+              <Button
+                type="primary"
+                icon={<FileDoneOutlined />}
+                onClick={() => dispatch(setReviewOpen(true))}
+              >
+                {t("infectionControl.followUp.register")}
+              </Button>
+            )}
+            <Button
+              icon={<FileTextOutlined />}
+              onClick={() => setClinicalNotesOpen(true)}
+            >
+              {t("infectionControl.clinicalNotes")}
+            </Button>
+            {showFollow && (
+              <Button
+                type="primary"
+                icon={<PlayCircleOutlined />}
+                loading={followStatus === "loading"}
+                onClick={follow}
+              >
+                {t("infectionControl.followUp.follow")}
+              </Button>
+            )}
+            {showNextPending && (
+              <Button
+                data-kb="infectionControl.nextPending"
+                icon={<ArrowRightOutlined />}
+                iconPlacement="end"
+                loading={nextLoading}
+                onClick={goToNextPending}
+              >
+                {t("infectionControl.nextPending")}
+              </Button>
+            )}
+          </div>
+        )}
+      </Header>
+    </Affix>
   );
 
   const notFound =
@@ -202,54 +284,46 @@ export function InfectionControl() {
     <>
       {header}
 
-      <TopRow gutter={[24, 24]}>
-        <Col xs={24} lg={8}>
-          <InfectionControlPatient
-            patient={data.patient}
-            reference={
-              data.patient.dischargeDate
-                ? dayjs(data.patient.dischargeDate)
-                : now
-            }
-          />
-        </Col>
+      <SummaryCard>
+        <InfectionControlPatient
+          patient={data.patient}
+          reference={
+            data.patient.dischargeDate ? dayjs(data.patient.dischargeDate) : now
+          }
+        />
         {followUpEnabled && followUp && (
-          <Col xs={24} lg={8}>
-            <FollowUpStatus
-              followUp={followUp}
-              drugNames={drugNames}
-              now={now}
-            />
-          </Col>
+          <FollowUpStatus followUp={followUp} drugNames={drugNames} now={now} />
         )}
         {followUpStatus === "failed" && (
           // without it the page would look like the schema has no follow-up
-          <Col xs={24} lg={8}>
-            <FollowUpError data-testid="follow-up-error">
-              <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={t("infectionControl.followUp.loadError")}
-              />
-              <Button icon={<ReloadOutlined />} onClick={loadFollowUp}>
-                {t("infectionControl.retry")}
-              </Button>
-            </FollowUpError>
-          </Col>
+          <FollowUpError data-testid="follow-up-error">
+            <span>{t("infectionControl.followUp.loadError")}</span>
+            <Button
+              size="small"
+              icon={<ReloadOutlined />}
+              onClick={loadFollowUp}
+            >
+              {t("infectionControl.retry")}
+            </Button>
+          </FollowUpError>
         )}
-      </TopRow>
+      </SummaryCard>
 
       <Section>
-        <h2 className="section-title">
-          {t("infectionControl.timeline.title")}
-        </h2>
         {courses.length === 0 ? (
-          <StateBox>
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={t("infectionControl.timeline.empty")}
-            />
-          </StateBox>
+          <>
+            <h2 className="section-title">
+              {t("infectionControl.timeline.title")}
+            </h2>
+            <StateBox>
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={t("infectionControl.timeline.empty")}
+              />
+            </StateBox>
+          </>
         ) : (
+          // the timeline carries its own title, next to its actions
           <CourseGantt
             courses={courses}
             now={now}
@@ -259,6 +333,35 @@ export function InfectionControl() {
           />
         )}
       </Section>
+
+      <CulturesAndExams className={hasExams ? "with-exams" : ""}>
+        <div className="panes">
+          <div data-kb="infectionControl.cultures">
+            <InfectionControlCultures
+              admissionNumber={admissionNumber}
+              patient={data.patient}
+              idPrescription={data.patient.idPrescription}
+              stackDates={hasExams}
+            />
+          </div>
+          {hasExams && (
+            <div data-kb="infectionControl.exams">
+              <InfectionControlExams
+                patient={data.patient}
+                exams={data.exams}
+                alertExams={data.alertExams}
+              />
+            </div>
+          )}
+        </div>
+      </CulturesAndExams>
+
+      <InfectionControlClinicalNotes
+        admissionNumber={data.patient.admissionNumber}
+        open={clinicalNotesOpen}
+        onClose={() => setClinicalNotesOpen(false)}
+      />
+      <ExamsModal idSegment={data.patient.idSegment ?? undefined} />
 
       {followUp && canReview && (
         <ReviewModal

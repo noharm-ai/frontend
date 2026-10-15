@@ -24,6 +24,9 @@ export default function AdvancedFilter({
   mainFilters,
   secondaryFilters,
   initialValues,
+  // what the reset button goes back to, when not the initial values (a page
+  // that keeps its filters starts from the ones in use)
+  resetValues = initialValues,
   onSearch,
   onChangeValues,
   loading,
@@ -70,13 +73,13 @@ export default function AdvancedFilter({
   };
 
   const reset = () => {
-    setValues(initialValues);
+    setValues(resetValues);
     if (onChangeValues) {
-      onChangeValues(initialValues);
+      onChangeValues(resetValues);
     }
 
     setOpen(false);
-    onSearch(initialValues);
+    onSearch(resetValues);
   };
 
   const loadFilter = (filter) => {

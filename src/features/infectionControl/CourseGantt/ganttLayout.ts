@@ -46,8 +46,9 @@ export const span = (
 export const evaluationLaneStyle = (lane: number) =>
   ({ "--lane": lane }) as React.CSSProperties;
 
-// records closer than this do not share a line, so their markers never
-// collide and one replacing another (ending where it starts) stacks
+// records starting closer than this do not share a line, so their markers
+// (on each start) never collide; one following another shares its line, and
+// one replacing another at the same instant stacks
 const LANE_GAP_MS = 12 * 60 * 60 * 1000;
 
 /**

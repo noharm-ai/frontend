@@ -55,7 +55,10 @@ const COURSES = [
     plannedDays: 7,
     days: 4,
     prescriptionCount: 2,
-    regimens: [regimen(-72, -24, 1), regimen(-24, 96, 2)],
+    regimens: [
+      regimen(-72, -24, 1),
+      { ...regimen(-24, 96, 2), notes: "Infundir em 3 horas" },
+    ],
   }),
   // daily prescriber, already past the planned 7 days, with a missing day
   course({
@@ -111,8 +114,12 @@ const timeline = (courses: unknown[]) => ({
       record: null,
       department: "UTI Adulto",
       segment: "Segmento Adulto",
+      idSegment: 3,
     },
     courses,
+    exams: [],
+    alertExams: 0,
+    followUp: { enabled: false, admissionNumber: ADMISSION },
   },
 });
 
@@ -131,14 +138,37 @@ test("shows the patient and the admission", async ({ page, mockApi }) => {
     page.getByRole("heading", { name: "Controle de Infecção" }),
   ).toBeVisible({ timeout: 15000 });
   await expect(page.getByText("Ciclano de Tal")).toBeVisible();
-  // patient data first, the admission one tab away
+  // the patient's measures on the card, the admission data in a modal
   await expect(page.getByText("82 kg")).toBeVisible();
-  await page.getByRole("tab", { name: "Atendimento" }).click();
-  await expect(page.getByText("UTI Adulto")).toBeVisible();
+  await expect(page.getByText("UTI Adulto")).toHaveCount(0);
+  await page.getByRole("button", { name: "Dados completos" }).click();
+  await expect(page.getByRole("dialog")).toContainText("UTI Adulto");
+  await page.keyboard.press("Escape");
   // the header no longer links to the prescription
   await expect(
     page.getByRole("link", { name: "Abrir prescrição", exact: true }),
   ).toHaveCount(0);
+});
+
+test("opens the clinical notes of the admission", async ({ page, mockApi }) => {
+  mockApi.override(ENDPOINT, { json: timeline(COURSES) });
+
+  await page.goto(PAGE_URL);
+
+  const notesRequest = page.waitForRequest((r) =>
+    r.url().includes(`/notes/${ADMISSION}/v2`),
+  );
+  await page
+    .getByRole("button", { name: "Evoluções" })
+    .click({ timeout: 15000 });
+  await notesRequest;
+  const notes = page.getByRole("dialog");
+  await expect(notes).toBeVisible();
+  await page.keyboard.press("Escape");
+  await expect(notes).toBeHidden();
+
+  // the exams live in their own card, not behind a header button
+  await expect(page.getByRole("button", { name: "Exames" })).toHaveCount(0);
 });
 
 test("lists every course on the timeline, the ones in use first", async ({
@@ -177,6 +207,8 @@ test("lists every course on the timeline, the ones in use first", async ({
     details.getByText("CPOE (prescrição com vigência)"),
   ).toBeVisible();
   await expect(details.getByText("Posologias")).toBeVisible();
+  // the observation of the prescribed item shows under its regimen
+  await expect(details.getByText("Infundir em 3 horas")).toBeVisible();
 
   // the footer button (the corner X is labeled "Fechar" too)
   await details.locator("button.ant-btn", { hasText: "Fechar" }).click();
@@ -286,4 +318,93 @@ test("can retry after a server error", async ({ page, mockApi }) => {
   await retry.click();
 
   await expect(page.getByTestId("course-row")).toHaveCount(4);
+});
+
+test("shows the screening alerts of the courses in use", async ({
+  page,
+  mockApi,
+}) => {
+  const alert = (type: string, level: string, text: string) => ({
+    idPrescriptionDrug: "199001",
+    key: "",
+    type,
+    level,
+    text,
+    handling: false,
+  });
+
+  mockApi.override(ENDPOINT, {
+    json: timeline([
+      course({
+        idDrug: 11,
+        drug: "MEROPENEM 1 g SOL INJ",
+        status: "active",
+        start: hoursFromNow(-48),
+        end: hoursFromNow(20),
+        days: 2,
+        regimens: [regimen(-48, 20, 2)],
+        idSubstance: null,
+        alerts: [
+          alert(
+            "it",
+            "high",
+            "Interação Medicamentosa: reduz o nível sérico (MEROPENEM e ÁCIDO VALPROICO)",
+          ),
+          alert("kidney", "medium", "Medicamento deve sofrer ajuste renal"),
+        ],
+      }),
+      course({
+        idDrug: 14,
+        drug: "AZITROMICINA 500 mg CP",
+        status: "finished",
+        start: hoursFromNow(-200),
+        end: hoursFromNow(-130),
+        days: 3,
+        regimens: [regimen(-200, -130, 0.5)],
+        idSubstance: null,
+        alerts: [],
+      }),
+    ]),
+  });
+
+  await page.goto(PAGE_URL);
+
+  const rows = page.getByTestId("course-row");
+  await expect(rows).toHaveCount(2, { timeout: 15000 });
+  // the row counts the alerts; a course out of the screening has none
+  const meropenemAlerts = rows
+    .filter({ hasText: "MEROPENEM" })
+    .getByTestId("course-alerts");
+  await expect(meropenemAlerts).toHaveText("2");
+  await expect(
+    rows.filter({ hasText: "AZITROMICINA" }).getByTestId("course-alerts"),
+  ).toHaveCount(0);
+
+  // the count opens the details, where the alerts start collapsed to a count
+  // per level
+  await meropenemAlerts.getByText("2").click();
+  const details = page.getByRole("dialog");
+  const header = details.getByRole("button", { name: /Alertas da triagem/ });
+  await expect(header).toHaveAttribute("aria-expanded", "false");
+  await expect(details.getByTestId("alerts-pill-high")).toHaveText("1Alto");
+  await expect(details.getByTestId("alerts-pill-medium")).toHaveText("1Médio");
+  await expect(details.getByTestId("alerts-pill-low")).toHaveCount(0);
+  await expect(
+    details.getByText("Medicamento deve sofrer ajuste renal"),
+  ).toHaveCount(0);
+
+  // opened, they list by level
+  await header.click();
+  await expect(header).toHaveAttribute("aria-expanded", "true");
+  await expect(details.getByTestId("alerts-group-high")).toContainText(
+    "Interação Medicamentosa: reduz o nível sérico",
+  );
+  await expect(details.getByTestId("alerts-group-medium")).toContainText(
+    "Medicamento deve sofrer ajuste renal",
+  );
+  // no handling for these alerts
+  await expect(details.getByText("Ver manejo")).toHaveCount(0);
+
+  await header.click();
+  await expect(details.getByTestId("alerts-group-high")).toHaveCount(0);
 });

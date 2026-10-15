@@ -15,6 +15,12 @@ export interface ICourseRegimen {
   measureUnit: string | null;
   frequency: string | null;
   route: string | null;
+  // dose per Kg and per Kg a day, as the screening shows them
+  // ("0,04 g/Kg ou 40,00 mg/Kg"); null without a patient weight
+  doseWeight?: string | null;
+  doseWeightDay?: string | null;
+  // the observation of the regimen's latest prescribed item (complemento)
+  notes?: string | null;
 }
 
 // a break inside a course: a day the drug was not prescribed
@@ -22,6 +28,23 @@ export interface ICourseGap {
   start: string;
   end: string;
 }
+
+// an alert of the screening (backend services/alert_service.py and
+// alert_interaction_service.py), as the prescription view lists them
+// (alertsComplete)
+export interface IDrugAlert {
+  idPrescriptionDrug: string;
+  key: string;
+  // drugAlertType: maxDose, kidney, liver, it (interaction), ...
+  type: string;
+  level: "high" | "medium" | "low";
+  text: string;
+  // the substance has a handling text for this type of alert
+  handling?: boolean;
+}
+
+// the levels of the screening alerts, the most severe first
+export const ALERT_LEVELS: IDrugAlert["level"][] = ["high", "medium", "low"];
 
 /**
  * One antimicrobial course: the prescriptions of the same drug merged into a
@@ -49,6 +72,20 @@ export interface ICourse {
   prescriptionCount: number;
   regimens: ICourseRegimen[];
   gaps: ICourseGap[];
+  // the alerts the screening raises for the course in the screening
+  // prescription, most severe first; empty for a course not prescribed there
+  alerts?: IDrugAlert[];
+  // the substance of the drug, for the handling of the alerts
+  idSubstance?: string | null;
+}
+
+// the prescription the screening shows for the patient now (the latest
+// prescription-day, or the latest prescription without one): the exams and the
+// alerts are read from it
+export interface IScreeningPrescription {
+  idPrescription: string;
+  date: string;
+  agg: boolean;
 }
 
 export interface IInfectionControlPatient {
@@ -68,6 +105,23 @@ export interface IInfectionControlPatient {
   record: string | null;
   department: string | null;
   segment: string | null;
+  idSegment: number | null;
+}
+
+// one exam of the screening exam card
+// (backend prescription_view_service._build_exams_card)
+export interface IExamCardItem {
+  key: string;
+  value: {
+    value: number | null;
+    unit: string | null;
+    alert: boolean;
+    date: string | null;
+    ref: string | null;
+    initials: string | null;
+    name: string | null;
+    delta: number | null;
+  };
 }
 
 export interface IAntimicrobialTimeline {
@@ -75,6 +129,19 @@ export interface IAntimicrobialTimeline {
   now: string;
   patient: IInfectionControlPatient;
   courses: ICourse[];
+  // null when the admission has no prescription
+  screeningPrescription?: IScreeningPrescription | null;
+  // the exam card of the screening, for the screening prescription (empty
+  // when the admission has none)
+  exams: IExamCardItem[];
+  // how many of them are out of range
+  alertExams: number;
+}
+
+// the antimicrobial timeline comes with the follow-up, judged from the same
+// courses at the same time; null when the follow-up failed to load
+interface IAntimicrobialTimelineResponse extends IAntimicrobialTimeline {
+  followUp: IFollowUp | null;
 }
 
 // an open reason that keeps the admission pending
@@ -187,6 +254,38 @@ export interface IReviewPayload {
   evaluations: IReviewEvaluationPayload[];
 }
 
+/**
+ * The latest culture of an exam and material of the patient, released in the
+ * last 60 days (backend services/infection_control/recent_cultures_service.py).
+ * The latest is the newest collection, so it may still be waiting for the lab
+ */
+export interface IRecentCulture {
+  id: string;
+  examName: string | null;
+  material: string | null;
+  collectionDate: string | null;
+  releaseDate: string | null;
+  gram: string | null;
+  // as the lab wrote it: HTML from some hospitals, plain text from others
+  previousResult: string | null;
+  // named by the antibiogram rows of the culture
+  microorganisms: string[];
+}
+
+export interface IRecentCultures {
+  admissionNumber: number;
+  releasedSince: string;
+  cultures: IRecentCulture[];
+}
+
+// every culture of the patient with the exam and material of one culture
+export interface ICultureHistory {
+  admissionNumber: number;
+  examName: string | null;
+  material: string | null;
+  cultures: IRecentCulture[];
+}
+
 type Status = "idle" | "loading" | "succeeded" | "failed";
 
 interface IInfectionControlSlice {
@@ -210,6 +309,20 @@ interface IInfectionControlSlice {
   follow: {
     status: Status;
   };
+  // only informative: loaded apart, so a failure here leaves the page whole
+  cultures: {
+    status: Status;
+    data: IRecentCultures | null;
+    requestId: string | null;
+  };
+  // the history behind a row of the recent cultures, opened on click
+  cultureHistory: {
+    // the culture whose row was clicked, null while it is closed
+    culture: IRecentCulture | null;
+    status: Status;
+    data: ICultureHistory | null;
+    requestId: string | null;
+  };
 }
 
 const initialState: IInfectionControlSlice = {
@@ -229,6 +342,17 @@ const initialState: IInfectionControlSlice = {
   follow: {
     status: "idle",
   },
+  cultures: {
+    status: "idle",
+    data: null,
+    requestId: null,
+  },
+  cultureHistory: {
+    culture: null,
+    status: "idle",
+    data: null,
+    requestId: null,
+  },
 };
 
 export const fetchAntimicrobialTimeline = createAsyncThunk(
@@ -238,7 +362,7 @@ export const fetchAntimicrobialTimeline = createAsyncThunk(
       const response = await api.infectionControl.getAntimicrobialTimeline(
         params.admissionNumber,
       );
-      const data: IAntimicrobialTimeline = response.data.data;
+      const data: IAntimicrobialTimelineResponse = response.data.data;
 
       // the name comes from the hospital name service; PatientNameCache shows
       // it once it arrives, so the timeline does not wait for it
@@ -263,6 +387,7 @@ export const fetchAntimicrobialTimeline = createAsyncThunk(
   },
 );
 
+// the follow-up alone, to retry it when it failed to come with the timeline
 export const fetchFollowUp = createAsyncThunk(
   "infectionControl/fetchFollowUp",
   async (params: { admissionNumber: string }, thunkAPI) => {
@@ -271,6 +396,38 @@ export const fetchFollowUp = createAsyncThunk(
         params.admissionNumber,
       );
       return response.data.data as IFollowUp;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
+export const fetchRecentCultures = createAsyncThunk(
+  "infectionControl/fetchRecentCultures",
+  async (params: { admissionNumber: string }, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.getRecentCultures(
+        params.admissionNumber,
+      );
+      return response.data.data as IRecentCultures;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
+export const fetchCultureHistory = createAsyncThunk(
+  "infectionControl/fetchCultureHistory",
+  async (
+    params: { admissionNumber: string; culture: IRecentCulture },
+    thunkAPI,
+  ) => {
+    try {
+      const response = await api.infectionControl.getCultureHistory(
+        params.admissionNumber,
+        params.culture.id,
+      );
+      return response.data.data as ICultureHistory;
     } catch (err) {
       return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
     }
@@ -318,6 +475,9 @@ const infectionControlSlice = createSlice({
     setReviewOpen(state, action: PayloadAction<boolean>) {
       state.review.open = action.payload;
     },
+    closeCultureHistory(state) {
+      state.cultureHistory = initialState.cultureHistory;
+    },
   },
   extraReducers(builder) {
     builder
@@ -334,6 +494,36 @@ const infectionControlSlice = createSlice({
         if (state.followUp.requestId !== action.meta.requestId) return;
         state.followUp.status = "failed";
         state.followUp.data = null;
+      })
+      .addCase(fetchRecentCultures.pending, (state, action) => {
+        state.cultures.status = "loading";
+        state.cultures.requestId = action.meta.requestId;
+      })
+      .addCase(fetchRecentCultures.fulfilled, (state, action) => {
+        if (state.cultures.requestId !== action.meta.requestId) return;
+        state.cultures.status = "succeeded";
+        state.cultures.data = action.payload;
+      })
+      .addCase(fetchRecentCultures.rejected, (state, action) => {
+        if (state.cultures.requestId !== action.meta.requestId) return;
+        state.cultures.status = "failed";
+        state.cultures.data = null;
+      })
+      .addCase(fetchCultureHistory.pending, (state, action) => {
+        state.cultureHistory.culture = action.meta.arg.culture;
+        state.cultureHistory.status = "loading";
+        state.cultureHistory.data = null;
+        state.cultureHistory.requestId = action.meta.requestId;
+      })
+      .addCase(fetchCultureHistory.fulfilled, (state, action) => {
+        if (state.cultureHistory.requestId !== action.meta.requestId) return;
+        state.cultureHistory.status = "succeeded";
+        state.cultureHistory.data = action.payload;
+      })
+      .addCase(fetchCultureHistory.rejected, (state, action) => {
+        if (state.cultureHistory.requestId !== action.meta.requestId) return;
+        state.cultureHistory.status = "failed";
+        state.cultureHistory.data = null;
       })
       .addCase(saveReview.pending, (state) => {
         state.review.status = "loading";
@@ -364,11 +554,18 @@ const infectionControlSlice = createSlice({
         state.status = "loading";
         state.errorCode = null;
         state.requestId = action.meta.requestId;
+        // the follow-up comes with it: a follow-up retry still running is
+        // dropped when it arrives
+        state.followUp.status = "loading";
+        state.followUp.requestId = action.meta.requestId;
       })
       .addCase(fetchAntimicrobialTimeline.fulfilled, (state, action) => {
         if (state.requestId !== action.meta.requestId) return;
+        const { followUp, ...data } = action.payload;
         state.status = "succeeded";
-        state.data = action.payload;
+        state.data = data;
+        state.followUp.status = followUp ? "succeeded" : "failed";
+        state.followUp.data = followUp;
       })
       .addCase(fetchAntimicrobialTimeline.rejected, (state, action) => {
         if (state.requestId !== action.meta.requestId) return;
@@ -376,10 +573,13 @@ const infectionControlSlice = createSlice({
         state.data = null;
         state.errorCode =
           (action.payload as { code?: string } | undefined)?.code ?? null;
+        state.followUp.status = "failed";
+        state.followUp.data = null;
       });
   },
 });
 
-export const { reset, setReviewOpen } = infectionControlSlice.actions;
+export const { reset, setReviewOpen, closeCultureHistory } =
+  infectionControlSlice.actions;
 
 export const infectionControlReducer = infectionControlSlice.reducer;
