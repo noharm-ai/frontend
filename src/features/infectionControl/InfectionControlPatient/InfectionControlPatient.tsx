@@ -1,17 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Tabs, Tooltip } from "antd";
-import { FileOutlined, UserOutlined } from "@ant-design/icons";
+import { Button, Tag, Tooltip } from "antd";
 import { Dayjs } from "dayjs";
 
+import DefaultModal from "components/Modal";
 import PatientNameCache from "components/PatientName/PatientNameCache";
-import { InfoIcon } from "components/Icon";
 import { getCorporalSurface, getIMC } from "utils/index";
 import { formatDate } from "utils/date";
+import { formatNumber } from "utils/number";
 
 import { IInfectionControlPatient } from "../InfectionControlSlice";
 import { daysSince, getAge } from "../timeline";
-import { PatientBox } from "./InfectionControlPatient.style";
+import { AdmissionBody, PatientBox } from "./InfectionControlPatient.style";
 
 interface InfectionControlPatientProps {
   patient: IInfectionControlPatient;
@@ -26,14 +26,16 @@ interface IDataItem {
   extra?: React.ReactNode;
 }
 
-const DataGrid = ({ items }: { items: IDataItem[] }) => (
+const DataList = ({ items }: { items: IDataItem[] }) => (
   <div className="patient-data">
     {items.map((item) => (
       <div className="patient-data-item" key={item.key}>
         <div className="patient-data-item-label">{item.label}</div>
         <div className="patient-data-item-value">
           {item.value ?? "-"}
-          {item.extra && <span className="small">({item.extra})</span>}
+          {item.value != null && item.extra && (
+            <span className="small">{item.extra}</span>
+          )}
         </div>
       </div>
     ))}
@@ -41,14 +43,16 @@ const DataGrid = ({ items }: { items: IDataItem[] }) => (
 );
 
 /**
- * Patient and admission card, laid out like the screening patient card: the
- * name on top and the patient and admission data in icon tabs
+ * The patient's name and measures in one row: age, gender, weight, height and what
+ * follows from them. The admission data (department, bed, dates...) is one
+ * click away, in a modal
  */
 export function InfectionControlPatient({
   patient,
   reference,
 }: InfectionControlPatientProps) {
   const { t } = useTranslation();
+  const [admissionOpen, setAdmissionOpen] = useState(false);
 
   const age = getAge(patient.birthdate, reference);
   const gender =
@@ -83,29 +87,32 @@ export function InfectionControlPatient({
       value: gender,
     },
     {
+      key: "weight",
+      label: t("infectionControl.patient.weight"),
+      value: weight ? `${weight} kg` : null,
+      extra: patient.weightDate
+        ? formatDate(patient.weightDate, "DD/MM")
+        : null,
+    },
+    {
       key: "height",
       label: t("patientCard.height"),
       value: height ? `${height} cm` : null,
     },
     {
-      key: "weight",
-      label: t("infectionControl.patient.weight"),
-      value: weight ? `${weight} kg` : null,
-      extra: patient.weightDate ? formatDate(patient.weightDate) : null,
-    },
-    {
       key: "bmi",
       label: t("patientCard.bmi"),
-      value:
-        weight && height ? `${getIMC(weight, height).toFixed(2)} kg/m²` : null,
+      value: weight && height ? formatNumber(getIMC(weight, height), 2) : null,
+      extra: "kg/m²",
     },
     {
       key: "bodySurface",
-      label: t("patientCard.bodySurface"),
+      label: t("infectionControl.patient.bodySurface"),
       value:
         weight && height
-          ? `${getCorporalSurface(weight, height).toFixed(3)} m²`
+          ? formatNumber(getCorporalSurface(weight, height), 3)
           : null,
+      extra: "m²",
     },
   ];
 
@@ -156,48 +163,49 @@ export function InfectionControlPatient({
     });
   }
 
-  const tabs = [
-    {
-      key: "patientData",
-      label: (
-        <Tooltip title={t("patientCard.patientData")}>
-          <UserOutlined aria-label={t("patientCard.patientData")} />
-        </Tooltip>
-      ),
-      children: <DataGrid items={patientItems} />,
-    },
-    {
-      key: "admissionData",
-      label: (
-        <Tooltip title={t("patientCard.admissionData")}>
-          <FileOutlined aria-label={t("patientCard.admissionData")} />
-        </Tooltip>
-      ),
-      children: <DataGrid items={admissionItems} />,
-    },
-  ];
-
   return (
     <PatientBox data-kb="infectionControl.patient">
       <div className="patient-header">
-        <div className="patient-header-name">
+        <h2 className="patient-name">
           <PatientNameCache idPatient={patient.idPatient} />
-          {patient.dischargeDate && " "}
-          {patient.dischargeDate && (
-            <Tooltip
-              title={`${t("infectionControl.patient.dischargeDate")}: ${formatDate(
-                patient.dischargeDate,
-              )}${patient.dischargeReason ? ` (${patient.dischargeReason})` : ""}`}
-            >
-              <span>
-                <InfoIcon />
-              </span>
-            </Tooltip>
-          )}
-        </div>
+        </h2>
+        {patient.dischargeDate && (
+          <Tooltip title={patient.dischargeReason}>
+            <Tag className="patient-discharge">
+              {t("infectionControl.patient.dischargeDate")}{" "}
+              {formatDate(patient.dischargeDate)}
+            </Tag>
+          </Tooltip>
+        )}
+        <Button
+          type="link"
+          size="small"
+          className="patient-full-data"
+          onClick={() => setAdmissionOpen(true)}
+        >
+          {t("infectionControl.patient.fullData")}
+        </Button>
       </div>
 
-      <Tabs defaultActiveKey="patientData" type="card" items={tabs} />
+      <DataList items={patientItems} />
+
+      <DefaultModal
+        open={admissionOpen}
+        width={640}
+        centered
+        destroyOnHidden
+        onCancel={() => setAdmissionOpen(false)}
+        footer={null}
+      >
+        <AdmissionBody data-kb="infectionControl.admission">
+          <h2 className="modal-title">{t("infectionControl.patient.title")}</h2>
+          <DataList items={patientItems} />
+          <h2 className="modal-title">
+            {t("infectionControl.patient.admission")}
+          </h2>
+          <DataList items={admissionItems} />
+        </AdmissionBody>
+      </DefaultModal>
     </PatientBox>
   );
 }

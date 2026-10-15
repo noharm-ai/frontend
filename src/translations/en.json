@@ -1578,7 +1578,39 @@
       "lengthOfStay_other": "{{count}} days",
       "department": "Department",
       "bed": "Bed",
-      "dischargeDate": "Discharge"
+      "dischargeDate": "Discharge",
+      "title": "Patient",
+      "fullData": "Full data",
+      "bodySurface": "Body surface"
+    },
+    "exams": {
+      "showAll": "View all",
+      "empty": "No exams found",
+      "up": "rising",
+      "down": "falling",
+      "stable": "stable",
+      "noResult": "no result"
+    },
+    "cultures": {
+      "title": "Cultures",
+      "legend": "Latest collection of each exam and material, released in the last 60 days",
+      "summary": "Summary",
+      "byDrug": "By drug",
+      "byDrugLegend": "Antibiogram of each drug, the ones in use in this prescription flagged",
+      "empty": "No culture released in the last 60 days.",
+      "loadError": "Could not load the cultures.",
+      "exam": "Exam",
+      "collectionDate": "Collected",
+      "releaseDate": "Released",
+      "gram": "Gram",
+      "microorganism": "Microorganism",
+      "result": "Result",
+      "openHistory": "See every collection of this exam and material",
+      "history": {
+        "legend": "Every collection of this exam and material, newest first",
+        "empty": "No collection found.",
+        "loadError": "Could not load the collections of this culture."
+      }
     },
     "timeline": {
       "title": "Antimicrobial timeline",
@@ -1677,7 +1709,6 @@
       "noPendings": "Nothing pending",
       "pendingsCount_one": "{{count}} pending item",
       "pendingsCount_other": "{{count}} pending items",
-      "showPendings": "View pending items",
       "sinceAt": "since {{date}} at {{time}}",
       "showHistory": "View history ({{count}})",
       "pending": {

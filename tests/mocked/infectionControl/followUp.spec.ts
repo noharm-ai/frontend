@@ -265,7 +265,7 @@ test("shows the follow-up status, its pending reasons and each drug's evaluation
 
   // the card only counts them; the reasons are listed in a modal
   await expect(box).not.toContainText("MEROPENEM 1 g SOL INJ sem avaliação");
-  await box.getByRole("button", { name: "Ver pendências" }).click();
+  await box.getByTestId("follow-up-pendings-count").click();
   const pendingsList = page.getByTestId("follow-up-pendings-list");
   await expect(pendingsList).toContainText(
     "MEROPENEM 1 g SOL INJ sem avaliação",
@@ -288,9 +288,9 @@ test("shows the follow-up status, its pending reasons and each drug's evaluation
   // the default user cannot register reviews
   await expect(page.getByRole("button", { name: "Revisar" })).toHaveCount(0);
 
-  // the review history opens from the follow-up, listing what each review
+  // the review history opens from the last review, listing what each review
   // evaluated
-  await box.getByRole("button", { name: "Ver histórico (1)" }).click();
+  await box.getByTestId("follow-up-last-review").click();
   const history = page.getByRole("dialog");
   const review = history.getByTestId("review-item");
   await expect(review).toContainText("Paciente estável, manter vancomicina");
@@ -1303,7 +1303,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     });
 
     await page.goto(PAGE_URL);
-    await page.getByRole("button", { name: "Ver pendências" }).click({
+    await page.getByTestId("follow-up-pendings-count").click({
       timeout: 15000,
     });
     await expect(page.getByTestId("follow-up-pendings-list")).toContainText(
@@ -1555,7 +1555,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(box.getByTestId("follow-up-pendings-count")).toHaveText(
       "1 pendência",
     );
-    await box.getByRole("button", { name: "Ver pendências" }).click();
+    await box.getByTestId("follow-up-pendings-count").click();
     await expect(page.getByTestId("follow-up-pendings-list")).toContainText(
       "Paciente ainda não revisado",
     );

@@ -280,14 +280,14 @@ export function DrugEvaluationStep({
                   onChange={(value) => setFieldValue(field("start"), value)}
                   options={[
                     {
-                      value: "now",
-                      label: t("infectionControl.review.startNow"),
-                      date: shortDate(dayjs()),
-                    },
-                    {
                       value: "courseStart",
                       label: t("infectionControl.review.startCourse"),
                       date: shortDate(evaluation.courseStart),
+                    },
+                    {
+                      value: "now",
+                      label: t("infectionControl.review.startNow"),
+                      date: shortDate(dayjs()),
                     },
                     {
                       value: "date",
