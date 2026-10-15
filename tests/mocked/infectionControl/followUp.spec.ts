@@ -1,4 +1,4 @@
-import type { Page } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 
 import { test, expect, type MockApi } from "../support/mockApi";
 import { loginWithAuth, loginWithPermissions } from "../support/featureLogin";
@@ -39,6 +39,13 @@ const BASE_PERMISSIONS = [
   "READ_PRESCRIPTION",
   "READ_SUPPORT",
 ];
+
+/** Opens the period of the evaluation, told in a line until changed */
+const openValidity = (drug: Locator) =>
+  drug
+    .getByTestId("review-validity")
+    .getByRole("button", { name: "Alterar" })
+    .click();
 
 /** A naive ISO date some hours away from now, as the backend sends it */
 const hoursFromNow = (hours: number) =>
@@ -656,7 +663,14 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(draft).toHaveClass(/non-conforming/);
 
     // it starts at the course start and holds until the treatment ends,
-    // unless chosen otherwise
+    // told in a line until chosen otherwise
+    await expect(drug.getByTestId("review-validity")).toContainText(
+      `Vigência da avaliação: ${shownDate(MEROPENEM_START).slice(0, 5)} → ${shownDate(MEROPENEM_END).slice(0, 5)}`,
+    );
+    await expect(drug.getByRole("radiogroup", { name: "Início" })).toHaveCount(
+      0,
+    );
+    await openValidity(drug);
     await expect(
       drug
         .getByRole("radiogroup", { name: "Início" })
@@ -678,7 +692,10 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(drug.getByTestId("review-triggers")).toContainText(
       "ou se a posologia mudar",
     );
-    await drug.getByRole("button", { name: "Alterar" }).click();
+    await drug
+      .getByTestId("review-triggers")
+      .getByRole("button", { name: "Alterar" })
+      .click();
     await expect(expiryBox).toBeChecked();
     await expect(posologyBox).toBeChecked();
 
@@ -718,10 +735,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
 
     // evaluating it again previews the new one replacing the current from now
     await decisions.getByText("Conforme", { exact: true }).click();
-    await expect(
-      validity.getByRole("radio", { checked: true }),
-    ).toHaveAccessibleName(
-      `Fim do tratamento ${shownDate(VANCOMYCIN_END).slice(0, 5)}`,
+    await expect(drug.getByTestId("review-period")).toContainText(
+      `→ ${shownDate(VANCOMYCIN_END).slice(0, 5)}`,
     );
     await expect(
       vancomycinTimeline.getByTestId("draft-evaluation"),
@@ -825,6 +840,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     );
     await decisions.getByText("Não conforme", { exact: true }).click();
     await drug.getByLabel("Justificativa", { exact: true }).fill("Sem cultura");
+    await openValidity(drug);
     await start.getByText("Agora", { exact: true }).click();
     await validity.getByText("Outra data", { exact: true }).click();
     // a chosen day is required once picked
@@ -938,9 +954,13 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     // from the course start to the treatment end, both past: recorded
     // already expired, which keeps the patient pending while it watches
     // the expiry
-    await expect(treatmentEnd).toBeChecked();
     await expect(pastNotice).toContainText("o paciente continua pendente");
-    await drug.getByRole("button", { name: "Alterar" }).click();
+    await openValidity(drug);
+    await expect(treatmentEnd).toBeChecked();
+    await drug
+      .getByTestId("review-triggers")
+      .getByRole("button", { name: "Alterar" })
+      .click();
     await drug.getByRole("checkbox", { name: WATCH_EXPIRY }).uncheck();
     await expect(pastNotice).toHaveText(
       "Esta data já passou: a conformidade é registrada já vencida.",
@@ -1048,6 +1068,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(historyNotice).toHaveCount(0);
 
     // from the course start up to a day before the current one started
+    await openValidity(drug);
     await validity.getByText("Outra data", { exact: true }).click();
     const until = drug.getByRole("textbox", { name: "Válida até" });
     await until.fill(shownDate(PAST_END));
@@ -1415,6 +1436,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     const expiryBox = drug.getByRole("checkbox", { name: WATCH_EXPIRY });
     await expect(expiryBox).not.toBeChecked();
 
+    await openValidity(drug);
     await drug
       .getByRole("radiogroup", { name: "Válida até" })
       .getByText("+10 dias", { exact: true })

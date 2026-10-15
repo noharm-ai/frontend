@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { useFormikContext } from "formik";
 import type { FormikErrors } from "formik";
 import {
+  CalendarOutlined,
   InfoCircleOutlined,
   RightOutlined,
   SyncOutlined,
@@ -84,6 +85,8 @@ export function DrugEvaluationStep({
   const { values, setFieldValue } = useFormikContext<IReviewFields>();
   // what sends the patient back to pending is told in a line, open to change
   const [triggersOpen, setTriggersOpen] = useState(false);
+  // the period of the evaluation is told in a line, open to change
+  const [validityOpen, setValidityOpen] = useState(false);
   // the dose by weight is a detail of the regimen, shown on demand
   const [doseWeightOpen, setDoseWeightOpen] = useState(false);
   // the drawer with the pendings and the alerts of the drug, by its tab
@@ -122,6 +125,8 @@ export function DrugEvaluationStep({
   const validUntil = getValidUntil(evaluation);
   const period = getValidityPeriod(evaluation);
   const periodError = drugErrors?.end ?? null;
+  // dates that do not make a period keep the choices in sight
+  const validityShown = validityOpen || !!periodError;
 
   const triggers = [
     evaluation.watchExpiry &&
@@ -299,125 +304,143 @@ export function DrugEvaluationStep({
       {evaluation.evaluate && decision !== null && (
         <>
           <section
-            className="drug-section"
+            className="drug-option-box"
             data-kb="infectionControl.review.validity"
+            data-testid="review-validity"
           >
-            <div className="drug-section-header">
-              <h4 className="drug-section-title">
-                {t("infectionControl.review.validityTitle")}
-              </h4>
-              <span
-                className={`drug-period ${periodError ? "error" : ""} ${period.days == null ? "empty" : ""}`}
-                data-testid="review-period"
+            <div className="drug-option-summary">
+              <CalendarOutlined className="drug-option-icon" />
+              <span>
+                {t("infectionControl.review.validityTitle")}:{" "}
+                <span
+                  className={`drug-period ${periodError ? "error" : ""} ${period.days == null ? "empty" : ""}`}
+                  data-testid="review-period"
+                >
+                  {periodError ??
+                    (period.days != null
+                      ? t("infectionControl.review.period", {
+                          from: shortDate(period.from),
+                          until: shortDate(period.until),
+                          count: period.days,
+                        })
+                      : t("infectionControl.review.periodEmpty"))}
+                </span>
+              </span>
+              <button
+                type="button"
+                className="link-button"
+                aria-expanded={validityShown}
+                onClick={() => setValidityOpen(!validityShown)}
               >
-                {periodError ??
-                  (period.days != null
-                    ? t("infectionControl.review.period", {
-                        from: shortDate(period.from),
-                        until: shortDate(period.until),
-                        count: period.days,
-                      })
-                    : t("infectionControl.review.periodEmpty"))}
-              </span>
+                {t(
+                  validityShown
+                    ? "infectionControl.review.reopenHide"
+                    : "infectionControl.review.reopenChange",
+                )}
+              </button>
             </div>
 
-            <div className="drug-validity">
-              <span className="drug-validity-label">
-                {t("infectionControl.review.start")}
-              </span>
-              <div className="drug-validity-choice">
-                <ChoiceChips<EvaluationStart>
-                  aria-label={t("infectionControl.review.start")}
-                  value={evaluation.start}
-                  onChange={(value) => setFieldValue(field("start"), value)}
-                  options={[
-                    {
-                      value: "courseStart",
-                      label: t("infectionControl.review.startCourse"),
-                      date: shortDate(evaluation.courseStart),
-                    },
-                    {
-                      value: "now",
-                      label: t("infectionControl.review.startNow"),
-                      date: shortDate(dayjs()),
-                    },
-                    {
-                      value: "date",
-                      label: t("infectionControl.review.startDate"),
-                    },
-                  ]}
-                />
-                {evaluation.start === "date" && (
-                  <DatePicker
-                    format="DD/MM/YYYY"
-                    value={evaluation.startDate}
-                    onChange={(value: Dayjs | null) =>
-                      setFieldValue(field("startDate"), value)
-                    }
-                    // from the day the course started up to today
-                    disabledDate={(current: Dayjs) =>
-                      !!current &&
-                      (current.isBefore(evaluation.courseStart, "day") ||
-                        current.isAfter(dayjs(), "day"))
-                    }
+            {validityShown && (
+              <div className="drug-validity">
+                <span className="drug-validity-label">
+                  {t("infectionControl.review.start")}
+                </span>
+                <div className="drug-validity-choice">
+                  <ChoiceChips<EvaluationStart>
                     aria-label={t("infectionControl.review.start")}
+                    value={evaluation.start}
+                    onChange={(value) => setFieldValue(field("start"), value)}
+                    options={[
+                      {
+                        value: "courseStart",
+                        label: t("infectionControl.review.startCourse"),
+                        date: shortDate(evaluation.courseStart),
+                      },
+                      {
+                        value: "now",
+                        label: t("infectionControl.review.startNow"),
+                        date: shortDate(dayjs()),
+                      },
+                      {
+                        value: "date",
+                        label: t("infectionControl.review.startDate"),
+                      },
+                    ]}
                   />
-                )}
-              </div>
+                  {evaluation.start === "date" && (
+                    <DatePicker
+                      format="DD/MM/YYYY"
+                      value={evaluation.startDate}
+                      onChange={(value: Dayjs | null) =>
+                        setFieldValue(field("startDate"), value)
+                      }
+                      // from the day the course started up to today
+                      disabledDate={(current: Dayjs) =>
+                        !!current &&
+                        (current.isBefore(evaluation.courseStart, "day") ||
+                          current.isAfter(dayjs(), "day"))
+                      }
+                      aria-label={t("infectionControl.review.start")}
+                    />
+                  )}
+                </div>
 
-              <span className="drug-validity-label">
-                {t("infectionControl.review.validUntil")}
-              </span>
-              <div className="drug-validity-choice">
-                <ChoiceChips<EvaluationEnd>
-                  aria-label={t("infectionControl.review.validUntil")}
-                  value={evaluation.end}
-                  onChange={(value) => setFieldValue(field("end"), value)}
-                  options={[
-                    ...(evaluation.treatmentEnd
-                      ? [
-                          {
-                            value: "treatmentEnd" as EvaluationEnd,
-                            label: t("infectionControl.review.endTreatment"),
-                            date: shortDate(evaluation.treatmentEnd),
-                            // over before an evaluation starting later
-                            disabled: endsBeforeStart(
-                              evaluation,
-                              dayjs(evaluation.treatmentEnd),
-                            ),
-                          },
-                        ]
-                      : []),
-                    ...VALIDITY_DAYS.map((days) => ({
-                      value: `days${days}` as EvaluationEnd,
-                      label: t("infectionControl.review.endDays", {
-                        count: days,
-                      }),
-                      date: shortDate(getValidUntil(evaluation, `days${days}`)),
-                    })),
-                    {
-                      value: "date",
-                      label: t("infectionControl.review.endDate"),
-                    },
-                  ]}
-                />
-                {evaluation.end === "date" && (
-                  <DatePicker
-                    format="DD/MM/YYYY"
-                    value={evaluation.endDate}
-                    onChange={(value: Dayjs | null) =>
-                      setFieldValue(field("endDate"), value)
-                    }
-                    // from the day it starts, even if already over
-                    disabledDate={(current: Dayjs) =>
-                      !!current &&
-                      current.isBefore(getStartMoment(evaluation), "day")
-                    }
+                <span className="drug-validity-label">
+                  {t("infectionControl.review.validUntil")}
+                </span>
+                <div className="drug-validity-choice">
+                  <ChoiceChips<EvaluationEnd>
                     aria-label={t("infectionControl.review.validUntil")}
+                    value={evaluation.end}
+                    onChange={(value) => setFieldValue(field("end"), value)}
+                    options={[
+                      ...(evaluation.treatmentEnd
+                        ? [
+                            {
+                              value: "treatmentEnd" as EvaluationEnd,
+                              label: t("infectionControl.review.endTreatment"),
+                              date: shortDate(evaluation.treatmentEnd),
+                              // over before an evaluation starting later
+                              disabled: endsBeforeStart(
+                                evaluation,
+                                dayjs(evaluation.treatmentEnd),
+                              ),
+                            },
+                          ]
+                        : []),
+                      ...VALIDITY_DAYS.map((days) => ({
+                        value: `days${days}` as EvaluationEnd,
+                        label: t("infectionControl.review.endDays", {
+                          count: days,
+                        }),
+                        date: shortDate(
+                          getValidUntil(evaluation, `days${days}`),
+                        ),
+                      })),
+                      {
+                        value: "date",
+                        label: t("infectionControl.review.endDate"),
+                      },
+                    ]}
                   />
-                )}
+                  {evaluation.end === "date" && (
+                    <DatePicker
+                      format="DD/MM/YYYY"
+                      value={evaluation.endDate}
+                      onChange={(value: Dayjs | null) =>
+                        setFieldValue(field("endDate"), value)
+                      }
+                      // from the day it starts, even if already over
+                      disabledDate={(current: Dayjs) =>
+                        !!current &&
+                        current.isBefore(getStartMoment(evaluation), "day")
+                      }
+                      aria-label={t("infectionControl.review.validUntil")}
+                    />
+                  )}
+                </div>
               </div>
-            </div>
+            )}
 
             {isHistoryOnly(evaluation) ? (
               // over before the evaluation in force: it neither
@@ -443,12 +466,12 @@ export function DrugEvaluationStep({
           </section>
 
           <div
-            className="drug-triggers"
+            className="drug-option-box"
             data-kb="infectionControl.review.triggers"
             data-testid="review-triggers"
           >
-            <div className="drug-triggers-summary">
-              <SyncOutlined className="drug-triggers-icon" />
+            <div className="drug-option-summary">
+              <SyncOutlined className="drug-option-icon" />
               <span>
                 {triggers.length
                   ? t("infectionControl.review.reopenWhen", {
@@ -472,7 +495,7 @@ export function DrugEvaluationStep({
               </button>
             </div>
             {triggersOpen && (
-              <div className="drug-triggers-options">
+              <div className="drug-option-details">
                 <Checkbox
                   checked={evaluation.watchExpiry}
                   onChange={(e: any) =>

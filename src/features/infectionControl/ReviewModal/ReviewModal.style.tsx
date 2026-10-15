@@ -279,14 +279,6 @@ export const DrugEvaluation = styled.div`
     gap: 10px;
   }
 
-  .drug-section-header {
-    align-items: center;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    justify-content: space-between;
-  }
-
   .drug-section-title {
     color: ${get("colors.primary")};
     font-size: 14px;
@@ -316,6 +308,7 @@ export const DrugEvaluation = styled.div`
   .drug-validity {
     align-items: center;
     display: grid;
+    padding-left: 26px;
     gap: 12px 16px;
     grid-template-columns: 96px minmax(0, 1fr);
 
@@ -359,7 +352,8 @@ export const DrugEvaluation = styled.div`
     }
   }
 
-  .drug-triggers {
+  /* a choice told in a line, opened to change it: the period, the triggers */
+  .drug-option-box {
     background: #fafafa;
     border: 1px solid ${border};
     border-radius: 8px;
@@ -369,7 +363,7 @@ export const DrugEvaluation = styled.div`
     padding: 12px 14px;
   }
 
-  .drug-triggers-summary {
+  .drug-option-summary {
     align-items: center;
     color: ${get("colors.primary")};
     display: flex;
@@ -382,12 +376,12 @@ export const DrugEvaluation = styled.div`
     }
   }
 
-  .drug-triggers-icon {
+  .drug-option-icon {
     color: ${get("colors.accentSecondary")};
   }
 
   /* one trigger per line */
-  .drug-triggers-options {
+  .drug-option-details {
     display: flex;
     flex-direction: column;
     gap: 8px;
