@@ -575,6 +575,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     );
     const alerts = drug.getByTestId("review-alerts");
     await expect(alerts).toContainText("Alertas da triagem");
+    await expect(alerts.getByTestId("alerts-pill-medium")).toHaveText("1Médio");
+    await alerts.getByRole("button", { name: /Alertas da triagem/ }).click();
     await expect(alerts).toContainText("Medicamento deve sofrer ajuste renal");
   });
 

@@ -1564,6 +1564,19 @@
     }
   },
   "infectionControl": {
+    "alerts": {
+      "title": "Alertas da triagem",
+      "show": "Mostrar",
+      "hide": "Ocultar",
+      "handling": "Ver manejo",
+      "handlingTitle": "Manejo",
+      "close": "Fechar",
+      "level": {
+        "high": "Alto",
+        "medium": "Médio",
+        "low": "Baixo"
+      }
+    },
     "title": "Controle de Infecção",
     "legend": "Atendimento {{admissionNumber}}",
     "notFound": "Nenhum registro encontrado para o atendimento {{admissionNumber}}.",
@@ -1680,7 +1693,6 @@
       "cpoe": "CPOE (prescrição com vigência)",
       "daily": "Prescrição diária",
       "prescriptions": "Prescrições",
-      "alerts": "Alertas da triagem",
       "regimens": "Posologias",
       "start": "Início",
       "end": "Fim",
@@ -1760,7 +1772,6 @@
       "success": "Revisão registrada com sucesso!",
       "triggerExpired": "Quando a avaliação vencer",
       "triggerPosology": "Quando a posologia mudar (dose, frequência ou via)",
-      "alerts": "Alertas da triagem",
       "currentEvaluation": "Avaliação atual",
       "evaluatedBy": "em {{date}} por {{user}}",
       "toEvaluate": "A avaliar",

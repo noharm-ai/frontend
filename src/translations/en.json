@@ -1554,6 +1554,19 @@
     }
   },
   "infectionControl": {
+    "alerts": {
+      "title": "Screening alerts",
+      "show": "Show",
+      "hide": "Hide",
+      "handling": "See handling",
+      "handlingTitle": "Handling",
+      "close": "Close",
+      "level": {
+        "high": "High",
+        "medium": "Medium",
+        "low": "Low"
+      }
+    },
     "title": "Infection control",
     "legend": "Admission {{admissionNumber}}",
     "notFound": "No record found for admission {{admissionNumber}}.",
@@ -1670,7 +1683,6 @@
       "cpoe": "CPOE (order with validity)",
       "daily": "Daily prescription",
       "prescriptions": "Prescriptions",
-      "alerts": "Screening alerts",
       "regimens": "Regimens",
       "start": "Start",
       "end": "End",
@@ -1750,7 +1762,6 @@
       "success": "Review registered!",
       "triggerExpired": "When the evaluation expires",
       "triggerPosology": "When the posology changes (dose, frequency or route)",
-      "alerts": "Screening alerts",
       "currentEvaluation": "Current evaluation",
       "evaluatedBy": "on {{date}} by {{user}}",
       "toEvaluate": "To evaluate",

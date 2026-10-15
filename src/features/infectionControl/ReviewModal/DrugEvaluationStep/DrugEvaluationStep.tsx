@@ -6,7 +6,6 @@ import { InfoCircleOutlined, SyncOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 
 import { Checkbox, DatePicker, Textarea } from "components/Inputs";
-import DrugAlerts from "components/Screening/PrescriptionDrug/components/DrugAlerts";
 import { formatDate, formatDateTime } from "utils/date";
 
 import {
@@ -17,6 +16,7 @@ import {
 import { CourseGantt } from "../../CourseGantt/CourseGantt";
 import { EvaluationTag } from "../../EvaluationTag/EvaluationTag";
 import { InvalidationReason } from "../../InvalidationReason/InvalidationReason";
+import { ScreeningAlerts } from "../../ScreeningAlerts/ScreeningAlerts";
 import { formatRegimen } from "../../timeline";
 import { ChoiceChips } from "../ChoiceChips/ChoiceChips";
 import { DecisionCards } from "../DecisionCards/DecisionCards";
@@ -127,22 +127,6 @@ export function DrugEvaluationStep({
         )}
       </div>
 
-      {!!activeCourse?.alerts?.length && (
-        <section
-          className="drug-section"
-          data-kb="infectionControl.review.alerts"
-          data-testid="review-alerts"
-        >
-          <h4 className="drug-section-title">
-            {t("infectionControl.review.alerts")}
-          </h4>
-          <DrugAlerts
-            alerts={activeCourse.alerts}
-            idSubstance={activeCourse.idSubstance}
-          />
-        </section>
-      )}
-
       {timeline && (
         <div className="drug-timeline" data-testid="review-timeline">
           <CourseGantt
@@ -156,6 +140,15 @@ export function DrugEvaluationStep({
             draftEvaluation={toDraftEvaluation(evaluation)}
           />
         </div>
+      )}
+
+      {!!activeCourse?.alerts?.length && (
+        <ScreeningAlerts
+          alerts={activeCourse.alerts}
+          idSubstance={activeCourse.idSubstance}
+          data-kb="infectionControl.review.alerts"
+          data-testid="review-alerts"
+        />
       )}
 
       {evaluation.current && (
