@@ -53,6 +53,8 @@ export interface IDrugEvaluationFields {
   current: IAntimicrobialEvaluation | null;
   evaluate: boolean;
   conforming: boolean | null;
+  // why it is not conforming, picked from the reasons list
+  idNonConformityReason: number | null;
   start: EvaluationStart;
   // the day chosen when it starts on a date
   startDate: Dayjs | null;
@@ -204,6 +206,7 @@ export const getInitialValues = (
         current: course.evaluation,
         evaluate: !course.evaluation || drugsWithReason.has(course.idDrug),
         conforming: null,
+        idNonConformityReason: null,
         start: "courseStart" as EvaluationStart,
         startDate: null,
         treatmentEnd,
@@ -236,6 +239,15 @@ export const getEvaluationSchema = (t: TFunction) =>
         .when("evaluate", {
           is: true,
           then: (schema) => schema.required(t("validation.requiredField")),
+        }),
+      // a non-conformity has a reason
+      idNonConformityReason: Yup.number()
+        .nullable()
+        .when(["evaluate", "conforming"], {
+          is: (evaluate: boolean, conforming: boolean | null) =>
+            evaluate && conforming === false,
+          then: (schema) =>
+            schema.required(t("infectionControl.review.reasonRequired")),
         }),
       startDate: Yup.mixed<Dayjs>()
         .nullable()
@@ -328,6 +340,7 @@ export const toReviewPayload = (
     .map((e) => ({
       idDrug: e.idDrug,
       conforming: !!e.conforming,
+      idNonConformityReason: e.conforming ? null : e.idNonConformityReason,
       notes: e.notes.trim() || null,
       validFrom: getValidFrom(e),
       // the evaluation holds through the whole chosen day

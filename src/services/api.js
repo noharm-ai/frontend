@@ -904,6 +904,10 @@ api.infectionControl.followAdmission = (admissionNumber) =>
   );
 api.infectionControl.saveReview = (params = {}) =>
   instance.post(`/infection-control/review`, params, setHeaders());
+api.infectionControl.getNonConformityReasons = () =>
+  instance.get(`/infection-control/non-conformity-reasons`, {
+    ...setHeaders(),
+  });
 api.infectionControl.listAdmissions = (params = {}) =>
   instance.post(`/infection-control/admissions`, params, setHeaders());
 

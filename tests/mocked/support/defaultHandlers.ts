@@ -124,6 +124,17 @@ export function defaultHandlers(): Record<string, Handler> {
         },
       },
     },
+    // the active reasons of non conformity, picked in a review
+    "GET /infection-control/non-conformity-reasons": {
+      json: {
+        status: "success",
+        data: [
+          { id: 1, name: "Dose inadequada" },
+          { id: 2, name: "Espectro inadequado" },
+          { id: 3, name: "Indicação inadequada" },
+        ],
+      },
+    },
     "POST /infection-control/admissions": {
       json: { status: "success", data: { count: 0, admissions: [] } },
     },

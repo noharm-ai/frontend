@@ -105,6 +105,13 @@ export function EvaluationMark({
                 })}
               </div>
             )}
+            {evaluation.nonConformityReason && (
+              <div>
+                {t("infectionControl.evaluation.reason", {
+                  reason: evaluation.nonConformityReason,
+                })}
+              </div>
+            )}
             {evaluation.notes && <em>{evaluation.notes}</em>}
           </>
         }

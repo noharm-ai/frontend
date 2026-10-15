@@ -15,6 +15,7 @@ import {
   ICourse,
   IFollowUp,
   IFollowUpCourse,
+  fetchNonConformityReasons,
   saveReview,
   setReviewOpen,
 } from "../InfectionControlSlice";
@@ -71,6 +72,11 @@ export function ReviewModal({
   useEffect(() => {
     if (open) setStep(0);
   }, [open]);
+
+  // the reasons of non conformity, loaded once (again if they failed)
+  useEffect(() => {
+    if (open) dispatch(fetchNonConformityReasons());
+  }, [open, dispatch]);
 
   // open reasons that make the evaluation on record of a drug no longer hold
   const invalidatedEvaluations = useMemo(
@@ -222,6 +228,11 @@ export function ReviewModal({
               text: t("infectionControl.review.hintDecision"),
               error: false,
             };
+          } else if (stepErrors?.idNonConformityReason) {
+            hint = {
+              text: t("infectionControl.review.hintReason"),
+              error: true,
+            };
           } else if (stepErrors?.notes) {
             hint = {
               text: t("infectionControl.review.hintJustification"),
@@ -290,6 +301,15 @@ export function ReviewModal({
                       now={now}
                     />
                   )}
+                  {/* without a submit button the browser submits on Enter
+                      only while the step has a single input (the reason
+                      select is a second one) */}
+                  <button
+                    type="submit"
+                    tabIndex={-1}
+                    aria-hidden="true"
+                    className="review-step-submit"
+                  />
                 </Form>
               </div>
 

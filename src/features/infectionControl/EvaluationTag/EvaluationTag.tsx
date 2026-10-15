@@ -67,7 +67,11 @@ export function EvaluationTag({
     <Tag
       color={expired ? "default" : evaluation.conforming ? "green" : "red"}
       data-testid="evaluation-tag"
-      title={evaluation.notes ?? undefined}
+      title={
+        [evaluation.nonConformityReason, evaluation.notes]
+          .filter(Boolean)
+          .join(" · ") || undefined
+      }
     >
       {verdict} · {validity}
     </Tag>

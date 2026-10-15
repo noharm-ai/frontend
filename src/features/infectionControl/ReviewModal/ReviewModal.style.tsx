@@ -69,6 +69,18 @@ export const ReviewBody = styled.div`
     padding: 24px 28px 28px;
   }
 
+  // out of the layout, only there for Enter to submit the step
+  .review-step-submit {
+    border: 0;
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0;
+    pointer-events: none;
+    position: absolute;
+    width: 0;
+  }
+
   .review-footer {
     align-items: center;
     border-top: 1px solid ${border};

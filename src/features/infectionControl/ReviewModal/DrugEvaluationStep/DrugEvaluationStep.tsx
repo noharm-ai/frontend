@@ -5,7 +5,8 @@ import type { FormikErrors } from "formik";
 import { InfoCircleOutlined, SyncOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 
-import { Checkbox, DatePicker, Textarea } from "components/Inputs";
+import { Checkbox, DatePicker, Select, Textarea } from "components/Inputs";
+import { useAppSelector } from "src/store";
 import { formatDate, formatDateTime } from "utils/date";
 
 import {
@@ -75,6 +76,9 @@ export function DrugEvaluationStep({
 }: DrugEvaluationStepProps) {
   const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<IReviewFields>();
+  const reasons = useAppSelector(
+    (state) => state.infectionControl.nonConformityReasons,
+  );
   // what sends the patient back to pending is told in a line, open to change
   const [triggersOpen, setTriggersOpen] = useState(false);
 
@@ -162,6 +166,13 @@ export function DrugEvaluationStep({
               user: evaluation.current.createdBy ?? "-",
             })}
           </div>
+          {evaluation.current.nonConformityReason && (
+            <div data-testid="review-current-reason">
+              {t("infectionControl.evaluation.reason", {
+                reason: evaluation.current.nonConformityReason,
+              })}
+            </div>
+          )}
           {evaluation.current.notes && <em>{evaluation.current.notes}</em>}
           {invalidations.length > 0 && (
             <div className="drug-current-invalidated">
@@ -423,6 +434,50 @@ export function DrugEvaluationStep({
               </div>
             )}
           </div>
+
+          {nonConforming && (
+            <div
+              className="drug-notes"
+              data-kb="infectionControl.review.reason"
+            >
+              <div className="drug-notes-header">
+                <label
+                  className="drug-section-title"
+                  htmlFor={field("idNonConformityReason")}
+                >
+                  {t("infectionControl.review.reason")}
+                </label>
+                <span className="drug-notes-hint required">
+                  {t("infectionControl.review.reasonHint")}
+                </span>
+              </div>
+              <Select
+                id={field("idNonConformityReason")}
+                data-testid="review-reason"
+                placeholder={t("infectionControl.review.reasonPlaceholder")}
+                value={evaluation.idNonConformityReason ?? undefined}
+                onChange={(value) =>
+                  setFieldValue(
+                    field("idNonConformityReason"),
+                    (value as number | undefined) ?? null,
+                  )
+                }
+                options={reasons.list.map((reason) => ({
+                  value: reason.id,
+                  label: reason.name,
+                }))}
+                loading={reasons.status === "loading"}
+                notFoundContent={
+                  reasons.status === "failed"
+                    ? t("infectionControl.review.reasonLoadError")
+                    : undefined
+                }
+                showSearch
+                optionFilterProp="label"
+                allowClear
+              />
+            </div>
+          )}
 
           <div className="drug-notes">
             <div className="drug-notes-header">

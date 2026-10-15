@@ -75,6 +75,13 @@ export function ReviewHistory({ followUp, drugNames }: ReviewHistoryProps) {
                         date: formatDate(evaluation.validUntil),
                       })}
                     </span>
+                    {evaluation.nonConformityReason && (
+                      <div className="review-evaluation-notes">
+                        {t("infectionControl.evaluation.reason", {
+                          reason: evaluation.nonConformityReason,
+                        })}
+                      </div>
+                    )}
                     {evaluation.notes && (
                       <div className="review-evaluation-notes">
                         {evaluation.notes}

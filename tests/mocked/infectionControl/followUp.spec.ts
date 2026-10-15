@@ -1,5 +1,6 @@
 import type { Page } from "@playwright/test";
 
+import { pickOption } from "../support/antd";
 import { test, expect, type MockApi } from "../support/mockApi";
 import { loginWithAuth, loginWithPermissions } from "../support/featureLogin";
 
@@ -32,6 +33,7 @@ const LIST = "POST /infection-control/admissions";
 const SKIP = "Não avaliar agora";
 const WATCH_EXPIRY = /Quando a avaliação vencer/;
 const WATCH_POSOLOGY = /Quando a posologia mudar/;
+const REASON = "Motivo da não conformidade";
 
 const BASE_PERMISSIONS = [
   "READ_BASIC_FEATURES",
@@ -123,6 +125,8 @@ const vancomycinEvaluation = {
   idPrescription: "298",
   courseStart: VANCOMYCIN_START,
   conforming: true,
+  idNonConformityReason: null,
+  nonConformityReason: null,
   notes: "Guiado por cultura",
   posology: {
     idPrescriptionDrug: "298001",
@@ -308,6 +312,8 @@ test("shows each conformity record on its course in the timeline", async ({
     id: "500",
     idReview: "40",
     conforming: false,
+    idNonConformityReason: 2,
+    nonConformityReason: "Espectro inadequado",
     notes: "Aguardar cultura",
     validFrom: hoursFromNow(-80),
     validUntil: hoursFromNow(48),
@@ -389,6 +395,11 @@ test("shows each conformity record on its course in the timeline", async ({
   );
   await expect(tooltip).toContainText("Posologia avaliada: 1 g · 12h/12h · IV");
   await expect(tooltip).toContainText("Guiado por cultura");
+  // a non-conformity tells its reason
+  await marks.nth(1).hover();
+  await expect(
+    page.getByRole("tooltip").filter({ hasText: "Aguardar cultura" }),
+  ).toContainText("Motivo: Espectro inadequado");
 
   // the legend opens from the timeline header
   await page.getByRole("button", { name: "Legenda" }).click();
@@ -637,8 +648,11 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(page.getByRole("tooltip")).toContainText(
       `Válida até ${shownDate(MEROPENEM_PLUS_7)}`,
     );
-    // a non-conformity is justified
+    // a non-conformity has a reason, picked from the list, and is justified
     await expect(next).toBeDisabled();
+    await expect(hint).toHaveText("Selecione o motivo da não conformidade");
+    await drug.getByLabel(REASON).click();
+    await pickOption(page, "Espectro inadequado");
     await expect(hint).toHaveText("Informe a justificativa");
     await drug
       .getByLabel("Justificativa", { exact: true })
@@ -712,6 +726,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
         {
           idDrug: 11,
           conforming: false,
+          idNonConformityReason: 2,
           notes: "Espectro amplo demais",
           validFrom: MEROPENEM_START,
           // through the whole day
@@ -768,6 +783,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       "VANCOMICINA 500 mg SOL INJ",
     );
     await decisions.getByText("Não conforme", { exact: true }).click();
+    await drug.getByLabel(REASON).click();
+    await pickOption(page, "Indicação inadequada");
     await drug.getByLabel("Justificativa", { exact: true }).fill("Sem cultura");
     await start.getByText("Agora", { exact: true }).click();
     await validity.getByText("Outra data", { exact: true }).click();
@@ -801,11 +818,13 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     expect(sent.evaluations).toMatchObject([
       {
         idDrug: 11,
+        idNonConformityReason: null,
         validFrom: MEROPENEM_START,
         validUntil: `${MEROPENEM_END.slice(0, 10)}T23:59:59`,
       },
       {
         idDrug: 12,
+        idNonConformityReason: 3,
         validFrom: null,
         validUntil: `${localDay(3)}T23:59:59`,
       },
@@ -984,6 +1003,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       .getByRole("radiogroup", { name: "Avaliação" })
       .getByText("Não conforme", { exact: true })
       .click();
+    await drug.getByLabel(REASON).click();
+    await pickOption(page, "Indicação inadequada");
     await drug
       .getByLabel("Justificativa", { exact: true })
       .fill("Sem indicação no período");

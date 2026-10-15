@@ -150,6 +150,9 @@ export interface IAntimicrobialEvaluation {
   idPrescription: string;
   courseStart: string;
   conforming: boolean;
+  // why it is not conforming, null when it is (or recorded before reasons)
+  idNonConformityReason: number | null;
+  nonConformityReason: string | null;
   notes: string | null;
   posology: IEvaluationPosology;
   // when the verdict starts to apply: the review, or earlier when backdated
@@ -204,9 +207,17 @@ export interface IFollowUp {
   courses?: IFollowUpCourse[];
 }
 
+// a reason a drug can be judged not conforming for, picked in a review
+export interface INonConformityReason {
+  id: number;
+  name: string;
+}
+
 export interface IReviewEvaluationPayload {
   idDrug: number;
   conforming: boolean;
+  // required when not conforming
+  idNonConformityReason: number | null;
   notes: string | null;
   // between the course start and now; null applies it from the review
   validFrom: string | null;
@@ -272,6 +283,11 @@ interface IInfectionControlSlice {
     open: boolean;
     status: Status;
   };
+  // the active reasons of non conformity, loaded when a review opens
+  nonConformityReasons: {
+    status: Status;
+    list: INonConformityReason[];
+  };
   // starting the follow-up of an admission by hand
   follow: {
     status: Status;
@@ -305,6 +321,10 @@ const initialState: IInfectionControlSlice = {
   review: {
     open: false,
     status: "idle",
+  },
+  nonConformityReasons: {
+    status: "idle",
+    list: [],
   },
   follow: {
     status: "idle",
@@ -401,6 +421,26 @@ export const fetchCultureHistory = createAsyncThunk(
   },
 );
 
+export const fetchNonConformityReasons = createAsyncThunk(
+  "infectionControl/fetchNonConformityReasons",
+  async (_, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.getNonConformityReasons();
+      return response.data.data as INonConformityReason[];
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+  {
+    // loaded once, again only after a failure
+    condition: (_, { getState }) => {
+      const { status } = (getState() as any).infectionControl
+        .nonConformityReasons;
+      return status === "idle" || status === "failed";
+    },
+  },
+);
+
 export const saveReview = createAsyncThunk(
   "infectionControl/saveReview",
   async (params: IReviewPayload, thunkAPI) => {
@@ -436,8 +476,12 @@ const infectionControlSlice = createSlice({
   name: "infectionControl",
   initialState,
   reducers: {
-    reset() {
-      return initialState;
+    reset(state) {
+      // the reasons are the same for every admission
+      return {
+        ...initialState,
+        nonConformityReasons: state.nonConformityReasons,
+      };
     },
     setReviewOpen(state, action: PayloadAction<boolean>) {
       state.review.open = action.payload;
@@ -491,6 +535,16 @@ const infectionControlSlice = createSlice({
         if (state.cultureHistory.requestId !== action.meta.requestId) return;
         state.cultureHistory.status = "failed";
         state.cultureHistory.data = null;
+      })
+      .addCase(fetchNonConformityReasons.pending, (state) => {
+        state.nonConformityReasons.status = "loading";
+      })
+      .addCase(fetchNonConformityReasons.fulfilled, (state, action) => {
+        state.nonConformityReasons.status = "succeeded";
+        state.nonConformityReasons.list = action.payload;
+      })
+      .addCase(fetchNonConformityReasons.rejected, (state) => {
+        state.nonConformityReasons.status = "failed";
       })
       .addCase(saveReview.pending, (state) => {
         state.review.status = "loading";

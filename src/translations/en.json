@@ -1732,7 +1732,8 @@
       "invalidated": {
         "3": "expired on {{date}}",
         "6": "posology changed"
-      }
+      },
+      "reason": "Reason: {{reason}}"
     },
     "review": {
       "title": "Register review",
@@ -1778,7 +1779,7 @@
       "optionalTag": "Optional",
       "decision": "Evaluation",
       "conformingDescription": "Appropriate use in the set period",
-      "nonConformingDescription": "Requires a justification",
+      "nonConformingDescription": "Requires a reason and a justification",
       "skipLabel": "Don't evaluate now",
       "skip": {
         "none": {
@@ -1833,7 +1834,13 @@
       "hintAllDrugs": "Finish evaluating all antimicrobials",
       "nextDrug": "Next antimicrobial",
       "nextPatient": "Next: patient",
-      "save": "Register review"
+      "save": "Register review",
+      "reason": "Non-conformity reason",
+      "reasonHint": "required",
+      "reasonPlaceholder": "Select the reason",
+      "reasonRequired": "Select the non-conformity reason",
+      "reasonLoadError": "Could not load the reasons",
+      "hintReason": "Select the non-conformity reason"
     },
     "history": {
       "title": "Reviews",

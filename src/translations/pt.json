@@ -1742,7 +1742,8 @@
       "invalidated": {
         "3": "vencida em {{date}}",
         "6": "posologia alterada"
-      }
+      },
+      "reason": "Motivo: {{reason}}"
     },
     "review": {
       "title": "Registrar revisão",
@@ -1788,7 +1789,7 @@
       "optionalTag": "Opcional",
       "decision": "Avaliação",
       "conformingDescription": "Uso adequado no período definido",
-      "nonConformingDescription": "Exige justificativa",
+      "nonConformingDescription": "Exige motivo e justificativa",
       "skipLabel": "Não avaliar agora",
       "skip": {
         "none": {
@@ -1843,7 +1844,13 @@
       "hintAllDrugs": "Conclua a avaliação de todos os antimicrobianos",
       "nextDrug": "Próximo antimicrobiano",
       "nextPatient": "Próximo: paciente",
-      "save": "Registrar revisão"
+      "save": "Registrar revisão",
+      "reason": "Motivo da não conformidade",
+      "reasonHint": "obrigatório",
+      "reasonPlaceholder": "Selecione o motivo",
+      "reasonRequired": "Selecione o motivo da não conformidade",
+      "reasonLoadError": "Não foi possível carregar os motivos",
+      "hintReason": "Selecione o motivo da não conformidade"
     },
     "history": {
       "title": "Revisões",
