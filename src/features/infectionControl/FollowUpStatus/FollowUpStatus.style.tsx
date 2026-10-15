@@ -11,7 +11,7 @@ export const FollowUpBox = styled.div`
   padding: 14px 20px 16px;
 
   &.pending {
-    --status-color: #f5222d;
+    --status-color: #f4511e;
   }
 
   &.revised {
