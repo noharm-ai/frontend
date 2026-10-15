@@ -29,6 +29,23 @@ export interface ICourseGap {
   end: string;
 }
 
+// an alert of the screening (backend services/alert_service.py and
+// alert_interaction_service.py), as the prescription view lists them
+// (alertsComplete)
+export interface IDrugAlert {
+  idPrescriptionDrug: string;
+  key: string;
+  // drugAlertType: maxDose, kidney, liver, it (interaction), ...
+  type: string;
+  level: "high" | "medium" | "low";
+  text: string;
+  // the substance has a handling text for this type of alert
+  handling?: boolean;
+}
+
+// the levels of the screening alerts, the most severe first
+export const ALERT_LEVELS: IDrugAlert["level"][] = ["high", "medium", "low"];
+
 /**
  * One antimicrobial course: the prescriptions of the same drug merged into a
  * single span, whether the hospital re-prescribes it every day or keeps a CPOE
@@ -55,6 +72,20 @@ export interface ICourse {
   prescriptionCount: number;
   regimens: ICourseRegimen[];
   gaps: ICourseGap[];
+  // the alerts the screening raises for the course in the screening
+  // prescription, most severe first; empty for a course not prescribed there
+  alerts?: IDrugAlert[];
+  // the substance of the drug, for the handling of the alerts
+  idSubstance?: string | null;
+}
+
+// the prescription the screening shows for the patient now (the latest
+// prescription-day, or the latest prescription without one): the exams and the
+// alerts are read from it
+export interface IScreeningPrescription {
+  idPrescription: string;
+  date: string;
+  agg: boolean;
 }
 
 export interface IInfectionControlPatient {
@@ -98,8 +129,10 @@ export interface IAntimicrobialTimeline {
   now: string;
   patient: IInfectionControlPatient;
   courses: ICourse[];
-  // the exam card of the screening, for the latest prescription (empty when
-  // the admission has none)
+  // null when the admission has no prescription
+  screeningPrescription?: IScreeningPrescription | null;
+  // the exam card of the screening, for the screening prescription (empty
+  // when the admission has none)
   exams: IExamCardItem[];
   // how many of them are out of range
   alertExams: number;

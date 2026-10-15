@@ -15,6 +15,7 @@ import {
   ICourseRegimen,
 } from "../InfectionControlSlice";
 import { formatDose } from "../timeline";
+import { ScreeningAlerts } from "../ScreeningAlerts/ScreeningAlerts";
 import { Details } from "./CourseDetails.style";
 
 interface CourseDetailsProps {
@@ -173,6 +174,16 @@ export function CourseDetails({ course, now, onClose }: CourseDetailsProps) {
             </div>
           ))}
         </dl>
+
+        {!!course.alerts?.length && (
+          <section>
+            <ScreeningAlerts
+              alerts={course.alerts}
+              idSubstance={course.idSubstance}
+              data-kb="infectionControl.antimicrobials.alerts"
+            />
+          </section>
+        )}
 
         <section>
           <h4>

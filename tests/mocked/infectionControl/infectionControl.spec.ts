@@ -150,10 +150,7 @@ test("shows the patient and the admission", async ({ page, mockApi }) => {
   ).toHaveCount(0);
 });
 
-test("opens the clinical notes of the admission", async ({
-  page,
-  mockApi,
-}) => {
+test("opens the clinical notes of the admission", async ({ page, mockApi }) => {
   mockApi.override(ENDPOINT, { json: timeline(COURSES) });
 
   await page.goto(PAGE_URL);
@@ -321,4 +318,93 @@ test("can retry after a server error", async ({ page, mockApi }) => {
   await retry.click();
 
   await expect(page.getByTestId("course-row")).toHaveCount(4);
+});
+
+test("shows the screening alerts of the courses in use", async ({
+  page,
+  mockApi,
+}) => {
+  const alert = (type: string, level: string, text: string) => ({
+    idPrescriptionDrug: "199001",
+    key: "",
+    type,
+    level,
+    text,
+    handling: false,
+  });
+
+  mockApi.override(ENDPOINT, {
+    json: timeline([
+      course({
+        idDrug: 11,
+        drug: "MEROPENEM 1 g SOL INJ",
+        status: "active",
+        start: hoursFromNow(-48),
+        end: hoursFromNow(20),
+        days: 2,
+        regimens: [regimen(-48, 20, 2)],
+        idSubstance: null,
+        alerts: [
+          alert(
+            "it",
+            "high",
+            "Interação Medicamentosa: reduz o nível sérico (MEROPENEM e ÁCIDO VALPROICO)",
+          ),
+          alert("kidney", "medium", "Medicamento deve sofrer ajuste renal"),
+        ],
+      }),
+      course({
+        idDrug: 14,
+        drug: "AZITROMICINA 500 mg CP",
+        status: "finished",
+        start: hoursFromNow(-200),
+        end: hoursFromNow(-130),
+        days: 3,
+        regimens: [regimen(-200, -130, 0.5)],
+        idSubstance: null,
+        alerts: [],
+      }),
+    ]),
+  });
+
+  await page.goto(PAGE_URL);
+
+  const rows = page.getByTestId("course-row");
+  await expect(rows).toHaveCount(2, { timeout: 15000 });
+  // the row counts the alerts; a course out of the screening has none
+  const meropenemAlerts = rows
+    .filter({ hasText: "MEROPENEM" })
+    .getByTestId("course-alerts");
+  await expect(meropenemAlerts).toHaveText("2");
+  await expect(
+    rows.filter({ hasText: "AZITROMICINA" }).getByTestId("course-alerts"),
+  ).toHaveCount(0);
+
+  // the count opens the details, where the alerts start collapsed to a count
+  // per level
+  await meropenemAlerts.getByText("2").click();
+  const details = page.getByRole("dialog");
+  const header = details.getByRole("button", { name: /Alertas da triagem/ });
+  await expect(header).toHaveAttribute("aria-expanded", "false");
+  await expect(details.getByTestId("alerts-pill-high")).toHaveText("1Alto");
+  await expect(details.getByTestId("alerts-pill-medium")).toHaveText("1Médio");
+  await expect(details.getByTestId("alerts-pill-low")).toHaveCount(0);
+  await expect(
+    details.getByText("Medicamento deve sofrer ajuste renal"),
+  ).toHaveCount(0);
+
+  // opened, they list by level
+  await header.click();
+  await expect(header).toHaveAttribute("aria-expanded", "true");
+  await expect(details.getByTestId("alerts-group-high")).toContainText(
+    "Interação Medicamentosa: reduz o nível sérico",
+  );
+  await expect(details.getByTestId("alerts-group-medium")).toContainText(
+    "Medicamento deve sofrer ajuste renal",
+  );
+  // no handling for these alerts
+  await expect(details.getByText("Ver manejo")).toHaveCount(0);
+
+  await header.click();
+  await expect(details.getByTestId("alerts-group-high")).toHaveCount(0);
 });

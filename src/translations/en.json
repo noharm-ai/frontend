@@ -1554,6 +1554,19 @@
     }
   },
   "infectionControl": {
+    "alerts": {
+      "title": "Screening alerts",
+      "show": "Show",
+      "hide": "Hide",
+      "handling": "See handling",
+      "handlingTitle": "Handling",
+      "close": "Close",
+      "level": {
+        "high": "High",
+        "medium": "Medium",
+        "low": "Low"
+      }
+    },
     "title": "Infection control",
     "legend": "Admission {{admissionNumber}}",
     "notFound": "No record found for admission {{admissionNumber}}.",
@@ -1804,13 +1817,18 @@
       "periodEmpty": "Select the dates",
       "validity_one": "Valid {{from}} → {{until}} · {{count}} day",
       "validity_other": "Valid {{from}} → {{until}} · {{count}} days",
-      "reopenWhen": "Goes back to pending {{when}}",
-      "reopenExpiry": "when it expires ({{date}})",
-      "reopenPosology": "if the posology changes",
-      "reopenOr": "or",
-      "reopenNever": "Does not go back to pending automatically",
+      "triggersTitle": "Pending triggers",
+      "triggersActive_one": "{{count}} active",
+      "triggersActive_other": "{{count}} active",
+      "triggersNone": "None active",
       "reopenChange": "Change",
       "reopenHide": "Hide",
+      "doseWeightShow": "Dose/kg",
+      "doseWeightHide": "Hide dose/kg",
+      "pendings": "Pending items",
+      "pendingsCount_one": "{{count}} pending item",
+      "pendingsCount_other": "{{count}} pending items",
+      "alertsChip": "Alerts",
       "evaluationNotesPlaceholder": "Note about this antimicrobial",
       "justification": "Justification",
       "justificationPlaceholder": "Describe why it does not conform and the suggested conduct",

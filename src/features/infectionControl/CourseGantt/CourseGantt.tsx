@@ -5,6 +5,7 @@ import { QuestionCircleOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 
 import { AwareTag } from "components/AwareTag/AwareTag";
+import DrugAlertLevelTag from "components/DrugAlertLevelTag";
 import { formatDate } from "utils/date";
 import { AntimicrobialEvaluationStatusEnum } from "models/InfectionControlEnum";
 
@@ -362,6 +363,16 @@ export function CourseGantt({
                         <Tag color={STATUS_TAG_COLORS[course.status]}>
                           {t(`infectionControl.status.${course.status}`)}
                         </Tag>
+                        {!!course.alerts?.length && (
+                          // the alerts themselves are in the details
+                          <span data-testid="course-alerts">
+                            <DrugAlertLevelTag
+                              levels={course.alerts.map((alert) => alert.level)}
+                              count={course.alerts.length}
+                              onClick={() => setSelected(course)}
+                            />
+                          </span>
+                        )}
                         {dayLabel}
                         <span className="label-dates">
                           {formatDate(course.start, "DD/MM")} –{" "}

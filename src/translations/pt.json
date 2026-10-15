@@ -1564,6 +1564,19 @@
     }
   },
   "infectionControl": {
+    "alerts": {
+      "title": "Alertas da triagem",
+      "show": "Mostrar",
+      "hide": "Ocultar",
+      "handling": "Ver manejo",
+      "handlingTitle": "Manejo",
+      "close": "Fechar",
+      "level": {
+        "high": "Alto",
+        "medium": "Médio",
+        "low": "Baixo"
+      }
+    },
     "title": "Controle de Infecção",
     "legend": "Atendimento {{admissionNumber}}",
     "notFound": "Nenhum registro encontrado para o atendimento {{admissionNumber}}.",
@@ -1814,13 +1827,18 @@
       "periodEmpty": "Selecione as datas",
       "validity_one": "Vigência {{from}} → {{until}} · {{count}} dia",
       "validity_other": "Vigência {{from}} → {{until}} · {{count}} dias",
-      "reopenWhen": "Volta para pendente {{when}}",
-      "reopenExpiry": "ao vencer ({{date}})",
-      "reopenPosology": "se a posologia mudar",
-      "reopenOr": "ou",
-      "reopenNever": "Não volta para pendente automaticamente",
+      "triggersTitle": "Gatilhos de pendência",
+      "triggersActive_one": "{{count}} ativo",
+      "triggersActive_other": "{{count}} ativos",
+      "triggersNone": "Nenhum ativo",
       "reopenChange": "Alterar",
       "reopenHide": "Ocultar",
+      "doseWeightShow": "Dose/kg",
+      "doseWeightHide": "Ocultar dose/kg",
+      "pendings": "Pendências",
+      "pendingsCount_one": "{{count}} pendência",
+      "pendingsCount_other": "{{count}} pendências",
+      "alertsChip": "Alertas",
       "evaluationNotesPlaceholder": "Anotação sobre este antimicrobiano",
       "justification": "Justificativa",
       "justificationPlaceholder": "Descreva o motivo da não conformidade e a conduta sugerida",

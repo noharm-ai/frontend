@@ -8,7 +8,7 @@ import Tag from "components/Tag";
 export default function DrugAlertLevelTag({
   levels,
   count,
-  label,
+  label = null,
   showTooltip = true,
   showDescription = false,
   allergy = false,

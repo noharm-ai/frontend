@@ -1,4 +1,4 @@
-import type { Page } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 
 import { test, expect, type MockApi } from "../support/mockApi";
 import { loginWithAuth, loginWithPermissions } from "../support/featureLogin";
@@ -39,6 +39,13 @@ const BASE_PERMISSIONS = [
   "READ_PRESCRIPTION",
   "READ_SUPPORT",
 ];
+
+/** Opens the period of the evaluation, told in a line until changed */
+const openValidity = (drug: Locator) =>
+  drug
+    .getByTestId("review-validity")
+    .getByRole("button", { name: "Alterar" })
+    .click();
 
 /** A naive ISO date some hours away from now, as the backend sends it */
 const hoursFromNow = (hours: number) =>
@@ -535,6 +542,62 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     ]);
   });
 
+  test("shows the screening alerts of the drug being evaluated", async ({
+    page,
+    mockApi,
+  }) => {
+    const [meropenem, vancomycin] = TIMELINE_DATA.data.courses;
+    mockPage(mockApi, followUp(), {
+      ...TIMELINE_DATA,
+      data: {
+        ...TIMELINE_DATA.data,
+        courses: [
+          {
+            ...meropenem,
+            idSubstance: null,
+            alerts: [
+              {
+                idPrescriptionDrug: "299001",
+                key: "",
+                type: "kidney",
+                level: "medium",
+                text: "Medicamento deve sofrer ajuste renal",
+                handling: false,
+              },
+            ],
+          },
+          { ...vancomycin, idSubstance: null, alerts: [] },
+        ],
+      },
+    });
+
+    await page.goto(PAGE_URL);
+    await page
+      .getByRole("button", { name: "Revisar" })
+      .click({ timeout: 15000 });
+
+    const drug = page.getByRole("dialog").getByTestId("review-drug");
+    await expect(drug.getByRole("heading", { level: 3 })).toHaveText(
+      "MEROPENEM 1 g SOL INJ",
+    );
+    // a chip beside the drug counts them by level, the drawer lists them
+    const chip = drug.getByTestId("review-alerts-chip");
+    await expect(chip).toContainText("Alertas");
+    await expect(chip.getByTestId("review-alerts-chip-medium")).toHaveText("1");
+    await expect(drug.getByTestId("review-pendings-chip")).toHaveCount(0);
+    await chip.click();
+    const alerts = page.getByTestId("review-alerts");
+    const alert = alerts.getByTestId("review-alert");
+    await expect(alert).toContainText("Médio");
+    await expect(alert).toContainText("Ajuste Renal");
+    await expect(alert).toContainText("Medicamento deve sofrer ajuste renal");
+
+    // Escape closes the drawer, not the review
+    await page.keyboard.press("Escape");
+    await expect(alerts).toHaveCount(0);
+    await expect(drug).toBeVisible();
+  });
+
   test("registers a review evaluating the drug without evaluation", async ({
     page,
     mockApi,
@@ -598,9 +661,20 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(draft).toHaveClass(/undecided/);
     await decisions.getByText("Não conforme", { exact: true }).click();
     await expect(draft).toHaveClass(/non-conforming/);
+    // what each verdict means is told on hover
+    await decisions.getByText("Não conforme", { exact: true }).hover();
+    await expect(page.getByRole("tooltip")).toHaveText("Exige justificativa");
+    await page.mouse.move(0, 0);
 
     // it starts at the course start and holds until the treatment ends,
-    // unless chosen otherwise
+    // told in a line until chosen otherwise
+    await expect(drug.getByTestId("review-validity")).toContainText(
+      `Vigência da avaliação: ${shownDate(MEROPENEM_START).slice(0, 5)} → ${shownDate(MEROPENEM_END).slice(0, 5)}`,
+    );
+    await expect(drug.getByRole("radiogroup", { name: "Início" })).toHaveCount(
+      0,
+    );
+    await openValidity(drug);
     await expect(
       drug
         .getByRole("radiogroup", { name: "Início" })
@@ -615,16 +689,26 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       `Fim do tratamento ${shownDate(MEROPENEM_END).slice(0, 5)}`,
     );
 
-    // expiry and a posology change send it back to pending unless unchecked
+    // expiry and a posology change send it back to pending unless unchecked,
+    // counted until opened
+    const triggersCount = drug.getByTestId("review-triggers-count");
     await expect(drug.getByTestId("review-triggers")).toContainText(
-      "Volta para pendente ao vencer",
+      "Gatilhos de pendência:",
     );
-    await expect(drug.getByTestId("review-triggers")).toContainText(
-      "ou se a posologia mudar",
-    );
-    await drug.getByRole("button", { name: "Alterar" }).click();
+    await expect(triggersCount).toHaveText("2 ativos");
+    await expect(expiryBox).toHaveCount(0);
+    await drug
+      .getByTestId("review-triggers")
+      .getByRole("button", { name: "Alterar" })
+      .click();
     await expect(expiryBox).toBeChecked();
     await expect(posologyBox).toBeChecked();
+    await expiryBox.uncheck();
+    await expect(triggersCount).toHaveText("1 ativo");
+    await posologyBox.uncheck();
+    await expect(triggersCount).toHaveText("Nenhum ativo");
+    await expiryBox.check();
+    await posologyBox.check();
 
     await validity.getByText("+7 dias", { exact: true }).click();
     await expect(drug.getByTestId("review-period")).toHaveText(
@@ -662,10 +746,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
 
     // evaluating it again previews the new one replacing the current from now
     await decisions.getByText("Conforme", { exact: true }).click();
-    await expect(
-      validity.getByRole("radio", { checked: true }),
-    ).toHaveAccessibleName(
-      `Fim do tratamento ${shownDate(VANCOMYCIN_END).slice(0, 5)}`,
+    await expect(drug.getByTestId("review-period")).toContainText(
+      `→ ${shownDate(VANCOMYCIN_END).slice(0, 5)}`,
     );
     await expect(
       vancomycinTimeline.getByTestId("draft-evaluation"),
@@ -769,6 +851,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     );
     await decisions.getByText("Não conforme", { exact: true }).click();
     await drug.getByLabel("Justificativa", { exact: true }).fill("Sem cultura");
+    await openValidity(drug);
     await start.getByText("Agora", { exact: true }).click();
     await validity.getByText("Outra data", { exact: true }).click();
     // a chosen day is required once picked
@@ -882,9 +965,13 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     // from the course start to the treatment end, both past: recorded
     // already expired, which keeps the patient pending while it watches
     // the expiry
-    await expect(treatmentEnd).toBeChecked();
     await expect(pastNotice).toContainText("o paciente continua pendente");
-    await drug.getByRole("button", { name: "Alterar" }).click();
+    await openValidity(drug);
+    await expect(treatmentEnd).toBeChecked();
+    await drug
+      .getByTestId("review-triggers")
+      .getByRole("button", { name: "Alterar" })
+      .click();
     await drug.getByRole("checkbox", { name: WATCH_EXPIRY }).uncheck();
     await expect(pastNotice).toHaveText(
       "Esta data já passou: a conformidade é registrada já vencida.",
@@ -992,6 +1079,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(historyNotice).toHaveCount(0);
 
     // from the course start up to a day before the current one started
+    await openValidity(drug);
     await validity.getByText("Outra data", { exact: true }).click();
     const until = drug.getByRole("textbox", { name: "Válida até" });
     await until.fill(shownDate(PAST_END));
@@ -1156,6 +1244,9 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       "MEROPENEM 1 g SOL INJ",
     );
     await expect(drug.getByText("2 FRASCO AMPOLA · 8h/8h · IV")).toBeVisible();
+    // the dose by weight is shown on demand
+    await expect(drug.getByTestId("review-dose-weight")).toHaveCount(0);
+    await drug.getByRole("button", { name: "Dose/kg" }).click();
     await expect(drug.getByTestId("review-dose-weight")).toHaveText(
       "0,03 FRASCO AMPOLA/Kg ou 31,25 mg/Kg · 0,09 FRASCO AMPOLA/Kg/Dia ou 93,75 mg/Kg/Dia",
     );
@@ -1170,6 +1261,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     );
     await expect(drug.getByText("1 g · 12h/12h · IV")).toBeVisible();
     await expect(drug.getByTestId("review-dose-weight")).toHaveCount(0);
+    await expect(drug.getByRole("button", { name: "Dose/kg" })).toHaveCount(0);
   });
 
   test("selects the drug whose posology changed and keeps its trigger choice", async ({
@@ -1313,16 +1405,24 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       0,
     );
 
-    // the verdict on record shows it no longer holds, and why
-    const tag = drug.getByTestId("evaluation-tag");
-    await expect(tag).toHaveText("Conforme · posologia alterada");
-    await expect(tag.locator("s")).toHaveText("Conforme");
-    const current = drug.getByTestId("review-current-evaluation");
-    await expect(current).toContainText(
+    // the header leaves the verdict on record to the drawer
+    await expect(drug.getByTestId("evaluation-tag")).toHaveCount(0);
+    // a chip beside the drug counts the reasons, the drawer has the verdict
+    // and why
+    const chip = drug.getByTestId("review-pendings-chip");
+    await expect(chip).toHaveText("1 pendência");
+    await chip.click();
+    const pendings = page.getByTestId("review-pendings");
+    const current = pendings.getByTestId("review-current-evaluation");
+    await expect(current).toContainText("Avaliação atual");
+    await expect(current.locator("s")).toHaveText("Conforme");
+    await expect(pendings).toContainText(
       "Esta avaliação não vale mais e mantém o paciente pendente",
     );
-    await expect(current).toContainText("Avaliada: 1 g · 12h/12h · IV");
-    await expect(current).toContainText("Prescrita agora: 2 g · 6h/6h · IV");
+    await expect(pendings).toContainText("Avaliada: 1 g · 12h/12h · IV");
+    await expect(pendings).toContainText("Prescrita agora: 2 g · 6h/6h · IV");
+    await page.keyboard.press("Escape");
+    await expect(pendings).toHaveCount(0);
 
     // the mini timeline shows it as the page does, even while the new one
     // being filled takes over from now on
@@ -1338,8 +1438,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
 
     await decisions.getByText("Conforme", { exact: true }).click();
     const triggers = drug.getByTestId("review-triggers");
-    await expect(triggers).toHaveText(
-      /Volta para pendente se a posologia mudar/,
+    await expect(triggers.getByTestId("review-triggers-count")).toHaveText(
+      "1 ativo",
     );
     await triggers.getByRole("button", { name: "Alterar" }).click();
     const posologyBox = drug.getByRole("checkbox", { name: WATCH_POSOLOGY });
@@ -1347,6 +1447,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     const expiryBox = drug.getByRole("checkbox", { name: WATCH_EXPIRY });
     await expect(expiryBox).not.toBeChecked();
 
+    await openValidity(drug);
     await drug
       .getByRole("radiogroup", { name: "Válida até" })
       .getByText("+10 dias", { exact: true })
@@ -1432,12 +1533,16 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
 
     const dialog = page.getByRole("dialog");
     const drug = dialog.getByTestId("review-drug");
-    await expect(drug.getByTestId("evaluation-tag")).toHaveText(
-      `Conforme · vencida em ${shownDate(expired.validUntil)}`,
+    await expect(drug.getByTestId("review-pendings-chip")).toHaveText(
+      "1 pendência",
     );
-    await expect(drug.getByTestId("review-current-evaluation")).toContainText(
+    await drug.getByTestId("review-pendings-chip").click();
+    const pendings = page.getByTestId("review-pendings");
+    await expect(pendings).toContainText(
       `A validade terminou em ${shownDate(expired.validUntil)}`,
     );
+    await page.keyboard.press("Escape");
+    await expect(pendings).toHaveCount(0);
 
     // leaving it out of the review does not keep a verdict that holds
     await drug.getByText(SKIP, { exact: true }).click();
