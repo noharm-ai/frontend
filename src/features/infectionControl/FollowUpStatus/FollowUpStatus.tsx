@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Tooltip } from "antd";
-import { WarningOutlined } from "@ant-design/icons";
+import { PrinterOutlined, WarningOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 
 import DefaultModal from "components/Modal";
@@ -17,6 +17,8 @@ interface FollowUpStatusProps {
   followUp: IFollowUp;
   drugNames: Record<number, string>;
   now: Dayjs;
+  // the detailed report, with every detail of the reviews, to print
+  onOpenReport: () => void;
 }
 
 const STATUS_CLASS: Record<number, string> = {
@@ -35,6 +37,7 @@ export function FollowUpStatus({
   followUp,
   drugNames,
   now,
+  onOpenReport,
 }: FollowUpStatusProps) {
   const { t } = useTranslation();
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -173,7 +176,21 @@ export function FollowUpStatus({
         footer={null}
       >
         <HistoryBody data-kb="infectionControl.reviews">
-          <h2 className="modal-title">{t("infectionControl.history.title")}</h2>
+          <div className="history-header">
+            <h2 className="modal-title">
+              {t("infectionControl.history.title")}
+            </h2>
+            <Button
+              icon={<PrinterOutlined />}
+              data-testid="history-open-report"
+              onClick={() => {
+                setHistoryOpen(false);
+                onOpenReport();
+              }}
+            >
+              {t("infectionControl.report.openDetailed")}
+            </Button>
+          </div>
           <ReviewHistory followUp={followUp} drugNames={drugNames} />
         </HistoryBody>
       </DefaultModal>

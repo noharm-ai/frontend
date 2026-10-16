@@ -7,6 +7,7 @@ import {
   FileDoneOutlined,
   FileTextOutlined,
   PlayCircleOutlined,
+  PrinterOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -39,6 +40,7 @@ import { InfectionControlClinicalNotes } from "../InfectionControlClinicalNotes/
 import { InfectionControlCultures } from "../InfectionControlCultures/InfectionControlCultures";
 import { InfectionControlExams } from "../InfectionControlExams/InfectionControlExams";
 import { InfectionControlPatient } from "../InfectionControlPatient/InfectionControlPatient";
+import { InfectionControlReport } from "../InfectionControlReport/InfectionControlReport";
 import { ReviewModal } from "../ReviewModal/ReviewModal";
 import {
   getDrugNames,
@@ -79,6 +81,7 @@ export function InfectionControl() {
   );
 
   const [clinicalNotesOpen, setClinicalNotesOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
   const [affixed, setAffixed] = useState(false);
   const [nextLoading, setNextLoading] = useState(false);
 
@@ -103,6 +106,7 @@ export function InfectionControl() {
     return () => {
       dispatch(reset());
       setClinicalNotesOpen(false);
+      setReportOpen(false);
       dispatch(setExamsModalAdmissionNumber(null));
     };
   }, [admissionNumber]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -215,6 +219,13 @@ export function InfectionControl() {
             >
               {t("infectionControl.clinicalNotes")}
             </Button>
+            <Button
+              data-kb="infectionControl.reportButton"
+              icon={<PrinterOutlined />}
+              onClick={() => setReportOpen(true)}
+            >
+              {t("infectionControl.report.open")}
+            </Button>
             {showFollow && (
               <Button
                 type="primary"
@@ -292,7 +303,12 @@ export function InfectionControl() {
           }
         />
         {followUpEnabled && followUp && (
-          <FollowUpStatus followUp={followUp} drugNames={drugNames} now={now} />
+          <FollowUpStatus
+            followUp={followUp}
+            drugNames={drugNames}
+            now={now}
+            onOpenReport={() => setReportOpen(true)}
+          />
         )}
         {followUpStatus === "failed" && (
           // without it the page would look like the schema has no follow-up
@@ -362,6 +378,15 @@ export function InfectionControl() {
         onClose={() => setClinicalNotesOpen(false)}
       />
       <ExamsModal idSegment={data.patient.idSegment ?? undefined} />
+      <InfectionControlReport
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+        data={data}
+        followUp={followUp}
+        courses={courses}
+        drugNames={drugNames}
+        now={now}
+      />
 
       {followUp && canReview && (
         <ReviewModal
