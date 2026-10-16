@@ -906,6 +906,8 @@ api.infectionControl.saveReview = (params = {}) =>
   instance.post(`/infection-control/review`, params, setHeaders());
 api.infectionControl.listAdmissions = (params = {}) =>
   instance.post(`/infection-control/admissions`, params, setHeaders());
+api.infectionControl.getInterventionReasons = () =>
+  instance.get(endpoints.intervention.reasons, setHeaders());
 
 /**
  * training namespace

@@ -8,7 +8,11 @@ import {
   IAntimicrobialEvaluation,
   IFollowUpPending,
 } from "../InfectionControlSlice";
-import { describeInvalidation, isEvaluationExpired } from "../followUp";
+import {
+  describeInvalidation,
+  describeReasons,
+  isEvaluationExpired,
+} from "../followUp";
 
 interface EvaluationTagProps {
   evaluation: IAntimicrobialEvaluation | null;
@@ -67,7 +71,11 @@ export function EvaluationTag({
     <Tag
       color={expired ? "default" : evaluation.conforming ? "green" : "red"}
       data-testid="evaluation-tag"
-      title={evaluation.notes ?? undefined}
+      title={
+        [describeReasons(evaluation), evaluation.notes]
+          .filter(Boolean)
+          .join(" · ") || undefined
+      }
     >
       {verdict} · {validity}
     </Tag>

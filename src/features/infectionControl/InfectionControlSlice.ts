@@ -175,6 +175,21 @@ export interface IEvaluationPosology {
   route: string | null;
 }
 
+// an intervention reason that can justify a non-conformity (flagged for
+// infection control in motivointervencao)
+export interface IInterventionReason {
+  id: number;
+  // with the name of its parent reason, as the intervention form shows it
+  name: string;
+}
+
+// an intervention recorded by a review, kept by infection control
+export interface IEvaluationIntervention {
+  id: string;
+  // the intervention status: "s" pending its outcome, "a" accepted...
+  status: string;
+}
+
 // conformity of one antimicrobial course, recorded in a review
 export interface IAntimicrobialEvaluation {
   id: string;
@@ -183,6 +198,10 @@ export interface IAntimicrobialEvaluation {
   idPrescription: string;
   courseStart: string;
   conforming: boolean;
+  // the reasons of a non-conformity
+  interventionReasons?: { id: number; name: string | null }[];
+  // the interventions it recorded on the drug
+  interventions?: IEvaluationIntervention[];
   notes: string | null;
   posology: IEvaluationPosology;
   // when the verdict starts to apply: the review, or earlier when backdated
@@ -240,6 +259,10 @@ export interface IFollowUp {
 export interface IReviewEvaluationPayload {
   idDrug: number;
   conforming: boolean;
+  // the reasons of a non-conformity, empty when conforming
+  interventionReasons: number[];
+  // record an intervention on the drug with the reasons
+  createIntervention: boolean;
   notes: string | null;
   // between the course start and now; null applies it from the review
   validFrom: string | null;
@@ -309,6 +332,11 @@ interface IInfectionControlSlice {
   follow: {
     status: Status;
   };
+  // the reasons a non-conformity can be given, loaded once
+  interventionReasons: {
+    status: Status;
+    list: IInterventionReason[];
+  };
   // only informative: loaded apart, so a failure here leaves the page whole
   cultures: {
     status: Status;
@@ -341,6 +369,10 @@ const initialState: IInfectionControlSlice = {
   },
   follow: {
     status: "idle",
+  },
+  interventionReasons: {
+    status: "idle",
+    list: [],
   },
   cultures: {
     status: "idle",
@@ -446,6 +478,40 @@ export const saveReview = createAsyncThunk(
   },
 );
 
+// the active intervention reasons flagged for infection control
+export const fetchInterventionReasons = createAsyncThunk(
+  "infectionControl/fetchInterventionReasons",
+  async (_, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.getInterventionReasons();
+      const reasons: {
+        id: number;
+        name: string;
+        parentName: string | null;
+        infectionControl: boolean;
+      }[] = response.data.data;
+
+      return reasons
+        .filter((reason) => reason.infectionControl)
+        .map((reason): IInterventionReason => ({
+          id: reason.id,
+          name: reason.parentName
+            ? `${reason.parentName} - ${reason.name}`
+            : reason.name,
+        }));
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+  {
+    // the list does not change while the page is open
+    condition: (_, { getState }) =>
+      !["loading", "succeeded"].includes(
+        (getState() as any).infectionControl.interventionReasons.status,
+      ),
+  },
+);
+
 export const followAdmission = createAsyncThunk(
   "infectionControl/followAdmission",
   async (params: { admissionNumber: string }, thunkAPI) => {
@@ -537,6 +603,16 @@ const infectionControlSlice = createSlice({
       })
       .addCase(saveReview.rejected, (state) => {
         state.review.status = "failed";
+      })
+      .addCase(fetchInterventionReasons.pending, (state) => {
+        state.interventionReasons.status = "loading";
+      })
+      .addCase(fetchInterventionReasons.fulfilled, (state, action) => {
+        state.interventionReasons.status = "succeeded";
+        state.interventionReasons.list = action.payload;
+      })
+      .addCase(fetchInterventionReasons.rejected, (state) => {
+        state.interventionReasons.status = "failed";
       })
       .addCase(followAdmission.pending, (state) => {
         state.follow.status = "loading";

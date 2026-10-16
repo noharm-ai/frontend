@@ -62,6 +62,10 @@ export interface IDrugEvaluationFields {
   // the day chosen when it holds until a date
   endDate: Dayjs | null;
   notes: string;
+  // the intervention reasons of a non-conformity
+  interventionReasons: number[];
+  // record an intervention on the drug with those reasons
+  createIntervention: boolean;
   // back to pending when the evaluation expires
   watchExpiry: boolean;
   // back to pending when the posology changes
@@ -210,6 +214,8 @@ export const getInitialValues = (
         end: "treatmentEnd",
         endDate: null,
         notes: "",
+        interventionReasons: [],
+        createIntervention: false,
         // the choices made last time, on by default
         watchExpiry: watches(
           course.evaluation,
@@ -251,7 +257,15 @@ export const getEvaluationSchema = (t: TFunction) =>
             evaluate && end === "date",
           then: (schema) => schema.required(t("validation.requiredField")),
         }),
-      // a non-conformity is justified
+      // a non-conformity is given its reasons and justified
+      interventionReasons: Yup.array()
+        .of(Yup.number())
+        .when(["evaluate", "conforming"], {
+          is: (evaluate: boolean, conforming: boolean | null) =>
+            evaluate && conforming === false,
+          then: (schema) =>
+            schema.min(1, t("infectionControl.review.reasonsRequired")),
+        }),
       notes: Yup.string().when(["evaluate", "conforming"], {
         is: (evaluate: boolean, conforming: boolean | null) =>
           evaluate && conforming === false,
@@ -312,6 +326,13 @@ export const validateDrug = (
   }
 };
 
+/**
+ * Whether the drug can be given an intervention: a record of the past would
+ * land on the drug prescribed now
+ */
+export const canRecordIntervention = (evaluation: IDrugEvaluationFields) =>
+  !isHistoryOnly(evaluation);
+
 /** The review as the backend takes it: only the drugs evaluated now */
 export const toReviewPayload = (
   values: IReviewFields,
@@ -328,6 +349,11 @@ export const toReviewPayload = (
     .map((e) => ({
       idDrug: e.idDrug,
       conforming: !!e.conforming,
+      // the reasons stay in the form when the verdict changes back, but only
+      // a non-conformity carries them
+      interventionReasons: e.conforming ? [] : e.interventionReasons,
+      createIntervention:
+        !e.conforming && e.createIntervention && canRecordIntervention(e),
       notes: e.notes.trim() || null,
       validFrom: getValidFrom(e),
       // the evaluation holds through the whole chosen day

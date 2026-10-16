@@ -2,6 +2,7 @@ import type { Locator, Page } from "@playwright/test";
 
 import { test, expect, type MockApi } from "../support/mockApi";
 import { loginWithAuth, loginWithPermissions } from "../support/featureLogin";
+import { openSelect, pickOption } from "../support/antd";
 
 /**
  * Infection control follow-up (src/features/infectionControl).
@@ -32,6 +33,41 @@ const LIST = "POST /infection-control/admissions";
 const SKIP = "Não avaliar agora";
 const WATCH_EXPIRY = /Quando a avaliação vencer/;
 const WATCH_POSOLOGY = /Quando a posologia mudar/;
+
+// the intervention reasons; only the ones flagged for infection control can
+// justify a non-conformity
+const REASONS = [
+  {
+    id: 31,
+    name: "Espectro inadequado",
+    parentId: 30,
+    parentName: "Antimicrobiano",
+    infectionControl: true,
+  },
+  {
+    id: 32,
+    name: "Tempo de tratamento",
+    parentId: null,
+    parentName: null,
+    infectionControl: true,
+  },
+  {
+    id: 5,
+    name: "Duplicidade medicamentosa",
+    parentId: null,
+    parentName: null,
+    infectionControl: false,
+  },
+];
+
+/** Picks a non-conformity reason of the drug being evaluated */
+const pickReason = async (page: Page, drug: Locator, reason: string) => {
+  await openSelect(drug.getByTestId("review-reasons"));
+  await pickOption(page, reason);
+  // the multiple select stays open: a click aside closes it (Escape would
+  // close the review)
+  await drug.getByRole("heading", { level: 3 }).click();
+};
 
 const BASE_PERMISSIONS = [
   "READ_BASIC_FEATURES",
@@ -305,6 +341,50 @@ test("shows the follow-up status, its pending reasons and each drug's evaluation
   await expect(review).toContainText("Guiado por cultura");
 });
 
+test("lists the reasons and the intervention of a non-conformity in the history", async ({
+  page,
+  mockApi,
+}) => {
+  const nonConforming = {
+    ...vancomycinEvaluation,
+    conforming: false,
+    notes: "Sem cultura que justifique",
+    interventionReasons: [
+      { id: 31, name: "Antimicrobiano - Espectro inadequado" },
+      { id: 32, name: "Tempo de tratamento" },
+    ],
+    interventions: [{ id: "7001", status: "s" }],
+  };
+  mockPage(
+    mockApi,
+    followUp({
+      courses: [
+        {
+          idDrug: 12,
+          start: VANCOMYCIN_START,
+          ongoing: true,
+          evaluation: nonConforming,
+          history: [nonConforming],
+        },
+      ],
+    }),
+  );
+
+  await page.goto(PAGE_URL);
+  const box = page.getByTestId("follow-up");
+  await expect(box).toBeVisible({ timeout: 15000 });
+
+  await box.getByTestId("follow-up-last-review").click();
+  const review = page.getByRole("dialog").getByTestId("review-item");
+  await expect(review.getByTestId("review-evaluation-reasons")).toHaveText(
+    "Motivos: Antimicrobiano - Espectro inadequado, Tempo de tratamento",
+  );
+  await expect(review.getByTestId("review-evaluation-intervention")).toHaveText(
+    "Intervenção: Pendente",
+  );
+  await expect(review).toContainText("Sem cultura que justifique");
+});
+
 test("shows each conformity record on its course in the timeline", async ({
   page,
   mockApi,
@@ -540,6 +620,9 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       ...BASE_PERMISSIONS,
       "WRITE_INFECTION_CONTROL",
     ]);
+    mockApi.override("GET /intervention/reasons", {
+      json: { status: "success", data: REASONS },
+    });
   });
 
   test("shows the screening alerts of the drug being evaluated", async ({
@@ -721,13 +804,39 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(page.getByRole("tooltip")).toContainText(
       `Válida até ${shownDate(MEROPENEM_PLUS_7)}`,
     );
-    // a non-conformity is justified
+    // a non-conformity is given its reasons, among the ones enabled for
+    // infection control
     await expect(next).toBeDisabled();
+    await expect(hint).toHaveText("Informe o motivo da não conformidade");
+    await openSelect(drug.getByTestId("review-reasons"));
+    await expect(
+      page.locator(
+        ".ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option",
+      ),
+    ).toHaveText([
+      "Antimicrobiano - Espectro inadequado",
+      "Tempo de tratamento",
+    ]);
+    await drug.getByRole("heading", { level: 3 }).click();
+    await pickReason(page, drug, "Antimicrobiano - Espectro inadequado");
+    await pickReason(page, drug, "Tempo de tratamento");
+
+    // and justified
     await expect(hint).toHaveText("Informe a justificativa");
     await drug
       .getByLabel("Justificativa", { exact: true })
       .fill("Espectro amplo demais");
     await expect(hint).toHaveCount(0);
+
+    // an intervention on the drug is recorded only when asked
+    const createIntervention = drug.getByRole("checkbox", {
+      name: "Registrar intervenção no medicamento",
+    });
+    await expect(createIntervention).not.toBeChecked();
+    await createIntervention.check();
+    await expect(drug.getByTestId("review-create-intervention")).toContainText(
+      "só pode ser alterada pelo controle de infecção",
+    );
     await next.click();
 
     // step 2: the evaluated drug shows its current evaluation, kept
@@ -794,6 +903,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
         {
           idDrug: 11,
           conforming: false,
+          interventionReasons: [31, 32],
+          createIntervention: true,
           notes: "Espectro amplo demais",
           validFrom: MEROPENEM_START,
           // through the whole day
@@ -850,6 +961,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       "VANCOMICINA 500 mg SOL INJ",
     );
     await decisions.getByText("Não conforme", { exact: true }).click();
+    await pickReason(page, drug, "Tempo de tratamento");
     await drug.getByLabel("Justificativa", { exact: true }).fill("Sem cultura");
     await openValidity(drug);
     await start.getByText("Agora", { exact: true }).click();
@@ -884,11 +996,16 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     expect(sent.evaluations).toMatchObject([
       {
         idDrug: 11,
+        // a conforming one has no reason
+        interventionReasons: [],
+        createIntervention: false,
         validFrom: MEROPENEM_START,
         validUntil: `${MEROPENEM_END.slice(0, 10)}T23:59:59`,
       },
       {
         idDrug: 12,
+        interventionReasons: [32],
+        createIntervention: false,
         validFrom: null,
         validUntil: `${localDay(3)}T23:59:59`,
       },
@@ -1071,10 +1188,15 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       .getByRole("radiogroup", { name: "Avaliação" })
       .getByText("Não conforme", { exact: true })
       .click();
+    await pickReason(page, drug, "Tempo de tratamento");
     await drug
       .getByLabel("Justificativa", { exact: true })
       .fill("Sem indicação no período");
-    // overlapping the current one, the new one replaces it
+    // overlapping the current one, the new one replaces it, and may record
+    // an intervention
+    await drug
+      .getByRole("checkbox", { name: "Registrar intervenção no medicamento" })
+      .check();
     await expect(current).toHaveClass(/past/);
     await expect(historyNotice).toHaveCount(0);
 
@@ -1099,6 +1221,9 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(historyNotice).toContainText(
       `Termina antes da avaliação atual (desde ${shownDate(vancomycinEvaluation.validFrom)})`,
     );
+    // a record of the past records no intervention: it would land on the
+    // drug prescribed now
+    await expect(drug.getByTestId("review-create-intervention")).toHaveCount(0);
     await expect(current).not.toHaveClass(/past/);
     await expect(drug.getByTestId("review-end-past")).toHaveCount(0);
     // they do not overlap: one line for both
@@ -1120,6 +1245,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       {
         idDrug: 12,
         conforming: false,
+        interventionReasons: [32],
+        createIntervention: false,
         validFrom: VANCOMYCIN_START,
         validUntil: `${PAST_END}T23:59:59`,
       },

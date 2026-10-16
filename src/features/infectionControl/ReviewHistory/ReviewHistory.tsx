@@ -4,6 +4,7 @@ import { Tag } from "antd";
 import { formatDate, formatDateTime } from "utils/date";
 
 import { IAntimicrobialEvaluation, IFollowUp } from "../InfectionControlSlice";
+import { describeReasons } from "../followUp";
 import { ReviewList } from "./ReviewHistory.style";
 
 interface ReviewHistoryProps {
@@ -75,6 +76,28 @@ export function ReviewHistory({ followUp, drugNames }: ReviewHistoryProps) {
                         date: formatDate(evaluation.validUntil),
                       })}
                     </span>
+                    {describeReasons(evaluation) && (
+                      <div
+                        className="review-evaluation-notes"
+                        data-testid="review-evaluation-reasons"
+                      >
+                        {t("infectionControl.evaluation.reasons", {
+                          reasons: describeReasons(evaluation),
+                        })}
+                      </div>
+                    )}
+                    {(evaluation.interventions ?? []).map((intervention) => (
+                      <Tag
+                        key={intervention.id}
+                        data-testid="review-evaluation-intervention"
+                      >
+                        {t("infectionControl.evaluation.intervention", {
+                          status: t(
+                            `interventionStatus.${intervention.status}`,
+                          ),
+                        })}
+                      </Tag>
+                    ))}
                     {evaluation.notes && (
                       <div className="review-evaluation-notes">
                         {evaluation.notes}

@@ -12,6 +12,7 @@ import { getErrorMessage } from "utils/errorHandler";
 import { Form } from "styles/Form.style";
 
 import {
+  fetchInterventionReasons,
   ICourse,
   IFollowUp,
   IFollowUpCourse,
@@ -71,6 +72,11 @@ export function ReviewModal({
   useEffect(() => {
     if (open) setStep(0);
   }, [open]);
+
+  // the reasons a non-conformity can be given
+  useEffect(() => {
+    if (open) dispatch(fetchInterventionReasons());
+  }, [open, dispatch]);
 
   // open reasons that make the evaluation on record of a drug no longer hold
   const invalidatedEvaluations = useMemo(
@@ -222,6 +228,11 @@ export function ReviewModal({
               text: t("infectionControl.review.hintDecision"),
               error: false,
             };
+          } else if (stepErrors?.interventionReasons) {
+            hint = {
+              text: t("infectionControl.review.hintReasons"),
+              error: true,
+            };
           } else if (stepErrors?.notes) {
             hint = {
               text: t("infectionControl.review.hintJustification"),
@@ -290,6 +301,10 @@ export function ReviewModal({
                       now={now}
                     />
                   )}
+                  {/* lets Enter submit with more than one field (a field
+                      alone submits by itself); the reasons select keeps its
+                      Enter to pick an option */}
+                  <button type="submit" hidden />
                 </Form>
               </div>
 

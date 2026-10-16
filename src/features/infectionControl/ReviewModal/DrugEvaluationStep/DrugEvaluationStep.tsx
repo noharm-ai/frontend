@@ -10,7 +10,8 @@ import {
 } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 
-import { Checkbox, DatePicker, Textarea } from "components/Inputs";
+import { Checkbox, DatePicker, Select, Textarea } from "components/Inputs";
+import { useAppSelector } from "src/store";
 import { formatDate, formatDateTime } from "utils/date";
 
 import {
@@ -20,6 +21,7 @@ import {
   ALERT_LEVELS,
 } from "../../InfectionControlSlice";
 import { CourseGantt } from "../../CourseGantt/CourseGantt";
+import { describeReasons } from "../../followUp";
 import { formatRegimen } from "../../timeline";
 import { ChoiceChips } from "../ChoiceChips/ChoiceChips";
 import { DecisionCards } from "../DecisionCards/DecisionCards";
@@ -28,6 +30,7 @@ import {
   ReviewDetailsTab,
 } from "../ReviewDetailsDrawer/ReviewDetailsDrawer";
 import {
+  canRecordIntervention,
   decisionFields,
   EvaluationEnd,
   EvaluationStart,
@@ -83,6 +86,9 @@ export function DrugEvaluationStep({
 }: DrugEvaluationStepProps) {
   const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<IReviewFields>();
+  const interventionReasons = useAppSelector(
+    (state) => state.infectionControl.interventionReasons,
+  );
   // what sends the patient back to pending is told in a line, open to change
   const [triggersOpen, setTriggersOpen] = useState(false);
   // the period of the evaluation is told in a line, open to change
@@ -249,6 +255,13 @@ export function DrugEvaluationStep({
               user: evaluation.current.createdBy ?? "-",
             })}
           </div>
+          {describeReasons(evaluation.current) && (
+            <div>
+              {t("infectionControl.evaluation.reasons", {
+                reasons: describeReasons(evaluation.current),
+              })}
+            </div>
+          )}
           {evaluation.current.notes && <em>{evaluation.current.notes}</em>}
         </div>
       )}
@@ -517,6 +530,70 @@ export function DrugEvaluationStep({
               </div>
             )}
           </div>
+
+          {nonConforming && (
+            <div
+              className="drug-notes"
+              data-kb="infectionControl.review.reasons"
+              data-testid="review-reasons"
+            >
+              <div className="drug-notes-header">
+                <label
+                  className="drug-section-title"
+                  htmlFor={field("interventionReasons")}
+                >
+                  {t("infectionControl.review.reasons")}
+                </label>
+                <span className="drug-notes-hint required">
+                  {t("infectionControl.review.required")}
+                </span>
+              </div>
+              <Select
+                id={field("interventionReasons")}
+                mode="multiple"
+                allowClear
+                optionFilterProp="children"
+                style={{ width: "100%" }}
+                placeholder={t("infectionControl.review.reasonsPlaceholder")}
+                loading={interventionReasons.status === "loading"}
+                notFoundContent={
+                  interventionReasons.status === "succeeded"
+                    ? t("infectionControl.review.reasonsEmpty")
+                    : undefined
+                }
+                value={evaluation.interventionReasons}
+                onChange={(value: any) =>
+                  setFieldValue(field("interventionReasons"), value)
+                }
+              >
+                {interventionReasons.list.map((reason) => (
+                  <Select.Option key={reason.id} value={reason.id}>
+                    {reason.name}
+                  </Select.Option>
+                ))}
+              </Select>
+              {canRecordIntervention(evaluation) && (
+                <div data-testid="review-create-intervention">
+                  <Checkbox
+                    checked={evaluation.createIntervention}
+                    onChange={(e: any) =>
+                      setFieldValue(
+                        field("createIntervention"),
+                        e.target.checked,
+                      )
+                    }
+                  >
+                    {t("infectionControl.review.createIntervention")}
+                  </Checkbox>
+                  {evaluation.createIntervention && (
+                    <div className="drug-field-info">
+                      {t("infectionControl.review.createInterventionInfo")}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="drug-notes">
             <div className="drug-notes-header">
