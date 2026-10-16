@@ -12,6 +12,7 @@ import { getErrorMessage } from "utils/errorHandler";
 import { Form } from "styles/Form.style";
 
 import {
+  fetchInterventionReasons,
   ICourse,
   IFollowUp,
   IFollowUpCourse,
@@ -64,6 +65,9 @@ export function ReviewModal({
   const { open, status } = useAppSelector(
     (state) => state.infectionControl.review,
   );
+  const reasons = useAppSelector(
+    (state) => state.infectionControl.interventionReasons.list,
+  );
   const isSaving = status === "loading";
   const [step, setStep] = useState(0);
 
@@ -71,6 +75,11 @@ export function ReviewModal({
   useEffect(() => {
     if (open) setStep(0);
   }, [open]);
+
+  // the reasons a non-conformity can be given
+  useEffect(() => {
+    if (open) dispatch(fetchInterventionReasons());
+  }, [open, dispatch]);
 
   // open reasons that make the evaluation on record of a drug no longer hold
   const invalidatedEvaluations = useMemo(
@@ -103,7 +112,10 @@ export function ReviewModal({
     () => getInitialValues(followUp, courses, drugNames),
     [followUp, courses, drugNames],
   );
-  const evaluationSchema = useMemo(() => getEvaluationSchema(t), [t]);
+  const evaluationSchema = useMemo(
+    () => getEvaluationSchema(t, reasons),
+    [t, reasons],
+  );
   const validationSchema = useMemo(
     () => getValidationSchema(t, evaluationSchema),
     [t, evaluationSchema],
@@ -115,7 +127,7 @@ export function ReviewModal({
 
   const onSave = (values: IReviewFields) => {
     dispatch(
-      saveReview(toReviewPayload(values, followUp.admissionNumber)),
+      saveReview(toReviewPayload(values, followUp.admissionNumber, reasons)),
     ).then((response: any) => {
       if (response.error) {
         notification.error({ message: getErrorMessage(response, t) });
@@ -222,6 +234,16 @@ export function ReviewModal({
               text: t("infectionControl.review.hintDecision"),
               error: false,
             };
+          } else if (stepErrors?.interventionReasons) {
+            hint = {
+              text: t("infectionControl.review.hintReasons"),
+              error: true,
+            };
+          } else if (stepErrors?.substituteDrug) {
+            hint = {
+              text: t("infectionControl.review.hintSubstitute"),
+              error: true,
+            };
           } else if (stepErrors?.notes) {
             hint = {
               text: t("infectionControl.review.hintJustification"),
@@ -290,6 +312,10 @@ export function ReviewModal({
                       now={now}
                     />
                   )}
+                  {/* lets Enter submit with more than one field (a field
+                      alone submits by itself); the reasons select keeps its
+                      Enter to pick an option */}
+                  <button type="submit" hidden />
                 </Form>
               </div>
 

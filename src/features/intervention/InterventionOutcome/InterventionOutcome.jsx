@@ -44,6 +44,9 @@ export default function InterventionOutcome({ ...props }) {
   const isInvalid =
     selectedIntervention.view &&
     ["s", "0"].indexOf(outcomeData?.header?.status) !== -1;
+  // the user cannot change it: infection control keeps the ones its reviews
+  // recorded
+  const isLocked = !!outcomeData?.header?.locked;
 
   useEffect(() => {
     if (selectedIntervention.open) {
@@ -121,7 +124,7 @@ export default function InterventionOutcome({ ...props }) {
   };
 
   const Footer = ({ handleSubmit }) => {
-    if (isInvalid || !outcomeData?.header) {
+    if (isInvalid || isLocked || !outcomeData?.header) {
       return (
         <ModalFooter>
           <Button
@@ -309,6 +312,20 @@ export default function InterventionOutcome({ ...props }) {
                   ></Alert>
                 )}
             </Space>
+          )}
+
+          {isLocked && (
+            <Alert
+              type="warning"
+              showIcon
+              data-testid="intervention-outcome-locked"
+              message={t(
+                outcomeData.header.infectionControl
+                  ? "interventionForm.lockedInfectionControl"
+                  : "interventionForm.locked",
+              )}
+              style={{ marginTop: "15px" }}
+            ></Alert>
           )}
 
           {outcomeData?.header?.archived && (

@@ -552,6 +552,9 @@
   "interventionForm": {
     "title": "Intervenção",
     "titleMultiple": "Intervenção Múltipla",
+    "infectionControlTag": "Controle de infecção",
+    "lockedInfectionControl": "Esta intervenção foi registrada pelo controle de infecção e só pode ser alterada por ele.",
+    "locked": "Você não tem permissão para alterar esta intervenção.",
 
     "labelPrescriptionError": "Possível erro de prescrição",
     "labelPrescriptionErrorHint": "Erro de prescrição com significado clínico é definido como um erro de decisão, não intencional, que pode reduzir a probabilidade do tratamento ser efetivo ou aumentar o risco de lesão no paciente, quando comparado com as praticas clínicas estabelecidas e aceitas. Ref: CFF,  Prot.: MS e Anvisa",
@@ -1752,6 +1755,9 @@
       "until": "até {{date}}",
       "expired": "vencida em {{date}}",
       "noLongerValid": "Não vale mais",
+      "reasons": "Motivos: {{reasons}}",
+      "substitute": "Substituto: {{drug}}",
+      "intervention": "Intervenção: {{status}}",
       "invalidated": {
         "3": "vencida em {{date}}",
         "6": "posologia alterada"
@@ -1843,6 +1849,18 @@
       "justification": "Justificativa",
       "justificationPlaceholder": "Descreva o motivo da não conformidade e a conduta sugerida",
       "justificationRequired": "Informe a justificativa",
+      "reasons": "Motivos da não conformidade",
+      "reasonsPlaceholder": "Selecione os motivos",
+      "reasonsEmpty": "Nenhum motivo de intervenção habilitado para o controle de infecção",
+      "reasonsRequired": "Informe o motivo da não conformidade",
+      "substitute": "Medicamento substituto",
+      "substitutePlaceholder": "Digite ao menos 3 letras para pesquisar um antimicrobiano",
+      "substituteEmpty": "Nenhum antimicrobiano encontrado",
+      "substituteRequired": "Informe o medicamento substituto",
+      "substituteHintRequired": "obrigatório",
+      "substituteHintOptional": "opcional",
+      "createIntervention": "Registrar intervenção no medicamento",
+      "createInterventionInfo": "A intervenção fica pendente de desfecho e só pode ser alterada pelo controle de infecção.",
       "required": "obrigatória",
       "nextReview": {
         "none": "Não agendar",
@@ -1858,6 +1876,8 @@
       "hintDecision": "Selecione uma avaliação para continuar",
       "hintJustification": "Informe a justificativa",
       "hintValidity": "Revise a vigência",
+      "hintReasons": "Informe o motivo da não conformidade",
+      "hintSubstitute": "Informe o medicamento substituto",
       "hintAllDrugs": "Conclua a avaliação de todos os antimicrobianos",
       "nextDrug": "Próximo antimicrobiano",
       "nextPatient": "Próximo: paciente",

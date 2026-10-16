@@ -175,6 +175,32 @@ export interface IEvaluationPosology {
   route: string | null;
 }
 
+// an intervention reason that can justify a non-conformity (flagged for
+// infection control in motivointervencao)
+export interface IInterventionReason {
+  id: number;
+  // with the name of its parent reason, as the intervention form shows it
+  name: string;
+  // whether it relates the drug to another, the substitute
+  // (InterventionReasonRelationType)
+  relationType: number;
+  // a substitution, which names the drug recommended instead
+  substitution: boolean;
+}
+
+// an antimicrobial recommended instead of the one evaluated
+export interface ISubstituteDrug {
+  id: number;
+  name: string | null;
+}
+
+// an intervention recorded by a review, kept by infection control
+export interface IEvaluationIntervention {
+  id: string;
+  // the intervention status: "s" pending its outcome, "a" accepted...
+  status: string;
+}
+
 // conformity of one antimicrobial course, recorded in a review
 export interface IAntimicrobialEvaluation {
   id: string;
@@ -183,6 +209,12 @@ export interface IAntimicrobialEvaluation {
   idPrescription: string;
   courseStart: string;
   conforming: boolean;
+  // the reasons of a non-conformity
+  interventionReasons?: { id: number; name: string | null }[];
+  // the drug recommended instead, for reasons related to another drug
+  substituteDrug?: ISubstituteDrug | null;
+  // the interventions it recorded on the drug
+  interventions?: IEvaluationIntervention[];
   notes: string | null;
   posology: IEvaluationPosology;
   // when the verdict starts to apply: the review, or earlier when backdated
@@ -240,6 +272,12 @@ export interface IFollowUp {
 export interface IReviewEvaluationPayload {
   idDrug: number;
   conforming: boolean;
+  // the reasons of a non-conformity, empty when conforming
+  interventionReasons: number[];
+  // record an intervention on the drug with the reasons
+  createIntervention: boolean;
+  // the drug recommended instead, only for reasons related to another drug
+  substituteDrug: number | null;
   notes: string | null;
   // between the course start and now; null applies it from the review
   validFrom: string | null;
@@ -309,6 +347,17 @@ interface IInfectionControlSlice {
   follow: {
     status: Status;
   };
+  // the reasons a non-conformity can be given, loaded once
+  interventionReasons: {
+    status: Status;
+    list: IInterventionReason[];
+  };
+  // the drugs found for a substitute, by the latest search
+  substituteSearch: {
+    status: Status;
+    list: ISubstituteDrug[];
+    requestId: string | null;
+  };
   // only informative: loaded apart, so a failure here leaves the page whole
   cultures: {
     status: Status;
@@ -341,6 +390,15 @@ const initialState: IInfectionControlSlice = {
   },
   follow: {
     status: "idle",
+  },
+  interventionReasons: {
+    status: "idle",
+    list: [],
+  },
+  substituteSearch: {
+    status: "idle",
+    list: [],
+    requestId: null,
   },
   cultures: {
     status: "idle",
@@ -446,6 +504,59 @@ export const saveReview = createAsyncThunk(
   },
 );
 
+// the active intervention reasons flagged for infection control
+export const fetchInterventionReasons = createAsyncThunk(
+  "infectionControl/fetchInterventionReasons",
+  async (_, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.getInterventionReasons();
+      const reasons: {
+        id: number;
+        name: string;
+        parentName: string | null;
+        relationType: number;
+        substitution: boolean;
+        infectionControl: boolean;
+      }[] = response.data.data;
+
+      return reasons
+        .filter((reason) => reason.infectionControl)
+        .map((reason): IInterventionReason => ({
+          id: reason.id,
+          name: reason.parentName
+            ? `${reason.parentName} - ${reason.name}`
+            : reason.name,
+          relationType: reason.relationType,
+          substitution: !!reason.substitution,
+        }));
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+  {
+    // the list does not change while the page is open
+    condition: (_, { getState }) =>
+      !["loading", "succeeded"].includes(
+        (getState() as any).infectionControl.interventionReasons.status,
+      ),
+  },
+);
+
+export const searchSubstituteDrugs = createAsyncThunk(
+  "infectionControl/searchSubstituteDrugs",
+  async (params: { term: string }, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.searchAntimicrobials(
+        params.term,
+      );
+
+      return response.data.data as ISubstituteDrug[];
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
 export const followAdmission = createAsyncThunk(
   "infectionControl/followAdmission",
   async (params: { admissionNumber: string }, thunkAPI) => {
@@ -537,6 +648,31 @@ const infectionControlSlice = createSlice({
       })
       .addCase(saveReview.rejected, (state) => {
         state.review.status = "failed";
+      })
+      .addCase(fetchInterventionReasons.pending, (state) => {
+        state.interventionReasons.status = "loading";
+      })
+      .addCase(fetchInterventionReasons.fulfilled, (state, action) => {
+        state.interventionReasons.status = "succeeded";
+        state.interventionReasons.list = action.payload;
+      })
+      .addCase(fetchInterventionReasons.rejected, (state) => {
+        state.interventionReasons.status = "failed";
+      })
+      // only the latest search fills the list
+      .addCase(searchSubstituteDrugs.pending, (state, action) => {
+        state.substituteSearch.status = "loading";
+        state.substituteSearch.requestId = action.meta.requestId;
+      })
+      .addCase(searchSubstituteDrugs.fulfilled, (state, action) => {
+        if (state.substituteSearch.requestId !== action.meta.requestId) return;
+        state.substituteSearch.status = "succeeded";
+        state.substituteSearch.list = action.payload;
+      })
+      .addCase(searchSubstituteDrugs.rejected, (state, action) => {
+        if (state.substituteSearch.requestId !== action.meta.requestId) return;
+        state.substituteSearch.status = "failed";
+        state.substituteSearch.list = [];
       })
       .addCase(followAdmission.pending, (state) => {
         state.follow.status = "loading";

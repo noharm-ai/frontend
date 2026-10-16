@@ -17,6 +17,19 @@ import {
   IFollowUpPending,
 } from "./InfectionControlSlice";
 
+// the reasons a non-conformity was given, by name
+export const describeReasons = (evaluation: IAntimicrobialEvaluation) =>
+  (evaluation.interventionReasons ?? [])
+    .map((reason) => reason.name)
+    .filter(Boolean)
+    .join(", ");
+
+// the drug an evaluation recommends instead, by name
+export const describeSubstitute = (evaluation: IAntimicrobialEvaluation) =>
+  evaluation.substituteDrug
+    ? (evaluation.substituteDrug.name ?? `${evaluation.substituteDrug.id}`)
+    : null;
+
 /**
  * The follow-up lists its courses by drug and start, the same key the
  * antimicrobial timeline uses (both are grouped by the backend the same way),

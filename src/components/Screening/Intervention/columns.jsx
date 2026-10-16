@@ -162,6 +162,11 @@ export const InterventionView = ({
       {showReasons && (
         <Descriptions.Item label={`${t("labels.reasons")}:`} span={4}>
           {intervention.reasonDescription}
+          {intervention.idInfectionControlEvaluation && (
+            <Tag style={{ marginLeft: "8px" }}>
+              {t("interventionForm.infectionControlTag")}
+            </Tag>
+          )}
         </Descriptions.Item>
       )}
 
@@ -474,6 +479,16 @@ const columns = (
       dataIndex: "reasonDescription",
       align: "left",
       width: 100,
+      render: (text, record) => (
+        <>
+          {text}
+          {record.idInfectionControlEvaluation && (
+            <div>
+              <Tag>{t("interventionForm.infectionControlTag")}</Tag>
+            </div>
+          )}
+        </>
+      ),
     },
     {
       title: t("labels.status"),

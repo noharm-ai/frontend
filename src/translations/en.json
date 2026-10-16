@@ -552,6 +552,9 @@
   "interventionForm": {
     "title": "Intervention",
     "titleMultiple": "Multiple Intervention",
+    "infectionControlTag": "Infection control",
+    "lockedInfectionControl": "This intervention was recorded by infection control and only infection control can change it.",
+    "locked": "You are not allowed to change this intervention.",
 
     "labelPrescriptionError": "Prescription error",
     "labelPrescriptionErrorHint": "Prescribing error with clinical significance is defined as an unintentional decision error that may reduce the likelihood that the treatment will be effective or increase the risk of injury to the patient, when compared to established and accepted clinical practices. Ref: CFF, Prot.: MS and Anvisa",
@@ -1742,6 +1745,9 @@
       "until": "until {{date}}",
       "expired": "expired on {{date}}",
       "noLongerValid": "No longer holds",
+      "reasons": "Reasons: {{reasons}}",
+      "substitute": "Substitute: {{drug}}",
+      "intervention": "Intervention: {{status}}",
       "invalidated": {
         "3": "expired on {{date}}",
         "6": "posology changed"
@@ -1833,6 +1839,18 @@
       "justification": "Justification",
       "justificationPlaceholder": "Describe why it does not conform and the suggested conduct",
       "justificationRequired": "Enter the justification",
+      "reasons": "Non-conformity reasons",
+      "reasonsPlaceholder": "Select the reasons",
+      "reasonsEmpty": "No intervention reason is enabled for infection control",
+      "reasonsRequired": "Enter the non-conformity reason",
+      "substitute": "Substitute drug",
+      "substitutePlaceholder": "Type at least 3 letters to search an antimicrobial",
+      "substituteEmpty": "No antimicrobial found",
+      "substituteRequired": "Choose the substitute drug",
+      "substituteHintRequired": "required",
+      "substituteHintOptional": "optional",
+      "createIntervention": "Record an intervention on the drug",
+      "createInterventionInfo": "The intervention stays pending its outcome and only infection control can change it.",
       "required": "required",
       "nextReview": {
         "none": "Don't schedule",
@@ -1848,6 +1866,8 @@
       "hintDecision": "Select an evaluation to continue",
       "hintJustification": "Enter the justification",
       "hintValidity": "Check the validity",
+      "hintReasons": "Enter the non-conformity reason",
+      "hintSubstitute": "Choose the substitute drug",
       "hintAllDrugs": "Finish evaluating all antimicrobials",
       "nextDrug": "Next antimicrobial",
       "nextPatient": "Next: patient",

@@ -56,6 +56,11 @@ function ChooseInterventionModal({
                 {moment(i.date).format("DD/MM/YYYY HH:mm")}
               </div>
               <div className="description">{i.reasonDescription}</div>
+              {i.idInfectionControlEvaluation && (
+                <div className="description">
+                  {translate("interventionForm.infectionControlTag")}
+                </div>
+              )}
               <div className="tag">{getConfig(i)}</div>
             </div>
             <RightOutlined />

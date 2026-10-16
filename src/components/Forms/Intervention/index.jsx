@@ -5,6 +5,7 @@ import { Formik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
 import { RollbackOutlined } from "@ant-design/icons";
+import { Alert } from "antd";
 
 import { Row, Col } from "components/Grid";
 import Button from "components/Button";
@@ -20,6 +21,7 @@ import { setSelectedIntervention as setSelectedInterventionOutcome } from "featu
 import { startMultipleOutcome } from "features/intervention/MultipleOutcome/MultipleOutcomeSlice";
 import { setSelectedRowsActive } from "features/prescription/PrescriptionSlice";
 import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
+import { isInterventionLocked } from "features/intervention/interventionAccess/interventionAccess";
 import { getErrorMessageFromException } from "utils/errorHandler";
 import {
   trackInterventionAction,
@@ -283,6 +285,8 @@ export default function Intervention({
       });
   };
 
+  const isLocked = isInterventionLocked(item.intervention);
+
   const InterventionFooter = ({ handleSubmit, setFieldValue }) => {
     const isChecked = item.intervention && item.intervention.status === "s";
     const closedStatuses = interventionStatus.getClosedStatuses();
@@ -349,7 +353,7 @@ export default function Intervention({
         >
           {t("interventionForm.btnCancel")}
         </Button>
-        {isChecked && !disableUndoIntervention && (
+        {isChecked && !disableUndoIntervention && !isLocked && (
           <Tooltip title={t("interventionForm.btnUndo")} placement="top">
             <Button
               className="gtm-bt-undo-interv"
@@ -366,13 +370,15 @@ export default function Intervention({
           title={
             isClosed
               ? "Esta intervenção não pode ser alterada, pois já possui desfecho cadastrado"
-              : ""
+              : isLocked
+                ? t("interventionForm.lockedInfectionControl")
+                : ""
           }
         >
           <Dropdown.Button
             id="btn-interv-save-action"
             loading={isSaving}
-            disabled={isClosed}
+            disabled={isClosed || isLocked}
             type="primary"
             onClick={() => handleSubmit()}
             menu={{
@@ -442,6 +448,16 @@ export default function Intervention({
               )}
               {item.idPrescriptionDrug + "" !== "0" && <DrugData item={item} />}
             </>
+          )}
+
+          {isLocked && (
+            <Alert
+              type="warning"
+              showIcon
+              data-testid="intervention-form-locked"
+              message={t("interventionForm.lockedInfectionControl")}
+              style={{ marginBottom: "15px" }}
+            />
           )}
 
           <form onSubmit={handleSubmit}>
