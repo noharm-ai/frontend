@@ -4,7 +4,7 @@ import { Tag } from "antd";
 import { formatDate, formatDateTime } from "utils/date";
 
 import { IAntimicrobialEvaluation, IFollowUp } from "../InfectionControlSlice";
-import { describeReasons } from "../followUp";
+import { describeReasons, describeSubstitute } from "../followUp";
 import { ReviewList } from "./ReviewHistory.style";
 
 interface ReviewHistoryProps {
@@ -83,6 +83,16 @@ export function ReviewHistory({ followUp, drugNames }: ReviewHistoryProps) {
                       >
                         {t("infectionControl.evaluation.reasons", {
                           reasons: describeReasons(evaluation),
+                        })}
+                      </div>
+                    )}
+                    {describeSubstitute(evaluation) && (
+                      <div
+                        className="review-evaluation-notes"
+                        data-testid="review-evaluation-substitute"
+                      >
+                        {t("infectionControl.evaluation.substitute", {
+                          drug: describeSubstitute(evaluation),
                         })}
                       </div>
                     )}

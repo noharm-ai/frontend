@@ -909,6 +909,13 @@ api.infectionControl.listAdmissions = (params = {}) =>
 api.infectionControl.getInterventionReasons = () =>
   instance.get(endpoints.intervention.reasons, setHeaders());
 
+// the antimicrobials, by name
+api.infectionControl.searchAntimicrobials = (term) =>
+  instance.get("/infection-control/antimicrobials", {
+    params: { q: term },
+    ...setHeaders(),
+  });
+
 /**
  * training namespace
  */

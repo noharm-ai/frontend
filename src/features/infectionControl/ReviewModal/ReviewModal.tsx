@@ -65,6 +65,9 @@ export function ReviewModal({
   const { open, status } = useAppSelector(
     (state) => state.infectionControl.review,
   );
+  const reasons = useAppSelector(
+    (state) => state.infectionControl.interventionReasons.list,
+  );
   const isSaving = status === "loading";
   const [step, setStep] = useState(0);
 
@@ -109,7 +112,10 @@ export function ReviewModal({
     () => getInitialValues(followUp, courses, drugNames),
     [followUp, courses, drugNames],
   );
-  const evaluationSchema = useMemo(() => getEvaluationSchema(t), [t]);
+  const evaluationSchema = useMemo(
+    () => getEvaluationSchema(t, reasons),
+    [t, reasons],
+  );
   const validationSchema = useMemo(
     () => getValidationSchema(t, evaluationSchema),
     [t, evaluationSchema],
@@ -121,7 +127,7 @@ export function ReviewModal({
 
   const onSave = (values: IReviewFields) => {
     dispatch(
-      saveReview(toReviewPayload(values, followUp.admissionNumber)),
+      saveReview(toReviewPayload(values, followUp.admissionNumber, reasons)),
     ).then((response: any) => {
       if (response.error) {
         notification.error({ message: getErrorMessage(response, t) });
@@ -231,6 +237,11 @@ export function ReviewModal({
           } else if (stepErrors?.interventionReasons) {
             hint = {
               text: t("infectionControl.review.hintReasons"),
+              error: true,
+            };
+          } else if (stepErrors?.substituteDrug) {
+            hint = {
+              text: t("infectionControl.review.hintSubstitute"),
               error: true,
             };
           } else if (stepErrors?.notes) {

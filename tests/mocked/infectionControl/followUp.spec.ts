@@ -35,13 +35,15 @@ const WATCH_EXPIRY = /Quando a avaliação vencer/;
 const WATCH_POSOLOGY = /Quando a posologia mudar/;
 
 // the intervention reasons; only the ones flagged for infection control can
-// justify a non-conformity
+// justify a non-conformity. A substitution or relationType 2 requires a
+// substitute drug, relationType 1 takes one optionally
 const REASONS = [
   {
     id: 31,
     name: "Espectro inadequado",
     parentId: 30,
     parentName: "Antimicrobiano",
+    relationType: 0,
     infectionControl: true,
   },
   {
@@ -49,6 +51,17 @@ const REASONS = [
     name: "Tempo de tratamento",
     parentId: null,
     parentName: null,
+    relationType: 0,
+    infectionControl: true,
+  },
+  {
+    // a substitution: the substitute is required whatever its relationType
+    id: 33,
+    name: "Trocar antimicrobiano",
+    parentId: null,
+    parentName: null,
+    relationType: 0,
+    substitution: true,
     infectionControl: true,
   },
   {
@@ -56,6 +69,7 @@ const REASONS = [
     name: "Duplicidade medicamentosa",
     parentId: null,
     parentName: null,
+    relationType: 1,
     infectionControl: false,
   },
 ];
@@ -353,6 +367,7 @@ test("lists the reasons and the intervention of a non-conformity in the history"
       { id: 31, name: "Antimicrobiano - Espectro inadequado" },
       { id: 32, name: "Tempo de tratamento" },
     ],
+    substituteDrug: { id: 21, name: "CEFTRIAXONA 1 g SOL INJ" },
     interventions: [{ id: "7001", status: "s" }],
   };
   mockPage(
@@ -378,6 +393,9 @@ test("lists the reasons and the intervention of a non-conformity in the history"
   const review = page.getByRole("dialog").getByTestId("review-item");
   await expect(review.getByTestId("review-evaluation-reasons")).toHaveText(
     "Motivos: Antimicrobiano - Espectro inadequado, Tempo de tratamento",
+  );
+  await expect(review.getByTestId("review-evaluation-substitute")).toHaveText(
+    "Substituto: CEFTRIAXONA 1 g SOL INJ",
   );
   await expect(review.getByTestId("review-evaluation-intervention")).toHaveText(
     "Intervenção: Pendente",
@@ -816,6 +834,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     ).toHaveText([
       "Antimicrobiano - Espectro inadequado",
       "Tempo de tratamento",
+      "Trocar antimicrobiano",
     ]);
     await drug.getByRole("heading", { level: 3 }).click();
     await pickReason(page, drug, "Antimicrobiano - Espectro inadequado");
@@ -1009,6 +1028,97 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
         validFrom: null,
         validUntil: `${localDay(3)}T23:59:59`,
       },
+    ]);
+  });
+
+  test("asks for the substitute drug a reason requires", async ({
+    page,
+    mockApi,
+  }) => {
+    mockPage(mockApi, followUp());
+    let sent: any = null;
+    mockApi.override(REVIEW, async (route) => {
+      sent = JSON.parse(route.request().postData()!);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(followUp({ status: 2, pendings: [] })),
+      });
+    });
+    const searches: string[] = [];
+    mockApi.override("GET /infection-control/antimicrobials", async (route) => {
+      searches.push(new URL(route.request().url()).searchParams.get("q")!);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          status: "success",
+          data: [
+            { id: 21, name: "CEFTRIAXONA 1 g SOL INJ" },
+            { id: 22, name: "CEFEPIMA 2 g SOL INJ" },
+          ],
+        }),
+      });
+    });
+
+    await page.goto(PAGE_URL);
+    await page
+      .getByRole("button", { name: "Revisar" })
+      .click({ timeout: 15000 });
+
+    const dialog = page.getByRole("dialog");
+    const next = dialog.getByRole("button", { name: "Próximo" });
+    const drug = dialog.getByTestId("review-drug");
+    const heading = drug.getByRole("heading", { level: 3 });
+    const substitute = drug.getByTestId("review-substitute");
+
+    await drug
+      .getByRole("radiogroup", { name: "Avaliação" })
+      .getByText("Não conforme", { exact: true })
+      .click();
+    await drug.getByLabel("Justificativa", { exact: true }).fill("Descalonar");
+    // a reason with no relation asks for no substitute
+    await pickReason(page, drug, "Tempo de tratamento");
+    await expect(substitute).toHaveCount(0);
+
+    await pickReason(page, drug, "Trocar antimicrobiano");
+    await expect(substitute).toContainText("obrigatório");
+    await expect(next).toBeDisabled();
+    await expect(dialog.getByTestId("review-hint")).toHaveText(
+      "Informe o medicamento substituto",
+    );
+
+    // searched from the third letter, picked with Enter, which stays here
+    const search = substitute.getByRole("combobox");
+    await search.click();
+    await search.pressSequentially("ce");
+    await search.pressSequentially("f");
+    await expect(
+      page.locator(
+        ".ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option",
+      ),
+    ).toHaveCount(2);
+    await search.press("Enter");
+    await expect(substitute).toContainText("CEFTRIAXONA 1 g SOL INJ");
+    await expect(heading).toHaveText("MEROPENEM 1 g SOL INJ");
+    expect(searches).toEqual(["cef"]);
+
+    await expect(next).toBeEnabled();
+    await next.click();
+    await expect(heading).toHaveText("VANCOMICINA 500 mg SOL INJ");
+    await drug
+      .getByRole("radiogroup", { name: "Avaliação" })
+      .getByText("Conforme", { exact: true })
+      .click();
+    await next.click();
+    await dialog.getByRole("button", { name: "Registrar revisão" }).click();
+
+    await expect(
+      page.getByText("Revisão registrada com sucesso!"),
+    ).toBeVisible();
+    expect(sent.evaluations).toMatchObject([
+      { idDrug: 11, interventionReasons: [32, 33], substituteDrug: 21 },
+      { idDrug: 12, interventionReasons: [], substituteDrug: null },
     ]);
   });
 

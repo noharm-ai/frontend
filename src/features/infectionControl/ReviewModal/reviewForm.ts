@@ -5,13 +5,16 @@ import type { TFunction } from "i18next";
 
 import { formatDate } from "utils/date";
 import { InfectionControlPendingTypeEnum } from "models/InfectionControlEnum";
+import InterventionReasonRelationType from "models/InterventionReasonRelationType";
 
 import {
   IAntimicrobialEvaluation,
   ICourse,
   IFollowUp,
   IFollowUpPending,
+  IInterventionReason,
   IReviewPayload,
+  ISubstituteDrug,
 } from "../InfectionControlSlice";
 import { endsBeforeInForce } from "../followUp";
 import { IDraftEvaluation } from "../CourseGantt/ganttLayout";
@@ -66,6 +69,8 @@ export interface IDrugEvaluationFields {
   interventionReasons: number[];
   // record an intervention on the drug with those reasons
   createIntervention: boolean;
+  // the drug recommended instead, for reasons related to another drug
+  substituteDrug: ISubstituteDrug | null;
   // back to pending when the evaluation expires
   watchExpiry: boolean;
   // back to pending when the posology changes
@@ -216,6 +221,7 @@ export const getInitialValues = (
         notes: "",
         interventionReasons: [],
         createIntervention: false,
+        substituteDrug: null,
         // the choices made last time, on by default
         watchExpiry: watches(
           course.evaluation,
@@ -232,8 +238,44 @@ export const getInitialValues = (
   };
 };
 
-/** The checks of one drug */
-export const getEvaluationSchema = (t: TFunction) =>
+/**
+ * Whether the reasons of a non-conformity ask for a substitute drug:
+ * "required" for a substitution or a required relation, "optional" for an
+ * optional relation, as the intervention form takes it, or null
+ */
+export const getSubstituteRelation = (
+  evaluation: Pick<IDrugEvaluationFields, "conforming" | "interventionReasons">,
+  reasons: IInterventionReason[],
+): "required" | "optional" | null => {
+  if (evaluation.conforming !== false) return null;
+
+  const chosen = reasons.filter((reason) =>
+    evaluation.interventionReasons.includes(reason.id),
+  );
+  const relationTypes = chosen.map((reason) => reason.relationType);
+
+  if (
+    chosen.some((reason) => reason.substitution) ||
+    relationTypes.some(InterventionReasonRelationType.isRequired)
+  ) {
+    return "required";
+  }
+  if (
+    relationTypes.some((type) =>
+      InterventionReasonRelationType.getTypesWithRelation().includes(type),
+    )
+  ) {
+    return "optional";
+  }
+
+  return null;
+};
+
+/** The checks of one drug, with the reasons a non-conformity can be given */
+export const getEvaluationSchema = (
+  t: TFunction,
+  reasons: IInterventionReason[],
+) =>
   Yup.object()
     .shape({
       evaluate: Yup.boolean(),
@@ -265,6 +307,23 @@ export const getEvaluationSchema = (t: TFunction) =>
             evaluate && conforming === false,
           then: (schema) =>
             schema.min(1, t("infectionControl.review.reasonsRequired")),
+        }),
+      // one substitute, for a reason that requires it
+      substituteDrug: Yup.mixed<ISubstituteDrug>()
+        .nullable()
+        .when(["evaluate", "conforming", "interventionReasons"], {
+          is: (
+            evaluate: boolean,
+            conforming: boolean | null,
+            interventionReasons: number[],
+          ) =>
+            evaluate &&
+            getSubstituteRelation(
+              { conforming, interventionReasons },
+              reasons,
+            ) === "required",
+          then: (schema) =>
+            schema.required(t("infectionControl.review.substituteRequired")),
         }),
       notes: Yup.string().when(["evaluate", "conforming"], {
         is: (evaluate: boolean, conforming: boolean | null) =>
@@ -337,6 +396,7 @@ export const canRecordIntervention = (evaluation: IDrugEvaluationFields) =>
 export const toReviewPayload = (
   values: IReviewFields,
   admissionNumber: number,
+  reasons: IInterventionReason[],
 ): IReviewPayload => ({
   admissionNumber,
   notes: values.notes.trim() || null,
@@ -354,6 +414,10 @@ export const toReviewPayload = (
       interventionReasons: e.conforming ? [] : e.interventionReasons,
       createIntervention:
         !e.conforming && e.createIntervention && canRecordIntervention(e),
+      // kept in the form like the reasons, sent while a reason asks for it
+      substituteDrug: getSubstituteRelation(e, reasons)
+        ? (e.substituteDrug?.id ?? null)
+        : null,
       notes: e.notes.trim() || null,
       validFrom: getValidFrom(e),
       // the evaluation holds through the whole chosen day

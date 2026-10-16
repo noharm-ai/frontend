@@ -21,7 +21,7 @@ import {
   ALERT_LEVELS,
 } from "../../InfectionControlSlice";
 import { CourseGantt } from "../../CourseGantt/CourseGantt";
-import { describeReasons } from "../../followUp";
+import { describeReasons, describeSubstitute } from "../../followUp";
 import { formatRegimen } from "../../timeline";
 import { ChoiceChips } from "../ChoiceChips/ChoiceChips";
 import { DecisionCards } from "../DecisionCards/DecisionCards";
@@ -39,6 +39,7 @@ import {
   getDecision,
   getSkipOutcome,
   getStartMoment,
+  getSubstituteRelation,
   getValidityPeriod,
   getValidUntil,
   IDrugEvaluationFields,
@@ -51,6 +52,7 @@ import {
   verdictLabel,
 } from "../reviewForm";
 import { DrugEvaluation } from "../ReviewModal.style";
+import { SubstituteDrugSelect } from "../SubstituteDrugSelect/SubstituteDrugSelect";
 
 interface DrugEvaluationStepProps {
   // the drug of the review form
@@ -102,6 +104,11 @@ export function DrugEvaluationStep({
   const field = (name: string) => `evaluations.${index}.${name}`;
   const decision = getDecision(evaluation);
   const nonConforming = decision === "nonConforming";
+  // a reason related to another drug asks for the one recommended instead
+  const substituteRelation = getSubstituteRelation(
+    evaluation,
+    interventionReasons.list,
+  );
   const skipOutcome = getSkipOutcome(evaluation, invalidatedEvaluations);
   // the running course being evaluated
   const activeCourse = findEvaluatedCourse(timeline?.courses, evaluation);
@@ -259,6 +266,13 @@ export function DrugEvaluationStep({
             <div>
               {t("infectionControl.evaluation.reasons", {
                 reasons: describeReasons(evaluation.current),
+              })}
+            </div>
+          )}
+          {describeSubstitute(evaluation.current) && (
+            <div>
+              {t("infectionControl.evaluation.substitute", {
+                drug: describeSubstitute(evaluation.current),
               })}
             </div>
           )}
@@ -572,6 +586,34 @@ export function DrugEvaluationStep({
                   </Select.Option>
                 ))}
               </Select>
+              {substituteRelation && (
+                <div className="drug-notes" data-testid="review-substitute">
+                  <div className="drug-notes-header">
+                    <label
+                      className="drug-section-title"
+                      htmlFor={field("substituteDrug")}
+                    >
+                      {t("infectionControl.review.substitute")}
+                    </label>
+                    <span
+                      className={`drug-notes-hint ${substituteRelation === "required" ? "required" : ""}`}
+                    >
+                      {t(
+                        substituteRelation === "required"
+                          ? "infectionControl.review.substituteHintRequired"
+                          : "infectionControl.review.substituteHintOptional",
+                      )}
+                    </span>
+                  </div>
+                  <SubstituteDrugSelect
+                    id={field("substituteDrug")}
+                    value={evaluation.substituteDrug}
+                    onChange={(drug) =>
+                      setFieldValue(field("substituteDrug"), drug)
+                    }
+                  />
+                </div>
+              )}
               {canRecordIntervention(evaluation) && (
                 <div data-testid="review-create-intervention">
                   <Checkbox

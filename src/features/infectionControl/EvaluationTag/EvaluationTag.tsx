@@ -11,6 +11,7 @@ import {
 import {
   describeInvalidation,
   describeReasons,
+  describeSubstitute,
   isEvaluationExpired,
 } from "../followUp";
 
@@ -72,7 +73,14 @@ export function EvaluationTag({
       color={expired ? "default" : evaluation.conforming ? "green" : "red"}
       data-testid="evaluation-tag"
       title={
-        [describeReasons(evaluation), evaluation.notes]
+        [
+          describeReasons(evaluation),
+          describeSubstitute(evaluation) &&
+            t("infectionControl.evaluation.substitute", {
+              drug: describeSubstitute(evaluation),
+            }),
+          evaluation.notes,
+        ]
           .filter(Boolean)
           .join(" · ") || undefined
       }
