@@ -38,6 +38,7 @@ import { KnowledgeBaseArticlePage } from "pages/KnowledgeBase/KnowledgeBaseArtic
 import { NewsPage } from "pages/News/NewsPage";
 import { InfectionControlPage } from "pages/InfectionControl/InfectionControl";
 import { InfectionControlListPage } from "pages/InfectionControlList/InfectionControlList";
+import { InfectionControlReportPage } from "pages/InfectionControlReport/InfectionControlReport";
 
 import AdminTag from "pages/Admin/Tag";
 import AdminMemory from "pages/Admin/Memory";
@@ -350,6 +351,11 @@ const routes = [
     exact: true,
     path: "/controle-infeccao/:admissionNumber",
     element: <WithAuth component={InfectionControlPage} />,
+  },
+  {
+    exact: true,
+    path: "/controle-infeccao/:admissionNumber/relatorio",
+    element: <WithAuth component={InfectionControlReportPage} />,
   },
   {
     exact: true,

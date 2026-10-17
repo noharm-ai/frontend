@@ -403,6 +403,152 @@ test("lists the reasons and the intervention of a non-conformity in the history"
   await expect(review).toContainText("Sem cultura que justifique");
 });
 
+test("shows the report page, with every course and every review in detail, to print", async ({
+  page,
+  mockApi,
+}) => {
+  const nonConforming = {
+    ...vancomycinEvaluation,
+    conforming: false,
+    notes: "Sem cultura que justifique",
+    triggers: [3, 6],
+    interventionReasons: [{ id: 32, name: "Tempo de tratamento" }],
+    substituteDrug: { id: 21, name: "CEFTRIAXONA 1 g SOL INJ" },
+    interventions: [{ id: "7001", status: "s" }],
+  };
+  const timeline = {
+    ...TIMELINE_DATA,
+    data: {
+      ...TIMELINE_DATA.data,
+      courses: [
+        TIMELINE_DATA.data.courses[0],
+        course({
+          idDrug: 12,
+          drug: "VANCOMICINA 500 mg SOL INJ",
+          substance: "VANCOMICINA",
+          atbLevel: 2,
+          start: VANCOMYCIN_START,
+          end: VANCOMYCIN_END,
+          days: 5,
+          plannedDays: 7,
+          regimens: [
+            {
+              start: VANCOMYCIN_START,
+              end: VANCOMYCIN_END,
+              dose: 1,
+              measureUnit: "g",
+              frequency: "12h/12h",
+              route: "IV",
+              doseWeight: "0,02 g/Kg",
+              doseWeightDay: "0,03 g/Kg/dia",
+              notes: "Infundir em 2 horas",
+            },
+          ],
+          gaps: [{ start: hoursFromNow(-72), end: hoursFromNow(-60) }],
+        }),
+      ],
+    },
+  };
+  mockPage(
+    mockApi,
+    followUp({
+      courses: [
+        {
+          idDrug: 11,
+          start: MEROPENEM_START,
+          ongoing: true,
+          evaluation: null,
+          history: [],
+        },
+        {
+          idDrug: 12,
+          start: VANCOMYCIN_START,
+          ongoing: true,
+          evaluation: nonConforming,
+          history: [nonConforming],
+        },
+      ],
+    }),
+    timeline,
+  );
+
+  // the page header and the review history open the report in a new tab
+  await page.goto(PAGE_URL);
+  const box = page.getByTestId("follow-up");
+  await expect(box).toBeVisible({ timeout: 15000 });
+  const headerLink = page.getByRole("link", { name: "Relatório" });
+  await expect(headerLink).toHaveAttribute("href", `${PAGE_URL}/relatorio`);
+  await expect(headerLink).toHaveAttribute("target", "_blank");
+  await box.getByTestId("follow-up-last-review").click();
+  await expect(page.getByTestId("history-open-report")).toHaveAttribute(
+    "href",
+    `${PAGE_URL}/relatorio`,
+  );
+
+  await page.goto(`${PAGE_URL}/relatorio`);
+  const report = page.getByTestId("infection-control-report");
+  await expect(report).toBeVisible({ timeout: 15000 });
+  await expect(
+    page.getByRole("heading", { name: "Relatório de controle de infecção" }),
+  ).toBeVisible();
+  await expect(report).toContainText("Fulano Beltrano");
+  await expect(report).toContainText("MEROPENEM 1 g SOL INJ sem avaliação");
+
+  // every course, with its posologies, gaps and evaluations
+  const courses = report.getByTestId("report-course");
+  await expect(courses).toHaveCount(2);
+  const vancomycin = courses.filter({ hasText: "VANCOMICINA 500 mg" });
+  await expect(vancomycin).toContainText("5 de 7 dias");
+  await expect(vancomycin).toContainText("Observe");
+  await expect(vancomycin).toContainText("0,02 g/Kg · 0,03 g/Kg/dia");
+  await expect(vancomycin).toContainText("Infundir em 2 horas");
+  await expect(vancomycin).toContainText("Intervalos sem prescrição (1)");
+  await expect(vancomycin).toContainText("Avaliações (1)");
+  await expect(courses.filter({ hasText: "MEROPENEM" })).toContainText(
+    "Nenhuma avaliação registrada.",
+  );
+
+  // every review, with all it recorded on each drug
+  const review = report.getByTestId("report-review");
+  await expect(review).toHaveCount(1);
+  await expect(review).toContainText("Maria Teste");
+  await expect(review).toContainText("Paciente estável, manter vancomicina");
+  const evaluation = review.getByTestId("report-evaluation");
+  await expect(evaluation).toContainText("Não conforme");
+  await expect(evaluation).toContainText("1 g · 12h/12h · IV");
+  await expect(evaluation).toContainText(
+    "Quando a avaliação vencer; Quando a posologia mudar",
+  );
+  await expect(evaluation).toContainText("Tempo de tratamento");
+  await expect(evaluation).toContainText("CEFTRIAXONA 1 g SOL INJ");
+  await expect(evaluation).toContainText("Pendente");
+  await expect(evaluation).toContainText("Sem cultura que justifique");
+
+  await expect(page.getByRole("button", { name: "Imprimir" })).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Voltar ao acompanhamento" }),
+  ).toHaveAttribute("href", PAGE_URL);
+});
+
+test("says so when the report page does not find the admission", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override(TIMELINE, {
+    status: 400,
+    json: { status: "error", message: "", code: "errors.invalidRecord" },
+  });
+
+  await page.goto(`${PAGE_URL}/relatorio`);
+  await expect(
+    page.getByText(
+      `Nenhum registro encontrado para o atendimento ${ADMISSION}.`,
+    ),
+  ).toBeVisible({ timeout: 15000 });
+  await expect(page.getByTestId("infection-control-report")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Imprimir" })).toHaveCount(0);
+});
+
 test("shows each conformity record on its course in the timeline", async ({
   page,
   mockApi,

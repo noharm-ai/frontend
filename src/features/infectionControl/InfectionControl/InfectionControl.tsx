@@ -7,6 +7,7 @@ import {
   FileDoneOutlined,
   FileTextOutlined,
   PlayCircleOutlined,
+  PrinterOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
@@ -44,6 +45,7 @@ import {
   getDrugNames,
   getFollowUpCourses,
   getInvalidatedEvaluations,
+  reportUrl,
 } from "../followUp";
 import { sortCourses } from "../timeline";
 import {
@@ -214,6 +216,15 @@ export function InfectionControl() {
               onClick={() => setClinicalNotesOpen(true)}
             >
               {t("infectionControl.clinicalNotes")}
+            </Button>
+            {/* in a new tab, keeping this page as it is */}
+            <Button
+              data-kb="infectionControl.reportButton"
+              icon={<PrinterOutlined />}
+              href={reportUrl(admissionNumber)}
+              target="_blank"
+            >
+              {t("infectionControl.report.open")}
             </Button>
             {showFollow && (
               <Button

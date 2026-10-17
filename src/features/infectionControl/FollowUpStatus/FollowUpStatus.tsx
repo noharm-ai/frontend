@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Tooltip } from "antd";
-import { WarningOutlined } from "@ant-design/icons";
+import { PrinterOutlined, WarningOutlined } from "@ant-design/icons";
 import dayjs, { Dayjs } from "dayjs";
 
 import DefaultModal from "components/Modal";
@@ -9,7 +9,7 @@ import { InfectionControlStatusEnum } from "models/InfectionControlEnum";
 import { formatDate } from "utils/date";
 
 import { IFollowUp } from "../InfectionControlSlice";
-import { describePending } from "../followUp";
+import { describePending, reportUrl } from "../followUp";
 import { ReviewHistory } from "../ReviewHistory/ReviewHistory";
 import { FollowUpBox, HistoryBody, PendingsBody } from "./FollowUpStatus.style";
 
@@ -173,7 +173,20 @@ export function FollowUpStatus({
         footer={null}
       >
         <HistoryBody data-kb="infectionControl.reviews">
-          <h2 className="modal-title">{t("infectionControl.history.title")}</h2>
+          <div className="history-header">
+            <h2 className="modal-title">
+              {t("infectionControl.history.title")}
+            </h2>
+            {/* the report page, with every detail of the reviews, to print */}
+            <Button
+              icon={<PrinterOutlined />}
+              data-testid="history-open-report"
+              href={reportUrl(followUp.admissionNumber)}
+              target="_blank"
+            >
+              {t("infectionControl.report.openDetailed")}
+            </Button>
+          </div>
           <ReviewHistory followUp={followUp} drugNames={drugNames} />
         </HistoryBody>
       </DefaultModal>
