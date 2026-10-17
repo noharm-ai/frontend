@@ -46,7 +46,6 @@ import AdminMemoryReports from "pages/Admin/Memory/Reports";
 import AdminMemoryFeatures from "pages/Admin/Memory/Features";
 import AdminMemorySchedules from "pages/Admin/Memory/Schedules";
 
-import AdminDrugAttributes from "pages/Admin/DrugAttributes";
 import AdminIntegration from "pages/Admin/Integration";
 import AdminSegment from "pages/Admin/Segment";
 import AdminExam from "pages/Admin/Exam";
@@ -386,23 +385,6 @@ const routes = [
     exact: true,
     path: "/admin/horarios",
     element: <WithAuth component={AdminMemorySchedules} />,
-  },
-  {
-    exact: true,
-    path: "/admin/curadoria-medicamentos",
-    element: <WithAuth component={AdminDrugAttributes} mode="drugAttributes" />,
-  },
-  {
-    exact: true,
-    path: "/admin/definicao-substancias",
-    element: (
-      <WithAuth component={AdminDrugAttributes} mode="substanceDefinition" />
-    ),
-  },
-  {
-    exact: true,
-    path: "/admin/divisor-faixas",
-    element: <WithAuth component={AdminDrugAttributes} mode="doseDivision" />,
   },
   {
     exact: true,
