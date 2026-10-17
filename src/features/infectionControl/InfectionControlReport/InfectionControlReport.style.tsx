@@ -1,20 +1,38 @@
 import styled from "styled-components";
 
-// the modal scrolls the document; the document itself is what gets printed,
-// whole
-export const ReportBody = styled.div`
-  max-height: 75vh;
-  overflow-y: auto;
-  padding-right: 8px;
-`;
-
+// on screen the document reads as a sheet of paper; printed, it is the page
 export const ReportDocument = styled.div`
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow:
+    0 1px 2px 0 rgba(0, 0, 0, 0.03),
+    0 1px 6px -1px rgba(0, 0, 0, 0.02),
+    0 2px 4px 0 rgba(0, 0, 0, 0.02);
   color: #2e3c5a;
   font-size: 13px;
   line-height: 1.45;
+  margin: 0 auto 24px auto;
+  max-width: 1100px;
+  padding: 24px 32px;
+
+  @media (max-width: 768px) {
+    padding: 16px;
+  }
+
+  @media screen {
+    .report-print-only {
+      display: none !important;
+    }
+  }
 
   @media print {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
     font-size: 11px;
+    margin: 0;
+    max-width: none;
     padding: 0;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;

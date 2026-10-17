@@ -403,7 +403,7 @@ test("lists the reasons and the intervention of a non-conformity in the history"
   await expect(review).toContainText("Sem cultura que justifique");
 });
 
-test("opens a printable report with every course and every review in detail", async ({
+test("shows the report page, with every course and every review in detail, to print", async ({
   page,
   mockApi,
 }) => {
@@ -472,16 +472,25 @@ test("opens a printable report with every course and every review in detail", as
     timeline,
   );
 
+  // the page header and the review history open the report in a new tab
   await page.goto(PAGE_URL);
   const box = page.getByTestId("follow-up");
   await expect(box).toBeVisible({ timeout: 15000 });
-
-  // the review history leads to the detailed report
+  const headerLink = page.getByRole("link", { name: "Relatório" });
+  await expect(headerLink).toHaveAttribute("href", `${PAGE_URL}/relatorio`);
+  await expect(headerLink).toHaveAttribute("target", "_blank");
   await box.getByTestId("follow-up-last-review").click();
-  await page.getByTestId("history-open-report").click();
+  await expect(page.getByTestId("history-open-report")).toHaveAttribute(
+    "href",
+    `${PAGE_URL}/relatorio`,
+  );
 
+  await page.goto(`${PAGE_URL}/relatorio`);
   const report = page.getByTestId("infection-control-report");
-  await expect(report).toBeVisible();
+  await expect(report).toBeVisible({ timeout: 15000 });
+  await expect(
+    page.getByRole("heading", { name: "Relatório de controle de infecção" }),
+  ).toBeVisible();
   await expect(report).toContainText("Fulano Beltrano");
   await expect(report).toContainText("MEROPENEM 1 g SOL INJ sem avaliação");
 
@@ -516,17 +525,28 @@ test("opens a printable report with every course and every review in detail", as
   await expect(evaluation).toContainText("Sem cultura que justifique");
 
   await expect(page.getByRole("button", { name: "Imprimir" })).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Voltar ao acompanhamento" }),
+  ).toHaveAttribute("href", PAGE_URL);
+});
 
-  // also offered in the page header
-  await page
-    .getByRole("dialog")
-    .filter({ has: report })
-    .locator(".ant-modal-footer")
-    .getByRole("button", { name: "Fechar" })
-    .click();
-  await expect(report).toHaveCount(0);
-  await page.getByRole("button", { name: "Relatório" }).click();
-  await expect(report).toBeVisible();
+test("says so when the report page does not find the admission", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override(TIMELINE, {
+    status: 400,
+    json: { status: "error", message: "", code: "errors.invalidRecord" },
+  });
+
+  await page.goto(`${PAGE_URL}/relatorio`);
+  await expect(
+    page.getByText(
+      `Nenhum registro encontrado para o atendimento ${ADMISSION}.`,
+    ),
+  ).toBeVisible({ timeout: 15000 });
+  await expect(page.getByTestId("infection-control-report")).toHaveCount(0);
+  await expect(page.getByRole("button", { name: "Imprimir" })).toHaveCount(0);
 });
 
 test("shows each conformity record on its course in the timeline", async ({

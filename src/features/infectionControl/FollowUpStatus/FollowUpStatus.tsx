@@ -9,7 +9,7 @@ import { InfectionControlStatusEnum } from "models/InfectionControlEnum";
 import { formatDate } from "utils/date";
 
 import { IFollowUp } from "../InfectionControlSlice";
-import { describePending } from "../followUp";
+import { describePending, reportUrl } from "../followUp";
 import { ReviewHistory } from "../ReviewHistory/ReviewHistory";
 import { FollowUpBox, HistoryBody, PendingsBody } from "./FollowUpStatus.style";
 
@@ -17,8 +17,6 @@ interface FollowUpStatusProps {
   followUp: IFollowUp;
   drugNames: Record<number, string>;
   now: Dayjs;
-  // the detailed report, with every detail of the reviews, to print
-  onOpenReport: () => void;
 }
 
 const STATUS_CLASS: Record<number, string> = {
@@ -37,7 +35,6 @@ export function FollowUpStatus({
   followUp,
   drugNames,
   now,
-  onOpenReport,
 }: FollowUpStatusProps) {
   const { t } = useTranslation();
   const [historyOpen, setHistoryOpen] = useState(false);
@@ -180,13 +177,12 @@ export function FollowUpStatus({
             <h2 className="modal-title">
               {t("infectionControl.history.title")}
             </h2>
+            {/* the report page, with every detail of the reviews, to print */}
             <Button
               icon={<PrinterOutlined />}
               data-testid="history-open-report"
-              onClick={() => {
-                setHistoryOpen(false);
-                onOpenReport();
-              }}
+              href={reportUrl(followUp.admissionNumber)}
+              target="_blank"
             >
               {t("infectionControl.report.openDetailed")}
             </Button>

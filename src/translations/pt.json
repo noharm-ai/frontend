@@ -1890,7 +1890,7 @@
       "documentTitle": "controle-infeccao-{{admissionNumber}}",
       "generatedAt": "Atendimento {{admissionNumber}} · Gerado em {{date}}",
       "print": "Imprimir",
-      "close": "Fechar",
+      "back": "Voltar ao acompanhamento",
       "name": "Nome",
       "birthdate": "Nascimento",
       "status": "Situação",

@@ -1,11 +1,7 @@
-import { useMemo, useRef } from "react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Button } from "antd";
-import { PrinterOutlined } from "@ant-design/icons";
-import { useReactToPrint } from "react-to-print";
 import dayjs, { Dayjs } from "dayjs";
 
-import DefaultModal from "components/Modal";
 import PatientNameCache from "components/PatientName/PatientNameCache";
 import RichTextView from "components/RichTextView";
 import { hasAwareLevel } from "features/culture/awareLevel";
@@ -29,11 +25,11 @@ import {
   getInvalidatedEvaluations,
 } from "../followUp";
 import { formatDose, formatRegimen, getAge } from "../timeline";
-import { ReportBody, ReportDocument } from "./InfectionControlReport.style";
+import { ReportDocument } from "./InfectionControlReport.style";
 
 interface InfectionControlReportProps {
-  open: boolean;
-  onClose: () => void;
+  // the document, for react-to-print
+  ref?: React.Ref<HTMLDivElement>;
   data: IAntimicrobialTimeline;
   // null when the follow-up failed to load, or the schema does not have it
   followUp: IFollowUp | null;
@@ -73,11 +69,11 @@ const Fields = ({ items }: { items: IField[] }) => (
  * Everything on record about the antimicrobials of an admission and its
  * infection control reviews, laid out as a document to print: the patient,
  * where the follow-up stands, each course with its posologies, gaps, alerts
- * and evaluations, and each review with every detail of what it evaluated
+ * and evaluations, and each review with every detail of what it evaluated.
+ * The same document shows on screen and goes to paper
  */
 export function InfectionControlReport({
-  open,
-  onClose,
+  ref,
   data,
   followUp,
   courses,
@@ -85,16 +81,7 @@ export function InfectionControlReport({
   now,
 }: InfectionControlReportProps) {
   const { t } = useTranslation();
-  const printRef = useRef<HTMLDivElement>(null);
   const { patient } = data;
-
-  const handlePrint = useReactToPrint({
-    contentRef: printRef,
-    documentTitle: t("infectionControl.report.documentTitle", {
-      admissionNumber: patient.admissionNumber,
-    }),
-    pageStyle: "@page { size: A4; margin: 12mm; }",
-  });
 
   const followUpEnabled = !!followUp?.enabled;
   const followUpCourses = useMemo(
@@ -595,138 +582,113 @@ export function InfectionControlReport({
   const reviews = followUp?.reviews ?? [];
 
   return (
-    <DefaultModal
-      open={open}
-      width={980}
-      centered
-      destroyOnHidden
-      onCancel={onClose}
-      footer={
-        <>
-          <Button onClick={onClose}>
-            {t("infectionControl.report.close")}
-          </Button>
-          <Button
-            type="primary"
-            icon={<PrinterOutlined />}
-            onClick={() => handlePrint()}
-          >
-            {t("infectionControl.report.print")}
-          </Button>
-        </>
-      }
-    >
-      <ReportBody data-kb="infectionControl.report">
-        <ReportDocument ref={printRef} data-testid="infection-control-report">
-          <header className="report-header">
-            <h1>{t("infectionControl.report.title")}</h1>
-            <div className="report-muted">
-              {t("infectionControl.report.generatedAt", {
-                admissionNumber: patient.admissionNumber,
-                date: formatDateTime(now.toISOString()),
-              })}
-            </div>
-          </header>
+    <ReportDocument ref={ref} data-testid="infection-control-report">
+      {/* on screen the page header carries the title */}
+      <header className="report-header report-print-only">
+        <h1>{t("infectionControl.report.title")}</h1>
+        <div className="report-muted">
+          {t("infectionControl.report.generatedAt", {
+            admissionNumber: patient.admissionNumber,
+            date: formatDateTime(now.toISOString()),
+          })}
+        </div>
+      </header>
 
-          <section>
-            <h2>{t("infectionControl.patient.title")}</h2>
-            <Fields items={patientFields} />
-          </section>
+      <section>
+        <h2>{t("infectionControl.patient.title")}</h2>
+        <Fields items={patientFields} />
+      </section>
 
-          {followUpEnabled && followUp && (
-            <section>
-              <h2>{t("infectionControl.followUp.title")}</h2>
-              {renderFollowUp(followUp)}
-            </section>
+      {followUpEnabled && followUp && (
+        <section>
+          <h2>{t("infectionControl.followUp.title")}</h2>
+          {renderFollowUp(followUp)}
+        </section>
+      )}
+
+      <section>
+        <h2>
+          {t("infectionControl.report.antimicrobials", {
+            count: courses.length,
+          })}
+        </h2>
+        {courses.length === 0 ? (
+          <p className="report-muted">{t("infectionControl.timeline.empty")}</p>
+        ) : (
+          courses.map(renderCourse)
+        )}
+      </section>
+
+      {followUpEnabled && (
+        <section>
+          <h2>
+            {t("infectionControl.report.reviews", {
+              count: reviews.length,
+            })}
+          </h2>
+          {reviews.length === 0 && (
+            <p className="report-muted">
+              {t("infectionControl.history.empty")}
+            </p>
           )}
+          {reviews.map((review) => {
+            const evaluations = evaluationsByReview[review.id] ?? [];
 
-          <section>
-            <h2>
-              {t("infectionControl.report.antimicrobials", {
-                count: courses.length,
-              })}
-            </h2>
-            {courses.length === 0 ? (
-              <p className="report-muted">
-                {t("infectionControl.timeline.empty")}
-              </p>
-            ) : (
-              courses.map(renderCourse)
-            )}
-          </section>
-
-          {followUpEnabled && (
-            <section>
-              <h2>
-                {t("infectionControl.report.reviews", {
-                  count: reviews.length,
-                })}
-              </h2>
-              {reviews.length === 0 && (
-                <p className="report-muted">
-                  {t("infectionControl.history.empty")}
-                </p>
-              )}
-              {reviews.map((review) => {
-                const evaluations = evaluationsByReview[review.id] ?? [];
-
-                return (
-                  <article
-                    className="report-block"
-                    key={review.id}
-                    data-testid="report-review"
-                  >
-                    <h3>
-                      {t("infectionControl.report.reviewTitle", {
-                        date: formatDateTime(review.createdAt),
+            return (
+              <article
+                className="report-block"
+                key={review.id}
+                data-testid="report-review"
+              >
+                <h3>
+                  {t("infectionControl.report.reviewTitle", {
+                    date: formatDateTime(review.createdAt),
+                  })}
+                  {review.createdBy && (
+                    <span className="report-muted">
+                      {" "}
+                      ·{" "}
+                      {t("infectionControl.followUp.reviewedBy", {
+                        user: review.createdBy,
                       })}
-                      {review.createdBy && (
-                        <span className="report-muted">
-                          {" "}
-                          ·{" "}
-                          {t("infectionControl.followUp.reviewedBy", {
-                            user: review.createdBy,
-                          })}
-                        </span>
-                      )}
-                    </h3>
-                    <Fields
-                      items={[
-                        {
-                          label: t("infectionControl.report.nextReview"),
-                          value: review.nextReviewDate
-                            ? formatDate(review.nextReviewDate)
-                            : t("infectionControl.followUp.noNextReview"),
-                        },
-                        {
-                          label: t("infectionControl.report.evaluatedDrugs"),
-                          value: evaluations.length,
-                        },
-                      ]}
-                    />
-                    {review.notes && (
-                      <div className="report-notes">
-                        <span className="report-label">
-                          {t("infectionControl.review.notes")}
-                        </span>
-                        {review.notes}
-                      </div>
-                    )}
-                    {evaluations.length === 0 ? (
-                      <p className="report-muted">
-                        {t("infectionControl.report.noReviewEvaluations")}
-                      </p>
-                    ) : (
-                      evaluations.map(renderEvaluation)
-                    )}
-                  </article>
-                );
-              })}
-            </section>
-          )}
-        </ReportDocument>
-      </ReportBody>
-    </DefaultModal>
+                    </span>
+                  )}
+                </h3>
+                <Fields
+                  items={[
+                    {
+                      label: t("infectionControl.report.nextReview"),
+                      value: review.nextReviewDate
+                        ? formatDate(review.nextReviewDate)
+                        : t("infectionControl.followUp.noNextReview"),
+                    },
+                    {
+                      label: t("infectionControl.report.evaluatedDrugs"),
+                      value: evaluations.length,
+                    },
+                  ]}
+                />
+                {review.notes && (
+                  <div className="report-notes">
+                    <span className="report-label">
+                      {t("infectionControl.review.notes")}
+                    </span>
+                    {review.notes}
+                  </div>
+                )}
+                {evaluations.length === 0 ? (
+                  <p className="report-muted">
+                    {t("infectionControl.report.noReviewEvaluations")}
+                  </p>
+                ) : (
+                  evaluations.map(renderEvaluation)
+                )}
+              </article>
+            );
+          })}
+        </section>
+      )}
+    </ReportDocument>
   );
 }
 

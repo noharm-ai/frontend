@@ -1880,7 +1880,7 @@
       "documentTitle": "infection-control-{{admissionNumber}}",
       "generatedAt": "Admission {{admissionNumber}} · Generated on {{date}}",
       "print": "Print",
-      "close": "Close",
+      "back": "Back to follow-up",
       "name": "Name",
       "birthdate": "Birthdate",
       "status": "Status",
