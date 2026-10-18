@@ -2305,7 +2305,7 @@ test.describe("worklist", () => {
       });
   });
 
-  test("filters by the antimicrobials running and their treatment day", async ({
+  test("filters by the antimicrobials running, each on its treatment day", async ({
     page,
     mockApi,
   }) => {
@@ -2338,7 +2338,7 @@ test.describe("worklist", () => {
     // under "see more": the antimicrobial, searched from the third letter
     await page.getByRole("button", { name: /Ver mais/ }).click();
     await page.waitForTimeout(800);
-    const drugs = page.locator("#drugs");
+    const drugs = page.locator("#drugs-0");
     await drugs.click();
     await drugs.pressSequentially("cef");
     await page
@@ -2348,11 +2348,14 @@ test.describe("worklist", () => {
     await page.keyboard.press("Escape");
     expect(searches).toEqual(["cef"]);
     // on its first day
-    await page.locator("#treatmentDayFrom").fill("1");
-    await page.locator("#treatmentDayTo").fill("1");
+    await page.locator("#treatmentDayFrom-0").fill("1");
+    await page.locator("#treatmentDayTo-0").fill("1");
 
-    // substance, AWaRe and non-conformity
-    const substances = page.locator("#substances");
+    // and another one, by its substance, on its second day
+    await page
+      .getByRole("button", { name: "Adicionar antimicrobiano" })
+      .click();
+    const substances = page.locator("#substances-1");
     await substances.click();
     await substances.pressSequentially("cef");
     await page
@@ -2360,6 +2363,17 @@ test.describe("worklist", () => {
       .getByText("CEFTRIAXONA", { exact: true })
       .click();
     await page.keyboard.press("Escape");
+    await page.locator("#treatmentDayFrom-1").fill("2");
+    await page.locator("#treatmentDayTo-1").fill("2");
+    // a new row waits for the last one to ask for something
+    await page
+      .getByRole("button", { name: "Adicionar antimicrobiano" })
+      .click();
+    await expect(
+      page.getByRole("button", { name: "Adicionar antimicrobiano" }),
+    ).toBeDisabled();
+
+    // AWaRe and non-conformity
     await pickOption(page, "#awareLevels", "Reserva");
     await page.locator("#nonConforming").click();
 
@@ -2369,11 +2383,22 @@ test.describe("worklist", () => {
       .poll(() => lists(mockApi).at(-1))
       .toMatchObject({
         status: [1],
-        idDrug: [22],
-        idSubstance: [9070001],
+        // the empty row is left out
+        antimicrobials: [
+          {
+            idDrug: [22],
+            idSubstance: [],
+            treatmentDayFrom: 1,
+            treatmentDayTo: 1,
+          },
+          {
+            idDrug: [],
+            idSubstance: [9070001],
+            treatmentDayFrom: 2,
+            treatmentDayTo: 2,
+          },
+        ],
         awareLevels: [3],
-        treatmentDayFrom: 1,
-        treatmentDayTo: 1,
         nonConforming: true,
       });
     // the chosen antimicrobial keeps its name
@@ -2383,16 +2408,33 @@ test.describe("worklist", () => {
       }),
     ).toBeVisible();
 
+    // removing the first row keeps the other one (the search closed "see more")
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
+    await page
+      .getByTestId("antimicrobial-criteria")
+      .getByRole("button", { name: "Remover" })
+      .first()
+      .click();
+    await page.locator(".gtm-btn-search").click();
+    await expect
+      .poll(() => lists(mockApi).at(-1)?.antimicrobials)
+      .toEqual([
+        {
+          idDrug: [],
+          idSubstance: [9070001],
+          treatmentDayFrom: 2,
+          treatmentDayTo: 2,
+        },
+      ]);
+
     // reset drops them
     await page.locator(".gtm-btn-reset").click();
     await expect
       .poll(() => lists(mockApi).at(-1))
       .toMatchObject({
-        idDrug: [],
-        idSubstance: [],
+        antimicrobials: [],
         awareLevels: [],
-        treatmentDayFrom: null,
-        treatmentDayTo: null,
         nonConforming: false,
       });
   });
@@ -2591,9 +2633,18 @@ test.describe("next pending", () => {
     mockApi,
   }) => {
     mockPendings(mockApi, [ADMISSION, ADMISSION + 2]);
+    const antimicrobials = [
+      {
+        idDrug: [21],
+        idSubstance: [],
+        treatmentDayFrom: 7,
+        treatmentDayTo: null,
+      },
+    ];
     const search =
-      "idDepartment=10,20&pendingTypes=2&idDrug=21&awareLevels=3" +
-      "&overdueReview=1&treatmentDayFrom=7&nonConforming=1";
+      "idDepartment=10,20&pendingTypes=2&awareLevels=3" +
+      `&antimicrobials=${encodeURIComponent(JSON.stringify(antimicrobials))}` +
+      "&overdueReview=1&nonConforming=1";
 
     await page.goto(`${PAGE_URL}?${search}`);
     await pickMoreAction(page, NEXT);
@@ -2604,11 +2655,8 @@ test.describe("next pending", () => {
       pendingTypes: [2],
       admissionNumbers: [],
       overdueReview: true,
-      idDrug: [21],
-      idSubstance: [],
+      antimicrobials,
       awareLevels: [3],
-      treatmentDayFrom: 7,
-      treatmentDayTo: null,
       nonConforming: true,
     });
     // and takes them along to the next one

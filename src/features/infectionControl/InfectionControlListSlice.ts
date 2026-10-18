@@ -49,6 +49,29 @@ export interface ITreatmentDays {
   to: number | null;
 }
 
+// one running antimicrobial the worklist asks for: any of these drugs or
+// substances, on a treatment day of the range; every part is optional
+export interface IAntimicrobialCriterion {
+  drugs: ILabeledValue[];
+  substances: ILabeledValue[];
+  treatmentDays: ITreatmentDays | null;
+}
+
+export const EMPTY_CRITERION: IAntimicrobialCriterion = {
+  drugs: [],
+  substances: [],
+  treatmentDays: null,
+};
+
+// at most this many antimicrobial criteria (the backend refuses more)
+export const MAX_CRITERIA = 10;
+
+/** Whether a criterion asks for nothing yet */
+export const isEmptyCriterion = (criterion: IAntimicrobialCriterion) =>
+  !criterion.drugs.length &&
+  !criterion.substances.length &&
+  !criterion.treatmentDays;
+
 // an antimicrobial found by name
 export interface IAntimicrobialOption {
   id: number;
@@ -68,16 +91,12 @@ export interface IInfectionControlListFilters {
   // only admissions whose scheduled review date has passed
   overdueReview: boolean;
   // the filters below match what the follow-up last saw running
-  // admissions running any of these antimicrobials
-  drugs: ILabeledValue[];
-  // admissions running an antimicrobial of any of these substances
-  substances: ILabeledValue[];
+  // admissions meeting every criterion, each by a running antimicrobial of its
+  // own (e.g. amoxicillin on D1 and vancomycin on D2). One value, so the "see
+  // more" badge counts it once
+  antimicrobials: IAntimicrobialCriterion[];
   // admissions running an antimicrobial of any of these AWaRe levels
   awareLevels: number[];
-  // admissions with an antimicrobial on a treatment day of this range; with
-  // the filters above, the same antimicrobial must match them all (e.g.
-  // amoxicillin on D1). One value, so the "see more" badge counts it once
-  treatmentDays: ITreatmentDays | null;
   // admissions with an evaluation in force judged non conforming
   nonConforming: boolean;
 }
@@ -88,25 +107,24 @@ export const DEFAULT_FILTERS: IInfectionControlListFilters = {
   pendingTypes: [],
   admissionNumbers: [],
   overdueReview: false,
-  drugs: [],
-  substances: [],
+  antimicrobials: [],
   awareLevels: [],
-  treatmentDays: null,
   nonConforming: false,
 };
 
-/** The worklist filters as the backend takes them, but the status */
-export const filtersToRequest = (filters: IInfectionControlListFilters) => {
-  const { drugs, substances, treatmentDays, ...rest } = filters;
-
-  return {
-    ...rest,
-    idDrug: drugs.map((drug) => drug.value),
-    idSubstance: substances.map((substance) => substance.value),
-    treatmentDayFrom: treatmentDays?.from ?? null,
-    treatmentDayTo: treatmentDays?.to ?? null,
-  };
-};
+/** The worklist filters as the backend takes them, but the status; the
+ * criteria that ask for nothing are left out */
+export const filtersToRequest = (filters: IInfectionControlListFilters) => ({
+  ...filters,
+  antimicrobials: filters.antimicrobials
+    .filter((criterion) => !isEmptyCriterion(criterion))
+    .map(({ drugs, substances, treatmentDays }) => ({
+      idDrug: drugs.map((drug) => drug.value),
+      idSubstance: substances.map((substance) => substance.value),
+      treatmentDayFrom: treatmentDays?.from ?? null,
+      treatmentDayTo: treatmentDays?.to ?? null,
+    })),
+});
 
 /**
  * The worklist filters, but the status, as a query string: the patient page
@@ -117,24 +135,51 @@ export const filtersToSearch = (filters: IInfectionControlListFilters) => {
   const params = new URLSearchParams();
   const request = filtersToRequest(filters);
   (
-    [
-      "idDepartment",
-      "pendingTypes",
-      "admissionNumbers",
-      "idDrug",
-      "idSubstance",
-      "awareLevels",
-    ] as const
+    ["idDepartment", "pendingTypes", "admissionNumbers", "awareLevels"] as const
   ).forEach((key) => {
     if (request[key].length) params.set(key, request[key].join(","));
   });
+  if (request.antimicrobials.length) {
+    params.set("antimicrobials", JSON.stringify(request.antimicrobials));
+  }
   if (filters.overdueReview) params.set("overdueReview", "1");
-  (["treatmentDayFrom", "treatmentDayTo"] as const).forEach((key) => {
-    if (request[key]) params.set(key, String(request[key]));
-  });
   if (filters.nonConforming) params.set("nonConforming", "1");
 
   return params.toString();
+};
+
+/**
+ * The antimicrobial criteria of a filtersToSearch query string, without the
+ * names; anything else than ids and days is dropped
+ */
+const criteriaFromSearch = (search: string | null) => {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(search ?? "[]");
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(parsed)) return [];
+
+  const ids = (list: unknown) =>
+    (Array.isArray(list) ? list : [])
+      .filter((value) => Number.isInteger(value) && value > 0)
+      .map((value: number) => ({ value, label: String(value) }));
+  const day = (value: unknown) =>
+    Number.isInteger(value) && (value as number) > 0 ? (value as number) : null;
+
+  return parsed
+    .slice(0, MAX_CRITERIA)
+    .map((item: any): IAntimicrobialCriterion => {
+      const from = day(item?.treatmentDayFrom);
+      const to = day(item?.treatmentDayTo);
+      return {
+        drugs: ids(item?.idDrug),
+        substances: ids(item?.idSubstance),
+        treatmentDays: from || to ? { from, to } : null,
+      };
+    })
+    .filter((criterion) => !isEmptyCriterion(criterion));
 };
 
 /**
@@ -150,12 +195,6 @@ export const filtersFromSearch = (
       .split(",")
       .filter((value) => /^\d+$/.test(value))
       .map(Number);
-  const unnamed = (key: string) =>
-    numbers(key).map((value) => ({ value, label: String(value) }));
-  const treatmentDays = {
-    from: numbers("treatmentDayFrom")[0] || null,
-    to: numbers("treatmentDayTo")[0] || null,
-  };
 
   return {
     ...DEFAULT_FILTERS,
@@ -163,11 +202,8 @@ export const filtersFromSearch = (
     pendingTypes: numbers("pendingTypes"),
     admissionNumbers: numbers("admissionNumbers"),
     overdueReview: params.get("overdueReview") === "1",
-    drugs: unnamed("idDrug"),
-    substances: unnamed("idSubstance"),
+    antimicrobials: criteriaFromSearch(params.get("antimicrobials")),
     awareLevels: numbers("awareLevels"),
-    treatmentDays:
-      treatmentDays.from || treatmentDays.to ? treatmentDays : null,
     nonConforming: params.get("nonConforming") === "1",
   };
 };
