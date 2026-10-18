@@ -8,24 +8,12 @@ import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
 import { getSegmentDepartments } from "features/lists/ListsSlice";
 import { getUniqBy } from "utils/report";
-import {
-  InfectionControlPendingTypeEnum,
-  InfectionControlStatusEnum,
-} from "models/InfectionControlEnum";
+import { InfectionControlStatusEnum } from "models/InfectionControlEnum";
 
 const STATUSES = [
   InfectionControlStatusEnum.PENDING,
   InfectionControlStatusEnum.REVISED,
   InfectionControlStatusEnum.CLOSED,
-];
-
-const PENDING_TYPES = [
-  InfectionControlPendingTypeEnum.NEVER_REVIEWED,
-  InfectionControlPendingTypeEnum.NO_EVALUATION,
-  InfectionControlPendingTypeEnum.EXPIRED,
-  InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
-  InfectionControlPendingTypeEnum.SCHEDULED_DATE,
-  InfectionControlPendingTypeEnum.ALERT_FIRED,
 ];
 
 interface ISegmentDepartment {
@@ -34,7 +22,7 @@ interface ISegmentDepartment {
   label: string;
 }
 
-/** Status, department and pending reason, always in sight */
+/** Status, department and admissions, always in sight */
 export function MainFilters() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
@@ -106,29 +94,36 @@ export function MainFilters() {
       </Col>
       <Col xs={24} md={6}>
         <Heading
-          {...({ as: "label", htmlFor: "pendingTypes", $size: "14px" } as any)}
+          {...({
+            as: "label",
+            htmlFor: "admissionNumbers",
+            $size: "14px",
+          } as any)}
         >
-          {t("infectionControl.worklist.filters.pendingTypes")}:
+          {t("infectionControl.worklist.filters.admissionNumbers")}:
         </Heading>
         <Select
-          id="pendingTypes"
+          id="admissionNumbers"
           style={{ width: "100%" }}
-          mode="multiple"
+          mode="tags"
           allowClear
           maxTagCount="responsive"
-          optionFilterProp="children"
+          tokenSeparators={[",", " "]}
           placeholder={t(
-            "infectionControl.worklist.filters.pendingTypesPlaceholder",
+            "infectionControl.worklist.filters.admissionNumbersPlaceholder",
           )}
-          value={values.pendingTypes}
-          onChange={(pendingTypes: any) => setFieldValue({ pendingTypes })}
-        >
-          {PENDING_TYPES.map((type) => (
-            <Select.Option key={type} value={type}>
-              {t(`infectionControl.worklist.pendingType.${type}`)}
-            </Select.Option>
-          ))}
-        </Select>
+          notFoundContent={t(
+            "infectionControl.worklist.filters.admissionNumbersPlaceholder",
+          )}
+          value={(values.admissionNumbers ?? []).map(String)}
+          onChange={(list: any) =>
+            setFieldValue({
+              admissionNumbers: list
+                .filter((value: string) => /^\d+$/.test(value))
+                .map(Number),
+            })
+          }
+        />
       </Col>
     </>
   );

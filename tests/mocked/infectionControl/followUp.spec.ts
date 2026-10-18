@@ -2,6 +2,7 @@ import type { Locator, Page } from "@playwright/test";
 
 import { test, expect, type MockApi } from "../support/mockApi";
 import { loginWithAuth, loginWithPermissions } from "../support/featureLogin";
+import { openSelect, pickMenuItem, pickOption } from "../support/antd";
 
 /**
  * Infection control follow-up (src/features/infectionControl).
@@ -32,6 +33,74 @@ const LIST = "POST /infection-control/admissions";
 const SKIP = "Não avaliar agora";
 const WATCH_EXPIRY = /Quando a avaliação vencer/;
 const WATCH_POSOLOGY = /Quando a posologia mudar/;
+
+// the intervention reasons; only the ones flagged for infection control can
+// justify a non-conformity. A substitution or relationType 2 requires a
+// substitute drug, relationType 1 takes one optionally
+const REASONS = [
+  {
+    id: 31,
+    name: "Espectro inadequado",
+    parentId: 30,
+    parentName: "Antimicrobiano",
+    relationType: 0,
+    infectionControl: true,
+  },
+  {
+    id: 32,
+    name: "Tempo de tratamento",
+    parentId: null,
+    parentName: null,
+    relationType: 0,
+    infectionControl: true,
+  },
+  {
+    // a substitution: the substitute is required whatever its relationType
+    id: 33,
+    name: "Trocar antimicrobiano",
+    parentId: null,
+    parentName: null,
+    relationType: 0,
+    substitution: true,
+    infectionControl: true,
+  },
+  {
+    id: 5,
+    name: "Duplicidade medicamentosa",
+    parentId: null,
+    parentName: null,
+    relationType: 1,
+    infectionControl: false,
+  },
+];
+
+/** Picks a non-conformity reason of the drug being evaluated */
+const pickReason = async (page: Page, drug: Locator, reason: string) => {
+  await openSelect(drug.getByTestId("review-reasons"));
+  await pickOption(page, reason);
+  // the multiple select stays open: a click aside closes it (Escape would
+  // close the review)
+  await drug.getByRole("heading", { level: 3 }).click();
+};
+
+/** The header dropdown holding the secondary actions of the page */
+const moreActions = (page: Page) =>
+  page.getByRole("button", { name: "Mais ações" });
+
+/** Opens the header's secondary actions and returns their popup */
+const openMoreActions = async (page: Page) => {
+  const popup = page.locator(".ant-dropdown:not(.ant-dropdown-hidden)");
+  await moreActions(page).click({ timeout: 15000 });
+  await expect(popup).toBeVisible();
+  await expect(popup).not.toHaveClass(/-(enter|appear|leave)/);
+  return popup;
+};
+
+/** Clicks one of the header's secondary actions, once the page is loaded */
+const pickMoreAction = async (page: Page, action: string) => {
+  await expect(moreActions(page)).toBeVisible({ timeout: 15000 });
+  await pickMenuItem(page, moreActions(page), new RegExp(action));
+};
 
 const BASE_PERMISSIONS = [
   "READ_BASIC_FEATURES",
@@ -305,6 +374,183 @@ test("shows the follow-up status, its pending reasons and each drug's evaluation
   await expect(review).toContainText("Guiado por cultura");
 });
 
+test("lists the reasons and the intervention of a non-conformity in the history", async ({
+  page,
+  mockApi,
+}) => {
+  const nonConforming = {
+    ...vancomycinEvaluation,
+    conforming: false,
+    notes: "Sem cultura que justifique",
+    interventionReasons: [
+      { id: 31, name: "Antimicrobiano - Espectro inadequado" },
+      { id: 32, name: "Tempo de tratamento" },
+    ],
+    substituteDrug: { id: 21, name: "CEFTRIAXONA 1 g SOL INJ" },
+    interventions: [{ id: "7001", status: "s" }],
+  };
+  mockPage(
+    mockApi,
+    followUp({
+      courses: [
+        {
+          idDrug: 12,
+          start: VANCOMYCIN_START,
+          ongoing: true,
+          evaluation: nonConforming,
+          history: [nonConforming],
+        },
+      ],
+    }),
+  );
+
+  await page.goto(PAGE_URL);
+  const box = page.getByTestId("follow-up");
+  await expect(box).toBeVisible({ timeout: 15000 });
+
+  await box.getByTestId("follow-up-last-review").click();
+  const review = page.getByRole("dialog").getByTestId("review-item");
+  await expect(review.getByTestId("review-evaluation-reasons")).toHaveText(
+    "Motivos: Antimicrobiano - Espectro inadequado, Tempo de tratamento",
+  );
+  await expect(review.getByTestId("review-evaluation-substitute")).toHaveText(
+    "Substituto: CEFTRIAXONA 1 g SOL INJ",
+  );
+  await expect(review.getByTestId("review-evaluation-intervention")).toHaveText(
+    "Intervenção: Pendente",
+  );
+  await expect(review).toContainText("Sem cultura que justifique");
+});
+
+test("opens a printable report with every course and every review in detail", async ({
+  page,
+  mockApi,
+}) => {
+  const nonConforming = {
+    ...vancomycinEvaluation,
+    conforming: false,
+    notes: "Sem cultura que justifique",
+    triggers: [3, 6],
+    interventionReasons: [{ id: 32, name: "Tempo de tratamento" }],
+    substituteDrug: { id: 21, name: "CEFTRIAXONA 1 g SOL INJ" },
+    interventions: [{ id: "7001", status: "s" }],
+  };
+  const timeline = {
+    ...TIMELINE_DATA,
+    data: {
+      ...TIMELINE_DATA.data,
+      courses: [
+        TIMELINE_DATA.data.courses[0],
+        course({
+          idDrug: 12,
+          drug: "VANCOMICINA 500 mg SOL INJ",
+          substance: "VANCOMICINA",
+          atbLevel: 2,
+          start: VANCOMYCIN_START,
+          end: VANCOMYCIN_END,
+          days: 5,
+          plannedDays: 7,
+          regimens: [
+            {
+              start: VANCOMYCIN_START,
+              end: VANCOMYCIN_END,
+              dose: 1,
+              measureUnit: "g",
+              frequency: "12h/12h",
+              route: "IV",
+              doseWeight: "0,02 g/Kg",
+              doseWeightDay: "0,03 g/Kg/dia",
+              notes: "Infundir em 2 horas",
+            },
+          ],
+          gaps: [{ start: hoursFromNow(-72), end: hoursFromNow(-60) }],
+        }),
+      ],
+    },
+  };
+  mockPage(
+    mockApi,
+    followUp({
+      courses: [
+        {
+          idDrug: 11,
+          start: MEROPENEM_START,
+          ongoing: true,
+          evaluation: null,
+          history: [],
+        },
+        {
+          idDrug: 12,
+          start: VANCOMYCIN_START,
+          ongoing: true,
+          evaluation: nonConforming,
+          history: [nonConforming],
+        },
+      ],
+    }),
+    timeline,
+  );
+
+  await page.goto(PAGE_URL);
+  const box = page.getByTestId("follow-up");
+  await expect(box).toBeVisible({ timeout: 15000 });
+
+  // the review history leads to the detailed report
+  await box.getByTestId("follow-up-last-review").click();
+  await page.getByTestId("history-open-report").click();
+
+  const report = page.getByTestId("infection-control-report");
+  await expect(report).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Relatório de controle de infecção" }),
+  ).toBeVisible();
+  await expect(report).toContainText("Fulano Beltrano");
+  await expect(report).toContainText("MEROPENEM 1 g SOL INJ sem avaliação");
+
+  // every course, with its posologies, gaps and evaluations
+  const courses = report.getByTestId("report-course");
+  await expect(courses).toHaveCount(2);
+  const vancomycin = courses.filter({ hasText: "VANCOMICINA 500 mg" });
+  await expect(vancomycin).toContainText("5 de 7 dias");
+  await expect(vancomycin).toContainText("Observe");
+  await expect(vancomycin).toContainText("0,02 g/Kg · 0,03 g/Kg/dia");
+  await expect(vancomycin).toContainText("Infundir em 2 horas");
+  await expect(vancomycin).toContainText("Intervalos sem prescrição (1)");
+  await expect(vancomycin).toContainText("Avaliações (1)");
+  await expect(courses.filter({ hasText: "MEROPENEM" })).toContainText(
+    "Nenhuma avaliação registrada.",
+  );
+
+  // every review, with all it recorded on each drug
+  const review = report.getByTestId("report-review");
+  await expect(review).toHaveCount(1);
+  await expect(review).toContainText("Maria Teste");
+  await expect(review).toContainText("Paciente estável, manter vancomicina");
+  const evaluation = review.getByTestId("report-evaluation");
+  await expect(evaluation).toContainText("Não conforme");
+  await expect(evaluation).toContainText("1 g · 12h/12h · IV");
+  await expect(evaluation).toContainText(
+    "Quando a avaliação vencer; Quando a posologia mudar",
+  );
+  await expect(evaluation).toContainText("Tempo de tratamento");
+  await expect(evaluation).toContainText("CEFTRIAXONA 1 g SOL INJ");
+  await expect(evaluation).toContainText("Pendente");
+  await expect(evaluation).toContainText("Sem cultura que justifique");
+
+  await expect(page.getByRole("button", { name: "Imprimir" })).toBeVisible();
+
+  // also offered in the page header
+  await page
+    .getByRole("dialog")
+    .filter({ has: report })
+    .locator(".ant-modal-footer")
+    .getByRole("button", { name: "Fechar" })
+    .click();
+  await expect(report).toHaveCount(0);
+  await pickMoreAction(page, "Relatório");
+  await expect(report).toBeVisible();
+});
+
 test("shows each conformity record on its course in the timeline", async ({
   page,
   mockApi,
@@ -527,7 +773,9 @@ test("does not offer to review nor follow an admission not followed without perm
     { timeout: 15000 },
   );
   await expect(
-    page.getByRole("button", { name: "Iniciar acompanhamento" }),
+    (await openMoreActions(page)).getByRole("menuitem", {
+      name: "Iniciar acompanhamento",
+    }),
   ).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Revisar" })).toHaveCount(0);
 });
@@ -540,6 +788,9 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       ...BASE_PERMISSIONS,
       "WRITE_INFECTION_CONTROL",
     ]);
+    mockApi.override("GET /intervention/reasons", {
+      json: { status: "success", data: REASONS },
+    });
   });
 
   test("shows the screening alerts of the drug being evaluated", async ({
@@ -721,13 +972,40 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(page.getByRole("tooltip")).toContainText(
       `Válida até ${shownDate(MEROPENEM_PLUS_7)}`,
     );
-    // a non-conformity is justified
+    // a non-conformity is given its reasons, among the ones enabled for
+    // infection control
     await expect(next).toBeDisabled();
+    await expect(hint).toHaveText("Informe o motivo da não conformidade");
+    await openSelect(drug.getByTestId("review-reasons"));
+    await expect(
+      page.locator(
+        ".ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option",
+      ),
+    ).toHaveText([
+      "Antimicrobiano - Espectro inadequado",
+      "Tempo de tratamento",
+      "Trocar antimicrobiano",
+    ]);
+    await drug.getByRole("heading", { level: 3 }).click();
+    await pickReason(page, drug, "Antimicrobiano - Espectro inadequado");
+    await pickReason(page, drug, "Tempo de tratamento");
+
+    // and justified
     await expect(hint).toHaveText("Informe a justificativa");
     await drug
       .getByLabel("Justificativa", { exact: true })
       .fill("Espectro amplo demais");
     await expect(hint).toHaveCount(0);
+
+    // an intervention on the drug is recorded only when asked
+    const createIntervention = drug.getByRole("checkbox", {
+      name: "Registrar intervenção no medicamento",
+    });
+    await expect(createIntervention).not.toBeChecked();
+    await createIntervention.check();
+    await expect(drug.getByTestId("review-create-intervention")).toContainText(
+      "só pode ser alterada pelo controle de infecção",
+    );
     await next.click();
 
     // step 2: the evaluated drug shows its current evaluation, kept
@@ -794,6 +1072,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
         {
           idDrug: 11,
           conforming: false,
+          interventionReasons: [31, 32],
+          createIntervention: true,
           notes: "Espectro amplo demais",
           validFrom: MEROPENEM_START,
           // through the whole day
@@ -850,6 +1130,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       "VANCOMICINA 500 mg SOL INJ",
     );
     await decisions.getByText("Não conforme", { exact: true }).click();
+    await pickReason(page, drug, "Tempo de tratamento");
     await drug.getByLabel("Justificativa", { exact: true }).fill("Sem cultura");
     await openValidity(drug);
     await start.getByText("Agora", { exact: true }).click();
@@ -884,14 +1165,110 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     expect(sent.evaluations).toMatchObject([
       {
         idDrug: 11,
+        // a conforming one has no reason
+        interventionReasons: [],
+        createIntervention: false,
         validFrom: MEROPENEM_START,
         validUntil: `${MEROPENEM_END.slice(0, 10)}T23:59:59`,
       },
       {
         idDrug: 12,
+        interventionReasons: [32],
+        createIntervention: false,
         validFrom: null,
         validUntil: `${localDay(3)}T23:59:59`,
       },
+    ]);
+  });
+
+  test("asks for the substitute drug a reason requires", async ({
+    page,
+    mockApi,
+  }) => {
+    mockPage(mockApi, followUp());
+    let sent: any = null;
+    mockApi.override(REVIEW, async (route) => {
+      sent = JSON.parse(route.request().postData()!);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(followUp({ status: 2, pendings: [] })),
+      });
+    });
+    const searches: string[] = [];
+    mockApi.override("GET /infection-control/antimicrobials", async (route) => {
+      searches.push(new URL(route.request().url()).searchParams.get("q")!);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify({
+          status: "success",
+          data: [
+            { id: 21, name: "CEFTRIAXONA 1 g SOL INJ" },
+            { id: 22, name: "CEFEPIMA 2 g SOL INJ" },
+          ],
+        }),
+      });
+    });
+
+    await page.goto(PAGE_URL);
+    await page
+      .getByRole("button", { name: "Revisar" })
+      .click({ timeout: 15000 });
+
+    const dialog = page.getByRole("dialog");
+    const next = dialog.getByRole("button", { name: "Próximo" });
+    const drug = dialog.getByTestId("review-drug");
+    const heading = drug.getByRole("heading", { level: 3 });
+    const substitute = drug.getByTestId("review-substitute");
+
+    await drug
+      .getByRole("radiogroup", { name: "Avaliação" })
+      .getByText("Não conforme", { exact: true })
+      .click();
+    await drug.getByLabel("Justificativa", { exact: true }).fill("Descalonar");
+    // a reason with no relation asks for no substitute
+    await pickReason(page, drug, "Tempo de tratamento");
+    await expect(substitute).toHaveCount(0);
+
+    await pickReason(page, drug, "Trocar antimicrobiano");
+    await expect(substitute).toContainText("obrigatório");
+    await expect(next).toBeDisabled();
+    await expect(dialog.getByTestId("review-hint")).toHaveText(
+      "Informe o medicamento substituto",
+    );
+
+    // searched from the third letter, picked with Enter, which stays here
+    const search = substitute.getByRole("combobox");
+    await search.click();
+    await search.pressSequentially("ce");
+    await search.pressSequentially("f");
+    await expect(
+      page.locator(
+        ".ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option",
+      ),
+    ).toHaveCount(2);
+    await search.press("Enter");
+    await expect(substitute).toContainText("CEFTRIAXONA 1 g SOL INJ");
+    await expect(heading).toHaveText("MEROPENEM 1 g SOL INJ");
+    expect(searches).toEqual(["cef"]);
+
+    await expect(next).toBeEnabled();
+    await next.click();
+    await expect(heading).toHaveText("VANCOMICINA 500 mg SOL INJ");
+    await drug
+      .getByRole("radiogroup", { name: "Avaliação" })
+      .getByText("Conforme", { exact: true })
+      .click();
+    await next.click();
+    await dialog.getByRole("button", { name: "Registrar revisão" }).click();
+
+    await expect(
+      page.getByText("Revisão registrada com sucesso!"),
+    ).toBeVisible();
+    expect(sent.evaluations).toMatchObject([
+      { idDrug: 11, interventionReasons: [32, 33], substituteDrug: 21 },
+      { idDrug: 12, interventionReasons: [], substituteDrug: null },
     ]);
   });
 
@@ -1071,10 +1448,15 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       .getByRole("radiogroup", { name: "Avaliação" })
       .getByText("Não conforme", { exact: true })
       .click();
+    await pickReason(page, drug, "Tempo de tratamento");
     await drug
       .getByLabel("Justificativa", { exact: true })
       .fill("Sem indicação no período");
-    // overlapping the current one, the new one replaces it
+    // overlapping the current one, the new one replaces it, and may record
+    // an intervention
+    await drug
+      .getByRole("checkbox", { name: "Registrar intervenção no medicamento" })
+      .check();
     await expect(current).toHaveClass(/past/);
     await expect(historyNotice).toHaveCount(0);
 
@@ -1099,6 +1481,9 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(historyNotice).toContainText(
       `Termina antes da avaliação atual (desde ${shownDate(vancomycinEvaluation.validFrom)})`,
     );
+    // a record of the past records no intervention: it would land on the
+    // drug prescribed now
+    await expect(drug.getByTestId("review-create-intervention")).toHaveCount(0);
     await expect(current).not.toHaveClass(/past/);
     await expect(drug.getByTestId("review-end-past")).toHaveCount(0);
     // they do not overlap: one line for both
@@ -1120,6 +1505,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       {
         idDrug: 12,
         conforming: false,
+        interventionReasons: [32],
+        createIntervention: false,
         validFrom: VANCOMYCIN_START,
         validUntil: `${PAST_END}T23:59:59`,
       },
@@ -1611,7 +1998,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       { timeout: 15000 },
     );
     await expect(page.getByRole("button", { name: "Revisar" })).toHaveCount(0);
-    await page.getByRole("button", { name: "Iniciar acompanhamento" }).click();
+    await pickMoreAction(page, "Iniciar acompanhamento");
 
     await expect(box.getByTestId("follow-up-status")).toHaveText("Pendente");
     await expect(box.getByTestId("follow-up-pendings-count")).toHaveText(
@@ -1624,7 +2011,9 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await page.keyboard.press("Escape");
     expect(followed).toBe(1);
     await expect(
-      page.getByRole("button", { name: "Iniciar acompanhamento" }),
+      (await openMoreActions(page)).getByRole("menuitem", {
+        name: "Iniciar acompanhamento",
+      }),
     ).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Revisar" })).toBeVisible();
   });
@@ -1641,7 +2030,9 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       page.getByTestId("follow-up").getByTestId("follow-up-status"),
     ).toHaveText("Não acompanhado", { timeout: 15000 });
     await expect(
-      page.getByRole("button", { name: "Iniciar acompanhamento" }),
+      (await openMoreActions(page)).getByRole("menuitem", {
+        name: "Iniciar acompanhamento",
+      }),
     ).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Revisar" })).toHaveCount(0);
   });
@@ -1870,14 +2261,14 @@ test.describe("worklist", () => {
     ).toBeVisible({ timeout: 15000 });
     await expect.poll(() => lists(mockApi).length).toBeGreaterThan(0);
 
-    // status, department and pending reason, always in sight
+    // status and department, always in sight
     await pickOption(page, "#status", "Revisado");
     await pickOption(page, "#departments", "UTI Adulto");
-    await pickOption(page, "#pendingTypes", "Antimicrobiano sem avaliação");
 
-    // overdue review, under "see more"
+    // pending reason and overdue review, under "see more"
     await page.getByRole("button", { name: /Ver mais/ }).click();
     await page.waitForTimeout(800);
+    await pickOption(page, "#pendingTypes", "Antimicrobiano sem avaliação");
     await page.locator("#overdueReview").click();
 
     await page.locator(".gtm-btn-search").click();
@@ -1914,6 +2305,155 @@ test.describe("worklist", () => {
       });
   });
 
+  test("filters by the antimicrobials running, each on its treatment day", async ({
+    page,
+    mockApi,
+  }) => {
+    const searches: string[] = [];
+    mockApi.override("GET /infection-control/antimicrobials", async (route) => {
+      searches.push(new URL(route.request().url()).searchParams.get("q")!);
+      await route.fulfill({
+        json: {
+          status: "success",
+          data: [
+            { id: 21, name: "CEFTRIAXONA 1 g SOL INJ" },
+            { id: 22, name: "CEFEPIMA 2 g SOL INJ" },
+          ],
+        },
+      });
+    });
+    mockApi.override("GET /substance/find", {
+      json: {
+        status: "success",
+        data: [{ sctid: 9070001, name: "CEFTRIAXONA" }],
+      },
+    });
+
+    await page.goto("/controle-infeccao");
+    await expect(
+      page.getByRole("heading", { name: "Controle de Infecção" }),
+    ).toBeVisible({ timeout: 15000 });
+    await expect.poll(() => lists(mockApi).length).toBeGreaterThan(0);
+
+    // under "see more": the antimicrobial, searched from the third letter
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
+    const drugs = page.locator("#drugs-0");
+    await drugs.click();
+    await drugs.pressSequentially("cef");
+    await page
+      .locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)")
+      .getByText("CEFEPIMA 2 g SOL INJ", { exact: true })
+      .click();
+    await page.keyboard.press("Escape");
+    expect(searches).toEqual(["cef"]);
+    // on its first day
+    await page.locator("#treatmentDayFrom-0").fill("1");
+    await page.locator("#treatmentDayTo-0").fill("1");
+
+    // and another one, by its substance, on its second day
+    await page
+      .getByRole("button", { name: "Adicionar antimicrobiano" })
+      .click();
+    const substances = page.locator("#substances-1");
+    await substances.click();
+    await substances.pressSequentially("cef");
+    await page
+      .locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)")
+      .getByText("CEFTRIAXONA", { exact: true })
+      .click();
+    await page.keyboard.press("Escape");
+    await page.locator("#treatmentDayFrom-1").fill("2");
+    await page.locator("#treatmentDayTo-1").fill("2");
+    // a new row waits for the last one to ask for something
+    await page
+      .getByRole("button", { name: "Adicionar antimicrobiano" })
+      .click();
+    await expect(
+      page.getByRole("button", { name: "Adicionar antimicrobiano" }),
+    ).toBeDisabled();
+
+    // with two rows, any of them will do unless every one is asked for
+    await expect(
+      page.getByRole("radio", { name: "Qualquer linha (OU)" }),
+    ).toBeChecked();
+
+    // AWaRe and non-conformity
+    await pickOption(page, "#awareLevels", "Reserva");
+    await page.locator("#nonConforming").click();
+
+    await page.locator(".gtm-btn-search").click();
+
+    await expect
+      .poll(() => lists(mockApi).at(-1))
+      .toMatchObject({
+        status: [1],
+        // the empty row is left out
+        antimicrobials: [
+          {
+            idDrug: [22],
+            idSubstance: [],
+            treatmentDayFrom: 1,
+            treatmentDayTo: 1,
+          },
+          {
+            idDrug: [],
+            idSubstance: [9070001],
+            treatmentDayFrom: 2,
+            treatmentDayTo: 2,
+          },
+        ],
+        antimicrobialsMatchAll: false,
+        awareLevels: [3],
+        nonConforming: true,
+      });
+    // the chosen antimicrobial keeps its name
+    await expect(
+      page.locator(".ant-select-selection-item", {
+        hasText: "CEFEPIMA 2 g SOL INJ",
+      }),
+    ).toBeVisible();
+
+    // every row, then (the search closed "see more")
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
+    await page.getByText("Todas as linhas (E)", { exact: true }).click();
+    await page.locator(".gtm-btn-search").click();
+    await expect
+      .poll(() => lists(mockApi).at(-1)?.antimicrobialsMatchAll)
+      .toBe(true);
+
+    // removing the first row keeps the other one
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
+    await page
+      .getByTestId("antimicrobial-criteria")
+      .getByRole("button", { name: "Remover" })
+      .first()
+      .click();
+    await page.locator(".gtm-btn-search").click();
+    await expect
+      .poll(() => lists(mockApi).at(-1)?.antimicrobials)
+      .toEqual([
+        {
+          idDrug: [],
+          idSubstance: [9070001],
+          treatmentDayFrom: 2,
+          treatmentDayTo: 2,
+        },
+      ]);
+
+    // reset drops them
+    await page.locator(".gtm-btn-reset").click();
+    await expect
+      .poll(() => lists(mockApi).at(-1))
+      .toMatchObject({
+        antimicrobials: [],
+        awareLevels: [],
+        nonConforming: false,
+      });
+  });
+
   test("takes the filters to the patient page, for its next pending patient", async ({
     page,
     mockApi,
@@ -1935,6 +2475,8 @@ test.describe("worklist", () => {
     await expect(link).toHaveAttribute("href", PAGE_URL, { timeout: 15000 });
 
     await pickOption(page, "#departments", "UTI Adulto");
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
     await pickOption(page, "#pendingTypes", "Antimicrobiano sem avaliação");
     await page.locator(".gtm-btn-search").click();
 
@@ -2047,14 +2589,16 @@ test.describe("next pending", () => {
     mockPendings(mockApi, [ADMISSION - 1, ADMISSION, ADMISSION + 7]);
 
     await page.goto(PAGE_URL);
-    await page.getByRole("button", { name: NEXT }).click({ timeout: 15000 });
+    await pickMoreAction(page, NEXT);
 
     await expect(page).toHaveURL(
       new RegExp(`/controle-infeccao/${ADMISSION + 7}$`),
     );
-    await expect(page.getByRole("button", { name: NEXT })).toBeVisible({
-      timeout: 15000,
-    });
+    await expect(moreActions(page)).toBeVisible({ timeout: 15000 });
+    await expect(
+      (await openMoreActions(page)).getByRole("menuitem", { name: NEXT }),
+    ).toBeVisible();
+    await page.keyboard.press("Escape");
     // the pending ones only, without the worklist filters
     expect(lists(mockApi)[0]).toMatchObject({
       status: [1],
@@ -2068,7 +2612,7 @@ test.describe("next pending", () => {
 
     // back to the start of the worklist, for the ones skipped before
     mockPendings(mockApi, [ADMISSION - 1, ADMISSION, ADMISSION + 7]);
-    await page.getByRole("button", { name: NEXT }).click();
+    await pickMoreAction(page, NEXT);
     await expect(page).toHaveURL(
       new RegExp(`/controle-infeccao/${ADMISSION - 1}$`),
     );
@@ -2082,7 +2626,7 @@ test.describe("next pending", () => {
     mockPendings(mockApi, [ADMISSION + 3, ADMISSION + 5]);
 
     await page.goto(PAGE_URL);
-    await page.getByRole("button", { name: NEXT }).click({ timeout: 15000 });
+    await pickMoreAction(page, NEXT);
 
     await expect(page).toHaveURL(
       new RegExp(`/controle-infeccao/${ADMISSION + 3}$`),
@@ -2093,7 +2637,7 @@ test.describe("next pending", () => {
     mockPendings(mockApi, [ADMISSION]);
 
     await page.goto(PAGE_URL);
-    await page.getByRole("button", { name: NEXT }).click({ timeout: 15000 });
+    await pickMoreAction(page, NEXT);
 
     await expect(
       page.getByText("Não há outro paciente pendente."),
@@ -2106,10 +2650,21 @@ test.describe("next pending", () => {
     mockApi,
   }) => {
     mockPendings(mockApi, [ADMISSION, ADMISSION + 2]);
-    const search = "idDepartment=10,20&pendingTypes=2&overdueReview=1";
+    const antimicrobials = [
+      {
+        idDrug: [21],
+        idSubstance: [],
+        treatmentDayFrom: 7,
+        treatmentDayTo: null,
+      },
+    ];
+    const search =
+      "idDepartment=10,20&pendingTypes=2&awareLevels=3" +
+      `&antimicrobials=${encodeURIComponent(JSON.stringify(antimicrobials))}` +
+      "&antimicrobialsMatchAll=1&overdueReview=1&nonConforming=1";
 
     await page.goto(`${PAGE_URL}?${search}`);
-    await page.getByRole("button", { name: NEXT }).click({ timeout: 15000 });
+    await pickMoreAction(page, NEXT);
 
     expect(lists(mockApi)[0]).toMatchObject({
       status: [1],
@@ -2117,6 +2672,10 @@ test.describe("next pending", () => {
       pendingTypes: [2],
       admissionNumbers: [],
       overdueReview: true,
+      antimicrobials,
+      antimicrobialsMatchAll: true,
+      awareLevels: [3],
+      nonConforming: true,
     });
     // and takes them along to the next one
     await expect(page).toHaveURL(
@@ -2132,7 +2691,9 @@ test.describe("next pending", () => {
     await expect(page.getByTestId("course-row")).toHaveCount(2, {
       timeout: 15000,
     });
-    await expect(page.getByRole("button", { name: NEXT })).toHaveCount(0);
+    await expect(
+      (await openMoreActions(page)).getByRole("menuitem", { name: NEXT }),
+    ).toHaveCount(0);
   });
 });
 
@@ -2146,7 +2707,9 @@ test.describe("next pending without READ_INFECTION_CONTROL", () => {
       timeout: 15000,
     });
     await expect(
-      page.getByRole("button", { name: "Próximo pendente" }),
+      (await openMoreActions(page)).getByRole("menuitem", {
+        name: "Próximo pendente",
+      }),
     ).toHaveCount(0);
   });
 });

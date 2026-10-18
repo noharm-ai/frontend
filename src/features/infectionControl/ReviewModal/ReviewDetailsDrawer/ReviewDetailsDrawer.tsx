@@ -13,6 +13,7 @@ import {
 } from "../../InfectionControlSlice";
 import { InvalidationReason } from "../../InvalidationReason/InvalidationReason";
 import { useAlertHandling } from "../../ScreeningAlerts/useAlertHandling";
+import { describeReasons, describeSubstitute } from "../../followUp";
 import { verdictLabel } from "../reviewForm";
 import { DetailsBody, DetailsTitle } from "./ReviewDetailsDrawer.style";
 
@@ -90,6 +91,20 @@ export function ReviewDetailsDrawer({
                 user: evaluation.createdBy ?? "-",
               })}
             </div>
+            {describeReasons(evaluation) && (
+              <div>
+                {t("infectionControl.evaluation.reasons", {
+                  reasons: describeReasons(evaluation),
+                })}
+              </div>
+            )}
+            {describeSubstitute(evaluation) && (
+              <div>
+                {t("infectionControl.evaluation.substitute", {
+                  drug: describeSubstitute(evaluation),
+                })}
+              </div>
+            )}
             {evaluation.notes && (
               <em className="details-notes">{evaluation.notes}</em>
             )}

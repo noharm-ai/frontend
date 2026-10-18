@@ -71,6 +71,11 @@ export class KnowledgeBasePathEnum {
       pathPattern: /^\/priorizacao\/prescricoes/,
     },
     {
+      value: "Regulação",
+      label: "Regulação",
+      pathPattern: /^\/regulacao/,
+    },
+    {
       value: "Relatórios",
       label: "Relatórios",
       pathPattern: /^\/relatorios/,

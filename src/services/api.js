@@ -906,6 +906,15 @@ api.infectionControl.saveReview = (params = {}) =>
   instance.post(`/infection-control/review`, params, setHeaders());
 api.infectionControl.listAdmissions = (params = {}) =>
   instance.post(`/infection-control/admissions`, params, setHeaders());
+api.infectionControl.getInterventionReasons = () =>
+  instance.get(endpoints.intervention.reasons, setHeaders());
+
+// the antimicrobials, by name
+api.infectionControl.searchAntimicrobials = (term) =>
+  instance.get("/infection-control/antimicrobials", {
+    params: { q: term },
+    ...setHeaders(),
+  });
 
 /**
  * training namespace

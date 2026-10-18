@@ -7,7 +7,6 @@ const endpoints = {
   integration: "/admin/integration",
   segment: "/admin/segments",
   exam: "/admin/exam",
-  unitConversion: "/admin/unit-conversion",
 };
 
 const getMemoryItems = (params = {}) =>
@@ -16,18 +15,6 @@ const getMemoryItems = (params = {}) =>
 const updateMemoryItem = (bearerToken, params = {}) => {
   return instance.put(`${endpoints.memory}`, params, {
     ...setHeaders(bearerToken),
-  });
-};
-
-const getDrugAttributes = (params = {}) => {
-  return instance.post(`${endpoints.drug}/attributes-list`, params, {
-    ...setHeaders(),
-  });
-};
-
-const copyDrugAttributes = (params = {}) => {
-  return instance.post(`${endpoints.drug}/copy-attributes`, params, {
-    ...setHeaders(),
   });
 };
 
@@ -130,64 +117,11 @@ api.exams.getExam = (params) =>
  */
 
 api.drugs = {};
-api.drugs.getDrugsMissingSubstance = (params) =>
-  instance.get(`${endpoints.drug}/get-missing-substance`, {
-    params,
-    ...setHeaders(),
-  });
-
 api.drugs.getDrugRef = (params) =>
   instance.get(`${endpoints.drug}/ref`, {
     params,
     ...setHeaders(),
   });
-
-api.drugs.predictSubstance = (params = {}) => {
-  return instance.post(`${endpoints.drug}/predict-substance`, params, {
-    ...setHeaders(),
-  });
-};
-
-api.drugs.addNewOutlier = (params = {}) => {
-  return instance.post(`${endpoints.drug}/add-new-outlier`, params, {
-    ...setHeaders(),
-  });
-};
-
-api.drugs.calculateDosemax = (params = {}) => {
-  return instance.post(
-    `${endpoints.drug}/calculate-dosemax`,
-    {},
-    {
-      ...setHeaders(),
-    },
-  );
-};
-
-/**
- * UNIT CONVERSION
- */
-
-api.unitConversion = {};
-api.unitConversion.copyConversion = (params = {}) => {
-  return instance.post(
-    `${endpoints.unitConversion}/copy-unit-conversion`,
-    params,
-    {
-      ...setHeaders(),
-    },
-  );
-};
-
-api.unitConversion.addDefaultUnits = (params = {}) => {
-  return instance.post(
-    `${endpoints.unitConversion}/add-default-units`,
-    params,
-    {
-      ...setHeaders(),
-    },
-  );
-};
 
 /**
  * INTEGRATION
@@ -282,8 +216,6 @@ const methods = {
   ...api,
   getMemoryItems,
   updateMemoryItem,
-  getDrugAttributes,
-  copyDrugAttributes,
   refreshPrescription,
   getSegmentDepartments,
   updateSegmentDepartments,
