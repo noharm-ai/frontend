@@ -33,7 +33,12 @@ export function WorklistFilter() {
       // the list shows it is loading; the filters can change meanwhile, the
       // latest search wins
       loading={false}
-      skipFilterList={["status", "idDepartment", "admissionNumbers"]}
+      skipFilterList={[
+        "status",
+        "idDepartment",
+        "admissionNumbers",
+        "antimicrobialsMatchAll",
+      ]}
     />
   );
 }

@@ -2373,6 +2373,11 @@ test.describe("worklist", () => {
       page.getByRole("button", { name: "Adicionar antimicrobiano" }),
     ).toBeDisabled();
 
+    // with two rows, any of them will do unless every one is asked for
+    await expect(
+      page.getByRole("radio", { name: "Qualquer linha (OU)" }),
+    ).toBeChecked();
+
     // AWaRe and non-conformity
     await pickOption(page, "#awareLevels", "Reserva");
     await page.locator("#nonConforming").click();
@@ -2398,6 +2403,7 @@ test.describe("worklist", () => {
             treatmentDayTo: 2,
           },
         ],
+        antimicrobialsMatchAll: false,
         awareLevels: [3],
         nonConforming: true,
       });
@@ -2408,7 +2414,16 @@ test.describe("worklist", () => {
       }),
     ).toBeVisible();
 
-    // removing the first row keeps the other one (the search closed "see more")
+    // every row, then (the search closed "see more")
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
+    await page.getByText("Todas as linhas (E)", { exact: true }).click();
+    await page.locator(".gtm-btn-search").click();
+    await expect
+      .poll(() => lists(mockApi).at(-1)?.antimicrobialsMatchAll)
+      .toBe(true);
+
+    // removing the first row keeps the other one
     await page.getByRole("button", { name: /Ver mais/ }).click();
     await page.waitForTimeout(800);
     await page
@@ -2646,7 +2661,7 @@ test.describe("next pending", () => {
     const search =
       "idDepartment=10,20&pendingTypes=2&awareLevels=3" +
       `&antimicrobials=${encodeURIComponent(JSON.stringify(antimicrobials))}` +
-      "&overdueReview=1&nonConforming=1";
+      "&antimicrobialsMatchAll=1&overdueReview=1&nonConforming=1";
 
     await page.goto(`${PAGE_URL}?${search}`);
     await pickMoreAction(page, NEXT);
@@ -2658,6 +2673,7 @@ test.describe("next pending", () => {
       admissionNumbers: [],
       overdueReview: true,
       antimicrobials,
+      antimicrobialsMatchAll: true,
       awareLevels: [3],
       nonConforming: true,
     });

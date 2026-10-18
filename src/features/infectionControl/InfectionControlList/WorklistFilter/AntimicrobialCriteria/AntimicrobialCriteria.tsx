@@ -3,7 +3,7 @@ import { Button } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 
 import { Col, Row } from "components/Grid";
-import { InputNumber } from "components/Inputs";
+import { InputNumber, Radio } from "components/Inputs";
 import Tooltip from "components/Tooltip";
 import FieldSubstanceAutocomplete from "features/fields/FieldSubstanceAutocomplete/FieldSubstanceAutocomplete";
 
@@ -16,22 +16,27 @@ import {
   isEmptyCriterion,
 } from "../../../InfectionControlListSlice";
 import { AntimicrobialFilter } from "../AntimicrobialFilter/AntimicrobialFilter";
-import { Criteria, DayRange, Hint } from "./AntimicrobialCriteria.style";
+import { Criteria, DayRange, Hint, Match } from "./AntimicrobialCriteria.style";
 
 interface AntimicrobialCriteriaProps {
   value: IAntimicrobialCriterion[];
   onChange: (criteria: IAntimicrobialCriterion[]) => void;
+  matchAll: boolean;
+  onMatchAllChange: (matchAll: boolean) => void;
 }
 
 /**
  * The running antimicrobials the worklist asks for, one row each: any of its
- * drugs or substances, on a treatment day of its range. The patient must meet
- * every row, each by an antimicrobial of its own (e.g. amoxicillin on D1 and
- * vancomycin on D2). With nothing asked one empty row shows
+ * drugs or substances, on a treatment day of its range. The patient meets any
+ * row, or every row with matchAll, each by an antimicrobial of its own (e.g.
+ * amoxicillin on D1 and vancomycin on D2); the choice shows from the second
+ * row. With nothing asked one empty row shows
  */
 export function AntimicrobialCriteria({
   value,
   onChange,
+  matchAll,
+  onMatchAllChange,
 }: AntimicrobialCriteriaProps) {
   const { t } = useTranslation();
   const rows = value.length ? value : [EMPTY_CRITERION];
@@ -61,6 +66,34 @@ export function AntimicrobialCriteria({
         </label>
       </div>
       <Hint>{t("infectionControl.worklist.filters.antimicrobialsHint")}</Hint>
+      {rows.length > 1 && (
+        <Match>
+          <span>
+            {t("infectionControl.worklist.filters.antimicrobialsMatch")}:
+          </span>
+          <Radio.Group
+            size="small"
+            optionType="button"
+            buttonStyle="solid"
+            options={[
+              {
+                value: false,
+                label: t(
+                  "infectionControl.worklist.filters.antimicrobialsMatchAny",
+                ),
+              },
+              {
+                value: true,
+                label: t(
+                  "infectionControl.worklist.filters.antimicrobialsMatchAll",
+                ),
+              },
+            ]}
+            value={matchAll}
+            onChange={({ target }: any) => onMatchAllChange(target.value)}
+          />
+        </Match>
+      )}
       <Criteria data-testid="antimicrobial-criteria">
         {rows.map((row, index) => (
           <Row key={index} gutter={[8, 8]} align="middle">

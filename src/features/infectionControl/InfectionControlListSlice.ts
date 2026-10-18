@@ -91,10 +91,13 @@ export interface IInfectionControlListFilters {
   // only admissions whose scheduled review date has passed
   overdueReview: boolean;
   // the filters below match what the follow-up last saw running
-  // admissions meeting every criterion, each by a running antimicrobial of its
-  // own (e.g. amoxicillin on D1 and vancomycin on D2). One value, so the "see
-  // more" badge counts it once
+  // admissions meeting any criterion, or every one with
+  // antimicrobialsMatchAll, each by a running antimicrobial of its own (e.g.
+  // amoxicillin on D1 and vancomycin on D2). One value, so the "see more"
+  // badge counts it once
   antimicrobials: IAntimicrobialCriterion[];
+  // how the criteria combine; the badge leaves it out, it is part of them
+  antimicrobialsMatchAll: boolean;
   // admissions running an antimicrobial of any of these AWaRe levels
   awareLevels: number[];
   // admissions with an evaluation in force judged non conforming
@@ -108,6 +111,7 @@ export const DEFAULT_FILTERS: IInfectionControlListFilters = {
   admissionNumbers: [],
   overdueReview: false,
   antimicrobials: [],
+  antimicrobialsMatchAll: false,
   awareLevels: [],
   nonConforming: false,
 };
@@ -141,6 +145,8 @@ export const filtersToSearch = (filters: IInfectionControlListFilters) => {
   });
   if (request.antimicrobials.length) {
     params.set("antimicrobials", JSON.stringify(request.antimicrobials));
+    if (filters.antimicrobialsMatchAll)
+      params.set("antimicrobialsMatchAll", "1");
   }
   if (filters.overdueReview) params.set("overdueReview", "1");
   if (filters.nonConforming) params.set("nonConforming", "1");
@@ -203,6 +209,7 @@ export const filtersFromSearch = (
     admissionNumbers: numbers("admissionNumbers"),
     overdueReview: params.get("overdueReview") === "1",
     antimicrobials: criteriaFromSearch(params.get("antimicrobials")),
+    antimicrobialsMatchAll: params.get("antimicrobialsMatchAll") === "1",
     awareLevels: numbers("awareLevels"),
     nonConforming: params.get("nonConforming") === "1",
   };

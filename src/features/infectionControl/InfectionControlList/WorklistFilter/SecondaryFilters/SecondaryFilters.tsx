@@ -48,6 +48,10 @@ export function SecondaryFilters() {
               <AntimicrobialCriteria
                 value={values.antimicrobials ?? []}
                 onChange={(antimicrobials) => setFieldValue({ antimicrobials })}
+                matchAll={!!values.antimicrobialsMatchAll}
+                onMatchAllChange={(antimicrobialsMatchAll) =>
+                  setFieldValue({ antimicrobialsMatchAll })
+                }
               />
             </div>
 

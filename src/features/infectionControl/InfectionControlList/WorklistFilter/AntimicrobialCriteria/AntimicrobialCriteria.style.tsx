@@ -13,6 +13,15 @@ export const Hint = styled.div`
   opacity: 0.75;
 `;
 
+// whether the patient meets any row or every row
+export const Match = styled.div`
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 8px;
+`;
+
 // the first and last treatment day, side by side
 export const DayRange = styled.div`
   display: flex;
