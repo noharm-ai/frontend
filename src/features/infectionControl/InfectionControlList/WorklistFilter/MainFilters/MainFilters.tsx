@@ -13,6 +13,8 @@ import {
   InfectionControlStatusEnum,
 } from "models/InfectionControlEnum";
 
+import { AntimicrobialFilter } from "../AntimicrobialFilter/AntimicrobialFilter";
+
 const STATUSES = [
   InfectionControlStatusEnum.PENDING,
   InfectionControlStatusEnum.REVISED,
@@ -34,7 +36,7 @@ interface ISegmentDepartment {
   label: string;
 }
 
-/** Status, department and pending reason, always in sight */
+/** Status, department, pending reason and antimicrobial, always in sight */
 export function MainFilters() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
@@ -129,6 +131,16 @@ export function MainFilters() {
             </Select.Option>
           ))}
         </Select>
+      </Col>
+      <Col xs={24} md={6}>
+        <Heading {...({ as: "label", htmlFor: "drugs", $size: "14px" } as any)}>
+          {t("infectionControl.worklist.filters.drugs")}:
+        </Heading>
+        <AntimicrobialFilter
+          id="drugs"
+          value={values.drugs ?? []}
+          onChange={(drugs) => setFieldValue({ drugs })}
+        />
       </Col>
     </>
   );

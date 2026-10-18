@@ -4,16 +4,120 @@ import { useTranslation } from "react-i18next";
 import Heading from "components/Heading";
 import { Col, Row } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
-import { Select } from "components/Inputs";
+import { InputNumber, Select } from "components/Inputs";
 import Switch from "components/Switch";
+import Tooltip from "components/Tooltip";
+import FieldSubstanceAutocomplete from "features/fields/FieldSubstanceAutocomplete/FieldSubstanceAutocomplete";
+import { AWARE_LEVELS } from "features/culture/awareLevel";
 
-/** The filters under "see more": admissions and overdue review */
+/**
+ * The filters under "see more": what runs (substance, AWaRe level, treatment
+ * days), non-conformity, admissions and overdue review
+ */
 export function SecondaryFilters() {
   const { t } = useTranslation();
   const { values, setFieldValue } = useContext(AdvancedFilterContext) as any;
 
   return (
     <Row gutter={[20, 20]}>
+      <Col md={24} xl={18} xxl={14}>
+        <Heading
+          {...({ as: "label", htmlFor: "substances", $size: "14px" } as any)}
+        >
+          {t("infectionControl.worklist.filters.substances")}:
+        </Heading>
+        <FieldSubstanceAutocomplete
+          id="substances"
+          style={{ width: "100%" }}
+          maxTagCount="responsive"
+          value={values.substances}
+          onChange={(substances: any) =>
+            setFieldValue({
+              substances: (substances ?? []).map(
+                ({ value, label }: { value: number; label: string }) => ({
+                  value,
+                  label,
+                }),
+              ),
+            })
+          }
+        />
+      </Col>
+
+      <Col md={24} xl={18} xxl={14}>
+        <Heading
+          {...({ as: "label", htmlFor: "awareLevels", $size: "14px" } as any)}
+        >
+          {t("infectionControl.worklist.filters.awareLevels")}:
+        </Heading>
+        <Select
+          id="awareLevels"
+          style={{ width: "100%" }}
+          mode="multiple"
+          allowClear
+          placeholder={t(
+            "infectionControl.worklist.filters.awareLevelsPlaceholder",
+          )}
+          value={values.awareLevels}
+          onChange={(awareLevels: any) => setFieldValue({ awareLevels })}
+        >
+          {AWARE_LEVELS.map((level) => (
+            <Select.Option key={level} value={level}>
+              {t(`culture.awareLevel.${level}`)}
+            </Select.Option>
+          ))}
+        </Select>
+      </Col>
+
+      <Col md={24} xl={18} xxl={14}>
+        <Heading
+          {...({
+            as: "label",
+            htmlFor: "minTreatmentDays",
+            $size: "14px",
+          } as any)}
+        >
+          {t("infectionControl.worklist.filters.minTreatmentDays")}:
+        </Heading>
+        <div>
+          <Tooltip
+            title={t("infectionControl.worklist.filters.minTreatmentDaysHint")}
+          >
+            <InputNumber
+              id="minTreatmentDays"
+              min={1}
+              max={365}
+              precision={0}
+              style={{ width: 120 }}
+              placeholder={t(
+                "infectionControl.worklist.filters.minTreatmentDaysPlaceholder",
+              )}
+              value={values.minTreatmentDays}
+              onChange={(minTreatmentDays: any) =>
+                setFieldValue({ minTreatmentDays: minTreatmentDays || null })
+              }
+            />
+          </Tooltip>
+        </div>
+      </Col>
+
+      <Col md={24} xl={18} xxl={14}>
+        <Heading
+          {...({ as: "label", htmlFor: "nonConforming", $size: "14px" } as any)}
+        >
+          {t("infectionControl.worklist.filters.nonConforming")}:
+        </Heading>
+        <div>
+          <Switch
+            id="nonConforming"
+            checked={!!values.nonConforming}
+            onChange={(nonConforming: boolean) =>
+              setFieldValue({ nonConforming })
+            }
+          />
+        </div>
+      </Col>
+
       <Col md={24} xl={18} xxl={14}>
         <Heading
           {...({

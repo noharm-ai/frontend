@@ -2305,6 +2305,91 @@ test.describe("worklist", () => {
       });
   });
 
+  test("filters by the antimicrobials running", async ({ page, mockApi }) => {
+    const searches: string[] = [];
+    mockApi.override("GET /infection-control/antimicrobials", async (route) => {
+      searches.push(new URL(route.request().url()).searchParams.get("q")!);
+      await route.fulfill({
+        json: {
+          status: "success",
+          data: [
+            { id: 21, name: "CEFTRIAXONA 1 g SOL INJ" },
+            { id: 22, name: "CEFEPIMA 2 g SOL INJ" },
+          ],
+        },
+      });
+    });
+    mockApi.override("GET /substance/find", {
+      json: {
+        status: "success",
+        data: [{ sctid: 9070001, name: "CEFTRIAXONA" }],
+      },
+    });
+
+    await page.goto("/controle-infeccao");
+    await expect(
+      page.getByRole("heading", { name: "Controle de Infecção" }),
+    ).toBeVisible({ timeout: 15000 });
+    await expect.poll(() => lists(mockApi).length).toBeGreaterThan(0);
+
+    // the antimicrobial, always in sight, searched from the third letter
+    const drugs = page.locator("#drugs");
+    await drugs.click();
+    await drugs.pressSequentially("cef");
+    await page
+      .locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)")
+      .getByText("CEFEPIMA 2 g SOL INJ", { exact: true })
+      .click();
+    await page.keyboard.press("Escape");
+    expect(searches).toEqual(["cef"]);
+
+    // substance, AWaRe, treatment days and non-conformity, under "see more"
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
+    const substances = page.locator("#substances");
+    await substances.click();
+    await substances.pressSequentially("cef");
+    await page
+      .locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)")
+      .getByText("CEFTRIAXONA", { exact: true })
+      .click();
+    await page.keyboard.press("Escape");
+    await pickOption(page, "#awareLevels", "Reserva");
+    await page.locator("#minTreatmentDays").fill("7");
+    await page.locator("#nonConforming").click();
+
+    await page.locator(".gtm-btn-search").click();
+
+    await expect
+      .poll(() => lists(mockApi).at(-1))
+      .toMatchObject({
+        status: [1],
+        idDrug: [22],
+        idSubstance: [9070001],
+        awareLevels: [3],
+        minTreatmentDays: 7,
+        nonConforming: true,
+      });
+    // the chosen antimicrobial keeps its name
+    await expect(
+      page.locator(".ant-select-selection-item", {
+        hasText: "CEFEPIMA 2 g SOL INJ",
+      }),
+    ).toBeVisible();
+
+    // reset drops them
+    await page.locator(".gtm-btn-reset").click();
+    await expect
+      .poll(() => lists(mockApi).at(-1))
+      .toMatchObject({
+        idDrug: [],
+        idSubstance: [],
+        awareLevels: [],
+        minTreatmentDays: null,
+        nonConforming: false,
+      });
+  });
+
   test("takes the filters to the patient page, for its next pending patient", async ({
     page,
     mockApi,
@@ -2499,7 +2584,9 @@ test.describe("next pending", () => {
     mockApi,
   }) => {
     mockPendings(mockApi, [ADMISSION, ADMISSION + 2]);
-    const search = "idDepartment=10,20&pendingTypes=2&overdueReview=1";
+    const search =
+      "idDepartment=10,20&pendingTypes=2&idDrug=21&awareLevels=3" +
+      "&overdueReview=1&minTreatmentDays=7&nonConforming=1";
 
     await page.goto(`${PAGE_URL}?${search}`);
     await pickMoreAction(page, NEXT);
@@ -2510,6 +2597,11 @@ test.describe("next pending", () => {
       pendingTypes: [2],
       admissionNumbers: [],
       overdueReview: true,
+      idDrug: [21],
+      idSubstance: [],
+      awareLevels: [3],
+      minTreatmentDays: 7,
+      nonConforming: true,
     });
     // and takes them along to the next one
     await expect(page).toHaveURL(

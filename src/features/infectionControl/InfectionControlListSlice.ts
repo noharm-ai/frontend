@@ -36,7 +36,21 @@ export interface IFollowedAdmission {
   pendings: IFollowUpPending[];
 }
 
-// the worklist filters, as the backend takes them
+// an option chosen in a searched select, kept with its name so it shows
+// while other searches come and go
+export interface ILabeledValue {
+  value: number;
+  label: string;
+}
+
+// an antimicrobial found by name
+export interface IAntimicrobialOption {
+  id: number;
+  name: string;
+}
+
+// the worklist filters; the antimicrobials and substances keep their names,
+// filtersToRequest sends only the ids
 export interface IInfectionControlListFilters {
   // InfectionControlStatusEnum shown; none means every status
   status: number[];
@@ -47,6 +61,17 @@ export interface IInfectionControlListFilters {
   admissionNumbers: number[];
   // only admissions whose scheduled review date has passed
   overdueReview: boolean;
+  // the filters below match what the follow-up last saw running
+  // admissions running any of these antimicrobials
+  drugs: ILabeledValue[];
+  // admissions running an antimicrobial of any of these substances
+  substances: ILabeledValue[];
+  // admissions running an antimicrobial of any of these AWaRe levels
+  awareLevels: number[];
+  // admissions with an antimicrobial running for at least this many days
+  minTreatmentDays: number | null;
+  // admissions with an evaluation in force judged non conforming
+  nonConforming: boolean;
 }
 
 export const DEFAULT_FILTERS: IInfectionControlListFilters = {
@@ -55,6 +80,22 @@ export const DEFAULT_FILTERS: IInfectionControlListFilters = {
   pendingTypes: [],
   admissionNumbers: [],
   overdueReview: false,
+  drugs: [],
+  substances: [],
+  awareLevels: [],
+  minTreatmentDays: null,
+  nonConforming: false,
+};
+
+/** The worklist filters as the backend takes them, but the status */
+export const filtersToRequest = (filters: IInfectionControlListFilters) => {
+  const { drugs, substances, ...rest } = filters;
+
+  return {
+    ...rest,
+    idDrug: drugs.map((drug) => drug.value),
+    idSubstance: substances.map((substance) => substance.value),
+  };
 };
 
 /**
@@ -64,17 +105,33 @@ export const DEFAULT_FILTERS: IInfectionControlListFilters = {
  */
 export const filtersToSearch = (filters: IInfectionControlListFilters) => {
   const params = new URLSearchParams();
-  (["idDepartment", "pendingTypes", "admissionNumbers"] as const).forEach(
-    (key) => {
-      if (filters[key].length) params.set(key, filters[key].join(","));
-    },
-  );
+  const request = filtersToRequest(filters);
+  (
+    [
+      "idDepartment",
+      "pendingTypes",
+      "admissionNumbers",
+      "idDrug",
+      "idSubstance",
+      "awareLevels",
+    ] as const
+  ).forEach((key) => {
+    if (request[key].length) params.set(key, request[key].join(","));
+  });
   if (filters.overdueReview) params.set("overdueReview", "1");
+  if (filters.minTreatmentDays) {
+    params.set("minTreatmentDays", String(filters.minTreatmentDays));
+  }
+  if (filters.nonConforming) params.set("nonConforming", "1");
 
   return params.toString();
 };
 
-/** The worklist filters of a filtersToSearch query string */
+/**
+ * The worklist filters of a filtersToSearch query string. The antimicrobials
+ * and substances come without their names: the patient page only searches
+ * with them
+ */
 export const filtersFromSearch = (
   params: URLSearchParams,
 ): IInfectionControlListFilters => {
@@ -83,6 +140,9 @@ export const filtersFromSearch = (
       .split(",")
       .filter((value) => /^\d+$/.test(value))
       .map(Number);
+  const unnamed = (key: string) =>
+    numbers(key).map((value) => ({ value, label: String(value) }));
+  const minTreatmentDays = numbers("minTreatmentDays")[0];
 
   return {
     ...DEFAULT_FILTERS,
@@ -90,6 +150,11 @@ export const filtersFromSearch = (
     pendingTypes: numbers("pendingTypes"),
     admissionNumbers: numbers("admissionNumbers"),
     overdueReview: params.get("overdueReview") === "1",
+    drugs: unnamed("idDrug"),
+    substances: unnamed("idSubstance"),
+    awareLevels: numbers("awareLevels"),
+    minTreatmentDays: minTreatmentDays || null,
+    nonConforming: params.get("nonConforming") === "1",
   };
 };
 
@@ -120,7 +185,7 @@ export const fetchFollowedAdmissions = createAsyncThunk(
   async (filters: IInfectionControlListFilters, thunkAPI) => {
     try {
       const response = await api.infectionControl.listAdmissions({
-        ...filters,
+        ...filtersToRequest(filters),
         status: filters.status.length ? filters.status : ALL_STATUSES,
         limit: LIST_LIMIT,
         offset: 0,
@@ -166,7 +231,7 @@ export const fetchNextPending = createAsyncThunk(
   ) => {
     try {
       const response = await api.infectionControl.listAdmissions({
-        ...params.filters,
+        ...filtersToRequest(params.filters),
         status: [InfectionControlStatusEnum.PENDING],
         limit: LIST_LIMIT,
         offset: 0,
@@ -181,6 +246,22 @@ export const fetchNextPending = createAsyncThunk(
       return next !== undefined && next !== params.admissionNumber
         ? next
         : null;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
+/** Antimicrobials by name, for the worklist filter; kept by the caller */
+export const searchAntimicrobials = createAsyncThunk(
+  "infectionControlList/searchAntimicrobials",
+  async (params: { term: string }, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.searchAntimicrobials(
+        params.term,
+      );
+
+      return response.data.data as IAntimicrobialOption[];
     } catch (err) {
       return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
     }

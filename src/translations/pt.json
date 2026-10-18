@@ -1945,7 +1945,17 @@
         "pendingTypesPlaceholder": "Selecione os motivos",
         "admissionNumbers": "Atendimentos",
         "admissionNumbersPlaceholder": "Digite o número do atendimento e pressione enter",
-        "overdueReview": "Somente com revisão atrasada"
+        "overdueReview": "Somente com revisão atrasada",
+        "drugs": "Antimicrobiano",
+        "drugsPlaceholder": "Digite para pesquisar",
+        "drugsEmpty": "Nenhum antimicrobiano encontrado",
+        "substances": "Substância",
+        "awareLevels": "Classificação AWaRe",
+        "awareLevelsPlaceholder": "Selecione as classificações",
+        "minTreatmentDays": "Dias de tratamento (mínimo)",
+        "minTreatmentDaysPlaceholder": "Ex.: 7",
+        "minTreatmentDaysHint": "Pacientes com algum antimicrobiano em uso há pelo menos esse número de dias (D1 são as primeiras 24 horas)",
+        "nonConforming": "Somente com avaliação não conforme vigente"
       },
       "pendingType": {
         "1": "Paciente ainda não revisado",
