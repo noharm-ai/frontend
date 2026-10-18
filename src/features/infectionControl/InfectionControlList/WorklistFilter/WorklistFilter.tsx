@@ -11,7 +11,7 @@ import { SecondaryFilters } from "./SecondaryFilters/SecondaryFilters";
 
 /**
  * The worklist filter card, the same one the prescription prioritization
- * shows: status, department and pending reason up front, the other filters
+ * shows: status, department and admissions up front, the other filters
  * under "see more"
  */
 export function WorklistFilter() {
@@ -33,7 +33,12 @@ export function WorklistFilter() {
       // the list shows it is loading; the filters can change meanwhile, the
       // latest search wins
       loading={false}
-      skipFilterList={["status", "idDepartment", "pendingTypes"]}
+      skipFilterList={[
+        "status",
+        "idDepartment",
+        "admissionNumbers",
+        "antimicrobialsMatchAll",
+      ]}
     />
   );
 }

@@ -1935,7 +1935,28 @@
         "pendingTypesPlaceholder": "Select reasons",
         "admissionNumbers": "Admissions",
         "admissionNumbersPlaceholder": "Type the admission number and press enter",
-        "overdueReview": "Only with overdue review"
+        "overdueReview": "Only with overdue review",
+        "antimicrobials": "Antimicrobials in use",
+        "antimicrobialsHint": "One row per antimicrobial: drug or substance and the treatment day (e.g. amoxicillin on D1 or vancomycin on D2).",
+        "antimicrobialsMatch": "The patient must meet",
+        "antimicrobialsMatchAny": "Any row (OR)",
+        "antimicrobialsMatchAll": "Every row (AND)",
+        "addAntimicrobial": "Add antimicrobial",
+        "removeAntimicrobial": "Remove",
+        "substancesPlaceholder": "Substance",
+        "drugsPlaceholder": "Antimicrobial",
+        "drugsEmpty": "No antimicrobial found",
+        "awareLevels": "AWaRe classification",
+        "awareLevelsPlaceholder": "Select classifications",
+        "treatmentDay": "Treatment day",
+        "treatmentDayFrom": "from",
+        "treatmentDayTo": "to",
+        "treatmentDayHint": "Treatment day of this row's antimicrobial (D1 is the first 24 hours): amoxicillin on D1 brings who started amoxicillin in the last 24 hours",
+        "nonConforming": "Only with a non-conforming evaluation in force",
+        "groups": {
+          "antimicrobials": "Antimicrobials",
+          "followUp": "Follow-up"
+        }
       },
       "pendingType": {
         "1": "Patient not reviewed yet",

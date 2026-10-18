@@ -36,7 +36,50 @@ export interface IFollowedAdmission {
   pendings: IFollowUpPending[];
 }
 
-// the worklist filters, as the backend takes them
+// an option chosen in a searched select, kept with its name so it shows
+// while other searches come and go
+export interface ILabeledValue {
+  value: number;
+  label: string;
+}
+
+// a range of treatment days (D1 is the first 24 hours); either end may be open
+export interface ITreatmentDays {
+  from: number | null;
+  to: number | null;
+}
+
+// one running antimicrobial the worklist asks for: any of these drugs or
+// substances, on a treatment day of the range; every part is optional
+export interface IAntimicrobialCriterion {
+  drugs: ILabeledValue[];
+  substances: ILabeledValue[];
+  treatmentDays: ITreatmentDays | null;
+}
+
+export const EMPTY_CRITERION: IAntimicrobialCriterion = {
+  drugs: [],
+  substances: [],
+  treatmentDays: null,
+};
+
+// at most this many antimicrobial criteria (the backend refuses more)
+export const MAX_CRITERIA = 10;
+
+/** Whether a criterion asks for nothing yet */
+export const isEmptyCriterion = (criterion: IAntimicrobialCriterion) =>
+  !criterion.drugs.length &&
+  !criterion.substances.length &&
+  !criterion.treatmentDays;
+
+// an antimicrobial found by name
+export interface IAntimicrobialOption {
+  id: number;
+  name: string;
+}
+
+// the worklist filters; the antimicrobials and substances keep their names,
+// filtersToRequest sends only the ids
 export interface IInfectionControlListFilters {
   // InfectionControlStatusEnum shown; none means every status
   status: number[];
@@ -47,6 +90,18 @@ export interface IInfectionControlListFilters {
   admissionNumbers: number[];
   // only admissions whose scheduled review date has passed
   overdueReview: boolean;
+  // the filters below match what the follow-up last saw running
+  // admissions meeting any criterion, or every one with
+  // antimicrobialsMatchAll, each by a running antimicrobial of its own (e.g.
+  // amoxicillin on D1 and vancomycin on D2). One value, so the "see more"
+  // badge counts it once
+  antimicrobials: IAntimicrobialCriterion[];
+  // how the criteria combine; the badge leaves it out, it is part of them
+  antimicrobialsMatchAll: boolean;
+  // admissions running an antimicrobial of any of these AWaRe levels
+  awareLevels: number[];
+  // admissions with an evaluation in force judged non conforming
+  nonConforming: boolean;
 }
 
 export const DEFAULT_FILTERS: IInfectionControlListFilters = {
@@ -55,7 +110,25 @@ export const DEFAULT_FILTERS: IInfectionControlListFilters = {
   pendingTypes: [],
   admissionNumbers: [],
   overdueReview: false,
+  antimicrobials: [],
+  antimicrobialsMatchAll: false,
+  awareLevels: [],
+  nonConforming: false,
 };
+
+/** The worklist filters as the backend takes them, but the status; the
+ * criteria that ask for nothing are left out */
+export const filtersToRequest = (filters: IInfectionControlListFilters) => ({
+  ...filters,
+  antimicrobials: filters.antimicrobials
+    .filter((criterion) => !isEmptyCriterion(criterion))
+    .map(({ drugs, substances, treatmentDays }) => ({
+      idDrug: drugs.map((drug) => drug.value),
+      idSubstance: substances.map((substance) => substance.value),
+      treatmentDayFrom: treatmentDays?.from ?? null,
+      treatmentDayTo: treatmentDays?.to ?? null,
+    })),
+});
 
 /**
  * The worklist filters, but the status, as a query string: the patient page
@@ -64,17 +137,62 @@ export const DEFAULT_FILTERS: IInfectionControlListFilters = {
  */
 export const filtersToSearch = (filters: IInfectionControlListFilters) => {
   const params = new URLSearchParams();
-  (["idDepartment", "pendingTypes", "admissionNumbers"] as const).forEach(
-    (key) => {
-      if (filters[key].length) params.set(key, filters[key].join(","));
-    },
-  );
+  const request = filtersToRequest(filters);
+  (
+    ["idDepartment", "pendingTypes", "admissionNumbers", "awareLevels"] as const
+  ).forEach((key) => {
+    if (request[key].length) params.set(key, request[key].join(","));
+  });
+  if (request.antimicrobials.length) {
+    params.set("antimicrobials", JSON.stringify(request.antimicrobials));
+    if (filters.antimicrobialsMatchAll)
+      params.set("antimicrobialsMatchAll", "1");
+  }
   if (filters.overdueReview) params.set("overdueReview", "1");
+  if (filters.nonConforming) params.set("nonConforming", "1");
 
   return params.toString();
 };
 
-/** The worklist filters of a filtersToSearch query string */
+/**
+ * The antimicrobial criteria of a filtersToSearch query string, without the
+ * names; anything else than ids and days is dropped
+ */
+const criteriaFromSearch = (search: string | null) => {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(search ?? "[]");
+  } catch {
+    return [];
+  }
+  if (!Array.isArray(parsed)) return [];
+
+  const ids = (list: unknown) =>
+    (Array.isArray(list) ? list : [])
+      .filter((value) => Number.isInteger(value) && value > 0)
+      .map((value: number) => ({ value, label: String(value) }));
+  const day = (value: unknown) =>
+    Number.isInteger(value) && (value as number) > 0 ? (value as number) : null;
+
+  return parsed
+    .slice(0, MAX_CRITERIA)
+    .map((item: any): IAntimicrobialCriterion => {
+      const from = day(item?.treatmentDayFrom);
+      const to = day(item?.treatmentDayTo);
+      return {
+        drugs: ids(item?.idDrug),
+        substances: ids(item?.idSubstance),
+        treatmentDays: from || to ? { from, to } : null,
+      };
+    })
+    .filter((criterion) => !isEmptyCriterion(criterion));
+};
+
+/**
+ * The worklist filters of a filtersToSearch query string. The antimicrobials
+ * and substances come without their names: the patient page only searches
+ * with them
+ */
 export const filtersFromSearch = (
   params: URLSearchParams,
 ): IInfectionControlListFilters => {
@@ -90,6 +208,10 @@ export const filtersFromSearch = (
     pendingTypes: numbers("pendingTypes"),
     admissionNumbers: numbers("admissionNumbers"),
     overdueReview: params.get("overdueReview") === "1",
+    antimicrobials: criteriaFromSearch(params.get("antimicrobials")),
+    antimicrobialsMatchAll: params.get("antimicrobialsMatchAll") === "1",
+    awareLevels: numbers("awareLevels"),
+    nonConforming: params.get("nonConforming") === "1",
   };
 };
 
@@ -120,7 +242,7 @@ export const fetchFollowedAdmissions = createAsyncThunk(
   async (filters: IInfectionControlListFilters, thunkAPI) => {
     try {
       const response = await api.infectionControl.listAdmissions({
-        ...filters,
+        ...filtersToRequest(filters),
         status: filters.status.length ? filters.status : ALL_STATUSES,
         limit: LIST_LIMIT,
         offset: 0,
@@ -166,7 +288,7 @@ export const fetchNextPending = createAsyncThunk(
   ) => {
     try {
       const response = await api.infectionControl.listAdmissions({
-        ...params.filters,
+        ...filtersToRequest(params.filters),
         status: [InfectionControlStatusEnum.PENDING],
         limit: LIST_LIMIT,
         offset: 0,
@@ -181,6 +303,22 @@ export const fetchNextPending = createAsyncThunk(
       return next !== undefined && next !== params.admissionNumber
         ? next
         : null;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
+/** Antimicrobials by name, for the worklist filter; kept by the caller */
+export const searchAntimicrobials = createAsyncThunk(
+  "infectionControlList/searchAntimicrobials",
+  async (params: { term: string }, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.searchAntimicrobials(
+        params.term,
+      );
+
+      return response.data.data as IAntimicrobialOption[];
     } catch (err) {
       return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
     }

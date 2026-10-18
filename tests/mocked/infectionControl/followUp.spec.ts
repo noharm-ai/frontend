@@ -2261,14 +2261,14 @@ test.describe("worklist", () => {
     ).toBeVisible({ timeout: 15000 });
     await expect.poll(() => lists(mockApi).length).toBeGreaterThan(0);
 
-    // status, department and pending reason, always in sight
+    // status and department, always in sight
     await pickOption(page, "#status", "Revisado");
     await pickOption(page, "#departments", "UTI Adulto");
-    await pickOption(page, "#pendingTypes", "Antimicrobiano sem avaliação");
 
-    // overdue review, under "see more"
+    // pending reason and overdue review, under "see more"
     await page.getByRole("button", { name: /Ver mais/ }).click();
     await page.waitForTimeout(800);
+    await pickOption(page, "#pendingTypes", "Antimicrobiano sem avaliação");
     await page.locator("#overdueReview").click();
 
     await page.locator(".gtm-btn-search").click();
@@ -2305,6 +2305,155 @@ test.describe("worklist", () => {
       });
   });
 
+  test("filters by the antimicrobials running, each on its treatment day", async ({
+    page,
+    mockApi,
+  }) => {
+    const searches: string[] = [];
+    mockApi.override("GET /infection-control/antimicrobials", async (route) => {
+      searches.push(new URL(route.request().url()).searchParams.get("q")!);
+      await route.fulfill({
+        json: {
+          status: "success",
+          data: [
+            { id: 21, name: "CEFTRIAXONA 1 g SOL INJ" },
+            { id: 22, name: "CEFEPIMA 2 g SOL INJ" },
+          ],
+        },
+      });
+    });
+    mockApi.override("GET /substance/find", {
+      json: {
+        status: "success",
+        data: [{ sctid: 9070001, name: "CEFTRIAXONA" }],
+      },
+    });
+
+    await page.goto("/controle-infeccao");
+    await expect(
+      page.getByRole("heading", { name: "Controle de Infecção" }),
+    ).toBeVisible({ timeout: 15000 });
+    await expect.poll(() => lists(mockApi).length).toBeGreaterThan(0);
+
+    // under "see more": the antimicrobial, searched from the third letter
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
+    const drugs = page.locator("#drugs-0");
+    await drugs.click();
+    await drugs.pressSequentially("cef");
+    await page
+      .locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)")
+      .getByText("CEFEPIMA 2 g SOL INJ", { exact: true })
+      .click();
+    await page.keyboard.press("Escape");
+    expect(searches).toEqual(["cef"]);
+    // on its first day
+    await page.locator("#treatmentDayFrom-0").fill("1");
+    await page.locator("#treatmentDayTo-0").fill("1");
+
+    // and another one, by its substance, on its second day
+    await page
+      .getByRole("button", { name: "Adicionar antimicrobiano" })
+      .click();
+    const substances = page.locator("#substances-1");
+    await substances.click();
+    await substances.pressSequentially("cef");
+    await page
+      .locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)")
+      .getByText("CEFTRIAXONA", { exact: true })
+      .click();
+    await page.keyboard.press("Escape");
+    await page.locator("#treatmentDayFrom-1").fill("2");
+    await page.locator("#treatmentDayTo-1").fill("2");
+    // a new row waits for the last one to ask for something
+    await page
+      .getByRole("button", { name: "Adicionar antimicrobiano" })
+      .click();
+    await expect(
+      page.getByRole("button", { name: "Adicionar antimicrobiano" }),
+    ).toBeDisabled();
+
+    // with two rows, any of them will do unless every one is asked for
+    await expect(
+      page.getByRole("radio", { name: "Qualquer linha (OU)" }),
+    ).toBeChecked();
+
+    // AWaRe and non-conformity
+    await pickOption(page, "#awareLevels", "Reserva");
+    await page.locator("#nonConforming").click();
+
+    await page.locator(".gtm-btn-search").click();
+
+    await expect
+      .poll(() => lists(mockApi).at(-1))
+      .toMatchObject({
+        status: [1],
+        // the empty row is left out
+        antimicrobials: [
+          {
+            idDrug: [22],
+            idSubstance: [],
+            treatmentDayFrom: 1,
+            treatmentDayTo: 1,
+          },
+          {
+            idDrug: [],
+            idSubstance: [9070001],
+            treatmentDayFrom: 2,
+            treatmentDayTo: 2,
+          },
+        ],
+        antimicrobialsMatchAll: false,
+        awareLevels: [3],
+        nonConforming: true,
+      });
+    // the chosen antimicrobial keeps its name
+    await expect(
+      page.locator(".ant-select-selection-item", {
+        hasText: "CEFEPIMA 2 g SOL INJ",
+      }),
+    ).toBeVisible();
+
+    // every row, then (the search closed "see more")
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
+    await page.getByText("Todas as linhas (E)", { exact: true }).click();
+    await page.locator(".gtm-btn-search").click();
+    await expect
+      .poll(() => lists(mockApi).at(-1)?.antimicrobialsMatchAll)
+      .toBe(true);
+
+    // removing the first row keeps the other one
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
+    await page
+      .getByTestId("antimicrobial-criteria")
+      .getByRole("button", { name: "Remover" })
+      .first()
+      .click();
+    await page.locator(".gtm-btn-search").click();
+    await expect
+      .poll(() => lists(mockApi).at(-1)?.antimicrobials)
+      .toEqual([
+        {
+          idDrug: [],
+          idSubstance: [9070001],
+          treatmentDayFrom: 2,
+          treatmentDayTo: 2,
+        },
+      ]);
+
+    // reset drops them
+    await page.locator(".gtm-btn-reset").click();
+    await expect
+      .poll(() => lists(mockApi).at(-1))
+      .toMatchObject({
+        antimicrobials: [],
+        awareLevels: [],
+        nonConforming: false,
+      });
+  });
+
   test("takes the filters to the patient page, for its next pending patient", async ({
     page,
     mockApi,
@@ -2326,6 +2475,8 @@ test.describe("worklist", () => {
     await expect(link).toHaveAttribute("href", PAGE_URL, { timeout: 15000 });
 
     await pickOption(page, "#departments", "UTI Adulto");
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
     await pickOption(page, "#pendingTypes", "Antimicrobiano sem avaliação");
     await page.locator(".gtm-btn-search").click();
 
@@ -2499,7 +2650,18 @@ test.describe("next pending", () => {
     mockApi,
   }) => {
     mockPendings(mockApi, [ADMISSION, ADMISSION + 2]);
-    const search = "idDepartment=10,20&pendingTypes=2&overdueReview=1";
+    const antimicrobials = [
+      {
+        idDrug: [21],
+        idSubstance: [],
+        treatmentDayFrom: 7,
+        treatmentDayTo: null,
+      },
+    ];
+    const search =
+      "idDepartment=10,20&pendingTypes=2&awareLevels=3" +
+      `&antimicrobials=${encodeURIComponent(JSON.stringify(antimicrobials))}` +
+      "&antimicrobialsMatchAll=1&overdueReview=1&nonConforming=1";
 
     await page.goto(`${PAGE_URL}?${search}`);
     await pickMoreAction(page, NEXT);
@@ -2510,6 +2672,10 @@ test.describe("next pending", () => {
       pendingTypes: [2],
       admissionNumbers: [],
       overdueReview: true,
+      antimicrobials,
+      antimicrobialsMatchAll: true,
+      awareLevels: [3],
+      nonConforming: true,
     });
     // and takes them along to the next one
     await expect(page).toHaveURL(
