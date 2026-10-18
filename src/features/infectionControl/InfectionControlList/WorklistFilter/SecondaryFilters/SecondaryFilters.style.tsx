@@ -5,4 +5,5 @@ export const DayRange = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
+  width: 240px;
 `;

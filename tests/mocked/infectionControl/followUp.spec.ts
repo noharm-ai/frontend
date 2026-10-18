@@ -2335,7 +2335,9 @@ test.describe("worklist", () => {
     ).toBeVisible({ timeout: 15000 });
     await expect.poll(() => lists(mockApi).length).toBeGreaterThan(0);
 
-    // the antimicrobial, always in sight, searched from the third letter
+    // under "see more": the antimicrobial, searched from the third letter
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
     const drugs = page.locator("#drugs");
     await drugs.click();
     await drugs.pressSequentially("cef");
@@ -2345,13 +2347,11 @@ test.describe("worklist", () => {
       .click();
     await page.keyboard.press("Escape");
     expect(searches).toEqual(["cef"]);
-    // on its first day, next to it
+    // on its first day
     await page.locator("#treatmentDayFrom").fill("1");
     await page.locator("#treatmentDayTo").fill("1");
 
-    // substance, AWaRe and non-conformity, under "see more"
-    await page.getByRole("button", { name: /Ver mais/ }).click();
-    await page.waitForTimeout(800);
+    // substance, AWaRe and non-conformity
     const substances = page.locator("#substances");
     await substances.click();
     await substances.pressSequentially("cef");

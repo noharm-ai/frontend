@@ -4,21 +4,90 @@ import { useTranslation } from "react-i18next";
 import Heading from "components/Heading";
 import { Col, Row } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
-import { Select } from "components/Inputs";
+import { InputNumber, Select } from "components/Inputs";
 import Switch from "components/Switch";
+import Tooltip from "components/Tooltip";
 import FieldSubstanceAutocomplete from "features/fields/FieldSubstanceAutocomplete/FieldSubstanceAutocomplete";
 import { AWARE_LEVELS } from "features/culture/awareLevel";
 
+import { ITreatmentDays } from "../../../InfectionControlListSlice";
+import { AntimicrobialFilter } from "../AntimicrobialFilter/AntimicrobialFilter";
+import { DayRange } from "./SecondaryFilters.style";
+
 /**
- * The filters under "see more": what runs (substance, AWaRe level),
- * non-conformity, admissions and overdue review
+ * The filters under "see more": what runs (antimicrobial and its treatment
+ * day, substance, AWaRe level), non-conformity, admissions and overdue review
  */
 export function SecondaryFilters() {
   const { t } = useTranslation();
   const { values, setFieldValue } = useContext(AdvancedFilterContext) as any;
+  const treatmentDays: ITreatmentDays = values.treatmentDays ?? {
+    from: null,
+    to: null,
+  };
+
+  /** Change one end of the day range; with both empty there is no filter */
+  const setTreatmentDay = (end: keyof ITreatmentDays, day: number | null) => {
+    const next = { ...treatmentDays, [end]: day || null };
+    setFieldValue({ treatmentDays: next.from || next.to ? next : null });
+  };
 
   return (
     <Row gutter={[20, 20]}>
+      <Col md={24} xl={18} xxl={14}>
+        <Heading {...({ as: "label", htmlFor: "drugs", $size: "14px" } as any)}>
+          {t("infectionControl.worklist.filters.drugs")}:
+        </Heading>
+        <AntimicrobialFilter
+          id="drugs"
+          value={values.drugs ?? []}
+          onChange={(drugs) => setFieldValue({ drugs })}
+        />
+      </Col>
+
+      <Col md={24} xl={18} xxl={14}>
+        <Heading
+          {...({
+            as: "label",
+            htmlFor: "treatmentDayFrom",
+            $size: "14px",
+          } as any)}
+        >
+          {t("infectionControl.worklist.filters.treatmentDay")}:
+        </Heading>
+        <Tooltip
+          title={t("infectionControl.worklist.filters.treatmentDayHint")}
+        >
+          <DayRange>
+            <InputNumber
+              id="treatmentDayFrom"
+              prefix="D"
+              min={1}
+              max={365}
+              precision={0}
+              placeholder={t(
+                "infectionControl.worklist.filters.treatmentDayFrom",
+              )}
+              value={treatmentDays.from}
+              onChange={(day: any) => setTreatmentDay("from", day)}
+            />
+            <span>–</span>
+            <InputNumber
+              id="treatmentDayTo"
+              prefix="D"
+              min={1}
+              max={365}
+              precision={0}
+              placeholder={t(
+                "infectionControl.worklist.filters.treatmentDayTo",
+              )}
+              value={treatmentDays.to}
+              onChange={(day: any) => setTreatmentDay("to", day)}
+            />
+          </DayRange>
+        </Tooltip>
+      </Col>
+
       <Col md={24} xl={18} xxl={14}>
         <Heading
           {...({ as: "label", htmlFor: "substances", $size: "14px" } as any)}

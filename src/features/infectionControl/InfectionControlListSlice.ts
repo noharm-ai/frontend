@@ -43,6 +43,12 @@ export interface ILabeledValue {
   label: string;
 }
 
+// a range of treatment days (D1 is the first 24 hours); either end may be open
+export interface ITreatmentDays {
+  from: number | null;
+  to: number | null;
+}
+
 // an antimicrobial found by name
 export interface IAntimicrobialOption {
   id: number;
@@ -68,11 +74,10 @@ export interface IInfectionControlListFilters {
   substances: ILabeledValue[];
   // admissions running an antimicrobial of any of these AWaRe levels
   awareLevels: number[];
-  // admissions with an antimicrobial on a treatment day of this range (D1 is
-  // the first 24 hours); with the filters above, the same antimicrobial must
-  // match them all (e.g. amoxicillin on D1). Either end may be open
-  treatmentDayFrom: number | null;
-  treatmentDayTo: number | null;
+  // admissions with an antimicrobial on a treatment day of this range; with
+  // the filters above, the same antimicrobial must match them all (e.g.
+  // amoxicillin on D1). One value, so the "see more" badge counts it once
+  treatmentDays: ITreatmentDays | null;
   // admissions with an evaluation in force judged non conforming
   nonConforming: boolean;
 }
@@ -86,19 +91,20 @@ export const DEFAULT_FILTERS: IInfectionControlListFilters = {
   drugs: [],
   substances: [],
   awareLevels: [],
-  treatmentDayFrom: null,
-  treatmentDayTo: null,
+  treatmentDays: null,
   nonConforming: false,
 };
 
 /** The worklist filters as the backend takes them, but the status */
 export const filtersToRequest = (filters: IInfectionControlListFilters) => {
-  const { drugs, substances, ...rest } = filters;
+  const { drugs, substances, treatmentDays, ...rest } = filters;
 
   return {
     ...rest,
     idDrug: drugs.map((drug) => drug.value),
     idSubstance: substances.map((substance) => substance.value),
+    treatmentDayFrom: treatmentDays?.from ?? null,
+    treatmentDayTo: treatmentDays?.to ?? null,
   };
 };
 
@@ -124,7 +130,7 @@ export const filtersToSearch = (filters: IInfectionControlListFilters) => {
   });
   if (filters.overdueReview) params.set("overdueReview", "1");
   (["treatmentDayFrom", "treatmentDayTo"] as const).forEach((key) => {
-    if (filters[key]) params.set(key, String(filters[key]));
+    if (request[key]) params.set(key, String(request[key]));
   });
   if (filters.nonConforming) params.set("nonConforming", "1");
 
@@ -146,6 +152,10 @@ export const filtersFromSearch = (
       .map(Number);
   const unnamed = (key: string) =>
     numbers(key).map((value) => ({ value, label: String(value) }));
+  const treatmentDays = {
+    from: numbers("treatmentDayFrom")[0] || null,
+    to: numbers("treatmentDayTo")[0] || null,
+  };
 
   return {
     ...DEFAULT_FILTERS,
@@ -156,8 +166,8 @@ export const filtersFromSearch = (
     drugs: unnamed("idDrug"),
     substances: unnamed("idSubstance"),
     awareLevels: numbers("awareLevels"),
-    treatmentDayFrom: numbers("treatmentDayFrom")[0] || null,
-    treatmentDayTo: numbers("treatmentDayTo")[0] || null,
+    treatmentDays:
+      treatmentDays.from || treatmentDays.to ? treatmentDays : null,
     nonConforming: params.get("nonConforming") === "1",
   };
 };

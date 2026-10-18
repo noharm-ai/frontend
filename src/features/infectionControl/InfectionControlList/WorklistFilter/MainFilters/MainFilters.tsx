@@ -2,9 +2,8 @@ import { useContext, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import { useAppDispatch, useAppSelector } from "src/store";
-import { InputNumber, Select } from "components/Inputs";
+import { Select } from "components/Inputs";
 import Heading from "components/Heading";
-import Tooltip from "components/Tooltip";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
 import { getSegmentDepartments } from "features/lists/ListsSlice";
@@ -13,9 +12,6 @@ import {
   InfectionControlPendingTypeEnum,
   InfectionControlStatusEnum,
 } from "models/InfectionControlEnum";
-
-import { AntimicrobialFilter } from "../AntimicrobialFilter/AntimicrobialFilter";
-import { DayRange } from "./MainFilters.style";
 
 const STATUSES = [
   InfectionControlStatusEnum.PENDING,
@@ -38,10 +34,7 @@ interface ISegmentDepartment {
   label: string;
 }
 
-/**
- * Status, department, pending reason, antimicrobial and treatment day, always
- * in sight: the antimicrobial and the day are searched together
- */
+/** Status, department and pending reason, always in sight */
 export function MainFilters() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
@@ -57,7 +50,7 @@ export function MainFilters() {
 
   return (
     <>
-      <Col xs={24} md={5}>
+      <Col xs={24} md={6}>
         <Heading
           {...({ as: "label", htmlFor: "status", $size: "14px" } as any)}
         >
@@ -80,7 +73,7 @@ export function MainFilters() {
           ))}
         </Select>
       </Col>
-      <Col xs={24} md={5}>
+      <Col xs={24} md={6}>
         <Heading
           {...({ as: "label", htmlFor: "departments", $size: "14px" } as any)}
         >
@@ -111,7 +104,7 @@ export function MainFilters() {
           ))}
         </Select>
       </Col>
-      <Col xs={24} md={5}>
+      <Col xs={24} md={6}>
         <Heading
           {...({ as: "label", htmlFor: "pendingTypes", $size: "14px" } as any)}
         >
@@ -136,62 +129,6 @@ export function MainFilters() {
             </Select.Option>
           ))}
         </Select>
-      </Col>
-      <Col xs={24} md={5}>
-        <Heading {...({ as: "label", htmlFor: "drugs", $size: "14px" } as any)}>
-          {t("infectionControl.worklist.filters.drugs")}:
-        </Heading>
-        <AntimicrobialFilter
-          id="drugs"
-          value={values.drugs ?? []}
-          onChange={(drugs) => setFieldValue({ drugs })}
-        />
-      </Col>
-      <Col xs={24} md={4}>
-        <Heading
-          {...({
-            as: "label",
-            htmlFor: "treatmentDayFrom",
-            $size: "14px",
-          } as any)}
-        >
-          {t("infectionControl.worklist.filters.treatmentDay")}:
-        </Heading>
-        <Tooltip
-          title={t("infectionControl.worklist.filters.treatmentDayHint")}
-        >
-          <DayRange>
-            <InputNumber
-              id="treatmentDayFrom"
-              prefix="D"
-              min={1}
-              max={365}
-              precision={0}
-              placeholder={t(
-                "infectionControl.worklist.filters.treatmentDayFrom",
-              )}
-              value={values.treatmentDayFrom}
-              onChange={(treatmentDayFrom: any) =>
-                setFieldValue({ treatmentDayFrom: treatmentDayFrom || null })
-              }
-            />
-            <span>–</span>
-            <InputNumber
-              id="treatmentDayTo"
-              prefix="D"
-              min={1}
-              max={365}
-              precision={0}
-              placeholder={t(
-                "infectionControl.worklist.filters.treatmentDayTo",
-              )}
-              value={values.treatmentDayTo}
-              onChange={(treatmentDayTo: any) =>
-                setFieldValue({ treatmentDayTo: treatmentDayTo || null })
-              }
-            />
-          </DayRange>
-        </Tooltip>
       </Col>
     </>
   );
