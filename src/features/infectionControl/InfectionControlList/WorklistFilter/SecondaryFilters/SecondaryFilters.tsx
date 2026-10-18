@@ -4,15 +4,14 @@ import { useTranslation } from "react-i18next";
 import Heading from "components/Heading";
 import { Col, Row } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
-import { InputNumber, Select } from "components/Inputs";
+import { Select } from "components/Inputs";
 import Switch from "components/Switch";
-import Tooltip from "components/Tooltip";
 import FieldSubstanceAutocomplete from "features/fields/FieldSubstanceAutocomplete/FieldSubstanceAutocomplete";
 import { AWARE_LEVELS } from "features/culture/awareLevel";
 
 /**
- * The filters under "see more": what runs (substance, AWaRe level, treatment
- * days), non-conformity, admissions and overdue review
+ * The filters under "see more": what runs (substance, AWaRe level),
+ * non-conformity, admissions and overdue review
  */
 export function SecondaryFilters() {
   const { t } = useTranslation();
@@ -67,38 +66,6 @@ export function SecondaryFilters() {
             </Select.Option>
           ))}
         </Select>
-      </Col>
-
-      <Col md={24} xl={18} xxl={14}>
-        <Heading
-          {...({
-            as: "label",
-            htmlFor: "minTreatmentDays",
-            $size: "14px",
-          } as any)}
-        >
-          {t("infectionControl.worklist.filters.minTreatmentDays")}:
-        </Heading>
-        <div>
-          <Tooltip
-            title={t("infectionControl.worklist.filters.minTreatmentDaysHint")}
-          >
-            <InputNumber
-              id="minTreatmentDays"
-              min={1}
-              max={365}
-              precision={0}
-              style={{ width: 120 }}
-              placeholder={t(
-                "infectionControl.worklist.filters.minTreatmentDaysPlaceholder",
-              )}
-              value={values.minTreatmentDays}
-              onChange={(minTreatmentDays: any) =>
-                setFieldValue({ minTreatmentDays: minTreatmentDays || null })
-              }
-            />
-          </Tooltip>
-        </div>
       </Col>
 
       <Col md={24} xl={18} xxl={14}>

@@ -68,8 +68,11 @@ export interface IInfectionControlListFilters {
   substances: ILabeledValue[];
   // admissions running an antimicrobial of any of these AWaRe levels
   awareLevels: number[];
-  // admissions with an antimicrobial running for at least this many days
-  minTreatmentDays: number | null;
+  // admissions with an antimicrobial on a treatment day of this range (D1 is
+  // the first 24 hours); with the filters above, the same antimicrobial must
+  // match them all (e.g. amoxicillin on D1). Either end may be open
+  treatmentDayFrom: number | null;
+  treatmentDayTo: number | null;
   // admissions with an evaluation in force judged non conforming
   nonConforming: boolean;
 }
@@ -83,7 +86,8 @@ export const DEFAULT_FILTERS: IInfectionControlListFilters = {
   drugs: [],
   substances: [],
   awareLevels: [],
-  minTreatmentDays: null,
+  treatmentDayFrom: null,
+  treatmentDayTo: null,
   nonConforming: false,
 };
 
@@ -119,9 +123,9 @@ export const filtersToSearch = (filters: IInfectionControlListFilters) => {
     if (request[key].length) params.set(key, request[key].join(","));
   });
   if (filters.overdueReview) params.set("overdueReview", "1");
-  if (filters.minTreatmentDays) {
-    params.set("minTreatmentDays", String(filters.minTreatmentDays));
-  }
+  (["treatmentDayFrom", "treatmentDayTo"] as const).forEach((key) => {
+    if (filters[key]) params.set(key, String(filters[key]));
+  });
   if (filters.nonConforming) params.set("nonConforming", "1");
 
   return params.toString();
@@ -142,7 +146,6 @@ export const filtersFromSearch = (
       .map(Number);
   const unnamed = (key: string) =>
     numbers(key).map((value) => ({ value, label: String(value) }));
-  const minTreatmentDays = numbers("minTreatmentDays")[0];
 
   return {
     ...DEFAULT_FILTERS,
@@ -153,7 +156,8 @@ export const filtersFromSearch = (
     drugs: unnamed("idDrug"),
     substances: unnamed("idSubstance"),
     awareLevels: numbers("awareLevels"),
-    minTreatmentDays: minTreatmentDays || null,
+    treatmentDayFrom: numbers("treatmentDayFrom")[0] || null,
+    treatmentDayTo: numbers("treatmentDayTo")[0] || null,
     nonConforming: params.get("nonConforming") === "1",
   };
 };

@@ -2305,7 +2305,10 @@ test.describe("worklist", () => {
       });
   });
 
-  test("filters by the antimicrobials running", async ({ page, mockApi }) => {
+  test("filters by the antimicrobials running and their treatment day", async ({
+    page,
+    mockApi,
+  }) => {
     const searches: string[] = [];
     mockApi.override("GET /infection-control/antimicrobials", async (route) => {
       searches.push(new URL(route.request().url()).searchParams.get("q")!);
@@ -2342,8 +2345,11 @@ test.describe("worklist", () => {
       .click();
     await page.keyboard.press("Escape");
     expect(searches).toEqual(["cef"]);
+    // on its first day, next to it
+    await page.locator("#treatmentDayFrom").fill("1");
+    await page.locator("#treatmentDayTo").fill("1");
 
-    // substance, AWaRe, treatment days and non-conformity, under "see more"
+    // substance, AWaRe and non-conformity, under "see more"
     await page.getByRole("button", { name: /Ver mais/ }).click();
     await page.waitForTimeout(800);
     const substances = page.locator("#substances");
@@ -2355,7 +2361,6 @@ test.describe("worklist", () => {
       .click();
     await page.keyboard.press("Escape");
     await pickOption(page, "#awareLevels", "Reserva");
-    await page.locator("#minTreatmentDays").fill("7");
     await page.locator("#nonConforming").click();
 
     await page.locator(".gtm-btn-search").click();
@@ -2367,7 +2372,8 @@ test.describe("worklist", () => {
         idDrug: [22],
         idSubstance: [9070001],
         awareLevels: [3],
-        minTreatmentDays: 7,
+        treatmentDayFrom: 1,
+        treatmentDayTo: 1,
         nonConforming: true,
       });
     // the chosen antimicrobial keeps its name
@@ -2385,7 +2391,8 @@ test.describe("worklist", () => {
         idDrug: [],
         idSubstance: [],
         awareLevels: [],
-        minTreatmentDays: null,
+        treatmentDayFrom: null,
+        treatmentDayTo: null,
         nonConforming: false,
       });
   });
@@ -2586,7 +2593,7 @@ test.describe("next pending", () => {
     mockPendings(mockApi, [ADMISSION, ADMISSION + 2]);
     const search =
       "idDepartment=10,20&pendingTypes=2&idDrug=21&awareLevels=3" +
-      "&overdueReview=1&minTreatmentDays=7&nonConforming=1";
+      "&overdueReview=1&treatmentDayFrom=7&nonConforming=1";
 
     await page.goto(`${PAGE_URL}?${search}`);
     await pickMoreAction(page, NEXT);
@@ -2600,7 +2607,8 @@ test.describe("next pending", () => {
       idDrug: [21],
       idSubstance: [],
       awareLevels: [3],
-      minTreatmentDays: 7,
+      treatmentDayFrom: 7,
+      treatmentDayTo: null,
       nonConforming: true,
     });
     // and takes them along to the next one

@@ -1952,9 +1952,10 @@
         "substances": "Substância",
         "awareLevels": "Classificação AWaRe",
         "awareLevelsPlaceholder": "Selecione as classificações",
-        "minTreatmentDays": "Dias de tratamento (mínimo)",
-        "minTreatmentDaysPlaceholder": "Ex.: 7",
-        "minTreatmentDaysHint": "Pacientes com algum antimicrobiano em uso há pelo menos esse número de dias (D1 são as primeiras 24 horas)",
+        "treatmentDay": "Dia de tratamento",
+        "treatmentDayFrom": "de",
+        "treatmentDayTo": "até",
+        "treatmentDayHint": "Dia de tratamento do antimicrobiano (D1 são as primeiras 24 horas). Com um antimicrobiano escolhido, vale para ele: amoxicilina em D1 traz quem começou amoxicilina nas últimas 24 horas",
         "nonConforming": "Somente com avaliação não conforme vigente"
       },
       "pendingType": {
