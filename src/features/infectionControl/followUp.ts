@@ -30,10 +30,6 @@ export const describeSubstitute = (evaluation: IAntimicrobialEvaluation) =>
     ? (evaluation.substituteDrug.name ?? `${evaluation.substituteDrug.id}`)
     : null;
 
-/** The report page of an admission, to read on screen and print */
-export const reportUrl = (admissionNumber: number | string) =>
-  `/controle-infeccao/${admissionNumber}/relatorio`;
-
 /**
  * The follow-up lists its courses by drug and start, the same key the
  * antimicrobial timeline uses (both are grouped by the backend the same way),

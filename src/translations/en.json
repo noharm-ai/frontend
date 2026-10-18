@@ -1577,6 +1577,7 @@
     "retry": "Try again",
     "clinicalNotes": "Clinical notes",
     "nextPending": "Next pending",
+    "moreActions": "More actions",
     "nextPendingEmpty": "There is no other pending patient.",
     "patient": {
       "admission": "Admission",
@@ -1880,7 +1881,7 @@
       "documentTitle": "infection-control-{{admissionNumber}}",
       "generatedAt": "Admission {{admissionNumber}} · Generated on {{date}}",
       "print": "Print",
-      "back": "Back to follow-up",
+      "close": "Close",
       "name": "Name",
       "birthdate": "Birthdate",
       "status": "Status",

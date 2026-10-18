@@ -1,9 +1,11 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { Affix, Button, Empty } from "antd";
+import { Affix, Button, Dropdown, Empty } from "antd";
+import type { MenuProps } from "antd";
 import {
   ArrowRightOutlined,
+  DownOutlined,
   FileDoneOutlined,
   FileTextOutlined,
   PlayCircleOutlined,
@@ -40,12 +42,12 @@ import { InfectionControlClinicalNotes } from "../InfectionControlClinicalNotes/
 import { InfectionControlCultures } from "../InfectionControlCultures/InfectionControlCultures";
 import { InfectionControlExams } from "../InfectionControlExams/InfectionControlExams";
 import { InfectionControlPatient } from "../InfectionControlPatient/InfectionControlPatient";
+import { InfectionControlReportModal } from "../InfectionControlReportModal/InfectionControlReportModal";
 import { ReviewModal } from "../ReviewModal/ReviewModal";
 import {
   getDrugNames,
   getFollowUpCourses,
   getInvalidatedEvaluations,
-  reportUrl,
 } from "../followUp";
 import { sortCourses } from "../timeline";
 import {
@@ -81,6 +83,7 @@ export function InfectionControl() {
   );
 
   const [clinicalNotesOpen, setClinicalNotesOpen] = useState(false);
+  const [reportOpen, setReportOpen] = useState(false);
   const [affixed, setAffixed] = useState(false);
   const [nextLoading, setNextLoading] = useState(false);
 
@@ -105,6 +108,7 @@ export function InfectionControl() {
     return () => {
       dispatch(reset());
       setClinicalNotesOpen(false);
+      setReportOpen(false);
       dispatch(setExamsModalAdmissionNumber(null));
     };
   }, [admissionNumber]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -183,6 +187,54 @@ export function InfectionControl() {
     });
   };
 
+  // the secondary actions, grouped so the header keeps Revisar and Evoluções
+  // in sight
+  const moreActions: MenuProps["items"] = [
+    {
+      key: "report",
+      icon: <PrinterOutlined />,
+      label: (
+        <span data-kb="infectionControl.reportButton">
+          {t("infectionControl.report.open")}
+        </span>
+      ),
+    },
+    ...(showFollow
+      ? [
+          {
+            key: "follow",
+            icon: <PlayCircleOutlined />,
+            disabled: followStatus === "loading",
+            label: t("infectionControl.followUp.follow"),
+          },
+        ]
+      : []),
+    ...(showNextPending
+      ? [
+          {
+            key: "nextPending",
+            icon: <ArrowRightOutlined />,
+            disabled: nextLoading,
+            label: (
+              <span data-kb="infectionControl.nextPending">
+                {t("infectionControl.nextPending")}
+              </span>
+            ),
+          },
+        ]
+      : []),
+  ];
+
+  const onMoreAction: MenuProps["onClick"] = ({ key }) => {
+    if (key === "report") {
+      setReportOpen(true);
+    } else if (key === "follow") {
+      follow();
+    } else if (key === "nextPending") {
+      goToNextPending();
+    }
+  };
+
   const header = (
     <Affix onChange={(value) => setAffixed(!!value)}>
       <Header className={affixed ? "affixed" : ""}>
@@ -217,36 +269,19 @@ export function InfectionControl() {
             >
               {t("infectionControl.clinicalNotes")}
             </Button>
-            {/* in a new tab, keeping this page as it is */}
-            <Button
-              data-kb="infectionControl.reportButton"
-              icon={<PrinterOutlined />}
-              href={reportUrl(admissionNumber)}
-              target="_blank"
+            <Dropdown
+              trigger={["click"]}
+              menu={{ items: moreActions, onClick: onMoreAction }}
             >
-              {t("infectionControl.report.open")}
-            </Button>
-            {showFollow && (
               <Button
-                type="primary"
-                icon={<PlayCircleOutlined />}
-                loading={followStatus === "loading"}
-                onClick={follow}
-              >
-                {t("infectionControl.followUp.follow")}
-              </Button>
-            )}
-            {showNextPending && (
-              <Button
-                data-kb="infectionControl.nextPending"
-                icon={<ArrowRightOutlined />}
+                data-kb="infectionControl.moreActions"
+                icon={<DownOutlined />}
                 iconPlacement="end"
-                loading={nextLoading}
-                onClick={goToNextPending}
+                loading={nextLoading || followStatus === "loading"}
               >
-                {t("infectionControl.nextPending")}
+                {t("infectionControl.moreActions")}
               </Button>
-            )}
+            </Dropdown>
           </div>
         )}
       </Header>
@@ -303,7 +338,12 @@ export function InfectionControl() {
           }
         />
         {followUpEnabled && followUp && (
-          <FollowUpStatus followUp={followUp} drugNames={drugNames} now={now} />
+          <FollowUpStatus
+            followUp={followUp}
+            drugNames={drugNames}
+            now={now}
+            onOpenReport={() => setReportOpen(true)}
+          />
         )}
         {followUpStatus === "failed" && (
           // without it the page would look like the schema has no follow-up
@@ -373,6 +413,15 @@ export function InfectionControl() {
         onClose={() => setClinicalNotesOpen(false)}
       />
       <ExamsModal idSegment={data.patient.idSegment ?? undefined} />
+      <InfectionControlReportModal
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+        data={data}
+        followUp={followUp}
+        courses={courses}
+        drugNames={drugNames}
+        now={now}
+      />
 
       {followUp && canReview && (
         <ReviewModal

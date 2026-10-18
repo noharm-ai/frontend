@@ -2,7 +2,7 @@ import type { Locator, Page } from "@playwright/test";
 
 import { test, expect, type MockApi } from "../support/mockApi";
 import { loginWithAuth, loginWithPermissions } from "../support/featureLogin";
-import { openSelect, pickOption } from "../support/antd";
+import { openSelect, pickMenuItem, pickOption } from "../support/antd";
 
 /**
  * Infection control follow-up (src/features/infectionControl).
@@ -81,6 +81,25 @@ const pickReason = async (page: Page, drug: Locator, reason: string) => {
   // the multiple select stays open: a click aside closes it (Escape would
   // close the review)
   await drug.getByRole("heading", { level: 3 }).click();
+};
+
+/** The header dropdown holding the secondary actions of the page */
+const moreActions = (page: Page) =>
+  page.getByRole("button", { name: "Mais ações" });
+
+/** Opens the header's secondary actions and returns their popup */
+const openMoreActions = async (page: Page) => {
+  const popup = page.locator(".ant-dropdown:not(.ant-dropdown-hidden)");
+  await moreActions(page).click({ timeout: 15000 });
+  await expect(popup).toBeVisible();
+  await expect(popup).not.toHaveClass(/-(enter|appear|leave)/);
+  return popup;
+};
+
+/** Clicks one of the header's secondary actions, once the page is loaded */
+const pickMoreAction = async (page: Page, action: string) => {
+  await expect(moreActions(page)).toBeVisible({ timeout: 15000 });
+  await pickMenuItem(page, moreActions(page), new RegExp(action));
 };
 
 const BASE_PERMISSIONS = [
@@ -403,7 +422,7 @@ test("lists the reasons and the intervention of a non-conformity in the history"
   await expect(review).toContainText("Sem cultura que justifique");
 });
 
-test("shows the report page, with every course and every review in detail, to print", async ({
+test("opens a printable report with every course and every review in detail", async ({
   page,
   mockApi,
 }) => {
@@ -472,22 +491,16 @@ test("shows the report page, with every course and every review in detail, to pr
     timeline,
   );
 
-  // the page header and the review history open the report in a new tab
   await page.goto(PAGE_URL);
   const box = page.getByTestId("follow-up");
   await expect(box).toBeVisible({ timeout: 15000 });
-  const headerLink = page.getByRole("link", { name: "Relatório" });
-  await expect(headerLink).toHaveAttribute("href", `${PAGE_URL}/relatorio`);
-  await expect(headerLink).toHaveAttribute("target", "_blank");
-  await box.getByTestId("follow-up-last-review").click();
-  await expect(page.getByTestId("history-open-report")).toHaveAttribute(
-    "href",
-    `${PAGE_URL}/relatorio`,
-  );
 
-  await page.goto(`${PAGE_URL}/relatorio`);
+  // the review history leads to the detailed report
+  await box.getByTestId("follow-up-last-review").click();
+  await page.getByTestId("history-open-report").click();
+
   const report = page.getByTestId("infection-control-report");
-  await expect(report).toBeVisible({ timeout: 15000 });
+  await expect(report).toBeVisible();
   await expect(
     page.getByRole("heading", { name: "Relatório de controle de infecção" }),
   ).toBeVisible();
@@ -525,28 +538,17 @@ test("shows the report page, with every course and every review in detail, to pr
   await expect(evaluation).toContainText("Sem cultura que justifique");
 
   await expect(page.getByRole("button", { name: "Imprimir" })).toBeVisible();
-  await expect(
-    page.getByRole("link", { name: "Voltar ao acompanhamento" }),
-  ).toHaveAttribute("href", PAGE_URL);
-});
 
-test("says so when the report page does not find the admission", async ({
-  page,
-  mockApi,
-}) => {
-  mockApi.override(TIMELINE, {
-    status: 400,
-    json: { status: "error", message: "", code: "errors.invalidRecord" },
-  });
-
-  await page.goto(`${PAGE_URL}/relatorio`);
-  await expect(
-    page.getByText(
-      `Nenhum registro encontrado para o atendimento ${ADMISSION}.`,
-    ),
-  ).toBeVisible({ timeout: 15000 });
-  await expect(page.getByTestId("infection-control-report")).toHaveCount(0);
-  await expect(page.getByRole("button", { name: "Imprimir" })).toHaveCount(0);
+  // also offered in the page header
+  await page
+    .getByRole("dialog")
+    .filter({ has: report })
+    .locator(".ant-modal-footer")
+    .getByRole("button", { name: "Fechar" })
+    .click();
+  await expect(report).toHaveCount(0);
+  await pickMoreAction(page, "Relatório");
+  await expect(report).toBeVisible();
 });
 
 test("shows each conformity record on its course in the timeline", async ({
@@ -771,7 +773,9 @@ test("does not offer to review nor follow an admission not followed without perm
     { timeout: 15000 },
   );
   await expect(
-    page.getByRole("button", { name: "Iniciar acompanhamento" }),
+    (await openMoreActions(page)).getByRole("menuitem", {
+      name: "Iniciar acompanhamento",
+    }),
   ).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Revisar" })).toHaveCount(0);
 });
@@ -1994,7 +1998,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       { timeout: 15000 },
     );
     await expect(page.getByRole("button", { name: "Revisar" })).toHaveCount(0);
-    await page.getByRole("button", { name: "Iniciar acompanhamento" }).click();
+    await pickMoreAction(page, "Iniciar acompanhamento");
 
     await expect(box.getByTestId("follow-up-status")).toHaveText("Pendente");
     await expect(box.getByTestId("follow-up-pendings-count")).toHaveText(
@@ -2007,7 +2011,9 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await page.keyboard.press("Escape");
     expect(followed).toBe(1);
     await expect(
-      page.getByRole("button", { name: "Iniciar acompanhamento" }),
+      (await openMoreActions(page)).getByRole("menuitem", {
+        name: "Iniciar acompanhamento",
+      }),
     ).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Revisar" })).toBeVisible();
   });
@@ -2024,7 +2030,9 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       page.getByTestId("follow-up").getByTestId("follow-up-status"),
     ).toHaveText("Não acompanhado", { timeout: 15000 });
     await expect(
-      page.getByRole("button", { name: "Iniciar acompanhamento" }),
+      (await openMoreActions(page)).getByRole("menuitem", {
+        name: "Iniciar acompanhamento",
+      }),
     ).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Revisar" })).toHaveCount(0);
   });
@@ -2430,14 +2438,16 @@ test.describe("next pending", () => {
     mockPendings(mockApi, [ADMISSION - 1, ADMISSION, ADMISSION + 7]);
 
     await page.goto(PAGE_URL);
-    await page.getByRole("button", { name: NEXT }).click({ timeout: 15000 });
+    await pickMoreAction(page, NEXT);
 
     await expect(page).toHaveURL(
       new RegExp(`/controle-infeccao/${ADMISSION + 7}$`),
     );
-    await expect(page.getByRole("button", { name: NEXT })).toBeVisible({
-      timeout: 15000,
-    });
+    await expect(moreActions(page)).toBeVisible({ timeout: 15000 });
+    await expect(
+      (await openMoreActions(page)).getByRole("menuitem", { name: NEXT }),
+    ).toBeVisible();
+    await page.keyboard.press("Escape");
     // the pending ones only, without the worklist filters
     expect(lists(mockApi)[0]).toMatchObject({
       status: [1],
@@ -2451,7 +2461,7 @@ test.describe("next pending", () => {
 
     // back to the start of the worklist, for the ones skipped before
     mockPendings(mockApi, [ADMISSION - 1, ADMISSION, ADMISSION + 7]);
-    await page.getByRole("button", { name: NEXT }).click();
+    await pickMoreAction(page, NEXT);
     await expect(page).toHaveURL(
       new RegExp(`/controle-infeccao/${ADMISSION - 1}$`),
     );
@@ -2465,7 +2475,7 @@ test.describe("next pending", () => {
     mockPendings(mockApi, [ADMISSION + 3, ADMISSION + 5]);
 
     await page.goto(PAGE_URL);
-    await page.getByRole("button", { name: NEXT }).click({ timeout: 15000 });
+    await pickMoreAction(page, NEXT);
 
     await expect(page).toHaveURL(
       new RegExp(`/controle-infeccao/${ADMISSION + 3}$`),
@@ -2476,7 +2486,7 @@ test.describe("next pending", () => {
     mockPendings(mockApi, [ADMISSION]);
 
     await page.goto(PAGE_URL);
-    await page.getByRole("button", { name: NEXT }).click({ timeout: 15000 });
+    await pickMoreAction(page, NEXT);
 
     await expect(
       page.getByText("Não há outro paciente pendente."),
@@ -2492,7 +2502,7 @@ test.describe("next pending", () => {
     const search = "idDepartment=10,20&pendingTypes=2&overdueReview=1";
 
     await page.goto(`${PAGE_URL}?${search}`);
-    await page.getByRole("button", { name: NEXT }).click({ timeout: 15000 });
+    await pickMoreAction(page, NEXT);
 
     expect(lists(mockApi)[0]).toMatchObject({
       status: [1],
@@ -2515,7 +2525,9 @@ test.describe("next pending", () => {
     await expect(page.getByTestId("course-row")).toHaveCount(2, {
       timeout: 15000,
     });
-    await expect(page.getByRole("button", { name: NEXT })).toHaveCount(0);
+    await expect(
+      (await openMoreActions(page)).getByRole("menuitem", { name: NEXT }),
+    ).toHaveCount(0);
   });
 });
 
@@ -2529,7 +2541,9 @@ test.describe("next pending without READ_INFECTION_CONTROL", () => {
       timeout: 15000,
     });
     await expect(
-      page.getByRole("button", { name: "Próximo pendente" }),
+      (await openMoreActions(page)).getByRole("menuitem", {
+        name: "Próximo pendente",
+      }),
     ).toHaveCount(0);
   });
 });

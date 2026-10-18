@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import dayjs, { Dayjs } from "dayjs";
 
+import { NoHarmLogoHorizontal as Brand } from "src/assets/NoHarmLogoHorizontal";
 import PatientNameCache from "components/PatientName/PatientNameCache";
 import RichTextView from "components/RichTextView";
 import { hasAwareLevel } from "features/culture/awareLevel";
@@ -583,14 +584,18 @@ export function InfectionControlReport({
 
   return (
     <ReportDocument ref={ref} data-testid="infection-control-report">
-      {/* on screen the page header carries the title */}
-      <header className="report-header report-print-only">
-        <h1>{t("infectionControl.report.title")}</h1>
-        <div className="report-muted">
-          {t("infectionControl.report.generatedAt", {
-            admissionNumber: patient.admissionNumber,
-            date: formatDateTime(now.toISOString()),
-          })}
+      <header className="report-header">
+        <div className="report-title">
+          <h1>{t("infectionControl.report.title")}</h1>
+          <div className="report-muted">
+            {t("infectionControl.report.generatedAt", {
+              admissionNumber: patient.admissionNumber,
+              date: formatDateTime(now.toISOString()),
+            })}
+          </div>
+        </div>
+        <div className="report-brand">
+          <Brand />
         </div>
       </header>
 

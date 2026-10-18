@@ -1,56 +1,68 @@
 import styled from "styled-components";
 
-// on screen the document reads as a sheet of paper; printed, it is the page
+// the modal scrolls the document; the document itself is what gets printed,
+// whole
+export const ReportBody = styled.div`
+  max-height: 75vh;
+  overflow-y: auto;
+  padding-right: 8px;
+`;
+
 export const ReportDocument = styled.div`
-  background: #fff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  box-shadow:
-    0 1px 2px 0 rgba(0, 0, 0, 0.03),
-    0 1px 6px -1px rgba(0, 0, 0, 0.02),
-    0 2px 4px 0 rgba(0, 0, 0, 0.02);
   color: #2e3c5a;
   font-size: 13px;
   line-height: 1.45;
-  margin: 0 auto 24px auto;
-  max-width: 1100px;
-  padding: 24px 32px;
-
-  @media (max-width: 768px) {
-    padding: 16px;
-  }
-
-  @media screen {
-    .report-print-only {
-      display: none !important;
-    }
-  }
 
   @media print {
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
     font-size: 11px;
-    margin: 0;
-    max-width: none;
     padding: 0;
     -webkit-print-color-adjust: exact;
     print-color-adjust: exact;
   }
 
   .report-header {
+    align-items: center;
     border-bottom: 2px solid #2e3c5a;
     display: flex;
-    flex-direction: column;
-    gap: 2px;
+    gap: 16px;
+    justify-content: space-between;
     margin-bottom: 16px;
     padding-bottom: 8px;
     padding-right: 24px;
+
+    @media print {
+      padding-right: 0;
+    }
+
+    .report-title {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
 
     h1 {
       font-size: 20px;
       font-weight: 600;
       margin: 0;
+    }
+  }
+
+  // the brand goes to paper only; the screen already carries it
+  .report-brand {
+    flex-shrink: 0;
+    width: 120px;
+
+    @media screen {
+      display: none;
+    }
+
+    svg {
+      display: block;
+
+      // the logo's lettering is white, for the dark menu
+      .cls-2 {
+        fill: rgb(34, 57, 91);
+      }
     }
   }
 

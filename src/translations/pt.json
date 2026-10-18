@@ -1587,6 +1587,7 @@
     "retry": "Tentar novamente",
     "clinicalNotes": "Evoluções",
     "nextPending": "Próximo pendente",
+    "moreActions": "Mais ações",
     "nextPendingEmpty": "Não há outro paciente pendente.",
     "patient": {
       "admission": "Atendimento",
@@ -1890,7 +1891,7 @@
       "documentTitle": "controle-infeccao-{{admissionNumber}}",
       "generatedAt": "Atendimento {{admissionNumber}} · Gerado em {{date}}",
       "print": "Imprimir",
-      "back": "Voltar ao acompanhamento",
+      "close": "Fechar",
       "name": "Nome",
       "birthdate": "Nascimento",
       "status": "Situação",
