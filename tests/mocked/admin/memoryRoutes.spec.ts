@@ -2,7 +2,7 @@ import type { Page } from "@playwright/test";
 
 import { test, expect } from "../support/mockApi";
 import type { MockApi } from "../support/mockApi";
-import { openSelect, pickOption } from "../support/antd";
+import { pickOption } from "../support/antd";
 
 /**
  * Admin routes of administration (/admin/vias, features/admin/Memory/Routes).
@@ -47,6 +47,23 @@ const card = (page: Page, title: string) =>
     has: page.locator(".ant-card-head-title", { hasText: title }),
   });
 
+/**
+ * Opens the card's select by clicking the empty end of its box. The shared
+ * openSelect clicks the box center, which a long tag ("Sonda nasoenteral")
+ * reaches with its remove icon depending on the fonts: on the CI runner that
+ * click removed the tag instead of opening the dropdown.
+ */
+const openRoutes = async (page: Page, title: string) => {
+  const box = card(page, title).locator(".ant-select-content").first();
+  const size = await box.boundingBox();
+  if (!size) throw new Error(`select of the "${title}" card is not visible`);
+
+  await box.click({ position: { x: size.width - 8, y: size.height / 2 } });
+  await expect(
+    page.locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)"),
+  ).toBeVisible();
+};
+
 const selectedTags = (page: Page, title: string) =>
   card(page, title).locator(".ant-select-selection-item");
 
@@ -79,7 +96,7 @@ test("loads the route kinds and shows the mapped routes by name", async ({
   expect(body).toEqual({ kinds: ["map-routes", "map-iv", "map-tube"] });
 
   // every route seen in the prescriptions is an option
-  await openSelect(card(page, "Sonda"));
+  await openRoutes(page, "Sonda");
   const options = page.locator(
     ".ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option",
   );
@@ -93,7 +110,7 @@ test("saves the tube routes as a unique record and reloads", async ({
   await page.goto("/admin/vias");
   await expect(selectedTags(page, "Sonda")).toHaveText(["Sonda nasoenteral"]);
 
-  await openSelect(card(page, "Sonda"));
+  await openRoutes(page, "Sonda");
   await pickOption(page, "Gastrostomia");
   await page.keyboard.press("Escape");
   await expect(selectedTags(page, "Sonda")).toHaveText([
@@ -131,7 +148,7 @@ test("saves the IV routes from its own card", async ({ page, mockApi }) => {
   await page.goto("/admin/vias");
   await expect(selectedTags(page, "Intravenosa")).toHaveText(["Endovenosa"]);
 
-  await openSelect(card(page, "Intravenosa"));
+  await openRoutes(page, "Intravenosa");
   await pickOption(page, "Sonda nasoenteral");
   await page.keyboard.press("Escape");
 
