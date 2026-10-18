@@ -103,8 +103,17 @@ export const FollowUpBox = styled.div`
 `;
 
 export const HistoryBody = styled.div`
-  .modal-title {
+  .history-header {
+    align-items: center;
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
     margin-bottom: 16px;
+    padding-right: 32px;
+  }
+
+  .modal-title {
+    margin-bottom: 0;
   }
 
   > ul {

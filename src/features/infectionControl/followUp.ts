@@ -202,3 +202,37 @@ export function describePending(
 
   return t(`infectionControl.followUp.pending.${pending.type}`, { drug });
 }
+
+/**
+ * Where an evaluation stands, in a sentence: in force until when, expired,
+ * replaced, closed, recorded retroactively, or no longer holding and why
+ */
+export function describeEvaluationOutcome(
+  evaluation: IAntimicrobialEvaluation,
+  invalidatedBy: IFollowUpPending[] | undefined,
+  course: ICourse | undefined,
+  now: Dayjs,
+  t: TFunction,
+): string {
+  if (invalidatedBy?.length) {
+    return t("infectionControl.timeline.evaluation.invalidated", {
+      date: formatDate(
+        invalidatedSince(invalidatedBy, evaluation, course),
+        "DD/MM/YYYY HH:mm",
+      ),
+      reasons: describeInvalidation(invalidatedBy, evaluation, t),
+    });
+  }
+
+  const period = getEvaluationPeriod(evaluation, now);
+  const byValidity =
+    period.outcome === "valid" ||
+    period.outcome === "expired" ||
+    period.outcome === "retroactive";
+
+  return t(`infectionControl.timeline.evaluation.${period.outcome}`, {
+    date: formatDate(
+      byValidity ? evaluation.validUntil : (evaluation.closedAt ?? period.end),
+    ),
+  });
+}
