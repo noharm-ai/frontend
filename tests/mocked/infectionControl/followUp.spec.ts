@@ -2261,14 +2261,14 @@ test.describe("worklist", () => {
     ).toBeVisible({ timeout: 15000 });
     await expect.poll(() => lists(mockApi).length).toBeGreaterThan(0);
 
-    // status, department and pending reason, always in sight
+    // status and department, always in sight
     await pickOption(page, "#status", "Revisado");
     await pickOption(page, "#departments", "UTI Adulto");
-    await pickOption(page, "#pendingTypes", "Antimicrobiano sem avaliação");
 
-    // overdue review, under "see more"
+    // pending reason and overdue review, under "see more"
     await page.getByRole("button", { name: /Ver mais/ }).click();
     await page.waitForTimeout(800);
+    await pickOption(page, "#pendingTypes", "Antimicrobiano sem avaliação");
     await page.locator("#overdueReview").click();
 
     await page.locator(".gtm-btn-search").click();
@@ -2460,6 +2460,8 @@ test.describe("worklist", () => {
     await expect(link).toHaveAttribute("href", PAGE_URL, { timeout: 15000 });
 
     await pickOption(page, "#departments", "UTI Adulto");
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
     await pickOption(page, "#pendingTypes", "Antimicrobiano sem avaliação");
     await page.locator(".gtm-btn-search").click();
 

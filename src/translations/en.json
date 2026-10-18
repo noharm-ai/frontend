@@ -1949,7 +1949,11 @@
         "treatmentDayFrom": "from",
         "treatmentDayTo": "to",
         "treatmentDayHint": "Treatment day of this row's antimicrobial (D1 is the first 24 hours): amoxicillin on D1 brings who started amoxicillin in the last 24 hours",
-        "nonConforming": "Only with a non-conforming evaluation in force"
+        "nonConforming": "Only with a non-conforming evaluation in force",
+        "groups": {
+          "antimicrobials": "Antimicrobials",
+          "followUp": "Follow-up"
+        }
       },
       "pendingType": {
         "1": "Patient not reviewed yet",

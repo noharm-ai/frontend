@@ -1959,7 +1959,11 @@
         "treatmentDayFrom": "de",
         "treatmentDayTo": "até",
         "treatmentDayHint": "Dia de tratamento do antimicrobiano desta linha (D1 são as primeiras 24 horas): amoxicilina em D1 traz quem começou amoxicilina nas últimas 24 horas",
-        "nonConforming": "Somente com avaliação não conforme vigente"
+        "nonConforming": "Somente com avaliação não conforme vigente",
+        "groups": {
+          "antimicrobials": "Antimicrobianos",
+          "followUp": "Acompanhamento"
+        }
       },
       "pendingType": {
         "1": "Paciente ainda não revisado",

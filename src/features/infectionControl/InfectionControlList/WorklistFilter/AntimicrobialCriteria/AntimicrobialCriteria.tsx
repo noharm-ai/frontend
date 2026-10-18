@@ -2,7 +2,6 @@ import { useTranslation } from "react-i18next";
 import { Button } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 
-import Heading from "components/Heading";
 import { Col, Row } from "components/Grid";
 import { InputNumber } from "components/Inputs";
 import Tooltip from "components/Tooltip";
@@ -56,9 +55,11 @@ export function AntimicrobialCriteria({
 
   return (
     <>
-      <Heading {...({ as: "label", htmlFor: "drugs-0", $size: "14px" } as any)}>
-        {t("infectionControl.worklist.filters.antimicrobials")}:
-      </Heading>
+      <div className="form-label">
+        <label htmlFor="drugs-0">
+          {t("infectionControl.worklist.filters.antimicrobials")}:
+        </label>
+      </div>
       <Hint>{t("infectionControl.worklist.filters.antimicrobialsHint")}</Hint>
       <Criteria data-testid="antimicrobial-criteria">
         {rows.map((row, index) => (
