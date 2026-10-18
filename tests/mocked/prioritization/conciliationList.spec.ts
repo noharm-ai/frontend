@@ -73,10 +73,14 @@ const search = async (page: Page) => {
 
 const rows = (page: Page) => page.locator(".ant-table-tbody tr.ant-table-row");
 
+const escapeRegex = (text: string) =>
+  text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+// the button name is the label followed by its counter
 const statusButton = (page: Page, label: string) =>
   page
     .locator('[data-kb="prioritization.table.status"]')
-    .getByRole("button", { name: new RegExp(`^${label}`) });
+    .getByRole("button", { name: new RegExp(`^${escapeRegex(label)}`) });
 
 test("asks the backend for conciliations only", async ({ page }) => {
   const params = await open(page);
