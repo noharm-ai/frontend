@@ -2338,6 +2338,12 @@ test.describe("worklist", () => {
     // under "see more": the antimicrobial, searched from the third letter
     await page.getByRole("button", { name: /Ver mais/ }).click();
     await page.waitForTimeout(800);
+    // a row searches drugs or substances; the empty one keeps the choice
+    const criteria = page.getByTestId("antimicrobial-criteria");
+    await criteria.locator("label", { hasText: "Substância" }).click();
+    await expect(page.locator("#substances-0")).toBeVisible();
+    await expect(page.locator("#drugs-0")).toHaveCount(0);
+    await criteria.locator("label", { hasText: "Medicamento" }).click();
     const drugs = page.locator("#drugs-0");
     await drugs.click();
     await drugs.pressSequentially("cef");
@@ -2351,10 +2357,22 @@ test.describe("worklist", () => {
     await page.locator("#treatmentDayFrom-0").fill("1");
     await page.locator("#treatmentDayTo-0").fill("1");
 
-    // and another one, by its substance, on its second day
+    // and another one, by its substance, on its second day; a row searches
+    // drugs or substances, so switching drops the drug picked first
     await page
       .getByRole("button", { name: "Adicionar antimicrobiano" })
       .click();
+    const otherDrugs = page.locator("#drugs-1");
+    await otherDrugs.click();
+    await otherDrugs.pressSequentially("cef");
+    await expect.poll(() => searches).toEqual(["cef", "cef"]);
+    await page
+      .locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)")
+      .getByText("CEFTRIAXONA 1 g SOL INJ", { exact: true })
+      .click();
+    await page.keyboard.press("Escape");
+    await criteria.locator("label", { hasText: "Substância" }).nth(1).click();
+    await expect(page.locator("#drugs-1")).toHaveCount(0);
     const substances = page.locator("#substances-1");
     await substances.click();
     await substances.pressSequentially("cef");

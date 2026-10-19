@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Card } from "antd";
 
 import { Col, Row } from "components/Grid";
+import { HelpTextIcon } from "components/HelpTextIcon/HelpTextIcon";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
 import { Select } from "components/Inputs";
 import Switch from "components/Switch";
@@ -35,7 +36,7 @@ export function SecondaryFilters() {
 
   return (
     <Row gutter={[20, 20]} style={{ marginTop: "15px", padding: "10px 0" }}>
-      <Col xs={24}>
+      <Col xs={24} md={12}>
         <Card
           title={t("infectionControl.worklist.filters.groups.antimicrobials")}
           size="small"
@@ -55,35 +56,34 @@ export function SecondaryFilters() {
               />
             </div>
 
-            <Row className="form-row">
-              <Col xs={24} md={12}>
-                <div className="form-label">
-                  <label htmlFor="awareLevels">
-                    {t("infectionControl.worklist.filters.awareLevels")}:
-                  </label>
-                </div>
-                <div className="form-input">
-                  <Select
-                    id="awareLevels"
-                    mode="multiple"
-                    allowClear
-                    placeholder={t(
-                      "infectionControl.worklist.filters.awareLevelsPlaceholder",
-                    )}
-                    value={values.awareLevels}
-                    onChange={(awareLevels: any) =>
-                      setFieldValue({ awareLevels })
-                    }
-                  >
-                    {AWARE_LEVELS.map((level) => (
-                      <Select.Option key={level} value={level}>
-                        {t(`culture.awareLevel.${level}`)}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </div>
-              </Col>
-            </Row>
+            <div className="form-row">
+              <div className="form-label-actions">
+                <label htmlFor="awareLevels">
+                  {t("infectionControl.worklist.filters.awareLevels")}:
+                </label>{" "}
+                <HelpTextIcon pageKey="controle-infeccao-aware" />
+              </div>
+              <div className="form-input">
+                <Select
+                  id="awareLevels"
+                  mode="multiple"
+                  allowClear
+                  placeholder={t(
+                    "infectionControl.worklist.filters.awareLevelsPlaceholder",
+                  )}
+                  value={values.awareLevels}
+                  onChange={(awareLevels: any) =>
+                    setFieldValue({ awareLevels })
+                  }
+                >
+                  {AWARE_LEVELS.map((level) => (
+                    <Select.Option key={level} value={level}>
+                      {t(`culture.awareLevel.${level}`)}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+            </div>
           </Form>
         </Card>
       </Col>
@@ -98,10 +98,11 @@ export function SecondaryFilters() {
         >
           <Form as="div">
             <div className="form-row">
-              <div className="form-label">
+              <div className="form-label-actions">
                 <label htmlFor="pendingTypes">
                   {t("infectionControl.worklist.filters.pendingTypes")}:
-                </label>
+                </label>{" "}
+                <HelpTextIcon pageKey="controle-infeccao-motivo-pendencia" />
               </div>
               <div className="form-input">
                 <Select
@@ -128,10 +129,11 @@ export function SecondaryFilters() {
             </div>
 
             <div className="form-row">
-              <div className="form-label">
+              <div className="form-label-actions">
                 <label htmlFor="nonConforming">
                   {t("infectionControl.worklist.filters.nonConforming")}:
-                </label>
+                </label>{" "}
+                <HelpTextIcon pageKey="controle-infeccao-nao-conforme" />
               </div>
               <div className="form-input">
                 <Switch
@@ -145,10 +147,11 @@ export function SecondaryFilters() {
             </div>
 
             <div className="form-row">
-              <div className="form-label">
+              <div className="form-label-actions">
                 <label htmlFor="overdueReview">
                   {t("infectionControl.worklist.filters.overdueReview")}:
-                </label>
+                </label>{" "}
+                <HelpTextIcon pageKey="controle-infeccao-revisao-atrasada" />
               </div>
               <div className="form-input">
                 <Switch
