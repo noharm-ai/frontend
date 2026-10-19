@@ -49,15 +49,22 @@ export interface ITreatmentDays {
   to: number | null;
 }
 
-// one running antimicrobial the worklist asks for: any of these drugs or
-// substances, on a treatment day of the range; every part is optional
+// what an antimicrobial criterion is searched by: drugs or substances, never
+// both
+export type AntimicrobialCriterionType = "drug" | "substance";
+
+// one running antimicrobial the worklist asks for: any of these drugs or any
+// of these substances, as its type says, on a treatment day of the range;
+// every part is optional
 export interface IAntimicrobialCriterion {
+  type: AntimicrobialCriterionType;
   drugs: ILabeledValue[];
   substances: ILabeledValue[];
   treatmentDays: ITreatmentDays | null;
 }
 
 export const EMPTY_CRITERION: IAntimicrobialCriterion = {
+  type: "drug",
   drugs: [],
   substances: [],
   treatmentDays: null,
@@ -117,14 +124,18 @@ export const DEFAULT_FILTERS: IInfectionControlListFilters = {
 };
 
 /** The worklist filters as the backend takes them, but the status; the
- * criteria that ask for nothing are left out */
+ * criteria that ask for nothing are left out, and each sends only the list of
+ * its type */
 export const filtersToRequest = (filters: IInfectionControlListFilters) => ({
   ...filters,
   antimicrobials: filters.antimicrobials
     .filter((criterion) => !isEmptyCriterion(criterion))
-    .map(({ drugs, substances, treatmentDays }) => ({
-      idDrug: drugs.map((drug) => drug.value),
-      idSubstance: substances.map((substance) => substance.value),
+    .map(({ type, drugs, substances, treatmentDays }) => ({
+      idDrug: type === "drug" ? drugs.map((drug) => drug.value) : [],
+      idSubstance:
+        type === "substance"
+          ? substances.map((substance) => substance.value)
+          : [],
       treatmentDayFrom: treatmentDays?.from ?? null,
       treatmentDayTo: treatmentDays?.to ?? null,
     })),
@@ -179,9 +190,12 @@ const criteriaFromSearch = (search: string | null) => {
     .map((item: any): IAntimicrobialCriterion => {
       const from = day(item?.treatmentDayFrom);
       const to = day(item?.treatmentDayTo);
+      const drugs = ids(item?.idDrug);
+      const substances = ids(item?.idSubstance);
       return {
-        drugs: ids(item?.idDrug),
-        substances: ids(item?.idSubstance),
+        type: !drugs.length && substances.length ? "substance" : "drug",
+        drugs,
+        substances,
         treatmentDays: from || to ? { from, to } : null,
       };
     })

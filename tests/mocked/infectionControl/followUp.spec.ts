@@ -2338,6 +2338,12 @@ test.describe("worklist", () => {
     // under "see more": the antimicrobial, searched from the third letter
     await page.getByRole("button", { name: /Ver mais/ }).click();
     await page.waitForTimeout(800);
+    // a row searches drugs or substances; the empty one keeps the choice
+    const criteria = page.getByTestId("antimicrobial-criteria");
+    await criteria.locator("label", { hasText: "Substância" }).click();
+    await expect(page.locator("#substances-0")).toBeVisible();
+    await expect(page.locator("#drugs-0")).toHaveCount(0);
+    await criteria.locator("label", { hasText: "Medicamento" }).click();
     const drugs = page.locator("#drugs-0");
     await drugs.click();
     await drugs.pressSequentially("cef");
@@ -2351,10 +2357,22 @@ test.describe("worklist", () => {
     await page.locator("#treatmentDayFrom-0").fill("1");
     await page.locator("#treatmentDayTo-0").fill("1");
 
-    // and another one, by its substance, on its second day
+    // and another one, by its substance, on its second day; a row searches
+    // drugs or substances, so switching drops the drug picked first
     await page
       .getByRole("button", { name: "Adicionar antimicrobiano" })
       .click();
+    const otherDrugs = page.locator("#drugs-1");
+    await otherDrugs.click();
+    await otherDrugs.pressSequentially("cef");
+    await expect.poll(() => searches).toEqual(["cef", "cef"]);
+    await page
+      .locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)")
+      .getByText("CEFTRIAXONA 1 g SOL INJ", { exact: true })
+      .click();
+    await page.keyboard.press("Escape");
+    await criteria.locator("label", { hasText: "Substância" }).nth(1).click();
+    await expect(page.locator("#drugs-1")).toHaveCount(0);
     const substances = page.locator("#substances-1");
     await substances.click();
     await substances.pressSequentially("cef");
@@ -2536,6 +2554,135 @@ test.describe("worklist", () => {
     await expect(
       page.getByRole("row", { name: new RegExp(`${ADMISSION}`) }),
     ).toHaveCount(0);
+  });
+
+  // the saved filters belong to the user: the memory kind carries its id
+  const SAVED_FILTERS = "infection_control_list_1";
+  const savedFiltersButton = (page: Page) =>
+    page.locator("button:has(.anticon-filter)");
+
+  test("saves the filters in use, for the user to apply again", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override(`PUT /memory/unique/${SAVED_FILTERS}`, {
+      json: { status: "success", data: 1 },
+    });
+
+    await page.goto("/controle-infeccao");
+    await expect(
+      page.getByRole("heading", { name: "Controle de Infecção" }),
+    ).toBeVisible({ timeout: 15000 });
+    await expect.poll(() => lists(mockApi).length).toBeGreaterThan(0);
+
+    await pickOption(page, "#status", "Revisado");
+
+    await pickMenuItem(page, savedFiltersButton(page), /Salvar filtro atual/);
+    const modal = page.locator(".ant-modal:visible");
+    await modal.locator("input").fill("Revisados e pendentes");
+    await modal.getByRole("button", { name: "Salvar" }).click();
+    await expect(modal).toBeHidden();
+
+    const saves = mockApi.requests.filter(
+      (r) => r.method === "PUT" && r.path === `/memory/unique/${SAVED_FILTERS}`,
+    );
+    expect(saves).toHaveLength(1);
+    expect(JSON.parse(saves[0].postData!)).toEqual({
+      value: [
+        {
+          name: "Revisados e pendentes",
+          data: expect.objectContaining({
+            status: [1, 2],
+            antimicrobials: [],
+          }),
+          active: true,
+        },
+      ],
+    });
+  });
+
+  test("applies a saved filter, showing its values", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override(`GET /memory/${SAVED_FILTERS}`, {
+      json: {
+        status: "success",
+        data: [
+          {
+            key: 1,
+            value: [
+              {
+                name: "Cefepima no D1",
+                data: {
+                  status: [3],
+                  idDepartment: [],
+                  pendingTypes: [],
+                  admissionNumbers: [],
+                  overdueReview: false,
+                  antimicrobials: [
+                    {
+                      type: "drug",
+                      drugs: [{ value: 22, label: "CEFEPIMA 2 g SOL INJ" }],
+                      substances: [],
+                      treatmentDays: { from: 1, to: 1 },
+                    },
+                  ],
+                  antimicrobialsMatchAll: false,
+                  awareLevels: [],
+                  nonConforming: true,
+                },
+                active: true,
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    await page.goto("/controle-infeccao");
+    await expect(
+      page.getByRole("heading", { name: "Controle de Infecção" }),
+    ).toBeVisible({ timeout: 15000 });
+    await expect.poll(() => lists(mockApi).length).toBeGreaterThan(0);
+
+    await pickMenuItem(page, savedFiltersButton(page), /Abrir filtros salvos/);
+    const modal = page.locator(".ant-modal:visible");
+    await expect(modal.getByText("Cefepima no D1")).toBeVisible();
+    await modal.getByRole("button", { name: /Aplicar/ }).click();
+    await expect(modal).toBeHidden();
+
+    await expect
+      .poll(() => lists(mockApi).at(-1))
+      .toMatchObject({
+        status: [3],
+        antimicrobials: [
+          {
+            idDrug: [22],
+            idSubstance: [],
+            treatmentDayFrom: 1,
+            treatmentDayTo: 1,
+          },
+        ],
+        nonConforming: true,
+      });
+
+    // the filter card shows what was applied
+    await expect(
+      page.locator(".ant-select-selection-item", { hasText: "Encerrado" }),
+    ).toBeVisible();
+    await expect(
+      page.locator(".ant-select-selection-item", { hasText: "Pendente" }),
+    ).toHaveCount(0);
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
+    await expect(
+      page.locator(".ant-select-selection-item", {
+        hasText: "CEFEPIMA 2 g SOL INJ",
+      }),
+    ).toBeVisible();
+    await expect(page.locator("#treatmentDayFrom-0")).toHaveValue("1");
+    await expect(page.locator("#nonConforming")).toBeChecked();
   });
 });
 

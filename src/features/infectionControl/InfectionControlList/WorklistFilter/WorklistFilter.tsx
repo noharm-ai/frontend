@@ -12,11 +12,12 @@ import { SecondaryFilters } from "./SecondaryFilters/SecondaryFilters";
 /**
  * The worklist filter card, the same one the prescription prioritization
  * shows: status, department and admissions up front, the other filters
- * under "see more"
+ * under "see more". Each user can save filters to apply them again
  */
 export function WorklistFilter() {
   const dispatch = useAppDispatch();
   const filters = useAppSelector((state) => state.infectionControlList.filters);
+  const userId = useAppSelector((state: any) => state.user.account.userId);
 
   return (
     <AdvancedFilter
@@ -29,7 +30,8 @@ export function WorklistFilter() {
         dispatch(setFilters({ ...DEFAULT_FILTERS, ...values }))
       }
       onChangeValues={undefined}
-      memoryType={undefined}
+      // the saved filters, of this user only
+      memoryType={`infection_control_list_${userId}`}
       // the list shows it is loading; the filters can change meanwhile, the
       // latest search wins
       loading={false}
