@@ -2555,6 +2555,135 @@ test.describe("worklist", () => {
       page.getByRole("row", { name: new RegExp(`${ADMISSION}`) }),
     ).toHaveCount(0);
   });
+
+  // the saved filters belong to the user: the memory kind carries its id
+  const SAVED_FILTERS = "infection_control_list_1";
+  const savedFiltersButton = (page: Page) =>
+    page.locator("button:has(.anticon-filter)");
+
+  test("saves the filters in use, for the user to apply again", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override(`PUT /memory/unique/${SAVED_FILTERS}`, {
+      json: { status: "success", data: 1 },
+    });
+
+    await page.goto("/controle-infeccao");
+    await expect(
+      page.getByRole("heading", { name: "Controle de Infecção" }),
+    ).toBeVisible({ timeout: 15000 });
+    await expect.poll(() => lists(mockApi).length).toBeGreaterThan(0);
+
+    await pickOption(page, "#status", "Revisado");
+
+    await pickMenuItem(page, savedFiltersButton(page), /Salvar filtro atual/);
+    const modal = page.locator(".ant-modal:visible");
+    await modal.locator("input").fill("Revisados e pendentes");
+    await modal.getByRole("button", { name: "Salvar" }).click();
+    await expect(modal).toBeHidden();
+
+    const saves = mockApi.requests.filter(
+      (r) => r.method === "PUT" && r.path === `/memory/unique/${SAVED_FILTERS}`,
+    );
+    expect(saves).toHaveLength(1);
+    expect(JSON.parse(saves[0].postData!)).toEqual({
+      value: [
+        {
+          name: "Revisados e pendentes",
+          data: expect.objectContaining({
+            status: [1, 2],
+            antimicrobials: [],
+          }),
+          active: true,
+        },
+      ],
+    });
+  });
+
+  test("applies a saved filter, showing its values", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override(`GET /memory/${SAVED_FILTERS}`, {
+      json: {
+        status: "success",
+        data: [
+          {
+            key: 1,
+            value: [
+              {
+                name: "Cefepima no D1",
+                data: {
+                  status: [3],
+                  idDepartment: [],
+                  pendingTypes: [],
+                  admissionNumbers: [],
+                  overdueReview: false,
+                  antimicrobials: [
+                    {
+                      type: "drug",
+                      drugs: [{ value: 22, label: "CEFEPIMA 2 g SOL INJ" }],
+                      substances: [],
+                      treatmentDays: { from: 1, to: 1 },
+                    },
+                  ],
+                  antimicrobialsMatchAll: false,
+                  awareLevels: [],
+                  nonConforming: true,
+                },
+                active: true,
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    await page.goto("/controle-infeccao");
+    await expect(
+      page.getByRole("heading", { name: "Controle de Infecção" }),
+    ).toBeVisible({ timeout: 15000 });
+    await expect.poll(() => lists(mockApi).length).toBeGreaterThan(0);
+
+    await pickMenuItem(page, savedFiltersButton(page), /Abrir filtros salvos/);
+    const modal = page.locator(".ant-modal:visible");
+    await expect(modal.getByText("Cefepima no D1")).toBeVisible();
+    await modal.getByRole("button", { name: /Aplicar/ }).click();
+    await expect(modal).toBeHidden();
+
+    await expect
+      .poll(() => lists(mockApi).at(-1))
+      .toMatchObject({
+        status: [3],
+        antimicrobials: [
+          {
+            idDrug: [22],
+            idSubstance: [],
+            treatmentDayFrom: 1,
+            treatmentDayTo: 1,
+          },
+        ],
+        nonConforming: true,
+      });
+
+    // the filter card shows what was applied
+    await expect(
+      page.locator(".ant-select-selection-item", { hasText: "Encerrado" }),
+    ).toBeVisible();
+    await expect(
+      page.locator(".ant-select-selection-item", { hasText: "Pendente" }),
+    ).toHaveCount(0);
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
+    await expect(
+      page.locator(".ant-select-selection-item", {
+        hasText: "CEFEPIMA 2 g SOL INJ",
+      }),
+    ).toBeVisible();
+    await expect(page.locator("#treatmentDayFrom-0")).toHaveValue("1");
+    await expect(page.locator("#nonConforming")).toBeChecked();
+  });
 });
 
 test.describe("next pending", () => {
