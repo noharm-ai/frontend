@@ -908,6 +908,9 @@ api.infectionControl.listAdmissions = (params = {}) =>
   instance.post(`/infection-control/admissions`, params, setHeaders());
 api.infectionControl.getInterventionReasons = () =>
   instance.get(endpoints.intervention.reasons, setHeaders());
+// the active clinical note types, for the note of a review
+api.infectionControl.getClinicalNoteTypes = () =>
+  instance.get("/infection-control/clinical-note-types", setHeaders());
 
 // the antimicrobials, by name
 api.infectionControl.searchAntimicrobials = (term) =>

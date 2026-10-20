@@ -543,3 +543,68 @@ export const ReviewSummary = styled.div`
     }
   }
 `;
+
+// the clinical note step: the summary layout with the note's editor
+export const ClinicalNote = styled(ReviewSummary)`
+  .note-text-header {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: space-between;
+  }
+
+  .note-actions {
+    align-items: center;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .note-type {
+    max-width: 360px;
+    width: 100%;
+  }
+
+  .note-outdated {
+    align-items: center;
+    background: #fffbe6;
+    border: 1px solid #ffe58f;
+    border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 13px;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+
+  .note-notice {
+    background: #fafafa;
+    border: 1px solid ${border};
+    border-radius: 8px;
+    color: ${muted};
+    padding: 12px 14px;
+  }
+`;
+
+// the variables a note template takes, listed in a popover
+export const NoteVariables = styled.dl`
+  display: grid;
+  gap: 4px 12px;
+  grid-template-columns: auto 1fr;
+  margin: 0;
+  max-height: 50vh;
+  max-width: 480px;
+  overflow-y: auto;
+
+  dt {
+    font-family: monospace;
+    font-size: 12px;
+  }
+
+  dd {
+    color: ${muted};
+    font-size: 12px;
+    margin: 0;
+  }
+`;

@@ -77,12 +77,27 @@ export interface IDrugEvaluationFields {
   watchPosology: boolean;
 }
 
+// the clinical note the review writes in the patient's record
+export interface IClinicalNoteFields {
+  // write it, or save the review without a note
+  create: boolean;
+  idClinicalNoteType: string | null;
+  text: string;
+  // the template the text came from (the default one, or one the user
+  // saved), null before the step fills it
+  template: string | null;
+  // the text last filled from it: while the text is still this one, it is
+  // filled again as the review changes; once edited, it is the user's
+  generated: string | null;
+}
+
 export interface IReviewFields {
   notes: string;
   nextReview: NextReview;
   // the day chosen when the next review is on a date
   nextReviewDate: Dayjs | null;
   evaluations: IDrugEvaluationFields[];
+  clinicalNote: IClinicalNoteFields;
 }
 
 const futureDate = (value: Dayjs | null | undefined) =>
@@ -199,6 +214,14 @@ export const getInitialValues = (
     notes: "",
     nextReview: "none",
     nextReviewDate: null,
+    clinicalNote: {
+      // skipped unless the user chooses to write it
+      create: false,
+      idClinicalNoteType: null,
+      text: "",
+      template: null,
+      generated: null,
+    },
     evaluations: ongoing.map((course) => {
       const treatmentEnd = getTreatmentEnd(
         courses.find(
@@ -386,20 +409,45 @@ export const validateDrug = (
 };
 
 /**
+ * What keeps the clinical note from being saved: its type, its text, or
+ * null when it is ready or not written
+ */
+export const validateClinicalNote = (
+  clinicalNote: IClinicalNoteFields,
+): "idClinicalNoteType" | "text" | null => {
+  if (!clinicalNote.create) return null;
+  if (!clinicalNote.idClinicalNoteType) return "idClinicalNoteType";
+  if (!clinicalNote.text.trim()) return "text";
+
+  return null;
+};
+
+/**
  * Whether the drug can be given an intervention: a record of the past would
  * land on the drug prescribed now
  */
 export const canRecordIntervention = (evaluation: IDrugEvaluationFields) =>
   !isHistoryOnly(evaluation);
 
-/** The review as the backend takes it: only the drugs evaluated now */
+/**
+ * The review as the backend takes it: only the drugs evaluated now, and the
+ * clinical note when one can be written and was not skipped
+ */
 export const toReviewPayload = (
   values: IReviewFields,
   admissionNumber: number,
   reasons: IInterventionReason[],
+  canWriteNote: boolean,
 ): IReviewPayload => ({
   admissionNumber,
   notes: values.notes.trim() || null,
+  clinicalNote:
+    canWriteNote && values.clinicalNote.create
+      ? {
+          idClinicalNoteType: values.clinicalNote.idClinicalNoteType!,
+          text: values.clinicalNote.text,
+        }
+      : null,
   // the patient is due from the start of the scheduled day
   nextReviewDate:
     getNextReviewDate(values)?.startOf("day").format("YYYY-MM-DDTHH:mm:ss") ??

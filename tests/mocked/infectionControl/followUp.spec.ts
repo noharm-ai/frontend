@@ -15,7 +15,9 @@ import { openSelect, pickMenuItem, pickOption } from "../support/antd";
  * by drug + course start, like the timeline). Users with
  * WRITE_INFECTION_CONTROL register reviews (POST /infection-control/review)
  * of a followed admission, and start following one that is not yet (POST
- * /infection-control/admission/:admissionNumber/follow).
+ * /infection-control/admission/:admissionNumber/follow). A review may write a
+ * clinical note, given one of the types of GET
+ * /infection-control/clinical-note-types (none by default: no note).
  * /controle-infeccao lists the followed admissions
  * (POST /infection-control/admissions); its menu entry needs
  * READ_INFECTION_CONTROL, READ_PRESCRIPTION alone does not reach it.
@@ -28,6 +30,7 @@ const TIMELINE =
   "GET /infection-control/antimicrobial-timeline/:admissionNumber";
 const FOLLOW_UP = "GET /infection-control/admission/:admissionNumber";
 const REVIEW = "POST /infection-control/review";
+const NOTE_TYPES = "GET /infection-control/clinical-note-types";
 const FOLLOW = "POST /infection-control/admission/:admissionNumber/follow";
 const LIST = "POST /infection-control/admissions";
 const SKIP = "Não avaliar agora";
@@ -81,6 +84,12 @@ const pickReason = async (page: Page, drug: Locator, reason: string) => {
   // the multiple select stays open: a click aside closes it (Escape would
   // close the review)
   await drug.getByRole("heading", { level: 3 }).click();
+};
+
+/** From the patient step, on to the clinical note step and the save */
+const saveReview = async (dialog: Locator) => {
+  await dialog.getByRole("button", { name: "Próximo: evolução" }).click();
+  await dialog.getByRole("button", { name: "Registrar revisão" }).click();
 };
 
 /** The header dropdown holding the secondary actions of the page */
@@ -229,6 +238,7 @@ const followUp = (overrides: Record<string, unknown> = {}) => ({
     statusDate: hoursFromNow(-20),
     nextReviewDate: null,
     recalculatedAt: hoursFromNow(-20),
+    idPrescription: "299",
     pendings: [
       {
         id: "801",
@@ -880,10 +890,11 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     const posologyBox = drug.getByRole("checkbox", { name: WATCH_POSOLOGY });
     const hint = dialog.getByTestId("review-hint");
 
-    // one step per running drug, then the patient
+    // one step per running drug, then the patient and the clinical note
     await expect(dialog.getByTestId("review-rail-drug")).toHaveCount(2);
     await expect(dialog.getByTestId("review-rail-patient")).toHaveCount(1);
-    await expect(dialog.getByText("Etapa 1 de 3")).toBeVisible();
+    await expect(dialog.getByTestId("review-rail-note")).toHaveCount(1);
+    await expect(dialog.getByText("Etapa 1 de 4")).toBeVisible();
 
     // step 1: the drug without an evaluation is to be evaluated, with its
     // timeline
@@ -1045,7 +1056,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     );
     await expect(summary).toContainText("Não conforme");
     await expect(summary).toContainText("Mantém a avaliação atual");
-    await expect(next).toHaveCount(0);
+    await expect(next).toHaveText("Próximo: evolução");
     await expect(dialog.getByTestId("review-rail-patient")).toHaveAttribute(
       "aria-current",
       "step",
@@ -1058,6 +1069,20 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       .getByLabel("Observação sobre o paciente")
       .fill("Sugerido descalonamento");
 
+    // the clinical note closes the review; with no type active, none can be
+    // written
+    await next.click();
+    await expect(dialog.getByText("Etapa 4 de 4")).toBeVisible();
+    await expect(dialog.getByTestId("review-note-unavailable")).toHaveText(
+      "Nenhum tipo de evolução ativo encontrado: não é possível registrar evolução. A revisão será registrada sem evolução.",
+    );
+    await expect(
+      dialog.getByRole("radio", { name: "Registrar evolução" }),
+    ).toBeDisabled();
+    await expect(
+      dialog.getByRole("radio", { name: "Não registrar" }),
+    ).toBeChecked();
+
     expect(sent).toBeNull();
     await dialog.getByRole("button", { name: "Registrar revisão" }).click();
 
@@ -1068,6 +1093,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       admissionNumber: ADMISSION,
       notes: "Sugerido descalonamento",
       nextReviewDate: null,
+      clinicalNote: null,
       evaluations: [
         {
           idDrug: 11,
@@ -1157,7 +1183,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(summary).toContainText(
       `Vigência ${shownDate(localDay(0))} → ${shownDate(localDay(3))} · 4 dias`,
     );
-    await dialog.getByRole("button", { name: "Registrar revisão" }).click();
+    await saveReview(dialog);
 
     await expect(
       page.getByText("Revisão registrada com sucesso!"),
@@ -1261,7 +1287,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       .getByText("Conforme", { exact: true })
       .click();
     await next.click();
-    await dialog.getByRole("button", { name: "Registrar revisão" }).click();
+    await saveReview(dialog);
 
     await expect(
       page.getByText("Revisão registrada com sucesso!"),
@@ -1372,7 +1398,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await start.getByText("Início do tratamento", { exact: true }).click();
     await expect(pastNotice).toBeVisible();
     await next.click();
-    await dialog.getByRole("button", { name: "Registrar revisão" }).click();
+    await saveReview(dialog);
 
     await expect(
       page.getByText("Revisão registrada com sucesso!"),
@@ -1497,7 +1523,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     );
 
     await dialog.getByRole("button", { name: "Próximo" }).click();
-    await dialog.getByRole("button", { name: "Registrar revisão" }).click();
+    await saveReview(dialog);
     await expect(
       page.getByText("Revisão registrada com sucesso!"),
     ).toBeVisible();
@@ -1530,6 +1556,290 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     );
   });
 
+  test("writes the clinical note of the review, started from what was reviewed", async ({
+    page,
+    mockApi,
+  }) => {
+    mockPage(mockApi, followUp());
+    mockApi.override(NOTE_TYPES, {
+      json: {
+        status: "success",
+        data: [{ id: "CI", name: "Controle de infecção" }],
+      },
+    });
+    let sent: any = null;
+    mockApi.override(REVIEW, async (route) => {
+      sent = JSON.parse(route.request().postData()!);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(followUp({ status: 2, pendings: [] })),
+      });
+    });
+
+    await page.goto(PAGE_URL);
+    await page
+      .getByRole("button", { name: "Revisar" })
+      .click({ timeout: 15000 });
+
+    const dialog = page.getByRole("dialog");
+    const next = dialog.getByRole("button", { name: "Próximo" });
+    const drug = dialog.getByTestId("review-drug");
+
+    // meropenem not conforming, vancomycin keeps its evaluation
+    await drug
+      .getByRole("radiogroup", { name: "Avaliação" })
+      .getByText("Não conforme", { exact: true })
+      .click();
+    await drug
+      .getByLabel("Justificativa", { exact: true })
+      .fill("Espectro amplo demais");
+    await pickReason(page, drug, "Espectro inadequado");
+    await next.click();
+    await next.click();
+    await dialog
+      .getByLabel("Observação sobre o paciente")
+      .fill("Aguardar cultura");
+    await next.click();
+
+    // skipped unless chosen; then the only type there is comes picked, and the
+    // text tells the review
+    const step = dialog.getByTestId("review-clinical-note");
+    await expect(step.getByTestId("review-note-skipped")).toBeVisible();
+    await expect(dialog.getByTestId("review-rail-note")).toContainText(
+      "Não registrar",
+    );
+    await step.getByText("Registrar evolução", { exact: true }).click();
+    await expect(step.getByTestId("review-note-type")).toContainText(
+      "Controle de infecção",
+    );
+    await expect(dialog.getByTestId("review-rail-note")).toContainText(
+      "Registrar",
+    );
+    const note = step.getByTestId("review-note-text");
+    await expect(note).toHaveValue(/^CONTROLE DE INFECÇÃO/);
+    const text = await note.inputValue();
+    for (const line of [
+      "Paciente: Fulano Beltrano",
+      "Atendimento: 9300 · Setor: UTI Adulto · Leito: 7B",
+      "Antimicrobianos em uso:\n- MEROPENEM 1 g SOL INJ · D3\n- VANCOMICINA 500 mg SOL INJ · D5",
+      "- MEROPENEM 1 g SOL INJ: Não conforme · Vigência",
+      "  Motivos: Antimicrobiano - Espectro inadequado",
+      "  Justificativa: Espectro amplo demais",
+      "- VANCOMICINA 500 mg SOL INJ: Mantém a avaliação atual",
+      "Culturas recentes:\nNenhuma cultura liberada nos últimos 60 dias.",
+      "Observação: Aguardar cultura",
+      "Próxima revisão: Não agendada",
+    ]) {
+      expect(text).toContain(line);
+    }
+    expect(text).not.toContain("{{");
+
+    // a new template is offered the variables of the review, not the
+    // prescription's
+    await pickMenuItem(
+      page,
+      step.locator(".gtm-bt-memorytext").first(),
+      /Novo/,
+    );
+    const templateModal = page
+      .getByRole("dialog")
+      .filter({ hasText: "Nome do texto padrão" });
+    await expect(
+      templateModal.locator(".variables-group-list button"),
+    ).toHaveText(["Paciente", "Revisão", "Culturas e exames", "Utilidades"]);
+    await pickMenuItem(
+      page,
+      templateModal.getByRole("button", { name: /Revisão/ }),
+      "Antimicrobianos em uso, com o dia de tratamento e a posologia",
+    );
+    await expect(templateModal.locator("textarea")).toHaveValue(
+      "{{antimicrobianos}}",
+    );
+    await templateModal.getByRole("button", { name: "Cancelar" }).click();
+    await expect(templateModal).toHaveCount(0);
+
+    // the text is the user's to edit
+    await note.fill(`${text}\nConduta: descalonar`);
+    await dialog.getByRole("button", { name: "Registrar revisão" }).click();
+
+    await expect(
+      page.getByText("Revisão registrada com sucesso!"),
+    ).toBeVisible();
+    expect(sent.clinicalNote).toEqual({
+      idClinicalNoteType: "CI",
+      text: `${text}\nConduta: descalonar`,
+    });
+  });
+
+  test("keeps the clinical note text in step with the review, until it is edited", async ({
+    page,
+    mockApi,
+  }) => {
+    mockPage(mockApi, followUp());
+    mockApi.override(NOTE_TYPES, {
+      json: {
+        status: "success",
+        data: [{ id: "CI", name: "Controle de infecção" }],
+      },
+    });
+
+    await page.goto(PAGE_URL);
+    await page
+      .getByRole("button", { name: "Revisar" })
+      .click({ timeout: 15000 });
+
+    const dialog = page.getByRole("dialog");
+    const drug = dialog.getByTestId("review-drug");
+    const toNote = () => dialog.getByTestId("review-rail-note").click();
+    const toMeropenem = () =>
+      dialog.getByTestId("review-rail-drug").first().click();
+    const note = dialog.getByTestId("review-note-text");
+    const outdated = dialog.getByTestId("review-note-outdated");
+
+    // straight to the note: meropenem is not evaluated yet
+    await toNote();
+    await dialog.getByText("Registrar evolução", { exact: true }).click();
+    await expect(note).toHaveValue(
+      /- MEROPENEM 1 g SOL INJ: Avaliação não preenchida/,
+    );
+    await expect(dialog.getByTestId("review-hint")).toHaveText(
+      "Conclua a avaliação de todos os antimicrobianos",
+    );
+
+    // evaluated afterwards, the untouched text follows
+    await toMeropenem();
+    await drug
+      .getByRole("radiogroup", { name: "Avaliação" })
+      .getByText("Conforme", { exact: true })
+      .click();
+    await toNote();
+    await expect(note).toHaveValue(
+      /- MEROPENEM 1 g SOL INJ: Conforme · Vigência/,
+    );
+    await expect(outdated).toHaveCount(0);
+
+    // once edited, the text is the user's: a change to the review is only
+    // told, and the text generated again on request
+    const edited = `${await note.inputValue()}\nConduta: manter`;
+    await note.fill(edited);
+    await toMeropenem();
+    await drug.getByText(SKIP, { exact: true }).click();
+    await toNote();
+    await expect(note).toHaveValue(edited);
+    await expect(outdated).toBeVisible();
+    await outdated.getByRole("button", { name: "Gerar novamente" }).click();
+    await page.getByRole("button", { name: "Sim", exact: true }).click();
+    await expect(note).toHaveValue(
+      /- MEROPENEM 1 g SOL INJ: Permanece como “A avaliar”/,
+    );
+    await expect(note).not.toHaveValue(/Conduta: manter/);
+    await expect(outdated).toHaveCount(0);
+  });
+
+  test("asks for the type and the text of the clinical note, which can be skipped", async ({
+    page,
+    mockApi,
+  }) => {
+    mockPage(mockApi, followUp());
+    mockApi.override(NOTE_TYPES, {
+      json: {
+        status: "success",
+        data: [
+          { id: "CI", name: "Controle de infecção" },
+          { id: "FARM", name: "Farmácia clínica" },
+        ],
+      },
+    });
+    let sent: any = null;
+    mockApi.override(REVIEW, async (route) => {
+      sent = JSON.parse(route.request().postData()!);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(followUp({ status: 2, pendings: [] })),
+      });
+    });
+
+    await page.goto(PAGE_URL);
+    await page
+      .getByRole("button", { name: "Revisar" })
+      .click({ timeout: 15000 });
+
+    const dialog = page.getByRole("dialog");
+    const next = dialog.getByRole("button", { name: "Próximo" });
+    const save = dialog.getByRole("button", { name: "Registrar revisão" });
+    const hint = dialog.getByTestId("review-hint");
+    await dialog
+      .getByTestId("review-drug")
+      .getByText(SKIP, { exact: true })
+      .click();
+    await next.click();
+    await next.click();
+    await next.click();
+
+    // with more than one type, the user picks it
+    const step = dialog.getByTestId("review-clinical-note");
+    const note = step.getByTestId("review-note-text");
+    await step.getByText("Registrar evolução", { exact: true }).click();
+    await expect(note).toHaveValue(/^CONTROLE DE INFECÇÃO/);
+    await expect(save).toBeDisabled();
+    await expect(hint).toHaveText("Informe o tipo de evolução");
+    await openSelect(step.getByTestId("review-note-type"));
+    await pickOption(page, "Farmácia clínica");
+    await expect(save).toBeEnabled();
+
+    // and writes something
+    await note.fill("");
+    await expect(save).toBeDisabled();
+    await expect(hint).toHaveText("Informe o texto da evolução");
+    await step.getByTestId("review-note-default").click();
+    await expect(note).toHaveValue(/^CONTROLE DE INFECÇÃO/);
+    await expect(save).toBeEnabled();
+
+    // or saves the review without a note
+    await step.getByText("Não registrar", { exact: true }).click();
+    await expect(step.getByTestId("review-note-skipped")).toHaveText(
+      "A revisão será registrada sem evolução.",
+    );
+    await expect(dialog.getByTestId("review-rail-note")).toContainText(
+      "Não registrar",
+    );
+    await save.click();
+
+    await expect(
+      page.getByText("Revisão registrada com sucesso!"),
+    ).toBeVisible();
+    expect(sent.clinicalNote).toBeNull();
+  });
+
+  test("offers no clinical note when the record has no prescription-day", async ({
+    page,
+    mockApi,
+  }) => {
+    mockPage(mockApi, followUp({ idPrescription: null }));
+    mockApi.override(NOTE_TYPES, {
+      json: {
+        status: "success",
+        data: [{ id: "CI", name: "Controle de infecção" }],
+      },
+    });
+
+    await page.goto(PAGE_URL);
+    await page
+      .getByRole("button", { name: "Revisar" })
+      .click({ timeout: 15000 });
+
+    const dialog = page.getByRole("dialog");
+    await dialog.getByTestId("review-rail-note").click();
+    await expect(dialog.getByTestId("review-note-unavailable")).toHaveText(
+      "Este atendimento não tem prescrição para registrar a evolução. A revisão será registrada sem evolução.",
+    );
+    await expect(
+      dialog.getByRole("radio", { name: "Registrar evolução" }),
+    ).toBeDisabled();
+  });
+
   test("keeps the modal open and shows the error when the save fails", async ({
     page,
     mockApi,
@@ -1558,7 +1868,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       .click();
     await next.click();
     await next.click();
-    await dialog.getByRole("button", { name: "Registrar revisão" }).click();
+    await saveReview(dialog);
 
     await expect(
       page.getByText("Antimicrobiano não está em uso neste atendimento"),
@@ -1849,7 +2159,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     const from = drug.getByRole("textbox", { name: "Início" });
     await from.fill(shownDate(localDay(-1)));
     await from.press("Enter");
-    await dialog.getByRole("button", { name: "Registrar revisão" }).click();
+    await saveReview(dialog);
 
     await expect(
       page.getByText("Revisão registrada com sucesso!"),
