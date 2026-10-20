@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
-import { Card } from "antd";
+import { Alert, Card } from "antd";
 
 import { Col, Row } from "components/Grid";
 import { HelpTextIcon } from "components/HelpTextIcon/HelpTextIcon";
@@ -11,6 +11,11 @@ import { AWARE_LEVELS } from "features/culture/awareLevel";
 import { InfectionControlPendingTypeEnum } from "models/InfectionControlEnum";
 import { Form } from "styles/Form.style";
 
+import {
+  CLOSED_DAYS_OPTIONS,
+  isClosedOnly,
+  listsClosed,
+} from "../../../InfectionControlListSlice";
 import { AntimicrobialCriteria } from "../AntimicrobialCriteria/AntimicrobialCriteria";
 
 const CARD_STYLE = { background: "#fafafa" };
@@ -27,15 +32,28 @@ const PENDING_TYPES = [
 /**
  * The filters under "see more", in group cards like the prescription
  * prioritization: the antimicrobials running (each on its treatment days, and
- * the AWaRe level) and the follow-up (pending reason, non-conformity and
- * overdue review). The cards are not forms, nothing submits on Enter
+ * the AWaRe level) and the follow-up (how far back the closed ones go, pending
+ * reason, non-conformity and overdue review). The cards are not forms, nothing submits on Enter.
+ *
+ * A closed admission has nothing running, no open reason and no evaluation in
+ * force, so with only the closed ones chosen those filters are disabled
  */
 export function SecondaryFilters() {
   const { t } = useTranslation();
   const { values, setFieldValue } = useContext(AdvancedFilterContext) as any;
+  const closedOnly = isClosedOnly(values.status);
 
   return (
     <Row gutter={[20, 20]} style={{ marginTop: "15px", padding: "10px 0" }}>
+      {closedOnly && (
+        <Col xs={24}>
+          <Alert
+            type="info"
+            showIcon
+            message={t("infectionControl.worklist.filters.closedOnlyHint")}
+          />
+        </Col>
+      )}
       <Col xs={24} md={12}>
         <Card
           title={t("infectionControl.worklist.filters.groups.antimicrobials")}
@@ -53,6 +71,7 @@ export function SecondaryFilters() {
                 onMatchAllChange={(antimicrobialsMatchAll) =>
                   setFieldValue({ antimicrobialsMatchAll })
                 }
+                disabled={closedOnly}
               />
             </div>
 
@@ -72,6 +91,7 @@ export function SecondaryFilters() {
                     "infectionControl.worklist.filters.awareLevelsPlaceholder",
                   )}
                   value={values.awareLevels}
+                  disabled={closedOnly}
                   onChange={(awareLevels: any) =>
                     setFieldValue({ awareLevels })
                   }
@@ -99,6 +119,32 @@ export function SecondaryFilters() {
           <Form as="div">
             <div className="form-row">
               <div className="form-label-actions">
+                <label htmlFor="closedDays">
+                  {t("infectionControl.worklist.filters.closedDays")}:
+                </label>
+              </div>
+              <div className="form-input">
+                <Select
+                  id="closedDays"
+                  // the closed ones are listed only within this many days of
+                  // closing
+                  disabled={!listsClosed(values.status)}
+                  value={values.closedDays}
+                  onChange={(closedDays: any) => setFieldValue({ closedDays })}
+                >
+                  {CLOSED_DAYS_OPTIONS.map((days) => (
+                    <Select.Option key={days} value={days}>
+                      {t("infectionControl.worklist.filters.closedDaysOption", {
+                        count: days,
+                      })}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-label-actions">
                 <label htmlFor="pendingTypes">
                   {t("infectionControl.worklist.filters.pendingTypes")}:
                 </label>{" "}
@@ -115,6 +161,7 @@ export function SecondaryFilters() {
                     "infectionControl.worklist.filters.pendingTypesPlaceholder",
                   )}
                   value={values.pendingTypes}
+                  disabled={closedOnly}
                   onChange={(pendingTypes: any) =>
                     setFieldValue({ pendingTypes })
                   }
@@ -139,6 +186,7 @@ export function SecondaryFilters() {
                 <Switch
                   id="nonConforming"
                   checked={!!values.nonConforming}
+                  disabled={closedOnly}
                   onChange={(nonConforming: boolean) =>
                     setFieldValue({ nonConforming })
                   }

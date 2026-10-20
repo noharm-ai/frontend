@@ -40,6 +40,7 @@ export function WorklistFilter() {
         "idDepartment",
         "admissionNumbers",
         "antimicrobialsMatchAll",
+        "closedDays",
       ]}
     />
   );

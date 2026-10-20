@@ -17,6 +17,7 @@ import {
   filtersToSearch,
   IFollowedAdmission,
   LIST_LIMIT,
+  listsClosed,
   PAGE_SIZE,
 } from "../InfectionControlListSlice";
 import { describePending } from "../followUp";
@@ -52,9 +53,8 @@ function usePatientNameUpdates(active: boolean) {
 export function InfectionControlList() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { status, list, count, countLimited, filters } = useAppSelector(
-    (state) => state.infectionControlList,
-  );
+  const { status, list, count, countLimited, errorCode, filters } =
+    useAppSelector((state) => state.infectionControlList);
   const [searchText, setSearchText] = useState("");
   const [page, setPage] = useState(1);
   const search = normalize(useDeferredValue(searchText));
@@ -243,9 +243,23 @@ export function InfectionControlList() {
           </span>
         </ListInfo>
 
+        {/* the closed ones grow without end: only the latest are listed,
+            unless searched by admission number */}
+        {listsClosed(filters.status) && !filters.admissionNumbers.length && (
+          <Alert
+            className="list-alert"
+            type="info"
+            showIcon
+            data-kb="infectionControl.worklist.closedWindow"
+            message={t("infectionControl.worklist.closedWindow", {
+              count: filters.closedDays,
+            })}
+          />
+        )}
+
         {isLimited && (
           <Alert
-            className="limit-alert"
+            className="list-alert"
             type="warning"
             showIcon
             message={t("infectionControl.worklist.limited", {
@@ -265,7 +279,11 @@ export function InfectionControlList() {
             <StateBox>
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={t("infectionControl.worklist.loadError")}
+                description={t(
+                  errorCode === "errors.queryTimeout"
+                    ? "infectionControl.worklist.queryTimeout"
+                    : "infectionControl.worklist.loadError",
+                )}
               />
               <Button icon={<ReloadOutlined />} onClick={load}>
                 {t("infectionControl.retry")}
