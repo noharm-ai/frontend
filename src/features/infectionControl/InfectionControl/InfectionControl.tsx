@@ -392,7 +392,6 @@ export function InfectionControl() {
               admissionNumber={admissionNumber}
               patient={data.patient}
               idPrescription={data.patient.idPrescription}
-              stackDates={hasExams}
             />
           </div>
           {hasExams && (

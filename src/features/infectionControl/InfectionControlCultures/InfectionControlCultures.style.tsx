@@ -87,12 +87,27 @@ export const CulturesBox = styled.div`
     color: #8c8c8c;
   }
 
+  /* a text of the lab cut at two lines: the whole of it is where the
+     culture opens */
+  .clamp {
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  .cultures-loading {
+    display: flex;
+    justify-content: center;
+    padding: 32px 0;
+  }
+
   .culture-exam {
     color: #2e3c5a;
     font-weight: 500;
   }
 
-  /* a row opens the history of its exam and material */
+  /* a collection of the history opens its antibiogram */
   .culture-row {
     cursor: pointer;
   }
