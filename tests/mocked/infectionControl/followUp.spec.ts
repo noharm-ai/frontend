@@ -2120,6 +2120,24 @@ test.describe("worklist", () => {
     ).toBeVisible();
   });
 
+  test("says when more match than the backend counted", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override(LIST, {
+      json: {
+        status: "success",
+        data: { count: 5000, countLimited: true, admissions: [admission] },
+      },
+    });
+
+    await page.goto("/controle-infeccao");
+
+    await expect(
+      page.getByText(/Mais de 5000 pacientes atendem aos filtros/),
+    ).toBeVisible({ timeout: 15000 });
+  });
+
   test("searches the loaded list by patient name or admission", async ({
     page,
     mockApi,
@@ -2303,6 +2321,138 @@ test.describe("worklist", () => {
         pendingTypes: [],
         overdueReview: false,
       });
+  });
+
+  test("lists the closed ones within the period chosen", async ({
+    page,
+    mockApi,
+  }) => {
+    await page.goto("/controle-infeccao");
+    await expect(
+      page.getByRole("heading", { name: "Controle de Infecção" }),
+    ).toBeVisible({ timeout: 15000 });
+    await expect.poll(() => lists(mockApi).length).toBeGreaterThan(0);
+
+    // the last 30 days by default, only asked for when the closed are listed
+    expect(lists(mockApi)[0]).toMatchObject({ status: [1], closedDays: 30 });
+    const closedWindow = page.getByText(
+      /A busca inclui somente os pacientes encerrados nos últimos/,
+    );
+    await expect(closedWindow).toHaveCount(0);
+
+    // the period is under "see more"
+    await pickOption(page, "#status", "Encerrado");
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
+    await pickOption(page, "#closedDays", "90 dias");
+    await page.locator(".gtm-btn-search").click();
+
+    await expect
+      .poll(() => lists(mockApi).at(-1))
+      .toMatchObject({ status: [1, 3], closedDays: 90 });
+    // the list says how far back the closed ones go
+    await expect(
+      page.getByText(
+        /A busca inclui somente os pacientes encerrados nos últimos 90 dias/,
+      ),
+    ).toBeVisible();
+
+    // searched by admission number, every closed one of them is listed
+    await page.locator("#admissionNumbers").fill(String(ADMISSION));
+    await page.keyboard.press("Enter");
+    await page.locator(".gtm-btn-search").click();
+    await expect
+      .poll(() => lists(mockApi).at(-1))
+      .toMatchObject({ admissionNumbers: [ADMISSION] });
+    await expect(closedWindow).toHaveCount(0);
+  });
+
+  test("disables the period when the closed ones are not listed", async ({
+    page,
+  }) => {
+    await page.goto("/controle-infeccao");
+    await expect(
+      page.getByRole("heading", { name: "Controle de Infecção" }),
+    ).toBeVisible({ timeout: 15000 });
+
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
+    await expect(page.locator("#closedDays")).toBeDisabled();
+  });
+
+  test("disables the filters closed patients never match", async ({ page }) => {
+    await page.goto("/controle-infeccao");
+    await expect(
+      page.getByRole("heading", { name: "Controle de Infecção" }),
+    ).toBeVisible({ timeout: 15000 });
+
+    // only the closed ones
+    await pickOption(page, "#status", "Encerrado");
+    await pickOption(page, "#status", "Pendente");
+
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
+    await expect(
+      page.getByText(/Pacientes encerrados não têm antimicrobianos em uso/),
+    ).toBeVisible();
+    await expect(page.locator("#awareLevels")).toBeDisabled();
+    await expect(page.locator("#pendingTypes")).toBeDisabled();
+    await expect(page.locator("#nonConforming")).toBeDisabled();
+    // a review date can still be overdue
+    await expect(page.locator("#overdueReview")).toBeEnabled();
+  });
+
+  test("leaves out the disabled filters with only the closed ones", async ({
+    page,
+    mockApi,
+  }) => {
+    await page.goto("/controle-infeccao");
+    await expect(
+      page.getByRole("heading", { name: "Controle de Infecção" }),
+    ).toBeVisible({ timeout: 15000 });
+
+    // a pending reason picked for the pending ones
+    await page.getByRole("button", { name: /Ver mais/ }).click();
+    await page.waitForTimeout(800);
+    await pickOption(page, "#pendingTypes", "Antimicrobiano sem avaliação");
+    await page.locator("#nonConforming").click();
+
+    // then only the closed ones: the reason is disabled, and not sent
+    await pickOption(page, "#status", "Encerrado");
+    await pickOption(page, "#status", "Pendente");
+    await page.locator(".gtm-btn-search").click();
+
+    await expect
+      .poll(() => lists(mockApi).at(-1))
+      .toMatchObject({
+        status: [3],
+        pendingTypes: [],
+        nonConforming: false,
+        antimicrobials: [],
+        awareLevels: [],
+      });
+  });
+
+  test("asks for more filters when the search took too long", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override(LIST, {
+      status: 400,
+      json: {
+        status: "error",
+        message: "A busca demorou demais. Utilize mais filtros",
+        code: "errors.queryTimeout",
+      },
+    });
+
+    await page.goto("/controle-infeccao");
+
+    await expect(
+      page.getByText(
+        "A busca demorou demais. Utilize mais filtros para direcionar a sua análise.",
+      ),
+    ).toBeVisible({ timeout: 15000 });
   });
 
   test("filters by the antimicrobials running, each on its treatment day", async ({
@@ -2615,7 +2765,7 @@ test.describe("worklist", () => {
               {
                 name: "Cefepima no D1",
                 data: {
-                  status: [3],
+                  status: [2],
                   idDepartment: [],
                   pendingTypes: [],
                   admissionNumbers: [],
@@ -2655,7 +2805,7 @@ test.describe("worklist", () => {
     await expect
       .poll(() => lists(mockApi).at(-1))
       .toMatchObject({
-        status: [3],
+        status: [2],
         antimicrobials: [
           {
             idDrug: [22],
@@ -2669,7 +2819,7 @@ test.describe("worklist", () => {
 
     // the filter card shows what was applied
     await expect(
-      page.locator(".ant-select-selection-item", { hasText: "Encerrado" }),
+      page.locator(".ant-select-selection-item", { hasText: "Revisado" }),
     ).toBeVisible();
     await expect(
       page.locator(".ant-select-selection-item", { hasText: "Pendente" }),

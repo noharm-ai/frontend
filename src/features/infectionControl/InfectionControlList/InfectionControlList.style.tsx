@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const ListBox = styled.div`
-  .limit-alert {
+  .list-alert {
     margin-bottom: 15px;
   }
 

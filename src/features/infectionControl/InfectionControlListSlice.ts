@@ -109,7 +109,13 @@ export interface IInfectionControlListFilters {
   awareLevels: number[];
   // admissions with an evaluation in force judged non conforming
   nonConforming: boolean;
+  // the closed admissions listed are the ones closed within this many days
+  // (all of them when searched by admission number)
+  closedDays: number;
 }
+
+// how far back the closed admissions can be listed, in days
+export const CLOSED_DAYS_OPTIONS = [7, 30, 90, 180, 365];
 
 export const DEFAULT_FILTERS: IInfectionControlListFilters = {
   status: [InfectionControlStatusEnum.PENDING],
@@ -121,25 +127,45 @@ export const DEFAULT_FILTERS: IInfectionControlListFilters = {
   antimicrobialsMatchAll: false,
   awareLevels: [],
   nonConforming: false,
+  closedDays: 30,
 };
+
+/** Whether the statuses list the closed admissions: none chosen lists every
+ * status */
+export const listsClosed = (status: number[] | undefined) =>
+  !status?.length || status.includes(InfectionControlStatusEnum.CLOSED);
+
+/** Whether the filters ask only for closed admissions, which have nothing
+ * running, no open reason and no evaluation in force: the antimicrobial and
+ * follow-up filters find none of them */
+export const isClosedOnly = (status: number[] | undefined) =>
+  status?.length === 1 && status[0] === InfectionControlStatusEnum.CLOSED;
 
 /** The worklist filters as the backend takes them, but the status; the
  * criteria that ask for nothing are left out, and each sends only the list of
- * its type */
-export const filtersToRequest = (filters: IInfectionControlListFilters) => ({
-  ...filters,
-  antimicrobials: filters.antimicrobials
-    .filter((criterion) => !isEmptyCriterion(criterion))
-    .map(({ type, drugs, substances, treatmentDays }) => ({
-      idDrug: type === "drug" ? drugs.map((drug) => drug.value) : [],
-      idSubstance:
-        type === "substance"
-          ? substances.map((substance) => substance.value)
-          : [],
-      treatmentDayFrom: treatmentDays?.from ?? null,
-      treatmentDayTo: treatmentDays?.to ?? null,
-    })),
-});
+ * its type. With only the closed ones the filters they never match are
+ * disabled, and left out too */
+export const filtersToRequest = (filters: IInfectionControlListFilters) => {
+  const closedOnly = isClosedOnly(filters.status);
+
+  return {
+    ...filters,
+    awareLevels: closedOnly ? [] : filters.awareLevels,
+    pendingTypes: closedOnly ? [] : filters.pendingTypes,
+    nonConforming: closedOnly ? false : filters.nonConforming,
+    antimicrobials: (closedOnly ? [] : filters.antimicrobials)
+      .filter((criterion) => !isEmptyCriterion(criterion))
+      .map(({ type, drugs, substances, treatmentDays }) => ({
+        idDrug: type === "drug" ? drugs.map((drug) => drug.value) : [],
+        idSubstance:
+          type === "substance"
+            ? substances.map((substance) => substance.value)
+            : [],
+        treatmentDayFrom: treatmentDays?.from ?? null,
+        treatmentDayTo: treatmentDays?.to ?? null,
+      })),
+  };
+};
 
 /**
  * The worklist filters, but the status, as a query string: the patient page
@@ -235,8 +261,12 @@ interface IInfectionControlListSlice {
   status: Status;
   list: IFollowedAdmission[];
   // every admission matching the filters: more than the list holds when the
-  // limit cut it
+  // limit cut it. The backend counts up to a limit of its own
   count: number;
+  // more match than the backend counted
+  countLimited: boolean;
+  // the backend's error code when the list failed
+  errorCode: string | null;
   filters: IInfectionControlListFilters;
   // the latest load: switching filters quickly drops the responses to the
   // earlier ones
@@ -247,6 +277,8 @@ const initialState: IInfectionControlListSlice = {
   status: "idle",
   list: [],
   count: 0,
+  countLimited: false,
+  errorCode: null,
   filters: DEFAULT_FILTERS,
   requestId: null,
 };
@@ -261,8 +293,11 @@ export const fetchFollowedAdmissions = createAsyncThunk(
         limit: LIST_LIMIT,
         offset: 0,
       });
-      const data: { count: number; admissions: IFollowedAdmission[] } =
-        response.data.data;
+      const data: {
+        count: number;
+        countLimited: boolean;
+        admissions: IFollowedAdmission[];
+      } = response.data.data;
 
       // names come from the hospital name service; PatientNameCache shows them
       // once they arrive, so the list does not wait for them
@@ -352,18 +387,22 @@ const infectionControlListSlice = createSlice({
       .addCase(fetchFollowedAdmissions.pending, (state, action) => {
         state.status = "loading";
         state.requestId = action.meta.requestId;
+        state.errorCode = null;
       })
       .addCase(fetchFollowedAdmissions.fulfilled, (state, action) => {
         if (state.requestId !== action.meta.requestId) return;
         state.status = "succeeded";
         state.list = action.payload.admissions;
         state.count = action.payload.count;
+        state.countLimited = action.payload.countLimited ?? false;
       })
       .addCase(fetchFollowedAdmissions.rejected, (state, action) => {
         if (state.requestId !== action.meta.requestId) return;
         state.status = "failed";
         state.list = [];
         state.count = 0;
+        state.countLimited = false;
+        state.errorCode = (action.payload as any)?.code ?? null;
       });
   },
 });
