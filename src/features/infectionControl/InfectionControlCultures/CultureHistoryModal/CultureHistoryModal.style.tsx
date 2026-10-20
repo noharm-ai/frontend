@@ -17,13 +17,32 @@ export const HistoryBody = styled.div`
     color: #595959;
   }
 
-  .history-legend {
-    color: #8c8c8c;
-    margin: 4px 0 0 0;
+  .history-loading {
+    display: flex;
+    justify-content: center;
+    padding: 48px 0;
   }
 
-  /* the culture whose row was clicked on the recent cultures */
+  .history-collections .legend {
+    margin: 0;
+  }
+
+  /* the collection whose antibiogram is open */
   .culture-current > td {
     background: #f0f5ff;
+  }
+`;
+
+// the footer: the previous culture of the card on the left, the next on the
+// right
+export const HistoryNav = styled.nav`
+  align-items: center;
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+
+  .history-position {
+    color: #8c8c8c;
+    white-space: nowrap;
   }
 `;

@@ -38,7 +38,8 @@ interface InfectionControlCulturesProps {
  * collection of each exam and material released in the last 60 days, with its
  * gram, the microorganisms of its antibiogram and the lab's result. Only
  * informative: loaded with the page but apart from it, and a failure stays in
- * here. A row opens every collection of its exam and material.
+ * here. A row opens its antibiogram, and a tab away every collection of its
+ * exam and material.
  *
  * For a schema with the antibiogram integration (models/Feature.CULTURE) the
  * same cultures read by drug (the culture card of the screening) are a tab

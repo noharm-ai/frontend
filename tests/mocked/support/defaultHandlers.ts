@@ -112,7 +112,8 @@ export function defaultHandlers(): Record<string, Handler> {
         },
       },
     },
-    // every collection of one culture's exam and material, opened from its row
+    // every collection of one culture's exam and material, each with its
+    // antibiogram, opened from its row
     "GET /infection-control/admission/:admissionNumber/cultures/:idCulture": {
       json: {
         status: "success",

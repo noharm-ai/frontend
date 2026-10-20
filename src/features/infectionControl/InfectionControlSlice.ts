@@ -316,12 +316,33 @@ export interface IRecentCultures {
   cultures: IRecentCulture[];
 }
 
-// every culture of the patient with the exam and material of one culture
+// a released result of the antibiogram of a culture. A prediction is never
+// one: the backend leaves the rows without a lab result out
+export interface IAntibiogramResult {
+  microorganism: string | null;
+  drug: string;
+  // as the lab wrote it
+  result: string;
+  // R, S or the U of a wording the backend could not classify, read as the
+  // culture card reads it (features/culture/cultureResistance)
+  resultType: string;
+  resultDetail: string | null;
+  // MIC as the lab reports it, qualifier included ("<=0.5")
+  mic: string | null;
+}
+
+export interface ICultureWithAntibiogram extends IRecentCulture {
+  // empty while the collection waits for the lab
+  antibiogram: IAntibiogramResult[];
+}
+
+// every culture of the patient with the exam and material of one culture,
+// each with its antibiogram
 export interface ICultureHistory {
   admissionNumber: number;
   examName: string | null;
   material: string | null;
-  cultures: IRecentCulture[];
+  cultures: ICultureWithAntibiogram[];
 }
 
 type Status = "idle" | "loading" | "succeeded" | "failed";
@@ -364,7 +385,8 @@ interface IInfectionControlSlice {
     data: IRecentCultures | null;
     requestId: string | null;
   };
-  // the history behind a row of the recent cultures, opened on click
+  // the antibiogram of a row of the recent cultures and the other collections
+  // of its exam and material, opened on click
   cultureHistory: {
     // the culture whose row was clicked, null while it is closed
     culture: IRecentCulture | null;

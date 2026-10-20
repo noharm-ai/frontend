@@ -1632,11 +1632,26 @@
       "gram": "Gram",
       "microorganism": "Microrganismo",
       "result": "Resultado",
-      "openHistory": "Ver todas as coletas deste exame e material",
+      "openHistory": "Ver o antibiograma e as coletas anteriores deste exame e material",
       "history": {
-        "legend": "Todas as coletas deste exame e material, da mais recente para a mais antiga",
+        "tab_one": "Coletas ({{count}})",
+        "tab_other": "Coletas ({{count}})",
+        "legend": "Todas as coletas deste exame e material, da mais recente para a mais antiga. Clique em uma coleta para ver o seu antibiograma",
+        "previous": "Cultura anterior",
+        "next": "Próxima cultura",
+        "position": "{{current}} de {{total}}",
+        "openAntibiogram": "Ver o antibiograma desta coleta",
         "empty": "Nenhuma coleta encontrada.",
         "loadError": "Não foi possível carregar as coletas desta cultura."
+      },
+      "antibiogram": {
+        "tab": "Antibiograma",
+        "drug": "Medicamento",
+        "result": "Resultado",
+        "mic": "CIM",
+        "noMicroorganism": "Microrganismo não informado",
+        "empty": "Nenhum antibiograma liberado para esta coleta.",
+        "openReleased": "Ver o antibiograma da coleta de {{date}}"
       }
     },
     "timeline": {
