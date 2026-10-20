@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
-import { Badge, Button, Empty, Table, Tabs, Tooltip } from "antd";
+import { Badge, Button, Empty, Tabs, Tooltip } from "antd";
 import { ReloadOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
@@ -19,8 +19,8 @@ import {
 } from "../InfectionControlSlice";
 import { CultureHistoryModal } from "./CultureHistoryModal/CultureHistoryModal";
 import { CulturesByDrug } from "./CulturesByDrug/CulturesByDrug";
-import { cultureColumns } from "./cultureColumns";
 import { CulturesBox, CulturesError } from "./InfectionControlCultures.style";
+import { RecentCultureList } from "./RecentCultureList/RecentCultureList";
 
 interface InfectionControlCulturesProps {
   admissionNumber: string;
@@ -28,9 +28,6 @@ interface InfectionControlCulturesProps {
   // the latest prescription of the admission, whose drugs the cultures by
   // drug flag; without one there are no cultures by drug
   idPrescription: string | null;
-  // beside the exams card the table is narrower: the release goes under the
-  // collection
-  stackDates: boolean;
 }
 
 /**
@@ -38,7 +35,8 @@ interface InfectionControlCulturesProps {
  * collection of each exam and material released in the last 60 days, with its
  * gram, the microorganisms of its antibiogram and the lab's result. Only
  * informative: loaded with the page but apart from it, and a failure stays in
- * here. A row opens every collection of its exam and material.
+ * here. A row opens its antibiogram, and a tab away every collection of its
+ * exam and material.
  *
  * For a schema with the antibiogram integration (models/Feature.CULTURE) the
  * same cultures read by drug (the culture card of the screening) are a tab
@@ -49,7 +47,6 @@ export function InfectionControlCultures({
   admissionNumber,
   patient,
   idPrescription,
-  stackDates,
 }: InfectionControlCulturesProps) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
@@ -88,11 +85,6 @@ export function InfectionControlCultures({
     ? (culturesByDrug ?? []).filter(isResistantInUse).length
     : 0;
 
-  const columns = useMemo(
-    () => cultureColumns(t, { withExam: true, stackDates }),
-    [t, stackDates],
-  );
-
   const openHistory = (culture: IRecentCulture) => {
     dispatch(fetchCultureHistory({ admissionNumber, culture }));
   };
@@ -118,36 +110,10 @@ export function InfectionControlCultures({
           </Button>
         </CulturesError>
       ) : (
-        <Table
-          rowKey="id"
-          size="small"
-          columns={columns}
-          dataSource={data?.cultures ?? []}
+        <RecentCultureList
+          cultures={data?.cultures ?? []}
           loading={status === "loading" || status === "idle"}
-          pagination={false}
-          // the columns stay over the rows as the card scrolls them
-          sticky
-          scroll={{ x: stackDates ? 640 : 900 }}
-          rowClassName="culture-row"
-          onRow={(culture) => ({
-            tabIndex: 0,
-            title: t("infectionControl.cultures.openHistory"),
-            onClick: () => openHistory(culture),
-            onKeyDown: (event) => {
-              if (event.key === "Enter" || event.key === " ") {
-                event.preventDefault();
-                openHistory(culture);
-              }
-            },
-          })}
-          locale={{
-            emptyText: (
-              <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={t("infectionControl.cultures.empty")}
-              />
-            ),
-          }}
+          onOpen={openHistory}
         />
       )}
     </div>

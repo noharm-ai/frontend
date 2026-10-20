@@ -1622,11 +1622,26 @@
       "gram": "Gram",
       "microorganism": "Microorganism",
       "result": "Result",
-      "openHistory": "See every collection of this exam and material",
+      "openHistory": "See the antibiogram and the previous collections of this exam and material",
       "history": {
-        "legend": "Every collection of this exam and material, newest first",
+        "tab_one": "Collections ({{count}})",
+        "tab_other": "Collections ({{count}})",
+        "legend": "Every collection of this exam and material, newest first. Click a collection to see its antibiogram",
+        "previous": "Previous culture",
+        "next": "Next culture",
+        "position": "{{current}} of {{total}}",
+        "openAntibiogram": "See the antibiogram of this collection",
         "empty": "No collection found.",
         "loadError": "Could not load the collections of this culture."
+      },
+      "antibiogram": {
+        "tab": "Antibiogram",
+        "drug": "Drug",
+        "result": "Result",
+        "mic": "MIC",
+        "noMicroorganism": "Microorganism not informed",
+        "empty": "No antibiogram released for this collection.",
+        "openReleased": "See the antibiogram of the collection of {{date}}"
       }
     },
     "timeline": {
