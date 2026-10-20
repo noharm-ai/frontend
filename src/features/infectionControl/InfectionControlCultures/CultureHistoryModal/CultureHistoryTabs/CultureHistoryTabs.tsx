@@ -30,10 +30,7 @@ export function CultureHistoryTabs({
   // is picked among the previous ones
   const [selectedId, setSelectedId] = useState(idCulture);
 
-  const columns = useMemo(
-    () => cultureColumns(t, { withExam: false, stackDates: false }),
-    [t],
-  );
+  const columns = useMemo(() => cultureColumns(t), [t]);
 
   const selected =
     history.cultures.find((c) => c.id === selectedId) ??
