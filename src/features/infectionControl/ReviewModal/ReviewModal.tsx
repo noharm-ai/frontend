@@ -397,13 +397,7 @@ export function ReviewModal({
                       context={noteContext}
                     />
                   )}
-                  {isPatientStep && (
-                    <ReviewSummaryStep
-                      invalidatedEvaluations={invalidatedEvaluations}
-                      drugStatus={drugStatus}
-                      onSelectStep={setStep}
-                    />
-                  )}
+                  {isPatientStep && <ReviewSummaryStep />}
                   {step < patientStep && (
                     <DrugEvaluationStep
                       key={values.evaluations[step].idDrug}

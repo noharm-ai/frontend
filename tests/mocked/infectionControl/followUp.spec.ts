@@ -1049,13 +1049,11 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(current).not.toHaveClass(/past/);
     await next.click();
 
-    // last step: the next review, its notes and what the review records
-    const summary = dialog.getByTestId("review-summary");
-    await expect(summary).toContainText(
-      `Vigência ${shownDate(MEROPENEM_START)} → ${shownDate(MEROPENEM_PLUS_7)} · 8 dias`,
-    );
-    await expect(summary).toContainText("Não conforme");
-    await expect(summary).toContainText("Mantém a avaliação atual");
+    // patient step: the next review and its notes; the rail tells what the
+    // review records for each drug
+    const railDrugs = dialog.getByTestId("review-rail-drug");
+    await expect(railDrugs.nth(0)).toContainText("Não conforme");
+    await expect(railDrugs.nth(1)).toContainText("Mantém atual");
     await expect(next).toHaveText("Próximo: evolução");
     await expect(dialog.getByTestId("review-rail-patient")).toHaveAttribute(
       "aria-current",
@@ -1173,15 +1171,9 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await until.fill(shownDate(localDay(3)));
     // Enter takes the typed day and moves on
     await until.press("Enter");
-
-    const summary = dialog.getByTestId("review-summary");
-    await expect(summary).toContainText(
-      new RegExp(
-        `Vigência ${shownDate(MEROPENEM_START)} → ${shownDate(MEROPENEM_END)} · \\d+ dias?`,
-      ),
-    );
-    await expect(summary).toContainText(
-      `Vigência ${shownDate(localDay(0))} → ${shownDate(localDay(3))} · 4 dias`,
+    await expect(dialog.getByTestId("review-rail-patient")).toHaveAttribute(
+      "aria-current",
+      "step",
     );
     await saveReview(dialog);
 
@@ -1493,16 +1485,15 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await until.fill(shownDate(PAST_END));
     await until.press("Enter");
 
-    const summary = dialog.getByTestId("review-summary");
-    await expect(summary).toContainText(
-      new RegExp(
-        `Vigência ${shownDate(VANCOMYCIN_START)} → ${shownDate(PAST_END)} · \\d+ dias? · só no histórico`,
-      ),
+    await expect(dialog.getByTestId("review-rail-patient")).toHaveAttribute(
+      "aria-current",
+      "step",
     );
 
     // back on the drug: the current one stays in force
-    await summary
-      .getByRole("button", { name: "Editar VANCOMICINA 500 mg SOL INJ" })
+    await dialog
+      .getByTestId("review-rail-drug")
+      .filter({ hasText: "VANCOMICINA 500 mg SOL INJ" })
       .click();
     await expect(historyNotice).toContainText(
       `Termina antes da avaliação atual (desde ${shownDate(vancomycinEvaluation.validFrom)})`,
@@ -2247,7 +2238,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       "continua pendente: a avaliação atual não vale mais",
     );
     await dialog.getByRole("button", { name: "Próximo" }).click();
-    await expect(dialog.getByTestId("review-summary")).toContainText(
+    await expect(dialog.getByTestId("review-rail-drug")).toContainText(
       "Continua pendente",
     );
   });

@@ -489,59 +489,6 @@ export const ReviewSummary = styled.div`
     color: ${muted};
     font-size: 12px;
   }
-
-  .summary-empty {
-    color: ${muted};
-  }
-
-  .summary-list {
-    border: 1px solid ${border};
-    border-radius: 8px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .summary-drug {
-    align-items: center;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 12px;
-    justify-content: space-between;
-    padding: 12px 14px;
-
-    & + .summary-drug {
-      border-top: 1px solid ${border};
-    }
-  }
-
-  .summary-drug-text {
-    display: flex;
-    flex: 1 1 260px;
-    flex-direction: column;
-    gap: 4px;
-    min-width: 0;
-  }
-
-  .summary-drug-name {
-    color: ${get("colors.primary")};
-    font-weight: 500;
-  }
-
-  .summary-drug-detail {
-    color: ${muted};
-    font-size: 13px;
-  }
-
-  .summary-drug-actions {
-    align-items: center;
-    display: flex;
-    gap: 12px;
-
-    .ant-tag {
-      margin: 0;
-    }
-  }
 `;
 
 // the clinical note step: the summary layout with the note's editor
