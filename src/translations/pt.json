@@ -1953,6 +1953,7 @@
       "patients": "Pacientes",
       "limited": "A lista foi limitada em {{limit}} registros.",
       "limitedHint": "{{count}} pacientes atendem aos filtros. Utilize mais filtros para direcionar a sua análise.",
+      "limitedHintOver": "Mais de {{count}} pacientes atendem aos filtros. Utilize mais filtros para direcionar a sua análise.",
       "loadError": "Não foi possível carregar a lista de pacientes.",
       "filters": {
         "allStatuses": "Todas as situações",

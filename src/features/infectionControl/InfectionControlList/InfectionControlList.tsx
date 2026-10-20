@@ -52,7 +52,7 @@ function usePatientNameUpdates(active: boolean) {
 export function InfectionControlList() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { status, list, count, filters } = useAppSelector(
+  const { status, list, count, countLimited, filters } = useAppSelector(
     (state) => state.infectionControlList,
   );
   const [searchText, setSearchText] = useState("");
@@ -251,9 +251,12 @@ export function InfectionControlList() {
             message={t("infectionControl.worklist.limited", {
               limit: LIST_LIMIT,
             })}
-            description={t("infectionControl.worklist.limitedHint", {
-              count,
-            })}
+            description={t(
+              countLimited
+                ? "infectionControl.worklist.limitedHintOver"
+                : "infectionControl.worklist.limitedHint",
+              { count },
+            )}
           />
         )}
 

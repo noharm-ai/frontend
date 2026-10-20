@@ -1943,6 +1943,7 @@
       "patients": "Patients",
       "limited": "The list was limited to {{limit}} records.",
       "limitedHint": "{{count}} patients match the filters. Use more filters to narrow your analysis.",
+      "limitedHintOver": "More than {{count}} patients match the filters. Use more filters to narrow your analysis.",
       "loadError": "Could not load the patient list.",
       "filters": {
         "allStatuses": "All statuses",

@@ -2120,6 +2120,24 @@ test.describe("worklist", () => {
     ).toBeVisible();
   });
 
+  test("says when more match than the backend counted", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override(LIST, {
+      json: {
+        status: "success",
+        data: { count: 5000, countLimited: true, admissions: [admission] },
+      },
+    });
+
+    await page.goto("/controle-infeccao");
+
+    await expect(
+      page.getByText(/Mais de 5000 pacientes atendem aos filtros/),
+    ).toBeVisible({ timeout: 15000 });
+  });
+
   test("searches the loaded list by patient name or admission", async ({
     page,
     mockApi,

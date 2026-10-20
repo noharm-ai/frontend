@@ -235,8 +235,10 @@ interface IInfectionControlListSlice {
   status: Status;
   list: IFollowedAdmission[];
   // every admission matching the filters: more than the list holds when the
-  // limit cut it
+  // limit cut it. The backend counts up to a limit of its own
   count: number;
+  // more match than the backend counted
+  countLimited: boolean;
   filters: IInfectionControlListFilters;
   // the latest load: switching filters quickly drops the responses to the
   // earlier ones
@@ -247,6 +249,7 @@ const initialState: IInfectionControlListSlice = {
   status: "idle",
   list: [],
   count: 0,
+  countLimited: false,
   filters: DEFAULT_FILTERS,
   requestId: null,
 };
@@ -261,8 +264,11 @@ export const fetchFollowedAdmissions = createAsyncThunk(
         limit: LIST_LIMIT,
         offset: 0,
       });
-      const data: { count: number; admissions: IFollowedAdmission[] } =
-        response.data.data;
+      const data: {
+        count: number;
+        countLimited: boolean;
+        admissions: IFollowedAdmission[];
+      } = response.data.data;
 
       // names come from the hospital name service; PatientNameCache shows them
       // once they arrive, so the list does not wait for them
@@ -358,12 +364,14 @@ const infectionControlListSlice = createSlice({
         state.status = "succeeded";
         state.list = action.payload.admissions;
         state.count = action.payload.count;
+        state.countLimited = action.payload.countLimited ?? false;
       })
       .addCase(fetchFollowedAdmissions.rejected, (state, action) => {
         if (state.requestId !== action.meta.requestId) return;
         state.status = "failed";
         state.list = [];
         state.count = 0;
+        state.countLimited = false;
       });
   },
 });
