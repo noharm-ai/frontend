@@ -1,10 +1,12 @@
 import { test, expect } from "../support/mockApi";
+import { loginWithAuth } from "../support/featureLogin";
 
 /**
  * Infection control on phones (src/features/infectionControl): below the
  * `lg` breakpoint the worklist shows a card per patient in place of its
  * table, and the patient page lists the antimicrobial courses as cards, the
- * timeline one tap away.
+ * timeline one tap away. The review keeps its steps on one line, so each
+ * step starts on the first screen, and its buttons inside the dialog.
  */
 
 const ADMISSION = 9400;
@@ -113,6 +115,7 @@ const TIMELINE = {
       enabled: true,
       admissionNumber: ADMISSION,
       followed: true,
+      idPrescription: "399",
       status: 1,
       statusDate: hoursFromNow(-20),
       nextReviewDate: null,
@@ -228,4 +231,70 @@ test("lists the courses as cards, the timeline one tap away", async ({
   await page.getByText("Linha do tempo", { exact: true }).click();
   await expect(page.getByTestId("course-row")).toHaveCount(2);
   await expect(cards).toHaveCount(0);
+});
+
+test.describe("the review", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  test("fits the screen on every step", async ({ page, mockApi }) => {
+    // the login checks the user name in the header, hidden on phones
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await loginWithAuth(page, mockApi, {
+      permissions: [
+        "READ_BASIC_FEATURES",
+        "WRITE_BASIC_FEATURES",
+        "READ_PRESCRIPTION",
+        "READ_SUPPORT",
+        "WRITE_INFECTION_CONTROL",
+      ],
+      features: ["MULTI_CLINICAL_NOTES"],
+    });
+    await page.setViewportSize({ width: 390, height: 844 });
+    mockApi.override(
+      "GET /infection-control/antimicrobial-timeline/:admissionNumber",
+      { json: TIMELINE },
+    );
+    mockApi.override("GET /intervention/reasons", {
+      json: { status: "success", data: [] },
+    });
+    mockApi.override("GET /infection-control/clinical-note-types", {
+      json: {
+        status: "success",
+        data: [{ id: "CI", name: "Controle de infecção" }],
+      },
+    });
+
+    await page.goto(`/controle-infeccao/${ADMISSION}`);
+    await page
+      .getByRole("button", { name: "Revisar" })
+      .click({ timeout: 15000 });
+
+    const dialog = page.getByRole("dialog");
+    const rail = dialog.getByTestId("review-rail");
+    const box = async (name: string) =>
+      (await dialog.getByRole("button", { name }).boundingBox())!;
+
+    // the steps take one line, the open one named
+    expect((await rail.boundingBox())!.height).toBeLessThan(80);
+    await expect(rail.getByText("MEROPENEM 1 g SOL INJ")).toBeVisible();
+    await expect(rail.getByText("VANCOMICINA 500 mg SOL INJ")).toBeHidden();
+
+    // a step opens from the rail, and the longest labels stay in the dialog
+    await dialog.getByTestId("review-rail-patient").click();
+    await expect(rail.getByText("Próxima revisão")).toBeVisible();
+    const dialogBox = (await dialog
+      .locator(".ant-modal-container")
+      .boundingBox())!;
+    const next = await box("Próximo: evolução");
+    expect(next.x + next.width).toBeLessThanOrEqual(
+      dialogBox.x + dialogBox.width,
+    );
+
+    await dialog.getByRole("button", { name: "Próximo: evolução" }).click();
+    await expect(dialog.getByTestId("review-clinical-note")).toBeVisible();
+    const save = await box("Registrar revisão");
+    expect(save.x + save.width).toBeLessThanOrEqual(
+      dialogBox.x + dialogBox.width,
+    );
+  });
 });
