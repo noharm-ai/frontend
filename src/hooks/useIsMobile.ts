@@ -3,7 +3,7 @@ import { useSyncExternalStore } from "react";
 import { breakpointsEnum } from "styles/breakpoints";
 
 // same threshold the app shell uses to collapse the side menu (Sider
-// breakpoint="lg"), so the training pages switch layout together with it
+// breakpoint="lg"), so the pages switch layout together with it
 const MOBILE_QUERY = `(max-width: ${breakpointsEnum.lg - 1}px)`;
 
 const subscribe = (onChange: () => void) => {

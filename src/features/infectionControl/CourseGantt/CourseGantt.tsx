@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { ReactNode, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Popover, Switch, Tag, Tooltip } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
@@ -48,6 +48,8 @@ interface CourseGanttProps {
   compact?: boolean;
   // the evaluation being filled, if any
   draftEvaluation?: IDraftEvaluation | null;
+  // more actions next to the title (not shown when compact)
+  actions?: ReactNode;
 }
 
 const STATUS_TAG_COLORS: Record<CourseStatus, string> = {
@@ -68,6 +70,7 @@ export function CourseGantt({
   invalidatedEvaluations,
   compact = false,
   draftEvaluation,
+  actions,
 }: CourseGanttProps) {
   const { t } = useTranslation();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -240,6 +243,7 @@ export function CourseGantt({
             {t("infectionControl.timeline.title")}
           </h2>
           <div className="gantt-actions">
+            {actions}
             {supersededCount > 0 && (
               <label className="gantt-toggle">
                 <Switch
