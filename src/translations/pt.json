@@ -1781,7 +1781,6 @@
     },
     "review": {
       "title": "Registrar revisão",
-      "legend": "Avalie cada antimicrobiano em uso. Agendar a próxima revisão do paciente é opcional.",
       "antimicrobials": "Antimicrobianos · {{count}}",
       "validUntil": "Válida até",
       "evaluationNotes": "Observação",

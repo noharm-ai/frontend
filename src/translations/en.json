@@ -1771,7 +1771,6 @@
     },
     "review": {
       "title": "Register review",
-      "legend": "Evaluate each antimicrobial in use. Scheduling the patient's next review is optional.",
       "antimicrobials": "Antimicrobials · {{count}}",
       "validUntil": "Valid until",
       "evaluationNotes": "Note",

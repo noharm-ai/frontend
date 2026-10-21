@@ -9,6 +9,7 @@ import DefaultModal from "components/Modal";
 import notification from "components/notification";
 import Feature from "models/Feature";
 import { FeatureService } from "services/FeatureService";
+import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
 import { useAppDispatch, useAppSelector } from "src/store";
 import { getErrorMessage } from "utils/errorHandler";
 import { Form } from "styles/Form.style";
@@ -375,9 +376,10 @@ export function ReviewModal({
                 <h2 className="review-title">
                   {t("infectionControl.review.title")}
                 </h2>
-                <p className="review-legend">
-                  {t("infectionControl.review.legend")}
-                </p>
+                <KnowledgeBaseIcon
+                  anchor="infectionControl.review.articles"
+                  label="Registrar revisão"
+                />
               </header>
 
               <div className="review-layout">

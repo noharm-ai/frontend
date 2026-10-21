@@ -45,21 +45,17 @@ export const ReviewBody = styled.div`
   flex-direction: column;
 
   .review-header {
+    align-items: center;
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    gap: 8px;
     /* room for the close button */
-    padding: 22px 64px 18px 28px;
+    padding: 18px 64px 16px 28px;
   }
 
   .review-title {
     color: ${get("colors.primary")};
     font-size: 20px;
     font-weight: 600;
-    margin: 0;
-  }
-
-  .review-legend {
     margin: 0;
   }
 
