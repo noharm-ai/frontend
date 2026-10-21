@@ -264,6 +264,9 @@ export interface IFollowUp {
   statusDate?: string | null;
   nextReviewDate?: string | null;
   recalculatedAt?: string | null;
+  // the prescription-day the record points at, where a review and its
+  // clinical note are written; null when it has none
+  idPrescription?: string | null;
   pendings?: IFollowUpPending[];
   reviews?: IFollowUpReview[];
   courses?: IFollowUpCourse[];
@@ -285,11 +288,25 @@ export interface IReviewEvaluationPayload {
   triggers: number[];
 }
 
+// a type a clinical note is given (tipoevolucao)
+export interface IClinicalNoteType {
+  id: string;
+  name: string;
+}
+
+// the clinical note a review writes in the patient's record
+export interface IReviewClinicalNotePayload {
+  idClinicalNoteType: string;
+  text: string;
+}
+
 export interface IReviewPayload {
   admissionNumber: number;
   notes: string | null;
   nextReviewDate: string | null;
   evaluations: IReviewEvaluationPayload[];
+  // null when the review is saved without a note
+  clinicalNote: IReviewClinicalNotePayload | null;
 }
 
 /**
@@ -373,6 +390,11 @@ interface IInfectionControlSlice {
     status: Status;
     list: IInterventionReason[];
   };
+  // the types the note of a review can be given, loaded once
+  clinicalNoteTypes: {
+    status: Status;
+    list: IClinicalNoteType[];
+  };
   // the drugs found for a substitute, by the latest search
   substituteSearch: {
     status: Status;
@@ -414,6 +436,10 @@ const initialState: IInfectionControlSlice = {
     status: "idle",
   },
   interventionReasons: {
+    status: "idle",
+    list: [],
+  },
+  clinicalNoteTypes: {
     status: "idle",
     list: [],
   },
@@ -564,6 +590,25 @@ export const fetchInterventionReasons = createAsyncThunk(
   },
 );
 
+export const fetchClinicalNoteTypes = createAsyncThunk(
+  "infectionControl/fetchClinicalNoteTypes",
+  async (_, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.getClinicalNoteTypes();
+      return response.data.data as IClinicalNoteType[];
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+  {
+    // the list does not change while the page is open
+    condition: (_, { getState }) =>
+      !["loading", "succeeded"].includes(
+        (getState() as any).infectionControl.clinicalNoteTypes.status,
+      ),
+  },
+);
+
 export const searchSubstituteDrugs = createAsyncThunk(
   "infectionControl/searchSubstituteDrugs",
   async (params: { term: string }, thunkAPI) => {
@@ -680,6 +725,16 @@ const infectionControlSlice = createSlice({
       })
       .addCase(fetchInterventionReasons.rejected, (state) => {
         state.interventionReasons.status = "failed";
+      })
+      .addCase(fetchClinicalNoteTypes.pending, (state) => {
+        state.clinicalNoteTypes.status = "loading";
+      })
+      .addCase(fetchClinicalNoteTypes.fulfilled, (state, action) => {
+        state.clinicalNoteTypes.status = "succeeded";
+        state.clinicalNoteTypes.list = action.payload;
+      })
+      .addCase(fetchClinicalNoteTypes.rejected, (state) => {
+        state.clinicalNoteTypes.status = "failed";
       })
       // only the latest search fills the list
       .addCase(searchSubstituteDrugs.pending, (state, action) => {

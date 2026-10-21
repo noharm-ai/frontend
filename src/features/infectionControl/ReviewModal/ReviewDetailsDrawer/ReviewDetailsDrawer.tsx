@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { Drawer, Tabs } from "antd";
+import { Button, Drawer, Tabs } from "antd";
+import dayjs, { Dayjs } from "dayjs";
 
 import RichTextView from "components/RichTextView";
 import { formatDateTime } from "utils/date";
@@ -14,10 +15,11 @@ import {
 import { InvalidationReason } from "../../InvalidationReason/InvalidationReason";
 import { useAlertHandling } from "../../ScreeningAlerts/useAlertHandling";
 import { describeReasons, describeSubstitute } from "../../followUp";
+import { formatDose } from "../../timeline";
 import { verdictLabel } from "../reviewForm";
 import { DetailsBody, DetailsTitle } from "./ReviewDetailsDrawer.style";
 
-export type ReviewDetailsTab = "pendings" | "alerts";
+export type ReviewDetailsTab = "prescription" | "pendings" | "alerts";
 
 interface ReviewDetailsDrawerProps {
   // the tab shown, null when the drawer is closed
@@ -32,11 +34,14 @@ interface ReviewDetailsDrawerProps {
   // the evaluation on record, and the reasons it no longer holds
   evaluation: IAntimicrobialEvaluation | null;
   invalidations: IFollowUpPending[];
+  // server time the course was judged at
+  now: Dayjs;
 }
 
 /**
- * What is known of the drug beside the review form: why its evaluation on
- * record no longer holds and the screening alerts of its course, one tab each
+ * What is known of the drug beside the review form: its current prescription,
+ * why its evaluation on record no longer holds and the screening alerts of its
+ * course, one tab each
  */
 export function ReviewDetailsDrawer({
   tab,
@@ -47,6 +52,7 @@ export function ReviewDetailsDrawer({
   course,
   evaluation,
   invalidations,
+  now,
 }: ReviewDetailsDrawerProps) {
   const { t } = useTranslation();
   const { loadingType, showHandling } = useAlertHandling(course?.idSubstance);
@@ -63,6 +69,132 @@ export function ReviewDetailsDrawer({
   );
 
   const items = [];
+
+  if (course) {
+    const regimen = course.regimens.at(-1);
+    // only what the prescription has: no weight, no dose by weight
+    const posology = [
+      {
+        label: t("infectionControl.details.dose"),
+        value: regimen && formatDose(regimen),
+      },
+      {
+        label: t("infectionControl.details.frequency"),
+        value: regimen?.frequency,
+      },
+      { label: t("infectionControl.details.route"), value: regimen?.route },
+      {
+        label: t("infectionControl.review.doseWeight"),
+        value: regimen?.doseWeight,
+      },
+      {
+        label: t("infectionControl.review.doseWeightDay"),
+        value: regimen?.doseWeightDay,
+      },
+      {
+        label: t("infectionControl.review.since"),
+        value: regimen && formatDateTime(regimen.start),
+      },
+    ].filter((item) => item.value);
+    const treatment = [
+      {
+        label: t("infectionControl.review.substance"),
+        value: course.substance,
+      },
+      {
+        label: t("infectionControl.details.start"),
+        value: formatDateTime(course.start),
+      },
+      {
+        label: dayjs(course.end).isAfter(now)
+          ? t("infectionControl.details.prescribedUntil")
+          : t("infectionControl.details.end"),
+        value: formatDateTime(course.end),
+      },
+      {
+        label: t("infectionControl.details.plannedEnd"),
+        value: course.plannedEnd && formatDateTime(course.plannedEnd),
+      },
+      {
+        label: t("infectionControl.details.treatment"),
+        value:
+          course.plannedDays != null
+            ? t("infectionControl.details.daysPlanned", {
+                count: course.days,
+                planned: course.plannedDays,
+              })
+            : t("infectionControl.details.days", { count: course.days }),
+      },
+      {
+        label: t("infectionControl.details.prescriptionType"),
+        value: course.cpoe
+          ? t("infectionControl.details.cpoe")
+          : t("infectionControl.details.daily"),
+      },
+      {
+        label: t("infectionControl.details.prescriptions"),
+        value: course.prescriptionCount,
+      },
+    ].filter((item) => item.value != null && item.value !== "");
+
+    const facts = (list: { label: string; value: unknown }[]) => (
+      <dl className="details-facts">
+        {list.map((item) => (
+          <div key={item.label}>
+            <dt>{item.label}</dt>
+            <dd>{String(item.value)}</dd>
+          </div>
+        ))}
+      </dl>
+    );
+
+    items.push({
+      key: "prescription",
+      label: (
+        <span className="details-tab">
+          {t("infectionControl.review.prescription")}
+        </span>
+      ),
+      children: (
+        <div
+          className="details-list"
+          data-kb="infectionControl.review.prescription"
+          data-testid="review-prescription"
+        >
+          <div className="details-card">
+            <span className="details-section-title">
+              {t("infectionControl.review.currentPosology")}
+            </span>
+            {posology.length > 0 && facts(posology)}
+            {regimen?.notes && (
+              <div
+                className="details-complement"
+                data-testid="review-prescription-complement"
+              >
+                <span className="details-card-label">
+                  {t("infectionControl.review.complement")}
+                </span>
+                <RichTextView text={regimen.notes} maxWidth="100%" />
+              </div>
+            )}
+          </div>
+          <div className="details-card">
+            <span className="details-section-title">
+              {t("infectionControl.review.course")}
+            </span>
+            {facts(treatment)}
+          </div>
+          <Button
+            className="details-open"
+            href={`/prescricao/${course.lastIdPrescription}`}
+            target="_blank"
+          >
+            {t("infectionControl.details.openPrescription")}
+          </Button>
+        </div>
+      ),
+    });
+  }
 
   if (evaluation && invalidations.length) {
     items.push({

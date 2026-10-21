@@ -43,13 +43,16 @@ export const ReviewBody = styled.div`
   color: ${get("colors.text")};
   display: flex;
   flex-direction: column;
+  /* the same on every step: the rail and the step scroll inside */
+  height: min(1000px, calc(100vh - 48px));
 
   .review-header {
+    align-items: center;
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    flex: none;
+    gap: 8px;
     /* room for the close button */
-    padding: 22px 64px 18px 28px;
+    padding: 18px 64px 16px 28px;
   }
 
   .review-title {
@@ -59,18 +62,28 @@ export const ReviewBody = styled.div`
     margin: 0;
   }
 
-  .review-legend {
-    margin: 0;
-  }
-
   /* the steps on the left, the drug (or the patient) being reviewed on the right */
   .review-layout {
     border-top: 1px solid ${border};
     display: grid;
+    flex: 1;
     grid-template-columns: 280px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    min-height: 0;
 
+    > * {
+      overflow-y: auto;
+    }
+
+    /* stacked, they scroll together */
     @media (max-width: 768px) {
       grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: none;
+      overflow-y: auto;
+
+      > * {
+        overflow-y: visible;
+      }
     }
   }
 
@@ -78,7 +91,6 @@ export const ReviewBody = styled.div`
     display: flex;
     flex-direction: column;
     gap: 24px;
-    min-height: 420px;
     min-width: 0;
     padding: 24px 28px 28px;
   }
@@ -87,6 +99,7 @@ export const ReviewBody = styled.div`
     align-items: center;
     border-top: 1px solid ${border};
     display: flex;
+    flex: none;
     flex-wrap: wrap;
     gap: 12px;
     justify-content: space-between;
@@ -246,12 +259,6 @@ export const DrugEvaluation = styled.div`
         color: ${get("colors.accentSecondary")};
       }
     }
-  }
-
-  .drug-dose-weight {
-    color: ${muted};
-    font-size: 13px;
-    line-height: 1.4;
   }
 
   .drug-current {
@@ -489,57 +496,69 @@ export const ReviewSummary = styled.div`
     color: ${muted};
     font-size: 12px;
   }
+`;
 
-  .summary-empty {
-    color: ${muted};
-  }
-
-  .summary-list {
-    border: 1px solid ${border};
-    border-radius: 8px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-
-  .summary-drug {
+// the clinical note step: the summary layout with the note's editor
+export const ClinicalNote = styled(ReviewSummary)`
+  .note-text-header {
     align-items: center;
     display: flex;
     flex-wrap: wrap;
-    gap: 12px;
+    gap: 8px;
     justify-content: space-between;
-    padding: 12px 14px;
-
-    & + .summary-drug {
-      border-top: 1px solid ${border};
-    }
   }
 
-  .summary-drug-text {
-    display: flex;
-    flex: 1 1 260px;
-    flex-direction: column;
-    gap: 4px;
-    min-width: 0;
-  }
-
-  .summary-drug-name {
-    color: ${get("colors.primary")};
-    font-weight: 500;
-  }
-
-  .summary-drug-detail {
-    color: ${muted};
-    font-size: 13px;
-  }
-
-  .summary-drug-actions {
+  .note-actions {
     align-items: center;
     display: flex;
-    gap: 12px;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
 
-    .ant-tag {
-      margin: 0;
-    }
+  .note-type {
+    max-width: 360px;
+    width: 100%;
+  }
+
+  .note-outdated {
+    align-items: center;
+    background: #fffbe6;
+    border: 1px solid #ffe58f;
+    border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    font-size: 13px;
+    gap: 8px;
+    padding: 8px 12px;
+  }
+
+  .note-notice {
+    background: #fafafa;
+    border: 1px solid ${border};
+    border-radius: 8px;
+    color: ${muted};
+    padding: 12px 14px;
+  }
+`;
+
+// the variables a note template takes, listed in a popover
+export const NoteVariables = styled.dl`
+  display: grid;
+  gap: 4px 12px;
+  grid-template-columns: auto 1fr;
+  margin: 0;
+  max-height: 50vh;
+  max-width: 480px;
+  overflow-y: auto;
+
+  dt {
+    font-family: monospace;
+    font-size: 12px;
+  }
+
+  dd {
+    color: ${muted};
+    font-size: 12px;
+    margin: 0;
   }
 `;

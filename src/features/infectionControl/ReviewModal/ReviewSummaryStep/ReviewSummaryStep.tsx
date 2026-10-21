@@ -1,15 +1,12 @@
 import { useTranslation } from "react-i18next";
 import { useFormikContext } from "formik";
-import { Tag } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 
 import { DatePicker, Textarea } from "components/Inputs";
 import { formatDate } from "utils/date";
 
-import { IFollowUpPending } from "../../InfectionControlSlice";
 import { ChoiceChips } from "../ChoiceChips/ChoiceChips";
 import {
-  describeDrugEvaluation,
   getNextReviewDate,
   getTreatmentsEnd,
   IReviewFields,
@@ -18,31 +15,17 @@ import {
 } from "../reviewForm";
 import { ReviewSummary } from "../ReviewModal.style";
 
-interface ReviewSummaryStepProps {
-  // open reasons that make an evaluation on record no longer hold, by id
-  invalidatedEvaluations: Record<string, IFollowUpPending[]>;
-  // what is chosen for each drug, as its step in the rail tells it
-  drugStatus: { label: string; color: string }[];
-  // goes back to the step of a drug
-  onSelectStep: (index: number) => void;
-}
-
 const notAfterToday = (current: Dayjs) =>
   !!current && !current.isAfter(dayjs(), "day");
 
 /**
- * The last step of the review: when the patient is reviewed again, the notes
- * about the patient and what the review records for each drug
+ * The patient step of the review: when the patient is reviewed again and the
+ * notes about the patient
  */
-export function ReviewSummaryStep({
-  invalidatedEvaluations,
-  drugStatus,
-  onSelectStep,
-}: ReviewSummaryStepProps) {
+export function ReviewSummaryStep() {
   const { t } = useTranslation();
   const { values, errors, setFieldValue, setFieldError } =
     useFormikContext<IReviewFields>();
-  const drugCount = values.evaluations.length;
   const treatmentsEnd = getTreatmentsEnd(values);
 
   const nextReviewOptions: NextReview[] = [
@@ -129,52 +112,6 @@ export function ReviewSummaryStep({
           value={values.notes}
           onChange={(e: any) => setFieldValue("notes", e.target.value)}
         />
-      </section>
-
-      <section
-        className="summary-section"
-        data-kb="infectionControl.review.summary"
-      >
-        <h4 className="summary-section-title">
-          {t("infectionControl.review.summary")}
-        </h4>
-        {drugCount === 0 ? (
-          <div className="summary-empty">
-            {t("infectionControl.review.noOngoing")}
-          </div>
-        ) : (
-          <ul className="summary-list" data-testid="review-summary">
-            {values.evaluations.map((evaluation, index) => (
-              <li key={evaluation.idDrug} className="summary-drug">
-                <div className="summary-drug-text">
-                  <span className="summary-drug-name">{evaluation.drug}</span>
-                  <span className="summary-drug-detail">
-                    {describeDrugEvaluation(
-                      evaluation,
-                      invalidatedEvaluations,
-                      t,
-                    )}
-                  </span>
-                </div>
-                <div className="summary-drug-actions">
-                  <Tag color={drugStatus[index].color}>
-                    {drugStatus[index].label}
-                  </Tag>
-                  <button
-                    type="button"
-                    className="link-button"
-                    aria-label={t("infectionControl.review.editDrug", {
-                      drug: evaluation.drug,
-                    })}
-                    onClick={() => onSelectStep(index)}
-                  >
-                    {t("actions.edit")}
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
       </section>
     </ReviewSummary>
   );

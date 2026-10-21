@@ -95,9 +95,8 @@ export function DrugEvaluationStep({
   const [triggersOpen, setTriggersOpen] = useState(false);
   // the period of the evaluation is told in a line, open to change
   const [validityOpen, setValidityOpen] = useState(false);
-  // the dose by weight is a detail of the regimen, shown on demand
-  const [doseWeightOpen, setDoseWeightOpen] = useState(false);
-  // the drawer with the pendings and the alerts of the drug, by its tab
+  // the drawer with the prescription, the pendings and the alerts of the drug,
+  // by its tab
   const [detailsTab, setDetailsTab] = useState<ReviewDetailsTab | null>(null);
 
   const evaluation = values.evaluations[index];
@@ -113,9 +112,6 @@ export function DrugEvaluationStep({
   // the running course being evaluated
   const activeCourse = findEvaluatedCourse(timeline?.courses, evaluation);
   const regimen = activeCourse?.regimens.at(-1);
-  const doseWeight = [regimen?.doseWeight, regimen?.doseWeightDay]
-    .filter(Boolean)
-    .join(" · ");
   const invalidations = invalidatedBy(
     evaluation.current,
     invalidatedEvaluations,
@@ -152,30 +148,20 @@ export function DrugEvaluationStep({
       <div className="drug-header">
         <div className="drug-header-main">
           <h3 className="drug-name">{evaluation.drug}</h3>
-          {((regimen && formatRegimen(regimen)) || doseWeight) && (
+          {activeCourse && (
             <div className="drug-regimen">
               {regimen && formatRegimen(regimen) && (
                 <span>{formatRegimen(regimen)}</span>
               )}
-              {doseWeight && (
-                <button
-                  type="button"
-                  className="link-button"
-                  aria-expanded={doseWeightOpen}
-                  onClick={() => setDoseWeightOpen(!doseWeightOpen)}
-                >
-                  {t(
-                    doseWeightOpen
-                      ? "infectionControl.review.doseWeightHide"
-                      : "infectionControl.review.doseWeightShow",
-                  )}
-                </button>
-              )}
-            </div>
-          )}
-          {doseWeight && doseWeightOpen && (
-            <div className="drug-dose-weight" data-testid="review-dose-weight">
-              {doseWeight}
+              {/* the whole prescription, complement included, in the drawer */}
+              <button
+                type="button"
+                className="link-button"
+                data-testid="review-prescription-link"
+                onClick={() => setDetailsTab("prescription")}
+              >
+                {t("infectionControl.review.prescriptionDetails")}
+              </button>
             </div>
           )}
         </div>
@@ -233,6 +219,7 @@ export function DrugEvaluationStep({
         course={activeCourse}
         evaluation={evaluation.current}
         invalidations={invalidations}
+        now={now}
       />
 
       {timeline && (

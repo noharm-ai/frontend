@@ -24,6 +24,9 @@ export default function SaveModal({
   setOpen,
   loadText,
   memoryType,
+  // [{ label, items: [{ key: "{{var}}", label }] }]: the variables a text
+  // takes, in place of the prescription clinical note ones
+  variableGroups = null,
 }) {
   const { t } = useTranslation();
   const prescription = useSelector((state) => state.prescriptions.single.data);
@@ -382,6 +385,9 @@ export default function SaveModal({
     setChooseClassModal(false);
   };
 
+  const showVariables =
+    !!variableGroups || `${memoryType}`.includes(CLINICAL_NOTES_MEMORY_TYPE);
+
   const addCustomAlertaVar = () => {
     const baseKey = alertaBaseKey.replace(/^\{\{/, "").replace(/\}\}$/, "");
     addVariable(`{{${baseKey}.${alertaDescricao}.${alertaNivel}}}`);
@@ -420,9 +426,7 @@ export default function SaveModal({
           maxLength={50}
         />
         <Row gutter={[16]}>
-          <Col
-            xs={`${memoryType}`.includes(CLINICAL_NOTES_MEMORY_TYPE) ? 17 : 24}
-          >
+          <Col xs={showVariables ? 17 : 24}>
             <Heading
               as="label"
               $size="14px"
@@ -438,7 +442,7 @@ export default function SaveModal({
               ref={textRef}
             />
           </Col>
-          {`${memoryType}`.includes(CLINICAL_NOTES_MEMORY_TYPE) && (
+          {showVariables && (
             <Col xs={7}>
               <VariableContainer>
                 <div className="variables-title">Váriáveis</div>
@@ -450,6 +454,23 @@ export default function SaveModal({
                   incluir.
                 </div>
                 <div className="variables-group">
+                  {variableGroups && (
+                    <div className="variables-group-list">
+                      {variableGroups.map((group) => (
+                        <Dropdown
+                          key={group.label}
+                          menu={{
+                            items: group.items,
+                            onClick: addVariableEvent,
+                          }}
+                          trigger={["click"]}
+                        >
+                          <Button icon={<DownOutlined />}>{group.label}</Button>
+                        </Dropdown>
+                      ))}
+                    </div>
+                  )}
+                  {!variableGroups && (
                   <div className="variables-group-list">
                     <Dropdown
                       menu={{
@@ -521,6 +542,7 @@ export default function SaveModal({
                       <Button icon={<DownOutlined />}>Utilidades</Button>
                     </Dropdown>
                   </div>
+                  )}
                 </div>
               </VariableContainer>
             </Col>

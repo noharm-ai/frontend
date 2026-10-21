@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Formik } from "formik";
 import { useTranslation } from "react-i18next";
 import { LeftOutlined } from "@ant-design/icons";
@@ -7,12 +7,17 @@ import { Dayjs } from "dayjs";
 
 import DefaultModal from "components/Modal";
 import notification from "components/notification";
+import Feature from "models/Feature";
+import { FeatureService } from "services/FeatureService";
+import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
 import { useAppDispatch, useAppSelector } from "src/store";
 import { getErrorMessage } from "utils/errorHandler";
 import { Form } from "styles/Form.style";
 
 import {
+  fetchClinicalNoteTypes,
   fetchInterventionReasons,
+  IAntimicrobialTimeline,
   ICourse,
   IFollowUp,
   IFollowUpCourse,
@@ -20,6 +25,10 @@ import {
   setReviewOpen,
 } from "../InfectionControlSlice";
 import { courseKey, getInvalidatedEvaluations } from "../followUp";
+import {
+  ClinicalNoteStep,
+  ClinicalNoteUnavailable,
+} from "./ClinicalNoteStep/ClinicalNoteStep";
 import { DrugEvaluationStep } from "./DrugEvaluationStep/DrugEvaluationStep";
 import { ReviewRail } from "./ReviewRail/ReviewRail";
 import { ReviewSummaryStep } from "./ReviewSummaryStep/ReviewSummaryStep";
@@ -32,12 +41,15 @@ import {
   getValidationSchema,
   IReviewFields,
   toReviewPayload,
+  validateClinicalNote,
   validateDrug,
 } from "./reviewForm";
 import { ReviewBody } from "./ReviewModal.style";
 
 interface ReviewModalProps {
   followUp: IFollowUp;
+  // the patient, the courses and the exams the clinical note tells about
+  timeline: IAntimicrobialTimeline;
   // the antimicrobial timeline of the admission, plotted for each drug
   courses: ICourse[];
   dischargeDate: string | null;
@@ -48,13 +60,15 @@ interface ReviewModalProps {
 /**
  * The infectologist's review of the patient, one step per running
  * antimicrobial - its timeline, its current evaluation and a new verdict,
- * conforming, not conforming or left out, valid until a date - and a last
- * step to schedule the next review. Drugs without an evaluation in force
+ * conforming, not conforming or left out, valid until a date - then a step to
+ * schedule the next review and a last, optional one for the clinical note the
+ * review writes in the patient's record. Drugs without an evaluation in force
  * (none, expired or with a changed posology) are to be evaluated; the others
  * keep it unless evaluated again.
  */
 export function ReviewModal({
   followUp,
+  timeline,
   courses,
   dischargeDate,
   drugNames,
@@ -68,24 +82,68 @@ export function ReviewModal({
   const reasons = useAppSelector(
     (state) => state.infectionControl.interventionReasons.list,
   );
+  const clinicalNoteTypes = useAppSelector(
+    (state) => state.infectionControl.clinicalNoteTypes,
+  );
+  const cultures = useAppSelector((state) => state.infectionControl.cultures);
+  // the user ducks are untyped legacy JS
+  const account = useAppSelector((state: any) => state.user.account);
   const isSaving = status === "loading";
+  const hasMultiClinicalNotes = FeatureService.has(
+    Feature.MULTI_CLINICAL_NOTES,
+  );
   const [step, setStep] = useState(0);
+  const stepRef = useRef<HTMLFormElement>(null);
 
   // every review starts at the first drug
   useEffect(() => {
     if (open) setStep(0);
   }, [open]);
 
-  // the reasons a non-conformity can be given
+  // each step opens at its top
   useEffect(() => {
-    if (open) dispatch(fetchInterventionReasons());
-  }, [open, dispatch]);
+    stepRef.current?.scrollTo({ top: 0 });
+  }, [step]);
+
+  // the reasons a non-conformity can be given and the types of a note
+  useEffect(() => {
+    if (open) {
+      dispatch(fetchInterventionReasons());
+      if (hasMultiClinicalNotes) dispatch(fetchClinicalNoteTypes());
+    }
+  }, [open, hasMultiClinicalNotes, dispatch]);
+
+  // a note is written on the prescription-day of the record, with a type,
+  // only where the schema has the multiple clinical notes
+  let noteUnavailable: ClinicalNoteUnavailable | null = null;
+  if (!followUp.idPrescription) {
+    noteUnavailable = "noPrescription";
+  } else if (!hasMultiClinicalNotes) {
+    noteUnavailable = "noFeature";
+  } else if (clinicalNoteTypes.status === "failed") {
+    noteUnavailable = "error";
+  } else if (clinicalNoteTypes.status !== "succeeded") {
+    noteUnavailable = "loading";
+  }
 
   // open reasons that make the evaluation on record of a drug no longer hold
   const invalidatedEvaluations = useMemo(
     () => getInvalidatedEvaluations(followUp),
     [followUp],
   );
+
+  // what the variables of the note are read from
+  const noteContext = {
+    timeline,
+    cultures:
+      cultures.status === "succeeded"
+        ? (cultures.data?.cultures ?? null)
+        : null,
+    reasons,
+    invalidatedEvaluations,
+    userName: account?.userName || null,
+    signature: account?.signature || null,
+  };
 
   // the timeline of each drug and the follow-up of its courses
   const drugTimelines = useMemo(() => {
@@ -127,7 +185,14 @@ export function ReviewModal({
 
   const onSave = (values: IReviewFields) => {
     dispatch(
-      saveReview(toReviewPayload(values, followUp.admissionNumber, reasons)),
+      saveReview(
+        toReviewPayload(
+          values,
+          followUp.admissionNumber,
+          reasons,
+          !noteUnavailable,
+        ),
+      ),
     ).then((response: any) => {
       if (response.error) {
         notification.error({ message: getErrorMessage(response, t) });
@@ -151,14 +216,22 @@ export function ReviewModal({
     >
       {({ values, submitForm, validateForm }) => {
         const drugCount = values.evaluations.length;
-        const lastStep = drugCount;
-        const isReviewStep = step === lastStep;
+        const patientStep = drugCount;
+        // the clinical note closes the review
+        const lastStep = patientStep + 1;
+        const isPatientStep = step === patientStep;
+        const isNoteStep = step === lastStep;
 
         // what keeps each drug from being done, checked as it is filled
         const drugErrors = values.evaluations.map((evaluation) =>
           validateDrug(evaluationSchema, evaluation),
         );
         const allDrugsDone = drugErrors.every((drugError) => !drugError);
+        // what keeps the note from being saved; nothing when none can be
+        // written, and the review is saved without it
+        const noteError = noteUnavailable
+          ? null
+          : validateClinicalNote(values.clinicalNote);
 
         // what is chosen for each drug, as a tag
         const drugStatus = values.evaluations.map((evaluation) => {
@@ -210,9 +283,24 @@ export function ReviewModal({
           };
         });
 
+        let noteStatus: { label: string; color?: string };
+        if (noteUnavailable && noteUnavailable !== "loading") {
+          noteStatus = { label: t("infectionControl.clinicalNote.tag.none") };
+        } else if (!values.clinicalNote.create) {
+          noteStatus = { label: t("infectionControl.clinicalNote.tag.skip") };
+        } else {
+          noteStatus = {
+            label: t("infectionControl.clinicalNote.tag.create"),
+            color: "blue",
+          };
+        }
+
         const save = () => {
           validateForm().then((formErrors) => {
-            if (!formErrors.evaluations && !formErrors.nextReviewDate) {
+            // the date is chosen on the patient step: back there to fix it
+            if (formErrors.nextReviewDate) {
+              setStep(patientStep);
+            } else if (!formErrors.evaluations) {
               submitForm();
             }
           });
@@ -220,10 +308,19 @@ export function ReviewModal({
 
         // why the step cannot move on yet
         let hint: { text: string; error: boolean } | null = null;
-        if (isReviewStep) {
+        if (isPatientStep || isNoteStep) {
           if (!allDrugsDone) {
             hint = {
               text: t("infectionControl.review.hintAllDrugs"),
+              error: isNoteStep,
+            };
+          } else if (isNoteStep && noteError) {
+            hint = {
+              text: t(
+                noteError === "text"
+                  ? "infectionControl.clinicalNote.hintText"
+                  : "infectionControl.clinicalNote.hintType",
+              ),
               error: true,
             };
           }
@@ -256,10 +353,16 @@ export function ReviewModal({
             };
           }
         }
-        const canMoveOn = isReviewStep ? allDrugsDone : !drugErrors[step];
+        let canMoveOn = !drugErrors[step];
+        if (isPatientStep) {
+          canMoveOn = true;
+        } else if (isNoteStep) {
+          canMoveOn =
+            allDrugsDone && noteUnavailable !== "loading" && !noteError;
+        }
         const moveOn = () => {
           if (!canMoveOn) return;
-          if (isReviewStep) save();
+          if (isNoteStep) save();
           else setStep(step + 1);
         };
 
@@ -279,15 +382,22 @@ export function ReviewModal({
                 <h2 className="review-title">
                   {t("infectionControl.review.title")}
                 </h2>
-                <p className="review-legend">
-                  {t("infectionControl.review.legend")}
-                </p>
+                <KnowledgeBaseIcon
+                  anchor="infectionControl.review.articles"
+                  label="Registrar revisão"
+                />
               </header>
 
               <div className="review-layout">
-                <ReviewRail drugs={railDrugs} step={step} onSelect={setStep} />
+                <ReviewRail
+                  drugs={railDrugs}
+                  step={step}
+                  noteStatus={noteStatus}
+                  onSelect={setStep}
+                />
 
                 <Form
+                  ref={stepRef}
                   className="review-step"
                   onSubmit={(event: React.FormEvent) => {
                     // Enter moves on, the save is only on the last step
@@ -295,13 +405,15 @@ export function ReviewModal({
                     moveOn();
                   }}
                 >
-                  {isReviewStep ? (
-                    <ReviewSummaryStep
-                      invalidatedEvaluations={invalidatedEvaluations}
-                      drugStatus={drugStatus}
-                      onSelectStep={setStep}
+                  {isNoteStep && (
+                    <ClinicalNoteStep
+                      unavailable={noteUnavailable}
+                      types={clinicalNoteTypes.list}
+                      context={noteContext}
                     />
-                  ) : (
+                  )}
+                  {isPatientStep && <ReviewSummaryStep />}
+                  {step < patientStep && (
                     <DrugEvaluationStep
                       key={values.evaluations[step].idDrug}
                       index={step}
@@ -324,7 +436,7 @@ export function ReviewModal({
                   <span className="review-footer-step">
                     {t("infectionControl.review.stepOf", {
                       step: step + 1,
-                      total: drugCount + 1,
+                      total: lastStep + 1,
                     })}
                   </span>
                   {hint && (
@@ -353,14 +465,16 @@ export function ReviewModal({
                     type="primary"
                     onClick={moveOn}
                     disabled={!canMoveOn}
-                    loading={isReviewStep && isSaving}
+                    loading={isNoteStep && isSaving}
                   >
                     {t(
-                      isReviewStep
+                      isNoteStep
                         ? "infectionControl.review.save"
-                        : step === lastStep - 1
-                          ? "infectionControl.review.nextPatient"
-                          : "infectionControl.review.nextDrug",
+                        : isPatientStep
+                          ? "infectionControl.clinicalNote.next"
+                          : step === patientStep - 1
+                            ? "infectionControl.review.nextPatient"
+                            : "infectionControl.review.nextDrug",
                     )}
                   </Button>
                 </div>

@@ -464,6 +464,7 @@ export function InfectionControl() {
       {followUp && canReview && (
         <ReviewModal
           followUp={followUp}
+          timeline={data}
           courses={courses}
           dischargeDate={data.patient.dischargeDate}
           drugNames={drugNames}
