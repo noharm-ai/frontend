@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Formik } from "formik";
 import { useTranslation } from "react-i18next";
 import { LeftOutlined } from "@ant-design/icons";
@@ -93,11 +93,17 @@ export function ReviewModal({
     Feature.MULTI_CLINICAL_NOTES,
   );
   const [step, setStep] = useState(0);
+  const stepRef = useRef<HTMLFormElement>(null);
 
   // every review starts at the first drug
   useEffect(() => {
     if (open) setStep(0);
   }, [open]);
+
+  // each step opens at its top
+  useEffect(() => {
+    stepRef.current?.scrollTo({ top: 0 });
+  }, [step]);
 
   // the reasons a non-conformity can be given and the types of a note
   useEffect(() => {
@@ -391,6 +397,7 @@ export function ReviewModal({
                 />
 
                 <Form
+                  ref={stepRef}
                   className="review-step"
                   onSubmit={(event: React.FormEvent) => {
                     // Enter moves on, the save is only on the last step

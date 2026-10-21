@@ -43,10 +43,13 @@ export const ReviewBody = styled.div`
   color: ${get("colors.text")};
   display: flex;
   flex-direction: column;
+  /* the same on every step: the rail and the step scroll inside */
+  height: min(1000px, calc(100vh - 48px));
 
   .review-header {
     align-items: center;
     display: flex;
+    flex: none;
     gap: 8px;
     /* room for the close button */
     padding: 18px 64px 16px 28px;
@@ -63,10 +66,24 @@ export const ReviewBody = styled.div`
   .review-layout {
     border-top: 1px solid ${border};
     display: grid;
+    flex: 1;
     grid-template-columns: 280px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    min-height: 0;
 
+    > * {
+      overflow-y: auto;
+    }
+
+    /* stacked, they scroll together */
     @media (max-width: 768px) {
       grid-template-columns: minmax(0, 1fr);
+      grid-template-rows: none;
+      overflow-y: auto;
+
+      > * {
+        overflow-y: visible;
+      }
     }
   }
 
@@ -74,7 +91,6 @@ export const ReviewBody = styled.div`
     display: flex;
     flex-direction: column;
     gap: 24px;
-    min-height: 420px;
     min-width: 0;
     padding: 24px 28px 28px;
   }
@@ -83,6 +99,7 @@ export const ReviewBody = styled.div`
     align-items: center;
     border-top: 1px solid ${border};
     display: flex;
+    flex: none;
     flex-wrap: wrap;
     gap: 12px;
     justify-content: space-between;
