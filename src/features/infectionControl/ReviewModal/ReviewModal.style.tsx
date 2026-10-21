@@ -261,12 +261,6 @@ export const DrugEvaluation = styled.div`
     }
   }
 
-  .drug-dose-weight {
-    color: ${muted};
-    font-size: 13px;
-    line-height: 1.4;
-  }
-
   .drug-current {
     background: #fafafa;
     border: 1px solid ${border};

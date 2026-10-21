@@ -1881,7 +1881,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(page.getByTestId("follow-up-status")).toHaveText("Pendente");
   });
 
-  test("shows the posology with the dose per Kg, like the screening", async ({
+  test("shows the posology, with its details in the drawer", async ({
     page,
     mockApi,
   }) => {
@@ -1906,6 +1906,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
                 route: "IV",
                 doseWeight: "0,03 FRASCO AMPOLA/Kg ou 31,25 mg/Kg",
                 doseWeightDay: "0,09 FRASCO AMPOLA/Kg/Dia ou 93,75 mg/Kg/Dia",
+                notes: "Infundir em 3 horas",
               },
             ],
           }),
@@ -1945,12 +1946,21 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       "MEROPENEM 1 g SOL INJ",
     );
     await expect(drug.getByText("2 FRASCO AMPOLA · 8h/8h · IV")).toBeVisible();
-    // the dose by weight is shown on demand
-    await expect(drug.getByTestId("review-dose-weight")).toHaveCount(0);
-    await drug.getByRole("button", { name: "Dose/kg" }).click();
-    await expect(drug.getByTestId("review-dose-weight")).toHaveText(
-      "0,03 FRASCO AMPOLA/Kg ou 31,25 mg/Kg · 0,09 FRASCO AMPOLA/Kg/Dia ou 93,75 mg/Kg/Dia",
+    // the dose by weight and the complement are in the drawer
+    await expect(drug.getByText("31,25 mg/Kg")).toHaveCount(0);
+    await drug.getByRole("button", { name: "+ detalhes" }).click();
+    const prescription = page.getByTestId("review-prescription");
+    await expect(prescription).toContainText(
+      "0,03 FRASCO AMPOLA/Kg ou 31,25 mg/Kg",
     );
+    await expect(prescription).toContainText(
+      "0,09 FRASCO AMPOLA/Kg/Dia ou 93,75 mg/Kg/Dia",
+    );
+    await expect(
+      prescription.getByTestId("review-prescription-complement"),
+    ).toContainText("Infundir em 3 horas");
+    await page.keyboard.press("Escape");
+    await expect(prescription).toHaveCount(0);
 
     await drug
       .getByRole("radiogroup", { name: "Avaliação" })
@@ -1961,8 +1971,13 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       "VANCOMICINA 500 mg SOL INJ",
     );
     await expect(drug.getByText("1 g · 12h/12h · IV")).toBeVisible();
-    await expect(drug.getByTestId("review-dose-weight")).toHaveCount(0);
-    await expect(drug.getByRole("button", { name: "Dose/kg" })).toHaveCount(0);
+    // the details are there even without a dose by weight or a complement
+    await drug.getByRole("button", { name: "+ detalhes" }).click();
+    await expect(prescription).toContainText("Via");
+    await expect(prescription).not.toContainText("Dose/kg");
+    await expect(
+      prescription.getByTestId("review-prescription-complement"),
+    ).toHaveCount(0);
   });
 
   test("selects the drug whose posology changed and keeps its trigger choice", async ({
