@@ -127,6 +127,41 @@ export const DetailsBody = styled.div`
     display: block;
   }
 
+  /* the posology and the course, a label beside each value */
+  .details-facts {
+    display: grid;
+    gap: 4px 12px;
+    grid-template-columns: max-content 1fr;
+    margin: 0;
+
+    > div {
+      display: contents;
+    }
+
+    dt {
+      color: ${muted};
+      font-size: 13px;
+    }
+
+    dd {
+      margin: 0;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .details-complement {
+    border-top: 1px solid ${border};
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 4px;
+    padding-top: 8px;
+  }
+
+  .details-open {
+    align-self: flex-start;
+  }
+
   .details-section-title {
     color: ${get("colors.primary")};
     font-weight: 600;

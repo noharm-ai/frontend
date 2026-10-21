@@ -25,6 +25,8 @@ export default function MemoryText({
   userId,
   canSave = true,
   privateMemory = false,
+  // the variables offered when a text is saved (see SaveModal)
+  variableGroups = /** @type {any} */ (null),
 }) {
   const { t } = useTranslation();
   const [saveModalOpen, setSaveModalOpen] = useState(false);
@@ -184,6 +186,7 @@ export default function MemoryText({
         setOpen={setSaveModalOpen}
         loadText={loadText}
         memoryType={memoryTypeInternal}
+        variableGroups={variableGroups}
       />
 
       <ConfigModal

@@ -12,6 +12,16 @@ export const CLINICAL_NOTES_MEMORY_TYPE = "clinical-notes";
 export const CLINICAL_NOTES_PRIVATE_STORE_ID = "clinical-notes-private";
 export const CLINICAL_NOTES_PRIVATE_MEMORY_TYPE = "clinical-notes-private";
 
+// the clinical note templates of the infection control review: their own
+// stores, since they take other variables. The private type keeps the
+// "clinical-notes-private" the backend reads as private to its owner
+export const IC_CLINICAL_NOTES_STORE_ID = "infection-control-clinical-notes";
+export const IC_CLINICAL_NOTES_MEMORY_TYPE = "infection-control-clinical-notes";
+export const IC_CLINICAL_NOTES_PRIVATE_STORE_ID =
+  "infection-control-clinical-notes-private";
+export const IC_CLINICAL_NOTES_PRIVATE_MEMORY_TYPE =
+  "infection-control-clinical-notes-private";
+
 export const CUSTOM_FORM_STORE_ID = "custom-forms";
 export const CUSTOM_FORM_MEMORY_TYPE = "custom-forms";
 

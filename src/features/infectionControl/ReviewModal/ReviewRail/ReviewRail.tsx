@@ -17,8 +17,10 @@ export interface IReviewRailItem {
 
 interface ReviewRailProps {
   drugs: IReviewRailItem[];
-  // the step open: a drug, or the patient after the last one
+  // the step open: a drug, the patient after the last one, then the note
   step: number;
+  // what is chosen for the clinical note
+  noteStatus: { label: string; color?: string };
   onSelect: (step: number) => void;
 }
 
@@ -141,11 +143,17 @@ const Rail = styled.nav`
 
 /**
  * The steps of the review: each running antimicrobial with what is chosen for
- * it, then the patient. Any of them can be opened.
+ * it, then the patient and the clinical note. Any of them can be opened.
  */
-export function ReviewRail({ drugs, step, onSelect }: ReviewRailProps) {
+export function ReviewRail({
+  drugs,
+  step,
+  noteStatus,
+  onSelect,
+}: ReviewRailProps) {
   const { t } = useTranslation();
   const patientStep = drugs.length;
+  const noteStep = patientStep + 1;
 
   return (
     <Rail
@@ -197,6 +205,23 @@ export function ReviewRail({ drugs, step, onSelect }: ReviewRailProps) {
           </span>
           <span className="rail-meta">
             <Tag>{t("infectionControl.review.optionalTag")}</Tag>
+          </span>
+        </span>
+      </button>
+      <button
+        type="button"
+        className={`rail-item ${step === noteStep ? "active" : ""}`}
+        aria-current={step === noteStep ? "step" : undefined}
+        onClick={() => onSelect(noteStep)}
+        data-testid="review-rail-note"
+      >
+        <span className="rail-number">{noteStep + 1}</span>
+        <span className="rail-text">
+          <span className="rail-title">
+            {t("infectionControl.clinicalNote.stepTitle")}
+          </span>
+          <span className="rail-meta">
+            <Tag color={noteStatus.color}>{noteStatus.label}</Tag>
           </span>
         </span>
       </button>
