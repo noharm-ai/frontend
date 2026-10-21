@@ -15,6 +15,8 @@ import { setTag, upsertTag } from "../TagSlice";
 import { canCreateTags, canWriteTag } from "../tagPermissions";
 import Base from "./Base";
 
+const MAX_TAG_CHARS = 40;
+
 export function TagForm({ ...props }) {
   const { t } = useTranslation();
   const dispatch = useDispatch();
@@ -26,7 +28,10 @@ export function TagForm({ ...props }) {
     : canWriteTag(formData?.tagType);
 
   const validationSchema = Yup.object().shape({
-    name: Yup.string().nullable().required(t("validation.requiredField")),
+    name: Yup.string()
+      .nullable()
+      .required(t("validation.requiredField"))
+      .max(MAX_TAG_CHARS, t("validation.maxChars", { max: MAX_TAG_CHARS })),
     tagType: Yup.number().nullable().required(t("validation.requiredField")),
     active: Yup.boolean().nullable().required(t("validation.requiredField")),
   });

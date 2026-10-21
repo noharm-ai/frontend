@@ -703,7 +703,8 @@
   "validation": {
     "requiredField": "Required field",
     "atLeastOne": "At least one item must be selected",
-    "max2mb": "Max file size: 2mb"
+    "max2mb": "Max file size: 2mb",
+    "maxChars": "Maximum of {{max}} characters"
   },
 
   "interventionStatus": {
