@@ -25,10 +25,10 @@ import {
 import { IReviewFields } from "../reviewForm";
 import { ClinicalNote, NoteVariables } from "../ReviewModal.style";
 
-// why no note can be written: the types still loading or failed to, none
-// active, or no prescription to write it on
+// why no note can be written: the types still loading or failed to, the
+// schema without the multiple clinical notes, or no prescription to write it on
 export type ClinicalNoteUnavailable =
-  "loading" | "error" | "noTypes" | "noPrescription";
+  "loading" | "error" | "noFeature" | "noPrescription";
 
 interface ClinicalNoteStepProps {
   // null when a note can be written
@@ -172,7 +172,8 @@ export function ClinicalNoteStep({
             {
               value: "create",
               label: t("infectionControl.clinicalNote.create"),
-              // no note without a type, nor a prescription to write it on
+              // no note without the feature, its types, nor a prescription to
+              // write it on
               disabled: !!unavailable,
             },
             {
@@ -190,6 +191,25 @@ export function ClinicalNoteStep({
           data-testid="review-note-unavailable"
           title={t(`infectionControl.clinicalNote.unavailable.${unavailable}`)}
         />
+      )}
+
+      {/* without the feature, the text the review would write still shows */}
+      {unavailable === "noFeature" && (
+        <section className="summary-section">
+          <label
+            className="summary-section-title"
+            htmlFor="review-note-preview"
+          >
+            {t("infectionControl.clinicalNote.preview")}
+          </label>
+          <Textarea
+            id="review-note-preview"
+            data-testid="review-note-preview"
+            autoSize={{ minRows: 12, maxRows: 24 }}
+            value={fillClinicalNote(template, noteContext)}
+            disabled
+          />
+        </section>
       )}
 
       {!unavailable && clinicalNote.create && (

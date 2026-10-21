@@ -1903,6 +1903,7 @@
       "create": "Registrar evolução",
       "skip": "Não registrar",
       "skipNotice": "A revisão será registrada sem evolução.",
+      "preview": "Prévia do texto da evolução",
       "type": "Tipo de evolução",
       "typePlaceholder": "Selecione o tipo de evolução",
       "text": "Evolução",
@@ -1922,7 +1923,7 @@
       "unavailable": {
         "loading": "Carregando os tipos de evolução...",
         "error": "Não foi possível carregar os tipos de evolução. A revisão será registrada sem evolução.",
-        "noTypes": "Nenhum tipo de evolução ativo encontrado: não é possível registrar evolução. A revisão será registrada sem evolução.",
+        "noFeature": "A funcionalidade de evolução múltipla não está habilitada, por isso não é possível registrar evolução. A revisão será registrada sem evolução.",
         "noPrescription": "Este atendimento não tem prescrição para registrar a evolução. A revisão será registrada sem evolução."
       },
       "notInformed": "Não informado",

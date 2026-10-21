@@ -1893,6 +1893,7 @@
       "create": "Write clinical note",
       "skip": "Don't write",
       "skipNotice": "The review will be registered without a clinical note.",
+      "preview": "Clinical note text preview",
       "type": "Clinical note type",
       "typePlaceholder": "Select the clinical note type",
       "text": "Clinical note",
@@ -1912,7 +1913,7 @@
       "unavailable": {
         "loading": "Loading the clinical note types...",
         "error": "Could not load the clinical note types. The review will be registered without a clinical note.",
-        "noTypes": "No active clinical note type found: a clinical note can't be written. The review will be registered without one.",
+        "noFeature": "The multiple clinical notes feature is not enabled, so a clinical note can't be written. The review will be registered without one.",
         "noPrescription": "This admission has no prescription to write the clinical note on. The review will be registered without a clinical note."
       },
       "notInformed": "Not informed",

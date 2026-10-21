@@ -7,6 +7,8 @@ import { Dayjs } from "dayjs";
 
 import DefaultModal from "components/Modal";
 import notification from "components/notification";
+import Feature from "models/Feature";
+import { FeatureService } from "services/FeatureService";
 import { useAppDispatch, useAppSelector } from "src/store";
 import { getErrorMessage } from "utils/errorHandler";
 import { Form } from "styles/Form.style";
@@ -86,6 +88,9 @@ export function ReviewModal({
   // the user ducks are untyped legacy JS
   const account = useAppSelector((state: any) => state.user.account);
   const isSaving = status === "loading";
+  const hasMultiClinicalNotes = FeatureService.has(
+    Feature.MULTI_CLINICAL_NOTES,
+  );
   const [step, setStep] = useState(0);
 
   // every review starts at the first drug
@@ -97,20 +102,21 @@ export function ReviewModal({
   useEffect(() => {
     if (open) {
       dispatch(fetchInterventionReasons());
-      dispatch(fetchClinicalNoteTypes());
+      if (hasMultiClinicalNotes) dispatch(fetchClinicalNoteTypes());
     }
-  }, [open, dispatch]);
+  }, [open, hasMultiClinicalNotes, dispatch]);
 
-  // a note is written on the prescription-day of the record, with a type
+  // a note is written on the prescription-day of the record, with a type,
+  // only where the schema has the multiple clinical notes
   let noteUnavailable: ClinicalNoteUnavailable | null = null;
   if (!followUp.idPrescription) {
     noteUnavailable = "noPrescription";
+  } else if (!hasMultiClinicalNotes) {
+    noteUnavailable = "noFeature";
   } else if (clinicalNoteTypes.status === "failed") {
     noteUnavailable = "error";
   } else if (clinicalNoteTypes.status !== "succeeded") {
     noteUnavailable = "loading";
-  } else if (!clinicalNoteTypes.list.length) {
-    noteUnavailable = "noTypes";
   }
 
   // open reasons that make the evaluation on record of a drug no longer hold
