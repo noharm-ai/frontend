@@ -24,6 +24,7 @@ import LoadBox from "components/LoadBox";
 import DefaultModal from "components/Modal";
 import { getErrorMessage } from "utils/errorHandler";
 import colors from "styles/colors";
+import { useIsMobile } from "hooks/useIsMobile";
 
 import { fetchTrainingItems, finishTrainingItem } from "./TrainingPlayerSlice";
 import { fetchTrainingList } from "./TrainingCentralSlice";
@@ -31,7 +32,6 @@ import { TrainingCertificate } from "./TrainingCertificate/TrainingCertificate";
 import { TrainingItemQuiz } from "./TrainingItemQuiz";
 import { TrainingLessonList } from "./TrainingLessonList/TrainingLessonList";
 import { YoutubeEmbed } from "./YoutubeEmbed";
-import { useIsMobile } from "./useIsMobile";
 import {
   PlayerHeader,
   ItemContent,

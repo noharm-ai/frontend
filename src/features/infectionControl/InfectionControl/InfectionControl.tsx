@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
-import { Affix, Button, Dropdown, Empty } from "antd";
+import { Affix, Button, Dropdown, Empty, Segmented } from "antd";
 import type { MenuProps } from "antd";
 import {
   ArrowRightOutlined,
@@ -23,6 +23,7 @@ import PermissionService from "services/PermissionService";
 import { getErrorMessage } from "utils/errorHandler";
 import ExamsModal from "features/exams/ExamModal/ExamModal";
 import { setExamsModalAdmissionNumber } from "features/exams/ExamModal/ExamModalSlice";
+import { useIsMobile } from "hooks/useIsMobile";
 
 import {
   fetchAntimicrobialTimeline,
@@ -37,6 +38,7 @@ import {
   filtersFromSearch,
 } from "../InfectionControlListSlice";
 import { CourseGantt } from "../CourseGantt/CourseGantt";
+import { CourseList } from "../CourseList/CourseList";
 import { FollowUpStatus } from "../FollowUpStatus/FollowUpStatus";
 import { InfectionControlClinicalNotes } from "../InfectionControlClinicalNotes/InfectionControlClinicalNotes";
 import { InfectionControlCultures } from "../InfectionControlCultures/InfectionControlCultures";
@@ -69,6 +71,7 @@ export function InfectionControl() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const { admissionNumber = "" } = useParams();
   // the worklist filters the page was opened with (filtersToSearch)
   const [searchParams] = useSearchParams();
@@ -86,6 +89,9 @@ export function InfectionControl() {
   const [reportOpen, setReportOpen] = useState(false);
   const [affixed, setAffixed] = useState(false);
   const [nextLoading, setNextLoading] = useState(false);
+  // phones show the courses as a list, the timeline being too wide to read;
+  // it is still one tap away
+  const [coursesView, setCoursesView] = useState<"list" | "timeline">("list");
 
   const isValid = /^\d+$/.test(admissionNumber);
 
@@ -235,57 +241,81 @@ export function InfectionControl() {
     }
   };
 
-  const header = (
-    <Affix onChange={(value) => setAffixed(!!value)}>
-      <Header className={affixed ? "affixed" : ""}>
-        <div>
-          <h1 className="page-header-title" data-kb="infectionControl.title">
-            {t("infectionControl.title")}
-          </h1>
-          <div className="page-header-legend">
-            {t("infectionControl.legend", { admissionNumber })}
-            {affixed && data && (
-              <>
-                {" - "}
-                <PatientNameCache idPatient={data.patient.idPatient} />
-              </>
-            )}
-          </div>
+  // phones never stick it (below), even when resized from a stuck desktop
+  const isAffixed = affixed && !isMobile;
+
+  const headerContent = (
+    <Header className={isAffixed ? "affixed" : ""}>
+      <div>
+        <h1 className="page-header-title" data-kb="infectionControl.title">
+          {t("infectionControl.title")}
+        </h1>
+        <div className="page-header-legend">
+          {t("infectionControl.legend", { admissionNumber })}
+          {isAffixed && data && (
+            <>
+              {" - "}
+              <PatientNameCache idPatient={data.patient.idPatient} />
+            </>
+          )}
         </div>
-        {status === "succeeded" && data && (
-          <div className="page-header-actions">
-            {showReview && (
-              <Button
-                type="primary"
-                icon={<FileDoneOutlined />}
-                onClick={() => dispatch(setReviewOpen(true))}
-              >
-                {t("infectionControl.followUp.register")}
-              </Button>
-            )}
+      </div>
+      {status === "succeeded" && data && (
+        <div className="page-header-actions">
+          {showReview && (
             <Button
-              icon={<FileTextOutlined />}
-              onClick={() => setClinicalNotesOpen(true)}
+              type="primary"
+              icon={<FileDoneOutlined />}
+              onClick={() => dispatch(setReviewOpen(true))}
             >
-              {t("infectionControl.clinicalNotes")}
+              {t("infectionControl.followUp.register")}
             </Button>
-            <Dropdown
-              trigger={["click"]}
-              menu={{ items: moreActions, onClick: onMoreAction }}
+          )}
+          <Button
+            icon={<FileTextOutlined />}
+            onClick={() => setClinicalNotesOpen(true)}
+          >
+            {t("infectionControl.clinicalNotes")}
+          </Button>
+          <Dropdown
+            trigger={["click"]}
+            menu={{ items: moreActions, onClick: onMoreAction }}
+          >
+            <Button
+              data-kb="infectionControl.moreActions"
+              icon={<DownOutlined />}
+              iconPlacement="end"
+              loading={nextLoading || followStatus === "loading"}
             >
-              <Button
-                data-kb="infectionControl.moreActions"
-                icon={<DownOutlined />}
-                iconPlacement="end"
-                loading={nextLoading || followStatus === "loading"}
-              >
-                {t("infectionControl.moreActions")}
-              </Button>
-            </Dropdown>
-          </div>
-        )}
-      </Header>
-    </Affix>
+              {t("infectionControl.moreActions")}
+            </Button>
+          </Dropdown>
+        </div>
+      )}
+    </Header>
+  );
+
+  // on phones the actions wrap below the title: stuck to the top they would
+  // cover too much of the screen
+  const header = isMobile ? (
+    headerContent
+  ) : (
+    <Affix onChange={(value) => setAffixed(!!value)}>{headerContent}</Affix>
+  );
+
+  const coursesViewToggle = isMobile && (
+    <Segmented
+      size="small"
+      value={coursesView}
+      onChange={setCoursesView}
+      options={[
+        { value: "list", label: t("infectionControl.timeline.viewList") },
+        {
+          value: "timeline",
+          label: t("infectionControl.timeline.viewTimeline"),
+        },
+      ]}
+    />
   );
 
   const notFound =
@@ -373,6 +403,14 @@ export function InfectionControl() {
               />
             </StateBox>
           </>
+        ) : isMobile && coursesView === "list" ? (
+          <CourseList
+            courses={courses}
+            now={now}
+            followUps={followUpCourses}
+            invalidatedEvaluations={invalidatedEvaluations}
+            actions={coursesViewToggle}
+          />
         ) : (
           // the timeline carries its own title, next to its actions
           <CourseGantt
@@ -381,6 +419,7 @@ export function InfectionControl() {
             dischargeDate={data.patient.dischargeDate}
             followUps={followUpCourses}
             invalidatedEvaluations={invalidatedEvaluations}
+            actions={coursesViewToggle}
           />
         )}
       </Section>
@@ -425,6 +464,7 @@ export function InfectionControl() {
       {followUp && canReview && (
         <ReviewModal
           followUp={followUp}
+          timeline={data}
           courses={courses}
           dischargeDate={data.patient.dischargeDate}
           drugNames={drugNames}

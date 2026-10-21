@@ -92,7 +92,7 @@ export function MainFilters() {
           ))}
         </Select>
       </Col>
-      <Col xs={24} md={6}>
+      <Col xs={24} md={4}>
         <Heading
           {...({
             as: "label",

@@ -18,6 +18,7 @@ interface AntimicrobialFilterProps {
   id: string;
   value: ILabeledValue[];
   onChange: (drugs: ILabeledValue[]) => void;
+  disabled?: boolean;
 }
 
 /**
@@ -28,6 +29,7 @@ export function AntimicrobialFilter({
   id,
   value,
   onChange,
+  disabled = false,
 }: AntimicrobialFilterProps) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
@@ -71,6 +73,7 @@ export function AntimicrobialFilter({
       mode="multiple"
       allowClear
       maxTagCount="responsive"
+      disabled={disabled}
       labelInValue
       placeholder={t("infectionControl.worklist.filters.drugsPlaceholder")}
       loading={loading}

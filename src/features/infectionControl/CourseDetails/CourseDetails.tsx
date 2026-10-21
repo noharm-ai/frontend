@@ -215,7 +215,8 @@ export function CourseDetails({ course, now, onClose }: CourseDetailsProps) {
                 </div>
               ),
             }}
-            scroll={{ y: 280 }}
+            // sideways on phones, rather than squeezing every column
+            scroll={{ x: "max-content", y: 280 }}
           />
         </section>
 

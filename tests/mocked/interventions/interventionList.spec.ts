@@ -188,8 +188,12 @@ test("Prescritor and Setor stack, and a new search clears the local filters", as
   expect(calls).toHaveLength(searchesOnLoad + 1);
   const payload = JSON.parse(calls[calls.length - 1].postData!);
   // the default period is the last 15 days, open-ended
-  const expectedStart = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000);
-  expect(payload.startDate).toBe(expectedStart.toISOString().slice(0, 10));
+  const expectedStart = new Date();
+  expectedStart.setDate(expectedStart.getDate() - 15);
+  const pad = (n: number) => `${n}`.padStart(2, "0");
+  expect(payload.startDate).toBe(
+    `${expectedStart.getFullYear()}-${pad(expectedStart.getMonth() + 1)}-${pad(expectedStart.getDate())}`,
+  );
   expect(payload.endDate).toBeNull();
 });
 

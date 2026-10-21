@@ -11,16 +11,19 @@ import { InfectionControlStatusEnum } from "models/InfectionControlEnum";
 import { formatDate, formatDateTime } from "utils/date";
 import { peekPatient, subscribe } from "utils/patientCache";
 import { PageCard } from "styles/Utils.style";
+import { useIsMobile } from "hooks/useIsMobile";
 
 import {
   fetchFollowedAdmissions,
   filtersToSearch,
   IFollowedAdmission,
   LIST_LIMIT,
+  listsClosed,
   PAGE_SIZE,
 } from "../InfectionControlListSlice";
 import { describePending } from "../followUp";
 import { Header, StateBox } from "../InfectionControl/InfectionControl.style";
+import { WorklistCards } from "./WorklistCards/WorklistCards";
 import { WorklistFilter } from "./WorklistFilter/WorklistFilter";
 import { ListBox, ListInfo } from "./InfectionControlList.style";
 
@@ -52,9 +55,9 @@ function usePatientNameUpdates(active: boolean) {
 export function InfectionControlList() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { status, list, count, filters } = useAppSelector(
-    (state) => state.infectionControlList,
-  );
+  const isMobile = useIsMobile();
+  const { status, list, count, countLimited, errorCode, filters } =
+    useAppSelector((state) => state.infectionControlList);
   const [searchText, setSearchText] = useState("");
   const [page, setPage] = useState(1);
   const search = normalize(useDeferredValue(searchText));
@@ -229,7 +232,7 @@ export function InfectionControlList() {
         <ListInfo data-kb="infectionControl.worklist.search">
           <Input
             placeholder={t("infectionControl.worklist.searchPlaceholder")}
-            style={{ width: 300 }}
+            style={{ width: isMobile ? "100%" : 300 }}
             allowClear
             value={searchText}
             onChange={(event) => setSearchText(event.target.value)}
@@ -243,32 +246,64 @@ export function InfectionControlList() {
           </span>
         </ListInfo>
 
+        {/* the closed ones grow without end: only the latest are listed,
+            unless searched by admission number */}
+        {listsClosed(filters.status) && !filters.admissionNumbers.length && (
+          <Alert
+            className="list-alert"
+            type="info"
+            showIcon
+            data-kb="infectionControl.worklist.closedWindow"
+            message={t("infectionControl.worklist.closedWindow", {
+              count: filters.closedDays,
+            })}
+          />
+        )}
+
         {isLimited && (
           <Alert
-            className="limit-alert"
+            className="list-alert"
             type="warning"
             showIcon
             message={t("infectionControl.worklist.limited", {
               limit: LIST_LIMIT,
             })}
-            description={t("infectionControl.worklist.limitedHint", {
-              count,
-            })}
+            description={t(
+              countLimited
+                ? "infectionControl.worklist.limitedHintOver"
+                : "infectionControl.worklist.limitedHint",
+              { count },
+            )}
           />
         )}
 
-        <PageCard>
-          {status === "failed" ? (
+        {status === "failed" ? (
+          <PageCard>
             <StateBox>
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={t("infectionControl.worklist.loadError")}
+                description={t(
+                  errorCode === "errors.queryTimeout"
+                    ? "infectionControl.worklist.queryTimeout"
+                    : "infectionControl.worklist.loadError",
+                )}
               />
               <Button icon={<ReloadOutlined />} onClick={load}>
                 {t("infectionControl.retry")}
               </Button>
             </StateBox>
-          ) : (
+          </PageCard>
+        ) : isMobile ? (
+          <WorklistCards
+            admissions={shownList}
+            loading={status === "loading" || status === "idle"}
+            page={page}
+            onPageChange={setPage}
+            patientUrl={patientUrl}
+            isPast={isPast}
+          />
+        ) : (
+          <PageCard>
             <Table
               data-kb="infectionControl.worklist.list"
               rowKey="admissionNumber"
@@ -287,8 +322,8 @@ export function InfectionControlList() {
                 onChange: setPage,
               }}
             />
-          )}
-        </PageCard>
+          </PageCard>
+        )}
       </ListBox>
     </>
   );

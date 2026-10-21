@@ -32,6 +32,7 @@ interface AntimicrobialCriteriaProps {
   onChange: (criteria: IAntimicrobialCriterion[]) => void;
   matchAll: boolean;
   onMatchAllChange: (matchAll: boolean) => void;
+  disabled?: boolean;
 }
 
 /**
@@ -47,6 +48,7 @@ export function AntimicrobialCriteria({
   onChange,
   matchAll,
   onMatchAllChange,
+  disabled = false,
 }: AntimicrobialCriteriaProps) {
   const { t } = useTranslation();
   // the type of the empty row shown when nothing is asked, which is no filter
@@ -113,6 +115,7 @@ export function AntimicrobialCriteria({
               },
             ]}
             value={matchAll}
+            disabled={disabled}
             onChange={({ target }: any) => onMatchAllChange(target.value)}
           />
         </Match>
@@ -141,6 +144,7 @@ export function AntimicrobialCriteria({
                   },
                 ]}
                 value={row.type}
+                disabled={disabled}
                 // a row searches drugs or substances, never both
                 onChange={({ target }: any) =>
                   change(index, {
@@ -154,6 +158,7 @@ export function AntimicrobialCriteria({
                 <AntimicrobialFilter
                   id={`drugs-${index}`}
                   value={row.drugs}
+                  disabled={disabled}
                   onChange={(drugs) => change(index, { drugs })}
                 />
               ) : (
@@ -165,6 +170,7 @@ export function AntimicrobialCriteria({
                     "infectionControl.worklist.filters.substancesPlaceholder",
                   )}
                   value={row.substances}
+                  disabled={disabled}
                   // one dropdown per row, not all in the first row's box
                   getPopupContainer={(trigger: HTMLElement) =>
                     trigger.parentElement
@@ -192,6 +198,7 @@ export function AntimicrobialCriteria({
                   min={1}
                   max={365}
                   precision={0}
+                  disabled={disabled}
                   placeholder={t(
                     "infectionControl.worklist.filters.treatmentDayFrom",
                   )}
@@ -208,6 +215,7 @@ export function AntimicrobialCriteria({
                   min={1}
                   max={365}
                   precision={0}
+                  disabled={disabled}
                   placeholder={t(
                     "infectionControl.worklist.filters.treatmentDayTo",
                   )}
@@ -225,7 +233,9 @@ export function AntimicrobialCriteria({
                 aria-label={t(
                   "infectionControl.worklist.filters.removeAntimicrobial",
                 )}
-                disabled={rows.length === 1 && isEmptyCriterion(row)}
+                disabled={
+                  disabled || (rows.length === 1 && isEmptyCriterion(row))
+                }
                 onClick={() => save(rows.filter((_, i) => i !== index))}
               />
             </Tooltip>
@@ -238,7 +248,9 @@ export function AntimicrobialCriteria({
         style={{ marginTop: 8 }}
         // a new row once the last one asks for something
         disabled={
-          rows.length >= MAX_CRITERIA || isEmptyCriterion(rows[rows.length - 1])
+          disabled ||
+          rows.length >= MAX_CRITERIA ||
+          isEmptyCriterion(rows[rows.length - 1])
         }
         onClick={() => onChange([...rows, EMPTY_CRITERION])}
       >

@@ -8,6 +8,15 @@ import dotenv from "dotenv";
 dotenv.config();
 
 /**
+ * The browser runs in this timezone (see `use.timezoneId`). Run the test
+ * process in it too, so dates the specs compute in local time match the day
+ * the app shows — otherwise a UTC runner disagrees with the browser on what
+ * "today" is between 21:00 and midnight in São Paulo.
+ */
+const TIMEZONE = "America/Sao_Paulo";
+process.env.TZ = TIMEZONE;
+
+/**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
@@ -30,7 +39,7 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
 
-    timezoneId: "America/Sao_Paulo",
+    timezoneId: TIMEZONE,
     locale: "pt-BR",
   },
 

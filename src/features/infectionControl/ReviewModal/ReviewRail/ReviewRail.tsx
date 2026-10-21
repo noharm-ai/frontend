@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { CheckOutlined } from "@ant-design/icons";
 import { Tag } from "antd";
@@ -17,8 +18,10 @@ export interface IReviewRailItem {
 
 interface ReviewRailProps {
   drugs: IReviewRailItem[];
-  // the step open: a drug, or the patient after the last one
+  // the step open: a drug, the patient after the last one, then the note
   step: number;
+  // what is chosen for the clinical note
+  noteStatus: { label: string; color?: string };
   onSelect: (step: number) => void;
 }
 
@@ -29,11 +32,6 @@ const Rail = styled.nav`
   flex-direction: column;
   gap: 6px;
   padding: 20px 14px;
-
-  @media (max-width: 768px) {
-    border-bottom: 1px solid #f0f0f0;
-    border-right: 0;
-  }
 
   .rail-section {
     color: #898685;
@@ -137,18 +135,73 @@ const Rail = styled.nav`
     font-size: 12px;
     font-weight: 500;
   }
+
+  /* phones: one line of numbered steps, only the open one named, so the step
+     itself starts on the first screen; it scrolls sideways with many drugs */
+  @media (max-width: 768px) {
+    align-items: center;
+    border-bottom: 1px solid #f0f0f0;
+    border-right: 0;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 8px 12px;
+    position: relative;
+
+    .rail-section,
+    .rail-divider,
+    .rail-meta,
+    .rail-item:not(.active) .rail-text {
+      display: none;
+    }
+
+    .rail-item {
+      align-items: center;
+      flex: none;
+      gap: 8px;
+      padding: 6px;
+      width: auto;
+
+      &.active {
+        flex: 1 0 auto;
+        max-width: 70%;
+      }
+    }
+
+    .rail-title {
+      -webkit-line-clamp: 1;
+    }
+  }
 `;
 
 /**
  * The steps of the review: each running antimicrobial with what is chosen for
- * it, then the patient. Any of them can be opened.
+ * it, then the patient and the clinical note. Any of them can be opened.
  */
-export function ReviewRail({ drugs, step, onSelect }: ReviewRailProps) {
+export function ReviewRail({
+  drugs,
+  step,
+  noteStatus,
+  onSelect,
+}: ReviewRailProps) {
   const { t } = useTranslation();
+  const railRef = useRef<HTMLElement>(null);
   const patientStep = drugs.length;
+  const noteStep = patientStep + 1;
+
+  // on phones the rail is a line that scrolls sideways: keep the open step in
+  // sight
+  useEffect(() => {
+    const rail = railRef.current;
+    const active = rail?.querySelector<HTMLElement>('[aria-current="step"]');
+    if (!rail || !active || rail.scrollWidth <= rail.clientWidth) return;
+
+    rail.scrollLeft =
+      active.offsetLeft - (rail.clientWidth - active.offsetWidth) / 2;
+  }, [step]);
 
   return (
     <Rail
+      ref={railRef}
       aria-label={t("infectionControl.review.steps")}
       data-kb="infectionControl.review.rail"
       data-testid="review-rail"
@@ -197,6 +250,23 @@ export function ReviewRail({ drugs, step, onSelect }: ReviewRailProps) {
           </span>
           <span className="rail-meta">
             <Tag>{t("infectionControl.review.optionalTag")}</Tag>
+          </span>
+        </span>
+      </button>
+      <button
+        type="button"
+        className={`rail-item ${step === noteStep ? "active" : ""}`}
+        aria-current={step === noteStep ? "step" : undefined}
+        onClick={() => onSelect(noteStep)}
+        data-testid="review-rail-note"
+      >
+        <span className="rail-number">{noteStep + 1}</span>
+        <span className="rail-text">
+          <span className="rail-title">
+            {t("infectionControl.clinicalNote.stepTitle")}
+          </span>
+          <span className="rail-meta">
+            <Tag color={noteStatus.color}>{noteStatus.label}</Tag>
           </span>
         </span>
       </button>
