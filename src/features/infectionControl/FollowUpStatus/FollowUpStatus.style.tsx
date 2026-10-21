@@ -100,6 +100,20 @@ export const FollowUpBox = styled.div`
     color: #595959;
     font-size: 13px;
   }
+
+  /* too narrow for a date and its detail on one line: wrap them */
+  @media (max-width: 576px) {
+    .follow-up-value,
+    .follow-up-link {
+      text-align: left;
+      white-space: normal;
+    }
+
+    .follow-up-link > span {
+      overflow: visible;
+      white-space: normal;
+    }
+  }
 `;
 
 export const HistoryBody = styled.div`

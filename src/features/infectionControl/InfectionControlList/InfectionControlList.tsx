@@ -11,6 +11,7 @@ import { InfectionControlStatusEnum } from "models/InfectionControlEnum";
 import { formatDate, formatDateTime } from "utils/date";
 import { peekPatient, subscribe } from "utils/patientCache";
 import { PageCard } from "styles/Utils.style";
+import { useIsMobile } from "hooks/useIsMobile";
 
 import {
   fetchFollowedAdmissions,
@@ -22,6 +23,7 @@ import {
 } from "../InfectionControlListSlice";
 import { describePending } from "../followUp";
 import { Header, StateBox } from "../InfectionControl/InfectionControl.style";
+import { WorklistCards } from "./WorklistCards/WorklistCards";
 import { WorklistFilter } from "./WorklistFilter/WorklistFilter";
 import { ListBox, ListInfo } from "./InfectionControlList.style";
 
@@ -53,6 +55,7 @@ function usePatientNameUpdates(active: boolean) {
 export function InfectionControlList() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+  const isMobile = useIsMobile();
   const { status, list, count, countLimited, errorCode, filters } =
     useAppSelector((state) => state.infectionControlList);
   const [searchText, setSearchText] = useState("");
@@ -229,7 +232,7 @@ export function InfectionControlList() {
         <ListInfo data-kb="infectionControl.worklist.search">
           <Input
             placeholder={t("infectionControl.worklist.searchPlaceholder")}
-            style={{ width: 300 }}
+            style={{ width: isMobile ? "100%" : 300 }}
             allowClear
             value={searchText}
             onChange={(event) => setSearchText(event.target.value)}
@@ -274,8 +277,8 @@ export function InfectionControlList() {
           />
         )}
 
-        <PageCard>
-          {status === "failed" ? (
+        {status === "failed" ? (
+          <PageCard>
             <StateBox>
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
@@ -289,7 +292,18 @@ export function InfectionControlList() {
                 {t("infectionControl.retry")}
               </Button>
             </StateBox>
-          ) : (
+          </PageCard>
+        ) : isMobile ? (
+          <WorklistCards
+            admissions={shownList}
+            loading={status === "loading" || status === "idle"}
+            page={page}
+            onPageChange={setPage}
+            patientUrl={patientUrl}
+            isPast={isPast}
+          />
+        ) : (
+          <PageCard>
             <Table
               data-kb="infectionControl.worklist.list"
               rowKey="admissionNumber"
@@ -308,8 +322,8 @@ export function InfectionControlList() {
                 onChange: setPage,
               }}
             />
-          )}
-        </PageCard>
+          </PageCard>
+        )}
       </ListBox>
     </>
   );

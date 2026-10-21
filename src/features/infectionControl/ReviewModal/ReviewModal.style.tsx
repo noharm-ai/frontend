@@ -77,6 +77,9 @@ export const ReviewBody = styled.div`
 
     /* stacked, they scroll together */
     @media (max-width: 768px) {
+      /* rows as tall as their content: stretched, the rail took the room
+         the step left */
+      align-content: start;
       grid-template-columns: minmax(0, 1fr);
       grid-template-rows: none;
       overflow-y: auto;
@@ -93,6 +96,22 @@ export const ReviewBody = styled.div`
     gap: 24px;
     min-width: 0;
     padding: 24px 28px 28px;
+  }
+
+  /* phones: less room around, more for the step */
+  @media (max-width: 768px) {
+    .review-header {
+      padding: 16px 56px 12px 16px;
+    }
+
+    .review-step {
+      padding: 16px 16px 20px;
+    }
+
+    .review-footer {
+      gap: 8px;
+      padding: 10px 16px;
+    }
   }
 
   .review-footer {
@@ -129,6 +148,18 @@ export const ReviewBody = styled.div`
   .review-footer-actions {
     display: flex;
     gap: 8px;
+
+    /* the whole width, wrapping when the labels do not fit beside each
+       other ("Próximo: evolução" after Cancelar and Voltar) */
+    @media (max-width: 768px) {
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      width: 100%;
+
+      > .ant-btn-primary {
+        flex: 1 1 auto;
+      }
+    }
 
     .ant-btn-primary:not(:disabled) {
       background: ${get("colors.accentSecondary")};

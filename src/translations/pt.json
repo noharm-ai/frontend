@@ -1684,6 +1684,9 @@
       "legendGroupMilestones": "Marcos",
       "legendGroupEvaluation": "Avaliação",
       "superseded": "Avaliações substituídas ({{count}})",
+      "listTitle": "Antimicrobianos",
+      "viewList": "Lista",
+      "viewTimeline": "Linha do tempo",
       "evaluation": {
         "draft": "Nova avaliação (não salva)",
         "label": "{{verdict}} em {{date}}",

@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { CheckOutlined } from "@ant-design/icons";
 import { Tag } from "antd";
@@ -31,11 +32,6 @@ const Rail = styled.nav`
   flex-direction: column;
   gap: 6px;
   padding: 20px 14px;
-
-  @media (max-width: 768px) {
-    border-bottom: 1px solid #f0f0f0;
-    border-right: 0;
-  }
 
   .rail-section {
     color: #898685;
@@ -139,6 +135,42 @@ const Rail = styled.nav`
     font-size: 12px;
     font-weight: 500;
   }
+
+  /* phones: one line of numbered steps, only the open one named, so the step
+     itself starts on the first screen; it scrolls sideways with many drugs */
+  @media (max-width: 768px) {
+    align-items: center;
+    border-bottom: 1px solid #f0f0f0;
+    border-right: 0;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 8px 12px;
+    position: relative;
+
+    .rail-section,
+    .rail-divider,
+    .rail-meta,
+    .rail-item:not(.active) .rail-text {
+      display: none;
+    }
+
+    .rail-item {
+      align-items: center;
+      flex: none;
+      gap: 8px;
+      padding: 6px;
+      width: auto;
+
+      &.active {
+        flex: 1 0 auto;
+        max-width: 70%;
+      }
+    }
+
+    .rail-title {
+      -webkit-line-clamp: 1;
+    }
+  }
 `;
 
 /**
@@ -152,11 +184,24 @@ export function ReviewRail({
   onSelect,
 }: ReviewRailProps) {
   const { t } = useTranslation();
+  const railRef = useRef<HTMLElement>(null);
   const patientStep = drugs.length;
   const noteStep = patientStep + 1;
 
+  // on phones the rail is a line that scrolls sideways: keep the open step in
+  // sight
+  useEffect(() => {
+    const rail = railRef.current;
+    const active = rail?.querySelector<HTMLElement>('[aria-current="step"]');
+    if (!rail || !active || rail.scrollWidth <= rail.clientWidth) return;
+
+    rail.scrollLeft =
+      active.offsetLeft - (rail.clientWidth - active.offsetWidth) / 2;
+  }, [step]);
+
   return (
     <Rail
+      ref={railRef}
       aria-label={t("infectionControl.review.steps")}
       data-kb="infectionControl.review.rail"
       data-testid="review-rail"

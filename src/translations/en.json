@@ -1674,6 +1674,9 @@
       "legendGroupMilestones": "Milestones",
       "legendGroupEvaluation": "Evaluation",
       "superseded": "Replaced evaluations ({{count}})",
+      "listTitle": "Antimicrobials",
+      "viewList": "List",
+      "viewTimeline": "Timeline",
       "evaluation": {
         "draft": "New evaluation (not saved)",
         "label": "{{verdict}} on {{date}}",
