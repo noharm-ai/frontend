@@ -19,6 +19,7 @@ const colors = {
   accentSecondary: tertiary,
 
   text: "#696766",
+  textSecondary: "rgba(0, 0, 0, 0.65)",
 
   detail: "#e0e0e0",
 

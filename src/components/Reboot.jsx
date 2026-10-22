@@ -1,4 +1,4 @@
-import { createGlobalStyle } from "styled-components";
+import { createGlobalStyle, css } from "styled-components";
 import { rgba } from "polished";
 
 import { get } from "styles/utils";
@@ -290,6 +290,19 @@ const ResetStyled = createGlobalStyle`
       }
     }
   }
+
+  /* High contrast preference: a focus ring that can't be missed, also on the
+  many elements that reset their outline. The white halo keeps it visible over
+  dark backgrounds. */
+  ${({ theme }) =>
+    theme.highContrast &&
+    css`
+      :focus-visible {
+        outline: 3px solid ${theme.colors.commonDarker} !important;
+        outline-offset: 2px !important;
+        box-shadow: 0 0 0 2px ${theme.colors.commonLighter};
+      }
+    `}
 `;
 
 export default ResetStyled;

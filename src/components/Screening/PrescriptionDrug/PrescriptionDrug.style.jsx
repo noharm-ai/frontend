@@ -37,8 +37,8 @@ export const ToolBox = styled.div`
     min-height: 32px;
 
     .add-filter {
-      background-color: #7ebe9a;
-      border-color: #7ebe9a;
+      background-color: ${get("colors.accent")};
+      border-color: ${get("colors.accent")};
       border-style: dashed;
       color: #fff;
       cursor: pointer;
@@ -129,7 +129,7 @@ export const PrescriptionHeader = styled.div`
     }
 
     a {
-      color: rgba(0, 0, 0, 0.65);
+      color: ${get("colors.textSecondary")};
       text-decoration: none;
     }
 
@@ -338,6 +338,6 @@ export const PanelActionContainer = styled.div`
   }
 
   .gtm-bt-check-single {
-    color: rgba(0, 0, 0, 0.65);
+    color: ${get("colors.textSecondary")};
   }
 `;

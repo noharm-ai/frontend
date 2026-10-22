@@ -19,6 +19,7 @@ import { Signature } from "./Signature/Signature";
 import { ChangePassword } from "./ChangePassword/ChangePassword";
 import { PageHeader } from "src/styles/PageHeader.style";
 import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
+import { HighContrast } from "features/preferences/HighContrast/HighContrast";
 
 const { appResetScreeningListFilter } = AppCreators;
 
@@ -133,6 +134,11 @@ export function UserProfile() {
             <Button type="primary" onClick={executeCleanCache}>
               Limpar cache de nomes dos pacientes
             </Button>
+          </Card>
+        </Col>
+        <Col xs={24} lg={8}>
+          <Card title="Acessibilidade" data-kb="userProfile.accessibility">
+            <HighContrast />
           </Card>
         </Col>
       </Row>
