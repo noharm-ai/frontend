@@ -1,3 +1,5 @@
+import type { Page } from "@playwright/test";
+
 import { test, expect } from "../support/mockApi";
 import { loginWithPermissions } from "../support/featureLogin";
 import { openSelect } from "../support/antd";
@@ -9,6 +11,17 @@ import { openSelect } from "../support/antd";
  */
 
 const BASE_PERMISSIONS = ["READ_BASIC_FEATURES", "READ_PRESCRIPTION"];
+
+/**
+ * The open tag modal, once its zoom motion is over: a click landing on it
+ * while it still zooms in can be lost, and the modal stays open.
+ */
+const settledModal = async (page: Page) => {
+  const modal = page.getByRole("dialog");
+  await expect(modal).toBeVisible();
+  await expect(modal).not.toHaveClass(/ant-zoom/);
+  return modal;
+};
 
 const tags = [
   {
@@ -131,22 +144,23 @@ test("WRITE_PATIENT_TAGS writes navigation tags only", async ({
 
   // the patient tag opens read-only, the navigation tag opens editable
   await patientRow.getByRole("button", { name: "Visualizar marcador" }).click();
-  let modal = page.getByRole("dialog");
+  let modal = await settledModal(page);
   await expect(modal.getByRole("button", { name: "Salvar" })).toHaveCount(0);
   await modal
     .locator(".ant-modal-footer")
     .getByRole("button", { name: "Fechar" })
     .click();
+  await expect(page.getByRole("dialog")).toHaveCount(0);
 
   await navRow.getByRole("button", { name: "Editar marcador" }).click();
-  modal = page.getByRole("dialog");
+  modal = await settledModal(page);
   await expect(modal.getByRole("button", { name: "Salvar" })).toBeVisible();
   await modal.getByRole("button", { name: "Cancelar" }).click();
   await expect(page.getByRole("dialog")).toHaveCount(0);
 
   // a new tag may only be a navigation tag
   await page.getByRole("button", { name: "Adicionar marcador" }).click();
-  modal = page.getByRole("dialog");
+  modal = await settledModal(page);
   await openSelect(modal.locator(".form-row").filter({ hasText: "Tipo:" }));
 
   const options = page.locator(
