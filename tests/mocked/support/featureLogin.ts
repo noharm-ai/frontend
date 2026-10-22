@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
-import type { Page } from "@playwright/test";
+import type { Page, Request } from "@playwright/test";
 
-import { MockApi } from "./mockApi";
+import { API_URL, MockApi } from "./mockApi";
 import { loadFixture } from "./defaultHandlers";
 
 /**
@@ -57,6 +57,7 @@ export async function loginWithAuth(
   const auth = loadFixture<Record<string, unknown>>("auth/authenticate.json");
   const payload = { ...auth, ...overrides };
   mockApi.override("POST /authenticate", { json: payload });
+  const pending = pendingApiRequests(page);
 
   await page.goto("/login");
   await page.getByPlaceholder("Email").fill("e2e@noharm.ai");
@@ -70,6 +71,83 @@ export async function loginWithAuth(
   });
 
   await waitForPersistedLogin(page, payload);
+  navigateInApp(page, pending);
+}
+
+/** The API requests the page has in flight, from now on */
+function pendingApiRequests(page: Page) {
+  const pending = new Set<Request>();
+  page.on("request", (request) => {
+    if (request.url().startsWith(API_URL)) {
+      pending.add(request);
+    }
+  });
+  page.on("requestfinished", (request) => pending.delete(request));
+  page.on("requestfailed", (request) => pending.delete(request));
+  return pending;
+}
+
+/**
+ * Makes the page.goto(path) calls that follow a login navigate inside the
+ * running app (pushState + popstate, as a click on a link would) instead of
+ * loading it again: booting the app costs ~1s of CPU per load, and the login
+ * already paid it once. The session is the same either way, since the
+ * navigation runs on the very store the login filled.
+ *
+ * A goto still loads the document when the test asked for something that only
+ * applies at load time (page.addInitScript, page.clock.install) or leaves the
+ * app (a full URL). page.reload() is untouched.
+ */
+function navigateInApp(page: Page, pending: Set<Request>) {
+  // an init script or a fake clock only applies to a document loaded after it
+  let reload = false;
+  const addInitScript = page.addInitScript.bind(page);
+  page.addInitScript = ((...args: Parameters<Page["addInitScript"]>) => {
+    reload = true;
+    return addInitScript(...args);
+  }) as Page["addInitScript"];
+  const installClock = page.clock.install.bind(page.clock);
+  page.clock.install = (...args: Parameters<Page["clock"]["install"]>) => {
+    reload = true;
+    return installClock(...args);
+  };
+
+  // A load cancels what the current page still has in flight; navigating
+  // inside the app lets it finish, and land in the next page's
+  // mockApi.requests (the landing page's name lookup, for one). Let the API
+  // settle first, for up to 2s: a request still pending by then (a handler
+  // that never answers) is one a load would have cut short, so go anyway.
+  const settle = async () => {
+    const deadline = Date.now() + 2000;
+    for (
+      let quiet = 0;
+      quiet < 2 && Date.now() < deadline;
+      quiet = pending.size ? 0 : quiet + 1
+    ) {
+      await page.waitForTimeout(50);
+    }
+  };
+
+  const goto = page.goto.bind(page);
+  page.goto = (async (url: string, options?: Parameters<Page["goto"]>[1]) => {
+    if (reload || !url.startsWith("/")) {
+      reload = false;
+      return goto(url, options);
+    }
+    await settle();
+    await page.evaluate((path) => {
+      const go = (to: string) => {
+        window.history.pushState({}, "", to);
+        window.dispatchEvent(new PopStateEvent("popstate"));
+      };
+      // the same route again would not remount the page
+      if (window.location.pathname + window.location.search === path) {
+        go("/");
+      }
+      go(path);
+    }, url);
+    return null;
+  }) as Page["goto"];
 }
 
 /**

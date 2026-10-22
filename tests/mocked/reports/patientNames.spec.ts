@@ -104,8 +104,9 @@ const installReportHandlers = (
   );
 };
 
-// The landing page shown after login resolves its own patient names, so only
-// the requests made after the report opened count.
+// The landing page shown after login resolves its own patient names, and the
+// ones it has in flight as the report loads still get routed, so only the
+// requests made once the report is up count.
 let reportOpenedAt = 0;
 
 const nameRequests = (mockApi: MockApi) =>
@@ -134,7 +135,6 @@ const openReport = async (
     [CACHE_KEY, options.seedCache ?? ""],
   );
 
-  reportOpenedAt = mockApi.requests.length;
   await page.goto(REPORT_URL);
   await expect(
     page.getByRole("heading", { name: /Relatório: Pacientes com antimicrobiano/ }),
@@ -142,6 +142,7 @@ const openReport = async (
   // the dataset has been decompressed once the dataset-derived UI shows up
   await expect(page.getByRole("tab", { name: /Tabela/ })).toBeVisible();
   await expect(page.locator(".ant-spin-spinning")).toHaveCount(0);
+  reportOpenedAt = mockApi.requests.length;
 };
 
 const table = (page: Page) => page.locator(".ant-table");
@@ -594,6 +595,8 @@ const openExport = async (page: Page) => {
   await page.getByRole("button", { name: "download", exact: true }).click();
   const dialog = page.getByRole("dialog", { name: "Exportar relatório" });
   await expect(dialog).toBeVisible();
+  // a click landing while it still zooms in can be lost
+  await expect(dialog).not.toHaveClass(/ant-zoom/);
   return dialog;
 };
 
