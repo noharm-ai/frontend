@@ -70,6 +70,53 @@ export async function loginWithAuth(
   });
 
   await waitForPersistedLogin(page, payload);
+  navigateInApp(page);
+}
+
+/**
+ * Makes the page.goto(path) calls that follow a login navigate inside the
+ * running app (pushState + popstate, as a click on a link would) instead of
+ * loading it again: booting the app costs ~1s of CPU per load, and the login
+ * already paid it once. The session is the same either way, since the
+ * navigation runs on the very store the login filled.
+ *
+ * A goto still loads the document when the test asked for something that only
+ * applies at load time (page.addInitScript, page.clock.install) or leaves the
+ * app (a full URL). page.reload() is untouched.
+ */
+function navigateInApp(page: Page) {
+  // an init script or a fake clock only applies to a document loaded after it
+  let reload = false;
+  const addInitScript = page.addInitScript.bind(page);
+  page.addInitScript = ((...args: Parameters<Page["addInitScript"]>) => {
+    reload = true;
+    return addInitScript(...args);
+  }) as Page["addInitScript"];
+  const installClock = page.clock.install.bind(page.clock);
+  page.clock.install = (...args: Parameters<Page["clock"]["install"]>) => {
+    reload = true;
+    return installClock(...args);
+  };
+
+  const goto = page.goto.bind(page);
+  page.goto = (async (url: string, options?: Parameters<Page["goto"]>[1]) => {
+    if (reload || !url.startsWith("/")) {
+      reload = false;
+      return goto(url, options);
+    }
+    await page.evaluate((path) => {
+      const go = (to: string) => {
+        window.history.pushState({}, "", to);
+        window.dispatchEvent(new PopStateEvent("popstate"));
+      };
+      // the same route again would not remount the page
+      if (window.location.pathname + window.location.search === path) {
+        go("/");
+      }
+      go(path);
+    }, url);
+    return null;
+  }) as Page["goto"];
 }
 
 /**
