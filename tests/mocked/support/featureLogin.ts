@@ -1,7 +1,7 @@
 import { expect } from "@playwright/test";
-import type { Page } from "@playwright/test";
+import type { Page, Request } from "@playwright/test";
 
-import { MockApi } from "./mockApi";
+import { API_URL, MockApi } from "./mockApi";
 import { loadFixture } from "./defaultHandlers";
 
 /**
@@ -57,6 +57,7 @@ export async function loginWithAuth(
   const auth = loadFixture<Record<string, unknown>>("auth/authenticate.json");
   const payload = { ...auth, ...overrides };
   mockApi.override("POST /authenticate", { json: payload });
+  const pending = pendingApiRequests(page);
 
   await page.goto("/login");
   await page.getByPlaceholder("Email").fill("e2e@noharm.ai");
@@ -70,7 +71,20 @@ export async function loginWithAuth(
   });
 
   await waitForPersistedLogin(page, payload);
-  navigateInApp(page);
+  navigateInApp(page, pending);
+}
+
+/** The API requests the page has in flight, from now on */
+function pendingApiRequests(page: Page) {
+  const pending = new Set<Request>();
+  page.on("request", (request) => {
+    if (request.url().startsWith(API_URL)) {
+      pending.add(request);
+    }
+  });
+  page.on("requestfinished", (request) => pending.delete(request));
+  page.on("requestfailed", (request) => pending.delete(request));
+  return pending;
 }
 
 /**
@@ -84,7 +98,7 @@ export async function loginWithAuth(
  * applies at load time (page.addInitScript, page.clock.install) or leaves the
  * app (a full URL). page.reload() is untouched.
  */
-function navigateInApp(page: Page) {
+function navigateInApp(page: Page, pending: Set<Request>) {
   // an init script or a fake clock only applies to a document loaded after it
   let reload = false;
   const addInitScript = page.addInitScript.bind(page);
@@ -98,12 +112,23 @@ function navigateInApp(page: Page) {
     return installClock(...args);
   };
 
+  // A load cancels what the current page still has in flight; navigating
+  // inside the app lets it finish, and land in the next page's
+  // mockApi.requests (the landing page's name lookup, for one). Let the API
+  // settle first.
+  const settle = async () => {
+    for (let quiet = 0; quiet < 2; quiet = pending.size ? 0 : quiet + 1) {
+      await page.waitForTimeout(50);
+    }
+  };
+
   const goto = page.goto.bind(page);
   page.goto = (async (url: string, options?: Parameters<Page["goto"]>[1]) => {
     if (reload || !url.startsWith("/")) {
       reload = false;
       return goto(url, options);
     }
+    await settle();
     await page.evaluate((path) => {
       const go = (to: string) => {
         window.history.pushState({}, "", to);
