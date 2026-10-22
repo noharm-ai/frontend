@@ -42,8 +42,12 @@ jobs:
       - name: Install dependencies
         run: sfw npm ci --ignore-scripts
 
+      # No --with-deps: ubuntu-latest already carries every library Chromium
+      # needs, and the apt step only added CJK/Unicode fonts the mocked
+      # specs don't use. It also pulled them from the Ubuntu mirror, which
+      # took 8 min on one shard (21 MB at 43 kB/s) instead of the usual 20s.
       - name: Install Playwright chromium
-        run: npx playwright install --with-deps chromium
+        run: npx playwright install chromium
 
       # Serve a production build instead of the dev server: with the backend
       # mocked, page loads are the bottleneck, and the dev server serves
