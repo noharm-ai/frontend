@@ -137,7 +137,10 @@ export function UserProfile() {
           </Card>
         </Col>
         <Col xs={24} lg={8}>
-          <Card title="Acessibilidade" data-kb="userProfile.accessibility">
+          <Card
+            title={t("accessibility.title")}
+            data-kb="userProfile.accessibility"
+          >
             <HighContrast />
           </Card>
         </Col>

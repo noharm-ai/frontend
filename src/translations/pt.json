@@ -2087,5 +2087,10 @@
         "6": "Posologia alterada"
       }
     }
+  },
+  "accessibility": {
+    "title": "Acessibilidade",
+    "highContrast": "Alto contraste",
+    "highContrastDescription": "Escurece textos, bordas e cores de destaque e reforça o indicador de foco, facilitando a leitura para quem tem baixa visão."
   }
 }

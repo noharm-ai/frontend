@@ -1,11 +1,14 @@
 import { Flex, Switch } from "antd";
+import { useTranslation } from "react-i18next";
 
 import { useAppDispatch, useAppSelector } from "store/index";
 import { setHighContrast, savePreferences } from "../PreferencesSlice";
 
 export function HighContrast() {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const highContrast = useAppSelector(
+    // PreferencesSlice is untyped JS, so its state is not in IRootState
     (state: any) => !!state.preferences.app.highContrast,
   );
 
@@ -22,11 +25,12 @@ export function HighContrast() {
           checked={highContrast}
           onChange={onChange}
         />
-        <label htmlFor="preferences-high-contrast">Alto contraste</label>
+        <label htmlFor="preferences-high-contrast">
+          {t("accessibility.highContrast")}
+        </label>
       </Flex>
       <p style={{ marginBottom: 0 }}>
-        Escurece textos, bordas e cores de destaque e reforça o indicador de
-        foco, facilitando a leitura para quem tem baixa visão.
+        {t("accessibility.highContrastDescription")}
       </p>
     </>
   );

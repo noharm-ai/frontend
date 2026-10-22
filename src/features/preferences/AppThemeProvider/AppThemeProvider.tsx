@@ -26,6 +26,7 @@ const boxShadowTertiary =
 export function AppThemeProvider({ children }: AppThemeProviderProps) {
   const { i18n } = useTranslation();
   const highContrast = useAppSelector(
+    // PreferencesSlice is untyped JS, so its state is not in IRootState
     (state: any) => !!state.preferences.app.highContrast,
   );
 
