@@ -115,9 +115,15 @@ function navigateInApp(page: Page, pending: Set<Request>) {
   // A load cancels what the current page still has in flight; navigating
   // inside the app lets it finish, and land in the next page's
   // mockApi.requests (the landing page's name lookup, for one). Let the API
-  // settle first.
+  // settle first, for up to 2s: a request still pending by then (a handler
+  // that never answers) is one a load would have cut short, so go anyway.
   const settle = async () => {
-    for (let quiet = 0; quiet < 2; quiet = pending.size ? 0 : quiet + 1) {
+    const deadline = Date.now() + 2000;
+    for (
+      let quiet = 0;
+      quiet < 2 && Date.now() < deadline;
+      quiet = pending.size ? 0 : quiet + 1
+    ) {
       await page.waitForTimeout(50);
     }
   };
