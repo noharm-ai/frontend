@@ -16,6 +16,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "2.13.0",
     "@tiptap/extension-link": "3.31.4",
+    "@tiptap/extension-youtube": "3.31.4",
     "@tiptap/pm": "3.31.4",
     "@tiptap/react": "3.31.4",
     "@tiptap/starter-kit": "3.31.4",

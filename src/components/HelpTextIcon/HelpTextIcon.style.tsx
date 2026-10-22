@@ -38,4 +38,21 @@ export const HtmlContent = styled.div`
   a {
     color: ${get("colors.primary")};
   }
+
+  .help-video {
+    position: relative;
+    margin: 0.5rem 0;
+    padding-top: 56.25%;
+    border-radius: 6px;
+    overflow: hidden;
+    background: ${get("colors.commonDarker")};
+
+    iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+  }
 `;
