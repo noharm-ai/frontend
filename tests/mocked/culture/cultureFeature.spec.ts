@@ -4,6 +4,7 @@ import { test, expect } from "../support/mockApi";
 import type { MockApi } from "../support/mockApi";
 import { loadFixture } from "../support/defaultHandlers";
 import { loginWithFeatures } from "../support/featureLogin";
+import { openMoreFilters } from "../support/advancedFilter";
 
 /**
  * The culture card is behind a schema feature (models/Feature.CULTURE): it
@@ -130,10 +131,7 @@ const searchAlertTypes = async (page: Page, mockApi: MockApi, term: string) => {
   });
 
   await page.goto("/priorizacao/pacientes/cards");
-  await page.getByRole("button", { name: /Ver mais/ }).click();
-  // the panel expands through a CSS max-height animation, so the field keeps
-  // moving until it settles
-  await page.waitForTimeout(800);
+  await openMoreFilters(page);
 
   // antd 6 renders the Select placeholder as bare text under the input, so the
   // field is reached through the select itself

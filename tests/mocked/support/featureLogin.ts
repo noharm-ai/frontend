@@ -55,7 +55,8 @@ export async function loginWithAuth(
   readyText = "E2E Test",
 ) {
   const auth = loadFixture<Record<string, unknown>>("auth/authenticate.json");
-  mockApi.override("POST /authenticate", { json: { ...auth, ...overrides } });
+  const payload = { ...auth, ...overrides };
+  mockApi.override("POST /authenticate", { json: payload });
 
   await page.goto("/login");
   await page.getByPlaceholder("Email").fill("e2e@noharm.ai");
@@ -68,7 +69,56 @@ export async function loginWithAuth(
     timeout: 15000,
   });
 
-  // give redux-persist a beat to flush user.account before navigating
-  // (same as auth.setup.ts), or features are lost on the next page load
-  await page.waitForTimeout(1000);
+  await waitForPersistedLogin(page, payload);
+}
+
+/**
+ * Waits until redux-persist has written the session `payload` logged in with.
+ *
+ * Login dispatches the user, its segments and the app config into slices that
+ * persist themselves on the following ticks, after the header has already
+ * rendered. A navigation before those writes land boots the app from the
+ * storage as it was, and the features or permissions of this login are lost.
+ */
+export async function waitForPersistedLogin(
+  page: Page,
+  payload: Record<string, unknown>,
+) {
+  const list = (value: unknown) => (Array.isArray(value) ? value : []);
+  const expected = {
+    features: JSON.stringify([
+      ...list(payload.features),
+      ...list(payload.userFeatures),
+    ]),
+    permissions: JSON.stringify(list(payload.permissions)),
+    segments: JSON.stringify(payload.segments),
+    apiKey: payload.apiKey,
+  };
+
+  await page.waitForFunction((expected) => {
+    // redux-persist stores each slice key as its own JSON string
+    const read = (key: string): Record<string, any> | undefined => {
+      const raw = localStorage.getItem(`persist:${key}`);
+      if (!raw) {
+        return undefined;
+      }
+      return Object.fromEntries(
+        Object.entries(JSON.parse(raw)).map(([k, v]) => [
+          k,
+          JSON.parse(v as string),
+        ]),
+      );
+    };
+    const user = read("user");
+    const app = read("app");
+    const segments = read("segments");
+
+    return (
+      user?.isLogged === true &&
+      JSON.stringify(user.account?.features) === expected.features &&
+      JSON.stringify(user.account?.permissions) === expected.permissions &&
+      JSON.stringify(segments?.list) === expected.segments &&
+      app?.config?.apiKey === expected.apiKey
+    );
+  }, expected);
 }

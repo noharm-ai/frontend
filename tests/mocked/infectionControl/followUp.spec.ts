@@ -3,6 +3,7 @@ import type { Locator, Page } from "@playwright/test";
 import { test, expect, type MockApi } from "../support/mockApi";
 import { loginWithAuth, loginWithPermissions } from "../support/featureLogin";
 import { openSelect, pickMenuItem, pickOption } from "../support/antd";
+import { openMoreFilters } from "../support/advancedFilter";
 
 /**
  * Infection control follow-up (src/features/infectionControl).
@@ -81,11 +82,24 @@ const REASONS = [
 
 /** Picks a non-conformity reason of the drug being evaluated */
 const pickReason = async (page: Page, drug: Locator, reason: string) => {
-  await openSelect(drug.getByTestId("review-reasons"));
+  const reasons = drug.getByTestId("review-reasons");
+  await openSelect(reasons);
   await pickOption(page, reason);
+  await expect(reasons).toContainText(reason);
   // the multiple select stays open: a click aside closes it (Escape would
   // close the review)
   await drug.getByRole("heading", { level: 3 }).click();
+};
+
+/**
+ * Opens the review and waits out its zoom motion: a click landing in the
+ * dialog while it still zooms in can be lost
+ */
+const openReview = async (page: Page) => {
+  await page.getByRole("button", { name: "Revisar" }).click({ timeout: 15000 });
+  const dialog = page.getByRole("dialog");
+  await expect(dialog).toBeVisible();
+  await expect(dialog).not.toHaveClass(/ant-zoom/);
 };
 
 /** From the patient step, on to the clinical note step and the save */
@@ -837,9 +851,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     });
 
     await page.goto(PAGE_URL);
-    await page
-      .getByRole("button", { name: "Revisar" })
-      .click({ timeout: 15000 });
+    await openReview(page);
 
     const drug = page.getByRole("dialog").getByTestId("review-drug");
     await expect(drug.getByRole("heading", { level: 3 })).toHaveText(
@@ -881,9 +893,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     });
 
     await page.goto(PAGE_URL);
-    await page
-      .getByRole("button", { name: "Revisar" })
-      .click({ timeout: 15000 });
+    await openReview(page);
 
     const dialog = page.getByRole("dialog");
     const next = dialog.getByRole("button", { name: "Próximo" });
@@ -1140,9 +1150,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     });
 
     await page.goto(PAGE_URL);
-    await page
-      .getByRole("button", { name: "Revisar" })
-      .click({ timeout: 15000 });
+    await openReview(page);
 
     const dialog = page.getByRole("dialog");
     const next = dialog.getByRole("button", { name: "Próximo" });
@@ -1155,7 +1163,12 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     // meropenem: the defaults, from the course start to the treatment end
     await decisions.getByText("Conforme", { exact: true }).click();
     await draft.hover();
-    await expect(page.getByRole("tooltip")).toContainText("Vale desde");
+    // the verdict's own tooltip may still be fading out from the click
+    await expect(
+      page
+        .getByRole("tooltip")
+        .filter({ hasText: "Nova avaliação (não salva)" }),
+    ).toContainText("Vale desde");
     await next.click();
 
     // vancomycin: now, until a chosen day
@@ -1239,9 +1252,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     });
 
     await page.goto(PAGE_URL);
-    await page
-      .getByRole("button", { name: "Revisar" })
-      .click({ timeout: 15000 });
+    await openReview(page);
 
     const dialog = page.getByRole("dialog");
     const next = dialog.getByRole("button", { name: "Próximo" });
@@ -1347,9 +1358,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     });
 
     await page.goto(PAGE_URL);
-    await page
-      .getByRole("button", { name: "Revisar" })
-      .click({ timeout: 15000 });
+    await openReview(page);
 
     const dialog = page.getByRole("dialog");
     const drug = dialog.getByTestId("review-drug");
@@ -1459,9 +1468,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     });
 
     await page.goto(PAGE_URL);
-    await page
-      .getByRole("button", { name: "Revisar" })
-      .click({ timeout: 15000 });
+    await openReview(page);
 
     const dialog = page.getByRole("dialog");
     const drug = dialog.getByTestId("review-drug");
@@ -1578,9 +1585,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       });
 
       await page.goto(PAGE_URL);
-      await page
-        .getByRole("button", { name: "Revisar" })
-        .click({ timeout: 15000 });
+      await openReview(page);
 
       const dialog = page.getByRole("dialog");
       const next = dialog.getByRole("button", { name: "Próximo" });
@@ -1686,9 +1691,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       });
 
       await page.goto(PAGE_URL);
-      await page
-        .getByRole("button", { name: "Revisar" })
-        .click({ timeout: 15000 });
+      await openReview(page);
 
       const dialog = page.getByRole("dialog");
       const drug = dialog.getByTestId("review-drug");
@@ -1764,9 +1767,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       });
 
       await page.goto(PAGE_URL);
-      await page
-        .getByRole("button", { name: "Revisar" })
-        .click({ timeout: 15000 });
+      await openReview(page);
 
       const dialog = page.getByRole("dialog");
       const next = dialog.getByRole("button", { name: "Próximo" });
@@ -1829,9 +1830,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       });
 
       await page.goto(PAGE_URL);
-      await page
-        .getByRole("button", { name: "Revisar" })
-        .click({ timeout: 15000 });
+      await openReview(page);
 
       const dialog = page.getByRole("dialog");
       await dialog.getByTestId("review-rail-note").click();
@@ -1859,9 +1858,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     });
 
     await page.goto(PAGE_URL);
-    await page
-      .getByRole("button", { name: "Revisar" })
-      .click({ timeout: 15000 });
+    await openReview(page);
 
     const dialog = page.getByRole("dialog");
     const next = dialog.getByRole("button", { name: "Próximo" });
@@ -1936,9 +1933,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     mockPage(mockApi, followUp(), timeline);
 
     await page.goto(PAGE_URL);
-    await page
-      .getByRole("button", { name: "Revisar" })
-      .click({ timeout: 15000 });
+    await openReview(page);
 
     const dialog = page.getByRole("dialog");
     const drug = dialog.getByTestId("review-drug");
@@ -2110,7 +2105,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(pendingTooltip).toContainText("Prescrita agora:");
     await page.mouse.move(0, 0);
 
-    await page.getByRole("button", { name: "Revisar" }).click();
+    await openReview(page);
 
     // evaluated before, but its posology changed: it is to be evaluated,
     // with the triggers chosen last time (posology, not expiry)
@@ -2243,9 +2238,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     ).toContainText(`A validade terminou em ${shownDate(expired.validUntil)}`);
     await page.mouse.move(0, 0);
 
-    await page
-      .getByRole("button", { name: "Revisar" })
-      .click({ timeout: 15000 });
+    await openReview(page);
 
     const dialog = page.getByRole("dialog");
     const drug = dialog.getByTestId("review-drug");
@@ -2613,8 +2606,7 @@ test.describe("worklist", () => {
     await pickOption(page, "#departments", "UTI Adulto");
 
     // pending reason and overdue review, under "see more"
-    await page.getByRole("button", { name: /Ver mais/ }).click();
-    await page.waitForTimeout(800);
+    await openMoreFilters(page);
     await pickOption(page, "#pendingTypes", "Antimicrobiano sem avaliação");
     await page.locator("#overdueReview").click();
 
@@ -2671,8 +2663,7 @@ test.describe("worklist", () => {
 
     // the period is under "see more"
     await pickOption(page, "#status", "Encerrado");
-    await page.getByRole("button", { name: /Ver mais/ }).click();
-    await page.waitForTimeout(800);
+    await openMoreFilters(page);
     await pickOption(page, "#closedDays", "90 dias");
     await page.locator(".gtm-btn-search").click();
 
@@ -2704,8 +2695,7 @@ test.describe("worklist", () => {
       page.getByRole("heading", { name: "Controle de Infecção" }),
     ).toBeVisible({ timeout: 15000 });
 
-    await page.getByRole("button", { name: /Ver mais/ }).click();
-    await page.waitForTimeout(800);
+    await openMoreFilters(page);
     await expect(page.locator("#closedDays")).toBeDisabled();
   });
 
@@ -2719,8 +2709,7 @@ test.describe("worklist", () => {
     await pickOption(page, "#status", "Encerrado");
     await pickOption(page, "#status", "Pendente");
 
-    await page.getByRole("button", { name: /Ver mais/ }).click();
-    await page.waitForTimeout(800);
+    await openMoreFilters(page);
     await expect(
       page.getByText(/Pacientes encerrados não têm antimicrobianos em uso/),
     ).toBeVisible();
@@ -2741,8 +2730,7 @@ test.describe("worklist", () => {
     ).toBeVisible({ timeout: 15000 });
 
     // a pending reason picked for the pending ones
-    await page.getByRole("button", { name: /Ver mais/ }).click();
-    await page.waitForTimeout(800);
+    await openMoreFilters(page);
     await pickOption(page, "#pendingTypes", "Antimicrobiano sem avaliação");
     await page.locator("#nonConforming").click();
 
@@ -2815,8 +2803,7 @@ test.describe("worklist", () => {
     await expect.poll(() => lists(mockApi).length).toBeGreaterThan(0);
 
     // under "see more": the antimicrobial, searched from the third letter
-    await page.getByRole("button", { name: /Ver mais/ }).click();
-    await page.waitForTimeout(800);
+    await openMoreFilters(page);
     // a row searches drugs or substances; the empty one keeps the choice
     const criteria = page.getByTestId("antimicrobial-criteria");
     await criteria.locator("label", { hasText: "Substância" }).click();
@@ -2912,8 +2899,7 @@ test.describe("worklist", () => {
     ).toBeVisible();
 
     // every row, then (the search closed "see more")
-    await page.getByRole("button", { name: /Ver mais/ }).click();
-    await page.waitForTimeout(800);
+    await openMoreFilters(page);
     await page.getByText("Todas as linhas (E)", { exact: true }).click();
     await page.locator(".gtm-btn-search").click();
     await expect
@@ -2921,8 +2907,7 @@ test.describe("worklist", () => {
       .toBe(true);
 
     // removing the first row keeps the other one
-    await page.getByRole("button", { name: /Ver mais/ }).click();
-    await page.waitForTimeout(800);
+    await openMoreFilters(page);
     await page
       .getByTestId("antimicrobial-criteria")
       .getByRole("button", { name: "Remover" })
@@ -2972,8 +2957,7 @@ test.describe("worklist", () => {
     await expect(link).toHaveAttribute("href", PAGE_URL, { timeout: 15000 });
 
     await pickOption(page, "#departments", "UTI Adulto");
-    await page.getByRole("button", { name: /Ver mais/ }).click();
-    await page.waitForTimeout(800);
+    await openMoreFilters(page);
     await pickOption(page, "#pendingTypes", "Antimicrobiano sem avaliação");
     await page.locator(".gtm-btn-search").click();
 
@@ -3153,8 +3137,7 @@ test.describe("worklist", () => {
     await expect(
       page.locator(".ant-select-selection-item", { hasText: "Pendente" }),
     ).toHaveCount(0);
-    await page.getByRole("button", { name: /Ver mais/ }).click();
-    await page.waitForTimeout(800);
+    await openMoreFilters(page);
     await expect(
       page.locator(".ant-select-selection-item", {
         hasText: "CEFEPIMA 2 g SOL INJ",

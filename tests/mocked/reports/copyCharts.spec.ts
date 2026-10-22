@@ -1,7 +1,10 @@
 import { gzipSync } from "node:zlib";
 
 import { test, expect, API_URL } from "../support/mockApi";
-import { loginWithPermissions } from "../support/featureLogin";
+import {
+  loginWithPermissions,
+  waitForPersistedLogin,
+} from "../support/featureLogin";
 import { loadFixture } from "../support/defaultHandlers";
 import { openSelect, pickOption } from "../support/antd";
 
@@ -139,7 +142,9 @@ const loginAsMaintainer = async (page: any, mockApi: any) => {
   };
 
   mockApi.override("POST /authenticate", { json: payload });
-  mockApi.override("POST /switch-schema", { json: { status: "success", data: payload } });
+  mockApi.override("POST /switch-schema", {
+    json: { status: "success", data: payload },
+  });
 
   await page.goto("/login");
   await page.getByPlaceholder("Email").fill("e2e@noharm.ai");
@@ -149,7 +154,7 @@ const loginAsMaintainer = async (page: any, mockApi: any) => {
   await page.getByRole("button", { name: "Definir schema" }).click();
 
   await expect(page.getByText("E2E Test")).toBeVisible({ timeout: 15000 });
-  await page.waitForTimeout(1000);
+  await waitForPersistedLogin(page, payload);
 };
 
 test.use({ storageState: { cookies: [], origins: [] } });

@@ -57,13 +57,20 @@ export async function pickMenuItem(
   await expect(popup).toBeHidden();
 }
 
-/** Clicks an option in the currently open Select dropdown. */
+/**
+ * Clicks an option in the currently open Select dropdown, once the dropdown
+ * is done sliding in: a click on an option still playing the appear motion
+ * can be lost, leaving the Select as it was.
+ */
 export async function pickOption(page: Page, text: string) {
-  await page
-    .locator(
-      ".ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option",
-    )
-    .filter({ hasText: text })
-    .first()
-    .click();
+  const option = page.locator(".ant-select-item-option").filter({
+    hasText: text,
+  });
+  const dropdown = page
+    .locator(".ant-select-dropdown:not(.ant-select-dropdown-hidden)")
+    .filter({ has: option })
+    .first();
+
+  await expect(dropdown).not.toHaveClass(/-(enter|appear)/);
+  await dropdown.locator(option).first().click();
 }
