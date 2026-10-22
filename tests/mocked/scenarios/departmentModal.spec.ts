@@ -1,4 +1,5 @@
 import { test, expect } from "../support/mockApi";
+import { pickOption } from "../support/antd";
 
 const protocolFixture = {
   id: 1,
@@ -71,7 +72,7 @@ test("department modal shows the segment column and filters by segment", async (
 
   // filter by segment narrows the rows
   await modal.getByRole("combobox").last().click();
-  await page.getByTitle("Segmento Pediatrico").click();
+  await pickOption(page, "Segmento Pediatrico");
   await expect(rows).toHaveCount(1);
   await expect(rows.first()).toContainText("Pediatria");
 

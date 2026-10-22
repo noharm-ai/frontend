@@ -8,13 +8,16 @@ import type { Page } from "@playwright/test";
  */
 export async function openMoreFilters(page: Page) {
   await page.getByRole("button", { name: /Ver mais/ }).click();
-  await page
-    .locator(".open .filters")
-    .evaluate((filters) =>
-      Promise.all(
-        filters
-          .getAnimations({ subtree: true })
-          .map((animation) => animation.finished),
-      ),
-    );
+  await page.locator(".open .filters").evaluate(async (filters) => {
+    // a re-render mid-way cancels the running transition (its `finished`
+    // rejects) and starts a new one, so wait until none is left
+    const running = () =>
+      filters
+        .getAnimations()
+        .filter((animation) => animation instanceof CSSTransition);
+    for (let transitions = running(); transitions.length; ) {
+      await Promise.allSettled(transitions.map((t) => t.finished));
+      transitions = running();
+    }
+  });
 }
