@@ -8,11 +8,22 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    # The suite is ~5 min against a production build on 4 workers. This is a
-    # ceiling for a hung run, not a budget.
+  shard:
+    name: test (${{ matrix.shard }}/${{ strategy.job-total }})
+    # Each shard is ~3-4 min against a production build on 4 workers. This
+    # is a ceiling for a hung run, not a budget.
     timeout-minutes: 20
     runs-on: ubuntu-latest
+    strategy:
+      # one shard failing must not cancel the others: their failures are
+      # part of the report too
+      fail-fast: false
+      matrix:
+        # The whole suite took 6-8 min in one job, nearly all of it running
+        # tests (setup is ~1 min). Playwright splits by test count, which
+        # comes out even in time here: the specs are fully parallel. Add a
+        # number to add a shard.
+        shard: [1, 2]
     env:
       VITE_APP_URL: http://localhost:3000
       VITE_APP_API_URL: http://localhost:5001
@@ -45,15 +56,32 @@ jobs:
       # npx (not sfw npm run): the sfw wrapper injects proxy env vars that
       # break Playwright's webServer startup probe (same pattern as
       # playwright-test.yml). --workers=4 matches the runner's 4 vCPUs; the
-      # mocked specs share no state, so they parallelize freely.
+      # mocked specs share no state, so they parallelize freely. The
+      # mock-setup login runs in every shard.
       - name: Run mocked e2e tests
         env:
           E2E_PREVIEW: "1"
-        run: npx playwright test --project=mock-setup --project=chromium-mocked --workers=4
+        run: >-
+          npx playwright test --project=mock-setup --project=chromium-mocked
+          --workers=4 --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: failure()
         with:
-          name: playwright-report-mocked
+          name: playwright-report-mocked-${{ matrix.shard }}
           path: playwright-report/
           retention-days: 15
+
+  # Keeps a single "test" check, green only when every shard passed, so
+  # branch protection does not depend on the number of shards.
+  test:
+    needs: shard
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Every shard passed
+        if: needs.shard.result != 'success'
+        run: |
+          echo "A shard ended as: ${{ needs.shard.result }}"
+          exit 1
+      - run: echo "All shards passed"
