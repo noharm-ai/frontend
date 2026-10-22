@@ -3,6 +3,7 @@ import styled from "styled-components";
 import { EditorProvider, useCurrentEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
+import Youtube from "@tiptap/extension-youtube";
 import { Slice, Fragment, Node } from "prosemirror-model";
 import { Space, Divider } from "antd";
 import {
@@ -15,6 +16,7 @@ import {
   UndoOutlined,
   UnorderedListOutlined,
   CopyOutlined,
+  YoutubeOutlined,
 } from "@ant-design/icons";
 
 import Button from "components/Button";
@@ -111,8 +113,24 @@ const Editor = forwardRef(function Editor({
     );
   }
 
+  if (utilities.includes("video")) {
+    extensions.push(
+      Youtube.configure({
+        nocookie: true,
+        // videos are added only through the menu button, never by pasting a link
+        addPasteHandler: false,
+      }),
+    );
+  }
+
   const onUpdate = ({ editor }) => {
-    if (!editor.state.doc.textContent.trim().length) {
+    let hasVideo = false;
+    editor.state.doc.descendants((node) => {
+      if (node.type.name === "youtube") hasVideo = true;
+      return !hasVideo;
+    });
+
+    if (!editor.state.doc.textContent.trim().length && !hasVideo) {
       onEdit(null);
       return;
     }
@@ -212,6 +230,25 @@ const MenuBar = ({ utilities }) => {
     }
   }, [editor]);
 
+  const addVideo = useCallback(() => {
+    const url = window.prompt("URL do vídeo no YouTube", "https://");
+
+    // cancelled or empty
+    if (!url) {
+      return;
+    }
+
+    const src = url.trim();
+
+    // the viewer only plays https embeds
+    if (
+      !/^https:\/\//.test(src) ||
+      !editor.chain().focus().setYoutubeVideo({ src }).run()
+    ) {
+      notification.error({ message: "URL do YouTube inválida" });
+    }
+  }, [editor]);
+
   const copyText = () => {
     navigator.clipboard.writeText(editor.getText({ blockSeparator: "\n" }));
   };
@@ -303,6 +340,20 @@ const MenuBar = ({ utilities }) => {
               />
             </Tooltip>
           </>
+        )}
+
+        {utilities.includes("video") && (
+          <Tooltip title="Adicionar vídeo do YouTube">
+            <Button
+              color="black"
+              variant="outlined"
+              onClick={addVideo}
+              ghost
+              type="primary"
+              icon={<YoutubeOutlined />}
+              size="small"
+            />
+          </Tooltip>
         )}
 
         <Divider type="vertical" />
@@ -430,6 +481,25 @@ const EditorContainer = styled.div`
     img {
       max-width: 100%;
       height: auto;
+    }
+
+    div[data-youtube-video] {
+      margin: 0.5rem 0;
+
+      /* a preview only: clicks select the node, so it can be deleted */
+      iframe {
+        display: block;
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+        aspect-ratio: 16 / 9;
+        border: 0;
+        pointer-events: none;
+      }
+    }
+
+    .ProseMirror-selectednode iframe {
+      outline: 2px solid #1677ff;
     }
 
     blockquote {
