@@ -2,7 +2,7 @@ patch_id=ccbe63e9cd37e3dd83d2d9c10937cf5ec68bbff3
 sha=eecf48a27ae3e489629ea4675d32c69c01cf467d
 base=origin/develop
 merge_base=312745808dede7ee362aaac7bc6b6126d2ad233d
-data=2026-10-22T11:49:04Z
+data=2026-10-22T12:03:45Z
 origem=sessao
 ---
 ## Revisão essencial (secret / infra / supply chain / estrutura / segurança)
@@ -14,7 +14,7 @@ origem=sessao
 **Segurança óbvia:** ✅ ok
 **Histórico da branch:** ✅ nada sensível em commit intermediário
 
-Diff só em `tests/mocked/` (suíte mockada). Sobre a base das correções de estabilidade (`a129508`, `3127458`), os commits `e267639` e `eecf48a` fazem o `page.goto(path)` que segue um login com features/permissões navegar dentro do app (`pushState` + `popstate`) em vez de recarregar a página (`tests/mocked/support/featureLogin.ts`), esperando a API do app ficar ociosa antes (e documenta isso em `tests/mocked/README.md`), e estabilizam `tests/mocked/reports/patientNames.spec.ts`. Sem dependência, workflow, fixture ou código de `src/` alterado. As linhas substituídas entre commits (`advancedFilter.ts`) são só código, sem valor sensível.
+Diff só em `tests/mocked/` (suíte mockada). `tests/mocked/support/featureLogin.ts`: depois de um login com features/permissões, `page.goto(path)` navega dentro do app (`pushState` + `popstate`) em vez de recarregar a página, esperando a API do app ficar ociosa antes; continua recarregando após `page.addInitScript`/`page.clock.install` e para URL completa. Documentado em `tests/mocked/README.md`. `tests/mocked/reports/patientNames.spec.ts` passa a contar as requisições a partir do relatório carregado e espera o zoom do diálogo de exportação. Sem dependência, workflow, fixture ou código de `src/` alterado. As linhas substituídas entre os commits (`featureLogin.ts`) são só código, sem valor sensível.
 
 Revisão automática dos pontos essenciais definidos pelo time — não substitui review humana de
 lógica de negócio/arquitetura em profundidade. Régua: a do `.review-gate/PERFIL.md` deste repo.
