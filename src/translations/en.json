@@ -2081,6 +2081,6 @@
   "accessibility": {
     "title": "Accessibility",
     "highContrast": "High contrast",
-    "highContrastDescription": "Darkens text, borders and accent colors and strengthens the focus indicator, making the app easier to read for people with low vision."
+    "highContrastDescription": "Darkens text, borders and accent colors and strengthens the focus indicator, making the app easier to read."
   }
 }
