@@ -256,3 +256,82 @@ test("clearing the name cache also asks the getname service to drop its copy", a
     ),
   ).toHaveLength(1);
 });
+
+/**
+ * "Alto contraste" lives in the user preferences (redux-persist + a unique
+ * memory record per user), and swaps both the styled-components palette (the
+ * body text) and the antd tokens (card titles) for darker ones.
+ */
+test.describe("high contrast", () => {
+  const highContrastSwitch = (page: Page) =>
+    page.getByRole("switch", { name: "Alto contraste" });
+
+  const bodyText = (page: Page) => page.locator("body");
+  const cardTitle = (page: Page) =>
+    card(page, "Acessibilidade").locator(".ant-card-head-title");
+
+  const preferencesCalls = (mockApi: MockApi) =>
+    memoryCalls(mockApi).filter(
+      (r) => r.path === "/memory/unique/user-preferences-1",
+    );
+
+  test("is saved per user, restyles the app and survives a reload", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override("PUT /memory/unique/user-preferences-1", {
+      json: { status: "success", data: 1 },
+    });
+    await openProfile(page);
+
+    await expect(highContrastSwitch(page)).not.toBeChecked();
+    await expect(bodyText(page)).toHaveCSS("color", "rgb(105, 103, 102)");
+    await expect(cardTitle(page)).toHaveCSS("color", "rgba(0, 0, 0, 0.88)");
+
+    await highContrastSwitch(page).click();
+
+    await expect(highContrastSwitch(page)).toBeChecked();
+    await expect(bodyText(page)).toHaveCSS("color", "rgb(31, 31, 31)");
+    await expect(cardTitle(page)).toHaveCSS("color", "rgb(0, 0, 0)");
+
+    await expect.poll(() => preferencesCalls(mockApi).length).toBe(1);
+    const saved = JSON.parse(preferencesCalls(mockApi)[0].postData!);
+    expect(saved.value.app.highContrast).toBe(true);
+
+    await page.reload();
+    await expect(highContrastSwitch(page)).toBeChecked();
+    await expect(bodyText(page)).toHaveCSS("color", "rgb(31, 31, 31)");
+
+    // and it can be turned back off
+    await highContrastSwitch(page).click();
+    await expect(highContrastSwitch(page)).not.toBeChecked();
+    await expect(bodyText(page)).toHaveCSS("color", "rgb(105, 103, 102)");
+    await expect.poll(() => preferencesCalls(mockApi).length).toBe(2);
+    expect(
+      JSON.parse(preferencesCalls(mockApi)[1].postData!).value.app.highContrast,
+    ).toBe(false);
+  });
+
+  test.describe("saved on another device", () => {
+    test.use({ storageState: { cookies: [], origins: [] } });
+
+    test("is applied as soon as the user logs in", async ({
+      page,
+      mockApi,
+    }) => {
+      await loginWithAuth(page, mockApi, {
+        preferences: {
+          app: {
+            initialPage: "/priorizacao/pacientes/cards",
+            highContrast: true,
+          },
+        },
+      });
+
+      await expect(bodyText(page)).toHaveCSS("color", "rgb(31, 31, 31)");
+
+      await openProfile(page);
+      await expect(highContrastSwitch(page)).toBeChecked();
+    });
+  });
+});

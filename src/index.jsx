@@ -5,10 +5,7 @@ import { BrowserRouter } from "react-router-dom";
 import { PersistGate } from "redux-persist/integration/react";
 import { I18nextProvider } from "react-i18next";
 import i18next from "i18next";
-import { ConfigProvider } from "antd";
 import { StyleProvider } from "@ant-design/cssinjs";
-import localePtBr from "antd/locale/pt_BR";
-import localeEnUs from "antd/locale/en_US";
 import dayjs from "dayjs";
 import dayjsLocalePtBr from "dayjs/locale/pt-br";
 import dayjsLocaleEnUs from "dayjs/locale/en";
@@ -16,6 +13,7 @@ import dayjsLocaleEnUs from "dayjs/locale/en";
 import RoutedComponent from "routes";
 import routes from "routes/routes";
 import App from "containers/App";
+import { AppThemeProvider } from "features/preferences/AppThemeProvider/AppThemeProvider";
 import { SupportDrawer } from "./features/support/SupportDrawer";
 import { KnowledgeBaseArticleModal } from "./features/knowledgeBase/KnowledgeBaseArticleModal/KnowledgeBaseArticleModal";
 import { HelpModeLayer } from "./features/knowledgeBase/HelpMode/HelpModeLayer/HelpModeLayer";
@@ -69,27 +67,7 @@ root.render(
     <Provider store={store}>
       <I18nextProvider i18n={i18next}>
         <PersistGate loading={null} persistor={persistor}>
-          <ConfigProvider
-            locale={i18next.language === "en" ? localeEnUs : localePtBr}
-            theme={{
-              token: {
-                // antd >= 6.3 darkened this shadow (used by cards/popups);
-                // keep the previous look
-                boxShadowTertiary:
-                  "0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02)",
-              },
-            }}
-            modal={{
-              mask: {
-                blur: false,
-              },
-            }}
-            drawer={{
-              mask: {
-                blur: false,
-              },
-            }}
-          >
+          <AppThemeProvider>
             <StyleProvider hashPriority={hashPriority}>
               <App>
                 <BrowserRouter>
@@ -100,7 +78,7 @@ root.render(
                 </BrowserRouter>
               </App>
             </StyleProvider>
-          </ConfigProvider>
+          </AppThemeProvider>
         </PersistGate>
       </I18nextProvider>
     </Provider>

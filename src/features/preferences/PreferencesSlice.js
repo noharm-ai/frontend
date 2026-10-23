@@ -14,6 +14,7 @@ const initialState = {
   },
   app: {
     initialPage: "/priorizacao/pacientes/cards",
+    highContrast: false,
   },
 };
 
@@ -55,6 +56,9 @@ const preferencesSlice = createSlice({
     setInitialPage(state, action) {
       state.app.initialPage = action.payload;
     },
+    setHighContrast(state, action) {
+      state.app.highContrast = action.payload;
+    },
     setSavedPreferences(state, action) {
       return {
         ...initialState,
@@ -74,6 +78,7 @@ export const {
   setPrescriptionListOrder,
   setPrescriptionDrugOrder,
   setInitialPage,
+  setHighContrast,
 } = preferencesSlice.actions;
 
 const persist = {
