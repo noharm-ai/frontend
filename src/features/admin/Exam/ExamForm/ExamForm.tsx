@@ -11,6 +11,7 @@ import { setExam, saveExam, fetchExam } from "./ExamFormSlice";
 import { ExamFormBase } from "./ExamFormBase";
 import { Form } from "styles/Form.style";
 import { canWriteExamConfig } from "../examPermissions";
+import { EXAM_FIELD_MAX, storedLength } from "../examFieldLength";
 
 interface Props {
   onAfterSave?: (exam: any) => void;
@@ -23,12 +24,19 @@ export function ExamForm({ onAfterSave }: Props) {
   const status = useAppSelector((state) => state.admin.examForm.single.status);
   const canWrite = canWriteExamConfig();
 
+  const maxStored = (max: number) =>
+    Yup.string()
+      .required(t("validation.requiredField"))
+      .test("max-stored", t("validation.maxChars", { max }), (value) =>
+        storedLength(value) <= max,
+      );
+
   const validationSchema = Yup.object().shape({
     idSegment: Yup.string().required(t("validation.requiredField")),
-    type: Yup.string().required(t("validation.requiredField")),
-    name: Yup.string().required(t("validation.requiredField")),
-    initials: Yup.string().required(t("validation.requiredField")),
-    ref: Yup.string().required(t("validation.requiredField")),
+    type: maxStored(EXAM_FIELD_MAX.type),
+    name: maxStored(EXAM_FIELD_MAX.name),
+    initials: maxStored(EXAM_FIELD_MAX.initials),
+    ref: maxStored(EXAM_FIELD_MAX.ref),
     min: Yup.number().required(t("validation.requiredField")),
     max: Yup.number().required(t("validation.requiredField")),
   });
