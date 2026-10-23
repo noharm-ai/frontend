@@ -1,8 +1,9 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import breakpoints from "styles/breakpoints";
 import { timingFunctions } from "polished";
 
 import { get } from "styles/utils";
+import { highContrastTokens } from "styles/highContrast";
 
 const getAlertColor = (type) => {
   switch (type) {
@@ -58,7 +59,7 @@ export const Card = styled.a`
 
   .card-header {
     display: flex;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid ${get("colors.detail")};
 
     .name {
       flex: 1;
@@ -69,7 +70,7 @@ export const Card = styled.a`
       overflow: hidden;
       text-overflow: ellipsis;
       transition: all 0.3s linear;
-      color: #696766;
+      color: ${get("colors.text")};
 
       &.discharged {
         padding-bottom: 0.2rem;
@@ -96,7 +97,7 @@ export const Card = styled.a`
       transition: all 0.3s linear;
 
       &.highlight {
-        background-color: #70bdc4;
+        background-color: ${get("colors.accentSecondary")};
 
         .stamp-label {
           font-weight: 400;
@@ -146,7 +147,7 @@ export const Card = styled.a`
 
   .attribute-container {
     &.border-bottom {
-      border-bottom: 1px solid #e0e0e0;
+      border-bottom: 1px solid ${get("colors.detail")};
     }
   }
 
@@ -154,7 +155,7 @@ export const Card = styled.a`
     display: flex;
     flex-wrap: wrap;
     border-top-left-radius: 0;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid ${get("colors.detail")};
     height: 100%;
 
     &:last-child {
@@ -186,7 +187,7 @@ export const Card = styled.a`
       }
 
       &:not(:last-child) {
-        border-right: 1px solid #e0e0e0;
+        border-right: 1px solid ${get("colors.detail")};
       }
 
       .attributes-item-label {
@@ -276,7 +277,7 @@ export const Card = styled.a`
           .prescription-dates-day-label {
             flex: 0 0 5.5rem;
             font-weight: 500;
-            color: #696766;
+            color: ${get("colors.text")};
             line-height: 22px;
           }
 
@@ -335,6 +336,87 @@ export const Card = styled.a`
       }
     }
   }
+
+  /* High contrast preference: outline the card instead of relying on a soft
+  shadow, thicken the priority stripe, drop the light font weights and use a
+  darker blue for hover/active. */
+  ${({ theme }) =>
+    theme.highContrast &&
+    css`
+      box-shadow: 0 0 0 1px ${theme.colors.fifth};
+
+      &:before {
+        height: 8px;
+      }
+
+      &:hover {
+        box-shadow: 0 0 0 2px ${theme.colors.commonDarker};
+
+        .card-header .name {
+          color: ${highContrastTokens.colorPrimary};
+        }
+      }
+
+      .card-header .stamp {
+        background: #f0f0f0;
+
+        .stamp-label {
+          font-weight: 400;
+        }
+      }
+
+      .attributes .attributes-item {
+        .attributes-item-label,
+        .attributes-item-value .small {
+          font-weight: 400;
+        }
+
+        .attributes-item-value .hint {
+          border-bottom-color: ${highContrastTokens.colorTextQuaternary};
+        }
+
+        .attributes-item-value.prescription-dates
+          .prescription-dates-times
+          .ant-tag.past {
+          color: ${highContrastTokens.colorTextQuaternary};
+        }
+      }
+
+      /* status tags use antd preset colors, which ignore theme tokens and come
+      with a .ant-tag.ant-tag-<color>:not(.ant-tag-disabled).ant-tag-outlined
+      selector, hence the doubled & to outrank it */
+      && .attributes-item-value .ant-tag:not(.ant-tag-disabled) {
+        &.ant-tag-green {
+          color: ${theme.colors.accent};
+          border-color: ${theme.colors.accent};
+        }
+
+        &.ant-tag-orange {
+          color: ${highContrastTokens.colorWarning};
+          border-color: ${highContrastTokens.colorWarning};
+        }
+
+        &.ant-tag-purple {
+          color: #531dab;
+          border-color: #531dab;
+        }
+      }
+
+      .tabs .tab {
+        background: #f0f0f0;
+        border: 1px solid ${theme.colors.fifth};
+        border-top: 0;
+
+        &.active,
+        &:hover {
+          background: #fff;
+
+          .anticon {
+            color: ${highContrastTokens.colorPrimary};
+          }
+        }
+      }
+    `}
 `;
 
 export const AlertContainer = styled.div`
