@@ -1,8 +1,10 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { Carousel as AntdCarousel, CarouselProps } from "antd";
 
+import { highContrastTokens } from "styles/highContrast";
+
 export const Carousel: typeof AntdCarousel = styled(
-  AntdCarousel
+  AntdCarousel,
 )<CarouselProps>`
   .slick-dots {
     bottom: -30px;
@@ -43,4 +45,23 @@ export const Carousel: typeof AntdCarousel = styled(
       }
     }
   }
+
+  /* High contrast preference: solid dots in a darker blue, the active one
+  filled. */
+  ${({ theme }) =>
+    theme.highContrast &&
+    css`
+      .slick-dots li button,
+      .slick-dots li.slick-active button {
+        border-color: ${highContrastTokens.colorPrimary};
+        color: ${highContrastTokens.colorPrimary};
+        background: #fff;
+        opacity: 1;
+      }
+
+      .slick-dots li.slick-active button {
+        color: #fff;
+        background: ${highContrastTokens.colorPrimary};
+      }
+    `}
 `;

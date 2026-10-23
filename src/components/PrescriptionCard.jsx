@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import {
   createIndicatorTagClasses,
@@ -189,4 +189,12 @@ export default styled.div`
   }
 
   ${(props) => createIndicatorCardClasses(props.t)}
+
+  /* High contrast preference: outline the card instead of relying on a soft
+  shadow. */
+  ${({ theme }) =>
+    theme.highContrast &&
+    css`
+      box-shadow: 0 0 0 1px ${theme.colors.fifth};
+    `}
 `;

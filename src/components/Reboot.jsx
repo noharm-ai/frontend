@@ -297,6 +297,11 @@ const ResetStyled = createGlobalStyle`
   ${({ theme }) =>
     theme.highContrast &&
     css`
+      /* base.css sets it on :root; html:root outranks it whatever the order */
+      html:root {
+        --nh-text-color: ${theme.colors.text};
+      }
+
       :focus-visible {
         outline: 3px solid ${theme.colors.commonDarker} !important;
         outline-offset: 2px !important;
