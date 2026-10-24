@@ -174,6 +174,10 @@ export default function ClinicalNotes({
     );
   };
 
+  const fetchExtra = (date) => {
+    fetchByDate(localAdmissionNumber, date);
+  };
+
   useEffect(() => {
     const groups = filterList(
       list,
@@ -209,10 +213,6 @@ export default function ClinicalNotes({
     if (groups.length > 0 && groups[0].value.length === 0) {
       fetchExtra(groups[0].label);
     }
-  };
-
-  const fetchExtra = (date) => {
-    fetchByDate(localAdmissionNumber, date);
   };
 
   if (isFetching) {

@@ -7,7 +7,7 @@ import storage from "redux-persist/lib/storage";
 import autoRefreshToken from "./middlewares/autoRefreshToken";
 import reducers from "./ducks/index.ts";
 
-const isDev = process.env.NODE_ENV === "development";
+const isDev = import.meta.env.DEV;
 
 const logger = createLogger({ collapsed: true });
 

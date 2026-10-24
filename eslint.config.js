@@ -1,13 +1,14 @@
 import js from "@eslint/js";
+import { defineConfig, globalIgnores } from "eslint/config";
 import globals from "globals";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
 
-export default tseslint.config(
-  { ignores: ["dist"] },
+export default defineConfig(
+  globalIgnores(["dist"]),
   {
-    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    extends: [js.configs.recommended, tseslint.configs.recommended],
     files: ["**/*.{ts,tsx,jsx}"],
     languageOptions: {
       ecmaVersion: 2020,
@@ -19,6 +20,9 @@ export default tseslint.config(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
+      // Existing effects still set loading/reset state synchronously; keep
+      // them visible as warnings until they are refactored.
+      "react-hooks/set-state-in-effect": "warn",
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },

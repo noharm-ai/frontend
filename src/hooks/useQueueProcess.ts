@@ -58,7 +58,7 @@ export default function useQueueProcess<T = any>({
   const [loading, setLoading] = useState<boolean>(false);
   const [result, setResult] = useState<T | null>(null);
   const [error, setError] = useState<any>(null);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const clearPolling = useCallback(() => {
     if (intervalRef.current) {

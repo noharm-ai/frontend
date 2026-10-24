@@ -266,7 +266,7 @@ export default function PageHeader({
   const createDate = moment(prescription.content.date);
   const expireDate = moment(prescription.content.expire);
 
-  const TitleLegend = ({ content, type }) => {
+  const renderTitleLegend = (content, type) => {
     if (type === "conciliation") {
       return <span className="legend">{content.dateOnlyFormated}</span>;
     }
@@ -299,7 +299,7 @@ export default function PageHeader({
     );
   };
 
-  const Title = ({ content, type, small }) => {
+  const renderTitle = (content, type, small) => {
     const label =
       type === "conciliation"
         ? t("screeningHeader.titleConciliation")
@@ -342,7 +342,7 @@ export default function PageHeader({
             {id}
           </UnstyledButton>
         </Tooltip>
-        <TitleLegend content={content} type={type} />
+        {renderTitleLegend(content, type)}
       </Heading>
     );
   };
@@ -356,7 +356,7 @@ export default function PageHeader({
       <ScreeningHeader className={`${affixed ? "affixed" : ""}`}>
         <Row type="flex">
           <Col span={24} md={10} data-kb="prescription.title">
-            <Title content={prescription.content} type={type} small={affixed} />
+            {renderTitle(prescription.content, type, affixed)}
           </Col>
           <Col
             span={24}

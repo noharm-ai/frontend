@@ -131,6 +131,12 @@ export const useSlashMenu = ({
   const [openMenuKeys, setOpenMenuKeys] = useState<string[]>([]);
   const menuContainerRef = useRef<HTMLDivElement>(null);
 
+  const closeSlashMenu = () => {
+    setSlashMenuOpen(false);
+    setSlashIndex(null);
+    setCursorCoords(null);
+  };
+
   useEffect(() => {
     if (!slashMenuOpen) return;
     const handleMouseDown = (e: MouseEvent) => {
@@ -153,12 +159,6 @@ export const useSlashMenu = ({
     setOpenMenuKeys([]);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slashMenuOpen]);
-
-  const closeSlashMenu = () => {
-    setSlashMenuOpen(false);
-    setSlashIndex(null);
-    setCursorCoords(null);
-  };
 
   const handleMenuSelect = ({ key }: { key: string }) => {
     onSelect({ key, slashIndex: slashIndex! });

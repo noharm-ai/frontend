@@ -113,7 +113,7 @@ export default function AlertList() {
 }
 
 const ExpandedRow = ({ record }) => {
-  let items = [];
+  let items;
   if (record.type === "protocolGeneral") {
     items = [
       {

@@ -546,7 +546,7 @@ export default function ScreeningList({
     return filter.status == null && status == null;
   };
 
-  const ExpandColumn = ({ expand }) => {
+  const renderExpandColumn = (expand) => {
     return (
       <div style={{ display: "flex", justifyContent: "center" }}>
         <button
@@ -784,7 +784,7 @@ export default function ScreeningList({
           dataSource={!isFetching ? dataSource : []}
           onChange={handleTableChange}
           showSorterTooltip={false}
-          columnTitle={<ExpandColumn expand={!expandedRows.length} />}
+          columnTitle={renderExpandColumn(!expandedRows.length)}
           expandedRowKeys={expandedRows}
           onExpand={(expanded, record) => handleRowExpand(record)}
         />

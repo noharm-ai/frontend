@@ -31,6 +31,27 @@ import {
 
 import { ScreeningTabs, DrugFormStatusBox } from "./index.style";
 
+const TabTitle = ({ title, count, ...props }) => (
+  <>
+    <span style={{ marginRight: "10px" }}>{title}</span>
+    {count >= 0 ? (
+      <Tag variant="outlined" {...props}>
+        {count}
+      </Tag>
+    ) : null}
+  </>
+);
+
+const expandRowClick = (activeRow) => {
+  activeRow.querySelector(".ant-table-row-expand-icon").click();
+
+  setTimeout(() => {
+    activeRow.nextElementSibling
+      .querySelector("input:not(:disabled)")
+      ?.select();
+  }, 100);
+};
+
 export default function Screening({
   fetchScreeningById,
   isFetching,
@@ -262,16 +283,6 @@ export default function Screening({
     };
   }, []);
 
-  const expandRowClick = (activeRow) => {
-    activeRow.querySelector(".ant-table-row-expand-icon").click();
-
-    setTimeout(() => {
-      activeRow.nextElementSibling
-        .querySelector("input:not(:disabled)")
-        ?.select();
-    }, 100);
-  };
-
   const listCount = {
     prescriptions: prescriptionCount,
     solutions: solutionCount,
@@ -294,17 +305,6 @@ export default function Screening({
 
     fetchScreeningById(id);
   }, [id, fetchScreeningById]);
-
-  const TabTitle = ({ title, count, ...props }) => (
-    <>
-      <span style={{ marginRight: "10px" }}>{title}</span>
-      {count >= 0 ? (
-        <Tag variant="outlined" {...props}>
-          {count}
-        </Tag>
-      ) : null}
-    </>
-  );
 
   if (error) {
     return (
