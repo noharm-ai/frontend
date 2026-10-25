@@ -324,3 +324,60 @@ test("a new user needs a name and a valid email, and starts with the default rol
   await expect(rows(page)).toHaveCount(USERS.length + 1);
   await expect(page.getByRole("cell", { name: "Nova Pessoa" })).toBeVisible();
 });
+
+test.describe("password tab", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  test("loads the reset history once on open and again on Atualizar", async ({
+    page,
+    mockApi,
+  }) => {
+    await loginWithPermissions(page, mockApi, [
+      "READ_BASIC_FEATURES",
+      "READ_PRESCRIPTION",
+      "READ_USERS",
+      "READ_RESET_PASSWORD_HISTORY",
+    ]);
+    mockApi.override("GET /user-admin/reset-history/2", {
+      json: {
+        status: "success",
+        data: {
+          lastLogin: null,
+          history: [
+            {
+              requestedAt: "2026-01-10T10:00:00",
+              requestedBy: "Ana Farmaceutica",
+              origin: "link",
+              used: false,
+            },
+          ],
+        },
+      },
+    });
+    const historyCalls = () =>
+      mockApi.requests.filter(
+        (r) => r.path === "/user-admin/reset-history/2",
+      );
+
+    await openList(page, mockApi);
+    await page
+      .getByRole("row", { name: /Bruno Gestor/ })
+      .getByRole("button")
+      .click();
+    await page.getByRole("dialog").getByRole("tab", { name: "Senha" }).click();
+
+    const refresh = page.getByRole("button", { name: "Atualizar" });
+    const history = page
+      .getByRole("dialog")
+      .getByRole("row", { name: /Ana Farmaceutica/ });
+    await expect(history).toContainText("Link manual");
+    await expect(history).toContainText("Não utilizado");
+    await expect(refresh).not.toHaveClass(/ant-btn-loading/);
+    expect(historyCalls()).toHaveLength(1);
+
+    await refresh.click();
+    await expect.poll(() => historyCalls().length).toBe(2);
+    await expect(refresh).not.toHaveClass(/ant-btn-loading/);
+    await expect(history).toBeVisible();
+  });
+});

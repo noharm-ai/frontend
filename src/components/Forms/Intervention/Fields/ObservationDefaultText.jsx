@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { Button as AntButton } from "antd";
 import { DownOutlined } from "@ant-design/icons";
@@ -28,7 +28,12 @@ export function ObservationDefaultText({
   saveDefaultText,
 }) {
   const { t } = useTranslation();
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(initialContent);
+  const [prevInitialContent, setPrevInitialContent] = useState(initialContent);
+  if (initialContent !== prevInitialContent) {
+    setPrevInitialContent(initialContent);
+    setContent(initialContent);
+  }
   const textRef = useRef(null);
 
   const menuItems = [
@@ -75,10 +80,6 @@ export function ObservationDefaultText({
   const addVariableEvent = ({ key }) => {
     addVariable(key);
   };
-
-  useEffect(() => {
-    setContent(initialContent);
-  }, [initialContent]);
 
   const addVariable = (variable) => {
     let value = content;

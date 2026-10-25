@@ -146,6 +146,12 @@ export default function ScreeningList({
     searchKey: null,
   });
   const { isFetching, list, error, check } = prescriptions;
+  // clear the search whenever a fetch starts or ends
+  const [prevIsFetching, setPrevIsFetching] = useState(isFetching);
+  if (isFetching !== prevIsFetching) {
+    setPrevIsFetching(isFetching);
+    setFilter({ ...filter, searchKey: null });
+  }
   const pageTitle = t(`screeningList.title-${prioritizationType}`);
 
   const [title] = useMedia(
@@ -387,10 +393,6 @@ export default function ScreeningList({
       notification.error(errorMessage);
     }
   }, [error]); // eslint-disable-line
-
-  useEffect(() => {
-    setFilter({ ...filter, searchKey: null });
-  }, [isFetching]); //eslint-disable-line
 
   useEffect(() => {
     const getNextSibling = (elm) => {

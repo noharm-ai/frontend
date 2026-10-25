@@ -87,9 +87,7 @@ export function ResetPassword() {
       ? lastEmailRequest
       : null;
 
-  const loadHistory = useCallback(() => {
-    setHistoryLoading(true);
-
+  const requestHistory = useCallback(() => {
     dispatch(getUserResetPasswordHistory({ idUser: values.id })).then(
       (response) => {
         setHistoryLoading(false);
@@ -105,11 +103,31 @@ export function ResetPassword() {
     );
   }, [dispatch, values.id, t]);
 
+  const loadHistory = () => {
+    setHistoryLoading(true);
+    requestHistory();
+  };
+
+  // the effect below loads the history of each user shown; flag it as loading
+  // from the first render that shows them
+  const [historyRequestedFor, setHistoryRequestedFor] = useState(null);
+  if (
+    !historyRequestedFor ||
+    historyRequestedFor.id !== values.id ||
+    historyRequestedFor.canReadHistory !== canReadHistory ||
+    historyRequestedFor.t !== t
+  ) {
+    setHistoryRequestedFor({ id: values.id, canReadHistory, t });
+    if (values.id && canReadHistory) {
+      setHistoryLoading(true);
+    }
+  }
+
   useEffect(() => {
     if (values.id && canReadHistory) {
-      loadHistory();
+      requestHistory();
     }
-  }, [values.id, canReadHistory, loadHistory]);
+  }, [values.id, canReadHistory, requestHistory]);
 
   const openFlow = () => {
     setEmailResult(null);

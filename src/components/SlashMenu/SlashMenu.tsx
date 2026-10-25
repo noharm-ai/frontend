@@ -135,6 +135,8 @@ export const useSlashMenu = ({
     setSlashMenuOpen(false);
     setSlashIndex(null);
     setCursorCoords(null);
+    setActiveMenuKey(null);
+    setOpenMenuKeys([]);
   };
 
   useEffect(() => {
@@ -147,17 +149,6 @@ export const useSlashMenu = ({
     };
     document.addEventListener("mousedown", handleMouseDown);
     return () => document.removeEventListener("mousedown", handleMouseDown);
-  }, [slashMenuOpen]);
-
-  useEffect(() => {
-    if (!slashMenuOpen) {
-      setActiveMenuKey(null);
-      setOpenMenuKeys([]);
-      return;
-    }
-    setActiveMenuKey(items[0]?.key ?? null);
-    setOpenMenuKeys([]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slashMenuOpen]);
 
   const handleMenuSelect = ({ key }: { key: string }) => {
@@ -175,6 +166,10 @@ export const useSlashMenu = ({
       const nativeTextarea: HTMLTextAreaElement =
         textareaRef.current?.resizableTextArea?.textArea ?? t;
       setCursorCoords(getCursorCoords(nativeTextarea, index));
+      if (!slashMenuOpen) {
+        setActiveMenuKey(items[0]?.key ?? null);
+        setOpenMenuKeys([]);
+      }
       setSlashMenuOpen(true);
     } else {
       closeSlashMenu();

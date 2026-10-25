@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import { Row, Col, Drawer } from "antd";
@@ -86,7 +86,8 @@ export function TrainingPlayer() {
   const [locallyFinishedIds, setLocallyFinishedIds] = useState<
     Record<number, boolean>
   >({});
-  const [itemStartedAt, setItemStartedAt] = useState(() => Date.now());
+  // stamped by the effect below whenever a lesson is shown
+  const itemStartedAt = useRef(0);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
   const [previewImageSrc, setPreviewImageSrc] = useState<string | null>(null);
 
@@ -131,7 +132,7 @@ export function TrainingPlayer() {
 
   useEffect(() => {
     if (currentItem) {
-      setItemStartedAt(Date.now());
+      itemStartedAt.current = Date.now();
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -184,7 +185,9 @@ export function TrainingPlayer() {
   };
 
   const goToNext = () => {
-    const durationSeconds = Math.round((Date.now() - itemStartedAt) / 1000);
+    const durationSeconds = Math.round(
+      (Date.now() - itemStartedAt.current) / 1000,
+    );
 
     dispatch(
       finishTrainingItem({ idTrainingItem: currentItem.id, durationSeconds }),

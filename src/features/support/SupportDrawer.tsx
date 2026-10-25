@@ -49,16 +49,33 @@ export function SupportDrawer() {
   // pending training with no ADMIN_SUPPORT: no ticket path at all
   const ticketBlocked = blocked && !requiresUrgent;
 
+  // back to the articles whenever the drawer opens, closes or changes screen
+  const [formShownFor, setFormShownFor] = useState({
+    supportDrawerOpen,
+    pathname: location.pathname,
+    pathOverride,
+  });
+  if (
+    formShownFor.supportDrawerOpen !== supportDrawerOpen ||
+    formShownFor.pathname !== location.pathname ||
+    formShownFor.pathOverride !== pathOverride
+  ) {
+    setFormShownFor({
+      supportDrawerOpen,
+      pathname: location.pathname,
+      pathOverride,
+    });
+    setShowForm(false);
+  }
+
   useEffect(() => {
     if (supportDrawerOpen) {
       const path =
         pathOverride || KnowledgeBasePathEnum.getPath(location.pathname);
       // @ts-expect-error ts 2554 (legacy code)
       dispatch(fetchKnowledgeBaseArticles({ active: true, path: [path] }));
-      setShowForm(false);
     } else {
       dispatch(resetKnowledgeBase());
-      setShowForm(false);
     }
   }, [supportDrawerOpen, dispatch, location.pathname, pathOverride]);
 
