@@ -98,6 +98,10 @@ export function CopyCharts({
     setExcluded([]);
   };
 
+  const notifyError = (response: any) => {
+    notification.error({ message: getErrorMessage(response, t) });
+  };
+
   useEffect(() => {
     if (!open) return;
 
@@ -136,10 +140,6 @@ export function CopyCharts({
       setReports(response.payload?.data?.data ?? []);
     });
   }, [open, sourceSchema]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const notifyError = (response: any) => {
-    notification.error({ message: getErrorMessage(response, t) });
-  };
 
   const loadCharts = (idReport: number) => {
     setSourceReportId(idReport);

@@ -143,6 +143,8 @@ export default function ConciliationDrugList({
       select({
         ...data,
         intervention: {
+          // onShowModal only runs from click handlers, never during render
+          // eslint-disable-next-line react-hooks/purity
           nonce: Math.random(),
         },
       });

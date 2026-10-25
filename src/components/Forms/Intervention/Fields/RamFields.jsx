@@ -49,7 +49,7 @@ export function RamFields({ setFieldValue, layout, values }) {
     });
 
     const setResponse = (total) => {
-      let causality = null;
+      let causality;
       if (total > 8) {
         causality = "comprovada";
       } else if (total > 4) {

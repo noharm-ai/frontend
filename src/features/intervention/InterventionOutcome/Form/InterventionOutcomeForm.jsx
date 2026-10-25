@@ -34,6 +34,20 @@ import RichTextView from "components/RichTextView";
 
 const INPUT_PRECISION = 6;
 
+const SubstitutionAlert = () => (
+  <>
+    Não foram encontradas prescrições com este medicamento posteriores à
+    intervenção.
+    <br />
+    <br />
+    Se for uma <strong>Suspensão</strong>, altere o motivo desta intervenção.
+    <br />
+    <br />
+    Caso contrário, informe <strong>manualmente</strong> a Economia/Dia e a
+    Quantidade de dias de economia e, então, aplique o desfecho.
+  </>
+);
+
 export default function InterventionOutcomeForm({
   outcomeData: outcomeDataProp,
   loadStatus: loadStatusProp,
@@ -175,20 +189,6 @@ export default function InterventionOutcomeForm({
 
     return "";
   };
-
-  const SubstitutionAlert = () => (
-    <>
-      Não foram encontradas prescrições com este medicamento posteriores à
-      intervenção.
-      <br />
-      <br />
-      Se for uma <strong>Suspensão</strong>, altere o motivo desta intervenção.
-      <br />
-      <br />
-      Caso contrário, informe <strong>manualmente</strong> a Economia/Dia e a
-      Quantidade de dias de economia e, então, aplique o desfecho.
-    </>
-  );
 
   const statusConfig = InterventionStatus.translate(
     outcomeData.header?.status,

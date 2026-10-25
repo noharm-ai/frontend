@@ -12,13 +12,19 @@ export default function Interaction({
   searchDrugs,
   uniqueDrugList,
 }) {
+  const selectedInteractions = isEmpty(interactions)
+    ? interactions
+    : interactions.map((item) => `${item}`);
+  const currentInteractionsList = interactionsList || [];
+  const currentUniqueDrugList = uniqueDrugList || [];
+
   const handleChange = (interactions) => {
     if (!isEmpty(interactions)) {
       interactions = interactions.map((item) => parseInt(item, 10));
     }
 
     const list = drugs.list
-      .concat(interactionsList)
+      .concat(currentInteractionsList)
       .map((i) => {
         if (interactions.indexOf(parseInt(i.idDrug, 10)) !== -1) {
           return {
@@ -41,15 +47,9 @@ export default function Interaction({
     searchDrugs(null, { q: value });
   }, 800);
 
-  if (!isEmpty(interactions)) {
-    interactions = interactions.map((item) => `${item}`);
-  }
-
-  interactionsList = interactionsList || [];
-  uniqueDrugList = uniqueDrugList || [];
   const normalizedList = drugs.list
-    .concat(interactionsList)
-    .concat(uniqueDrugList)
+    .concat(currentInteractionsList)
+    .concat(currentUniqueDrugList)
     .map((i) => ({
       ...i,
       idDrug: `${i.idDrug}`,
@@ -61,7 +61,7 @@ export default function Interaction({
         id="interactions"
         mode="multiple"
         style={{ width: "100%" }}
-        defaultValue={interactions || undefined}
+        defaultValue={selectedInteractions || undefined}
         notFoundContent={drugs.isFetching ? <LoadBox /> : null}
         onChange={handleChange}
         placeholder="Digite para pesquisar mais medicamentos"
