@@ -96,9 +96,11 @@ export function ReviewModal({
   const stepRef = useRef<HTMLFormElement>(null);
 
   // every review starts at the first drug
-  useEffect(() => {
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
     if (open) setStep(0);
-  }, [open]);
+  }
 
   // each step opens at its top
   useEffect(() => {

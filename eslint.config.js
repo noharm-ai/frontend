@@ -20,9 +20,6 @@ export default defineConfig(
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      // Existing effects still set loading/reset state synchronously; keep
-      // them visible as warnings until they are refactored.
-      "react-hooks/set-state-in-effect": "warn",
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },

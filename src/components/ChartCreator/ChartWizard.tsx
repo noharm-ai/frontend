@@ -127,15 +127,29 @@ export function ChartWizard({
   const [stepIndex, setStepIndex] = useState(0);
 
   // (Re)initialize whenever the wizard opens or the target chart changes.
-  useEffect(() => {
-    if (!open) return;
-    setDraft(
-      editingChart
-        ? { ...editingChart }
-        : { ...makeDefaultDraft(), ...(initialType ? { type: initialType } : {}) },
-    );
-    setStepIndex(0);
-  }, [open, editingChart, initialType, openToAgent]);
+  // Done during render, not in an effect, so the first open frame already
+  // shows the right draft.
+  const [initializedFor, setInitializedFor] = useState<Pick<
+    ChartWizardProps,
+    "open" | "editingChart" | "initialType" | "openToAgent"
+  > | null>(null);
+  if (
+    !initializedFor ||
+    initializedFor.open !== open ||
+    initializedFor.editingChart !== editingChart ||
+    initializedFor.initialType !== initialType ||
+    initializedFor.openToAgent !== openToAgent
+  ) {
+    setInitializedFor({ open, editingChart, initialType, openToAgent });
+    if (open) {
+      setDraft(
+        editingChart
+          ? { ...editingChart }
+          : { ...makeDefaultDraft(), ...(initialType ? { type: initialType } : {}) },
+      );
+      setStepIndex(0);
+    }
+  }
 
   const patchDraft = (patch: Partial<ChartConfig>) =>
     setDraft((prev) => ({ ...prev, ...patch }));

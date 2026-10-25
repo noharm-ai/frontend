@@ -43,8 +43,6 @@ export function HelpTextIcon({ pageKey }: HelpTextIconProps) {
     if (!modalOpen) return undefined;
 
     let active = true;
-    setLoading(true);
-    setEditMode(false);
 
     api.helpText
       .getHelpText(storageKey)
@@ -76,7 +74,11 @@ export function HelpTextIcon({ pageKey }: HelpTextIconProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalOpen, pageKey]);
 
-  const openModal = () => setModalOpen(true);
+  const openModal = () => {
+    setLoading(true);
+    setEditMode(false);
+    setModalOpen(true);
+  };
 
   const closeModal = () => {
     setModalOpen(false);
