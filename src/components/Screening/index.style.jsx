@@ -92,7 +92,7 @@ export const DrugFormStatusBox = styled.div`
 `;
 
 export const TableLink = styled.a`
-  color: rgba(0, 0, 0, 0.65);
+  color: ${get("colors.textSecondary")};
   text-decoration: none;
 
   &:hover {
@@ -103,7 +103,7 @@ export const TableLink = styled.a`
 export const DrugLink = styled.a`
   display: inline-block;
   position: relative;
-  color: rgba(0, 0, 0, 0.65);
+  color: ${get("colors.textSecondary")};
   text-decoration: none;
 
   &:hover {

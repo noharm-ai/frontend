@@ -707,7 +707,8 @@
   "validation": {
     "requiredField": "Campo obrigatório",
     "atLeastOne": "Pelo menos um item deve ser selecionado",
-    "max2mb": "O arquivo deve ter até 2mb"
+    "max2mb": "O arquivo deve ter até 2mb",
+    "maxChars": "Máximo de {{max}} caracteres"
   },
 
   "interventionStatus": {
@@ -2086,5 +2087,10 @@
         "6": "Posologia alterada"
       }
     }
+  },
+  "accessibility": {
+    "title": "Acessibilidade",
+    "highContrast": "Alto contraste",
+    "highContrastDescription": "Escurece textos, bordas e cores de destaque e reforça o indicador de foco, facilitando a leitura."
   }
 }

@@ -12,6 +12,7 @@ import { FeatureService } from "services/FeatureService";
 import Feature from "models/Feature";
 import { fetchExamTypes, fetchGlobalExams } from "./ExamFormSlice";
 import { canWriteExamConfig } from "../examPermissions";
+import { EXAM_FIELD_MAX, storedLength } from "../examFieldLength";
 
 export function ExamFormBase() {
   const dispatch = useAppDispatch();
@@ -139,7 +140,7 @@ export function ExamFormBase() {
               onChange={({ target }: React.ChangeEvent<HTMLInputElement>) =>
                 setFieldValue("type", target.value)
               }
-              maxLength={100}
+              maxLength={EXAM_FIELD_MAX.type}
               placeholder="Digite o tipo de exame..."
             />
           ) : (
@@ -214,7 +215,7 @@ export function ExamFormBase() {
             onChange={({ target }: React.ChangeEvent<HTMLInputElement>) =>
               setFieldValue("name", target.value)
             }
-            maxLength={250}
+            maxLength={EXAM_FIELD_MAX.name}
             disabled={!canWrite}
           />
         </div>
@@ -231,7 +232,7 @@ export function ExamFormBase() {
             onChange={({ target }: React.ChangeEvent<HTMLInputElement>) =>
               setFieldValue("initials", target.value)
             }
-            maxLength={50}
+            maxLength={EXAM_FIELD_MAX.initials}
             disabled={!canWrite}
           />
         </div>
@@ -250,7 +251,12 @@ export function ExamFormBase() {
             onChange={({ target }: React.ChangeEvent<HTMLInputElement>) =>
               setFieldValue("ref", target.value)
             }
-            maxLength={250}
+            maxLength={EXAM_FIELD_MAX.ref}
+            count={{
+              show: true,
+              max: EXAM_FIELD_MAX.ref,
+              strategy: storedLength,
+            }}
             disabled={!canWrite}
           />
         </div>

@@ -28,7 +28,7 @@ export function ProtocolSubstanceClassSelect({
   const [labelMap, setLabelMap] = useState<Record<string, string>>({});
   const [options, setOptions] = useState<ClassOption[]>([]);
   const [loading, setLoading] = useState(false);
-  const [resolving, setResolving] = useState(false);
+  const [failedIdsKey, setFailedIdsKey] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   // The value can arrive as a non-array (e.g. a stale string left by the
@@ -36,6 +36,10 @@ export function ProtocolSubstanceClassSelect({
   // is not a proper id list.
   const ids = Array.isArray(value) ? value : [];
   const idsKey = ids.join(",");
+  // Names are being resolved while a saved id has no label yet, unless the
+  // lookup for this exact set of ids already failed.
+  const resolving =
+    ids.some((id) => !(String(id) in labelMap)) && failedIdsKey !== idsKey;
 
   // Resolve names for the saved ids only — never fetch the whole class table.
   useEffect(() => {
@@ -43,7 +47,6 @@ export function ProtocolSubstanceClassSelect({
 
     if (!missing.length) return;
 
-    setResolving(true);
     api.substance
       .resolveSubstanceClasses(missing)
       .then((response) => {
@@ -63,11 +66,11 @@ export function ProtocolSubstanceClassSelect({
         });
       })
       .catch((err) => {
+        setFailedIdsKey(idsKey);
         notification.error({
           message: getErrorMessageFromException(err.response?.data, t),
         });
-      })
-      .finally(() => setResolving(false));
+      });
     // `labelMap` and `t` are deliberately excluded from the deps: this effect
     // *writes* labelMap, so depending on it would loop. We re-resolve only when
     // the set of saved ids (idsKey) changes.

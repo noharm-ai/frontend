@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router-dom";
 import {
@@ -49,12 +49,23 @@ export function CertificateValidation() {
   const [typedCode, setTypedCode] = useState<string>(code ?? "");
   const [formError, setFormError] = useState<string | null>(null);
 
-  const validate = useCallback((rawCode: string) => {
-    setStatus("loading");
-    setCertificate(null);
+  // the :code param is the single trigger, so a pasted URL and a submitted
+  // form go through exactly the same path
+  const [validatedCode, setValidatedCode] = useState<string>();
+  if (code !== validatedCode) {
+    setValidatedCode(code);
+    if (code) {
+      setTypedCode(code);
+      setStatus("loading");
+      setCertificate(null);
+    }
+  }
+
+  useEffect(() => {
+    if (!code) return;
 
     api.training
-      .validateCertificate(normalizeCertificateCode(rawCode))
+      .validateCertificate(normalizeCertificateCode(code))
       .then((response: any) => {
         setCertificate(response.data.data);
         setStatus("done");
@@ -64,16 +75,6 @@ export function CertificateValidation() {
         // a transport or server fault lands here
         setStatus("error");
       });
-  }, []);
-
-  // the :code param is the single trigger, so a pasted URL and a submitted
-  // form go through exactly the same path
-  useEffect(() => {
-    if (code) {
-      setTypedCode(code);
-      validate(code);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [code]);
 
   const submit = (event: React.FormEvent) => {

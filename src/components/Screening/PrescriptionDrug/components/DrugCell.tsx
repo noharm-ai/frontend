@@ -57,6 +57,12 @@ export interface DrugRecord {
   atbLevel?: number | null;
   idMeasureUnitDefault?: string;
   drugAttributes?: DrugAttributes;
+  // the allergy alert of the item (backend alert_service.is_allergic): the
+  // flag as it arrived (presmed.alergia) and what the patient's allergy
+  // records (alergia) said of the item, null when none decided
+  allergy?: boolean;
+  allergyFlag?: string | null;
+  allergyRecord?: "active" | "inactive" | null;
 }
 
 interface DrugCellBag {
@@ -158,6 +164,27 @@ const periodTypeLabel = (periodType?: number): string => {
   }
 };
 
+// why the allergy alert was raised or not, for the maintainers: the alergia
+// records decide when there is one of the item, otherwise the flag stands
+const allergyReason = (record: DrugRecord): string | null => {
+  // a backend that does not confirm the flag with the records
+  if (record.allergyRecord === undefined) {
+    return null;
+  }
+
+  const outcome = record.allergy ? "sim" : "não";
+  const flag = `presmed.alergia: ${record.allergyFlag || "vazio"}`;
+
+  switch (record.allergyRecord) {
+    case "active":
+      return `${outcome} — registro ativo na tabela alergia (${flag})`;
+    case "inactive":
+      return `${outcome} — registro inativado na tabela alergia (${flag})`;
+    default:
+      return `${outcome} — ${flag} (sem registro do medicamento na tabela alergia)`;
+  }
+};
+
 function DrugCell({ record, bag }: DrugCellProps): React.ReactElement | null {
   if (record.total || record.emptyRow) {
     return null;
@@ -214,6 +241,7 @@ function DrugCell({ record, bag }: DrugCellProps): React.ReactElement | null {
         ? record.periodDayInterval
         : (record.periodDayInterval ?? 0) + 1;
     const differentiatedDose = getDifferentiatedDose(record);
+    const allergy = allergyReason(record);
 
     content = (
       <DrugCellPopover>
@@ -282,6 +310,13 @@ function DrugCell({ record, bag }: DrugCellProps): React.ReactElement | null {
             {periodType} (fixo: {record.periodFixed} / dias prescrito:{" "}
             {periodDays})
           </span>
+
+          {allergy && (
+            <>
+              <span className="info-label">alergia:</span>
+              <span className="info-value">{allergy}</span>
+            </>
+          )}
 
           <span className="info-label">Tags:</span>
           <span className="info-value">

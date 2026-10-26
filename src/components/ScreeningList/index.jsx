@@ -146,6 +146,12 @@ export default function ScreeningList({
     searchKey: null,
   });
   const { isFetching, list, error, check } = prescriptions;
+  // clear the search whenever a fetch starts or ends
+  const [prevIsFetching, setPrevIsFetching] = useState(isFetching);
+  if (isFetching !== prevIsFetching) {
+    setPrevIsFetching(isFetching);
+    setFilter({ ...filter, searchKey: null });
+  }
   const pageTitle = t(`screeningList.title-${prioritizationType}`);
 
   const [title] = useMedia(
@@ -389,10 +395,6 @@ export default function ScreeningList({
   }, [error]); // eslint-disable-line
 
   useEffect(() => {
-    setFilter({ ...filter, searchKey: null });
-  }, [isFetching]); //eslint-disable-line
-
-  useEffect(() => {
     const getNextSibling = (elm) => {
       if (!elm.nextElementSibling) {
         return elm;
@@ -546,7 +548,7 @@ export default function ScreeningList({
     return filter.status == null && status == null;
   };
 
-  const ExpandColumn = ({ expand }) => {
+  const renderExpandColumn = (expand) => {
     return (
       <div style={{ display: "flex", justifyContent: "center" }}>
         <button
@@ -784,7 +786,7 @@ export default function ScreeningList({
           dataSource={!isFetching ? dataSource : []}
           onChange={handleTableChange}
           showSorterTooltip={false}
-          columnTitle={<ExpandColumn expand={!expandedRows.length} />}
+          columnTitle={renderExpandColumn(!expandedRows.length)}
           expandedRowKeys={expandedRows}
           onExpand={(expanded, record) => handleRowExpand(record)}
         />

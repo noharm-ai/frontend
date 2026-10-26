@@ -225,7 +225,6 @@ function prepareChart(data: any[], config: ChartConfig): PreparedChart {
 
   let valueSeries: ValueSeries[];
   let processedData: any[];
-  let isCount = false;
   let isCountPct = false;
   let countTotal = 0;
 
@@ -265,7 +264,7 @@ function prepareChart(data: any[], config: ChartConfig): PreparedChart {
 
     const isAggregated = effectiveAggregation !== "none";
     isCountPct = effectiveAggregation === "count_pct";
-    isCount = effectiveAggregation === "count" || isCountPct;
+    const isCount = effectiveAggregation === "count" || isCountPct;
 
     if (isAggregated) {
       processedData = groupAndAggregate(

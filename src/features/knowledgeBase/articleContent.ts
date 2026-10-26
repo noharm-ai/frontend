@@ -1,13 +1,11 @@
 import DOMPurify from "dompurify";
 
+import { rebuildYoutubeEmbeds } from "utils/youtubeEmbed";
+
 export interface IArticleHeading {
   id: string;
   text: string;
 }
-
-// the only embeds the articles carry are YouTube videos
-const ALLOWED_IFRAME_SRC =
-  /^https:\/\/(www\.)?(youtube\.com|youtube-nocookie\.com)\/embed\//;
 
 export const KNOWLEDGE_BASE_PATH = "/base-de-conhecimento";
 
@@ -53,28 +51,7 @@ export const prepareArticleContent = (
     }
   });
 
-  // rebuilt from scratch: only an allowed src survives, never other attributes
-  body.querySelectorAll("iframe").forEach((iframe) => {
-    const src = iframe.getAttribute("src") ?? "";
-    if (!ALLOWED_IFRAME_SRC.test(src)) {
-      iframe.remove();
-      return;
-    }
-
-    const video = document.createElement("iframe");
-    video.setAttribute("src", src);
-    video.setAttribute("title", iframe.getAttribute("title") || "video");
-    video.setAttribute(
-      "allow",
-      "accelerometer; encrypted-media; gyroscope; picture-in-picture",
-    );
-    video.setAttribute("allowfullscreen", "true");
-
-    const wrapper = document.createElement("div");
-    wrapper.className = "kb-video";
-    wrapper.appendChild(video);
-    iframe.replaceWith(wrapper);
-  });
+  rebuildYoutubeEmbeds(body, "kb-video");
 
   // re-parsing serialized markup can differ from the DOM it came from:
   // sanitize the final string too, allowing only what was added above

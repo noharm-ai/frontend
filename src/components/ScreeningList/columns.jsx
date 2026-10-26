@@ -451,7 +451,7 @@ const columns = (sortedInfo, filteredInfo, t, bag) => {
           {t("screeningList.clGlobalScore")}
         </Tooltip>
       ),
-      className: `ant-table-right-border gtm-th-ge ${oddClass(index++)}`,
+      className: `ant-table-right-border gtm-th-ge ${oddClass(index)}`,
       key: "globalScore",
       width: 20,
       align: "center",

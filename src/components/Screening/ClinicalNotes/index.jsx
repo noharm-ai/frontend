@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { format, parseISO } from "date-fns";
 import { useTranslation } from "react-i18next";
 import {
@@ -51,7 +51,8 @@ export default function ClinicalNotes({
     visibleState?.indicators ?? []
   );
   const [filteredList, setFilteredList] = useState([]);
-  const [autoFetchedDates, setAutoFetchedDates] = useState(new Set());
+  const [filteredFor, setFilteredFor] = useState(null);
+  const autoFetchedDates = useRef(new Set());
   const [edit, setEdit] = useState(false);
   const { t } = useTranslation();
 
@@ -174,19 +175,24 @@ export default function ClinicalNotes({
     );
   };
 
-  useEffect(() => {
-    const groups = filterList(
-      list,
-      true,
-      selectedPositions,
-      selectedIndicators
-    );
-    setFilteredList(groups);
+  const fetchExtra = (date) => {
+    fetchByDate(localAdmissionNumber, date);
+  };
 
-    if (groups.length > 0 && groups[0].value.length === 0) {
-      const firstDate = groups[0].label;
-      if (!autoFetchedDates.has(firstDate)) {
-        setAutoFetchedDates((prev) => new Set([...prev, firstDate]));
+  // Refilter whenever a new list arrives, with the filters applied so far.
+  if (filteredFor !== list) {
+    setFilteredFor(list);
+    setFilteredList(
+      filterList(list, true, selectedPositions, selectedIndicators)
+    );
+  }
+
+  // When the newest date came without notes, fetch it once.
+  useEffect(() => {
+    if (filteredList.length > 0 && filteredList[0].value.length === 0) {
+      const firstDate = filteredList[0].label;
+      if (!autoFetchedDates.current.has(firstDate)) {
+        autoFetchedDates.current.add(firstDate);
         fetchExtra(firstDate);
       }
     }
@@ -209,10 +215,6 @@ export default function ClinicalNotes({
     if (groups.length > 0 && groups[0].value.length === 0) {
       fetchExtra(groups[0].label);
     }
-  };
-
-  const fetchExtra = (date) => {
-    fetchByDate(localAdmissionNumber, date);
   };
 
   if (isFetching) {

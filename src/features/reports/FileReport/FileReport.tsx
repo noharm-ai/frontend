@@ -235,12 +235,14 @@ export function FileReport() {
     [nameColumnKey, patientIds, patientNames, notFoundIds, handleNamesLoaded],
   );
 
-  useEffect(() => {
+  // Detect the columns of each new data set; an empty one keeps the last.
+  const [schemaFor, setSchemaFor] = useState<any[] | null>(null);
+  if (schemaFor !== enrichedData) {
+    setSchemaFor(enrichedData);
     if (enrichedData.length > 0) {
-      const detectedSchema = detectColumnSchema(enrichedData);
-      setSchema(detectedSchema);
+      setSchema(detectColumnSchema(enrichedData));
     }
-  }, [enrichedData]);
+  }
 
   const filteredData = useMemo(() => {
     return applyFilters(enrichedData, filters, schema);

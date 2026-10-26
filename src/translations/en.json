@@ -703,7 +703,8 @@
   "validation": {
     "requiredField": "Required field",
     "atLeastOne": "At least one item must be selected",
-    "max2mb": "Max file size: 2mb"
+    "max2mb": "Max file size: 2mb",
+    "maxChars": "Maximum of {{max}} characters"
   },
 
   "interventionStatus": {
@@ -2076,5 +2077,10 @@
         "6": "Posology changed"
       }
     }
+  },
+  "accessibility": {
+    "title": "Accessibility",
+    "highContrast": "High contrast",
+    "highContrastDescription": "Darkens text, borders and accent colors and strengthens the focus indicator, making the app easier to read."
   }
 }

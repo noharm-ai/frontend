@@ -41,7 +41,7 @@ rendering and no application server of our own.
 | Rich text | TipTap, sanitized with DOMPurify |
 | Routing | React Router 7 |
 | End-to-end tests | Playwright |
-| Lint | ESLint 9 (flat config) |
+| Lint | ESLint 10 (flat config) |
 
 ## 3. Directory layout
 

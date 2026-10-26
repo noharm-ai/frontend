@@ -55,7 +55,7 @@ export function BatchTestPanel() {
     setPhase("running");
     setProgress({ current: 0, total: 0 });
 
-    let ids: string[] = [];
+    let ids: string[];
     try {
       const sampleResponse = await api.protocols.testSample({
         protocolType: values.protocolType,

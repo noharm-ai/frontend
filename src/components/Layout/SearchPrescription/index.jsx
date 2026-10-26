@@ -21,6 +21,8 @@ export default function SearchPrescription({ type, size }) {
   const dispatch = useDispatch();
   const wrapperRef = useRef(null);
   const inputRef = useRef(null);
+  const [open, setOpen] = useState(false);
+  const [itemActive, setItemActive] = useState(null);
   useOutsideAlerter(wrapperRef, () => {
     setOpen(false);
   });
@@ -44,8 +46,6 @@ export default function SearchPrescription({ type, size }) {
     [type],
   );
 
-  const [open, setOpen] = useState(false);
-  const [itemActive, setItemActive] = useState(null);
   const loadStatus = useSelector(
     (state) => state.lists.searchPrescriptions.status,
   );

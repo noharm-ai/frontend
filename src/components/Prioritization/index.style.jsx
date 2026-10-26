@@ -130,7 +130,7 @@ export const ResultActions = styled.div`
 
       .filters-item-label {
         font-weight: 500;
-        color: #696766;
+        color: ${get("colors.text")};
       }
 
       .filters-item-value {
@@ -156,7 +156,7 @@ export const ResultActions = styled.div`
 
         .prioritization-select {
           &.ant-select {
-            background-color: #70bdc4;
+            background-color: ${get("colors.accentSecondary")};
           }
 
           .ant-select-content-has-value {

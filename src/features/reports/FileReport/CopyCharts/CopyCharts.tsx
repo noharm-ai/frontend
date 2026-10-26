@@ -98,12 +98,32 @@ export function CopyCharts({
     setExcluded([]);
   };
 
+  const notifyError = (response: any) => {
+    notification.error({ message: getErrorMessage(response, t) });
+  };
+
+  // Every opening starts over from the current schema; its reports load below.
+  const [prevOpen, setPrevOpen] = useState(false);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
+    if (open) {
+      setStepIndex(0);
+      setSourceSchema(currentSchemaName);
+      resetSource();
+      setIsLoadingReports(true);
+    }
+  }
+
+  const changeSourceSchema = (schema: string) => {
+    if (schema === sourceSchema) return;
+
+    setSourceSchema(schema);
+    resetSource();
+    setIsLoadingReports(true);
+  };
+
   useEffect(() => {
     if (!open) return;
-
-    setStepIndex(0);
-    setSourceSchema(currentSchemaName);
-    resetSource();
 
     if (canPickSchema) {
       dispatch(fetchSwitchSchemaData({})).then((response: any) => {
@@ -117,9 +137,6 @@ export function CopyCharts({
 
   useEffect(() => {
     if (!open) return;
-
-    resetSource();
-    setIsLoadingReports(true);
 
     dispatch(
       // @ts-expect-error legacy code
@@ -136,10 +153,6 @@ export function CopyCharts({
       setReports(response.payload?.data?.data ?? []);
     });
   }, [open, sourceSchema]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  const notifyError = (response: any) => {
-    notification.error({ message: getErrorMessage(response, t) });
-  };
 
   const loadCharts = (idReport: number) => {
     setSourceReportId(idReport);
@@ -255,7 +268,7 @@ export function CopyCharts({
           <Select
             style={{ width: "100%" }}
             value={sourceSchema}
-            onChange={setSourceSchema}
+            onChange={changeSourceSchema}
             showSearch
             optionFilterProp="label"
             options={(schemas.length > 0 ? schemas : [currentSchemaName]).map(

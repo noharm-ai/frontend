@@ -69,6 +69,16 @@ writing fixtures, opt out with:
 test.use({ strictMocks: false });
 ```
 
+### Logging in with features or permissions
+
+`loginWithFeatures` / `loginWithPermissions` / `loginWithAuth`
+(`support/featureLogin.ts`) log in through the login page from a clean
+storage state. After they return, `page.goto(path)` navigates **inside the
+running app** instead of loading it again — booting the app is the bulk of
+a test's time. A `goto` still loads the document after `page.addInitScript`
+or `page.clock.install` (both only apply at load time); use `page.reload()`
+when a test needs a fresh boot for another reason.
+
 ## Adding fixtures for a new page
 
 1. Start the real stack (`make e2e-up`) and the dev server.

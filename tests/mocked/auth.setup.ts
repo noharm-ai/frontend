@@ -1,4 +1,6 @@
 import { test as setup, expect } from "./support/mockApi";
+import { loadFixture } from "./support/defaultHandlers";
+import { waitForPersistedLogin } from "./support/featureLogin";
 
 const authFile = "playwright/.auth/mock-user.json";
 
@@ -19,8 +21,7 @@ setup("mocked login", async ({ page }) => {
     page.getByRole("heading", { name: "Priorização por Pacientes" }),
   ).toBeVisible({ timeout: 15000 });
 
-  // give redux-persist a beat to flush the rehydrated state
-  await page.waitForTimeout(1000);
+  await waitForPersistedLogin(page, loadFixture("auth/authenticate.json"));
 
   await page.context().storageState({ path: authFile });
 });

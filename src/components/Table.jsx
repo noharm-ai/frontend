@@ -20,7 +20,7 @@ const Table = styled(AntTable)`
   }
 
   .ant-table-tbody > tr > td {
-    color: rgba(0, 0, 0, 0.65);
+    color: ${get("colors.textSecondary")};
   }
 
   .ant-table-thead > tr > th,

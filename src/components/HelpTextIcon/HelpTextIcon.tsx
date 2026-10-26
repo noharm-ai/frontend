@@ -1,6 +1,5 @@
 import { useState, useEffect, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
-import DOMPurify from "dompurify";
 import { Space, Spin } from "antd";
 import { QuestionCircleOutlined, EditOutlined } from "@ant-design/icons";
 
@@ -12,6 +11,7 @@ import DefaultModal from "components/Modal";
 import Tooltip from "components/Tooltip";
 import Editor from "components/Editor";
 import notification from "components/notification";
+import { sanitizeWithYoutubeEmbeds } from "utils/youtubeEmbed";
 
 import {
   IconButton,
@@ -43,8 +43,6 @@ export function HelpTextIcon({ pageKey }: HelpTextIconProps) {
     if (!modalOpen) return undefined;
 
     let active = true;
-    setLoading(true);
-    setEditMode(false);
 
     api.helpText
       .getHelpText(storageKey)
@@ -76,7 +74,11 @@ export function HelpTextIcon({ pageKey }: HelpTextIconProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [modalOpen, pageKey]);
 
-  const openModal = () => setModalOpen(true);
+  const openModal = () => {
+    setLoading(true);
+    setEditMode(false);
+    setModalOpen(true);
+  };
 
   const closeModal = () => {
     setModalOpen(false);
@@ -101,7 +103,8 @@ export function HelpTextIcon({ pageKey }: HelpTextIconProps) {
     setSaving(true);
     try {
       const stripped = (draft ?? "").replace(/<[^>]*>/g, "").trim();
-      const payload = stripped ? draft : null;
+      const hasVideo = /<iframe[\s>]/i.test(draft ?? "");
+      const payload = stripped || hasVideo ? draft : null;
 
       const response = await api.helpText.updateHelpText(storageKey, payload);
 
@@ -123,14 +126,16 @@ export function HelpTextIcon({ pageKey }: HelpTextIconProps) {
       <Editor
         content={draft ?? ""}
         onEdit={setDraft}
-        utilities={["basic", "link"]}
+        utilities={["basic", "link", "video"]}
         onCreateFocus
       />
     );
   } else if (content) {
     body = (
       <HtmlContent
-        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content) }}
+        dangerouslySetInnerHTML={{
+          __html: sanitizeWithYoutubeEmbeds(content, "help-video"),
+        }}
       />
     );
   } else {

@@ -1,6 +1,7 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { get } from "styles/utils";
+import { highContrastTokens } from "styles/highContrast";
 import Heading from "components/Heading";
 import { createIndicatorCardClasses } from "components/Screening/ClinicalNotes/index.style";
 
@@ -56,7 +57,7 @@ export const Box = styled.div`
     text-align: center;
 
     button {
-      color: #696766;
+      color: ${get("colors.text")};
       height: auto;
       padding-right: 2px;
     }
@@ -157,9 +158,9 @@ export const PatientBox = styled.div`
       display: flex;
       flex-wrap: wrap;
       background: #fff;
-      border-bottom: 1px solid #e0e0e0;
-      border-left: 1px solid #e0e0e0;
-      border-right: 1px solid #e0e0e0;
+      border-bottom: 1px solid ${get("colors.detail")};
+      border-left: 1px solid ${get("colors.detail")};
+      border-right: 1px solid ${get("colors.detail")};
       border-radius: 5px;
       border-top-left-radius: 0;
       height: 100%;
@@ -175,7 +176,7 @@ export const PatientBox = styled.div`
         width: 50%;
         padding: 5px 0;
         padding-left: 10px;
-        border-bottom: 1px solid #e0e0e0;
+        border-bottom: 1px solid ${get("colors.detail")};
         overflow-x: clip;
 
         &.full {
@@ -195,7 +196,7 @@ export const PatientBox = styled.div`
         }
 
         &:nth-child(odd) {
-          border-right: 1px solid #e0e0e0;
+          border-right: 1px solid ${get("colors.detail")};
         }
 
         .patient-data-item-label {
@@ -302,7 +303,7 @@ export const PatientBox = styled.div`
           width: 20%;
           opacity: 0;
           pointer-events: none;
-          background: #7ebe9a;
+          background: ${get("colors.accent")};
           transform: translateX(100%);
           transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
           display: flex;
@@ -386,7 +387,7 @@ export const PatientBox = styled.div`
           align-items: center;
           line-height: 1;
           list-style-type: none;
-          border: 1px solid #e0e0e0;
+          border: 1px solid ${get("colors.detail")};
           border-radius: 5px;
           background: #fff;
           font-size: 14px;
@@ -451,6 +452,44 @@ export const PatientBox = styled.div`
       }
     }
   }
+  /* High contrast preference: drop the light font weights, give the tabs a
+  solid background and use a darker blue for active/hover. */
+  ${({ theme }) =>
+    theme.highContrast &&
+    css`
+      .patient-header .patient-header-action .patient-menu:hover {
+        color: ${highContrastTokens.colorPrimary};
+      }
+
+      .patient-body {
+        .patient-data .patient-data-item {
+          .patient-data-item-label,
+          .patient-data-item-value .small,
+          .patient-data-item-value .tag {
+            font-weight: 400;
+          }
+
+          .patient-data-item-value .hint {
+            border-bottom-color: ${highContrastTokens.colorTextQuaternary};
+          }
+        }
+
+        .ant-tabs .ant-tabs-tab {
+          background: #f0f0f0;
+        }
+
+        .ant-tabs .ant-tabs-tab-active {
+          background: #fff;
+        }
+
+        .ant-tabs-tab.ant-tabs-tab-active,
+        .ant-tabs-tab:hover {
+          .anticon {
+            color: ${highContrastTokens.colorPrimary};
+          }
+        }
+      }
+    `}
 `;
 
 export const MaxHeightContainer = styled.div`

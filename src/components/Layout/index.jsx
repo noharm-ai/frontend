@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 
 import appInfo from "utils/appInfo";
 import { getStorageItem } from "utils/storage";
+import { getErrorMessage } from "utils/errorHandler";
 import Avatar from "components/Avatar";
 import Button from "components/Button";
 import toast from "components/notification";

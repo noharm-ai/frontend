@@ -119,11 +119,10 @@ export function DownloadModal() {
 
   const renderItems = (item: any, index: number) => {
     const actions = [];
-    let diff = 0;
     let title = dayjs(item.name).format("DD/MM/YYYY");
 
     if (item.updateAt) {
-      diff = dayjs().diff(dayjs(item.updateAt), "minutes");
+      const diff = dayjs().diff(dayjs(item.updateAt), "minutes");
 
       if (diff < 2) {
         title = `${dayjs(item.name).format("DD/MM/YYYY")} - Atualizado`;
