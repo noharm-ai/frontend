@@ -86,7 +86,10 @@ const infectionControlConsolidatedReportSlice = createSlice({
       .addCase(fetchReportData.rejected, (state, action) => {
         state.filtered.status = "failed";
         state.filtered.result = {};
-        state.filtered.error = action.error.message || null;
+        state.filtered.error =
+          (action.payload as { message?: string })?.message ||
+          action.error.message ||
+          null;
       })
       .addCase(fetchDayData.pending, (state) => {
         state.day.status = "loading";
