@@ -2360,6 +2360,71 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
   });
 });
 
+test.describe("with READ_INFECTION_CONTROL only", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  test.beforeEach(async ({ page, mockApi }) => {
+    await loginWithPermissions(page, mockApi, [
+      ...BASE_PERMISSIONS,
+      "READ_INFECTION_CONTROL",
+    ]);
+    mockApi.override("GET /intervention/reasons", {
+      json: { status: "success", data: REASONS },
+    });
+  });
+
+  test("goes through the review but cannot save it", async ({
+    page,
+    mockApi,
+  }) => {
+    mockPage(mockApi, followUp());
+    let saved = 0;
+    mockApi.override(REVIEW, async (route) => {
+      saved += 1;
+      await route.fulfill({ status: 200, json: followUp() });
+    });
+
+    await page.goto(PAGE_URL);
+    await openReview(page);
+
+    const dialog = page.getByRole("dialog");
+    const drug = dialog.getByTestId("review-drug");
+    await drug
+      .getByRole("radiogroup", { name: "Avaliação" })
+      .getByText("Conforme", { exact: true })
+      .click();
+    await dialog
+      .getByRole("button", { name: "Próximo antimicrobiano" })
+      .click();
+    await dialog.getByRole("button", { name: "Próximo: paciente" }).click();
+    await dialog.getByRole("button", { name: "Próximo: evolução" }).click();
+
+    await expect(dialog.getByText("Etapa 4 de 4")).toBeVisible();
+    await expect(
+      dialog.getByRole("button", { name: "Registrar revisão" }),
+    ).toBeDisabled();
+    await expect(dialog.getByTestId("review-hint")).toHaveText(
+      "Você não tem permissão para registrar revisões",
+    );
+    expect(saved).toBe(0);
+  });
+
+  test("does not start the follow-up", async ({ page, mockApi }) => {
+    mockPage(mockApi, notFollowed());
+
+    await page.goto(PAGE_URL);
+
+    await expect(
+      page.getByTestId("follow-up").getByTestId("follow-up-status"),
+    ).toHaveText("Não acompanhado", { timeout: 15000 });
+    await expect(
+      (await openMoreActions(page)).getByRole("menuitem", {
+        name: "Iniciar acompanhamento",
+      }),
+    ).toHaveCount(0);
+  });
+});
+
 test.describe("worklist", () => {
   const admission = {
     admissionNumber: ADMISSION,

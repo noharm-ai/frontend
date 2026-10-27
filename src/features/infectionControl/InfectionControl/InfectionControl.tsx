@@ -132,9 +132,15 @@ export function InfectionControl() {
     () => getInvalidatedEvaluations(followUp),
     [followUp],
   );
-  const canReview =
+  // registering a review takes WRITE; going through one, to see what it would
+  // evaluate, only READ
+  const canSaveReview =
     followUpEnabled &&
     PermissionService().has(Permission.WRITE_INFECTION_CONTROL);
+  const canReview =
+    canSaveReview ||
+    (followUpEnabled &&
+      PermissionService().has(Permission.READ_INFECTION_CONTROL));
   // a review needs a followed admission and the timeline loaded, since the
   // review modal lives with it
   const showReview =
@@ -143,7 +149,7 @@ export function InfectionControl() {
   // feature was turned on) is started by hand while a drug is running (none
   // is, once the patient is discharged)
   const showFollow =
-    canReview &&
+    canSaveReview &&
     status === "succeeded" &&
     !!followUp &&
     !followUp.followed &&
@@ -469,6 +475,7 @@ export function InfectionControl() {
           dischargeDate={data.patient.dischargeDate}
           drugNames={drugNames}
           now={now}
+          canSave={canSaveReview}
         />
       )}
     </>

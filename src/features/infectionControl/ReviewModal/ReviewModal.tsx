@@ -55,6 +55,8 @@ interface ReviewModalProps {
   dischargeDate: string | null;
   drugNames: Record<number, string>;
   now: Dayjs;
+  // without WRITE_INFECTION_CONTROL the review is gone through, not saved
+  canSave: boolean;
 }
 
 /**
@@ -73,6 +75,7 @@ export function ReviewModal({
   dischargeDate,
   drugNames,
   now,
+  canSave,
 }: ReviewModalProps) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
@@ -310,7 +313,12 @@ export function ReviewModal({
 
         // why the step cannot move on yet
         let hint: { text: string; error: boolean } | null = null;
-        if (isPatientStep || isNoteStep) {
+        if (isNoteStep && !canSave) {
+          hint = {
+            text: t("infectionControl.review.hintNoPermission"),
+            error: false,
+          };
+        } else if (isPatientStep || isNoteStep) {
           if (!allDrugsDone) {
             hint = {
               text: t("infectionControl.review.hintAllDrugs"),
@@ -360,7 +368,10 @@ export function ReviewModal({
           canMoveOn = true;
         } else if (isNoteStep) {
           canMoveOn =
-            allDrugsDone && noteUnavailable !== "loading" && !noteError;
+            canSave &&
+            allDrugsDone &&
+            noteUnavailable !== "loading" &&
+            !noteError;
         }
         const moveOn = () => {
           if (!canMoveOn) return;

@@ -1893,6 +1893,7 @@
       "hintReasons": "Enter the non-conformity reason",
       "hintSubstitute": "Choose the substitute drug",
       "hintAllDrugs": "Finish evaluating all antimicrobials",
+      "hintNoPermission": "You are not allowed to register reviews",
       "nextDrug": "Next antimicrobial",
       "nextPatient": "Next: patient",
       "save": "Register review"
