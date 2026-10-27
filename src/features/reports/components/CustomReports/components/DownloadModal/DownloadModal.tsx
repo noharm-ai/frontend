@@ -90,11 +90,11 @@ export function DownloadModal() {
     ) {
       const diff = dayjs().diff(dayjs(data.processed_at), "minutes");
 
-      if (diff < 30) {
+      if (diff < 10) {
         Modal.warning({
           title: "Processamento recente",
           content:
-            "Este relatório foi processado há menos de 30 minutos. Você deve esperar pelo menos 30 minutos antes de processá-lo novamente.",
+            "Este relatório foi processado há menos de 10 minutos. Você deve esperar pelo menos 10 minutos antes de processá-lo novamente.",
           okText: "Ok",
         });
         return;
