@@ -41,6 +41,10 @@ import {
 } from "./DataViewer.utils";
 import { getColumnHref } from "./DataViewer.links";
 import { LinkCell } from "./LinkCell/LinkCell";
+import {
+  ResizableTitle,
+  ResizableTitleProps,
+} from "./ResizableTitle/ResizableTitle";
 import { ColumnMeta, DataRow } from "./types";
 
 export interface DataViewerProps {
@@ -58,6 +62,21 @@ const renderLink = (col: ColumnMeta, value: unknown, record: DataRow) => {
   if (!href || !col.link) return null;
 
   return <LinkCell href={href} id={String(value).trim()} link={col.link} />;
+};
+
+const defaultColumnWidth = (col: ColumnMeta) =>
+  col.link ? 150 : col.type === "number" ? 120 : 180;
+
+// Without a width this column takes the space the others leave free. The
+// table otherwise stretches every column to fill it, and a resized column
+// would not follow the pointer.
+const fillerColumn: ColumnType<DataRow> = {
+  key: "__filler",
+  render: () => null,
+};
+
+const tableComponents: TableProps<DataRow>["components"] = {
+  header: { cell: ResizableTitle },
 };
 
 export const DataViewer: React.FC<DataViewerProps> = ({
@@ -84,6 +103,20 @@ export const DataViewer: React.FC<DataViewerProps> = ({
   const [columnDropdownOpen, setColumnDropdownOpen] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<DataRow | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  // widths the user dragged to; columns not in here use their default width
+  const [columnWidths, setColumnWidths] = useState<Record<string, number>>({});
+
+  const resizeColumn = useCallback((key: string, width: number) => {
+    setColumnWidths((prev) => ({ ...prev, [key]: width }));
+  }, []);
+
+  const resetColumnWidth = useCallback((key: string) => {
+    setColumnWidths((prev) => {
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+  }, []);
 
   const filteredData = useMemo(() => {
     if (!globalFilter) return indexedData;
@@ -101,16 +134,24 @@ export const DataViewer: React.FC<DataViewerProps> = ({
   }, [indexedData, globalFilter]);
 
   const antColumns: TableColumnsType<DataRow> = useMemo(() => {
-    return columnsMeta
+    const columns = columnsMeta
       .filter((col) => !hiddenColumnKeys.has(col.key))
       .map((col) => {
+        const width = columnWidths[col.key] ?? defaultColumnWidth(col);
         const column: ColumnType<DataRow> = {
           title: col.title,
           dataIndex: col.key,
           key: col.key,
           sorter: true,
           ellipsis: true,
-          width: col.link ? 150 : col.type === "number" ? 120 : 180,
+          width,
+          onHeaderCell: () =>
+            ({
+              width,
+              columnTitle: col.title,
+              onResize: (newWidth: number) => resizeColumn(col.key, newWidth),
+              onResetWidth: () => resetColumnWidth(col.key),
+            }) as ResizableTitleProps as React.HTMLAttributes<HTMLElement>,
           render: (value: unknown, record: DataRow) => {
             const link = renderLink(col, value, record);
             if (link) return link;
@@ -141,7 +182,15 @@ export const DataViewer: React.FC<DataViewerProps> = ({
 
         return column;
       });
-  }, [columnsMeta, hiddenColumnKeys]);
+
+    return columns.length > 0 ? [...columns, fillerColumn] : columns;
+  }, [
+    columnsMeta,
+    hiddenColumnKeys,
+    columnWidths,
+    resizeColumn,
+    resetColumnWidth,
+  ]);
 
   const debouncedSearch = useMemo(
     () => debounce((value: string) => setGlobalFilter(value), 250),
@@ -243,6 +292,7 @@ export const DataViewer: React.FC<DataViewerProps> = ({
 
   const tableProps: TableProps<DataRow> = {
     columns: antColumns,
+    components: tableComponents,
     dataSource: filteredData,
     loading,
     pagination: false,

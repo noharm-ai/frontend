@@ -167,13 +167,19 @@ export const Container = styled(PageCard) <{ $height: number }>`
     white-space: nowrap;
   }
 
+  /*
+   * Inside the header cell's right edge: header cells clip their overflow and
+   * the next cell would cover anything past it.
+   */
   .ant-table-resize-handle {
     position: absolute;
     top: 0;
-    right: -5px;
+    right: 0;
     bottom: 0;
-    width: 10px;
+    width: 8px;
     cursor: col-resize;
+    touch-action: none;
+    user-select: none;
     z-index: 1;
 
     &:hover {

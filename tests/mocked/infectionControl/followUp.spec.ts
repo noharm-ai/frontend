@@ -41,8 +41,8 @@ const WATCH_EXPIRY = /Quando a avaliação vencer/;
 const WATCH_POSOLOGY = /Quando a posologia mudar/;
 
 // the intervention reasons; only the ones flagged for infection control can
-// justify a non-conformity. A substitution or relationType 2 requires a
-// substitute drug, relationType 1 takes one optionally
+// justify a non-conformity. relationType 2 requires a substitute drug,
+// relationType 1 takes one optionally; a substitution alone asks for none
 const REASONS = [
   {
     id: 31,
@@ -53,21 +53,30 @@ const REASONS = [
     infectionControl: true,
   },
   {
+    // a substitution without a relation: no substitute
     id: 32,
     name: "Tempo de tratamento",
     parentId: null,
     parentName: null,
     relationType: 0,
+    substitution: true,
     infectionControl: true,
   },
   {
-    // a substitution: the substitute is required whatever its relationType
     id: 33,
     name: "Trocar antimicrobiano",
     parentId: null,
     parentName: null,
-    relationType: 0,
+    relationType: 2,
     substitution: true,
+    infectionControl: true,
+  },
+  {
+    id: 34,
+    name: "Alternativa terapêutica",
+    parentId: null,
+    parentName: null,
+    relationType: 1,
     infectionControl: true,
   },
   {
@@ -1010,6 +1019,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       "Antimicrobiano - Espectro inadequado",
       "Tempo de tratamento",
       "Trocar antimicrobiano",
+      "Alternativa terapêutica",
     ]);
     await drug.getByRole("heading", { level: 3 }).click();
     await pickReason(page, drug, "Antimicrobiano - Espectro inadequado");
@@ -1265,9 +1275,14 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       .getByText("Não conforme", { exact: true })
       .click();
     await drug.getByLabel("Justificativa", { exact: true }).fill("Descalonar");
-    // a reason with no relation asks for no substitute
+    // a reason with no relation asks for no substitute, a substitution too
     await pickReason(page, drug, "Tempo de tratamento");
     await expect(substitute).toHaveCount(0);
+
+    // an optional relation takes one, but moves on without it
+    await pickReason(page, drug, "Alternativa terapêutica");
+    await expect(substitute).toContainText("opcional");
+    await expect(next).toBeEnabled();
 
     await pickReason(page, drug, "Trocar antimicrobiano");
     await expect(substitute).toContainText("obrigatório");
@@ -1305,7 +1320,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       page.getByText("Revisão registrada com sucesso!"),
     ).toBeVisible();
     expect(sent.evaluations).toMatchObject([
-      { idDrug: 11, interventionReasons: [32, 33], substituteDrug: 21 },
+      { idDrug: 11, interventionReasons: [32, 34, 33], substituteDrug: 21 },
       { idDrug: 12, interventionReasons: [], substituteDrug: null },
     ]);
   });
@@ -2357,6 +2372,71 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       }),
     ).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Revisar" })).toHaveCount(0);
+  });
+});
+
+test.describe("with READ_INFECTION_CONTROL only", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  test.beforeEach(async ({ page, mockApi }) => {
+    await loginWithPermissions(page, mockApi, [
+      ...BASE_PERMISSIONS,
+      "READ_INFECTION_CONTROL",
+    ]);
+    mockApi.override("GET /intervention/reasons", {
+      json: { status: "success", data: REASONS },
+    });
+  });
+
+  test("goes through the review but cannot save it", async ({
+    page,
+    mockApi,
+  }) => {
+    mockPage(mockApi, followUp());
+    let saved = 0;
+    mockApi.override(REVIEW, async (route) => {
+      saved += 1;
+      await route.fulfill({ status: 200, json: followUp() });
+    });
+
+    await page.goto(PAGE_URL);
+    await openReview(page);
+
+    const dialog = page.getByRole("dialog");
+    const drug = dialog.getByTestId("review-drug");
+    await drug
+      .getByRole("radiogroup", { name: "Avaliação" })
+      .getByText("Conforme", { exact: true })
+      .click();
+    await dialog
+      .getByRole("button", { name: "Próximo antimicrobiano" })
+      .click();
+    await dialog.getByRole("button", { name: "Próximo: paciente" }).click();
+    await dialog.getByRole("button", { name: "Próximo: evolução" }).click();
+
+    await expect(dialog.getByText("Etapa 4 de 4")).toBeVisible();
+    await expect(
+      dialog.getByRole("button", { name: "Registrar revisão" }),
+    ).toBeDisabled();
+    await expect(dialog.getByTestId("review-hint")).toHaveText(
+      "Você não tem permissão para registrar revisões",
+    );
+    expect(saved).toBe(0);
+  });
+
+  test("does not start the follow-up", async ({ page, mockApi }) => {
+    mockPage(mockApi, notFollowed());
+
+    await page.goto(PAGE_URL);
+
+    await expect(
+      page.getByTestId("follow-up").getByTestId("follow-up-status"),
+    ).toHaveText("Não acompanhado", { timeout: 15000 });
+    await expect(
+      (await openMoreActions(page)).getByRole("menuitem", {
+        name: "Iniciar acompanhamento",
+      }),
+    ).toHaveCount(0);
   });
 });
 

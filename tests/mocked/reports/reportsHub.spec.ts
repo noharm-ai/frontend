@@ -319,7 +319,7 @@ test.describe("custom reports", () => {
     ).toBe(true);
   });
 
-  test("a report processed less than 30 minutes ago can't be reprocessed", async ({
+  test("a report processed less than 10 minutes ago can't be reprocessed", async ({
     page,
     mockApi,
   }) => {

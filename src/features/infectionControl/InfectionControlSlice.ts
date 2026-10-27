@@ -181,11 +181,9 @@ export interface IInterventionReason {
   id: number;
   // with the name of its parent reason, as the intervention form shows it
   name: string;
-  // whether it relates the drug to another, the substitute
-  // (InterventionReasonRelationType)
+  // whether it relates the drug to another, the substitute, optionally or
+  // necessarily (InterventionReasonRelationType)
   relationType: number;
-  // a substitution, which names the drug recommended instead
-  substitution: boolean;
 }
 
 // an antimicrobial recommended instead of the one evaluated
@@ -563,7 +561,6 @@ export const fetchInterventionReasons = createAsyncThunk(
         name: string;
         parentName: string | null;
         relationType: number;
-        substitution: boolean;
         infectionControl: boolean;
       }[] = response.data.data;
 
@@ -575,7 +572,6 @@ export const fetchInterventionReasons = createAsyncThunk(
             ? `${reason.parentName} - ${reason.name}`
             : reason.name,
           relationType: reason.relationType,
-          substitution: !!reason.substitution,
         }));
     } catch (err) {
       return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
