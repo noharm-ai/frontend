@@ -2033,6 +2033,23 @@
       "closedWindow_one": "The search includes only the patients closed in the last day. To see another period, change \"Closed in the last\" under See more.",
       "closedWindow_other": "The search includes only the patients closed in the last {{count}} days. To see another period, change \"Closed in the last\" under See more.",
       "queryTimeout": "The search took too long. Use more filters to narrow your analysis.",
+      "backfill": {
+        "button": "Utilities",
+        "confirmTitle": "Confirm the action?",
+        "run": "Run",
+        "admissions": {
+          "label": "Follow admissions on antimicrobials",
+          "confirm": "Starts following the admissions already on antimicrobials that are not followed yet. It may take a few minutes.",
+          "done": "{{processed}} admissions processed, {{updated}} now followed.",
+          "partial": "Before the error: {{processed}} admissions processed, {{updated}} now followed."
+        },
+        "summary": {
+          "label": "Fill report summaries",
+          "confirm": "Fills the report summary of the followed admissions that do not have one yet. It may take a few minutes.",
+          "done": "{{processed}} admissions processed, {{updated}} summaries filled.",
+          "partial": "Before the error: {{processed}} admissions processed, {{updated}} summaries filled."
+        }
+      },
       "filters": {
         "allStatuses": "All statuses",
         "closedDays": "Closed in the last",

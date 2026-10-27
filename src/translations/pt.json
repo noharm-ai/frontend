@@ -2043,6 +2043,23 @@
       "closedWindow_one": "A busca inclui somente os pacientes encerrados no último dia. Para ver outro período, altere \"Encerrados nos últimos\" em Ver mais.",
       "closedWindow_other": "A busca inclui somente os pacientes encerrados nos últimos {{count}} dias. Para ver outro período, altere \"Encerrados nos últimos\" em Ver mais.",
       "queryTimeout": "A busca demorou demais. Utilize mais filtros para direcionar a sua análise.",
+      "backfill": {
+        "button": "Utilitários",
+        "confirmTitle": "Confirma a ação?",
+        "run": "Executar",
+        "admissions": {
+          "label": "Acompanhar internações em uso de antimicrobianos",
+          "confirm": "Passa a acompanhar as internações já em uso de antimicrobianos que ainda não são acompanhadas. Pode levar alguns minutos.",
+          "done": "{{processed}} internações processadas, {{updated}} passaram a ser acompanhadas.",
+          "partial": "Antes do erro: {{processed}} internações processadas, {{updated}} passaram a ser acompanhadas."
+        },
+        "summary": {
+          "label": "Preencher resumos do relatório",
+          "confirm": "Preenche o resumo do relatório das internações acompanhadas que ainda não têm. Pode levar alguns minutos.",
+          "done": "{{processed}} internações processadas, {{updated}} resumos preenchidos.",
+          "partial": "Antes do erro: {{processed}} internações processadas, {{updated}} resumos preenchidos."
+        }
+      },
       "filters": {
         "allStatuses": "Todas as situações",
         "closedDays": "Encerrados nos últimos",
