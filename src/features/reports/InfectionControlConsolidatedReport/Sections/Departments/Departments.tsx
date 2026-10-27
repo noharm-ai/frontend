@@ -48,8 +48,8 @@ export function Departments({ departments, loading }: DepartmentsProps) {
     },
     {
       title: tk("dotPer1000"),
+      // no `key`: antd keys the column by its dataIndex
       dataIndex: "dotPer1000PatientDays",
-      key: "dotPer1000PatientDays",
       align: right,
       sorter: sorter("dotPer1000PatientDays"),
       render: (value: number) => formatDecimal(value),
