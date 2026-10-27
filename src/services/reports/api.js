@@ -130,4 +130,7 @@ api.consolidated.getEconomyConsolidatedReport = (params = {}) =>
 api.consolidated.getInterventionConsolidatedReport = (params = {}) =>
   instance.post(`/reports/consolidated/intervention`, params, setHeaders());
 
+api.consolidated.getInfectionControlConsolidatedReport = (params = {}) =>
+  instance.post(`/reports/consolidated/infection-control`, params, setHeaders());
+
 export default api;

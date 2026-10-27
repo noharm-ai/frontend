@@ -94,8 +94,8 @@ test.describe("as maintainer", () => {
 
     await page.goto(PAGE_URL);
 
-    // all six internal reports render
-    await expect(reportCards(page)).toHaveCount(6);
+    // all seven internal reports render
+    await expect(reportCards(page)).toHaveCount(7);
 
     const economy = reportCards(page).filter({
       hasText: "Farmacoeconomia (Beta)",
