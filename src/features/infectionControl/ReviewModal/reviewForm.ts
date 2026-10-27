@@ -262,9 +262,9 @@ export const getInitialValues = (
 };
 
 /**
- * Whether the reasons of a non-conformity ask for a substitute drug:
- * "required" for a substitution or a required relation, "optional" for an
- * optional relation, as the intervention form takes it, or null
+ * Whether the reasons of a non-conformity ask for a substitute drug, by their
+ * relation type as the intervention form takes it: "required", "optional" or
+ * null
  */
 export const getSubstituteRelation = (
   evaluation: Pick<IDrugEvaluationFields, "conforming" | "interventionReasons">,
@@ -277,10 +277,7 @@ export const getSubstituteRelation = (
   );
   const relationTypes = chosen.map((reason) => reason.relationType);
 
-  if (
-    chosen.some((reason) => reason.substitution) ||
-    relationTypes.some(InterventionReasonRelationType.isRequired)
-  ) {
+  if (relationTypes.some(InterventionReasonRelationType.isRequired)) {
     return "required";
   }
   if (
