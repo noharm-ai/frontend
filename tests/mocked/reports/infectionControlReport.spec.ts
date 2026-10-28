@@ -448,6 +448,43 @@ test("sends the chosen filters with the period", async ({ page, mockApi }) => {
   );
 });
 
+test("the period picker offers the current and the last month", async ({
+  page,
+  mockApi,
+}) => {
+  mockReport(mockApi);
+
+  await page.goto(PAGE_URL);
+  await expect(
+    indicator(page, "Dias de terapia (DOT)")
+      .first()
+      .locator(".indicator-value"),
+  ).toHaveText("1.234");
+
+  await page.locator(".ant-picker-range").click();
+  const presets = page.locator(".ant-picker-presets li");
+  await expect(presets.nth(0)).toHaveText("Mês atual");
+  await expect(presets.nth(1)).toHaveText("Mês anterior");
+  await expect(presets.nth(2)).toHaveText("Ano atual");
+  await presets.nth(1).click();
+
+  const period = page.waitForRequest(isReport);
+  await page.locator(".gtm-btn-search").click();
+
+  const params = (await period).postDataJSON();
+  const lastMonth = new Date();
+  lastMonth.setDate(1);
+  lastMonth.setMonth(lastMonth.getMonth() - 1);
+  const year = lastMonth.getFullYear();
+  const month = String(lastMonth.getMonth() + 1).padStart(2, "0");
+  const lastDay = new Date(year, lastMonth.getMonth() + 1, 0).getDate();
+  expect(params).toMatchObject({
+    year,
+    start_date: `${year}-${month}-01`,
+    end_date: `${year}-${month}-${lastDay}`,
+  });
+});
+
 test("a department row lists the admissions it counts, for the same period", async ({
   page,
   mockApi,

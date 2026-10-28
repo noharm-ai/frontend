@@ -1,5 +1,6 @@
 import { useContext } from "react";
 import { useTranslation } from "react-i18next";
+import dayjs from "dayjs";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import { Col } from "components/Grid";
@@ -51,6 +52,22 @@ export function MainFilters() {
 
   const segmentNames = segments.map((s) => s.description).sort();
 
+  // the months come before the years; each period stays in one year, as the report needs
+  const periodPresets = [
+    {
+      label: tk("currentMonth"),
+      value: [dayjs().startOf("month"), dayjs().endOf("month")],
+    },
+    {
+      label: tk("lastMonth"),
+      value: [
+        dayjs().subtract(1, "month").startOf("month"),
+        dayjs().subtract(1, "month").endOf("month"),
+      ],
+    },
+    ...getLongDateRangePresets(),
+  ];
+
   const filterDepartments = (
     list: ISegmentDepartment[],
   ): ISegmentDepartment[] => {
@@ -75,7 +92,7 @@ export function MainFilters() {
         </Heading>
         <RangeDatePicker
           format="DD/MM/YYYY"
-          presets={getLongDateRangePresets()}
+          presets={periodPresets}
           value={values.dateRange}
           onChange={(val: IFilterContext["values"]["dateRange"]) =>
             setFieldValue({ dateRange: val })

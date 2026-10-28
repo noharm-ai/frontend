@@ -2123,6 +2123,8 @@
     },
     "filter": {
       "period": "Period",
+      "currentMonth": "Current month",
+      "lastMonth": "Last month",
       "segment": "Segment",
       "department": "Department",
       "aware": "AWaRe classification",

@@ -2133,6 +2133,8 @@
     },
     "filter": {
       "period": "Período",
+      "currentMonth": "Mês atual",
+      "lastMonth": "Mês anterior",
       "segment": "Segmento",
       "department": "Setor",
       "aware": "Classificação AWaRe",
