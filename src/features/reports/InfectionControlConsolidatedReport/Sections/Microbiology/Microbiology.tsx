@@ -6,7 +6,10 @@ import { SectionHeader } from "styles/Report.style";
 
 import { Indicator } from "../../Indicator/Indicator";
 import { Block } from "../../Block/Block";
-import { IndicatorGrid } from "../../InfectionControlConsolidatedReport.style";
+import {
+  IndicatorGrid,
+  Section,
+} from "../../InfectionControlConsolidatedReport.style";
 import { formatInteger, formatShare } from "../../format";
 import {
   IMicrobiology,
@@ -40,7 +43,7 @@ export function Microbiology({ microbiology, loading }: MicrobiologyProps) {
   ];
 
   return (
-    <>
+    <Section>
       <SectionHeader>
         <h2>{tk("title")}</h2>
         <div>{tk("description")}</div>
@@ -89,6 +92,6 @@ export function Microbiology({ microbiology, loading }: MicrobiologyProps) {
           size="small"
         />
       </Block>
-    </>
+    </Section>
   );
 }

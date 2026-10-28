@@ -6,6 +6,7 @@ import { SectionHeader } from "styles/Report.style";
 
 import { formatDecimal, formatInteger, formatShare } from "../../format";
 import { IDepartmentRow } from "../../infectionControlReportTypes";
+import { Section } from "../../InfectionControlConsolidatedReport.style";
 
 interface DepartmentsProps {
   departments?: IDepartmentRow[];
@@ -88,7 +89,7 @@ export function Departments({ departments, loading }: DepartmentsProps) {
   ];
 
   return (
-    <>
+    <Section>
       <SectionHeader>
         <h2>{tk("title")}</h2>
         <div>{tk("description")}</div>
@@ -103,6 +104,6 @@ export function Departments({ departments, loading }: DepartmentsProps) {
         size="small"
         scroll={{ x: true }}
       />
-    </>
+    </Section>
   );
 }

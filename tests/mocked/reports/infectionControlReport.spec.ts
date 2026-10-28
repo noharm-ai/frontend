@@ -8,9 +8,9 @@ import { openSelectById, pickOption } from "../support/antd";
  * src/features/reports/InfectionControlConsolidatedReport).
  *
  * POST /reports/consolidated/infection-control answers the indicators of a
- * period, or, when the request carries `day`, the view of that day. The page
- * asks both when it opens: the period from January 1st to yesterday and the
- * day view of yesterday, the last complete day of the files.
+ * period. The page asks the period from January 1st to yesterday, the last
+ * complete day of the files, when it opens. Each section is a tab, and the
+ * period summary is the one open at first.
  */
 
 const PAGE_URL = "/relatorios/consolidado/controle-infeccao";
@@ -181,61 +181,32 @@ const indicators = {
   },
 };
 
-const dayView = (date: string) => ({
-  date,
-  prescribed: 42,
-  patients: 30,
-  withRecord: 31,
-  conforming: 25,
-  nonConforming: 6,
-  withoutRecord: 11,
-  notEvaluated: 8,
-  expired: 3,
-  withoutRecordPastD3: 4,
-  byDepartment: [
-    {
-      idDepartment: 5,
-      department: "UTI Teste",
-      prescribed: 42,
-      conforming: 25,
-      non_conforming: 6,
-      not_evaluated: 8,
-      expired: 3,
-    },
-  ],
-  nonConformityReasons: [{ reason: "Espectro - Amplo demais", count: 6 }],
-});
-
 const isReport = (request: Request) =>
   request.method() === "POST" &&
   request.url().endsWith("/reports/consolidated/infection-control");
 
-const isDay = (request: Request) => !!request.postDataJSON()?.day;
-
-/** Answers the period or the day, as the private backend does. */
+/** Answers the indicators of the period, as the private backend does. */
 function mockReport(mockApi: any) {
-  mockApi.override(ENDPOINT, (route: any) => {
-    const params = route.request().postDataJSON();
-    const data = params.day
-      ? { day: dayView(params.day), updatedAt: UPDATED_AT }
-      : { indicators, updatedAt: UPDATED_AT };
-
-    return route.fulfill({ json: { status: "success", data } });
+  mockApi.override(ENDPOINT, {
+    json: { status: "success", data: { indicators, updatedAt: UPDATED_AT } },
   });
 }
+
+/** Opens a section of the report; the period summary is the one open at first. */
+const openTab = (page: Page, name: string) =>
+  page.getByRole("tab", { name, exact: true }).click();
 
 const indicator = (page: Page, title: string) =>
   page.locator(".indicator").filter({
     has: page.locator(".indicator-title").getByText(title, { exact: true }),
   });
 
-test("opens with the period up to yesterday and the day view of yesterday", async ({
+test("opens with the period up to yesterday, on the period summary", async ({
   page,
   mockApi,
 }) => {
   mockReport(mockApi);
-  const period = page.waitForRequest((r) => isReport(r) && !isDay(r));
-  const day = page.waitForRequest((r) => isReport(r) && isDay(r));
+  const period = page.waitForRequest(isReport);
 
   await page.goto(PAGE_URL);
 
@@ -245,75 +216,22 @@ test("opens with the period up to yesterday and the day view of yesterday", asyn
       level: 1,
     }),
   ).toBeVisible();
+  await expect(
+    page.getByRole("tab", { name: "Resumo do período", selected: true }),
+  ).toBeVisible();
 
-  const dayParams = (await day).postDataJSON();
-  const periodParams = (await period).postDataJSON();
-  expect(dayParams.day).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-  expect(dayParams.year).toBe(Number(dayParams.day.slice(0, 4)));
-  expect(periodParams).toMatchObject({
-    year: dayParams.year,
-    start_date: `${dayParams.year}-01-01`,
-    end_date: dayParams.day,
+  const params = (await period).postDataJSON();
+  expect(params.end_date).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+  const year = Number(params.end_date.slice(0, 4));
+  expect(params).toMatchObject({
+    year,
+    start_date: `${year}-01-01`,
     id_department: [],
     segment: [],
     substance: [],
     aware_level: [],
     reviewer: [],
   });
-  expect(periodParams.day).toBeUndefined();
-});
-
-test("shows the day view: prescribed, with and without a valid record", async ({
-  page,
-  mockApi,
-}) => {
-  mockReport(mockApi);
-
-  await page.goto(PAGE_URL);
-
-  const day = page.locator('[data-kb="reports.infectionControl.day"]');
-  await expect(
-    indicator(page, "Antimicrobianos prescritos").locator(".indicator-value"),
-  ).toHaveText("42");
-  await expect(day).toContainText("30 pacientes");
-  await expect(day).toContainText("Com registro válido");
-  await expect(day).toContainText("25 conformes · 6 não conformes");
-  await expect(day).toContainText("8 nunca avaliados · 3 vencidos");
-  await expect(
-    indicator(page, "Sem registro após o D3").locator(".indicator-value"),
-  ).toHaveText("4");
-
-  const departments = page.locator(
-    '[data-kb="reports.infectionControl.dayDepartments"]',
-  );
-  await expect(
-    departments.getByRole("row", { name: /UTI Teste/ }),
-  ).toContainText("42");
-});
-
-test("asks the day again when another day is picked", async ({
-  page,
-  mockApi,
-}) => {
-  mockReport(mockApi);
-  const first = page.waitForRequest((r) => isReport(r) && isDay(r));
-  await page.goto(PAGE_URL);
-  const year = (await first).postDataJSON().year;
-  await expect(
-    indicator(page, "Antimicrobianos prescritos").locator(".indicator-value"),
-  ).toHaveText("42");
-
-  const picked = `${year}-01-02`;
-  const next = page.waitForRequest(
-    (r) => isReport(r) && isDay(r) && r.postDataJSON().day === picked,
-  );
-  const picker = page.locator("#infection-control-day");
-  await picker.click();
-  await picker.fill(`02/01/${year}`);
-  await picker.press("Enter");
-
-  expect((await next).postDataJSON()).toMatchObject({ day: picked, year });
-  await expect(picker).toHaveValue(`02/01/${year}`);
 });
 
 test("shows the period indicators in the browser's number format", async ({
@@ -333,10 +251,9 @@ test("shows the period indicators in the browser's number format", async ({
   await expect(value("DOT do grupo Acesso")).toHaveText("61,2%");
   await expect(value("Cursos avaliados até o D3")).toHaveText("80,0%");
   await expect(value("Tempo até a 1ª revisão")).toHaveText("26,0 h");
-  await expect(value("Revisões por atendimento")).toHaveText("3,5");
-  await expect(value("Duração dos cursos")).toHaveText("7,0 dias");
-  await expect(value("Dia da troca para oral")).toHaveText("D4,0");
 
+  await openTab(page, "Processo de revisão");
+  await expect(value("Revisões por atendimento")).toHaveText("3,5");
   await expect(
     page
       .locator('[data-kb="reports.infectionControl.reviewers"]')
@@ -347,9 +264,17 @@ test("shows the period indicators in the browser's number format", async ({
       .locator('[data-kb="reports.infectionControl.pendings"]')
       .getByRole("row", { name: /Avaliação vencida/ }),
   ).toContainText("75,0%");
+
+  await openTab(page, "Adequação");
   await expect(
     page.locator('[data-kb="reports.infectionControl.substitutions"]'),
   ).toContainText("Descalonamento");
+
+  await openTab(page, "Consumo");
+  await expect(value("Duração dos cursos")).toHaveText("7,0 dias");
+  await expect(value("Dia da troca para oral")).toHaveText("D4,0");
+
+  await openTab(page, "Perfil e desfechos");
   await expect(
     page.locator('[data-kb="reports.infectionControl.diagnoses"]'),
   ).toContainText("J18 - Pneumonia");
@@ -390,12 +315,10 @@ test("sends the chosen filters with the period", async ({ page, mockApi }) => {
   await pickOption(page, "UTI Teste");
   await page.keyboard.press("Escape");
 
-  const period = page.waitForRequest((r) => isReport(r) && !isDay(r));
-  const day = page.waitForRequest((r) => isReport(r) && isDay(r));
+  const period = page.waitForRequest(isReport);
   await page.locator(".gtm-btn-search").click();
 
   expect((await period).postDataJSON().id_department).toEqual([5]);
-  expect((await day).postDataJSON().id_department).toEqual([5]);
   await expect(page.locator(".report-filter-list")).toContainText(
     "Setor: UTI Teste",
   );
@@ -407,8 +330,8 @@ test("warns when the report can't be loaded", async ({ page, mockApi }) => {
     json: { status: "error", message: "Controle de infecção não habilitado" },
   });
 
-  // the period notifies; the notice closes itself after a few seconds, so
-  // wait for it from before the page opens
+  // the notice closes itself after a few seconds, so wait for it from before
+  // the page opens
   const notified = page
     .locator(".ant-notification-notice-error")
     .filter({ hasText: "Controle de infecção não habilitado" })
@@ -416,11 +339,6 @@ test("warns when the report can't be loaded", async ({ page, mockApi }) => {
     .waitFor({ state: "attached" });
   await page.goto(PAGE_URL);
   await notified;
-
-  // the day view says so in its own section
-  await expect(page.locator(".ant-alert-error")).toContainText(
-    "Controle de infecção não habilitado",
-  );
   await expect(
     indicator(page, "Dias de terapia (DOT)")
       .first()

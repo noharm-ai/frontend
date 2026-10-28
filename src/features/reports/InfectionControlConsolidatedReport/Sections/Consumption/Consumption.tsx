@@ -7,7 +7,10 @@ import { Indicator } from "../../Indicator/Indicator";
 import { Block } from "../../Block/Block";
 import { BarChart } from "../../BarChart/BarChart";
 import { PieChart } from "../../PieChart/PieChart";
-import { IndicatorGrid } from "../../InfectionControlConsolidatedReport.style";
+import {
+  IndicatorGrid,
+  Section,
+} from "../../InfectionControlConsolidatedReport.style";
 import {
   formatDecimal,
   formatMedian,
@@ -31,7 +34,7 @@ export function Consumption({ consumption, loading }: ConsumptionProps) {
   const days = t("infectionControlConsolidated.units.days");
 
   return (
-    <>
+    <Section>
       <SectionHeader>
         <h2>{tk("title")}</h2>
         <div>{tk("description")}</div>
@@ -174,6 +177,6 @@ export function Consumption({ consumption, loading }: ConsumptionProps) {
           </Block>
         </Col>
       </Row>
-    </>
+    </Section>
   );
 }

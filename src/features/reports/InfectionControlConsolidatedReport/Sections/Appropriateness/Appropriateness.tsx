@@ -8,7 +8,10 @@ import { Indicator } from "../../Indicator/Indicator";
 import { Block } from "../../Block/Block";
 import { BarChart } from "../../BarChart/BarChart";
 import { PieChart } from "../../PieChart/PieChart";
-import { IndicatorGrid } from "../../InfectionControlConsolidatedReport.style";
+import {
+  IndicatorGrid,
+  Section,
+} from "../../InfectionControlConsolidatedReport.style";
 import { formatDecimal, formatInteger, formatShare } from "../../format";
 import { ADJUSTMENTS, REGISTRY_COLORS, REGISTRY_STATUSES } from "../../options";
 import {
@@ -66,7 +69,7 @@ export function Appropriateness({
   ];
 
   return (
-    <>
+    <Section>
       <SectionHeader>
         <h2>{tk("title")}</h2>
         <div>{tk("description")}</div>
@@ -215,6 +218,6 @@ export function Appropriateness({
           </Block>
         </Col>
       </Row>
-    </>
+    </Section>
   );
 }

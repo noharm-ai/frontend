@@ -7,7 +7,10 @@ import { SectionHeader } from "styles/Report.style";
 import { Indicator } from "../../Indicator/Indicator";
 import { Block } from "../../Block/Block";
 import { PieChart } from "../../PieChart/PieChart";
-import { IndicatorGrid } from "../../InfectionControlConsolidatedReport.style";
+import {
+  IndicatorGrid,
+  Section,
+} from "../../InfectionControlConsolidatedReport.style";
 import { formatDecimal, formatMedian, formatShare } from "../../format";
 import {
   IAgeBand,
@@ -69,7 +72,7 @@ export function Outcomes({ outcomes, loading }: OutcomesProps) {
   ];
 
   return (
-    <>
+    <Section>
       <SectionHeader>
         <h2>{tk("title")}</h2>
         <div>{tk("description")}</div>
@@ -146,6 +149,6 @@ export function Outcomes({ outcomes, loading }: OutcomesProps) {
           </Block>
         </Col>
       </Row>
-    </>
+    </Section>
   );
 }

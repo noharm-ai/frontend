@@ -16,8 +16,6 @@ interface ResultState {
 interface InfectionControlConsolidatedReportState {
   // indicators of the period
   filtered: ResultState;
-  // the view of one day (antimicrobials running on it and their records)
-  day: ResultState;
   helpModal: boolean;
 }
 
@@ -27,30 +25,11 @@ const initialState: InfectionControlConsolidatedReportState = {
     error: null,
     result: {},
   },
-  day: {
-    status: "idle",
-    error: null,
-    result: {},
-  },
   helpModal: false,
 };
 
 export const fetchReportData = createAsyncThunk(
   "reports-infection-control-consolidated/fetch-data",
-  async (params: IReportParams, thunkAPI) => {
-    try {
-      const response =
-        await api.consolidated.getInfectionControlConsolidatedReport(params);
-      return response.data;
-    } catch (err) {
-      console.error(err);
-      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
-    }
-  },
-);
-
-export const fetchDayData = createAsyncThunk(
-  "reports-infection-control-consolidated/fetch-day",
   async (params: IReportParams, thunkAPI) => {
     try {
       const response =
@@ -87,21 +66,6 @@ const infectionControlConsolidatedReportSlice = createSlice({
         state.filtered.status = "failed";
         state.filtered.result = {};
         state.filtered.error =
-          (action.payload as { message?: string })?.message ||
-          action.error.message ||
-          null;
-      })
-      .addCase(fetchDayData.pending, (state) => {
-        state.day.status = "loading";
-      })
-      .addCase(fetchDayData.fulfilled, (state, action) => {
-        state.day.status = "succeeded";
-        state.day.result = action.payload.data || {};
-      })
-      .addCase(fetchDayData.rejected, (state, action) => {
-        state.day.status = "failed";
-        state.day.result = {};
-        state.day.error =
           (action.payload as { message?: string })?.message ||
           action.error.message ||
           null;

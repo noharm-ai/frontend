@@ -56,7 +56,8 @@ export function BarChart({
     grid: {
       left: horizontal ? 230 : 40,
       right: 30,
-      top: 10,
+      // room for the value labels above the bars and the save icon
+      top: horizontal ? 10 : 35,
       bottom: 30,
     },
     toolbox: {

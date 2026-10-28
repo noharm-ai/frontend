@@ -10,7 +10,10 @@ import { maskedName } from "utils/report";
 import { Indicator } from "../../Indicator/Indicator";
 import { Block } from "../../Block/Block";
 import { BarChart } from "../../BarChart/BarChart";
-import { IndicatorGrid } from "../../InfectionControlConsolidatedReport.style";
+import {
+  IndicatorGrid,
+  Section,
+} from "../../InfectionControlConsolidatedReport.style";
 import {
   formatDecimal,
   formatInteger,
@@ -110,7 +113,7 @@ export function Process({ process, loading }: ProcessProps) {
   ];
 
   return (
-    <>
+    <Section>
       <SectionHeader>
         <h2>{tk("title")}</h2>
         <div>{tk("description")}</div>
@@ -221,6 +224,6 @@ export function Process({ process, loading }: ProcessProps) {
           </Block>
         </Col>
       </Row>
-    </>
+    </Section>
   );
 }

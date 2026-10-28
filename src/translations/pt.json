@@ -2178,28 +2178,6 @@
       "F": "Feminino",
       "?": "Não informado"
     },
-    "day": {
-      "title": "Visão do dia",
-      "description": "Antimicrobianos prescritos no dia e se cada um tinha um registro de conformidade válido naquele dia",
-      "date": "Dia",
-      "prescribed": "Antimicrobianos prescritos",
-      "prescribedHelp": "Antimicrobianos com prescrição vigente em algum momento do dia, contados por paciente: o mesmo medicamento em duas prescrições do paciente conta uma vez.",
-      "patients": "pacientes",
-      "withRecord": "Com registro válido",
-      "withRecordHelp": "Antimicrobianos do dia com uma avaliação de conformidade vigente em algum momento do dia: do início da validade até o vencimento ou o encerramento da avaliação. Se houve mais de uma no dia, vale a registrada por último.",
-      "conformingDetail": "conformes",
-      "nonConformingDetail": "não conformes",
-      "withoutRecord": "Sem registro válido",
-      "withoutRecordHelp": "Antimicrobianos prescritos no dia sem nenhuma avaliação vigente: nunca avaliados no curso, ou com a última avaliação já vencida.",
-      "notEvaluatedDetail": "nunca avaliados",
-      "expiredDetail": "vencidos",
-      "pastD3": "Sem registro após o D3",
-      "pastD3Help": "Antimicrobianos sem registro válido no dia que já estavam no 4º dia de tratamento ou depois (passaram do time-out de 72 horas).",
-      "reasons": "Motivos de não conformidade",
-      "reasonsHelp": "Motivos das avaliações não conformes vigentes no dia. Uma avaliação pode ter mais de um motivo, então a soma pode passar do número de antimicrobianos não conformes.",
-      "byDepartment": "Por setor",
-      "byDepartmentHelp": "Os antimicrobianos do dia pelo setor em que o paciente estava naquele dia."
-    },
     "overview": {
       "title": "Resumo do período",
       "description": "Consumo, adequação e tempo de resposta",

@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { escape } from "lodash";
 import DOMPurify from "dompurify";
 import { useNavigate } from "react-router-dom";
-import { Space, FloatButton, Alert } from "antd";
+import { Space, FloatButton, Alert, Tabs } from "antd";
 import {
   UnorderedListOutlined,
   QuestionOutlined,
@@ -40,6 +40,7 @@ import {
   fetchReportData,
   setHelpModal,
 } from "./InfectionControlConsolidatedReportSlice";
+import { ReportTabs } from "./InfectionControlConsolidatedReport.style";
 import {
   IFilterValues,
   IIndicators,
@@ -47,7 +48,6 @@ import {
 } from "./infectionControlReportTypes";
 import { Filter } from "./Filter/Filter";
 import { HelpModal } from "./Help/Help";
-import { DayView } from "./DayView/DayView";
 import { Overview } from "./Sections/Overview/Overview";
 import { Departments } from "./Sections/Departments/Departments";
 import { Process } from "./Sections/Process/Process";
@@ -69,14 +69,6 @@ const labels = (list?: { label: string }[]) =>
 const values = (list?: { value: number }[]) =>
   (list || []).map((item) => item.value);
 
-// the filters the day view follows: all but the period and the reviewer
-const dayFiltersOf = (params: Omit<IFilterValues, "dateRange">) => ({
-  id_department: params.department,
-  segment: params.segment,
-  substance: values(params.substance),
-  aware_level: params.aware_level,
-});
-
 // up to yesterday, the last complete day of the files
 const yesterday = () => dayjs().subtract(1, "day");
 
@@ -90,10 +82,9 @@ const INITIAL_VALUES: Omit<IFilterValues, "dateRange"> = {
 };
 
 /**
- * Infection control report: the antimicrobials of a day and their conformity
- * records, plus the indicators of a period (consumption, appropriateness,
- * review process, microbiology and outcomes), read from the files the
- * long-running tasks build every night.
+ * Infection control report: the indicators of a period (consumption,
+ * appropriateness, review process, microbiology and outcomes), read from the
+ * files the long-running tasks build every night.
  */
 export function InfectionControlConsolidatedReport() {
   const { t } = useTranslation();
@@ -114,9 +105,6 @@ export function InfectionControlConsolidatedReport() {
     ...INITIAL_VALUES,
     dateRange: [yesterday().startOf("year"), yesterday()],
   }));
-  const [dayFilters, setDayFilters] = useState<Record<string, unknown>>(() =>
-    dayFiltersOf(INITIAL_VALUES),
-  );
   const isLoading = status === "loading";
   const indicators: Partial<IIndicators> = result?.indicators || {};
   const hideNames = FeatureService.has(Feature.HIDE_NAMES);
@@ -131,11 +119,14 @@ export function InfectionControlConsolidatedReport() {
     reviewer: { label: tk("filter.reviewer"), type: "list", mask: hideNames },
   };
 
-  // the indicators of the period (the day view follows dayFilters)
+  // the indicators of the period
   const fetchPeriod = (params: IFilterValues) => {
     const [start, end] = params.dateRange;
     const apiParams: IReportParams = {
-      ...dayFiltersOf(params),
+      id_department: params.department,
+      segment: params.segment,
+      substance: values(params.substance),
+      aware_level: params.aware_level,
       year: start.year(),
       start_date: start.format("YYYY-MM-DD"),
       end_date: end.format("YYYY-MM-DD"),
@@ -183,7 +174,6 @@ export function InfectionControlConsolidatedReport() {
       return;
     }
 
-    setDayFilters(dayFiltersOf(params));
     fetchPeriod(params);
   };
 
@@ -272,37 +262,83 @@ export function InfectionControlConsolidatedReport() {
             ></div>
           </ReportFilterContainer>
 
-          <Space orientation="vertical" size="large" style={{ width: "100%" }}>
-            <DayView filters={dayFilters} />
-            <div className="page-break"></div>
-            <Overview
-              overview={indicators.overview}
-              monthly={indicators.monthly}
-              loading={isLoading}
+          {/* panes mount when first opened, so the charts get their width;
+              printing prints the open one */}
+          <ReportTabs>
+            <Tabs
+              data-kb="reports.infectionControl.tabs"
+              items={[
+                {
+                  key: "overview",
+                  label: tk("overview.title"),
+                  children: (
+                    <Space
+                      orientation="vertical"
+                      size={48}
+                      style={{ width: "100%" }}
+                    >
+                      <Overview
+                        overview={indicators.overview}
+                        monthly={indicators.monthly}
+                        loading={isLoading}
+                      />
+                      <Departments
+                        departments={indicators.byDepartment}
+                        loading={isLoading}
+                      />
+                    </Space>
+                  ),
+                },
+                {
+                  key: "process",
+                  label: tk("process.title"),
+                  children: (
+                    <Process process={indicators.process} loading={isLoading} />
+                  ),
+                },
+                {
+                  key: "appropriateness",
+                  label: tk("appropriateness.title"),
+                  children: (
+                    <Appropriateness
+                      appropriateness={indicators.appropriateness}
+                      loading={isLoading}
+                    />
+                  ),
+                },
+                {
+                  key: "consumption",
+                  label: tk("consumption.title"),
+                  children: (
+                    <Consumption
+                      consumption={indicators.consumption}
+                      loading={isLoading}
+                    />
+                  ),
+                },
+                {
+                  key: "microbiology",
+                  label: tk("microbiology.title"),
+                  children: (
+                    <Microbiology
+                      microbiology={indicators.microbiology}
+                      loading={isLoading}
+                    />
+                  ),
+                },
+                {
+                  key: "outcomes",
+                  label: tk("outcomes.title"),
+                  children: (
+                    <Outcomes
+                      outcomes={indicators.outcomes}
+                      loading={isLoading}
+                    />
+                  ),
+                },
+              ]}
             />
-            <Departments
-              departments={indicators.byDepartment}
-              loading={isLoading}
-            />
-            <div className="page-break"></div>
-            <Process process={indicators.process} loading={isLoading} />
-            <div className="page-break"></div>
-            <Appropriateness
-              appropriateness={indicators.appropriateness}
-              loading={isLoading}
-            />
-            <div className="page-break"></div>
-            <Consumption
-              consumption={indicators.consumption}
-              loading={isLoading}
-            />
-            <div className="page-break"></div>
-            <Microbiology
-              microbiology={indicators.microbiology}
-              loading={isLoading}
-            />
-            <Outcomes outcomes={indicators.outcomes} loading={isLoading} />
-          </Space>
+          </ReportTabs>
         </div>
       </ReportContainer>
       <HelpModal />

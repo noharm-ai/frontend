@@ -2168,28 +2168,6 @@
       "F": "Female",
       "?": "Not informed"
     },
-    "day": {
-      "title": "Day view",
-      "description": "Antimicrobials prescribed on the day and whether each had a valid conformity record on it",
-      "date": "Day",
-      "prescribed": "Antimicrobials prescribed",
-      "prescribedHelp": "Antimicrobials with a prescription in force at any time of the day, counted per patient: the same drug in two prescriptions of the patient counts once.",
-      "patients": "patients",
-      "withRecord": "With a valid record",
-      "withRecordHelp": "Antimicrobials of the day with a conformity evaluation in force at any time of the day: from the start of its validity until it expires or closes. When more than one, the latest recorded one counts.",
-      "conformingDetail": "conforming",
-      "nonConformingDetail": "non-conforming",
-      "withoutRecord": "Without a valid record",
-      "withoutRecordHelp": "Antimicrobials prescribed on the day with no evaluation in force: never evaluated in the course, or the last evaluation already expired.",
-      "notEvaluatedDetail": "never evaluated",
-      "expiredDetail": "expired",
-      "pastD3": "Without a record past D3",
-      "pastD3Help": "Antimicrobials without a valid record on the day that were already on treatment day 4 or later (past the 72-hour time-out).",
-      "reasons": "Non-conformity reasons",
-      "reasonsHelp": "Reasons of the non-conforming evaluations in force on the day. An evaluation may have more than one reason, so the sum can exceed the non-conforming antimicrobials.",
-      "byDepartment": "By department",
-      "byDepartmentHelp": "The antimicrobials of the day by the department the patient was in on that day."
-    },
     "overview": {
       "title": "Period summary",
       "description": "Consumption, appropriateness and response time",

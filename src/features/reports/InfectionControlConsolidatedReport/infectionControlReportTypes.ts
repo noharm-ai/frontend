@@ -198,31 +198,8 @@ export interface IIndicators {
   outcomes: IOutcomes;
 }
 
-export interface IDayDepartment extends IVerdictDays {
-  idDepartment: number | null;
-  department: string | null;
-  prescribed: number;
-}
-
-export interface IDayView {
-  date: string;
-  prescribed: number;
-  patients: number;
-  withRecord: number;
-  conforming: number;
-  nonConforming: number;
-  withoutRecord: number;
-  notEvaluated: number;
-  expired: number;
-  withoutRecordPastD3: number;
-  byDepartment: IDayDepartment[];
-  nonConformityReasons: INamedCount[];
-}
-
-// the period answers indicators; a request with `day` answers the day view
 export interface IReportResult {
   indicators?: IIndicators;
-  day?: IDayView;
   updatedAt?: string | null;
 }
 
@@ -236,7 +213,6 @@ export interface IReportParams {
   substance?: number[];
   aware_level?: number[];
   reviewer?: number[];
-  day?: string;
 }
 
 export interface IOption {

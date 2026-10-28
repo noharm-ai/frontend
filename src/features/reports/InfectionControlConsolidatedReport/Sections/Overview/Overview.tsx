@@ -5,7 +5,10 @@ import { SectionHeader } from "styles/Report.style";
 import { Indicator } from "../../Indicator/Indicator";
 import { Block } from "../../Block/Block";
 import { MonthlyChart } from "../../MonthlyChart/MonthlyChart";
-import { IndicatorGrid } from "../../InfectionControlConsolidatedReport.style";
+import {
+  IndicatorGrid,
+  Section,
+} from "../../InfectionControlConsolidatedReport.style";
 import {
   formatDecimal,
   formatInteger,
@@ -28,7 +31,7 @@ export function Overview({ overview, monthly, loading }: OverviewProps) {
   const hours = t("infectionControlConsolidated.units.hours");
 
   return (
-    <>
+    <Section>
       <SectionHeader>
         <h2>{tk("title")}</h2>
         <div>{tk("description")}</div>
@@ -132,6 +135,6 @@ export function Overview({ overview, monthly, loading }: OverviewProps) {
       >
         <MonthlyChart months={monthly || []} loading={loading} />
       </Block>
-    </>
+    </Section>
   );
 }
