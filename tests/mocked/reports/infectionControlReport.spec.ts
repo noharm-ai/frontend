@@ -10,7 +10,9 @@ import { openSelectById, pickOption } from "../support/antd";
  * POST /reports/consolidated/infection-control answers the indicators of a
  * period. The page asks the period from January 1st to yesterday, the last
  * complete day of the files, when it opens. Each section is a tab, and the
- * period summary is the one open at first.
+ * period summary is the one open at first. A department row drills down to
+ * its admissions (`admissions_of`), and an admission to its antimicrobial
+ * courses (`courses_of`).
  */
 
 const PAGE_URL = "/relatorios/consolidado/controle-infeccao";
@@ -181,14 +183,103 @@ const indicators = {
   },
 };
 
+const admissions = [
+  {
+    admissionNumber: 90001,
+    followed: true,
+    closedAt: null,
+    segment: "Adulto",
+    age: 71,
+    sex: "M",
+    idcid: "A41",
+    diagnosis: "Sepse teste",
+    antimicrobialStart: "2026-03-04T08:00:00",
+    antimicrobialEnd: null,
+    dot: 9,
+    episodes: 1,
+    reviews: 3,
+    timeToFirstReviewHours: 20,
+    lengthOfStayDays: null,
+  },
+  {
+    admissionNumber: 90002,
+    followed: false,
+    closedAt: "2026-03-06T10:00:00",
+    segment: "Adulto",
+    age: 64,
+    sex: "F",
+    idcid: "J18",
+    diagnosis: "Pneumonia",
+    antimicrobialStart: "2026-03-01T08:00:00",
+    antimicrobialEnd: "2026-03-06T08:00:00",
+    dot: 5,
+    episodes: 1,
+    reviews: 2,
+    timeToFirstReviewHours: 26,
+    lengthOfStayDays: 12,
+  },
+];
+
+const courses = [
+  {
+    course: 1,
+    idSubstance: 100,
+    substance: "SUBSTANCIA TESTE",
+    awareLevel: 2,
+    start: "2026-03-01T08:00:00",
+    days: 5,
+    plannedDays: 7,
+    pastPlannedEnd: false,
+    route: "EV",
+    ivToOralDay: 4,
+    ongoing: false,
+    restart: false,
+    department: "UTI Teste",
+    evaluatedByD3: true,
+    finalVerdict: "non_conforming",
+    everNonConforming: true,
+  },
+  {
+    course: 2,
+    idSubstance: 200,
+    substance: "OUTRA SUBSTANCIA TESTE",
+    awareLevel: 1,
+    start: "2026-03-05T08:00:00",
+    days: 2,
+    plannedDays: null,
+    pastPlannedEnd: false,
+    route: "VO",
+    ivToOralDay: null,
+    ongoing: true,
+    restart: false,
+    department: "UTI Teste",
+    evaluatedByD3: null,
+    finalVerdict: null,
+    everNonConforming: false,
+  },
+];
+
 const isReport = (request: Request) =>
   request.method() === "POST" &&
   request.url().endsWith("/reports/consolidated/infection-control");
 
-/** Answers the indicators of the period, as the private backend does. */
+const isAdmissions = (request: Request) =>
+  isReport(request) && !!request.postDataJSON()?.admissions_of;
+
+const isCourses = (request: Request) =>
+  isReport(request) && !!request.postDataJSON()?.courses_of;
+
+/** Answers the period, a department's admissions or an admission's courses, as the private backend does. */
 function mockReport(mockApi: any) {
-  mockApi.override(ENDPOINT, {
-    json: { status: "success", data: { indicators, updatedAt: UPDATED_AT } },
+  mockApi.override(ENDPOINT, (route: any) => {
+    const params = route.request().postDataJSON();
+    const data = params.courses_of
+      ? { courses, updatedAt: UPDATED_AT }
+      : params.admissions_of
+        ? { admissions, updatedAt: UPDATED_AT }
+        : { indicators, updatedAt: UPDATED_AT };
+
+    return route.fulfill({ json: { status: "success", data } });
   });
 }
 
@@ -322,6 +413,80 @@ test("sends the chosen filters with the period", async ({ page, mockApi }) => {
   await expect(page.locator(".report-filter-list")).toContainText(
     "Setor: UTI Teste",
   );
+});
+
+test("a department row lists the admissions it counts, for the same period", async ({
+  page,
+  mockApi,
+}) => {
+  mockReport(mockApi);
+  const period = page.waitForRequest(isReport);
+  await page.goto(PAGE_URL);
+  const periodParams = (await period).postDataJSON();
+
+  const asked = page.waitForRequest(isAdmissions);
+  await page
+    .locator('[data-kb="reports.infectionControl.departments"]')
+    .getByRole("row", { name: /UTI Teste/ })
+    .click();
+
+  expect((await asked).postDataJSON()).toEqual({
+    ...periodParams,
+    admissions_of: 5,
+  });
+
+  const modal = page.locator(
+    '[data-kb="reports.infectionControl.departmentAdmissions"]',
+  );
+  await expect(page.getByText("Atendimentos: UTI Teste")).toBeVisible();
+  const followed = modal.getByRole("row", { name: /90001/ });
+  await expect(followed).toContainText("Em acompanhamento");
+  await expect(followed).toContainText("71 anos · Masculino");
+  await expect(followed).toContainText("A41 - Sepse teste");
+  await expect(modal.getByRole("row", { name: /90002/ })).toContainText(
+    "Encerrado em 06/03/26",
+  );
+  await expect(
+    modal
+      .getByRole("row", { name: /90002/ })
+      .getByLabel("Abrir o acompanhamento do atendimento (dados atuais)"),
+  ).toHaveAttribute("href", "/controle-infeccao/90002");
+});
+
+test("an admission lists its antimicrobial courses", async ({
+  page,
+  mockApi,
+}) => {
+  mockReport(mockApi);
+  const period = page.waitForRequest(isReport);
+  await page.goto(PAGE_URL);
+  const year = (await period).postDataJSON().year;
+
+  await page
+    .locator('[data-kb="reports.infectionControl.departments"]')
+    .getByRole("row", { name: /UTI Teste/ })
+    .click();
+  const modal = page.locator(
+    '[data-kb="reports.infectionControl.departmentAdmissions"]',
+  );
+
+  const asked = page.waitForRequest(isCourses);
+  await modal.getByRole("row", { name: /90002/ }).click();
+  expect((await asked).postDataJSON()).toEqual({ year, courses_of: 90002 });
+
+  const list = page.locator(
+    '[data-kb="reports.infectionControl.admissionCourses"]',
+  );
+  await expect(list).toContainText("Antimicrobianos do atendimento 90002");
+  const first = list.getByRole("row", { name: /^SUBSTANCIA TESTE/ });
+  await expect(first).toContainText("Observe");
+  await expect(first).toContainText("5 (7)");
+  await expect(first).toContainText("D4");
+  await expect(first).toContainText("Não conforme");
+  await expect(first).toContainText("Já teve parecer não conforme");
+  const running = list.getByRole("row", { name: /OUTRA SUBSTANCIA TESTE/ });
+  await expect(running).toContainText("Em andamento");
+  await expect(running).toContainText("Acesso");
 });
 
 test("warns when the report can't be loaded", async ({ page, mockApi }) => {

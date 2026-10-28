@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Table } from "antd";
 import type { TableColumnsType } from "antd";
@@ -5,17 +6,28 @@ import type { TableColumnsType } from "antd";
 import { SectionHeader } from "styles/Report.style";
 
 import { formatDecimal, formatInteger, formatShare } from "../../format";
-import { IDepartmentRow } from "../../infectionControlReportTypes";
+import {
+  IDepartmentRow,
+  IReportParams,
+} from "../../infectionControlReportTypes";
 import { Section } from "../../InfectionControlConsolidatedReport.style";
+import { DepartmentAdmissions } from "../../DepartmentAdmissions/DepartmentAdmissions";
 
 interface DepartmentsProps {
   departments?: IDepartmentRow[];
+  // the request of the period on screen, which the drill-down repeats
+  params: IReportParams | null;
   loading: boolean;
 }
 
-/** The headline numbers by department. */
-export function Departments({ departments, loading }: DepartmentsProps) {
+/** The headline numbers by department; a row opens its admissions. */
+export function Departments({
+  departments,
+  params,
+  loading,
+}: DepartmentsProps) {
   const { t } = useTranslation();
+  const [selected, setSelected] = useState<IDepartmentRow | null>(null);
   const tk = (key: string) =>
     t(`infectionControlConsolidated.departments.${key}`);
   const right = "right" as const;
@@ -92,7 +104,9 @@ export function Departments({ departments, loading }: DepartmentsProps) {
     <Section>
       <SectionHeader>
         <h2>{tk("title")}</h2>
-        <div>{tk("description")}</div>
+        <div>
+          {tk("description")}. {tk("drillHint")}
+        </div>
       </SectionHeader>
       <Table<IDepartmentRow>
         data-kb="reports.infectionControl.departments"
@@ -103,6 +117,15 @@ export function Departments({ departments, loading }: DepartmentsProps) {
         pagination={false}
         size="small"
         scroll={{ x: true }}
+        onRow={(row: IDepartmentRow) => ({
+          onClick: () => setSelected(row),
+          style: { cursor: "pointer" },
+        })}
+      />
+      <DepartmentAdmissions
+        department={selected}
+        params={params}
+        onClose={() => setSelected(null)}
       />
     </Section>
   );

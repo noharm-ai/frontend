@@ -101,6 +101,8 @@ export function InfectionControlConsolidatedReport() {
     (state) => state.lists.getSegmentDepartments.list,
   );
   const [description, setDescription] = useState<Record<string, unknown>>({});
+  // the request behind the indicators on screen, repeated by the drill-down
+  const [periodParams, setPeriodParams] = useState<IReportParams | null>(null);
   const [initialValues] = useState<IFilterValues>(() => ({
     ...INITIAL_VALUES,
     dateRange: [yesterday().startOf("year"), yesterday()],
@@ -145,6 +147,7 @@ export function InfectionControlConsolidatedReport() {
         return;
       }
 
+      setPeriodParams(apiParams);
       setDescription({
         period: [start, end],
         segment: params.segment.map((s) => escape(s)).join(", "),
@@ -284,6 +287,7 @@ export function InfectionControlConsolidatedReport() {
                       />
                       <Departments
                         departments={indicators.byDepartment}
+                        params={periodParams}
                         loading={isLoading}
                       />
                     </Space>

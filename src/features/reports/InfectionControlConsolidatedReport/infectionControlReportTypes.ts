@@ -198,8 +198,51 @@ export interface IIndicators {
   outcomes: IOutcomes;
 }
 
+// an admission of a department's drill-down (the ones its row counts)
+export interface IAdmission {
+  admissionNumber: number;
+  followed: boolean;
+  closedAt: string | null;
+  segment: string | null;
+  age: number | null;
+  sex: string | null;
+  idcid: string | null;
+  diagnosis: string | null;
+  antimicrobialStart: string | null;
+  antimicrobialEnd: string | null;
+  dot: number | null;
+  episodes: number | null;
+  reviews: number | null;
+  timeToFirstReviewHours: number | null;
+  lengthOfStayDays: number | null;
+}
+
+// an antimicrobial course of an admission
+export interface ICourse {
+  course: number;
+  idSubstance: number | null;
+  substance: string | null;
+  awareLevel: number | null;
+  start: string | null;
+  days: number | null;
+  plannedDays: number | null;
+  pastPlannedEnd: boolean;
+  route: string | null;
+  ivToOralDay: number | null;
+  ongoing: boolean;
+  restart: boolean;
+  department: string | null;
+  // null while a running course has not reached D3
+  evaluatedByD3: boolean | null;
+  finalVerdict: "conforming" | "non_conforming" | null;
+  everNonConforming: boolean;
+}
+
+// the period answers indicators; admissions_of and courses_of the drill-down
 export interface IReportResult {
   indicators?: IIndicators;
+  admissions?: IAdmission[];
+  courses?: ICourse[];
   updatedAt?: string | null;
 }
 
@@ -213,6 +256,10 @@ export interface IReportParams {
   substance?: number[];
   aware_level?: number[];
   reviewer?: number[];
+  // the admissions of this department in the period
+  admissions_of?: number;
+  // the courses of this admission
+  courses_of?: number;
 }
 
 export interface IOption {

@@ -13,9 +13,19 @@ interface ResultState {
   result: IReportResult;
 }
 
+// a drill-down list, with what it was asked for: a late answer to an earlier
+// click is dropped
+interface DrillState extends ResultState {
+  requested: number | null;
+}
+
 interface InfectionControlConsolidatedReportState {
   // indicators of the period
   filtered: ResultState;
+  // the admissions of a department
+  admissions: DrillState;
+  // the courses of an admission
+  courses: DrillState;
   helpModal: boolean;
 }
 
@@ -25,22 +35,55 @@ const initialState: InfectionControlConsolidatedReportState = {
     error: null,
     result: {},
   },
+  admissions: {
+    status: "idle",
+    error: null,
+    result: {},
+    requested: null,
+  },
+  courses: {
+    status: "idle",
+    error: null,
+    result: {},
+    requested: null,
+  },
   helpModal: false,
+};
+
+// the period and the drill-downs ask the same endpoint
+const fetchReport = async (
+  params: IReportParams,
+  thunkAPI: { rejectWithValue: (value: unknown) => unknown },
+) => {
+  try {
+    const response =
+      await api.consolidated.getInfectionControlConsolidatedReport(params);
+    return response.data;
+  } catch (err) {
+    console.error(err);
+    return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+  }
 };
 
 export const fetchReportData = createAsyncThunk(
   "reports-infection-control-consolidated/fetch-data",
-  async (params: IReportParams, thunkAPI) => {
-    try {
-      const response =
-        await api.consolidated.getInfectionControlConsolidatedReport(params);
-      return response.data;
-    } catch (err) {
-      console.error(err);
-      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
-    }
-  },
+  fetchReport,
 );
+
+export const fetchDepartmentAdmissions = createAsyncThunk(
+  "reports-infection-control-consolidated/fetch-admissions",
+  fetchReport,
+);
+
+export const fetchAdmissionCourses = createAsyncThunk(
+  "reports-infection-control-consolidated/fetch-courses",
+  fetchReport,
+);
+
+const errorOf = (action: { payload?: unknown; error: { message?: string } }) =>
+  (action.payload as { message?: string })?.message ||
+  action.error.message ||
+  null;
 
 const infectionControlConsolidatedReportSlice = createSlice({
   name: "infectionControlConsolidatedReport",
@@ -65,11 +108,31 @@ const infectionControlConsolidatedReportSlice = createSlice({
       .addCase(fetchReportData.rejected, (state, action) => {
         state.filtered.status = "failed";
         state.filtered.result = {};
-        state.filtered.error =
-          (action.payload as { message?: string })?.message ||
-          action.error.message ||
-          null;
+        state.filtered.error = errorOf(action);
       });
+
+    for (const [thunk, slot, key] of [
+      [fetchDepartmentAdmissions, "admissions", "admissions_of"],
+      [fetchAdmissionCourses, "courses", "courses_of"],
+    ] as const) {
+      builder
+        .addCase(thunk.pending, (state, action) => {
+          state[slot].status = "loading";
+          state[slot].error = null;
+          state[slot].result = {};
+          state[slot].requested = action.meta.arg[key] ?? null;
+        })
+        .addCase(thunk.fulfilled, (state, action) => {
+          if (state[slot].requested !== action.meta.arg[key]) return;
+          state[slot].status = "succeeded";
+          state[slot].result = action.payload.data || {};
+        })
+        .addCase(thunk.rejected, (state, action) => {
+          if (state[slot].requested !== action.meta.arg[key]) return;
+          state[slot].status = "failed";
+          state[slot].error = errorOf(action);
+        });
+    }
   },
 });
 
