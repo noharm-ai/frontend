@@ -283,6 +283,7 @@ export function InfectionControlConsolidatedReport() {
                       <Overview
                         overview={indicators.overview}
                         monthly={indicators.monthly}
+                        daily={indicators.daily}
                         loading={isLoading}
                       />
                       <Departments

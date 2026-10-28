@@ -66,16 +66,50 @@ const indicators = {
   ],
   monthly: [
     {
-      month: "2026-01",
+      period: "2026-01",
       dot: 600,
       conformingShare: 0.7,
-      evaluatedByD3Share: 0.75,
+      verdictDays: {
+        conforming: 400,
+        non_conforming: 100,
+        not_evaluated: 80,
+        expired: 20,
+      },
     },
     {
-      month: "2026-02",
+      period: "2026-02",
       dot: 634,
       conformingShare: 0.8,
-      evaluatedByD3Share: 0.85,
+      verdictDays: {
+        conforming: 500,
+        non_conforming: 100,
+        not_evaluated: 20,
+        expired: 14,
+      },
+    },
+  ],
+  daily: [
+    {
+      period: "2026-01-01",
+      dot: 20,
+      conformingShare: null,
+      verdictDays: {
+        conforming: 12,
+        non_conforming: 4,
+        not_evaluated: 3,
+        expired: 1,
+      },
+    },
+    {
+      period: "2026-01-02",
+      dot: 22,
+      conformingShare: 0.5,
+      verdictDays: {
+        conforming: 14,
+        non_conforming: 4,
+        not_evaluated: 3,
+        expired: 1,
+      },
     },
   ],
   process: {
@@ -487,6 +521,32 @@ test("an admission lists its antimicrobial courses", async ({
   const running = list.getByRole("row", { name: /OUTRA SUBSTANCIA TESTE/ });
   await expect(running).toContainText("Em andamento");
   await expect(running).toContainText("Acesso");
+});
+
+test("the trend charts switch between months and days", async ({
+  page,
+  mockApi,
+}) => {
+  mockReport(mockApi);
+  const errors: Error[] = [];
+  page.on("pageerror", (error) => errors.push(error));
+
+  await page.goto(PAGE_URL);
+
+  for (const kb of ["monthly", "registry"]) {
+    const block = page.locator(`[data-kb="reports.infectionControl.${kb}"]`);
+    await expect(block.locator(".ant-segmented-item-selected")).toHaveText(
+      "Mensal",
+    );
+    await block.getByText("Diário", { exact: true }).click();
+    await expect(block.locator(".ant-segmented-item-selected")).toHaveText(
+      "Diário",
+    );
+  }
+  await expect(
+    page.locator('[data-kb="reports.infectionControl.registry"]'),
+  ).toContainText("Situação dos antimicrobianos prescritos");
+  expect(errors).toEqual([]);
 });
 
 test("warns when the report can't be loaded", async ({ page, mockApi }) => {

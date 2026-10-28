@@ -1,40 +1,47 @@
 import { useTranslation } from "react-i18next";
-import dayjs from "dayjs";
 
 import { EChartBase } from "components/EChartBase";
 import Empty from "components/Empty";
 
-import { toPercent } from "../format";
-import { IMonth } from "../infectionControlReportTypes";
+import { formatPeriod, toPercent } from "../format";
+import { ITrendPoint, TrendScale } from "../infectionControlReportTypes";
 
-interface MonthlyChartProps {
-  months: IMonth[];
+interface TrendChartProps {
+  points: ITrendPoint[];
+  scale: TrendScale;
   loading?: boolean;
 }
 
-/** DOT by month (bars) with the conformity and D3 time-out shares (lines). */
-export function MonthlyChart({ months, loading = false }: MonthlyChartProps) {
+/** DOT by month or day (bars) with the share of conforming evaluations (line). */
+export function TrendChart({
+  points,
+  scale,
+  loading = false,
+}: TrendChartProps) {
   const { t } = useTranslation();
+  const tk = (key: string) => t(`infectionControlConsolidated.monthly.${key}`);
 
-  if (!loading && months.length === 0) {
+  if (!loading && points.length === 0) {
     return <Empty description={t("infectionControlConsolidated.noData")} />;
   }
 
   const option = {
     tooltip: { trigger: "axis" },
     legend: {},
-    grid: { left: 50, right: 50, top: 40, bottom: 30 },
+    grid: { left: 50, right: 50, top: 40, bottom: scale === "day" ? 70 : 30 },
     toolbox: {
       feature: {
         saveAsImage: { title: t("infectionControlConsolidated.saveAsImage") },
       },
     },
+    // a year of days needs zooming
+    dataZoom: scale === "day" ? [{ type: "inside" }, { type: "slider" }] : [],
     xAxis: {
       type: "category",
-      data: months.map((m) => dayjs(`${m.month}-01`).format("MM/YYYY")),
+      data: points.map((p) => formatPeriod(p.period, scale)),
     },
     yAxis: [
-      { type: "value", name: t("infectionControlConsolidated.monthly.dot") },
+      { type: "value", name: tk("dot") },
       {
         type: "value",
         min: 0,
@@ -44,25 +51,18 @@ export function MonthlyChart({ months, loading = false }: MonthlyChartProps) {
     ],
     series: [
       {
-        name: t("infectionControlConsolidated.monthly.dot"),
+        name: tk("dot"),
         type: "bar",
-        data: months.map((m) => m.dot),
+        data: points.map((p) => p.dot),
         itemStyle: { color: "#90caf9", borderRadius: [4, 4, 0, 0] },
       },
       {
-        name: t("infectionControlConsolidated.monthly.conforming"),
+        name: tk("conforming"),
         type: "line",
         yAxisIndex: 1,
-        data: months.map((m) => toPercent(m.conformingShare)),
+        connectNulls: true,
+        data: points.map((p) => toPercent(p.conformingShare)),
         itemStyle: { color: "#388e3c" },
-        tooltip: { valueFormatter: (v: number) => (v == null ? "-" : `${v}%`) },
-      },
-      {
-        name: t("infectionControlConsolidated.monthly.d3"),
-        type: "line",
-        yAxisIndex: 1,
-        data: months.map((m) => toPercent(m.evaluatedByD3Share)),
-        itemStyle: { color: "#f4511e" },
         tooltip: { valueFormatter: (v: number) => (v == null ? "-" : `${v}%`) },
       },
     ],

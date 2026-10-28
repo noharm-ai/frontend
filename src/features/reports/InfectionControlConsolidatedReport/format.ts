@@ -1,4 +1,6 @@
-import { IQuantiles } from "./infectionControlReportTypes";
+import dayjs from "dayjs";
+
+import { IQuantiles, TrendScale } from "./infectionControlReportTypes";
 
 /**
  * Formatting of the report numbers: the service answers shares as 0-1 and
@@ -33,3 +35,9 @@ export const formatMedian = (
 // a share as a 0-100 number for the charts
 export const toPercent = (value?: number | null) =>
   value == null ? null : Math.round(value * 1000) / 10;
+
+// a month (YYYY-MM) or a day (YYYY-MM-DD) of the trend charts
+export const formatPeriod = (period: string, scale: TrendScale) =>
+  scale === "month"
+    ? dayjs(`${period}-01`).format("MM/YYYY")
+    : dayjs(period).format("DD/MM/YY");

@@ -64,11 +64,16 @@ export interface IDepartmentRow {
   verdictDays: IVerdictDays;
 }
 
-export interface IMonth {
-  month: string;
+// the scale of the trend charts
+export type TrendScale = "month" | "day";
+
+// a month (YYYY-MM) or a day (YYYY-MM-DD) of the trend
+export interface ITrendPoint {
+  period: string;
   dot: number;
   conformingShare: number | null;
-  evaluatedByD3Share: number | null;
+  // antimicrobial days by the record in force on them
+  verdictDays: IVerdictDays;
 }
 
 export interface IPendingRow {
@@ -190,7 +195,8 @@ export interface IOutcomes {
 export interface IIndicators {
   overview: IOverview;
   byDepartment: IDepartmentRow[];
-  monthly: IMonth[];
+  monthly: ITrendPoint[];
+  daily: ITrendPoint[];
   process: IProcess;
   appropriateness: IAppropriateness;
   consumption: IConsumption;

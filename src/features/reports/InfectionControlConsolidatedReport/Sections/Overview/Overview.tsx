@@ -1,10 +1,13 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { Segmented } from "antd";
 
 import { SectionHeader } from "styles/Report.style";
 
 import { Indicator } from "../../Indicator/Indicator";
 import { Block } from "../../Block/Block";
-import { MonthlyChart } from "../../MonthlyChart/MonthlyChart";
+import { TrendChart } from "../../TrendChart/TrendChart";
+import { RegistryChart } from "../../RegistryChart/RegistryChart";
 import {
   IndicatorGrid,
   Section,
@@ -15,17 +18,50 @@ import {
   formatMedian,
   formatShare,
 } from "../../format";
-import { IMonth, IOverview } from "../../infectionControlReportTypes";
+import {
+  IOverview,
+  ITrendPoint,
+  TrendScale,
+} from "../../infectionControlReportTypes";
 
 interface OverviewProps {
   overview?: IOverview;
-  monthly?: IMonth[];
+  monthly?: ITrendPoint[];
+  daily?: ITrendPoint[];
   loading: boolean;
 }
 
-/** The headline numbers of the period and their monthly trend. */
-export function Overview({ overview, monthly, loading }: OverviewProps) {
+/** The headline numbers of the period and their trend, by month or day. */
+export function Overview({ overview, monthly, daily, loading }: OverviewProps) {
   const { t } = useTranslation();
+  const [trendScale, setTrendScale] = useState<TrendScale>("month");
+  const [registryScale, setRegistryScale] = useState<TrendScale>("month");
+  const pointsOf = (scale: TrendScale) =>
+    (scale === "month" ? monthly : daily) || [];
+
+  // the month / day switch above a trend chart
+  const scaleSwitch = (
+    scale: TrendScale,
+    onChange: (scale: TrendScale) => void,
+  ) => (
+    <div style={{ textAlign: "center", marginBottom: 8 }}>
+      <Segmented<TrendScale>
+        size="small"
+        value={scale}
+        onChange={onChange}
+        options={[
+          {
+            label: t("infectionControlConsolidated.monthly.month"),
+            value: "month",
+          },
+          {
+            label: t("infectionControlConsolidated.monthly.day"),
+            value: "day",
+          },
+        ]}
+      />
+    </div>
+  );
   const tk = (key: string) => t(`infectionControlConsolidated.overview.${key}`);
   const data: Partial<IOverview> = overview || {};
   const hours = t("infectionControlConsolidated.units.hours");
@@ -133,7 +169,26 @@ export function Overview({ overview, monthly, loading }: OverviewProps) {
         loading={loading}
         kb="reports.infectionControl.monthly"
       >
-        <MonthlyChart months={monthly || []} loading={loading} />
+        {scaleSwitch(trendScale, setTrendScale)}
+        <TrendChart
+          points={pointsOf(trendScale)}
+          scale={trendScale}
+          loading={loading}
+        />
+      </Block>
+
+      <Block
+        title={t("infectionControlConsolidated.registry.title")}
+        help={t("infectionControlConsolidated.registry.help")}
+        loading={loading}
+        kb="reports.infectionControl.registry"
+      >
+        {scaleSwitch(registryScale, setRegistryScale)}
+        <RegistryChart
+          points={pointsOf(registryScale)}
+          scale={registryScale}
+          loading={loading}
+        />
       </Block>
     </Section>
   );

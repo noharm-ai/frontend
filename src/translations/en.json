@@ -2199,11 +2199,16 @@
       "median": "median"
     },
     "monthly": {
-      "title": "Monthly trend",
-      "help": "DOT of each month, % conforming evaluations by evaluation date and % of courses evaluated by D3 by course start.",
+      "title": "Trend",
+      "help": "DOT of each month or day and % conforming evaluations by evaluation date.",
       "dot": "DOT",
       "conforming": "% conforming",
-      "d3": "% evaluated by D3"
+      "month": "Monthly",
+      "day": "Daily"
+    },
+    "registry": {
+      "title": "Prescribed antimicrobials by record",
+      "help": "Antimicrobial days (DOT) of each month or day by the evaluation in force on the day: conforming, non-conforming, never evaluated or with an expired evaluation. Each bar is the period's DOT; hover to see the % of each."
     },
     "departments": {
       "title": "By department",

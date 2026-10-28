@@ -2209,11 +2209,16 @@
       "median": "mediana"
     },
     "monthly": {
-      "title": "Evolução mensal",
-      "help": "DOT de cada mês, % de avaliações conformes pela data da avaliação e % de cursos avaliados até o D3 pela data de início do curso.",
+      "title": "Evolução",
+      "help": "DOT de cada mês ou dia e % de avaliações conformes pela data da avaliação.",
       "dot": "DOT",
       "conforming": "% conformes",
-      "d3": "% avaliados até D3"
+      "month": "Mensal",
+      "day": "Diário"
+    },
+    "registry": {
+      "title": "Situação dos antimicrobianos prescritos",
+      "help": "Dias de antimicrobiano (DOT) de cada mês ou dia pela avaliação vigente no dia: conforme, não conforme, nunca avaliado ou com a avaliação vencida. Cada barra é o DOT do período; passe o mouse para ver a % de cada situação."
     },
     "departments": {
       "title": "Por setor",
