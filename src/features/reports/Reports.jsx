@@ -86,6 +86,7 @@ export default function Reports() {
       type: "internal",
       route: "/relatorios/consolidado/controle-infeccao",
       visible: internalList.indexOf("INFECTION_CONTROL") !== -1,
+      permission: Permission.READ_INFECTION_CONTROL,
       track: TrackedReport.INFECTION_CONTROL,
     },
     {
@@ -146,16 +147,18 @@ export default function Reports() {
             {internalReports.map((reportData, index) => (
               <React.Fragment key={index}>
                 {(reportData.visible ||
-                  PermissionService().has(Permission.MAINTAINER)) && (
-                  <Col key={index} span={24} md={12} lg={8}>
-                    <ReportCard
-                      reportData={reportData}
-                      showReport={showInternalReport}
-                      id={index}
-                      className="gtm-report-item"
-                    />
-                  </Col>
-                )}
+                  PermissionService().has(Permission.MAINTAINER)) &&
+                  (!reportData.permission ||
+                    PermissionService().has(reportData.permission)) && (
+                    <Col key={index} span={24} md={12} lg={8}>
+                      <ReportCard
+                        reportData={reportData}
+                        showReport={showInternalReport}
+                        id={index}
+                        className="gtm-report-item"
+                      />
+                    </Col>
+                  )}
               </React.Fragment>
             ))}
 

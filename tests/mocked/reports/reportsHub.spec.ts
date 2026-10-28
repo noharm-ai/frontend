@@ -94,8 +94,10 @@ test.describe("as maintainer", () => {
 
     await page.goto(PAGE_URL);
 
-    // all seven internal reports render
-    await expect(reportCards(page)).toHaveCount(7);
+    // every internal report renders but infection control, which needs
+    // READ_INFECTION_CONTROL even for maintainers
+    await expect(reportCards(page)).toHaveCount(6);
+    await expect(page.getByText("Controle de Infecção")).toHaveCount(0);
 
     const economy = reportCards(page).filter({
       hasText: "Farmacoeconomia (Beta)",
@@ -111,6 +113,54 @@ test.describe("as maintainer", () => {
         "Este relatório não está habilitado para os usuários. Acesse Curadoria->Relatórios para ativá-lo.",
       ),
     ).toBeVisible();
+  });
+});
+
+test.describe("infection control report", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  test("is listed only with READ_INFECTION_CONTROL", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override(
+      "GET /reports/config",
+      config({ internal: ["PATIENT_DAY", "INFECTION_CONTROL"] }),
+    );
+    await loginWithPermissions(page, mockApi, [
+      "READ_BASIC_FEATURES",
+      "READ_PRESCRIPTION",
+      "READ_REPORTS",
+      "READ_INFECTION_CONTROL",
+    ]);
+
+    await page.goto(PAGE_URL);
+
+    await expect(reportCards(page)).toHaveCount(2);
+    await expect(reportCards(page).nth(1)).toContainText(
+      "Controle de Infecção",
+    );
+  });
+
+  test("is hidden without READ_INFECTION_CONTROL, even when enabled", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override(
+      "GET /reports/config",
+      config({ internal: ["PATIENT_DAY", "INFECTION_CONTROL"] }),
+    );
+    await loginWithPermissions(page, mockApi, [
+      "READ_BASIC_FEATURES",
+      "READ_PRESCRIPTION",
+      "READ_REPORTS",
+    ]);
+
+    await page.goto(PAGE_URL);
+
+    await expect(reportCards(page)).toHaveCount(1);
+    await expect(reportCards(page).nth(0)).toContainText("Pacientes-Dia");
+    await expect(page.getByText("Controle de Infecção")).toHaveCount(0);
   });
 });
 
