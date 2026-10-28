@@ -39,6 +39,8 @@ export interface IOverview {
   lot: number;
   dotLot: number | null;
   patientDays: number;
+  // admissions with an antimicrobial day in the period
+  patientsOnAntimicrobials: number;
   dotPer1000PatientDays: number | null;
   accessShare: number | null;
   evaluations: number;

@@ -63,6 +63,18 @@ export function Overview({ overview, monthly, daily, loading }: OverviewProps) {
           loading={loading}
         />
         <Indicator
+          title={tk("patientDays")}
+          value={formatInteger(data.patientDays)}
+          help={tk("patientDaysHelp")}
+          loading={loading}
+        />
+        <Indicator
+          title={tk("patients")}
+          value={formatInteger(data.patientsOnAntimicrobials)}
+          help={tk("patientsHelp")}
+          loading={loading}
+        />
+        <Indicator
           title={tk("lot")}
           value={formatInteger(data.lot)}
           help={tk("lotHelp")}

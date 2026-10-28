@@ -34,6 +34,7 @@ const indicators = {
     lot: 800,
     dotLot: 1.54,
     patientDays: 2000,
+    patientsOnAntimicrobials: 150,
     dotPer1000PatientDays: 617,
     accessShare: 0.612,
     evaluations: 40,
@@ -368,6 +369,8 @@ test("shows the period indicators in the browser's number format", async ({
 
   await expect(value("Dias de terapia (DOT)")).toHaveText("1.234");
   await expect(value("DOT por 1.000 pacientes-dia")).toHaveText("617,0");
+  await expect(value("Pacientes-dia")).toHaveText("2.000");
+  await expect(value("Pacientes com antimicrobiano")).toHaveText("150");
   await expect(value("DOT / LOT")).toHaveText("1,54");
   await expect(value("DOT do grupo Acesso")).toHaveText("61,2%");
   await expect(value("Cursos avaliados até o D3")).toHaveText("80,0%");
