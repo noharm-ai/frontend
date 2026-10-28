@@ -64,14 +64,13 @@ export interface IDepartmentRow {
   verdictDays: IVerdictDays;
 }
 
-// the scale of the trend charts
+// the scale of the trend chart
 export type TrendScale = "month" | "day";
 
 // a month (YYYY-MM) or a day (YYYY-MM-DD) of the trend
 export interface ITrendPoint {
   period: string;
   dot: number;
-  conformingShare: number | null;
   // antimicrobial days by the record in force on them
   verdictDays: IVerdictDays;
 }

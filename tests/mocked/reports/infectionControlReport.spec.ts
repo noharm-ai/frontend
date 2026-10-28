@@ -68,7 +68,6 @@ const indicators = {
     {
       period: "2026-01",
       dot: 600,
-      conformingShare: 0.7,
       verdictDays: {
         conforming: 400,
         non_conforming: 100,
@@ -79,7 +78,6 @@ const indicators = {
     {
       period: "2026-02",
       dot: 634,
-      conformingShare: 0.8,
       verdictDays: {
         conforming: 500,
         non_conforming: 100,
@@ -92,7 +90,6 @@ const indicators = {
     {
       period: "2026-01-01",
       dot: 20,
-      conformingShare: null,
       verdictDays: {
         conforming: 12,
         non_conforming: 4,
@@ -103,7 +100,6 @@ const indicators = {
     {
       period: "2026-01-02",
       dot: 22,
-      conformingShare: 0.5,
       verdictDays: {
         conforming: 14,
         non_conforming: 4,
@@ -523,7 +519,7 @@ test("an admission lists its antimicrobial courses", async ({
   await expect(running).toContainText("Acesso");
 });
 
-test("the trend charts switch between months and days", async ({
+test("the antimicrobials by record switch between months and days", async ({
   page,
   mockApi,
 }) => {
@@ -533,19 +529,18 @@ test("the trend charts switch between months and days", async ({
 
   await page.goto(PAGE_URL);
 
-  for (const kb of ["monthly", "registry"]) {
-    const block = page.locator(`[data-kb="reports.infectionControl.${kb}"]`);
-    await expect(block.locator(".ant-segmented-item-selected")).toHaveText(
-      "Mensal",
-    );
-    await block.getByText("Diário", { exact: true }).click();
-    await expect(block.locator(".ant-segmented-item-selected")).toHaveText(
-      "Diário",
-    );
-  }
+  const block = page.locator('[data-kb="reports.infectionControl.registry"]');
+  await expect(block).toContainText("Situação dos antimicrobianos prescritos");
+  await expect(block.locator(".ant-segmented-item-selected")).toHaveText(
+    "Mensal",
+  );
+  await block.getByText("Diário", { exact: true }).click();
+  await expect(block.locator(".ant-segmented-item-selected")).toHaveText(
+    "Diário",
+  );
   await expect(
-    page.locator('[data-kb="reports.infectionControl.registry"]'),
-  ).toContainText("Situação dos antimicrobianos prescritos");
+    page.locator('[data-kb="reports.infectionControl.monthly"]'),
+  ).toHaveCount(0);
   expect(errors).toEqual([]);
 });
 

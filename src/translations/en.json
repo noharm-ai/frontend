@@ -2199,10 +2199,7 @@
       "median": "median"
     },
     "monthly": {
-      "title": "Trend",
-      "help": "DOT of each month or day and % conforming evaluations by evaluation date.",
       "dot": "DOT",
-      "conforming": "% conforming",
       "month": "Monthly",
       "day": "Daily"
     },

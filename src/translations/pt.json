@@ -2209,10 +2209,7 @@
       "median": "mediana"
     },
     "monthly": {
-      "title": "Evolução",
-      "help": "DOT de cada mês ou dia e % de avaliações conformes pela data da avaliação.",
       "dot": "DOT",
-      "conforming": "% conformes",
       "month": "Mensal",
       "day": "Diário"
     },

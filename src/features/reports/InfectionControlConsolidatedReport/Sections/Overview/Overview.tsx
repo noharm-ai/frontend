@@ -6,7 +6,6 @@ import { SectionHeader } from "styles/Report.style";
 
 import { Indicator } from "../../Indicator/Indicator";
 import { Block } from "../../Block/Block";
-import { TrendChart } from "../../TrendChart/TrendChart";
 import { RegistryChart } from "../../RegistryChart/RegistryChart";
 import {
   IndicatorGrid,
@@ -31,37 +30,10 @@ interface OverviewProps {
   loading: boolean;
 }
 
-/** The headline numbers of the period and their trend, by month or day. */
+/** The headline numbers of the period and its antimicrobials by record, by month or day. */
 export function Overview({ overview, monthly, daily, loading }: OverviewProps) {
   const { t } = useTranslation();
-  const [trendScale, setTrendScale] = useState<TrendScale>("month");
-  const [registryScale, setRegistryScale] = useState<TrendScale>("month");
-  const pointsOf = (scale: TrendScale) =>
-    (scale === "month" ? monthly : daily) || [];
-
-  // the month / day switch above a trend chart
-  const scaleSwitch = (
-    scale: TrendScale,
-    onChange: (scale: TrendScale) => void,
-  ) => (
-    <div style={{ textAlign: "center", marginBottom: 8 }}>
-      <Segmented<TrendScale>
-        size="small"
-        value={scale}
-        onChange={onChange}
-        options={[
-          {
-            label: t("infectionControlConsolidated.monthly.month"),
-            value: "month",
-          },
-          {
-            label: t("infectionControlConsolidated.monthly.day"),
-            value: "day",
-          },
-        ]}
-      />
-    </div>
-  );
+  const [scale, setScale] = useState<TrendScale>("month");
   const tk = (key: string) => t(`infectionControlConsolidated.overview.${key}`);
   const data: Partial<IOverview> = overview || {};
   const hours = t("infectionControlConsolidated.units.hours");
@@ -164,29 +136,31 @@ export function Overview({ overview, monthly, daily, loading }: OverviewProps) {
       </IndicatorGrid>
 
       <Block
-        title={t("infectionControlConsolidated.monthly.title")}
-        help={t("infectionControlConsolidated.monthly.help")}
-        loading={loading}
-        kb="reports.infectionControl.monthly"
-      >
-        {scaleSwitch(trendScale, setTrendScale)}
-        <TrendChart
-          points={pointsOf(trendScale)}
-          scale={trendScale}
-          loading={loading}
-        />
-      </Block>
-
-      <Block
         title={t("infectionControlConsolidated.registry.title")}
         help={t("infectionControlConsolidated.registry.help")}
         loading={loading}
         kb="reports.infectionControl.registry"
       >
-        {scaleSwitch(registryScale, setRegistryScale)}
+        <div style={{ textAlign: "center", marginBottom: 8 }}>
+          <Segmented<TrendScale>
+            size="small"
+            value={scale}
+            onChange={setScale}
+            options={[
+              {
+                label: t("infectionControlConsolidated.monthly.month"),
+                value: "month",
+              },
+              {
+                label: t("infectionControlConsolidated.monthly.day"),
+                value: "day",
+              },
+            ]}
+          />
+        </div>
         <RegistryChart
-          points={pointsOf(registryScale)}
-          scale={registryScale}
+          points={(scale === "month" ? monthly : daily) || []}
+          scale={scale}
           loading={loading}
         />
       </Block>
