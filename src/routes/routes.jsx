@@ -60,6 +60,7 @@ import PrescriptionAuditReport from "pages/Reports/PrescriptionAuditReport";
 import EconomyReport from "pages/Reports/EconomyReport";
 import EconomyConsolidatedReport from "pages/Reports/EconomyConsolidatedReport";
 import { InterventionConsolidatedReportPage } from "pages/Reports/InterventionConsolidatedReport/InterventionConsolidatedReport";
+import { InfectionControlConsolidatedReportPage } from "pages/Reports/InfectionControlConsolidatedReport/InfectionControlConsolidatedReport";
 import FileReport from "pages/Reports/FileReport";
 import PatientDayConsolidatedReport from "pages/Reports/PatientDayConsolidatedReport";
 import PrescriptionConsolidatedReport from "pages/Reports/PrescriptionConsolidatedReport";
@@ -455,6 +456,11 @@ const routes = [
     exact: true,
     path: "/relatorios/consolidado/intervencoes",
     element: <WithAuth component={InterventionConsolidatedReportPage} />,
+  },
+  {
+    exact: true,
+    path: "/relatorios/consolidado/controle-infeccao",
+    element: <WithAuth component={InfectionControlConsolidatedReportPage} />,
   },
 
   {

@@ -48,6 +48,7 @@ import { reset as patientDayConsolidatedReportReset } from "features/reports/Pat
 import { reset as prescriptionConsolidatedReportReset } from "features/reports/PrescriptionConsolidatedReport/PrescriptionConsolidatedReportSlice";
 import { reset as economyConsolidatedReportReset } from "features/reports/EconomyConsolidatedReport/EconomyConsolidatedReportSlice";
 import { reset as interventionConsolidatedReportReset } from "features/reports/InterventionConsolidatedReport/InterventionConsolidatedReportSlice";
+import { reset as infectionControlConsolidatedReportReset } from "features/reports/InfectionControlConsolidatedReport/InfectionControlConsolidatedReportSlice";
 
 import { reset as regulationPrioritizationReset } from "features/regulation/Prioritization/PrioritizationSlice";
 import { reset as regulationReset } from "features/regulation/Regulation/RegulationSlice";
@@ -113,6 +114,7 @@ export const resetReduxState = (dispatch) => {
   dispatch(prescriptionConsolidatedReportReset());
   dispatch(economyConsolidatedReportReset());
   dispatch(interventionConsolidatedReportReset());
+  dispatch(infectionControlConsolidatedReportReset());
 
   dispatch(regulationPrioritizationReset());
   dispatch(regulationReset());

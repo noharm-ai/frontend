@@ -1,4 +1,4 @@
-import type { Locator, Page } from "@playwright/test";
+import type { Locator, Page, Route } from "@playwright/test";
 
 import { test, expect, type MockApi } from "../support/mockApi";
 import { loginWithAuth, loginWithPermissions } from "../support/featureLogin";
@@ -3225,6 +3225,161 @@ test.describe("worklist", () => {
     ).toBeVisible();
     await expect(page.locator("#treatmentDayFrom-0")).toHaveValue("1");
     await expect(page.locator("#nonConforming")).toBeChecked();
+  });
+});
+
+test.describe("integration utilities", () => {
+  const BACKFILL = "POST /infection-control/backfill";
+  const BACKFILL_SUMMARY = "POST /infection-control/backfill-summary";
+  const UTILITIES = '[data-kb="infectionControl.worklist.backfill"]';
+
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  const bodies = (mockApi: MockApi, path: string) =>
+    mockApi.requests
+      .filter((r) => r.path === path)
+      .map((r) => JSON.parse(r.postData!));
+
+  // two batches: the first one full, resumed after its last admission
+  const batches = (counter: "created" | "filled") => {
+    let call = 0;
+    return async (route: Route) => {
+      call += 1;
+      await route.fulfill({
+        json: {
+          status: "success",
+          data:
+            call === 1
+              ? { processed: 50, [counter]: 10, next: 9350 }
+              : { processed: 7, [counter]: 2, next: null },
+        },
+      });
+    };
+  };
+
+  test("are not offered without INTEGRATION_UTILS", async ({
+    page,
+    mockApi,
+  }) => {
+    await loginWithPermissions(page, mockApi, [
+      ...BASE_PERMISSIONS,
+      "READ_INFECTION_CONTROL",
+    ]);
+    await page.goto("/controle-infeccao");
+
+    await expect(
+      page.getByRole("heading", { name: "Controle de Infecção" }),
+    ).toBeVisible({ timeout: 15000 });
+    await expect(page.locator(UTILITIES)).toHaveCount(0);
+  });
+
+  test.describe("with INTEGRATION_UTILS", () => {
+    test.beforeEach(async ({ page, mockApi }) => {
+      await loginWithPermissions(page, mockApi, [
+        ...BASE_PERMISSIONS,
+        "READ_INFECTION_CONTROL",
+        "INTEGRATION_UTILS",
+      ]);
+      await page.goto("/controle-infeccao");
+      await expect(page.locator(UTILITIES)).toBeVisible({ timeout: 15000 });
+    });
+
+    test("marks the utilities as maintainer only", async ({ page }) => {
+      await expect(
+        page.locator(UTILITIES).getByTestId("maintainer-badge"),
+      ).toBeVisible();
+    });
+
+    test("follows the admissions on antimicrobials, batch after batch", async ({
+      page,
+      mockApi,
+    }) => {
+      mockApi.override(BACKFILL, batches("created"));
+      const listsBefore = bodies(mockApi, "/infection-control/admissions");
+
+      await pickMenuItem(
+        page,
+        page.locator(UTILITIES),
+        /Acompanhar internações em uso de antimicrobianos/,
+      );
+      // nothing runs before it is confirmed
+      expect(bodies(mockApi, "/infection-control/backfill")).toHaveLength(0);
+      await page.getByRole("button", { name: "Executar" }).click();
+
+      await expect(
+        page.getByText(
+          "57 internações processadas, 12 passaram a ser acompanhadas.",
+        ),
+      ).toBeVisible();
+      expect(bodies(mockApi, "/infection-control/backfill")).toEqual([
+        { after: 0 },
+        { after: 9350 },
+      ]);
+      // the list is loaded again, with the admissions just followed
+      expect(
+        bodies(mockApi, "/infection-control/admissions").length,
+      ).toBeGreaterThan(listsBefore.length);
+    });
+
+    test("fills the report summaries, batch after batch", async ({
+      page,
+      mockApi,
+    }) => {
+      mockApi.override(BACKFILL_SUMMARY, batches("filled"));
+
+      await pickMenuItem(
+        page,
+        page.locator(UTILITIES),
+        /Preencher resumos do relatório/,
+      );
+      await page.getByRole("button", { name: "Executar" }).click();
+
+      await expect(
+        page.getByText("57 internações processadas, 12 resumos preenchidos."),
+      ).toBeVisible();
+      expect(bodies(mockApi, "/infection-control/backfill-summary")).toEqual([
+        { after: 0 },
+        { after: 9350 },
+      ]);
+    });
+
+    test("stops at the batch that fails and says what was done", async ({
+      page,
+      mockApi,
+    }) => {
+      let call = 0;
+      mockApi.override(BACKFILL, async (route) => {
+        call += 1;
+        await route.fulfill(
+          call === 1
+            ? {
+                json: {
+                  status: "success",
+                  data: { processed: 50, created: 10, next: 9350 },
+                },
+              }
+            : {
+                status: 500,
+                json: { status: "error", message: "Falha no lote" },
+              },
+        );
+      });
+
+      await pickMenuItem(
+        page,
+        page.locator(UTILITIES),
+        /Acompanhar internações em uso de antimicrobianos/,
+      );
+      await page.getByRole("button", { name: "Executar" }).click();
+
+      await expect(page.getByText("Falha no lote")).toBeVisible();
+      await expect(
+        page.getByText(
+          "Antes do erro: 50 internações processadas, 10 passaram a ser acompanhadas.",
+        ),
+      ).toBeVisible();
+      expect(bodies(mockApi, "/infection-control/backfill")).toHaveLength(2);
+    });
   });
 });
 

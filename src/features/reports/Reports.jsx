@@ -80,6 +80,15 @@ export default function Reports() {
       track: TrackedReport.ECONOMY,
     },
     {
+      title: "Controle de Infecção",
+      description: "Uso de antimicrobianos e processo de revisão",
+      icon: "report",
+      type: "internal",
+      route: "/relatorios/consolidado/controle-infeccao",
+      visible: internalList.indexOf("INFECTION_CONTROL") !== -1,
+      track: TrackedReport.INFECTION_CONTROL,
+    },
+    {
       title: "Juntos pela Saúde: Indicadores",
       description: "Acompanhamento de indicadores",
       icon: "report",
