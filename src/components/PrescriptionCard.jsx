@@ -137,6 +137,16 @@ export default styled.div`
           font-weight: 400;
           margin-bottom: 2px;
         }
+
+        .drug-names {
+          font-size: 12px;
+          font-weight: 400;
+          color: #8c94a6;
+
+          &.no-substance {
+            font-style: italic;
+          }
+        }
       }
 
       .text-link {

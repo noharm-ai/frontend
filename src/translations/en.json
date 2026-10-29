@@ -220,6 +220,8 @@
     "dataExtractedFrom": "Data extracted by NoHarm Care",
     "signals": "Signs",
     "signalsExtractedFrom": "Signs extracted by NoHarm Care",
+    "allergyRecordedAs": "Recorded as: {{names}}",
+    "allergyNoSubstance": "No substance associated",
     "allergiesExtractedFrom": "Allergies extracted by NoHarm Care",
     "extractedFrom": "Extracted by NoHarm Care on",
     "more": "More",
@@ -397,6 +399,7 @@
   },
   "allergyRecords": {
     "open": "View allergy records",
+    "configure": "Configure",
     "summary_one": "{{count}} record: {{withDrug}} with a registered drug, {{withoutDrug}} without a registered drug",
     "summary_other": "{{count}} records: {{withDrug}} with a registered drug, {{withoutDrug}} without a registered drug",
     "withDrug": "Registered drug",

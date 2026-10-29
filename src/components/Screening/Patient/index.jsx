@@ -8,7 +8,7 @@ import {
   CaretDownOutlined,
   CaretUpOutlined,
   DeleteOutlined,
-  DatabaseOutlined,
+  SettingOutlined,
 } from "@ant-design/icons";
 
 import Button from "components/Button";
@@ -17,6 +17,7 @@ import Tooltip from "components/Tooltip";
 import PrescriptionCard from "components/PrescriptionCard";
 import DefaultModal from "components/Modal";
 import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
+import { MaintainerGroup } from "components/MaintainerGroup/MaintainerGroup";
 import { AllergyRecords } from "features/prescription/AllergyRecords/AllergyRecords";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
@@ -245,15 +246,19 @@ export default function Patient({
                   <h3 className="title">
                     {t("clinicalNotesIndicator.allergy")}
                     {isMaintainer && (
-                      <Tooltip title={t("allergyRecords.open")}>
-                        <Button
-                          type="text"
-                          size="small"
-                          icon={<DatabaseOutlined />}
-                          aria-label={t("allergyRecords.open")}
-                          onClick={() => setAllergyRecordsOpen(true)}
-                        />
-                      </Tooltip>
+                      <MaintainerGroup>
+                        <Tooltip title={t("allergyRecords.open")}>
+                          <Button
+                            type="primary"
+                            ghost
+                            size="small"
+                            icon={<SettingOutlined />}
+                            onClick={() => setAllergyRecordsOpen(true)}
+                          >
+                            {t("allergyRecords.configure")}
+                          </Button>
+                        </Tooltip>
+                      </MaintainerGroup>
                     )}
                   </h3>
                 </div>
@@ -263,53 +268,77 @@ export default function Patient({
                     {(notesAllergies || [])
                       .slice()
                       .sort(sortAllergies)
-                      .map(({ text, date, source, id }) => (
-                        <div key={text} className="list-item">
-                          <div>
-                            <div className="date">
-                              {moment(date).format("DD/MM/YYYY HH:mm")}
-                              {source === "care" ? " (NoHarm Care)" : ""}
-                            </div>
-                            {source === "care" ? (
-                              <div
-                                className="text-link"
-                                onClick={() =>
-                                  dispatch(selectSingleClinicalNotes(id))
-                                }
-                              >
-                                <Tooltip title="Visualizar evolução">
-                                  {text}
-                                </Tooltip>
+                      .map(
+                        ({
+                          text,
+                          date,
+                          source,
+                          id,
+                          drugNames,
+                          hasSubstance,
+                        }) => (
+                          <div key={text} className="list-item">
+                            <div>
+                              <div className="date">
+                                {moment(date).format("DD/MM/YYYY HH:mm")}
+                                {source === "care" ? " (NoHarm Care)" : ""}
                               </div>
-                            ) : (
-                              <div className="text">{text}</div>
+                              {source === "care" ? (
+                                <div
+                                  className="text-link"
+                                  onClick={() =>
+                                    dispatch(selectSingleClinicalNotes(id))
+                                  }
+                                >
+                                  <Tooltip title="Visualizar evolução">
+                                    {text}
+                                  </Tooltip>
+                                </div>
+                              ) : (
+                                <div className="text">{text}</div>
+                              )}
+                              {/* the names recorded in the allergy records the
+                                substance was resolved from */}
+                              {drugNames?.length > 0 && (
+                                <div className="drug-names">
+                                  {t("patientCard.allergyRecordedAs", {
+                                    names: drugNames.join(", "),
+                                  })}
+                                </div>
+                              )}
+                              {/* only allergy records carry the flag */}
+                              {hasSubstance === false && (
+                                <div className="drug-names no-substance">
+                                  {t("patientCard.allergyNoSubstance")}
+                                </div>
+                              )}
+                            </div>
+                            {source === "care" && (
+                              <div>
+                                <Popconfirm
+                                  title="Remover anotação"
+                                  description="Confirma a remoção desta anotação?"
+                                  okText="Sim"
+                                  cancelText="Não"
+                                  onConfirm={() =>
+                                    actionRemoveNotes(id, "allergy")
+                                  }
+                                >
+                                  <Tooltip title="Remover anotação">
+                                    <Button
+                                      icon={<DeleteOutlined />}
+                                      ghost
+                                      danger
+                                      loading={isRemovingNotes}
+                                      size="small"
+                                    />
+                                  </Tooltip>
+                                </Popconfirm>
+                              </div>
                             )}
                           </div>
-                          {source === "care" && (
-                            <div>
-                              <Popconfirm
-                                title="Remover anotação"
-                                description="Confirma a remoção desta anotação?"
-                                okText="Sim"
-                                cancelText="Não"
-                                onConfirm={() =>
-                                  actionRemoveNotes(id, "allergy")
-                                }
-                              >
-                                <Tooltip title="Remover anotação">
-                                  <Button
-                                    icon={<DeleteOutlined />}
-                                    ghost
-                                    danger
-                                    loading={isRemovingNotes}
-                                    size="small"
-                                  />
-                                </Tooltip>
-                              </Popconfirm>
-                            </div>
-                          )}
-                        </div>
-                      ))}
+                        ),
+                      )}
                   </div>
                 </div>
               </PrescriptionCard>

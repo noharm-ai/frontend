@@ -220,6 +220,8 @@
     "dataExtractedFrom": "Dados extraídos pela NoHarm Care",
     "signals": "Sinais",
     "signalsExtractedFrom": "Sinais extraídos pela NoHarm Care",
+    "allergyRecordedAs": "Registrado como: {{names}}",
+    "allergyNoSubstance": "Sem substância associada",
     "allergiesExtractedFrom": "Alergias extraídas pela NoHarm Care",
     "extractedFrom": "Extraído pela NoHarm Care em",
     "more": "Ver mais",
@@ -397,6 +399,7 @@
   },
   "allergyRecords": {
     "open": "Ver registros de alergia",
+    "configure": "Configurar",
     "summary_one": "{{count}} registro: {{withDrug}} com medicamento cadastrado, {{withoutDrug}} sem medicamento cadastrado",
     "summary_other": "{{count}} registros: {{withDrug}} com medicamento cadastrado, {{withoutDrug}} sem medicamento cadastrado",
     "withDrug": "Medicamento cadastrado",

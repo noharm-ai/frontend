@@ -57,6 +57,10 @@ const RECORDS = [
   },
 ];
 
+// the maintainer button of the allergy card
+const configureButton = (page: Page) =>
+  page.locator(".allergy").getByRole("button", { name: "Configurar" });
+
 const openAllergyCard = async (page: Page) => {
   await page.goto("/prescricao/199");
   await expect(
@@ -81,9 +85,7 @@ test("the records are only offered to maintainers", async ({
   await openAllergyCard(page);
 
   await expect(page.getByText("Dipirona", { exact: true })).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Ver registros de alergia" }),
-  ).toHaveCount(0);
+  await expect(configureButton(page)).toHaveCount(0);
 });
 
 test("each record shows the drug or, without one, its own name", async ({
@@ -100,7 +102,7 @@ test("each record shows the drug or, without one, its own name", async ({
   ]);
   // the patient has no allergy to list: maintainers still get the card
   await openAllergyCard(page);
-  await page.getByRole("button", { name: "Ver registros de alergia" }).click();
+  await configureButton(page).click();
 
   const modal = page.locator(".ant-modal", {
     hasText: "Registros de alergia do paciente",
@@ -148,7 +150,7 @@ test("a patient without records says so", async ({ page, mockApi }) => {
     "MAINTAINER",
   ]);
   await openAllergyCard(page);
-  await page.getByRole("button", { name: "Ver registros de alergia" }).click();
+  await configureButton(page).click();
 
   await expect(
     page.getByText("Nenhum registro de alergia para este paciente"),
@@ -191,7 +193,7 @@ test("the substance of a record without drug is set for its name", async ({
     "MAINTAINER",
   ]);
   await openAllergyCard(page);
-  await page.getByRole("button", { name: "Ver registros de alergia" }).click();
+  await configureButton(page).click();
 
   const modal = page.locator(".ant-modal", {
     hasText: "Registros de alergia do paciente",
@@ -255,7 +257,7 @@ test("the substance of a record without drug can be removed", async ({
     "MAINTAINER",
   ]);
   await openAllergyCard(page);
-  await page.getByRole("button", { name: "Ver registros de alergia" }).click();
+  await configureButton(page).click();
 
   const row = page
     .locator(".ant-modal")
@@ -286,4 +288,50 @@ test("the substance of a record without drug can be removed", async ({
   expect(puts).toEqual([
     { idDrug: "777", drugName: "DIPIRONA GOTAS", sctid: null },
   ]);
+});
+
+test("the card shows the recorded names or the missing substance", async ({
+  page,
+  mockApi,
+}) => {
+  const fixture = loadFixture<{ data: Record<string, unknown> }>(
+    "prescriptions/single-199.json",
+  );
+  fixture.data.notesAllergies = [
+    {
+      text: "Dipirona",
+      date: "2026-01-02T10:00:00",
+      source: "pep",
+      drugNames: ["DIPIRONA GOTAS", "NOVALGINA"],
+      hasSubstance: true,
+    },
+    {
+      text: "Sulfa",
+      date: "2026-01-01T10:00:00",
+      source: "pep",
+      drugNames: [],
+      hasSubstance: false,
+    },
+    // NoHarm Care notes carry no flag
+    { text: "Penicilina", date: "2026-01-03T10:00:00", source: "care", id: 1 },
+  ];
+  mockApi.override("GET /prescriptions/:id", { json: fixture });
+
+  await loginWithPermissions(page, mockApi, BASE_PERMISSIONS);
+  await openAllergyCard(page);
+
+  const card = page.locator(".allergy.full-height");
+  await expect(card.getByText("Dipirona", { exact: true })).toBeVisible();
+  await expect(
+    card.getByText("Registrado como: DIPIRONA GOTAS, NOVALGINA"),
+  ).toBeVisible();
+  await expect(card.getByText("Sulfa", { exact: true })).toBeVisible();
+  await expect(card.getByText(/Registrado como/)).toHaveCount(1);
+  await expect(
+    card
+      .locator(".list-item")
+      .filter({ hasText: "Sulfa" })
+      .getByText("Sem substância associada"),
+  ).toBeVisible();
+  await expect(card.getByText("Sem substância associada")).toHaveCount(1);
 });
