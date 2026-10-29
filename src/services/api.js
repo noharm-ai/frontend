@@ -650,6 +650,9 @@ api.prescription.getAllergyRecords = (idPrescription) =>
     ...setHeaders(),
   });
 
+api.prescription.updateAllergySubstance = (params) =>
+  instance.put(`/allergy-records/substance`, params, setHeaders());
+
 /**
  * Conciliation
  */

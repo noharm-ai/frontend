@@ -404,7 +404,6 @@
     "withoutDrug": "No registered drug",
     "withoutDrugHint": "fkmedicamento not found in medicamento: shows the name and the substance stored in the allergy record",
     "noSubstance": "No substance",
-    "origin": "Origin",
     "name": "Name",
     "substance": "Substance",
     "status": "Status",
@@ -412,7 +411,17 @@
     "unknownSubstance": "sctid {{sctid}} has no registered substance",
     "active": "Active",
     "inactive": "Inactive",
-    "empty": "No allergy records for this patient"
+    "empty": "No allergy records for this patient",
+    "editSubstance": "Change substance",
+    "selectSubstance": "Select the substance...",
+    "confirmSubstanceTitle": "Change the substance of this name?",
+    "confirmSubstance": "Changes every allergy record, of every patient, named \"{{name}}\" with the same fkmedicamento. The name is also mapped to this substance (noharm_cultura_medicamento_sctid), a mapping shared by every client and used by cultures and allergies.",
+    "confirmRemoveTitle": "Remove the substance of this name?",
+    "confirmRemove": "Removes the substance of every allergy record, of every patient, named \"{{name}}\" with the same fkmedicamento. The name is also left without substance in the noharm_cultura_medicamento_sctid mapping, shared by every client and used by cultures and allergies, so the substance is not inferred again.",
+    "confirmRemoveNoName": "Removes the substance of every allergy record, of every patient, without a name and with the same fkmedicamento.",
+    "confirmSubstanceNoName": "Changes every allergy record, of every patient, without a name and with the same fkmedicamento.",
+    "substanceUpdated_one": "Substance changed in {{count}} record",
+    "substanceUpdated_other": "Substance changed in {{count}} records"
   },
   "maintainerBadge": {
     "label": "Maintainer",

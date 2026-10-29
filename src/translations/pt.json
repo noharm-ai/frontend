@@ -404,7 +404,6 @@
     "withoutDrug": "Sem medicamento cadastrado",
     "withoutDrugHint": "fkmedicamento não encontrado em medicamento: exibe o nome e a substância registrados na própria alergia",
     "noSubstance": "Sem substância",
-    "origin": "Origem",
     "name": "Nome",
     "substance": "Substância",
     "status": "Situação",
@@ -412,7 +411,17 @@
     "unknownSubstance": "sctid {{sctid}} sem substância cadastrada",
     "active": "Ativa",
     "inactive": "Inativa",
-    "empty": "Nenhum registro de alergia para este paciente"
+    "empty": "Nenhum registro de alergia para este paciente",
+    "editSubstance": "Alterar substância",
+    "selectSubstance": "Selecione a substância...",
+    "confirmSubstanceTitle": "Alterar a substância deste nome?",
+    "confirmSubstance": "Altera todos os registros de alergia, de todos os pacientes, com o nome \"{{name}}\" e o mesmo fkmedicamento. O nome também passa a ser mapeado para esta substância (noharm_cultura_medicamento_sctid), mapeamento compartilhado entre todos os clientes e usado por culturas e alergias.",
+    "confirmRemoveTitle": "Remover a substância deste nome?",
+    "confirmRemove": "Remove a substância de todos os registros de alergia, de todos os pacientes, com o nome \"{{name}}\" e o mesmo fkmedicamento. O nome também fica sem substância no mapeamento noharm_cultura_medicamento_sctid, compartilhado entre todos os clientes e usado por culturas e alergias, e a substância não volta a ser inferida.",
+    "confirmRemoveNoName": "Remove a substância de todos os registros de alergia, de todos os pacientes, sem nome e com o mesmo fkmedicamento.",
+    "confirmSubstanceNoName": "Altera todos os registros de alergia, de todos os pacientes, sem nome e com o mesmo fkmedicamento.",
+    "substanceUpdated_one": "Substância alterada em {{count}} registro",
+    "substanceUpdated_other": "Substância alterada em {{count}} registros"
   },
   "maintainerBadge": {
     "label": "Mantenedor",

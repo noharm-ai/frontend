@@ -3,6 +3,7 @@ import type { Page } from "@playwright/test";
 import { test, expect } from "../support/mockApi";
 import { loginWithPermissions } from "../support/featureLogin";
 import { loadFixture } from "../support/defaultHandlers";
+import { openSelect, pickOption } from "../support/antd";
 
 /**
  * Allergy records (features/prescription/AllergyRecords). In the allergy card
@@ -114,9 +115,10 @@ test("each record shows the drug or, without one, its own name", async ({
     modal.getByRole("row").filter({ hasText: text });
 
   const withDrug = row("Amoxicilina 500mg");
-  await expect(withDrug.getByText("Medicamento cadastrado")).toBeVisible();
+  await expect(
+    withDrug.getByLabel("Medicamento cadastrado", { exact: true }),
+  ).toHaveText("501");
   await expect(withDrug.getByText("Amoxicilina (2001)")).toBeVisible();
-  await expect(withDrug.getByRole("cell", { name: "501" })).toBeVisible();
   // the record's own name is not what identifies it here
   await expect(withDrug.getByText("AMOXICILINA", { exact: true })).toHaveCount(
     0,
@@ -124,9 +126,8 @@ test("each record shows the drug or, without one, its own name", async ({
 
   const withoutDrug = row("DIPIRONA GOTAS");
   await expect(
-    withoutDrug.getByText("Sem medicamento cadastrado"),
-  ).toBeVisible();
-  await expect(withoutDrug.getByRole("cell", { name: "777" })).toBeVisible();
+    withoutDrug.getByLabel("Sem medicamento cadastrado", { exact: true }),
+  ).toHaveText("777");
   await expect(withoutDrug.getByText("Dipirona (2002)")).toBeVisible();
 
   const inactive = row("CONTRASTE IODADO");
@@ -152,4 +153,137 @@ test("a patient without records says so", async ({ page, mockApi }) => {
   await expect(
     page.getByText("Nenhum registro de alergia para este paciente"),
   ).toBeVisible();
+});
+
+test("the substance of a record without drug is set for its name", async ({
+  page,
+  mockApi,
+}) => {
+  // the records read after the edit carry the new substance
+  let updated = false;
+  mockApi.override("GET /prescriptions/:id/allergy-records", (route) => {
+    const data = updated
+      ? RECORDS.map((r) =>
+          r.idDrug === "777"
+            ? { ...r, sctid: "2003", substance: "Ibuprofeno" }
+            : r,
+        )
+      : RECORDS;
+
+    return route.fulfill({ json: { status: "success", data } });
+  });
+  mockApi.override("GET /substance", {
+    json: {
+      status: "success",
+      data: [
+        { sctid: "2002", name: "Dipirona", active: true },
+        { sctid: "2003", name: "Ibuprofeno", active: true },
+      ],
+    },
+  });
+  mockApi.override("PUT /allergy-records/substance", (route) => {
+    updated = true;
+    return route.fulfill({ json: { status: "success", data: { updated: 2 } } });
+  });
+
+  await loginWithPermissions(page, mockApi, [
+    ...BASE_PERMISSIONS,
+    "MAINTAINER",
+  ]);
+  await openAllergyCard(page);
+  await page.getByRole("button", { name: "Ver registros de alergia" }).click();
+
+  const modal = page.locator(".ant-modal", {
+    hasText: "Registros de alergia do paciente",
+  });
+  const row = (text: string) =>
+    modal.getByRole("row").filter({ hasText: text });
+  const edit = { name: "Alterar substância" };
+
+  // the substance of a catalogued drug comes from the drug
+  await expect(row("Amoxicilina 500mg").getByRole("button", edit)).toHaveCount(
+    0,
+  );
+
+  await row("DIPIRONA GOTAS").getByRole("button", edit).click();
+  await openSelect(row("DIPIRONA GOTAS"));
+  await pickOption(page, "Ibuprofeno");
+  await row("DIPIRONA GOTAS").getByRole("button", { name: "Salvar" }).click();
+
+  const confirm = page.locator(".ant-popconfirm");
+  await expect(confirm).toContainText(
+    'Altera todos os registros de alergia, de todos os pacientes, com o nome "DIPIRONA GOTAS"',
+  );
+  await confirm.getByRole("button", { name: "Salvar" }).click();
+
+  await expect(
+    page.getByText("Substância alterada em 2 registros"),
+  ).toBeVisible();
+  await expect(
+    row("DIPIRONA GOTAS").getByText("Ibuprofeno (2003)"),
+  ).toBeVisible();
+
+  const puts = mockApi.requests
+    .filter(
+      (r) => r.method === "PUT" && r.path === "/allergy-records/substance",
+    )
+    .map((r) => JSON.parse(r.postData!));
+  expect(puts).toEqual([
+    { idDrug: "777", drugName: "DIPIRONA GOTAS", sctid: "2003" },
+  ]);
+});
+
+test("the substance of a record without drug can be removed", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override("GET /prescriptions/:id/allergy-records", {
+    json: { status: "success", data: RECORDS },
+  });
+  mockApi.override("GET /substance", {
+    json: {
+      status: "success",
+      data: [{ sctid: "2002", name: "Dipirona", active: true }],
+    },
+  });
+  mockApi.override("PUT /allergy-records/substance", {
+    json: { status: "success", data: { updated: 1 } },
+  });
+
+  await loginWithPermissions(page, mockApi, [
+    ...BASE_PERMISSIONS,
+    "MAINTAINER",
+  ]);
+  await openAllergyCard(page);
+  await page.getByRole("button", { name: "Ver registros de alergia" }).click();
+
+  const row = page
+    .locator(".ant-modal")
+    .getByRole("row")
+    .filter({ hasText: "DIPIRONA GOTAS" });
+  await row.getByRole("button", { name: "Alterar substância" }).click();
+
+  // nothing changed yet
+  await expect(row.getByRole("button", { name: "Salvar" })).toBeDisabled();
+
+  await row.locator(".ant-select").hover();
+  await row.locator(".ant-select-clear").click();
+  await row.getByRole("button", { name: "Salvar" }).click();
+
+  const confirm = page.locator(".ant-popconfirm");
+  await expect(confirm).toContainText("Remover a substância deste nome?");
+  await confirm.getByRole("button", { name: "Salvar" }).click();
+
+  await expect(
+    page.getByText("Substância alterada em 1 registro", { exact: true }),
+  ).toBeVisible();
+
+  const puts = mockApi.requests
+    .filter(
+      (r) => r.method === "PUT" && r.path === "/allergy-records/substance",
+    )
+    .map((r) => JSON.parse(r.postData!));
+  expect(puts).toEqual([
+    { idDrug: "777", drugName: "DIPIRONA GOTAS", sctid: null },
+  ]);
 });
