@@ -233,16 +233,6 @@ const indicators = {
     ivToOralSwitchShare: 0.25,
     ivToOralSwitchDay: quantiles(4),
     restartShare: 0.1,
-    episodesPerAdmission: 1.25,
-  },
-  microbiology: {
-    collectedBeforeStartShare: 0.6,
-    positiveShare: 0.4,
-    culturesCollected: 20,
-    resistantInUseShare: 0.05,
-    microorganisms: [
-      { microorganism: "Escherichia coli teste", admissions: 3 },
-    ],
   },
   outcomes: {
     lengthOfStayDays: quantiles(14),
@@ -448,8 +438,14 @@ test("shows the period indicators in the browser's number format", async ({
     (await width("reasons")) * 1.8,
   );
 
-  // the reviews are the tab next to the conformity one
-  await expect(page.getByRole("tab").nth(1)).toHaveText("Revisões");
+  // the reviews are the tab next to the conformity one; no microbiology tab
+  await expect(page.getByRole("tab")).toHaveText([
+    "Conformidade",
+    "Revisões",
+    "DOT/LOT",
+    "Cursos",
+    "Perfil dos pacientes",
+  ]);
   await openTab(page, "Revisões");
   await expect(value("Tempo até a 1ª revisão")).toHaveText("26,0 h");
   await expect(value("Atendimentos revisados")).toHaveText("91,7%");
@@ -542,9 +538,9 @@ test("shows the period indicators in the browser's number format", async ({
     (await blockWidth("route")) * 1.8,
   );
 
-  await openTab(page, "Consumo");
+  await openTab(page, "Cursos");
   await expect(value("Duração dos cursos")).toHaveText("7,0 dias");
-  // and no longer in Consumo
+  // and no longer in Cursos
   for (const kb of ["route", "dotBySubstance"]) {
     await expect(
       page.locator(`[data-kb="reports.infectionControl.${kb}"]`),
@@ -654,6 +650,99 @@ test("a chart opened before a new search keeps the width of its block", async ({
       return chartWidth / blockWidth;
     })
     .toBeGreaterThan(0.9);
+});
+
+/** The tab buttons stretch from one end of the tab list to the other. */
+async function expectTabsFillBar(page: Page) {
+  const bar = page.locator('[data-kb="reports.infectionControl.tabs"]');
+  const nav = bar.locator(".ant-tabs-nav");
+  // the button, not the label inside it that carries the tab role
+  const tabs = bar.locator(".ant-tabs-nav-list > .ant-tabs-tab");
+
+  await expect
+    .poll(async () => {
+      const navBox = await nav.boundingBox();
+      const first = await tabs.first().boundingBox();
+      const last = await tabs.last().boundingBox();
+      if (!navBox || !first || !last) return -1;
+      return Math.max(
+        Math.abs(first.x - navBox.x),
+        Math.abs(navBox.x + navBox.width - (last.x + last.width)),
+      );
+    })
+    .toBeLessThan(2);
+}
+
+test("the tab bar sticks to the top of the page on scroll", async ({
+  page,
+  mockApi,
+}) => {
+  mockReport(mockApi);
+
+  await page.goto(PAGE_URL);
+  const tab = page.getByRole("tab", { name: "Conformidade", exact: true });
+  await expect(tab).toBeVisible();
+  const startTop = (await tab.boundingBox())?.y ?? 0;
+  expect(startTop).toBeGreaterThan(100);
+  // the page title shows on the bar only once it is stuck
+  const title = page
+    .locator('[data-kb="reports.infectionControl.tabs"]')
+    .getByText("Relatório: Controle de Infecção");
+  await expect(title).toBeHidden();
+  await expectTabsFillBar(page);
+
+  await page
+    .locator('[data-kb="reports.infectionControl.departments"]')
+    .scrollIntoViewIfNeeded();
+
+  await expect
+    .poll(async () => (await tab.boundingBox())?.y ?? -1)
+    .toBeLessThan(40);
+  await expect(tab).toBeInViewport();
+  // stuck, the bar carries the page title
+  await expect(title).toBeVisible();
+  await expectTabsFillBar(page);
+
+  // a tab picked from the stuck bar opens its section, at the top of the page
+  await page.getByRole("tab", { name: "DOT/LOT", exact: true }).click();
+  await expect(
+    page.getByRole("tab", { name: "DOT/LOT", selected: true }),
+  ).toBeVisible();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+  await expect(title).toBeHidden();
+});
+
+test("sticking the tab bar redraws only the bar, not the page", async ({
+  page,
+  mockApi,
+}) => {
+  mockReport(mockApi);
+
+  await page.goto(PAGE_URL);
+  const canvas = page
+    .locator('[data-kb="reports.infectionControl.registry"] canvas')
+    .first();
+  await expect(canvas).toBeVisible();
+  // the charts draw again once the report loads; mark them after that
+  await expect(page.locator(".ant-spin-spinning")).toHaveCount(0);
+  // a chart rebuilt by a render of the page gets a new canvas
+  await canvas.evaluate((element) => {
+    element.dataset.marked = "before";
+  });
+
+  await page
+    .locator('[data-kb="reports.infectionControl.departments"]')
+    .scrollIntoViewIfNeeded();
+  const title = page
+    .locator('[data-kb="reports.infectionControl.tabs"]')
+    .getByText("Relatório: Controle de Infecção");
+  await expect(title).toBeVisible();
+
+  await expect(
+    page.locator(
+      '[data-kb="reports.infectionControl.registry"] canvas[data-marked="before"]',
+    ),
+  ).toHaveCount(1);
 });
 
 test("explains how each indicator is calculated", async ({ page, mockApi }) => {

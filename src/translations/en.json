@@ -2363,7 +2363,7 @@
       "hoursToOutcome": "Hours to outcome (median)"
     },
     "consumption": {
-      "title": "Consumption",
+      "title": "Courses",
       "description": "Course length, route switch, restarts and combinations",
       "courseLength": "Course length",
       "courseLengthHelp": "Treatment days of the finished courses (interruptions not counted); shows the median.",
@@ -2377,28 +2377,10 @@
       "ivToOralDayHelp": "Treatment day on which the course switched from intravenous to oral; shows the median.",
       "restart": "Restarted courses",
       "restartHelp": "Finished courses of an antimicrobial the patient had already received in an earlier course of the same admission (prescribed again after more than 36 hours without it) ÷ finished courses.",
-      "episodes": "Episodes per admission",
-      "episodesHelp": "Average antimicrobial episodes per closed admission. A new episode starts after more than 36 hours without any antimicrobial.",
       "maxSimultaneous": "Simultaneous antimicrobials",
       "maxSimultaneousHelp": "Closed admissions by the highest number of antimicrobials prescribed at the same time.",
       "admissions": "Admissions",
       "courses": "Courses"
-    },
-    "microbiology": {
-      "title": "Microbiology",
-      "description": "Cultures around the start of the courses and resistance results",
-      "collectedBefore": "Culture before the start",
-      "collectedBeforeHelp": "Courses with a culture collected between 48 hours before and 24 hours after the start ÷ courses with cultures checked.",
-      "positive": "Positive cultures",
-      "positiveHelp": "Positive cultures ÷ cultures collected during the follow-up.",
-      "collected": "Cultures collected",
-      "collectedHelp": "Cultures collected during the follow-up of the admissions of the period.",
-      "resistant": "Resistance with the antimicrobial in use",
-      "resistantHelp": "Courses with a resistant result to the antimicrobial released while it was still in use ÷ courses with cultures checked.",
-      "microorganisms": "Microorganisms",
-      "microorganismsHelp": "Microorganisms identified in the cultures and in how many admissions they appeared (the 20 most frequent).",
-      "microorganism": "Microorganism",
-      "admissions": "Admissions"
     },
     "outcomes": {
       "title": "Patient profile",

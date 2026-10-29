@@ -76,12 +76,6 @@ export function Consumption({ consumption, loading }: ConsumptionProps) {
           color="orange"
           loading={loading}
         />
-        <Indicator
-          title={tk("episodes")}
-          value={formatDecimal(data.episodesPerAdmission, 2)}
-          help={tk("episodesHelp")}
-          loading={loading}
-        />
       </IndicatorGrid>
 
       <Row gutter={[24, 24]}>

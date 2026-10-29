@@ -2373,7 +2373,7 @@
       "hoursToOutcome": "Horas até o desfecho (mediana)"
     },
     "consumption": {
-      "title": "Consumo",
+      "title": "Cursos",
       "description": "Duração dos cursos, troca de via, reinícios e associações",
       "courseLength": "Duração dos cursos",
       "courseLengthHelp": "Dias de tratamento dos cursos encerrados (sem contar interrupções); mostra a mediana.",
@@ -2387,28 +2387,10 @@
       "ivToOralDayHelp": "Dia de tratamento em que o curso passou da via endovenosa para a oral; mostra a mediana.",
       "restart": "Cursos reiniciados",
       "restartHelp": "Cursos encerrados de um antimicrobiano que o paciente já tinha recebido num curso anterior do mesmo atendimento (voltou a ser prescrito depois de mais de 36 horas sem ele) ÷ cursos encerrados.",
-      "episodes": "Episódios por atendimento",
-      "episodesHelp": "Média de episódios de antimicrobiano por atendimento encerrado. Um novo episódio começa após mais de 36 horas sem nenhum antimicrobiano.",
       "maxSimultaneous": "Antimicrobianos simultâneos",
       "maxSimultaneousHelp": "Atendimentos encerrados pelo maior número de antimicrobianos prescritos ao mesmo tempo.",
       "admissions": "Atendimentos",
       "courses": "Cursos"
-    },
-    "microbiology": {
-      "title": "Microbiologia",
-      "description": "Culturas em torno do início dos cursos e resultados de resistência",
-      "collectedBefore": "Cultura antes do início",
-      "collectedBeforeHelp": "Cursos com uma cultura coletada entre 48 horas antes e 24 horas depois do início ÷ cursos com culturas verificadas.",
-      "positive": "Culturas positivas",
-      "positiveHelp": "Culturas positivas ÷ culturas coletadas durante o acompanhamento.",
-      "collected": "Culturas coletadas",
-      "collectedHelp": "Culturas coletadas durante o acompanhamento dos atendimentos do período.",
-      "resistant": "Resistência com o antimicrobiano em uso",
-      "resistantHelp": "Cursos em que saiu um resultado resistente ao antimicrobiano enquanto ele ainda estava em uso ÷ cursos com culturas verificadas.",
-      "microorganisms": "Microrganismos",
-      "microorganismsHelp": "Microrganismos identificados nas culturas e em quantos atendimentos apareceram (os 20 mais frequentes).",
-      "microorganism": "Microrganismo",
-      "admissions": "Atendimentos"
     },
     "outcomes": {
       "title": "Perfil dos pacientes",

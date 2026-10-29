@@ -187,20 +187,6 @@ export interface IConsumption {
   ivToOralSwitchShare: number | null;
   ivToOralSwitchDay: IQuantiles;
   restartShare: number | null;
-  episodesPerAdmission: number | null;
-}
-
-export interface IMicroorganism {
-  microorganism: string;
-  admissions: number;
-}
-
-export interface IMicrobiology {
-  collectedBeforeStartShare: number | null;
-  positiveShare: number | null;
-  culturesCollected: number;
-  resistantInUseShare: number | null;
-  microorganisms: IMicroorganism[];
 }
 
 export interface IAgeBand {
@@ -234,7 +220,6 @@ export interface IIndicators {
   process: IProcess;
   appropriateness: IAppropriateness;
   consumption: IConsumption;
-  microbiology: IMicrobiology;
   outcomes: IOutcomes;
 }
 

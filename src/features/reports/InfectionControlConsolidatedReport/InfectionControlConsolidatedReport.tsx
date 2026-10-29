@@ -11,6 +11,11 @@ import {
   MenuOutlined,
   QuestionCircleOutlined,
   PrinterOutlined,
+  CheckCircleOutlined,
+  AuditOutlined,
+  ClockCircleOutlined,
+  BarChartOutlined,
+  TeamOutlined,
 } from "@ant-design/icons";
 import { useReactToPrint } from "react-to-print";
 
@@ -48,12 +53,12 @@ import {
 } from "./infectionControlReportTypes";
 import { Filter } from "./Filter/Filter";
 import { HelpModal } from "./Help/Help";
+import { StickyTabBar } from "./StickyTabBar/StickyTabBar";
 import { Conformity } from "./Sections/Conformity/Conformity";
 import { DotLot } from "./Sections/DotLot/DotLot";
 import { Departments } from "./Sections/Departments/Departments";
 import { Reviews } from "./Sections/Reviews/Reviews";
 import { Consumption } from "./Sections/Consumption/Consumption";
-import { Microbiology } from "./Sections/Microbiology/Microbiology";
 import { Outcomes } from "./Sections/Outcomes/Outcomes";
 
 // names typed elsewhere (substances, users, departments) go into the printed
@@ -83,7 +88,7 @@ const INITIAL_VALUES: Omit<IFilterValues, "dateRange"> = {
 
 /**
  * Infection control report: the indicators of a period (conformity and
- * reviews, DOT/LOT, consumption, microbiology and outcomes),
+ * reviews, DOT/LOT, courses and patient profile),
  * read from the files the long-running tasks build every night.
  */
 export function InfectionControlConsolidatedReport() {
@@ -255,10 +260,20 @@ export function InfectionControlConsolidatedReport() {
             <Tabs
               data-kb="reports.infectionControl.tabs"
               destroyOnHidden
+              // a tab opens at the top of the page, not where the last one
+              // was scrolled to
+              onChange={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              renderTabBar={(props, DefaultTabBar) => (
+                <StickyTabBar title={tk("title")}>
+                  <DefaultTabBar {...props} />
+                </StickyTabBar>
+              )}
               items={[
                 {
+                  // the icons are decoration: the tab is named by its label
                   key: "conformity",
                   label: tk("conformity.title"),
+                  icon: <CheckCircleOutlined aria-hidden />,
                   children: (
                     <Space
                       orientation="vertical"
@@ -284,6 +299,7 @@ export function InfectionControlConsolidatedReport() {
                 {
                   key: "reviews",
                   label: tk("process.title"),
+                  icon: <AuditOutlined aria-hidden />,
                   children: (
                     <Space
                       orientation="vertical"
@@ -307,6 +323,7 @@ export function InfectionControlConsolidatedReport() {
                 {
                   key: "dotLot",
                   label: tk("dotLot.title"),
+                  icon: <ClockCircleOutlined aria-hidden />,
                   children: (
                     <Space
                       orientation="vertical"
@@ -331,6 +348,7 @@ export function InfectionControlConsolidatedReport() {
                 {
                   key: "consumption",
                   label: tk("consumption.title"),
+                  icon: <BarChartOutlined aria-hidden />,
                   children: (
                     <Consumption
                       consumption={indicators.consumption}
@@ -339,18 +357,9 @@ export function InfectionControlConsolidatedReport() {
                   ),
                 },
                 {
-                  key: "microbiology",
-                  label: tk("microbiology.title"),
-                  children: (
-                    <Microbiology
-                      microbiology={indicators.microbiology}
-                      loading={isLoading}
-                    />
-                  ),
-                },
-                {
                   key: "outcomes",
                   label: tk("outcomes.title"),
+                  icon: <TeamOutlined aria-hidden />,
                   children: (
                     <Outcomes
                       outcomes={indicators.outcomes}
