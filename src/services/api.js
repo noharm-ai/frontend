@@ -645,6 +645,14 @@ api.prescription.traceInteraction = (params) =>
     ...setHeaders(),
   });
 
+api.prescription.getAllergyRecords = (idPrescription) =>
+  instance.get(`/prescriptions/${idPrescription}/allergy-records`, {
+    ...setHeaders(),
+  });
+
+api.prescription.updateAllergySubstance = (params) =>
+  instance.put(`/allergy-records/substance`, params, setHeaders());
+
 /**
  * Conciliation
  */
