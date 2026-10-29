@@ -6,6 +6,8 @@ import Empty from "components/Empty";
 export interface IBarItem {
   name: string;
   value: number | null;
+  // the bar's own color, over the chart's
+  color?: string;
 }
 
 interface BarChartProps {
@@ -32,7 +34,9 @@ export function BarChart({
   }
 
   const names = items.map((i) => i.name);
-  const values = items.map((i) => i.value);
+  const values = items.map((i) =>
+    i.color ? { value: i.value, itemStyle: { color: i.color } } : i.value,
+  );
   // horizontal bars read top-down, so the first item goes on top
   const categoryAxis = {
     type: "category",

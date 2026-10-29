@@ -122,6 +122,28 @@ const indicators = {
       },
     },
   ],
+  monthlyUse: [
+    {
+      period: "2026-01",
+      dot: 600,
+      lot: 400,
+      dotLot: 1.5,
+      patientDays: 1000,
+      dotPer1000PatientDays: 600,
+      lotPer1000PatientDays: 400,
+      awareDays: { access: 330, watch: 200, reserve: 70 },
+    },
+    {
+      period: "2026-02",
+      dot: 634,
+      lot: 400,
+      dotLot: 1.59,
+      patientDays: 1000,
+      dotPer1000PatientDays: 634,
+      lotPer1000PatientDays: 400,
+      awareDays: { access: 425, watch: 170, reserve: 39 },
+    },
+  ],
   process: {
     admissionsClosed: 12,
     admissionsReviewed: 11,
@@ -196,7 +218,12 @@ const indicators = {
   consumption: {
     awareMix: { access: 0.612, watch: 0.3, reserve: 0.088 },
     dotBySubstance: [
-      { idSubstance: 100, substance: "SUBSTANCIA TESTE", dot: 1234 },
+      {
+        idSubstance: 100,
+        substance: "SUBSTANCIA TESTE",
+        dot: 1234,
+        aware: "watch",
+      },
     ],
     courseLengthDays: quantiles(7, 12),
     courseLengthBins: [{ label: "4-7", count: 10, share: 0.5 }],
@@ -480,19 +507,31 @@ test("shows the period indicators in the browser's number format", async ({
     "DOT / LOT",
   ]);
 
-  // the DOT by AWaRe group, route and substance sit in the DOT/LOT tab, the
-  // substances the width of the page
+  // the DOT by route and substance sit in the DOT/LOT tab, the substances the
+  // width of the page; the AWaRe mix is the chart by month, not a pie
   const dotLotPane = page.locator(".ant-tabs-content-active");
-  for (const kb of ["awareMix", "route", "dotBySubstance"]) {
+  for (const kb of ["route", "dotBySubstance"]) {
     await expect(
       dotLotPane.locator(`[data-kb="reports.infectionControl.${kb}"]`),
     ).toBeVisible();
   }
   await expect(
     page.locator('[data-kb="reports.infectionControl.awareMix"]'),
+  ).toHaveCount(0);
+  // the use and the AWaRe mix by month, and the substances by AWaRe group
+  for (const kb of ["useTrend", "awareTrend"]) {
+    await expect(
+      page.locator(`[data-kb="reports.infectionControl.${kb}"] canvas`),
+    ).toBeVisible();
+  }
+  await expect(
+    page.locator('[data-kb="reports.infectionControl.awareTrend"]'),
   ).toContainText(
     "A OMS recomenda que ao menos 60% do DOT seja do grupo Acesso.",
   );
+  await expect(
+    page.locator('[data-kb="reports.infectionControl.dotBySubstance"]'),
+  ).toContainText("Observe");
   const blockWidth = async (kb: string) =>
     (
       await page
@@ -500,13 +539,13 @@ test("shows the period indicators in the browser's number format", async ({
         .boundingBox()
     )?.width ?? 0;
   expect(await blockWidth("dotBySubstance")).toBeGreaterThan(
-    (await blockWidth("awareMix")) * 1.8,
+    (await blockWidth("route")) * 1.8,
   );
 
   await openTab(page, "Consumo");
   await expect(value("Duração dos cursos")).toHaveText("7,0 dias");
   // and no longer in Consumo
-  for (const kb of ["awareMix", "route", "dotBySubstance"]) {
+  for (const kb of ["route", "dotBySubstance"]) {
     await expect(
       page.locator(`[data-kb="reports.infectionControl.${kb}"]`),
     ).toHaveCount(0);

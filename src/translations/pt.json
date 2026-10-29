@@ -2239,13 +2239,19 @@
       "dotLot": "DOT / LOT",
       "dotLotHelp": "DOT ÷ LOT: quantos antimicrobianos, em média, por dia de tratamento. 1,0 é monoterapia; valores maiores indicam associações.",
       "courses": "cursos",
-      "awareMix": "DOT por classificação AWaRe",
-      "awareMixHelp": "Parte dos dias de terapia do período em cada grupo AWaRe da OMS.",
       "awareMixTarget": "A OMS recomenda que ao menos 60% do DOT seja do grupo Acesso.",
       "bySubstance": "DOT por substância",
-      "bySubstanceHelp": "As 20 substâncias com mais dias de terapia no período.",
+      "bySubstanceHelp": "As 20 substâncias com mais dias de terapia no período, coloridas pelo grupo AWaRe.",
       "route": "DOT por via",
-      "routeHelp": "Parte dos dias de terapia por via de administração. A via endovenosa segue o mapeamento de vias do hospital."
+      "routeHelp": "Parte dos dias de terapia por via de administração. A via endovenosa segue o mapeamento de vias do hospital.",
+      "useTrend": "DOT e LOT por 1.000 pacientes-dia por mês",
+      "useTrendHelp": "Para cada mês, DOT e LOT ÷ pacientes-dia do mês × 1.000, e DOT ÷ LOT (eixo da direita). Os pacientes-dia vêm do relatório Pacientes-Dia, com os mesmos filtros de setor e segmento; um mês sem pacientes-dia fica sem taxa.",
+      "per1000Axis": "por 1.000 PD",
+      "dotPer1000Line": "DOT/1.000 PD",
+      "lotPer1000Line": "LOT/1.000 PD",
+      "awareTrend": "Classificação AWaRe por mês",
+      "awareTrendHelp": "Parte do DOT de cada mês em cada grupo AWaRe da OMS. A linha tracejada marca a meta de 60% do grupo Acesso, que fica na base de cada barra.",
+      "awareTarget": "Meta OMS: 60% Acesso"
     },
     "monthly": {
       "dot": "DOT",

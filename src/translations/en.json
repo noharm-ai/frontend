@@ -2229,13 +2229,19 @@
       "dotLot": "DOT / LOT",
       "dotLotHelp": "DOT ÷ LOT: how many antimicrobials, on average, per treatment day. 1.0 is monotherapy; higher values mean combinations.",
       "courses": "courses",
-      "awareMix": "DOT by AWaRe classification",
-      "awareMixHelp": "Share of the days of therapy of the period in each WHO AWaRe group.",
       "awareMixTarget": "The WHO recommends at least 60% of DOT from the Access group.",
       "bySubstance": "DOT by substance",
-      "bySubstanceHelp": "The 20 substances with the most days of therapy in the period.",
+      "bySubstanceHelp": "The 20 substances with the most days of therapy in the period, colored by AWaRe group.",
       "route": "DOT by route",
-      "routeHelp": "Share of the days of therapy by route. Intravenous follows the hospital's route mapping."
+      "routeHelp": "Share of the days of therapy by route. Intravenous follows the hospital's route mapping.",
+      "useTrend": "DOT and LOT per 1,000 patient-days by month",
+      "useTrendHelp": "For each month, DOT and LOT ÷ patient-days of the month × 1,000, and DOT ÷ LOT (right axis). Patient-days come from the Patient-Days report, with the same department and segment filters; a month without patient-days has no rate.",
+      "per1000Axis": "per 1,000 PD",
+      "dotPer1000Line": "DOT/1,000 PD",
+      "lotPer1000Line": "LOT/1,000 PD",
+      "awareTrend": "AWaRe classification by month",
+      "awareTrendHelp": "Share of each month's DOT in each WHO AWaRe group. The dashed line marks the 60% target of the Access group, at the bottom of each bar.",
+      "awareTarget": "WHO target: 60% Access"
     },
     "monthly": {
       "dot": "DOT",

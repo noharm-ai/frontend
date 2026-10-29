@@ -7,6 +7,8 @@ import { Indicator } from "../../Indicator/Indicator";
 import { Block } from "../../Block/Block";
 import { BarChart } from "../../BarChart/BarChart";
 import { PieChart } from "../../PieChart/PieChart";
+import { UseTrendChart } from "../../UseTrendChart/UseTrendChart";
+import { AwareTrendChart } from "../../AwareTrendChart/AwareTrendChart";
 import {
   BlockHint,
   IndicatorGrid,
@@ -14,21 +16,38 @@ import {
 } from "../../InfectionControlConsolidatedReport.style";
 import { formatDecimal, formatInteger, toPercent } from "../../format";
 import { AWARE_GROUPS, ROUTE_COLORS, ROUTES } from "../../options";
-import { IConsumption, IOverview } from "../../infectionControlReportTypes";
+import {
+  IConsumption,
+  IOverview,
+  IUsePoint,
+} from "../../infectionControlReportTypes";
 
 interface DotLotProps {
   overview?: IOverview;
   // the days of therapy by AWaRe group, route and substance
   consumption?: IConsumption;
+  monthlyUse?: IUsePoint[];
   loading: boolean;
 }
 
-/** Days of therapy and days on antimicrobials of the period, the admissions behind them and the DOT by AWaRe group, route and substance. */
-export function DotLot({ overview, consumption, loading }: DotLotProps) {
+/** Days of therapy and days on antimicrobials of the period, by month, and the DOT by AWaRe group, substance and route. */
+export function DotLot({
+  overview,
+  consumption,
+  monthlyUse,
+  loading,
+}: DotLotProps) {
   const { t } = useTranslation();
   const tk = (key: string) => t(`infectionControlConsolidated.dotLot.${key}`);
   const data: Partial<IOverview> = overview || {};
   const consumed: Partial<IConsumption> = consumption || {};
+  const awareColor = Object.fromEntries(
+    AWARE_GROUPS.map((g) => [g.key, g.color]),
+  );
+  // the AWaRe groups among the substances shown, for the bars' legend
+  const substanceGroups = AWARE_GROUPS.filter((g) =>
+    (consumed.dotBySubstance || []).some((s) => s.aware === g.key),
+  );
 
   return (
     <Section>
@@ -75,20 +94,49 @@ export function DotLot({ overview, consumption, loading }: DotLotProps) {
       </IndicatorGrid>
 
       <Row gutter={[24, 24]}>
-        <Col xs={24} lg={12}>
+        <Col xs={24}>
           <Block
-            title={tk("awareMix")}
-            help={tk("awareMixHelp")}
+            title={tk("useTrend")}
+            help={tk("useTrendHelp")}
             loading={loading}
-            kb="reports.infectionControl.awareMix"
+            kb="reports.infectionControl.useTrend"
+          >
+            <UseTrendChart points={monthlyUse || []} loading={loading} />
+          </Block>
+        </Col>
+        <Col xs={24}>
+          <Block
+            title={tk("awareTrend")}
+            help={tk("awareTrendHelp")}
+            loading={loading}
+            kb="reports.infectionControl.awareTrend"
           >
             <BlockHint>{tk("awareMixTarget")}</BlockHint>
-            <PieChart
+            <AwareTrendChart points={monthlyUse || []} loading={loading} />
+          </Block>
+        </Col>
+        <Col xs={24}>
+          <Block
+            title={tk("bySubstance")}
+            help={tk("bySubstanceHelp")}
+            loading={loading}
+            kb="reports.infectionControl.dotBySubstance"
+          >
+            <BlockHint>
+              {substanceGroups.map((g) => (
+                <span key={g.key} style={{ marginRight: 12 }}>
+                  <span style={{ color: g.color }}>■</span>{" "}
+                  {t(`infectionControlConsolidated.aware.${g.key}`)}
+                </span>
+              ))}
+            </BlockHint>
+            <BarChart
+              horizontal
               loading={loading}
-              slices={AWARE_GROUPS.map((g) => ({
-                name: t(`infectionControlConsolidated.aware.${g.key}`),
-                value: toPercent(consumed.awareMix?.[g.key]) || 0,
-                color: g.color,
+              items={(consumed.dotBySubstance || []).map((s) => ({
+                name: s.substance || "-",
+                value: s.dot,
+                color: awareColor[s.aware],
               }))}
             />
           </Block>
@@ -106,23 +154,6 @@ export function DotLot({ overview, consumption, loading }: DotLotProps) {
                 name: t(`infectionControlConsolidated.route.${r}`),
                 value: toPercent(consumed.routeShare?.[r]) || 0,
                 color: ROUTE_COLORS[r],
-              }))}
-            />
-          </Block>
-        </Col>
-        <Col xs={24}>
-          <Block
-            title={tk("bySubstance")}
-            help={tk("bySubstanceHelp")}
-            loading={loading}
-            kb="reports.infectionControl.dotBySubstance"
-          >
-            <BarChart
-              horizontal
-              loading={loading}
-              items={(consumed.dotBySubstance || []).map((s) => ({
-                name: s.substance || "-",
-                value: s.dot,
               }))}
             />
           </Block>

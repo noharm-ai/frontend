@@ -316,6 +316,7 @@ export function InfectionControlConsolidatedReport() {
                       <DotLot
                         overview={indicators.overview}
                         consumption={indicators.consumption}
+                        monthlyUse={indicators.monthlyUse}
                         loading={isLoading}
                       />
                       <Departments

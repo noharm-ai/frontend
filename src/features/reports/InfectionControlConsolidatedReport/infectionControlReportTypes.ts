@@ -80,6 +80,19 @@ export interface IDepartmentRow {
   verdictDays: IVerdictDays;
 }
 
+// a month (YYYY-MM) of the use trend: DOT, LOT, their rates and the AWaRe mix
+export interface IUsePoint {
+  period: string;
+  dot: number;
+  lot: number;
+  dotLot: number | null;
+  patientDays: number | null;
+  dotPer1000PatientDays: number | null;
+  lotPer1000PatientDays: number | null;
+  // days by AWaRe group, as the service names them (consumption.awareMix)
+  awareDays: Record<string, number>;
+}
+
 // the scale of the trend chart
 export type TrendScale = "month" | "day";
 
@@ -163,6 +176,8 @@ export interface IConsumption {
     idSubstance: number | null;
     substance: string | null;
     dot: number;
+    // the AWaRe group as the service names it (consumption.awareMix)
+    aware: string;
   }[];
   courseLengthDays: IQuantiles;
   courseLengthBins: IBin[];
@@ -215,6 +230,7 @@ export interface IIndicators {
   byDepartment: IDepartmentRow[];
   monthly: ITrendPoint[];
   daily: ITrendPoint[];
+  monthlyUse: IUsePoint[];
   process: IProcess;
   appropriateness: IAppropriateness;
   consumption: IConsumption;
