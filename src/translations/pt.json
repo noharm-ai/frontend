@@ -395,6 +395,25 @@
     "protocolTargetTest": "Direcionado",
     "protocolSampleTest": "Amostra do dia"
   },
+  "allergyRecords": {
+    "open": "Ver registros de alergia",
+    "summary_one": "{{count}} registro: {{withDrug}} com medicamento cadastrado, {{withoutDrug}} sem medicamento cadastrado",
+    "summary_other": "{{count}} registros: {{withDrug}} com medicamento cadastrado, {{withoutDrug}} sem medicamento cadastrado",
+    "withDrug": "Medicamento cadastrado",
+    "withDrugHint": "fkmedicamento encontrado em medicamento: exibe o nome do medicamento e a substância do medicamento",
+    "withoutDrug": "Sem medicamento cadastrado",
+    "withoutDrugHint": "fkmedicamento não encontrado em medicamento: exibe o nome e a substância registrados na própria alergia",
+    "noSubstance": "Sem substância",
+    "origin": "Origem",
+    "name": "Nome",
+    "substance": "Substância",
+    "status": "Situação",
+    "createdAt": "Criado em",
+    "unknownSubstance": "sctid {{sctid}} sem substância cadastrada",
+    "active": "Ativa",
+    "inactive": "Inativa",
+    "empty": "Nenhum registro de alergia para este paciente"
+  },
   "maintainerBadge": {
     "label": "Mantenedor",
     "tooltip": "Visível apenas para mantenedores (Administrador e Curadoria). Usuários do cliente não têm acesso: não recomende esta ação a eles."
@@ -403,6 +422,7 @@
     "protocolDescription": "Como este protocolo é disparado",
     "addDrugMeasureUnit": "Adicionar Unidade de Medida",
     "interactionTrace": "Explicação das interações",
+    "allergyRecords": "Registros de alergia do paciente",
     "protocolTrace": "Explicação da avaliação de protocolos",
     "protocolTest": "Testar protocolo",
     "protocolTestResults": "Resultados do teste"

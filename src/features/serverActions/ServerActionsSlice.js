@@ -59,6 +59,22 @@ export const traceInteraction = createAsyncThunk(
   },
 );
 
+export const getAllergyRecords = createAsyncThunk(
+  "serverActions/get-allergy-records",
+  /**
+   * @param {{ idPrescription: number | string }} params
+   */
+  async ({ idPrescription }, thunkAPI) => {
+    try {
+      const response = await api.prescription.getAllergyRecords(idPrescription);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  },
+);
+
 export const traceProtocol = createAsyncThunk(
   "serverActions/trace-protocol",
   /**

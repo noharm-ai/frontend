@@ -395,6 +395,25 @@
     "protocolTargetTest": "Targeted",
     "protocolSampleTest": "Today's sample"
   },
+  "allergyRecords": {
+    "open": "View allergy records",
+    "summary_one": "{{count}} record: {{withDrug}} with a registered drug, {{withoutDrug}} without a registered drug",
+    "summary_other": "{{count}} records: {{withDrug}} with a registered drug, {{withoutDrug}} without a registered drug",
+    "withDrug": "Registered drug",
+    "withDrugHint": "fkmedicamento found in medicamento: shows the drug name and the drug substance",
+    "withoutDrug": "No registered drug",
+    "withoutDrugHint": "fkmedicamento not found in medicamento: shows the name and the substance stored in the allergy record",
+    "noSubstance": "No substance",
+    "origin": "Origin",
+    "name": "Name",
+    "substance": "Substance",
+    "status": "Status",
+    "createdAt": "Created at",
+    "unknownSubstance": "sctid {{sctid}} has no registered substance",
+    "active": "Active",
+    "inactive": "Inactive",
+    "empty": "No allergy records for this patient"
+  },
   "maintainerBadge": {
     "label": "Maintainer",
     "tooltip": "Only visible to maintainers (Admin and Curator). Client users have no access: do not recommend this action to them."
@@ -403,6 +422,7 @@
     "protocolDescription": "How this protocol is triggered",
     "addDrugMeasureUnit": "Add Drug Unit",
     "interactionTrace": "Interaction evaluation explanation",
+    "allergyRecords": "Patient allergy records",
     "protocolTrace": "Protocol evaluation explanation",
     "protocolTest": "Test protocol",
     "protocolTestResults": "Test results"

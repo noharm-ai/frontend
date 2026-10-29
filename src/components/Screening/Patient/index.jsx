@@ -2,18 +2,24 @@ import "styled-components";
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import moment from "moment";
-import { Row, Col, Flex, notification, Popconfirm } from "antd";
+import { Row, Col, Flex, notification, Popconfirm, Space } from "antd";
 import { useTranslation } from "react-i18next";
 import {
   CaretDownOutlined,
   CaretUpOutlined,
   DeleteOutlined,
+  DatabaseOutlined,
 } from "@ant-design/icons";
 
 import Button from "components/Button";
 import { InfoIcon } from "components/Icon";
 import Tooltip from "components/Tooltip";
 import PrescriptionCard from "components/PrescriptionCard";
+import DefaultModal from "components/Modal";
+import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
+import { AllergyRecords } from "features/prescription/AllergyRecords/AllergyRecords";
+import Permission from "models/Permission";
+import PermissionService from "services/PermissionService";
 
 import { SeeMore, MaxHeightContainer } from "./Patient.style";
 import ExamCard from "../Exam/Card";
@@ -60,10 +66,13 @@ export default function Patient({
 
   const [seeMore, setSeeMore] = useState(false);
   const [isRemovingNotes, setIsRemovingNotes] = useState(false);
+  const [allergyRecordsOpen, setAllergyRecordsOpen] = useState(false);
 
   const { t } = useTranslation();
 
   const hasAIData = notesSigns !== "" || notesInfo !== "";
+  const isMaintainer = PermissionService().has(Permission.MAINTAINER);
+  const hasNotesAllergies = notesAllergies && notesAllergies.length > 0;
 
   const toggleSeeMore = () => {
     setSeeMore(!seeMore);
@@ -227,17 +236,31 @@ export default function Patient({
               </div>
             </PrescriptionCard>
           </Col>
-          {notesAllergies && notesAllergies.length > 0 && (
+          {/* maintainers get the card even without allergies to list: the
+              records behind it may all be inactive or nameless */}
+          {(hasNotesAllergies || isMaintainer) && (
             <Col xs={24} md={12} lg={8} style={{ marginTop: "10px" }}>
               <PrescriptionCard className="full-height allergy">
                 <div className="header">
                   <h3 className="title">
                     {t("clinicalNotesIndicator.allergy")}
+                    {isMaintainer && (
+                      <Tooltip title={t("allergyRecords.open")}>
+                        <Button
+                          type="text"
+                          size="small"
+                          icon={<DatabaseOutlined />}
+                          aria-label={t("allergyRecords.open")}
+                          onClick={() => setAllergyRecordsOpen(true)}
+                        />
+                      </Tooltip>
+                    )}
                   </h3>
                 </div>
                 <div className="content">
                   <div className="text-content list">
-                    {notesAllergies
+                    {!hasNotesAllergies && "--"}
+                    {(notesAllergies || [])
                       .slice()
                       .sort(sortAllergies)
                       .map(({ text, date, source, id }) => (
@@ -362,6 +385,27 @@ export default function Patient({
             </Col>
           )}
         </>
+      )}
+
+      {isMaintainer && (
+        <DefaultModal
+          title={
+            <Space size={8}>
+              {t("titles.allergyRecords")}
+              <MaintainerBadge />
+            </Space>
+          }
+          destroyOnHidden
+          open={allergyRecordsOpen}
+          onCancel={() => setAllergyRecordsOpen(false)}
+          width="min(1000px, 96vw)"
+          style={{ top: 20 }}
+          footer={null}
+        >
+          <div data-kb="prescription.allergyRecords">
+            <AllergyRecords idPrescription={prescription.idPrescription} />
+          </div>
+        </DefaultModal>
       )}
 
       <Col xs={24}>
