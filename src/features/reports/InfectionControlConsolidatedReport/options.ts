@@ -39,11 +39,3 @@ export const ROUTE_COLORS: Record<string, string> = {
   other: "#f2b530",
   unknown: "#bdbdbd",
 };
-
-export const ADJUSTMENTS = [
-  "suspension",
-  "de_escalation",
-  "same_level",
-  "escalation",
-  "substitution",
-];

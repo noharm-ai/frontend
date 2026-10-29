@@ -7,6 +7,15 @@ import { formatPeriod, formatShare } from "../format";
 import { REGISTRY_COLORS, REGISTRY_STATUSES } from "../options";
 import { ITrendPoint, TrendScale } from "../infectionControlReportTypes";
 
+// an expired evaluation counts as not evaluated here
+const STATUSES = REGISTRY_STATUSES.filter((status) => status !== "expired");
+
+const daysOf = (point: ITrendPoint, status: (typeof STATUSES)[number]) =>
+  status === "not_evaluated"
+    ? (point.verdictDays?.not_evaluated || 0) +
+      (point.verdictDays?.expired || 0)
+    : point.verdictDays?.[status] || 0;
+
 interface RegistryChartProps {
   points: ITrendPoint[];
   scale: TrendScale;
@@ -22,8 +31,8 @@ interface TooltipItem {
 
 /**
  * The antimicrobial days of each month or day by the record in force on them
- * (conforming, non-conforming, never evaluated, expired), stacked: each bar is
- * the period's DOT.
+ * (conforming, non-conforming, not evaluated), stacked: each bar is the
+ * period's DOT.
  */
 export function RegistryChart({
   points,
@@ -72,11 +81,11 @@ export function RegistryChart({
     dataZoom: scale === "day" ? [{ type: "inside" }, { type: "slider" }] : [],
     xAxis: { type: "category", data: labels },
     yAxis: { type: "value" },
-    series: REGISTRY_STATUSES.map((status) => ({
+    series: STATUSES.map((status) => ({
       name: t(`infectionControlConsolidated.status.${status}`),
       type: "bar",
       stack: "registry",
-      data: points.map((p) => p.verdictDays?.[status] || 0),
+      data: points.map((p) => daysOf(p, status)),
       itemStyle: { color: REGISTRY_COLORS[status] },
     })),
   };

@@ -10,9 +10,10 @@ import { openSelectById, pickOption } from "../support/antd";
  * POST /reports/consolidated/infection-control answers the indicators of a
  * period. The page asks the period from January 1st to yesterday, the last
  * complete day of the files, when it opens. Each section is a tab, and the
- * period summary is the one open at first. A department row drills down to
- * its admissions (`admissions_of`), and an admission to its antimicrobial
- * courses (`courses_of`).
+ * conformity one is open at first. The conformity and DOT/LOT tabs each have
+ * a table by department, and a department row drills down to its admissions
+ * (`admissions_of`), and an admission to its antimicrobial courses
+ * (`courses_of`).
  */
 
 const PAGE_URL = "/relatorios/consolidado/controle-infeccao";
@@ -37,6 +38,8 @@ const indicators = {
     patientsOnAntimicrobials: 150,
     dotPer1000PatientDays: 617,
     accessShare: 0.612,
+    dotWithRecord: 1100,
+    dotWithRecordShare: 0.8914,
     evaluations: 40,
     conformingShare: 0.75,
     evaluatedByD3Share: 0.8,
@@ -51,12 +54,22 @@ const indicators = {
       admissions: 12,
       dot: 1234,
       dotPer1000PatientDays: 617,
+      lot: 800,
+      dotLot: 1.54,
+      patientDays: 2000,
+      patientsOnAntimicrobials: 150,
       accessShare: 0.612,
+      dotWithRecordShare: 0.8914,
       conformingShare: 0.75,
       evaluatedByD3Share: 0.8,
       timeToFirstReviewHours: 26,
       interventionAcceptance: 0.5,
       pendingTimeShare: 0.1,
+      admissionsClosed: 10,
+      admissionsReviewed: 8,
+      admissionsReviewedShare: 0.8,
+      reviewsPerAdmission: 2.5,
+      reviewsPer100Dot: 9.8,
       verdictDays: {
         conforming: 900,
         non_conforming: 200,
@@ -110,7 +123,9 @@ const indicators = {
     },
   ],
   process: {
-    admissionsReviewedShare: 0.9,
+    admissionsClosed: 12,
+    admissionsReviewed: 11,
+    admissionsReviewedShare: 0.9167,
     coursesEvaluatedShare: 0.85,
     reviewsPerAdmission: 3.5,
     reviewsPer100Dot: 12.4,
@@ -314,7 +329,7 @@ function mockReport(mockApi: any) {
   });
 }
 
-/** Opens a section of the report; the period summary is the one open at first. */
+/** Opens a section of the report; the conformity one is open at first. */
 const openTab = (page: Page, name: string) =>
   page.getByRole("tab", { name, exact: true }).click();
 
@@ -323,7 +338,7 @@ const indicator = (page: Page, title: string) =>
     has: page.locator(".indicator-title").getByText(title, { exact: true }),
   });
 
-test("opens with the period up to yesterday, on the period summary", async ({
+test("opens with the period up to yesterday, on the conformity tab", async ({
   page,
   mockApi,
 }) => {
@@ -339,7 +354,7 @@ test("opens with the period up to yesterday, on the period summary", async ({
     }),
   ).toBeVisible();
   await expect(
-    page.getByRole("tab", { name: "Resumo do período", selected: true }),
+    page.getByRole("tab", { name: "Conformidade", selected: true }),
   ).toBeVisible();
 
   const params = (await period).postDataJSON();
@@ -367,17 +382,55 @@ test("shows the period indicators in the browser's number format", async ({
   const value = (title: string) =>
     indicator(page, title).first().locator(".indicator-value");
 
-  await expect(value("Dias de terapia (DOT)")).toHaveText("1.234");
-  await expect(value("DOT por 1.000 pacientes-dia")).toHaveText("617,0");
-  await expect(value("Pacientes-dia")).toHaveText("2.000");
-  await expect(value("Pacientes com antimicrobiano")).toHaveText("150");
-  await expect(value("DOT / LOT")).toHaveText("1,54");
-  await expect(value("DOT do grupo Acesso")).toHaveText("61,2%");
+  await expect(
+    value("Antimicrobianos com registro de conformidade"),
+  ).toHaveText("89,1%");
+  await expect(
+    indicator(page, "Antimicrobianos com registro de conformidade").first(),
+  ).toContainText("1.100 de 1.234 DOT");
+  await expect(value("Avaliações conformes")).toHaveText("75,0%");
   await expect(value("Cursos avaliados até o D3")).toHaveText("80,0%");
-  await expect(value("Tempo até a 1ª revisão")).toHaveText("26,0 h");
+  // the verdicts of the former Adequação tab sit in the conformity section
+  await expect(value("Atendimentos com não conformidade")).toHaveText("5");
+  await expect(
+    page.locator('[data-kb="reports.infectionControl.substitutions"]'),
+  ).toContainText("Descalonamento");
+  await expect(page.getByRole("tab", { name: "Adequação" })).toHaveCount(0);
+  await expect(indicator(page, "Aceitação das intervenções")).toHaveCount(0);
+  await expect(
+    page.locator('[data-kb="reports.infectionControl.verdictDays"]'),
+  ).toHaveCount(0);
+  await expect(
+    page.locator('[data-kb="reports.infectionControl.adjustments"]'),
+  ).toHaveCount(0);
+  // the evaluations by substance close the section, the width of the page
+  const sections = page.locator(
+    '[data-kb="reports.infectionControl.overview"] ~ * [data-kb]',
+  );
+  await expect(sections.last()).toHaveAttribute(
+    "data-kb",
+    "reports.infectionControl.evaluationsBySubstance",
+  );
+  const width = async (kb: string) =>
+    (
+      await page
+        .locator(`[data-kb="reports.infectionControl.${kb}"]`)
+        .boundingBox()
+    )?.width ?? 0;
+  expect(await width("evaluationsBySubstance")).toBeGreaterThan(
+    (await width("reasons")) * 1.8,
+  );
 
-  await openTab(page, "Processo de revisão");
+  // the reviews are the tab next to the conformity one
+  await expect(page.getByRole("tab").nth(1)).toHaveText("Revisões");
+  await openTab(page, "Revisões");
+  await expect(value("Tempo até a 1ª revisão")).toHaveText("26,0 h");
+  await expect(value("Atendimentos revisados")).toHaveText("91,7%");
+  await expect(indicator(page, "Atendimentos revisados").first()).toContainText(
+    "11 revisados de 12 atendimentos",
+  );
   await expect(value("Revisões por atendimento")).toHaveText("3,5");
+  await expect(value("Revisões por 100 DOT")).toHaveText("12,4");
   await expect(
     page
       .locator('[data-kb="reports.infectionControl.reviewers"]')
@@ -388,20 +441,146 @@ test("shows the period indicators in the browser's number format", async ({
       .locator('[data-kb="reports.infectionControl.pendings"]')
       .getByRole("row", { name: /Avaliação vencida/ }),
   ).toContainText("75,0%");
-
-  await openTab(page, "Adequação");
   await expect(
-    page.locator('[data-kb="reports.infectionControl.substitutions"]'),
-  ).toContainText("Descalonamento");
+    page.getByRole("tab", { name: "Processo de revisão" }),
+  ).toHaveCount(0);
+
+  // the review cards sit in their own tab, not among the conformity ones
+  const reviewCards = page.locator(
+    '[data-kb="reports.infectionControl.process"] .indicator-title',
+  );
+  await expect(reviewCards).toHaveText([
+    "Atendimentos revisados",
+    "Revisões por atendimento",
+    "Revisões por 100 DOT",
+    "Tempo até a 1ª revisão",
+  ]);
+  await expect(
+    page
+      .locator('[data-kb="reports.infectionControl.overview"]')
+      .getByText("Tempo até a 1ª revisão"),
+  ).toHaveCount(0);
+
+  await openTab(page, "DOT/LOT");
+  await expect(value("Dias de terapia (DOT)")).toHaveText("1.234");
+  await expect(value("DOT por 1.000 pacientes-dia")).toHaveText("617,0");
+  await expect(value("Dias com antimicrobiano (LOT)")).toHaveText("800");
+  await expect(value("DOT / LOT")).toHaveText("1,54");
+  await expect(
+    indicator(page, "DOT por 1.000 pacientes-dia").first(),
+  ).toContainText("2.000 pacientes-dia");
+  await expect(
+    page.locator(
+      '[data-kb="reports.infectionControl.dotLot"] .indicator-title',
+    ),
+  ).toHaveText([
+    "Dias de terapia (DOT)",
+    "DOT por 1.000 pacientes-dia",
+    "Dias com antimicrobiano (LOT)",
+    "DOT / LOT",
+  ]);
+
+  // the DOT by AWaRe group, route and substance sit in the DOT/LOT tab, the
+  // substances the width of the page
+  const dotLotPane = page.locator(".ant-tabs-content-active");
+  for (const kb of ["awareMix", "route", "dotBySubstance"]) {
+    await expect(
+      dotLotPane.locator(`[data-kb="reports.infectionControl.${kb}"]`),
+    ).toBeVisible();
+  }
+  await expect(
+    page.locator('[data-kb="reports.infectionControl.awareMix"]'),
+  ).toContainText(
+    "A OMS recomenda que ao menos 60% do DOT seja do grupo Acesso.",
+  );
+  const blockWidth = async (kb: string) =>
+    (
+      await page
+        .locator(`[data-kb="reports.infectionControl.${kb}"]`)
+        .boundingBox()
+    )?.width ?? 0;
+  expect(await blockWidth("dotBySubstance")).toBeGreaterThan(
+    (await blockWidth("awareMix")) * 1.8,
+  );
 
   await openTab(page, "Consumo");
   await expect(value("Duração dos cursos")).toHaveText("7,0 dias");
+  for (const kb of ["awareMix", "route", "dotBySubstance"]) {
+    await expect(
+      page.locator(`[data-kb="reports.infectionControl.${kb}"]`),
+    ).toHaveCount(1);
+  }
   await expect(value("Dia da troca para oral")).toHaveText("D4,0");
 
-  await openTab(page, "Perfil e desfechos");
+  await openTab(page, "Perfil dos pacientes");
+  await expect(
+    page.locator('[data-kb="reports.infectionControl.outcomes"]'),
+  ).toHaveCount(0);
   await expect(
     page.locator('[data-kb="reports.infectionControl.diagnoses"]'),
   ).toContainText("J18 - Pneumonia");
+});
+
+test("the blocks of a row have the same height", async ({ page, mockApi }) => {
+  mockReport(mockApi);
+
+  await page.goto(PAGE_URL);
+
+  const height = async (kb: string) =>
+    (
+      await page
+        .locator(`[data-kb="reports.infectionControl.${kb}"]`)
+        .boundingBox()
+    )?.height;
+  await expect
+    .poll(
+      async () => (await height("reasons")) === (await height("substitutions")),
+    )
+    .toBe(true);
+
+  // tiles with and without a detail line
+  const tiles = page.locator(
+    '[data-kb="reports.infectionControl.overview"] .indicator',
+  );
+  await expect
+    .poll(
+      async () =>
+        new Set(
+          await tiles.evaluateAll((all) =>
+            all.map((tile) => tile.getBoundingClientRect().height),
+          ),
+        ).size,
+    )
+    .toBe(1);
+
+  // a bar chart beside a table of one row
+  await openTab(page, "Revisões");
+  await expect(
+    page.locator('[data-kb="reports.infectionControl.pendings"] tbody tr'),
+  ).toHaveCount(1);
+  await expect
+    .poll(
+      async () => (await height("firstReview")) === (await height("pendings")),
+    )
+    .toBe(true);
+});
+
+test("the consolidation notice sits in the help, not on the page", async ({
+  page,
+  mockApi,
+}) => {
+  mockReport(mockApi);
+
+  await page.goto(PAGE_URL);
+  await expect(page.locator(".indicator-value").first()).not.toHaveText("-");
+  await expect(page.getByText("Os dados são consolidados")).toHaveCount(0);
+
+  await page.locator(".page-header-title button").click();
+
+  const help = page.locator('[data-kb="reports.infectionControl.help"]');
+  await expect(help).toContainText("Relatório Consolidado");
+  await expect(help).toContainText("Os dados são consolidados todos os dias");
+  await expect(help).toContainText("Atualizado em: 11/03/26 02:10");
 });
 
 test("explains how each indicator is calculated", async ({ page, mockApi }) => {
@@ -430,10 +609,8 @@ test("sends the chosen filters with the period", async ({ page, mockApi }) => {
 
   await page.goto(PAGE_URL);
   await expect(
-    indicator(page, "Dias de terapia (DOT)")
-      .first()
-      .locator(".indicator-value"),
-  ).toHaveText("1.234");
+    indicator(page, "Avaliações conformes").first().locator(".indicator-value"),
+  ).toHaveText("75,0%");
 
   await openSelectById(page, "infection-control-department");
   await pickOption(page, "UTI Teste");
@@ -456,10 +633,8 @@ test("the period picker offers the current and the last month", async ({
 
   await page.goto(PAGE_URL);
   await expect(
-    indicator(page, "Dias de terapia (DOT)")
-      .first()
-      .locator(".indicator-value"),
-  ).toHaveText("1.234");
+    indicator(page, "Avaliações conformes").first().locator(".indicator-value"),
+  ).toHaveText("75,0%");
 
   await page.locator(".ant-picker-range").click();
   const presets = page.locator(".ant-picker-presets li");
@@ -485,7 +660,7 @@ test("the period picker offers the current and the last month", async ({
   });
 });
 
-test("a department row lists the admissions it counts, for the same period", async ({
+test("a department's search button lists the admissions it counts, for the same period", async ({
   page,
   mockApi,
 }) => {
@@ -498,6 +673,7 @@ test("a department row lists the admissions it counts, for the same period", asy
   await page
     .locator('[data-kb="reports.infectionControl.departments"]')
     .getByRole("row", { name: /UTI Teste/ })
+    .getByRole("button", { name: "Ver os atendimentos do setor" })
     .click();
 
   expect((await asked).postDataJSON()).toEqual({
@@ -523,6 +699,69 @@ test("a department row lists the admissions it counts, for the same period", asy
   ).toHaveAttribute("href", "/controle-infeccao/90002");
 });
 
+test("each tab's department table keeps to its own numbers", async ({
+  page,
+  mockApi,
+}) => {
+  mockReport(mockApi);
+
+  await page.goto(PAGE_URL);
+
+  const conformity = page.locator(
+    '[data-kb="reports.infectionControl.departments"]',
+  );
+  const headers = (table: typeof conformity) =>
+    table.locator("thead th").allInnerTexts();
+  await expect(
+    conformity.getByRole("row", { name: /UTI Teste/ }),
+  ).toContainText("89,1%");
+  expect(await headers(conformity)).toContain("% DOT com registro");
+  expect(await headers(conformity)).not.toContain("DOT");
+  expect(await headers(conformity)).not.toContain("1ª revisão (h)");
+  // a card like the other blocks, not a section title
+  await expect(page.getByRole("heading", { name: "Por setor" })).toHaveCount(0);
+
+  await openTab(page, "Revisões");
+  const reviews = page.locator(
+    '[data-kb="reports.infectionControl.reviewsDepartments"]',
+  );
+  const reviewsRow = reviews.getByRole("row", { name: /UTI Teste/ });
+  await expect(reviewsRow).toContainText("80,0%");
+  await expect(reviewsRow).toContainText("2,5");
+  await expect(reviewsRow).toContainText("9,8");
+  await expect(reviewsRow).toContainText("26,0");
+  expect(await headers(reviews)).toEqual(
+    expect.arrayContaining([
+      "Encerrados",
+      "% revisados",
+      "Revisões/atend.",
+      "Revisões/100 DOT",
+      "1ª revisão (h)",
+      "% tempo pendente",
+    ]),
+  );
+  expect(await headers(reviews)).not.toContain("% conformes");
+
+  await openTab(page, "DOT/LOT");
+  const dotLot = page.locator(
+    '[data-kb="reports.infectionControl.dotLotDepartments"]',
+  );
+  const row = dotLot.getByRole("row", { name: /UTI Teste/ });
+  await expect(row).toContainText("1.234");
+  await expect(row).toContainText("800");
+  await expect(row).toContainText("1,54");
+  expect(await headers(dotLot)).toEqual(
+    expect.arrayContaining(["DOT", "LOT", "DOT/LOT"]),
+  );
+  expect(await headers(dotLot)).not.toContain("% conformes");
+
+  const asked = page.waitForRequest(isAdmissions);
+  await row
+    .getByRole("button", { name: "Ver os atendimentos do setor" })
+    .click();
+  expect((await asked).postDataJSON().admissions_of).toBe(5);
+});
+
 test("an admission lists its antimicrobial courses", async ({
   page,
   mockApi,
@@ -535,6 +774,7 @@ test("an admission lists its antimicrobial courses", async ({
   await page
     .locator('[data-kb="reports.infectionControl.departments"]')
     .getByRole("row", { name: /UTI Teste/ })
+    .getByRole("button", { name: "Ver os atendimentos do setor" })
     .click();
   const modal = page.locator(
     '[data-kb="reports.infectionControl.departmentAdmissions"]',
@@ -600,8 +840,6 @@ test("warns when the report can't be loaded", async ({ page, mockApi }) => {
   await page.goto(PAGE_URL);
   await notified;
   await expect(
-    indicator(page, "Dias de terapia (DOT)")
-      .first()
-      .locator(".indicator-value"),
+    indicator(page, "Avaliações conformes").first().locator(".indicator-value"),
   ).toHaveText("-");
 });

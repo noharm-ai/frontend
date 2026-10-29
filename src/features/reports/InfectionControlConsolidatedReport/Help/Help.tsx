@@ -7,7 +7,7 @@ import Alert from "components/Alert";
 
 import { setHelpModal } from "../InfectionControlConsolidatedReportSlice";
 
-/** What the report shows and when its files were last built. */
+/** What the report shows, how its files are consolidated and when they were last built. */
 export function HelpModal() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
@@ -36,9 +36,17 @@ export function HelpModal() {
         <p>{t("infectionControlConsolidated.help.p3")}</p>
 
         <Alert
-          description={`${t("infectionControlConsolidated.updatedAt")}: ${
-            updatedAt ? dayjs(updatedAt).format("DD/MM/YY HH:mm") : "-"
-          }`}
+          title={
+            <strong>{t("infectionControlConsolidated.alert.title")}</strong>
+          }
+          description={
+            <>
+              {t("infectionControlConsolidated.alert.description")}
+              <br />
+              {t("infectionControlConsolidated.updatedAt")}:{" "}
+              {updatedAt ? dayjs(updatedAt).format("DD/MM/YY HH:mm") : "-"}
+            </>
+          }
           type="info"
           showIcon
         />

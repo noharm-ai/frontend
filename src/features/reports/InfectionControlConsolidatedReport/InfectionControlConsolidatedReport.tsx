@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import { escape } from "lodash";
 import DOMPurify from "dompurify";
 import { useNavigate } from "react-router-dom";
-import { Space, FloatButton, Alert, Tabs } from "antd";
+import { Space, FloatButton, Tabs } from "antd";
 import {
   UnorderedListOutlined,
   QuestionOutlined,
@@ -48,10 +48,10 @@ import {
 } from "./infectionControlReportTypes";
 import { Filter } from "./Filter/Filter";
 import { HelpModal } from "./Help/Help";
-import { Overview } from "./Sections/Overview/Overview";
+import { Conformity } from "./Sections/Conformity/Conformity";
+import { DotLot } from "./Sections/DotLot/DotLot";
 import { Departments } from "./Sections/Departments/Departments";
-import { Process } from "./Sections/Process/Process";
-import { Appropriateness } from "./Sections/Appropriateness/Appropriateness";
+import { Reviews } from "./Sections/Reviews/Reviews";
 import { Consumption } from "./Sections/Consumption/Consumption";
 import { Microbiology } from "./Sections/Microbiology/Microbiology";
 import { Outcomes } from "./Sections/Outcomes/Outcomes";
@@ -82,9 +82,9 @@ const INITIAL_VALUES: Omit<IFilterValues, "dateRange"> = {
 };
 
 /**
- * Infection control report: the indicators of a period (consumption,
- * appropriateness, review process, microbiology and outcomes), read from the
- * files the long-running tasks build every night.
+ * Infection control report: the indicators of a period (conformity and
+ * reviews, DOT/LOT, consumption, microbiology and outcomes),
+ * read from the files the long-running tasks build every night.
  */
 export function InfectionControlConsolidatedReport() {
   const { t } = useTranslation();
@@ -229,23 +229,6 @@ export function InfectionControlConsolidatedReport() {
           initialValues={initialValues}
         />
 
-        <Alert
-          title={<strong>{tk("alert.title")}</strong>}
-          description={
-            <>
-              {tk("alert.description")}
-              {result?.updatedAt && (
-                <>
-                  <br />
-                  {tk("updatedAt")}:{" "}
-                  {dayjs(result.updatedAt).format("DD/MM/YY HH:mm")}
-                </>
-              )}
-            </>
-          }
-          showIcon
-        />
-
         <div ref={printRef}>
           <ReportHeader className="report-header">
             <h1>{tk("title")}</h1>
@@ -272,21 +255,23 @@ export function InfectionControlConsolidatedReport() {
               data-kb="reports.infectionControl.tabs"
               items={[
                 {
-                  key: "overview",
-                  label: tk("overview.title"),
+                  key: "conformity",
+                  label: tk("conformity.title"),
                   children: (
                     <Space
                       orientation="vertical"
-                      size={48}
+                      size={24}
                       style={{ width: "100%" }}
                     >
-                      <Overview
+                      <Conformity
                         overview={indicators.overview}
+                        appropriateness={indicators.appropriateness}
                         monthly={indicators.monthly}
                         daily={indicators.daily}
                         loading={isLoading}
                       />
                       <Departments
+                        view="conformity"
                         departments={indicators.byDepartment}
                         params={periodParams}
                         loading={isLoading}
@@ -295,20 +280,49 @@ export function InfectionControlConsolidatedReport() {
                   ),
                 },
                 {
-                  key: "process",
+                  key: "reviews",
                   label: tk("process.title"),
                   children: (
-                    <Process process={indicators.process} loading={isLoading} />
+                    <Space
+                      orientation="vertical"
+                      size={24}
+                      style={{ width: "100%" }}
+                    >
+                      <Reviews
+                        overview={indicators.overview}
+                        process={indicators.process}
+                        loading={isLoading}
+                      />
+                      <Departments
+                        view="reviews"
+                        departments={indicators.byDepartment}
+                        params={periodParams}
+                        loading={isLoading}
+                      />
+                    </Space>
                   ),
                 },
                 {
-                  key: "appropriateness",
-                  label: tk("appropriateness.title"),
+                  key: "dotLot",
+                  label: tk("dotLot.title"),
                   children: (
-                    <Appropriateness
-                      appropriateness={indicators.appropriateness}
-                      loading={isLoading}
-                    />
+                    <Space
+                      orientation="vertical"
+                      size={24}
+                      style={{ width: "100%" }}
+                    >
+                      <DotLot
+                        overview={indicators.overview}
+                        consumption={indicators.consumption}
+                        loading={isLoading}
+                      />
+                      <Departments
+                        view="dotLot"
+                        departments={indicators.byDepartment}
+                        params={periodParams}
+                        loading={isLoading}
+                      />
+                    </Space>
                   ),
                 },
                 {

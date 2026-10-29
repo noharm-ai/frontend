@@ -43,6 +43,9 @@ export interface IOverview {
   patientsOnAntimicrobials: number;
   dotPer1000PatientDays: number | null;
   accessShare: number | null;
+  // antimicrobial days with a conforming or non-conforming record in force
+  dotWithRecord: number;
+  dotWithRecordShare: number | null;
   evaluations: number;
   conformingShare: number | null;
   evaluatedByD3Share: number | null;
@@ -57,12 +60,23 @@ export interface IDepartmentRow {
   admissions: number;
   dot: number;
   dotPer1000PatientDays: number | null;
+  lot: number;
+  dotLot: number | null;
+  patientDays: number | null;
+  patientsOnAntimicrobials: number;
   accessShare: number | null;
+  dotWithRecordShare: number | null;
   conformingShare: number | null;
   evaluatedByD3Share: number | null;
   timeToFirstReviewHours: number | null;
   interventionAcceptance: number | null;
   pendingTimeShare: number | null;
+  // the reviews of the admissions closed in the period
+  admissionsClosed: number;
+  admissionsReviewed: number;
+  admissionsReviewedShare: number | null;
+  reviewsPerAdmission: number | null;
+  reviewsPer100Dot: number | null;
   verdictDays: IVerdictDays;
 }
 
@@ -94,6 +108,9 @@ export interface IReviewerRow {
 }
 
 export interface IProcess {
+  // closed admissions of the period and the ones with at least one review
+  admissionsClosed: number;
+  admissionsReviewed: number;
   admissionsReviewedShare: number | null;
   coursesEvaluatedShare: number | null;
   reviewsPerAdmission: number | null;
