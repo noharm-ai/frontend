@@ -505,10 +505,11 @@ test("shows the period indicators in the browser's number format", async ({
 
   await openTab(page, "Consumo");
   await expect(value("Duração dos cursos")).toHaveText("7,0 dias");
+  // and no longer in Consumo
   for (const kb of ["awareMix", "route", "dotBySubstance"]) {
     await expect(
       page.locator(`[data-kb="reports.infectionControl.${kb}"]`),
-    ).toHaveCount(1);
+    ).toHaveCount(0);
   }
   await expect(value("Dia da troca para oral")).toHaveText("D4,0");
 
@@ -581,6 +582,39 @@ test("the consolidation notice sits in the help, not on the page", async ({
   await expect(help).toContainText("Relatório Consolidado");
   await expect(help).toContainText("Os dados são consolidados todos os dias");
   await expect(help).toContainText("Atualizado em: 11/03/26 02:10");
+});
+
+test("a chart opened before a new search keeps the width of its block", async ({
+  page,
+  mockApi,
+}) => {
+  mockReport(mockApi);
+
+  await page.goto(PAGE_URL);
+  await openTab(page, "Revisões");
+  const block = page.locator(
+    '[data-kb="reports.infectionControl.firstReview"]',
+  );
+  await expect(block.locator("canvas")).toBeVisible();
+
+  // a new search while the tab is hidden, then the tab again
+  await openTab(page, "Conformidade");
+  const period = page.waitForRequest(isReport);
+  await page.locator(".gtm-btn-search").click();
+  await period;
+  await expect(
+    page.locator(".ant-tabs-content-active .indicator-value").first(),
+  ).not.toHaveText("-");
+  await openTab(page, "Revisões");
+
+  await expect
+    .poll(async () => {
+      const blockWidth = (await block.boundingBox())?.width ?? 0;
+      const chartWidth =
+        (await block.locator("canvas").boundingBox())?.width ?? 0;
+      return chartWidth / blockWidth;
+    })
+    .toBeGreaterThan(0.9);
 });
 
 test("explains how each indicator is calculated", async ({ page, mockApi }) => {

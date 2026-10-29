@@ -248,11 +248,13 @@ export function InfectionControlConsolidatedReport() {
             ></div>
           </ReportFilterContainer>
 
-          {/* panes mount when first opened, so the charts get their width;
-              printing prints the open one */}
+          {/* only the open pane is mounted, so its charts are drawn with
+              their width: a hidden pane redrawn by a new search would keep
+              the width of a hidden element. Printing prints the open one */}
           <ReportTabs>
             <Tabs
               data-kb="reports.infectionControl.tabs"
+              destroyOnHidden
               items={[
                 {
                   key: "conformity",

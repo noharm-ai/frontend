@@ -18,7 +18,7 @@ import { DepartmentAdmissions } from "../../DepartmentAdmissions/DepartmentAdmis
 // which numbers the table shows: the ones of the tab it sits in
 type DepartmentsView = "conformity" | "reviews" | "dotLot";
 
-// one anchor per tab: a pane stays mounted once opened
+// one anchor per tab, so help pinned to a tab's table stays on it
 const KB: Record<DepartmentsView, string> = {
   conformity: "reports.infectionControl.departments",
   reviews: "reports.infectionControl.reviewsDepartments",
