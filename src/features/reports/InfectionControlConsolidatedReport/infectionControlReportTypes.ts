@@ -43,6 +43,9 @@ export interface IOverview {
   patientsOnAntimicrobials: number;
   dotPer1000PatientDays: number | null;
   accessShare: number | null;
+  // antimicrobial days with a conforming or non-conforming record in force
+  dotWithRecord: number;
+  dotWithRecordShare: number | null;
   evaluations: number;
   conformingShare: number | null;
   evaluatedByD3Share: number | null;
@@ -57,13 +60,37 @@ export interface IDepartmentRow {
   admissions: number;
   dot: number;
   dotPer1000PatientDays: number | null;
+  lot: number;
+  dotLot: number | null;
+  patientDays: number | null;
+  patientsOnAntimicrobials: number;
   accessShare: number | null;
+  dotWithRecordShare: number | null;
   conformingShare: number | null;
   evaluatedByD3Share: number | null;
   timeToFirstReviewHours: number | null;
   interventionAcceptance: number | null;
   pendingTimeShare: number | null;
+  // the reviews of the admissions closed in the period
+  admissionsClosed: number;
+  admissionsReviewed: number;
+  admissionsReviewedShare: number | null;
+  reviewsPerAdmission: number | null;
+  reviewsPer100Dot: number | null;
   verdictDays: IVerdictDays;
+}
+
+// a month (YYYY-MM) of the use trend: DOT, LOT, their rates and the AWaRe mix
+export interface IUsePoint {
+  period: string;
+  dot: number;
+  lot: number;
+  dotLot: number | null;
+  patientDays: number | null;
+  dotPer1000PatientDays: number | null;
+  lotPer1000PatientDays: number | null;
+  // days by AWaRe group, as the service names them (consumption.awareMix)
+  awareDays: Record<string, number>;
 }
 
 // the scale of the trend chart
@@ -94,6 +121,9 @@ export interface IReviewerRow {
 }
 
 export interface IProcess {
+  // closed admissions of the period and the ones with at least one review
+  admissionsClosed: number;
+  admissionsReviewed: number;
   admissionsReviewedShare: number | null;
   coursesEvaluatedShare: number | null;
   reviewsPerAdmission: number | null;
@@ -146,6 +176,8 @@ export interface IConsumption {
     idSubstance: number | null;
     substance: string | null;
     dot: number;
+    // the AWaRe group as the service names it (consumption.awareMix)
+    aware: string;
   }[];
   courseLengthDays: IQuantiles;
   courseLengthBins: IBin[];
@@ -155,20 +187,6 @@ export interface IConsumption {
   ivToOralSwitchShare: number | null;
   ivToOralSwitchDay: IQuantiles;
   restartShare: number | null;
-  episodesPerAdmission: number | null;
-}
-
-export interface IMicroorganism {
-  microorganism: string;
-  admissions: number;
-}
-
-export interface IMicrobiology {
-  collectedBeforeStartShare: number | null;
-  positiveShare: number | null;
-  culturesCollected: number;
-  resistantInUseShare: number | null;
-  microorganisms: IMicroorganism[];
 }
 
 export interface IAgeBand {
@@ -198,10 +216,10 @@ export interface IIndicators {
   byDepartment: IDepartmentRow[];
   monthly: ITrendPoint[];
   daily: ITrendPoint[];
+  monthlyUse: IUsePoint[];
   process: IProcess;
   appropriateness: IAppropriateness;
   consumption: IConsumption;
-  microbiology: IMicrobiology;
   outcomes: IOutcomes;
 }
 

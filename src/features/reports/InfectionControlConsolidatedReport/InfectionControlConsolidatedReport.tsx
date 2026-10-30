@@ -4,13 +4,18 @@ import dayjs from "dayjs";
 import { escape } from "lodash";
 import DOMPurify from "dompurify";
 import { useNavigate } from "react-router-dom";
-import { Space, FloatButton, Alert, Tabs } from "antd";
+import { Space, FloatButton, Tabs } from "antd";
 import {
   UnorderedListOutlined,
   QuestionOutlined,
   MenuOutlined,
   QuestionCircleOutlined,
   PrinterOutlined,
+  CheckCircleOutlined,
+  AuditOutlined,
+  ClockCircleOutlined,
+  BarChartOutlined,
+  TeamOutlined,
 } from "@ant-design/icons";
 import { useReactToPrint } from "react-to-print";
 
@@ -48,12 +53,12 @@ import {
 } from "./infectionControlReportTypes";
 import { Filter } from "./Filter/Filter";
 import { HelpModal } from "./Help/Help";
-import { Overview } from "./Sections/Overview/Overview";
+import { StickyTabBar } from "./StickyTabBar/StickyTabBar";
+import { Conformity } from "./Sections/Conformity/Conformity";
+import { DotLot } from "./Sections/DotLot/DotLot";
 import { Departments } from "./Sections/Departments/Departments";
-import { Process } from "./Sections/Process/Process";
-import { Appropriateness } from "./Sections/Appropriateness/Appropriateness";
+import { Reviews } from "./Sections/Reviews/Reviews";
 import { Consumption } from "./Sections/Consumption/Consumption";
-import { Microbiology } from "./Sections/Microbiology/Microbiology";
 import { Outcomes } from "./Sections/Outcomes/Outcomes";
 
 // names typed elsewhere (substances, users, departments) go into the printed
@@ -82,9 +87,9 @@ const INITIAL_VALUES: Omit<IFilterValues, "dateRange"> = {
 };
 
 /**
- * Infection control report: the indicators of a period (consumption,
- * appropriateness, review process, microbiology and outcomes), read from the
- * files the long-running tasks build every night.
+ * Infection control report: the indicators of a period (conformity and
+ * reviews, DOT/LOT, courses and patient profile),
+ * read from the files the long-running tasks build every night.
  */
 export function InfectionControlConsolidatedReport() {
   const { t } = useTranslation();
@@ -229,23 +234,6 @@ export function InfectionControlConsolidatedReport() {
           initialValues={initialValues}
         />
 
-        <Alert
-          title={<strong>{tk("alert.title")}</strong>}
-          description={
-            <>
-              {tk("alert.description")}
-              {result?.updatedAt && (
-                <>
-                  <br />
-                  {tk("updatedAt")}:{" "}
-                  {dayjs(result.updatedAt).format("DD/MM/YY HH:mm")}
-                </>
-              )}
-            </>
-          }
-          showIcon
-        />
-
         <div ref={printRef}>
           <ReportHeader className="report-header">
             <h1>{tk("title")}</h1>
@@ -265,28 +253,42 @@ export function InfectionControlConsolidatedReport() {
             ></div>
           </ReportFilterContainer>
 
-          {/* panes mount when first opened, so the charts get their width;
-              printing prints the open one */}
+          {/* only the open pane is mounted, so its charts are drawn with
+              their width: a hidden pane redrawn by a new search would keep
+              the width of a hidden element. Printing prints the open one */}
           <ReportTabs>
             <Tabs
               data-kb="reports.infectionControl.tabs"
+              destroyOnHidden
+              // a tab opens at the top of the page, not where the last one
+              // was scrolled to
+              onChange={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+              renderTabBar={(props, DefaultTabBar) => (
+                <StickyTabBar title={tk("title")}>
+                  <DefaultTabBar {...props} />
+                </StickyTabBar>
+              )}
               items={[
                 {
-                  key: "overview",
-                  label: tk("overview.title"),
+                  // the icons are decoration: the tab is named by its label
+                  key: "conformity",
+                  label: tk("conformity.title"),
+                  icon: <CheckCircleOutlined aria-hidden />,
                   children: (
                     <Space
                       orientation="vertical"
-                      size={48}
+                      size={24}
                       style={{ width: "100%" }}
                     >
-                      <Overview
+                      <Conformity
                         overview={indicators.overview}
+                        appropriateness={indicators.appropriateness}
                         monthly={indicators.monthly}
                         daily={indicators.daily}
                         loading={isLoading}
                       />
                       <Departments
+                        view="conformity"
                         departments={indicators.byDepartment}
                         params={periodParams}
                         loading={isLoading}
@@ -295,25 +297,58 @@ export function InfectionControlConsolidatedReport() {
                   ),
                 },
                 {
-                  key: "process",
+                  key: "reviews",
                   label: tk("process.title"),
+                  icon: <AuditOutlined aria-hidden />,
                   children: (
-                    <Process process={indicators.process} loading={isLoading} />
+                    <Space
+                      orientation="vertical"
+                      size={24}
+                      style={{ width: "100%" }}
+                    >
+                      <Reviews
+                        overview={indicators.overview}
+                        process={indicators.process}
+                        loading={isLoading}
+                      />
+                      <Departments
+                        view="reviews"
+                        departments={indicators.byDepartment}
+                        params={periodParams}
+                        loading={isLoading}
+                      />
+                    </Space>
                   ),
                 },
                 {
-                  key: "appropriateness",
-                  label: tk("appropriateness.title"),
+                  key: "dotLot",
+                  label: tk("dotLot.title"),
+                  icon: <ClockCircleOutlined aria-hidden />,
                   children: (
-                    <Appropriateness
-                      appropriateness={indicators.appropriateness}
-                      loading={isLoading}
-                    />
+                    <Space
+                      orientation="vertical"
+                      size={24}
+                      style={{ width: "100%" }}
+                    >
+                      <DotLot
+                        overview={indicators.overview}
+                        consumption={indicators.consumption}
+                        monthlyUse={indicators.monthlyUse}
+                        loading={isLoading}
+                      />
+                      <Departments
+                        view="dotLot"
+                        departments={indicators.byDepartment}
+                        params={periodParams}
+                        loading={isLoading}
+                      />
+                    </Space>
                   ),
                 },
                 {
                   key: "consumption",
                   label: tk("consumption.title"),
+                  icon: <BarChartOutlined aria-hidden />,
                   children: (
                     <Consumption
                       consumption={indicators.consumption}
@@ -322,18 +357,9 @@ export function InfectionControlConsolidatedReport() {
                   ),
                 },
                 {
-                  key: "microbiology",
-                  label: tk("microbiology.title"),
-                  children: (
-                    <Microbiology
-                      microbiology={indicators.microbiology}
-                      loading={isLoading}
-                    />
-                  ),
-                },
-                {
                   key: "outcomes",
                   label: tk("outcomes.title"),
+                  icon: <TeamOutlined aria-hidden />,
                   children: (
                     <Outcomes
                       outcomes={indicators.outcomes}

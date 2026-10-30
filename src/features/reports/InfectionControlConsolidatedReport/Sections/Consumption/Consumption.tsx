@@ -6,18 +6,11 @@ import { SectionHeader } from "styles/Report.style";
 import { Indicator } from "../../Indicator/Indicator";
 import { Block } from "../../Block/Block";
 import { BarChart } from "../../BarChart/BarChart";
-import { PieChart } from "../../PieChart/PieChart";
 import {
   IndicatorGrid,
   Section,
 } from "../../InfectionControlConsolidatedReport.style";
-import {
-  formatDecimal,
-  formatMedian,
-  formatShare,
-  toPercent,
-} from "../../format";
-import { AWARE_GROUPS, ROUTE_COLORS, ROUTES } from "../../options";
+import { formatDecimal, formatMedian, formatShare } from "../../format";
 import { IConsumption } from "../../infectionControlReportTypes";
 
 interface ConsumptionProps {
@@ -25,7 +18,7 @@ interface ConsumptionProps {
   loading: boolean;
 }
 
-/** Days of therapy by AWaRe group, substance and route, and the length of the courses. */
+/** The length of the courses, route switches, restarts and combinations. */
 export function Consumption({ consumption, loading }: ConsumptionProps) {
   const { t } = useTranslation();
   const tk = (key: string) =>
@@ -83,66 +76,9 @@ export function Consumption({ consumption, loading }: ConsumptionProps) {
           color="orange"
           loading={loading}
         />
-        <Indicator
-          title={tk("episodes")}
-          value={formatDecimal(data.episodesPerAdmission, 2)}
-          help={tk("episodesHelp")}
-          loading={loading}
-        />
       </IndicatorGrid>
 
       <Row gutter={[24, 24]}>
-        <Col xs={24} lg={12}>
-          <Block
-            title={tk("awareMix")}
-            help={tk("awareMixHelp")}
-            loading={loading}
-            kb="reports.infectionControl.awareMix"
-          >
-            <PieChart
-              loading={loading}
-              slices={AWARE_GROUPS.map((g) => ({
-                name: t(`infectionControlConsolidated.aware.${g.key}`),
-                value: toPercent(data.awareMix?.[g.key]) || 0,
-                color: g.color,
-              }))}
-            />
-          </Block>
-        </Col>
-        <Col xs={24} lg={12}>
-          <Block
-            title={tk("route")}
-            help={tk("routeHelp")}
-            loading={loading}
-            kb="reports.infectionControl.route"
-          >
-            <PieChart
-              loading={loading}
-              slices={ROUTES.map((r) => ({
-                name: t(`infectionControlConsolidated.route.${r}`),
-                value: toPercent(data.routeShare?.[r]) || 0,
-                color: ROUTE_COLORS[r],
-              }))}
-            />
-          </Block>
-        </Col>
-        <Col xs={24} lg={12}>
-          <Block
-            title={tk("bySubstance")}
-            help={tk("bySubstanceHelp")}
-            loading={loading}
-            kb="reports.infectionControl.dotBySubstance"
-          >
-            <BarChart
-              horizontal
-              loading={loading}
-              items={(data.dotBySubstance || []).map((s) => ({
-                name: s.substance || "-",
-                value: s.dot,
-              }))}
-            />
-          </Block>
-        </Col>
         <Col xs={24} lg={12}>
           <Block
             title={tk("courseLengthBins")}
@@ -158,7 +94,8 @@ export function Consumption({ consumption, loading }: ConsumptionProps) {
               }))}
             />
           </Block>
-          <div style={{ height: 24 }} />
+        </Col>
+        <Col xs={24} lg={12}>
           <Block
             title={tk("maxSimultaneous")}
             help={tk("maxSimultaneousHelp")}

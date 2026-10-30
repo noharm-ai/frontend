@@ -4,14 +4,10 @@ import type { TableColumnsType } from "antd";
 
 import { SectionHeader } from "styles/Report.style";
 
-import { Indicator } from "../../Indicator/Indicator";
 import { Block } from "../../Block/Block";
 import { PieChart } from "../../PieChart/PieChart";
-import {
-  IndicatorGrid,
-  Section,
-} from "../../InfectionControlConsolidatedReport.style";
-import { formatDecimal, formatMedian, formatShare } from "../../format";
+import { Section } from "../../InfectionControlConsolidatedReport.style";
+import { formatDecimal } from "../../format";
 import {
   IAgeBand,
   IDiagnosis,
@@ -23,12 +19,11 @@ interface OutcomesProps {
   loading: boolean;
 }
 
-/** Profile of the closed admissions: length of stay, age, sex and diagnoses. */
+/** Profile of the patients of the closed admissions: age, sex and diagnoses. */
 export function Outcomes({ outcomes, loading }: OutcomesProps) {
   const { t } = useTranslation();
   const tk = (key: string) => t(`infectionControlConsolidated.outcomes.${key}`);
   const data: Partial<IOutcomes> = outcomes || {};
-  const days = t("infectionControlConsolidated.units.days");
   const right = "right" as const;
 
   const ageColumns: TableColumnsType<IAgeBand> = [
@@ -77,27 +72,6 @@ export function Outcomes({ outcomes, loading }: OutcomesProps) {
         <h2>{tk("title")}</h2>
         <div>{tk("description")}</div>
       </SectionHeader>
-
-      <IndicatorGrid data-kb="reports.infectionControl.outcomes">
-        <Indicator
-          title={tk("los")}
-          value={formatMedian(data.lengthOfStayDays, days)}
-          help={tk("losHelp")}
-          loading={loading}
-        />
-        <Indicator
-          title={tk("endToDischarge")}
-          value={formatMedian(data.antimicrobialEndToDischargeDays, days)}
-          help={tk("endToDischargeHelp")}
-          loading={loading}
-        />
-        <Indicator
-          title={tk("stillInHospital")}
-          value={formatShare(data.stillInHospitalShare)}
-          help={tk("stillInHospitalHelp")}
-          loading={loading}
-        />
-      </IndicatorGrid>
 
       <Row gutter={[24, 24]}>
         <Col xs={24} lg={12}>

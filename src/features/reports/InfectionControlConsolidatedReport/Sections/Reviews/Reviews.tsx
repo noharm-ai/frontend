@@ -21,22 +21,26 @@ import {
   formatShare,
 } from "../../format";
 import {
+  IOverview,
   IPendingRow,
   IProcess,
   IQuantiles,
   IReviewerRow,
 } from "../../infectionControlReportTypes";
 
-interface ProcessProps {
+interface ReviewsProps {
+  // the time to the first review comes with the period's headline numbers
+  overview?: IOverview;
   process?: IProcess;
   loading: boolean;
 }
 
-/** How the team follows the admissions: coverage, timeliness, pending reasons and reviewers. */
-export function Process({ process, loading }: ProcessProps) {
+/** How the team reviews the admissions: coverage, time to the first review, pending reasons and reviewers. */
+export function Reviews({ overview, process, loading }: ReviewsProps) {
   const { t } = useTranslation();
   const tk = (key: string) => t(`infectionControlConsolidated.process.${key}`);
   const data: Partial<IProcess> = process || {};
+  const firstReview = overview?.timeToFirstReviewHours;
   const hours = t("infectionControlConsolidated.units.hours");
   const hideNames = FeatureService.has(Feature.HIDE_NAMES);
   const right = "right" as const;
@@ -123,13 +127,15 @@ export function Process({ process, loading }: ProcessProps) {
         <Indicator
           title={tk("reviewed")}
           value={formatShare(data.admissionsReviewedShare)}
+          detail={
+            data.admissionsReviewed != null &&
+            data.admissionsClosed != null &&
+            t("infectionControlConsolidated.process.reviewedDetail", {
+              reviewed: formatInteger(data.admissionsReviewed),
+              admissions: formatInteger(data.admissionsClosed),
+            })
+          }
           help={tk("reviewedHelp")}
-          loading={loading}
-        />
-        <Indicator
-          title={tk("evaluated")}
-          value={formatShare(data.coursesEvaluatedShare)}
-          help={tk("evaluatedHelp")}
           loading={loading}
         />
         <Indicator
@@ -145,30 +151,13 @@ export function Process({ process, loading }: ProcessProps) {
           loading={loading}
         />
         <Indicator
-          title={tk("interval")}
-          value={formatMedian(data.reviewIntervalHours, hours)}
-          help={tk("intervalHelp")}
-          color="orange"
-          loading={loading}
-        />
-        <Indicator
-          title={tk("firstEvaluation")}
-          value={formatMedian(data.timeToFirstEvaluationHours, hours)}
-          help={tk("firstEvaluationHelp")}
-          color="orange"
-          loading={loading}
-        />
-        <Indicator
-          title={tk("pendingTime")}
-          value={formatShare(data.pendingTimeShare)}
-          help={tk("pendingTimeHelp")}
-          color="orange"
-          loading={loading}
-        />
-        <Indicator
-          title={tk("retroactive")}
-          value={formatShare(data.retroactiveShare)}
-          help={tk("retroactiveHelp")}
+          title={tk("firstReview")}
+          value={formatMedian(firstReview, hours)}
+          detail={
+            firstReview?.p90 != null &&
+            `p90: ${formatDecimal(firstReview.p90)} ${hours}`
+          }
+          help={tk("firstReviewHelp")}
           color="orange"
           loading={loading}
         />
