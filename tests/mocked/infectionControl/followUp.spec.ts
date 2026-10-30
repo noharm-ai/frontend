@@ -1032,12 +1032,11 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       .fill("Espectro amplo demais");
     await expect(hint).toHaveCount(0);
 
-    // an intervention on the drug is recorded only when asked
+    // an intervention on the drug is recorded by default
     const createIntervention = drug.getByRole("checkbox", {
       name: "Registrar intervenção no medicamento",
     });
-    await expect(createIntervention).not.toBeChecked();
-    await createIntervention.check();
+    await expect(createIntervention).toBeChecked();
     await expect(drug.getByTestId("review-create-intervention")).toContainText(
       "só pode ser alterada pelo controle de infecção",
     );
@@ -1224,7 +1223,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       {
         idDrug: 12,
         interventionReasons: [32],
-        createIntervention: false,
+        // on by default for a non-conformity
+        createIntervention: true,
         validFrom: null,
         validUntil: `${localDay(3)}T23:59:59`,
       },
@@ -1501,11 +1501,13 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await drug
       .getByLabel("Justificativa", { exact: true })
       .fill("Sem indicação no período");
-    // overlapping the current one, the new one replaces it, and may record
-    // an intervention
-    await drug
-      .getByRole("checkbox", { name: "Registrar intervenção no medicamento" })
-      .check();
+    // overlapping the current one, the new one replaces it, and records an
+    // intervention by default
+    await expect(
+      drug.getByRole("checkbox", {
+        name: "Registrar intervenção no medicamento",
+      }),
+    ).toBeChecked();
     await expect(current).toHaveClass(/past/);
     await expect(historyNotice).toHaveCount(0);
 
