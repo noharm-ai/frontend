@@ -488,6 +488,15 @@ test("opens a printable report detailing the courses in use and every review", a
           regimens: [
             {
               start: VANCOMYCIN_START,
+              end: hoursFromNow(-48),
+              dose: 500,
+              measureUnit: "mg",
+              frequency: "12h/12h",
+              route: "IV",
+              notes: "Infundir em 1 hora",
+            },
+            {
+              start: hoursFromNow(-48),
               end: VANCOMYCIN_END,
               dose: 1,
               measureUnit: "g",
@@ -558,7 +567,12 @@ test("opens a printable report detailing the courses in use and every review", a
   await expect(vancomycin).toContainText("5 de 7 dias");
   await expect(vancomycin).toContainText("Observe");
   await expect(vancomycin).toContainText("0,02 g/Kg · 0,03 g/Kg/dia");
+  // the latest posology first, and only its notes
+  const regimenRows = vancomycin.locator("table").first().locator("tbody tr");
+  await expect(regimenRows.first()).toContainText("1 g");
+  await expect(regimenRows.last()).toContainText("500 mg");
   await expect(vancomycin).toContainText("Infundir em 2 horas");
+  await expect(vancomycin).not.toContainText("Infundir em 1 hora");
   await expect(vancomycin).toContainText("Intervalos sem prescrição (1)");
   await expect(vancomycin).toContainText("Avaliações (1)");
   await expect(courses.filter({ hasText: "MEROPENEM" })).toContainText(
@@ -600,6 +614,133 @@ test("opens a printable report detailing the courses in use and every review", a
   await expect(report).toHaveCount(0);
   await pickMoreAction(page, "Relatório");
   await expect(report).toBeVisible();
+});
+
+test("adds the recent cultures and the exams the page shows to the report", async ({
+  page,
+  mockApi,
+}) => {
+  const exam = (key: string, value: Record<string, unknown>) => ({
+    key,
+    value: {
+      value: null,
+      unit: null,
+      alert: false,
+      date: hoursFromNow(-12),
+      ref: null,
+      initials: key.toUpperCase(),
+      name: null,
+      delta: null,
+      ...value,
+    },
+  });
+  mockApi.override(TIMELINE, {
+    json: {
+      ...TIMELINE_DATA,
+      data: {
+        ...TIMELINE_DATA.data,
+        screeningPrescription: {
+          idPrescription: "299",
+          date: hoursFromNow(-24),
+          agg: false,
+        },
+        exams: [
+          exam("cr", { name: "Creatinina", value: 0.9, unit: "mg/dL" }),
+          exam("pcr", { name: "PCR" }),
+          exam("leuco", {
+            name: "Leucócitos",
+            value: 18500,
+            unit: "/mm³",
+            alert: true,
+            ref: "4.000 a 11.000",
+            delta: 25,
+          }),
+        ],
+        alertExams: 1,
+      },
+    },
+  });
+  mockApi.override(
+    "GET /infection-control/admission/:admissionNumber/cultures",
+    {
+      json: {
+        status: "success",
+        data: {
+          admissionNumber: ADMISSION,
+          releasedSince: hoursFromNow(-60 * 24),
+          cultures: [
+            {
+              id: "1",
+              examName: "Hemocultura teste",
+              material: "Sangue teste",
+              collectionDate: hoursFromNow(-30),
+              releaseDate: hoursFromNow(-6),
+              gram: "Cocos gram positivos em cachos, observados após 18 horas de incubação em meio aeróbio.",
+              previousResult:
+                "<div><label>RESULTADO: </label><span>Positivo</span></div>",
+              microorganisms: ["Staphylococcus aureus"],
+            },
+          ],
+        },
+      },
+    },
+  );
+
+  await page.goto(PAGE_URL);
+  await expect(page.getByTestId("recent-culture")).toBeVisible({
+    timeout: 15000,
+  });
+  await pickMoreAction(page, "Relatório");
+  const report = page.getByTestId("infection-control-report");
+  await expect(report).toBeVisible();
+
+  // the cultures whole: the gram and the result are not cut on paper
+  const cultures = report.getByTestId("report-cultures");
+  await expect(cultures).toContainText("Culturas (1)");
+  const culture = cultures.getByTestId("report-culture");
+  await expect(culture).toContainText("Hemocultura teste");
+  await expect(culture).toContainText("Sangue teste");
+  await expect(culture).toContainText("Staphylococcus aureus");
+  await expect(culture).toContainText("após 18 horas de incubação");
+  await expect(culture).toContainText("RESULTADO: Positivo");
+
+  // the exams of the screening prescription, the ones out of range first
+  const exams = report.getByTestId("report-exams");
+  await expect(exams).toContainText("Exames (3)");
+  await expect(exams).toContainText("1 fora da referência");
+  const rows = exams.getByTestId("report-exam");
+  await expect(rows).toHaveCount(3);
+  await expect(rows.nth(0)).toContainText("Leucócitos");
+  await expect(rows.nth(0)).toContainText("18.500 /mm³");
+  // the reference is left out
+  await expect(rows.nth(0)).not.toContainText("4.000 a 11.000");
+  await expect(rows.nth(0)).toContainText("+25%");
+  await expect(rows.nth(1)).toContainText("Creatinina");
+  await expect(rows.nth(1)).toContainText("0,9 mg/dL");
+  await expect(rows.nth(2)).toContainText("PCR");
+});
+
+test("says in the report when the cultures did not load", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override(
+    "GET /infection-control/admission/:admissionNumber/cultures",
+    { status: 500, json: { status: "error" } },
+  );
+
+  await page.goto(PAGE_URL);
+  await expect(
+    page.getByText("Não foi possível carregar as culturas."),
+  ).toBeVisible({ timeout: 15000 });
+  await pickMoreAction(page, "Relatório");
+
+  const cultures = page
+    .getByTestId("infection-control-report")
+    .getByTestId("report-cultures");
+  await expect(cultures).toContainText("As culturas não foram carregadas.");
+  await expect(cultures).not.toContainText("Nenhuma cultura liberada");
+  await expect(cultures).not.toContainText("Culturas (0)");
 });
 
 test("shows each conformity record on its course in the timeline", async ({

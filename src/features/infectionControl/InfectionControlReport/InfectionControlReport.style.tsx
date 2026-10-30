@@ -95,7 +95,9 @@ export const ReportDocument = styled.div`
     break-after: avoid;
   }
 
-  .report-muted {
+  /* .muted: the empty result of a culture (LabResult) */
+  .report-muted,
+  .muted {
     color: #8c8c8c;
     font-weight: 400;
   }
@@ -178,6 +180,21 @@ export const ReportDocument = styled.div`
   .report-list {
     margin: 0;
     padding-left: 18px;
+  }
+
+  .report-pre-line {
+    white-space: pre-line;
+  }
+
+  /* an exam out of range: tinted and in red, as on the page */
+  .report-exam-alert td {
+    background: #fff1f0;
+    color: #cf1322;
+    font-weight: 600;
+
+    &:first-child {
+      color: inherit;
+    }
   }
 
   .report-alert strong {

@@ -2039,7 +2039,14 @@
       "evaluatedDrugs": "Antimicrobials evaluated",
       "noReviewEvaluations": "No antimicrobial evaluated in this review.",
       "posology": "Posology evaluated",
-      "interventions": "Interventions"
+      "interventions": "Interventions",
+      "cultures": "Cultures ({{count}})",
+      "culturesNotLoaded": "The cultures were not loaded. Reload the cultures section of the page and generate the report again.",
+      "exams": "Exams ({{count}})",
+      "examsPrescription": "Prescription of {{date}}",
+      "examsOutOfRange_one": "{{count}} out of range",
+      "examsOutOfRange_other": "{{count}} out of range",
+      "variation": "Variation"
     },
     "history": {
       "title": "Reviews",

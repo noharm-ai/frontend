@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import dayjs, { Dayjs } from "dayjs";
 
 import { NoHarmLogoHorizontal as Brand } from "src/assets/NoHarmLogoHorizontal";
+import NumericValue from "components/NumericValue";
 import PatientNameCache from "components/PatientName/PatientNameCache";
 import RichTextView from "components/RichTextView";
 import { hasAwareLevel } from "features/culture/awareLevel";
@@ -15,7 +16,9 @@ import {
   IAntimicrobialTimeline,
   ICourse,
   IFollowUp,
+  IRecentCulture,
 } from "../InfectionControlSlice";
+import { isExamAlert, sortExams } from "../exams";
 import {
   courseKey,
   describeEvaluationOutcome,
@@ -25,6 +28,7 @@ import {
   getFollowUpCourses,
   getInvalidatedEvaluations,
 } from "../followUp";
+import { LabResult } from "../InfectionControlCultures/LabResult/LabResult";
 import { formatDose, formatRegimen, getAge } from "../timeline";
 import { ReportDocument } from "./InfectionControlReport.style";
 
@@ -37,6 +41,9 @@ interface InfectionControlReportProps {
   // as the timeline sorts them
   courses: ICourse[];
   drugNames: Record<number, string>;
+  // the recent cultures the page loaded; null while they load, or when they
+  // failed to
+  cultures: IRecentCulture[] | null;
   now: Dayjs;
 }
 
@@ -71,8 +78,9 @@ const Fields = ({ items }: { items: IField[] }) => (
  * infection control reviews, laid out as a document to print: the patient,
  * where the follow-up stands, each course in use with its posologies, gaps,
  * alerts and evaluations, how long each suspended or finished course lasted,
- * and each review with every detail of what it evaluated. The same document
- * shows on screen and goes to paper
+ * the recent cultures and the exams the page shows, and each review with
+ * every detail of what it evaluated. The same document shows on screen and
+ * goes to paper
  */
 export function InfectionControlReport({
   ref,
@@ -80,6 +88,7 @@ export function InfectionControlReport({
   followUp,
   courses,
   drugNames,
+  cultures,
   now,
 }: InfectionControlReportProps) {
   const { t } = useTranslation();
@@ -389,7 +398,8 @@ export function InfectionControlReport({
               </tr>
             </thead>
             <tbody>
-              {course.regimens.map((regimen, index) => (
+              {/* the latest first */}
+              {[...course.regimens].reverse().map((regimen, index) => (
                 <RegimenRows
                   key={`${regimen.start}-${index}`}
                   cells={[
@@ -406,7 +416,8 @@ export function InfectionControlReport({
                     regimen.frequency || "-",
                     regimen.route || "-",
                   ]}
-                  notes={regimen.notes}
+                  // the notes of the latest posology only, the one in force
+                  notes={index === 0 ? regimen.notes : null}
                   notesLabel={t("infectionControl.details.notes")}
                 />
               ))}
@@ -581,6 +592,11 @@ export function InfectionControlReport({
     );
   };
 
+  // the exams of the screening prescription, as the page shows them: only
+  // with a prescription, the ones out of range first
+  const hasExams = !!patient.idPrescription;
+  const exams = sortExams(data.exams);
+
   const reviews = followUp?.reviews ?? [];
   // only the courses in use are detailed; of the others, the report keeps
   // how long the patient took them
@@ -666,6 +682,122 @@ export function InfectionControlReport({
               ))}
             </tbody>
           </table>
+        </section>
+      )}
+
+      <section data-testid="report-cultures">
+        <h2>
+          {cultures === null
+            ? t("infectionControl.cultures.title")
+            : t("infectionControl.report.cultures", {
+                count: cultures.length,
+              })}
+        </h2>
+        <p className="report-muted">{t("infectionControl.cultures.legend")}</p>
+        {cultures === null ? (
+          <p className="report-muted">
+            {t("infectionControl.report.culturesNotLoaded")}
+          </p>
+        ) : cultures.length === 0 ? (
+          <p className="report-muted">{t("infectionControl.cultures.empty")}</p>
+        ) : (
+          <table className="report-table">
+            <thead>
+              <tr>
+                <th>{t("infectionControl.cultures.exam")}</th>
+                <th>{t("infectionControl.cultures.collectionDate")}</th>
+                <th>{t("infectionControl.cultures.releaseDate")}</th>
+                <th>{t("infectionControl.cultures.microorganism")}</th>
+                <th>{t("infectionControl.cultures.gram")}</th>
+                <th>{t("infectionControl.cultures.result")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cultures.map((culture) => (
+                <tr key={culture.id} data-testid="report-culture">
+                  <td>
+                    {culture.examName ?? "-"}
+                    {culture.material && (
+                      <div className="report-muted">{culture.material}</div>
+                    )}
+                  </td>
+                  <td>{formatDateTime(culture.collectionDate) ?? "-"}</td>
+                  <td>{formatDateTime(culture.releaseDate) ?? "-"}</td>
+                  <td>
+                    {culture.microorganisms.length
+                      ? culture.microorganisms.map((name) => (
+                          <div key={name}>{name}</div>
+                        ))
+                      : "-"}
+                  </td>
+                  <td className="report-pre-line">{culture.gram || "-"}</td>
+                  <td>
+                    <LabResult value={culture.previousResult} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </section>
+
+      {hasExams && (
+        <section data-testid="report-exams">
+          <h2>{t("infectionControl.report.exams", { count: exams.length })}</h2>
+          <p className="report-muted">
+            {[
+              data.screeningPrescription?.date &&
+                t("infectionControl.report.examsPrescription", {
+                  date: formatDate(data.screeningPrescription.date),
+                }),
+              t("infectionControl.report.examsOutOfRange", {
+                count: exams.filter(({ value }) => isExamAlert(value)).length,
+              }),
+            ]
+              .filter(Boolean)
+              .join(" · ")}
+          </p>
+          {exams.length === 0 ? (
+            <p className="report-muted">{t("infectionControl.exams.empty")}</p>
+          ) : (
+            <table className="report-table">
+              <thead>
+                <tr>
+                  <th>{t("infectionControl.cultures.exam")}</th>
+                  <th>{t("tableHeader.value")}</th>
+                  <th>{t("patientCard.examDate")}</th>
+                  <th>{t("infectionControl.report.variation")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {exams.map(({ key, value: exam }) => (
+                  <tr
+                    key={key}
+                    className={isExamAlert(exam) ? "report-exam-alert" : ""}
+                    data-testid="report-exam"
+                  >
+                    <td>{exam.name ?? exam.initials ?? key}</td>
+                    <td>
+                      {exam.value ? (
+                        <NumericValue
+                          value={exam.value}
+                          suffix={exam.unit ? ` ${exam.unit}` : ""}
+                        />
+                      ) : (
+                        "-"
+                      )}
+                    </td>
+                    <td>{formatDateTime(exam.date) ?? "-"}</td>
+                    <td>
+                      {exam.value && exam.delta != null
+                        ? `${exam.delta > 0 ? "+" : ""}${exam.delta}%`
+                        : "-"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </section>
       )}
 

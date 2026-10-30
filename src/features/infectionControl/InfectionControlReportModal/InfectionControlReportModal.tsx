@@ -11,6 +11,7 @@ import {
   IAntimicrobialTimeline,
   ICourse,
   IFollowUp,
+  IRecentCulture,
 } from "../InfectionControlSlice";
 import { InfectionControlReport } from "../InfectionControlReport/InfectionControlReport";
 import { ReportBody } from "../InfectionControlReport/InfectionControlReport.style";
@@ -24,6 +25,8 @@ interface InfectionControlReportModalProps {
   // as the timeline sorts them
   courses: ICourse[];
   drugNames: Record<number, string>;
+  // null while they load, or when they failed to
+  cultures: IRecentCulture[] | null;
   now: Dayjs;
 }
 
@@ -38,6 +41,7 @@ export function InfectionControlReportModal({
   followUp,
   courses,
   drugNames,
+  cultures,
   now,
 }: InfectionControlReportModalProps) {
   const { t } = useTranslation();
@@ -80,6 +84,7 @@ export function InfectionControlReportModal({
           followUp={followUp}
           courses={courses}
           drugNames={drugNames}
+          cultures={cultures}
           now={now}
         />
       </ReportBody>

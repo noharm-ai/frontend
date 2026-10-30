@@ -17,6 +17,7 @@ import {
   IExamCardItem,
   IInfectionControlPatient,
 } from "../InfectionControlSlice";
+import { isExamAlert, sortExams } from "../exams";
 import { ExamsBox } from "./InfectionControlExams.style";
 
 interface InfectionControlExamsProps {
@@ -26,13 +27,6 @@ interface InfectionControlExamsProps {
 }
 
 type IExam = IExamCardItem["value"];
-
-// an exam out of range only counts once it has a result, as on the screening
-const isAlert = (exam: IExam) => !!exam.value && exam.alert;
-
-// out of range first, then the ones with a result, then the ones without;
-// the order of the backend within each
-const rank = (exam: IExam) => (isAlert(exam) ? 0 : exam.value ? 1 : 2);
 
 const TrendIcon = ({ delta }: { delta: number | null }) => {
   if (delta != null && delta > 0) {
@@ -64,19 +58,9 @@ export function InfectionControlExams({
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
 
-  const sorted = useMemo(
-    () =>
-      // a timeline response without them shows the card empty, as the
-      // screening card does
-      (exams ?? [])
-        .map((exam, index) => ({ exam, index }))
-        .sort(
-          (a, b) =>
-            rank(a.exam.value) - rank(b.exam.value) || a.index - b.index,
-        )
-        .map(({ exam }) => exam),
-    [exams],
-  );
+  // a timeline response without them shows the card empty, as the screening
+  // card does
+  const sorted = useMemo(() => sortExams(exams), [exams]);
 
   const details = (exam: IExam) => (
     <div>
@@ -146,7 +130,7 @@ export function InfectionControlExams({
               mouseLeaveDelay={0}
             >
               <li
-                className={`exam-row ${isAlert(exam) ? "alert" : ""}`}
+                className={`exam-row ${isExamAlert(exam) ? "alert" : ""}`}
                 data-testid="exam-row"
               >
                 <span className="exam-name">{exam.name ?? exam.initials}</span>
