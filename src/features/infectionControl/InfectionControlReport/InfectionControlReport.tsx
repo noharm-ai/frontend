@@ -69,9 +69,10 @@ const Fields = ({ items }: { items: IField[] }) => (
 /**
  * Everything on record about the antimicrobials of an admission and its
  * infection control reviews, laid out as a document to print: the patient,
- * where the follow-up stands, each course with its posologies, gaps, alerts
- * and evaluations, and each review with every detail of what it evaluated.
- * The same document shows on screen and goes to paper
+ * where the follow-up stands, each course in use with its posologies, gaps,
+ * alerts and evaluations, how long each suspended or finished course lasted,
+ * and each review with every detail of what it evaluated. The same document
+ * shows on screen and goes to paper
  */
 export function InfectionControlReport({
   ref,
@@ -581,6 +582,10 @@ export function InfectionControlReport({
   };
 
   const reviews = followUp?.reviews ?? [];
+  // only the courses in use are detailed; of the others, the report keeps
+  // how long the patient took them
+  const activeCourses = courses.filter((course) => course.status === "active");
+  const pastCourses = courses.filter((course) => course.status !== "active");
 
   return (
     <ReportDocument ref={ref} data-testid="infection-control-report">
@@ -614,15 +619,55 @@ export function InfectionControlReport({
       <section>
         <h2>
           {t("infectionControl.report.antimicrobials", {
-            count: courses.length,
+            count: activeCourses.length,
           })}
         </h2>
-        {courses.length === 0 ? (
-          <p className="report-muted">{t("infectionControl.timeline.empty")}</p>
+        {activeCourses.length === 0 ? (
+          <p className="report-muted">
+            {courses.length === 0
+              ? t("infectionControl.timeline.empty")
+              : t("infectionControl.report.noActive")}
+          </p>
         ) : (
-          courses.map(renderCourse)
+          activeCourses.map(renderCourse)
         )}
       </section>
+
+      {pastCourses.length > 0 && (
+        <section>
+          <h2>
+            {t("infectionControl.report.pastAntimicrobials", {
+              count: pastCourses.length,
+            })}
+          </h2>
+          <table className="report-table" data-testid="report-past-courses">
+            <thead>
+              <tr>
+                <th>{t("infectionControl.report.drug")}</th>
+                <th>{t("infectionControl.report.status")}</th>
+                <th>{t("infectionControl.details.start")}</th>
+                <th>{t("infectionControl.details.end")}</th>
+                <th>{t("infectionControl.details.treatment")}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {pastCourses.map((course) => (
+                <tr key={courseKey(course.idDrug, course.start)}>
+                  <td>{course.drug}</td>
+                  <td>{t(`infectionControl.status.${course.status}`)}</td>
+                  <td>{formatDateTime(course.start)}</td>
+                  <td>{formatDateTime(course.end)}</td>
+                  <td>
+                    {t("infectionControl.report.daysUsed", {
+                      count: course.days,
+                    })}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </section>
+      )}
 
       {followUpEnabled && (
         <section>

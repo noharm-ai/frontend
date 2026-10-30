@@ -457,7 +457,7 @@ test("lists the reasons and the intervention of a non-conformity in the history"
   await expect(review).toContainText("Sem cultura que justifique");
 });
 
-test("opens a printable report with every course and every review in detail", async ({
+test("opens a printable report detailing the courses in use and every review", async ({
   page,
   mockApi,
 }) => {
@@ -499,6 +499,15 @@ test("opens a printable report with every course and every review in detail", as
             },
           ],
           gaps: [{ start: hoursFromNow(-72), end: hoursFromNow(-60) }],
+        }),
+        course({
+          idDrug: 13,
+          drug: "CEFEPIMA 1 g SOL INJ",
+          substance: "CEFEPIMA",
+          status: "finished",
+          start: hoursFromNow(-240),
+          end: hoursFromNow(-120),
+          days: 6,
         }),
       ],
     },
@@ -542,7 +551,7 @@ test("opens a printable report with every course and every review in detail", as
   await expect(report).toContainText("Fulano Beltrano");
   await expect(report).toContainText("MEROPENEM 1 g SOL INJ sem avaliação");
 
-  // every course, with its posologies, gaps and evaluations
+  // every course in use, with its posologies, gaps and evaluations
   const courses = report.getByTestId("report-course");
   await expect(courses).toHaveCount(2);
   const vancomycin = courses.filter({ hasText: "VANCOMICINA 500 mg" });
@@ -555,6 +564,13 @@ test("opens a printable report with every course and every review in detail", as
   await expect(courses.filter({ hasText: "MEROPENEM" })).toContainText(
     "Nenhuma avaliação registrada.",
   );
+
+  // the finished course, only for how long it was taken
+  await expect(courses.filter({ hasText: "CEFEPIMA" })).toHaveCount(0);
+  const pastCourses = report.getByTestId("report-past-courses");
+  await expect(pastCourses).toContainText("CEFEPIMA 1 g SOL INJ");
+  await expect(pastCourses).toContainText("Encerrado");
+  await expect(pastCourses).toContainText("6 dias");
 
   // every review, with all it recorded on each drug
   const review = report.getByTestId("report-review");
