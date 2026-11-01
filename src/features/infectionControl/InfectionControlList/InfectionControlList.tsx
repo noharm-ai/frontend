@@ -8,6 +8,8 @@ import dayjs from "dayjs";
 import { useAppDispatch, useAppSelector } from "src/store";
 import PatientNameCache from "components/PatientName/PatientNameCache";
 import { InfectionControlStatusEnum } from "models/InfectionControlEnum";
+import Permission from "models/Permission";
+import PermissionService from "services/PermissionService";
 import { formatDate, formatDateTime } from "utils/date";
 import { peekPatient, subscribe } from "utils/patientCache";
 import { PageCard } from "styles/Utils.style";
@@ -23,6 +25,7 @@ import {
 } from "../InfectionControlListSlice";
 import { describePending } from "../followUp";
 import { Header, StateBox } from "../InfectionControl/InfectionControl.style";
+import { WorklistBackfill } from "./WorklistBackfill/WorklistBackfill";
 import { WorklistCards } from "./WorklistCards/WorklistCards";
 import { WorklistFilter } from "./WorklistFilter/WorklistFilter";
 import { ListBox, ListInfo } from "./InfectionControlList.style";
@@ -224,6 +227,11 @@ export function InfectionControlList() {
             {t("infectionControl.worklist.legend")}
           </div>
         </div>
+        {PermissionService().has(Permission.INTEGRATION_UTILS) && (
+          <div className="page-header-actions">
+            <WorklistBackfill onDone={load} />
+          </div>
+        )}
       </Header>
 
       <WorklistFilter />

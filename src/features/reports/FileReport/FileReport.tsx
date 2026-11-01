@@ -452,6 +452,16 @@ export function FileReport() {
             // correct default tab (Gráficos first when present) takes effect.
             key={showChartsTab ? "with-charts" : "table-only"}
             defaultActiveKey={showChartsTab ? "charts" : "table"}
+            // charts redrawn while their tab was hidden (a filter applied on
+            // the table) keep the width of a hidden element; the resize they
+            // listen to measures them again once the tab shows
+            onChange={(key) => {
+              if (key === "charts") {
+                requestAnimationFrame(() =>
+                  window.dispatchEvent(new Event("resize")),
+                );
+              }
+            }}
             items={[
               ...(showChartsTab
                 ? [

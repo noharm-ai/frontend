@@ -295,3 +295,87 @@ test("a failing list reports the error and leaves the empty state", async ({
   ).toBeVisible();
   await expect(rows(page)).toHaveCount(0);
 });
+
+test("an empty list shows the empty state without reporting an error", async ({
+  page,
+  mockApi,
+}) => {
+  installHandlers(mockApi, []);
+
+  await page.goto("/pacientes-ambulatoriais");
+
+  await expect(
+    page.getByRole("cell").getByText("Nenhum registro encontrado"),
+  ).toBeVisible();
+  await expect(rows(page)).toHaveCount(0);
+  await expect(page.getByText("Ops! Algo de errado aconteceu.")).toHaveCount(0);
+});
+
+test("the table sorts by patient name and by scheduled date", async ({
+  page,
+  mockApi,
+}) => {
+  installHandlers(mockApi);
+  await openList(page);
+  await expect(rows(page).nth(0)).toContainText("Fulano Beltrano");
+  const requestsBefore = listCalls(mockApi).length;
+
+  const header = (name: string) =>
+    page.getByRole("columnheader", { name, exact: true });
+
+  // the sorters start descending, then flip to ascending
+  await header("Paciente").click();
+  await expect(rows(page).nth(0)).toContainText("Maria Teste");
+  await expect(rows(page).nth(2)).toContainText("Ciclano de Tal");
+
+  await header("Paciente").click();
+  await expect(rows(page).nth(0)).toContainText("Ciclano de Tal");
+  await expect(rows(page).nth(2)).toContainText("Maria Teste");
+
+  await header("Data de agendamento").click();
+  await expect(rows(page).nth(0)).toContainText("12/03/2026");
+  await expect(rows(page).nth(2)).toContainText("10/03/2026");
+
+  await header("Data de agendamento").click();
+  await expect(rows(page).nth(0)).toContainText("10/03/2026");
+  await expect(rows(page).nth(2)).toContainText("12/03/2026");
+
+  // sorting is client-side
+  expect(listCalls(mockApi)).toHaveLength(requestsBefore);
+});
+
+test("a row expands on its own to show only its marcadores", async ({
+  page,
+  mockApi,
+}) => {
+  installHandlers(mockApi);
+  await openList(page);
+
+  await rows(page).nth(0).locator("button.ant-table-row-expand-icon").click();
+
+  const table = page.getByRole("table");
+  await expect(table.getByText("Marcadores:")).toBeVisible();
+  await expect(table.getByText("Diabetes")).toBeVisible();
+  await expect(table.getByText("Hipertensão")).toBeVisible();
+  await expect(table.getByText("Oncologia")).toBeHidden();
+
+  await rows(page).nth(0).locator("button.ant-table-row-expand-icon").click();
+  await expect(table.getByText("Diabetes")).toBeHidden();
+});
+
+test("the list is paged by 50 rows", async ({ page, mockApi }) => {
+  const many = Array.from({ length: 55 }, (_, i) => ({
+    ...PATIENTS[1],
+    idPatient: 2000 + i,
+    idPrescription: 7000 + i,
+    admissionNumber: 400000 + i,
+  }));
+  installHandlers(mockApi, many);
+
+  await openList(page, 50);
+  const requestsBefore = listCalls(mockApi).length;
+
+  await page.getByRole("listitem", { name: "2", exact: true }).first().click();
+  await expect(rows(page)).toHaveCount(5);
+  expect(listCalls(mockApi)).toHaveLength(requestsBefore);
+});

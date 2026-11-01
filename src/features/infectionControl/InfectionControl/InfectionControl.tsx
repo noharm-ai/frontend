@@ -81,6 +81,9 @@ export function InfectionControl() {
   const { data: followUp, status: followUpStatus } = useAppSelector(
     (state) => state.infectionControl.followUp,
   );
+  const { data: cultures, status: culturesStatus } = useAppSelector(
+    (state) => state.infectionControl.cultures,
+  );
   const followStatus = useAppSelector(
     (state) => state.infectionControl.follow.status,
   );
@@ -464,6 +467,10 @@ export function InfectionControl() {
         followUp={followUp}
         courses={courses}
         drugNames={drugNames}
+        // the report tells apart the cultures it could not include
+        cultures={
+          culturesStatus === "succeeded" ? (cultures?.cultures ?? []) : null
+        }
         now={now}
       />
 

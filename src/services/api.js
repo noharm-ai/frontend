@@ -645,6 +645,14 @@ api.prescription.traceInteraction = (params) =>
     ...setHeaders(),
   });
 
+api.prescription.getAllergyRecords = (idPrescription) =>
+  instance.get(`/prescriptions/${idPrescription}/allergy-records`, {
+    ...setHeaders(),
+  });
+
+api.prescription.updateAllergySubstance = (params) =>
+  instance.put(`/allergy-records/substance`, params, setHeaders());
+
 /**
  * Conciliation
  */
@@ -906,6 +914,11 @@ api.infectionControl.saveReview = (params = {}) =>
   instance.post(`/infection-control/review`, params, setHeaders());
 api.infectionControl.listAdmissions = (params = {}) =>
   instance.post(`/infection-control/admissions`, params, setHeaders());
+// one batch per call, resumed after the `next` of the previous one
+api.infectionControl.backfill = (params = {}) =>
+  instance.post(`/infection-control/backfill`, params, setHeaders());
+api.infectionControl.backfillSummary = (params = {}) =>
+  instance.post(`/infection-control/backfill-summary`, params, setHeaders());
 api.infectionControl.getInterventionReasons = () =>
   instance.get(endpoints.intervention.reasons, setHeaders());
 // the active clinical note types, for the note of a review

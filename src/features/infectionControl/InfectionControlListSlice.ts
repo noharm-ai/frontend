@@ -374,6 +374,54 @@ export const searchAntimicrobials = createAsyncThunk(
   },
 );
 
+export type BackfillType = "admissions" | "summary";
+
+export interface IBackfillResult {
+  processed: number;
+  // admissions followed (admissions) or summaries filled (summary)
+  updated: number;
+}
+
+/**
+ * Follows the admissions already on antimicrobials (admissions) or fills the
+ * summary of the followed ones without it (summary), batch after batch until
+ * the backend has no next one. A failure stops it, rejecting with what was
+ * done so far
+ */
+export const runBackfill = createAsyncThunk(
+  "infectionControlList/runBackfill",
+  async (params: { type: BackfillType }, thunkAPI) => {
+    const result: IBackfillResult = { processed: 0, updated: 0 };
+    let after: number | null = 0;
+
+    try {
+      while (after !== null) {
+        const response =
+          params.type === "admissions"
+            ? await api.infectionControl.backfill({ after })
+            : await api.infectionControl.backfillSummary({ after });
+        const data: {
+          processed: number;
+          created?: number;
+          filled?: number;
+          next: number | null;
+        } = response.data.data;
+
+        result.processed += data.processed;
+        result.updated += data.created ?? data.filled ?? 0;
+        after = data.next;
+      }
+
+      return result;
+    } catch (err) {
+      return thunkAPI.rejectWithValue({
+        ...((err as AxiosError).response?.data as object),
+        ...result,
+      });
+    }
+  },
+);
+
 const infectionControlListSlice = createSlice({
   name: "infectionControlList",
   initialState,

@@ -80,6 +80,7 @@ import reportPrescriptionAuditReport from "features/reports/PrescriptionAuditRep
 import reportEconomyReport from "features/reports/EconomyReport/EconomyReportSlice";
 import reportEconomyConsolidatedReport from "features/reports/EconomyConsolidatedReport/EconomyConsolidatedReportSlice";
 import { interventionConsolidatedReportReducer } from "features/reports/InterventionConsolidatedReport/InterventionConsolidatedReportSlice";
+import { infectionControlConsolidatedReportReducer } from "features/reports/InfectionControlConsolidatedReport/InfectionControlConsolidatedReportSlice";
 import reportCultureReport from "features/reports/CultureReport/CultureReportSlice";
 import reportDrugHistoryReport from "features/reports/DrugHistoryReport/DrugHistoryReportSlice";
 import reportPrescriptionHistoryReport from "features/reports/PrescriptionHistoryReport/PrescriptionHistoryReportSlice";
@@ -119,6 +120,7 @@ const reportReducers = combineReducers({
   economy: reportEconomyReport,
   economyConsolidated: reportEconomyConsolidatedReport,
   interventionConsolidated: interventionConsolidatedReportReducer,
+  infectionControlConsolidated: infectionControlConsolidatedReportReducer,
   culture: reportCultureReport,
   drugHistory: reportDrugHistoryReport,
   prescriptionHistory: reportPrescriptionHistoryReport,

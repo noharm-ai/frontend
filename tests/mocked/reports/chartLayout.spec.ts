@@ -2,6 +2,7 @@ import { gzipSync } from "node:zlib";
 
 import { test, expect, API_URL } from "../support/mockApi";
 import { loginWithPermissions } from "../support/featureLogin";
+import { openSelect, pickOption } from "../support/antd";
 
 /**
  * Arranging the charts of a custom report: reordering them with the arrows or
@@ -269,4 +270,41 @@ test("Escape cancels a resize", async ({ page, mockApi }) => {
 
   await expect(page.getByText("Um terço · 400px")).toHaveCount(0);
   await expect(page.getByText("Alterações não salvas")).toHaveCount(0);
+});
+
+test("a chart filtered while the table is open keeps its width", async ({
+  page,
+  mockApi,
+}) => {
+  installReportHandlers(mockApi);
+  await loginWithPermissions(page, mockApi, READ_PERMISSIONS);
+  await page.goto(REPORT_URL);
+
+  const card = chartCard(page, "Por setor");
+  await expect(card.locator("canvas")).toBeVisible({ timeout: 15000 });
+
+  // the charts are redrawn by the filter while their tab is hidden
+  await page.getByRole("tab", { name: /Tabela/ }).click();
+  await page.getByRole("button", { name: "Adicionar filtro" }).click();
+  const filters = page
+    .locator("div")
+    .filter({ has: page.getByRole("button", { name: "Adicionar filtro" }) })
+    .last()
+    .locator("..");
+  await openSelect(filters);
+  await pickOption(page, "setor");
+  await openSelect(filters.locator(".ant-select").nth(1));
+  await pickOption(page, "UTI");
+  await page.keyboard.press("Escape");
+
+  await page.getByRole("tab", { name: /Gráficos/ }).click();
+
+  await expect
+    .poll(async () => {
+      const cardWidth = (await card.boundingBox())?.width ?? 0;
+      const chartWidth =
+        (await card.locator("canvas").boundingBox())?.width ?? 0;
+      return chartWidth / cardWidth;
+    })
+    .toBeGreaterThan(0.8);
 });

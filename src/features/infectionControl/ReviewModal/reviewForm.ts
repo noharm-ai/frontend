@@ -243,7 +243,8 @@ export const getInitialValues = (
         endDate: null,
         notes: "",
         interventionReasons: [],
-        createIntervention: false,
+        // a non-conformity records an intervention unless unchecked
+        createIntervention: true,
         substituteDrug: null,
         // the choices made last time, on by default
         watchExpiry: watches(
