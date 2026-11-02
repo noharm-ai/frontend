@@ -2,19 +2,9 @@ import { instance, setHeaders } from "services/api";
 
 const api = {};
 const endpoints = {
-  memory: "/admin/memory",
   drug: "/admin/drug",
   integration: "/admin/integration",
   exam: "/admin/exam",
-};
-
-const getMemoryItems = (params = {}) =>
-  instance.post(`${endpoints.memory}/list`, params, setHeaders());
-
-const updateMemoryItem = (bearerToken, params = {}) => {
-  return instance.put(`${endpoints.memory}`, params, {
-    ...setHeaders(bearerToken),
-  });
 };
 
 const refreshPrescription = (params = {}) => {
@@ -169,8 +159,6 @@ api.protocols.getDepartments = (params = {}) =>
 
 const methods = {
   ...api,
-  getMemoryItems,
-  updateMemoryItem,
   refreshPrescription,
 };
 

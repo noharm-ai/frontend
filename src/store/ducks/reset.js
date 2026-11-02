@@ -5,7 +5,6 @@ import { Creators as MemoryCreators } from "./memory";
 import { Creators as PrescriptionDrugsCreators } from "./prescriptionDrugs";
 import { Creators as PrescriptionsCreators } from "./prescriptions";
 
-import { reset as adminMemoryReset } from "features/admin/Memory/MemorySlice";
 import { reset as adminIntegrationReset } from "features/admin/Integration/IntegrationSlice";
 import { reset as adminExamReset } from "features/admin/Exam/ExamSlice";
 import { reset as adminDrugReferenceDrawerReset } from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
@@ -62,7 +61,6 @@ const { prescriptionDrugsReset } = PrescriptionDrugsCreators;
 const { prescriptionsReset } = PrescriptionsCreators;
 
 export const resetReduxState = (dispatch) => {
-  dispatch(adminMemoryReset());
   dispatch(adminIntegrationReset());
   dispatch(adminExamReset());
   dispatch(adminDrugReferenceDrawerReset());

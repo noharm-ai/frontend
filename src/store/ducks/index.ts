@@ -39,7 +39,6 @@ import drugGenerateScoreSlice from "features/drugs/DrugGenerateScore/DrugGenerat
 import drugSubstanceSlice from "features/drugs/DrugSubstance/DrugSubstanceSlice";
 import { userProfileReducer } from "features/user/UserProfile/UserProfileSlice";
 
-import adminMemory from "features/admin/Memory/MemorySlice";
 import adminIntegration from "features/admin/Integration/IntegrationSlice";
 import adminExam from "features/admin/Exam/ExamSlice";
 import adminSubstanceForm from "features/admin/Substance/SubstanceFormSlice";
@@ -88,7 +87,6 @@ import reportPatientObservationReport from "features/reports/PatientObservationR
 import reportCheckedIndexReport from "features/reports/CheckedIndexReport/CheckedIndexReportSlice";
 
 const adminReducers = combineReducers({
-  memory: adminMemory,
   integration: adminIntegration,
   exam: adminExam,
   examForm: adminExamForm,
