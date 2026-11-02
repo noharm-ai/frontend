@@ -54,6 +54,7 @@ import trainingOverviewSlice from "features/training/TrainingOverviewSlice";
 import trainingPlayerSlice from "features/training/TrainingPlayerSlice";
 import { knowledgeBaseReducer } from "features/knowledgeBase/KnowledgeBaseSlice";
 import { helpModeReducer } from "features/knowledgeBase/HelpMode/HelpModeSlice";
+import { appVersionReducer } from "features/appVersion/AppVersionSlice";
 import { newsReducer } from "features/news/NewsSlice";
 import { infectionControlReducer } from "features/infectionControl/InfectionControlSlice";
 import { infectionControlListReducer } from "features/infectionControl/InfectionControlListSlice";
@@ -180,6 +181,7 @@ const rootReducer = combineReducers({
   infectionControl: infectionControlReducer,
   infectionControlList: infectionControlListReducer,
   helpMode: helpModeReducer,
+  appVersion: appVersionReducer,
 });
 
 export default rootReducer;

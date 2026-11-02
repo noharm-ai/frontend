@@ -1,5 +1,5 @@
 import "styled-components";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -20,6 +20,10 @@ import { generateRandomString, getCodeChallenge } from "utils/auth";
 import ForgotPassword from "containers/Login/ForgotPassword";
 import api from "services/api";
 import { getStorageItem, setStorageItem } from "utils/storage";
+import {
+  checkForNewVersion,
+  reloadApp,
+} from "features/appVersion/appVersionCheck";
 import { LoginContainer, Brand, BrandEN } from "./Login.style";
 
 const initialValues = {
@@ -39,12 +43,19 @@ export default function Login({ isLogging, error, doLogin, forceSchema }) {
   const [loading, setLoading] = useState(false);
   const [oauthData, setOauthData] = useState(null);
   const [forgotPassTabActive, setForgotPassTab] = useState(false);
-  const { values, errors, touched, handleChange, handleBlur, handleSubmit } =
-    useFormik({
-      initialValues,
-      validationSchema,
-      onSubmit: (values) => preLogin(values),
-    });
+  const {
+    values,
+    errors,
+    touched,
+    dirty,
+    handleChange,
+    handleBlur,
+    handleSubmit,
+  } = useFormik({
+    initialValues,
+    validationSchema,
+    onSubmit: (values) => preLogin(values),
+  });
 
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
@@ -67,6 +78,28 @@ export default function Login({ isLogging, error, doLogin, forceSchema }) {
       navigate("/");
     }
   }, [navigate]);
+
+  // Users land here after the session expires, often in a tab that has run
+  // the same code for days. Load the deployed version before they log in;
+  // if they already started typing, AppVersionWatcher reloads on the
+  // navigation that follows the login instead.
+  const dirtyRef = useRef(dirty);
+  useEffect(() => {
+    dirtyRef.current = dirty;
+  }, [dirty]);
+  useEffect(() => {
+    let active = true;
+
+    checkForNewVersion({ force: true }).then((available) => {
+      if (active && available && !dirtyRef.current) {
+        reloadApp();
+      }
+    });
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     const getAuthProvider = async (schema) => {

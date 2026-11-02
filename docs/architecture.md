@@ -227,4 +227,23 @@ Details in [testing.md](testing.md).
 - Never put a secret in a `VITE_*` variable. Everything in the bundle is public
   to anyone who opens the browser's developer tools.
 
+### Keeping open tabs on the deployed version
+
+Every build gets an id (`VITE_APP_BUILD_ID`, generated in `vite.config.ts`
+unless set) that is stamped into both the bundle and `index.html`
+(`<meta name="app-build">`). A tab that has been open across deploys notices it
+is outdated by fetching `/index.html` and comparing ids
+(`src/features/appVersion/appVersionCheck.ts`). It checks:
+
+- when the login page opens (users land there when the session expires), and
+  reloads right away if the form is still untouched;
+- after an access token refresh, at most once an hour (deploys are rare, and
+  users go through the login page daily anyway).
+
+Once a newer build is known, a notification offers to update, and
+`AppVersionWatcher` reloads on the next screen change, so nothing in progress
+is lost. If a reload still comes back with the old page (a stale cache), the
+same build is not offered again for 10 minutes, so it cannot loop. This relies
+on `index.html` being served uncached (see deployment.md).
+
 See [deployment.md](deployment.md).

@@ -46,7 +46,8 @@ aws s3 cp s3://<bucket>/index.html s3://<bucket>/index.html \
 ```
 
 The hashed asset files can be cached aggressively; `index.html` cannot, or
-browsers keep loading the previous release.
+browsers keep loading the previous release — and open tabs could not detect a
+new deploy, since they fetch `index.html` to compare build ids.
 
 ### A web server
 
