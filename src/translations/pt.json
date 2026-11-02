@@ -2,6 +2,11 @@
   "welcome": {
     "title": "Bem-vindo à NoHarm"
   },
+  "appVersion": {
+    "title": "Nova versão disponível",
+    "description": "A NoHarm foi atualizada. A nova versão será carregada na próxima troca de tela.",
+    "reload": "Atualizar agora"
+  },
   "login": {
     "email": "Email",
     "password": "Senha",

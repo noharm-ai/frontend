@@ -4,6 +4,7 @@ import api from "services/api";
 import { tokenDecode } from "utils";
 import notification from "components/notification";
 import { getStorageItem, setStorageItem, removeStorageItem } from "utils/storage";
+import { checkForNewVersion } from "features/appVersion/appVersionCheck";
 
 import { store } from "store/index";
 import { Creators as AuthCreators } from "./ducks/auth";
@@ -22,6 +23,10 @@ const runRefresh = () => {
       setStorageItem("ac2", response.data.access_token.substring(10));
 
       store.dispatch(authSetRefreshTokenPromise(null));
+
+      // the access token refreshes every few minutes while the app is in use:
+      // a cheap moment to notice a newer deploy (throttled, never throws)
+      checkForNewVersion();
 
       return response.data
         ? Promise.resolve(response.data)
