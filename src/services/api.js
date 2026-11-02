@@ -596,15 +596,6 @@ const scoreRemoveOutlier = (params) =>
     },
   );
 
-const scoreConfigDrug = (params) =>
-  instance.post(
-    `/outliers/generate/config/${params.idSegment}/${params.idDrug}`,
-    params,
-    {
-      ...setHeaders(),
-    },
-  );
-
 const scoreConfigDrugV2 = (params) =>
   instance.post(
     `/outliers/generate/config/${params.idSegment}/${params.idDrug}/v2`,
@@ -1244,7 +1235,6 @@ const methods = {
   copyPrescriptionMissingDrugs,
   scorePrepareGeneration,
   scoreGenerateSingle,
-  scoreConfigDrug,
   scoreConfigDrugV2,
   scoreAddHistory,
   scoreRemoveOutlier,

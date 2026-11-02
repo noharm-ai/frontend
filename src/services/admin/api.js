@@ -7,16 +7,6 @@ const endpoints = {
   exam: "/admin/exam",
 };
 
-const refreshPrescription = (params = {}) => {
-  return instance.post(
-    `${endpoints.integration}/refresh-prescription`,
-    params,
-    {
-      ...setHeaders(),
-    },
-  );
-};
-
 /**
  * EXAMS
  */
@@ -159,7 +149,6 @@ api.protocols.getDepartments = (params = {}) =>
 
 const methods = {
   ...api,
-  refreshPrescription,
 };
 
 export default methods;

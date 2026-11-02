@@ -41,7 +41,6 @@ import { InfectionControlListPage } from "pages/InfectionControlList/InfectionCo
 
 import AdminTag from "pages/Admin/Tag";
 
-import AdminIntegration from "pages/Admin/Integration";
 import AdminExam from "pages/Admin/Exam";
 import AdminProtocol from "pages/Admin/Protocol";
 import AdminProtocolEditor from "pages/Admin/Protocol/ProtocolEditor";
@@ -353,11 +352,6 @@ const routes = [
     exact: true,
     path: "/admin/tags",
     element: <WithAuth component={AdminTag} />,
-  },
-  {
-    exact: true,
-    path: "/admin/integracao",
-    element: <WithAuth component={AdminIntegration} />,
   },
   {
     exact: true,

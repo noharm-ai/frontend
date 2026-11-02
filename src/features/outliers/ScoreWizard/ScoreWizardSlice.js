@@ -15,54 +15,7 @@ const initialState = {
     status: "idle",
     error: null,
   },
-  addHistory: {
-    status: "idle",
-    error: null,
-  },
-  removeOutlier: {
-    status: "idle",
-    error: null,
-  },
 };
-
-export const addHistory = createAsyncThunk(
-  "score-wizard-slice/add-presc-history",
-  async (params, thunkAPI) => {
-    try {
-      const response = await api.scoreAddHistory(params);
-
-      return response.data;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
-    }
-  },
-);
-
-export const removeOutlier = createAsyncThunk(
-  "score-wizard-slice/remove-outlier",
-  async (params, thunkAPI) => {
-    try {
-      const response = await api.scoreRemoveOutlier(params);
-
-      return response.data;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
-    }
-  },
-);
-
-export const configDrug = createAsyncThunk(
-  "score-wizard-slice/config",
-  async (params, thunkAPI) => {
-    try {
-      const response = await api.scoreConfigDrug(params);
-
-      return response.data;
-    } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
-    }
-  },
-);
 
 export const configDrugV2 = createAsyncThunk(
   "score-wizard-slice/config",
@@ -113,13 +66,13 @@ const scoreWizardSlice = createSlice({
   },
   extraReducers(builder) {
     builder
-      .addCase(configDrug.pending, (state, action) => {
+      .addCase(configDrugV2.pending, (state, action) => {
         state.configDrug.status = "loading";
       })
-      .addCase(configDrug.fulfilled, (state, action) => {
+      .addCase(configDrugV2.fulfilled, (state, action) => {
         state.configDrug.status = "succeeded";
       })
-      .addCase(configDrug.rejected, (state, action) => {
+      .addCase(configDrugV2.rejected, (state, action) => {
         state.configDrug.status = "failed";
       })
       .addCase(prepareGeneration.pending, (state, action) => {
@@ -139,24 +92,6 @@ const scoreWizardSlice = createSlice({
       })
       .addCase(generateSingle.rejected, (state, action) => {
         state.generateSingle.status = "failed";
-      })
-      .addCase(addHistory.pending, (state, action) => {
-        state.addHistory.status = "loading";
-      })
-      .addCase(addHistory.fulfilled, (state, action) => {
-        state.addHistory.status = "succeeded";
-      })
-      .addCase(addHistory.rejected, (state, action) => {
-        state.addHistory.status = "failed";
-      })
-      .addCase(removeOutlier.pending, (state, action) => {
-        state.removeOutlier.status = "loading";
-      })
-      .addCase(removeOutlier.fulfilled, (state, action) => {
-        state.removeOutlier.status = "succeeded";
-      })
-      .addCase(removeOutlier.rejected, (state, action) => {
-        state.removeOutlier.status = "failed";
       });
   },
 });
