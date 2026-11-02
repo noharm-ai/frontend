@@ -50,7 +50,6 @@ import AdminIntegration from "pages/Admin/Integration";
 import AdminExam from "pages/Admin/Exam";
 import AdminProtocol from "pages/Admin/Protocol";
 import AdminProtocolEditor from "pages/Admin/Protocol/ProtocolEditor";
-import AdminGlobalMemoryNZero from "pages/Admin/GlobalMemory/GlobalMemoryNZero";
 
 import PatientDayReport from "pages/Reports/PatientDayReport";
 import PrescriptionReport from "pages/Reports/PrescriptionReport";
@@ -400,11 +399,6 @@ const routes = [
     exact: true,
     path: "/admin/protocolos/:id",
     element: <WithAuth component={AdminProtocolEditor} />,
-  },
-  {
-    exact: true,
-    path: "/admin/memoria-global/nzero",
-    element: <WithAuth component={AdminGlobalMemoryNZero} />,
   },
   {
     exact: true,

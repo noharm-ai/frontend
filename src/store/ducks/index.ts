@@ -46,7 +46,6 @@ import adminSubstanceForm from "features/admin/Substance/SubstanceFormSlice";
 import adminDrugReferenceDrawer from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
 import adminTag from "features/admin/Tag/TagSlice";
 import adminProtocol from "features/admin/Protocol/ProtocolSlice";
-import adminGlobalMemory from "features/admin/GlobalMemory/GlobalMemorySlice";
 import adminExamForm from "features/admin/Exam/ExamForm/ExamFormSlice";
 
 import { outpatientPrioritizationReducer } from "features/outpatient/OutpatientPrioritization/OutpatientPrioritizationSlice";
@@ -97,7 +96,6 @@ const adminReducers = combineReducers({
   drugReferenceDrawer: adminDrugReferenceDrawer,
   tag: adminTag,
   protocol: adminProtocol,
-  globalMemory: adminGlobalMemory,
 });
 
 const regulationReducers = combineReducers({

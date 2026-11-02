@@ -11,7 +11,6 @@ import { reset as adminExamReset } from "features/admin/Exam/ExamSlice";
 import { reset as adminDrugReferenceDrawerReset } from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
 import { reset as adminTagReset } from "features/admin/Tag/TagSlice";
 import { reset as adminProtocolReset } from "features/admin/Protocol/ProtocolSlice";
-import { reset as adminGlobalMemoryReset } from "features/admin/GlobalMemory/GlobalMemorySlice";
 
 import { reset as drugFormStatusReset } from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import { reset as listsReset } from "features/lists/ListsSlice";
@@ -69,7 +68,6 @@ export const resetReduxState = (dispatch) => {
   dispatch(adminDrugReferenceDrawerReset());
   dispatch(adminTagReset());
   dispatch(adminProtocolReset());
-  dispatch(adminGlobalMemoryReset());
 
   dispatch(clinicalNotesReset());
   dispatch(drugsReset());

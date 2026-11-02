@@ -167,19 +167,6 @@ api.protocols.getDepartments = (params = {}) =>
     ...setHeaders(),
   });
 
-/**
- * GLOBAL MEMORY
- */
-api.globalMemory = {};
-api.globalMemory.getGlobalMemory = (params = {}) =>
-  instance.post(`/admin/global-memory/list`, params, setHeaders());
-
-api.globalMemory.updateGlobalMemory = (params = {}) => {
-  return instance.post(`/admin/global-memory/update`, params, {
-    ...setHeaders(),
-  });
-};
-
 const methods = {
   ...api,
   getMemoryItems,

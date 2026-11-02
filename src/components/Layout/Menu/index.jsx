@@ -301,14 +301,6 @@ export default function Menu({ segments, collapsed }) {
         //   icon: <HourglassOutlined />,
         //   id: "gtm-lnk-horarios",
         // },
-        // {
-        //   key: "/admin/memoria-global/nzero",
-        //   link: "/admin/memoria-global/nzero",
-        //   label: "NZero",
-        //   icon: <RobotOutlined />,
-        //   id: "gtm-lnk-nzero",
-        //   permission: [Permission.ADMIN_NZERO],
-        // },
         {
           key: "/admin/protocolos",
           link: "/admin/protocolos",
