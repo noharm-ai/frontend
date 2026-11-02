@@ -5,7 +5,6 @@ const endpoints = {
   memory: "/admin/memory",
   drug: "/admin/drug",
   integration: "/admin/integration",
-  segment: "/admin/segments",
   exam: "/admin/exam",
 };
 
@@ -27,37 +26,6 @@ const refreshPrescription = (params = {}) => {
     },
   );
 };
-
-const getSegmentDepartments = (params) =>
-  instance.get(`${endpoints.segment}/departments/${params.idSegment}`, {
-    ...setHeaders(),
-  });
-
-const updateSegmentDepartments = (params) =>
-  instance.post(`${endpoints.segment}/departments`, params, {
-    ...setHeaders(),
-  });
-
-const upsertSegment = (params = {}) => {
-  return instance.post(`${endpoints.segment}`, params, {
-    ...setHeaders(),
-  });
-};
-
-/**
- * OUTLIERS
- */
-api.outliers = {};
-api.outliers.refreshAgg = (params) =>
-  instance.get(`/outliers/generate/refresh-agg`, {
-    params,
-    ...setHeaders(),
-  });
-
-api.outliers.generateSegmentOutliers = (params) =>
-  instance.post(`/outliers/generate/segment`, params, {
-    ...setHeaders(),
-  });
 
 /**
  * EXAMS
@@ -217,9 +185,6 @@ const methods = {
   getMemoryItems,
   updateMemoryItem,
   refreshPrescription,
-  getSegmentDepartments,
-  updateSegmentDepartments,
-  upsertSegment,
 };
 
 export default methods;

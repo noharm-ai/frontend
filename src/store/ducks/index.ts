@@ -41,7 +41,6 @@ import { userProfileReducer } from "features/user/UserProfile/UserProfileSlice";
 
 import adminMemory from "features/admin/Memory/MemorySlice";
 import adminIntegration from "features/admin/Integration/IntegrationSlice";
-import adminSegment from "features/admin/Segment/SegmentSlice";
 import adminExam from "features/admin/Exam/ExamSlice";
 import adminSubstanceForm from "features/admin/Substance/SubstanceFormSlice";
 import adminDrugReferenceDrawer from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
@@ -92,7 +91,6 @@ import reportCheckedIndexReport from "features/reports/CheckedIndexReport/Checke
 const adminReducers = combineReducers({
   memory: adminMemory,
   integration: adminIntegration,
-  segment: adminSegment,
   exam: adminExam,
   examForm: adminExamForm,
   substanceForm: adminSubstanceForm,

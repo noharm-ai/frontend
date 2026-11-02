@@ -47,7 +47,6 @@ import AdminMemoryFeatures from "pages/Admin/Memory/Features";
 import AdminMemorySchedules from "pages/Admin/Memory/Schedules";
 
 import AdminIntegration from "pages/Admin/Integration";
-import AdminSegment from "pages/Admin/Segment";
 import AdminExam from "pages/Admin/Exam";
 import AdminProtocol from "pages/Admin/Protocol";
 import AdminProtocolEditor from "pages/Admin/Protocol/ProtocolEditor";
@@ -391,11 +390,6 @@ const routes = [
     exact: true,
     path: "/admin/integracao",
     element: <WithAuth component={AdminIntegration} />,
-  },
-  {
-    exact: true,
-    path: "/admin/segmentos",
-    element: <WithAuth component={AdminSegment} />,
   },
   {
     exact: true,

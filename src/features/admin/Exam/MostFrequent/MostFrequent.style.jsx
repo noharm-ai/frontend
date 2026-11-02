@@ -15,13 +15,4 @@ export const FilterContainer = styled.div`
     flex: 1;
     text-align: left;
   }
-
-  .switch-container {
-    display: flex;
-    align-items: center;
-
-    label {
-      margin-left: 5px;
-    }
-  }
 `;
