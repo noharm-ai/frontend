@@ -5,17 +5,16 @@ import { Button } from "antd";
 
 import notification from "components/notification";
 import { useAppSelector } from "store/index";
-import { checkForNewVersion, reloadApp } from "../appVersionCheck";
+import { reloadApp } from "../appVersionCheck";
 
 const NOTIFICATION_KEY = "app-version-update";
 
 /**
  * Keeps long-lived tabs on the deployed version (see appVersionCheck).
  *
- * - checks again when the tab becomes visible (throttled)
- * - once a newer build is known, offers to update and reloads on the next
- *   screen change: the user just left the previous screen, so no work in
- *   progress is lost
+ * Once a newer build is known, offers to update and reloads on the next
+ * screen change: the user just left the previous screen, so no work in
+ * progress is lost.
  */
 export function AppVersionWatcher() {
   const location = useLocation();
@@ -35,18 +34,6 @@ export function AppVersionWatcher() {
       reloadApp();
     }
   }, [location, updateAvailable]);
-
-  useEffect(() => {
-    const onVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        checkForNewVersion();
-      }
-    };
-
-    document.addEventListener("visibilitychange", onVisibilityChange);
-    return () =>
-      document.removeEventListener("visibilitychange", onVisibilityChange);
-  }, []);
 
   useEffect(() => {
     if (!updateAvailable) return;

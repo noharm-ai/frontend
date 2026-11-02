@@ -237,8 +237,8 @@ is outdated by fetching `/index.html` and comparing ids
 
 - when the login page opens (users land there when the session expires), and
   reloads right away if the form is still untouched;
-- after each access token refresh, and when the tab becomes visible again
-  (at most every 5 minutes).
+- after an access token refresh, at most once an hour (deploys are rare, and
+  users go through the login page daily anyway).
 
 Once a newer build is known, a notification offers to update, and
 `AppVersionWatcher` reloads on the next screen change, so nothing in progress

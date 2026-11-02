@@ -1,12 +1,15 @@
 import { test, expect } from "../support/mockApi";
 import type { Page, Route } from "@playwright/test";
+import type { MockApi } from "../support/mockApi";
+import { fakeJwt } from "../support/token";
+import { loadFixture } from "../support/defaultHandlers";
 
 /**
  * Keeping long-lived tabs on the deployed version (src/features/appVersion).
  *
  * Every build stamps an id into index.html (`<meta name="app-build">`). The app
- * fetches /index.html?build-check=... (on the login page, after an access
- * token refresh, when the tab becomes visible) and, when the id differs from
+ * fetches /index.html?build-check=... (always on the login page; after an
+ * access token refresh, at most once an hour) and, when the id differs from
  * the running one, reloads at a safe moment: right away on an untouched login
  * page, otherwise on the next screen change.
  *
@@ -20,17 +23,20 @@ const isBuildCheck = (url: URL) =>
 const deployedPage = (build: string) =>
   `<!DOCTYPE html><html><head><meta name="app-build" content="${build}" /></head><body></body></html>`;
 
-/** Answers the build check with `build`; returns how many checks were made */
+/**
+ * Answers the build check with `deployed.build` (change it mid-test to
+ * simulate a deploy); `deployed.checks` counts the checks made
+ */
 async function serveDeployedBuild(page: Page, build: string) {
-  const checks = { count: 0 };
+  const deployed = { build, checks: 0 };
   await page.route(isBuildCheck, (route) => {
-    checks.count += 1;
+    deployed.checks += 1;
     return route.fulfill({
       contentType: "text/html",
-      body: deployedPage(build),
+      body: deployedPage(deployed.build),
     });
   });
-  return checks;
+  return deployed;
 }
 
 /** Counts full page loads (each boot of the app) */
@@ -47,8 +53,11 @@ function countPageLoads(page: Page) {
   return loads;
 }
 
-const runningBuild = (page: Page) =>
-  page.locator('meta[name="app-build"]').getAttribute("content");
+/** The build the server deploys now, i.e. the one the app will run */
+async function servedBuild(page: Page) {
+  const html = await (await page.request.get("/index.html")).text();
+  return html.match(/<meta name="app-build" content="([^"]*)"/)![1];
+}
 
 async function login(page: Page) {
   await page.getByPlaceholder("Email").fill("fulano@example.com");
@@ -75,14 +84,14 @@ test.describe("login page", () => {
   test("loads the deployed version before the user logs in, only once", async ({
     page,
   }) => {
-    const checks = await serveDeployedBuild(page, "newer-build");
+    const deployed = await serveDeployedBuild(page, "newer-build");
     const loads = countPageLoads(page);
 
     await page.goto("/login");
 
     // the first boot finds the newer build and reloads; the second one still
     // gets the old page (as a stale cache would serve it) and must not loop
-    await expect.poll(() => checks.count, { timeout: 15000 }).toBe(2);
+    await expect.poll(() => deployed.checks, { timeout: 15000 }).toBe(2);
     expect(loads.count).toBe(2);
 
     await login(page);
@@ -129,23 +138,67 @@ test.describe("login page", () => {
 });
 
 test.describe("logged in", () => {
-  test("a newer deploy is offered and loaded on the next screen change", async ({
-    page,
-  }) => {
-    const checks = await serveDeployedBuild(page, "newer-build");
-    const loads = countPageLoads(page);
+  test.use({ storageState: { cookies: [], origins: [] } });
 
-    await page.goto("/priorizacao/pacientes/cards");
+  /** Logs in with an access token that expires in 30 minutes */
+  async function loginWithShortToken(page: Page, mockApi: MockApi) {
+    const auth = loadFixture<Record<string, unknown>>("auth/authenticate.json");
+    auth.access_token = fakeJwt(Date.now() / 1000 + 30 * 60);
+    mockApi.override("POST /authenticate", { json: auth });
+
+    await page.goto("/login");
+    await login(page);
     await expect(
       page.getByRole("heading", { name: "Priorização por Pacientes" }),
     ).toBeVisible({ timeout: 15000 });
+  }
 
-    // coming back to the tab checks the deployed build
-    await page.evaluate(() =>
-      document.dispatchEvent(new Event("visibilitychange")),
-    );
+  /** Next /refresh-token answers a token expiring `seconds` from now */
+  const refreshInto = (mockApi: MockApi, seconds: number) =>
+    mockApi.override("POST /refresh-token", {
+      json: {
+        status: "success",
+        access_token: fakeJwt(Date.now() / 1000 + seconds),
+      },
+    });
+
+  const refreshes = (mockApi: MockApi) =>
+    mockApi.requests.filter((r) => r.path === "/refresh-token").length;
+
+  test("a deploy is noticed at a token refresh and loaded on the next screen change", async ({
+    page,
+    mockApi,
+  }) => {
+    await page.clock.install();
+    const loads = countPageLoads(page);
+    const deployed = await serveDeployedBuild(page, await servedBuild(page));
+
+    // the login page checks; the deployed build is still the running one
+    await loginWithShortToken(page, mockApi);
+    await expect.poll(() => deployed.checks).toBe(1);
+    expect(loads.count).toBe(1);
+    await expect(updateNotice(page)).toHaveCount(0);
+
+    // a deploy goes live. 40 minutes later the access token has expired: it
+    // is refreshed (into one that lasts until 1h after login), but the last
+    // check is less than an hour old, so it does not check again
+    deployed.build = "newer-build";
+    refreshInto(mockApi, 60 * 60);
+    await page.clock.fastForward("40:00");
+    await navigateInApp(page, "/novidades");
+    await expect(
+      page.getByRole("heading", { name: "O que há de novo na NoHarm" }),
+    ).toBeVisible();
+    await expect.poll(() => refreshes(mockApi)).toBe(1);
+    expect(deployed.checks).toBe(1);
+
+    // 70 minutes after login: the next refresh checks and finds the deploy
+    refreshInto(mockApi, 24 * 60 * 60);
+    await page.clock.fastForward("30:00");
+    await navigateInApp(page, "/priorizacao/pacientes/cards");
+    await expect.poll(() => refreshes(mockApi)).toBe(2);
     await expect(updateNotice(page)).toBeVisible();
-    expect(checks.count).toBe(1);
+    expect(deployed.checks).toBe(2);
 
     // the current screen is left alone until the user moves on
     expect(loads.count).toBe(1);
@@ -155,30 +208,6 @@ test.describe("logged in", () => {
     await expect(
       page.getByRole("heading", { name: "O que há de novo na NoHarm" }),
     ).toBeVisible({ timeout: 15000 });
-    await expect(updateNotice(page)).toHaveCount(0);
-  });
-
-  test("nothing happens while the deployed build is the running one", async ({
-    page,
-  }) => {
-    const loads = countPageLoads(page);
-
-    await page.goto("/priorizacao/pacientes/cards");
-    await expect(
-      page.getByRole("heading", { name: "Priorização por Pacientes" }),
-    ).toBeVisible({ timeout: 15000 });
-
-    const checks = await serveDeployedBuild(page, (await runningBuild(page))!);
-    await page.evaluate(() =>
-      document.dispatchEvent(new Event("visibilitychange")),
-    );
-    await expect.poll(() => checks.count).toBe(1);
-
-    await navigateInApp(page, "/novidades");
-    await expect(
-      page.getByRole("heading", { name: "O que há de novo na NoHarm" }),
-    ).toBeVisible();
-    expect(loads.count).toBe(1);
     await expect(updateNotice(page)).toHaveCount(0);
   });
 });

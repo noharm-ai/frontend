@@ -14,8 +14,10 @@ import { setUpdateAvailable } from "./AppVersionSlice";
 
 const RUNNING_BUILD: string | undefined = import.meta.env.VITE_APP_BUILD_ID;
 
-// unforced checks (token refresh, tab focus) run at most this often
-const CHECK_INTERVAL_MS = 5 * 60 * 1000;
+// Deploys are rare: the check that runs while the app is in use (after an
+// access token refresh) is made at most once an hour. The login page always
+// checks, and users go through it daily when the refresh token expires.
+const CHECK_INTERVAL_MS = 60 * 60 * 1000;
 
 // Last reload made to pick up a build, in sessionStorage so it outlives the
 // reload. If a cache in front of index.html still hands the old page to the
