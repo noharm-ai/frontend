@@ -51,12 +51,9 @@ const PADDING = 10;
 
 const formatNumber = (value: number) => value.toLocaleString("pt-BR");
 
-// the results and the reference both fit, with some room above and below
+// the results fit, with some room above and below
 const valueRange = (series: IExamSeries) => {
   const values = series.points.map((point) => point.value);
-  if (series.reference) {
-    values.push(series.reference.min, series.reference.max);
-  }
   const min = Math.min(...values);
   const max = Math.max(...values);
   const pad = max > min ? (max - min) * 0.1 : Math.abs(max) * 0.1 || 1;
@@ -66,8 +63,8 @@ const valueRange = (series: IExamSeries) => {
 /**
  * The history of an exam on the days of the timeline, under the courses, drawn
  * as a chart and not as a bar: a dashed line through its results on their own
- * scale, the reference of the segment as an outlined green band behind it, the
- * results in it as hollow dots and the ones out of it filled in red
+ * scale, the ones in the reference of the segment as hollow dots and the ones
+ * out of it filled in red
  */
 function ExamSparkline({
   series,
@@ -101,28 +98,6 @@ function ExamSparkline({
       role="img"
       aria-label={series.name}
     >
-      {series.reference && (
-        <g data-testid="exam-reference">
-          <rect
-            className="exam-reference"
-            x={0}
-            width={width}
-            y={y(series.reference.max)}
-            height={y(series.reference.min) - y(series.reference.max)}
-          />
-          {/* the outline along both limits, not across the ends of the row */}
-          {[series.reference.max, series.reference.min].map((limit) => (
-            <line
-              key={limit}
-              className="exam-reference-edge"
-              x1={0}
-              x2={width}
-              y1={y(limit)}
-              y2={y(limit)}
-            />
-          ))}
-        </g>
-      )}
       <polyline
         className="exam-line"
         points={points

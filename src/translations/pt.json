@@ -1662,7 +1662,6 @@
       "timelineSearch": "Buscar exame",
       "timelineRemove": "Remover {{name}} da linha do tempo",
       "timelineInRange": "dentro da referência",
-      "timelineReferenceBand": "faixa de referência",
       "timelineOutOfRange": "fora da referência",
       "timelineReference": "ref. {{min}} a {{max}}",
       "timelineLoadError": "Não foi possível carregar o histórico dos exames"

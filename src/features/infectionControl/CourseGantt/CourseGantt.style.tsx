@@ -657,14 +657,4 @@ export const Legend = styled.div`
     background: ${EXAM_COLORS.alert};
     border: 2px solid #fff;
   }
-
-  .legend-exam-reference {
-    background: ${EXAM_COLORS.reference};
-    border-bottom: 1px solid ${EXAM_COLORS.referenceOutline};
-    border-radius: 0;
-    border-top: 1px solid ${EXAM_COLORS.referenceOutline};
-    box-sizing: border-box;
-    height: 10px;
-    width: 18px;
-  }
 `;

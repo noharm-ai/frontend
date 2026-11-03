@@ -153,15 +153,6 @@ export const ExamRow = styled(Row)`
     z-index: 1;
   }
 
-  .exam-reference {
-    fill: ${EXAM_COLORS.reference};
-  }
-
-  .exam-reference-edge {
-    stroke: ${EXAM_COLORS.referenceOutline};
-    stroke-width: 1;
-  }
-
   /* dashed, so nothing on the row reads as a solid course bar */
   .exam-line {
     fill: none;

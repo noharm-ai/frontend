@@ -1652,7 +1652,6 @@
       "timelineSearch": "Search exam",
       "timelineRemove": "Remove {{name}} from the timeline",
       "timelineInRange": "in range",
-      "timelineReferenceBand": "reference range",
       "timelineOutOfRange": "out of range",
       "timelineReference": "ref. {{min}} to {{max}}",
       "timelineLoadError": "Could not load the exam history"

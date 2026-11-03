@@ -194,7 +194,6 @@ test("plots CRP, CKD-EPI and leukocytes under the courses on opening", async ({
   await expect(crp.getByTestId("exam-point")).toHaveCount(3);
   await expect(crp.locator(".exam-point.alert")).toHaveCount(2);
   await expect(crp).toContainText("ref. 0 a 5");
-  await expect(crp.getByTestId("exam-reference")).toHaveCount(1);
 
   // exams are added on the timeline, not picked in the card
   await expect(
@@ -208,13 +207,8 @@ test("plots CRP, CKD-EPI and leukocytes under the courses on opening", async ({
   const legend = page.locator(
     '[data-kb="infectionControl.antimicrobials.legend"]',
   );
-  await expect(legend).toContainText("faixa de referência");
   await expect(legend).toContainText("dentro da referência");
   await expect(legend).toContainText("fora da referência");
-  // only there, not on the header of the exams
-  await expect(
-    antimicrobialTimeline(page).getByText("faixa de referência"),
-  ).toHaveCount(0);
 });
 
 test("plots CKD-EPI 2021 where CKD-EPI is not configured", async ({
@@ -268,7 +262,7 @@ test("hides the exams from the timeline and remembers it", async ({
   await expect(
     page
       .locator('[data-kb="infectionControl.antimicrobials.legend"]')
-      .getByText("faixa de referência"),
+      .getByText("fora da referência"),
   ).toHaveCount(0);
 
   // still hidden on the next visit, until shown again
