@@ -46,7 +46,7 @@ function loadFixedFixture<T = unknown>(relativePath: string): T {
 }
 
 function freezeDates(mockApi: MockApi) {
-  mockApi.override("GET /prescriptions", {
+  mockApi.override("POST /prescriptions", {
     json: loadFixedFixture("prescriptions/list.json"),
   });
   mockApi.override("GET /prescriptions/:id", {

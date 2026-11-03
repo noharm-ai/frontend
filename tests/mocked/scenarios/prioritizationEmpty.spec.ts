@@ -8,7 +8,7 @@ test("shows empty state when there are no prescriptions", async ({
   page,
   mockApi,
 }) => {
-  mockApi.override("GET /prescriptions", {
+  mockApi.override("POST /prescriptions", {
     json: { status: "success", data: [] },
   });
 

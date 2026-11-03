@@ -205,8 +205,10 @@ const getExams = (bearerToken, admissionNumber, params = {}) =>
  * Prescriptions.
  *
  */
+// the filters go in the body: a long list of them made the URL too long for
+// the server (414 Request-URI Too Large)
 const getPrescriptions = (bearerToken, params = {}) =>
-  instance.get(endpoints.prescriptions, { params, ...setHeaders(bearerToken) });
+  instance.post(endpoints.prescriptions, params, setHeaders(bearerToken));
 
 const getPrescriptionsStatusList = (bearerToken, idPrescriptionList) =>
   instance.post(
