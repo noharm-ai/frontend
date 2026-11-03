@@ -156,7 +156,7 @@ test.use({ storageState: { cookies: [], origins: [] } });
 test.beforeEach(async ({ page, mockApi }) => {
   await page.clock.setFixedTime(FIXED_NOW);
 
-  mockApi.override("GET /prescriptions", {
+  mockApi.override("POST /prescriptions", {
     json: {
       status: "success",
       data: [
@@ -236,7 +236,7 @@ test("the dates tab lists the inner prescription times grouped by day", async ({
   mockApi,
 }) => {
   const tomorrow = shiftHours(24);
-  mockApi.override("GET /prescriptions", {
+  mockApi.override("POST /prescriptions", {
     json: {
       status: "success",
       data: [
@@ -288,7 +288,7 @@ test("picking a prioritization applies its default order", async ({
 }) => {
   const soon = naive(shiftHours(2));
   const later = naive(shiftHours(4));
-  mockApi.override("GET /prescriptions", {
+  mockApi.override("POST /prescriptions", {
     json: {
       status: "success",
       data: [
