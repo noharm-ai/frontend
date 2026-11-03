@@ -4,6 +4,7 @@ import {
   COURSE_COLORS,
   DISCHARGE_COLOR,
   EVALUATION_COLORS,
+  EXAM_COLORS,
   SCHEDULED_COLOR,
   TODAY_COLOR,
 } from "../courseColors";
@@ -634,5 +635,23 @@ export const Legend = styled.div`
     height: 9px;
     transform: rotate(45deg);
     width: 9px;
+  }
+
+  .legend-exam-line {
+    background: ${EXAM_COLORS.line};
+    border-radius: 1px;
+    height: 2px;
+  }
+
+  .legend-exam-alert {
+    background: ${EXAM_COLORS.alert};
+    border-radius: 50%;
+    height: 8px;
+    width: 8px;
+  }
+
+  .legend-exam-reference {
+    background: rgba(46, 60, 90, 0.14);
+    border-radius: 2px;
   }
 `;

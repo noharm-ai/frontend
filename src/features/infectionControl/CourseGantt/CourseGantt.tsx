@@ -20,6 +20,7 @@ import { CourseDetails } from "../CourseDetails/CourseDetails";
 import { courseKey } from "../followUp";
 import { getTimelineRange, groupCourseRows, toPercent } from "../timeline";
 import { CourseBars } from "./CourseBars/CourseBars";
+import { ExamRows, IGanttExams } from "./ExamRows/ExamRows";
 import { IDraftEvaluation, layoutEvaluations } from "./ganttLayout";
 import {
   DAY_WIDTH,
@@ -50,7 +51,12 @@ interface CourseGanttProps {
   draftEvaluation?: IDraftEvaluation | null;
   // more actions next to the title (not shown when compact)
   actions?: ReactNode;
+  // the exams plotted under the courses (getTimelineExams)
+  exams?: IGanttExams | null;
 }
+
+// how far before the first course the exams are plotted
+const EXAM_LOOKBACK_DAYS = 7;
 
 const STATUS_TAG_COLORS: Record<CourseStatus, string> = {
   active: "blue",
@@ -60,7 +66,8 @@ const STATUS_TAG_COLORS: Record<CourseStatus, string> = {
 
 /**
  * Gantt of the antimicrobial courses of an admission, one row per course, with
- * a line for today (and the discharge)
+ * a line for today (and the discharge). Some exams follow the courses, a row
+ * each on the same days (ExamRows)
  */
 export function CourseGantt({
   courses,
@@ -71,6 +78,7 @@ export function CourseGantt({
   compact = false,
   draftEvaluation,
   actions,
+  exams,
 }: CourseGanttProps) {
   const { t } = useTranslation();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -102,6 +110,23 @@ export function CourseGantt({
       : null;
 
   const rows = useMemo(() => groupCourseRows(courses), [courses]);
+  const showExams =
+    !!exams && (exams.status === "failed" || exams.series.length > 0);
+  // the timeline reaches the results of the exams it plots, from a few days
+  // before the first course (the baseline before the antimicrobial) on; the
+  // older ones are left out, so the courses stay in sight
+  const examDates = useMemo(() => {
+    if (!exams || courses.length === 0) return [];
+    const firstStart = Math.min(
+      ...courses.map((course) => dayjs(course.start).valueOf()),
+    );
+    const since = dayjs(firstStart)
+      .startOf("day")
+      .subtract(EXAM_LOOKBACK_DAYS, "day");
+    return exams.series
+      .flatMap((item) => item.points.map((point) => point.date))
+      .filter((date) => !dayjs(date).isBefore(since));
+  }, [exams, courses]);
   const range = useMemo(
     () =>
       getTimelineRange(
@@ -114,9 +139,18 @@ export function CourseGantt({
             (followUp) => followUp.evaluation?.validUntil,
           ),
           draftEvaluation?.validUntil,
+          ...examDates,
         ].filter((date): date is string => !!date),
+        examDates,
       ),
-    [courses, now, dischargeDate, followUps, draftEvaluation?.validUntil],
+    [
+      courses,
+      now,
+      dischargeDate,
+      followUps,
+      draftEvaluation?.validUntil,
+      examDates,
+    ],
   );
   const todayPercent = toPercent(now, range);
   const showToday = now.isAfter(range.start) && now.isBefore(range.end);
@@ -212,6 +246,23 @@ export function CourseGantt({
           {t("infectionControl.timeline.legendChange")}
         </span>
       </section>
+      {!!exams?.series.length && (
+        <section>
+          <h4>{t("infectionControl.exams.timelineGroup")}</h4>
+          <span>
+            <i className="legend-exam-line" />
+            {t("infectionControl.exams.timelineResult")}
+          </span>
+          <span>
+            <i className="legend-exam-alert" />
+            {t("infectionControl.exams.timelineOutOfRange")}
+          </span>
+          <span>
+            <i className="legend-exam-reference" />
+            {t("infectionControl.exams.timelineReferenceBand")}
+          </span>
+        </section>
+      )}
       {followUps && (
         <section>
           <h4>{t("infectionControl.timeline.legendGroupEvaluation")}</h4>
@@ -414,6 +465,8 @@ export function CourseGantt({
               </Row>
             );
           })}
+
+          {showExams && <ExamRows {...exams} range={range} markers={markers} />}
         </GanttGrid>
       </GanttScroll>
 

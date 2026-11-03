@@ -27,6 +27,7 @@ import { useIsMobile } from "hooks/useIsMobile";
 
 import {
   fetchAntimicrobialTimeline,
+  fetchExamHistory,
   fetchFollowUp,
   fetchRecentCultures,
   followAdmission,
@@ -52,6 +53,7 @@ import {
   getInvalidatedEvaluations,
 } from "../followUp";
 import { sortCourses } from "../timeline";
+import { getTimelineExams } from "../exams";
 import {
   CulturesAndExams,
   FollowUpError,
@@ -86,6 +88,9 @@ export function InfectionControl() {
   );
   const followStatus = useAppSelector(
     (state) => state.infectionControl.follow.status,
+  );
+  const examHistory = useAppSelector(
+    (state) => state.infectionControl.examHistory,
   );
 
   const [clinicalNotesOpen, setClinicalNotesOpen] = useState(false);
@@ -161,6 +166,37 @@ export function InfectionControl() {
   // an admission with no prescription has no segment to read the exam
   // references from
   const hasExams = !!data?.patient.idPrescription;
+
+  const loadExamHistory = () => {
+    dispatch(
+      fetchExamHistory({
+        admissionNumber,
+        idSegment: data?.patient.idSegment ?? null,
+      }),
+    );
+  };
+
+  // the timeline plots some exams under the courses (getTimelineExams), from
+  // the history "Ver todos" shows: loaded once the timeline brings the segment
+  // to read their references from. A reset (another admission) makes it idle
+  // again
+  useEffect(() => {
+    if (status === "succeeded" && hasExams && examHistory.status === "idle") {
+      loadExamHistory();
+    }
+  }, [status, hasExams, examHistory.status]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const timelineExams = useMemo(
+    () =>
+      hasExams
+        ? {
+            series: getTimelineExams(examHistory.list),
+            status: examHistory.status,
+            onRetry: loadExamHistory,
+          }
+        : null,
+    [hasExams, examHistory], // eslint-disable-line react-hooks/exhaustive-deps
+  );
 
   // the next one of the worklist the page came from, by its filters
   const showNextPending =
@@ -429,6 +465,7 @@ export function InfectionControl() {
             followUps={followUpCourses}
             invalidatedEvaluations={invalidatedEvaluations}
             actions={coursesViewToggle}
+            exams={timelineExams}
           />
         )}
       </Section>

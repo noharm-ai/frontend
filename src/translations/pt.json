@@ -1654,7 +1654,13 @@
       "up": "alta",
       "down": "queda",
       "stable": "estável",
-      "noResult": "sem resultado"
+      "noResult": "sem resultado",
+      "timelineGroup": "Exames",
+      "timelineResult": "resultado",
+      "timelineReferenceBand": "faixa de referência",
+      "timelineOutOfRange": "fora da referência",
+      "timelineReference": "ref. {{min}} a {{max}}",
+      "timelineLoadError": "Não foi possível carregar o histórico dos exames"
     },
     "cultures": {
       "title": "Culturas",

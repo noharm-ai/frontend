@@ -18,6 +18,15 @@ export const TODAY_COLOR = colors.accentSecondary;
 
 export const DISCHARGE_COLOR = "#2e3c5a";
 
+// an exam plotted under the courses: the line in the ink of the labels, apart
+// from the blues of the bars, the results out of the reference in red and the
+// reference as a band
+export const EXAM_COLORS = {
+  line: "#5b6b8c",
+  alert: "#f5222d",
+  reference: "rgba(46, 60, 90, 0.07)",
+};
+
 // the infectologist's verdict on a course, on the timeline
 export const EVALUATION_COLORS = {
   conforming: "#389e0d",

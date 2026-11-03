@@ -1644,7 +1644,13 @@
       "up": "rising",
       "down": "falling",
       "stable": "stable",
-      "noResult": "no result"
+      "noResult": "no result",
+      "timelineGroup": "Exams",
+      "timelineResult": "result",
+      "timelineReferenceBand": "reference range",
+      "timelineOutOfRange": "out of range",
+      "timelineReference": "ref. {{min}} to {{max}}",
+      "timelineLoadError": "Could not load the exam history"
     },
     "cultures": {
       "title": "Cultures",
