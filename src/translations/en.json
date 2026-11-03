@@ -1617,6 +1617,7 @@
     "nextPending": "Next pending",
     "moreActions": "More actions",
     "nextPendingEmpty": "There is no other pending patient.",
+    "loading": "Loading the admission",
     "patient": {
       "admission": "Admission",
       "age": "Age",
@@ -1644,7 +1645,18 @@
       "up": "rising",
       "down": "falling",
       "stable": "stable",
-      "noResult": "no result"
+      "noResult": "no result",
+      "timelineGroup": "Exams",
+      "timelineAdd": "Add exam",
+      "timelineShow": "Show exams on the timeline",
+      "timelineHide": "Hide exams from the timeline",
+      "timelineSearch": "Search exam",
+      "timelineRemove": "Remove {{name}} from the timeline",
+      "timelineReferenceBand": "reference range",
+      "timelineInRange": "in range",
+      "timelineOutOfRange": "out of range",
+      "timelineReference": "ref. {{min}} to {{max}}",
+      "timelineLoadError": "Could not load the exam history"
     },
     "cultures": {
       "title": "Cultures",

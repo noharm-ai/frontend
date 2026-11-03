@@ -4,6 +4,7 @@ import {
   COURSE_COLORS,
   DISCHARGE_COLOR,
   EVALUATION_COLORS,
+  EXAM_COLORS,
   SCHEDULED_COLOR,
   TODAY_COLOR,
 } from "../courseColors";
@@ -67,14 +68,21 @@ export const GanttGrid = styled.div`
 export const Row = styled.div`
   --bar-center: calc(50% - (var(--lanes, 1) - 1) * ${EVALUATION_LANE / 2}px);
 
-  border-bottom: 1px solid ${GRID_LINE};
+  /* the borders of the row, which the lines of today and the discharge
+     (Marker) cross so they run unbroken down the timeline */
+  --row-border-top: 0px;
+  --row-border-bottom: 1px;
+
+  /* a block of rows can have a tint of its own (--row-bg, --row-hover) */
+  background-color: var(--row-bg, transparent);
+  border-bottom: var(--row-border-bottom) solid ${GRID_LINE};
   display: flex;
   min-height: calc(
     ${ROW_HEIGHT}px + (var(--lanes, 1) - 1) * ${EVALUATION_LANE}px
   );
 
   &:last-child {
-    border-bottom: 0;
+    --row-border-bottom: 0px;
   }
 
   &.row-header {
@@ -83,13 +91,13 @@ export const Row = styled.div`
   }
 
   &:not(.row-header):hover {
-    background-color: ${HOVER_ROW};
+    background-color: var(--row-hover, ${HOVER_ROW});
   }
 `;
 
 export const RowLabel = styled.div`
   background: inherit;
-  background-color: #fff;
+  background-color: var(--row-bg, #fff);
   border-right: 1px solid #e0e0e0;
   display: flex;
   flex: 0 0 var(--label-width);
@@ -102,7 +110,7 @@ export const RowLabel = styled.div`
   z-index: 3;
 
   ${Row}:not(.row-header):hover & {
-    background-color: ${HOVER_ROW};
+    background-color: var(--row-hover, ${HOVER_ROW});
   }
 
   .label-drug {
@@ -163,9 +171,10 @@ export const RowLabel = styled.div`
 `;
 
 export const Track = styled.div<{ $days: number }>`
+  /* the day lines; a tinted block of rows can darken them (--grid-line) */
   background-image: linear-gradient(
     to right,
-    ${GRID_LINE} 1px,
+    var(--grid-line, ${GRID_LINE}) 1px,
     transparent 1px
   );
   background-size: ${DAY_WIDTH}px 100%;
@@ -479,11 +488,13 @@ export const EvaluationPending = styled.span`
   }
 `;
 
+// over the borders of its row too (Row), so the line does not break between
+// the rows
 export const Marker = styled.div`
-  bottom: 0;
+  bottom: calc(-1 * var(--row-border-bottom, 0px));
   pointer-events: none;
   position: absolute;
-  top: 0;
+  top: calc(-1 * var(--row-border-top, 0px));
   width: 0;
   z-index: 2;
 
@@ -634,5 +645,30 @@ export const Legend = styled.div`
     height: 9px;
     transform: rotate(45deg);
     width: 9px;
+  }
+
+  .legend-exam-normal,
+  .legend-exam-alert {
+    border-radius: 50%;
+    box-sizing: border-box;
+    height: 9px;
+    width: 9px;
+  }
+
+  .legend-exam-normal {
+    background: #fff;
+    border: 2px solid ${EXAM_COLORS.line};
+  }
+
+  .legend-exam-alert {
+    background: ${EXAM_COLORS.alert};
+    border: 2px solid #fff;
+  }
+
+  .legend-exam-reference {
+    background: ${EXAM_COLORS.reference};
+    border-radius: 2px;
+    height: 10px;
+    width: 18px;
   }
 `;

@@ -1627,6 +1627,7 @@
     "nextPending": "Próximo pendente",
     "moreActions": "Mais ações",
     "nextPendingEmpty": "Não há outro paciente pendente.",
+    "loading": "Carregando o atendimento",
     "patient": {
       "admission": "Atendimento",
       "age": "Idade",
@@ -1654,7 +1655,18 @@
       "up": "alta",
       "down": "queda",
       "stable": "estável",
-      "noResult": "sem resultado"
+      "noResult": "sem resultado",
+      "timelineGroup": "Exames",
+      "timelineAdd": "Adicionar exame",
+      "timelineShow": "Mostrar exames na linha do tempo",
+      "timelineHide": "Ocultar exames da linha do tempo",
+      "timelineSearch": "Buscar exame",
+      "timelineRemove": "Remover {{name}} da linha do tempo",
+      "timelineReferenceBand": "faixa de referência",
+      "timelineInRange": "dentro da referência",
+      "timelineOutOfRange": "fora da referência",
+      "timelineReference": "ref. {{min}} a {{max}}",
+      "timelineLoadError": "Não foi possível carregar o histórico dos exames"
     },
     "cultures": {
       "title": "Culturas",

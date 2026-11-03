@@ -20,6 +20,7 @@ import { CourseDetails } from "../CourseDetails/CourseDetails";
 import { courseKey } from "../followUp";
 import { getTimelineRange, groupCourseRows, toPercent } from "../timeline";
 import { CourseBars } from "./CourseBars/CourseBars";
+import { ExamRows, IGanttExams } from "./ExamRows/ExamRows";
 import { IDraftEvaluation, layoutEvaluations } from "./ganttLayout";
 import {
   DAY_WIDTH,
@@ -50,7 +51,36 @@ interface CourseGanttProps {
   draftEvaluation?: IDraftEvaluation | null;
   // more actions next to the title (not shown when compact)
   actions?: ReactNode;
+  // the exams plotted under the courses (getTimelineExams)
+  exams?: IGanttExams | null;
 }
+
+// whether the exams under the courses are hidden: a preference of the viewer,
+// kept in this browser for every patient (storage may be unavailable)
+const EXAMS_HIDDEN_KEY = "infectionControl.timeline.examsHidden";
+
+const readExamsHidden = () => {
+  try {
+    return localStorage.getItem(EXAMS_HIDDEN_KEY) === "1";
+  } catch {
+    return false;
+  }
+};
+
+const saveExamsHidden = (hidden: boolean) => {
+  try {
+    if (hidden) {
+      localStorage.setItem(EXAMS_HIDDEN_KEY, "1");
+    } else {
+      localStorage.removeItem(EXAMS_HIDDEN_KEY);
+    }
+  } catch {
+    // not kept: it holds for this visit only
+  }
+};
+
+// how far before the first course the exams are plotted
+const EXAM_LOOKBACK_DAYS = 7;
 
 const STATUS_TAG_COLORS: Record<CourseStatus, string> = {
   active: "blue",
@@ -60,7 +90,8 @@ const STATUS_TAG_COLORS: Record<CourseStatus, string> = {
 
 /**
  * Gantt of the antimicrobial courses of an admission, one row per course, with
- * a line for today (and the discharge)
+ * a line for today (and the discharge). Some exams follow the courses, a row
+ * each on the same days (ExamRows)
  */
 export function CourseGantt({
   courses,
@@ -71,6 +102,7 @@ export function CourseGantt({
   compact = false,
   draftEvaluation,
   actions,
+  exams,
 }: CourseGanttProps) {
   const { t } = useTranslation();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -102,6 +134,36 @@ export function CourseGantt({
       : null;
 
   const rows = useMemo(() => groupCourseRows(courses), [courses]);
+  // while the history loads the exams keep their place (ExamRows), so the
+  // timeline does not jump when they come
+  const hasExams =
+    !!exams &&
+    (exams.status === "idle" ||
+      exams.status === "loading" ||
+      exams.status === "failed" ||
+      exams.series.length > 0 ||
+      exams.options.length > 0);
+  const [examsHidden, setExamsHidden] = useState(readExamsHidden);
+  const toggleExams = (show: boolean) => {
+    setExamsHidden(!show);
+    saveExamsHidden(!show);
+  };
+  const showExams = hasExams && !examsHidden;
+  // the timeline reaches the results of the exams it plots, from a few days
+  // before the first course (the baseline before the antimicrobial) on; the
+  // older ones are left out, so the courses stay in sight
+  const examDates = useMemo(() => {
+    if (!exams || !showExams || courses.length === 0) return [];
+    const firstStart = Math.min(
+      ...courses.map((course) => dayjs(course.start).valueOf()),
+    );
+    const since = dayjs(firstStart)
+      .startOf("day")
+      .subtract(EXAM_LOOKBACK_DAYS, "day");
+    return exams.series
+      .flatMap((item) => item.points.map((point) => point.date))
+      .filter((date) => !dayjs(date).isBefore(since));
+  }, [exams, showExams, courses]);
   const range = useMemo(
     () =>
       getTimelineRange(
@@ -114,9 +176,18 @@ export function CourseGantt({
             (followUp) => followUp.evaluation?.validUntil,
           ),
           draftEvaluation?.validUntil,
+          ...examDates,
         ].filter((date): date is string => !!date),
+        examDates,
       ),
-    [courses, now, dischargeDate, followUps, draftEvaluation?.validUntil],
+    [
+      courses,
+      now,
+      dischargeDate,
+      followUps,
+      draftEvaluation?.validUntil,
+      examDates,
+    ],
   );
   const todayPercent = toPercent(now, range);
   const showToday = now.isAfter(range.start) && now.isBefore(range.end);
@@ -212,6 +283,23 @@ export function CourseGantt({
           {t("infectionControl.timeline.legendChange")}
         </span>
       </section>
+      {showExams && !!exams?.series.length && (
+        <section>
+          <h4>{t("infectionControl.exams.timelineGroup")}</h4>
+          <span>
+            <i className="legend-exam-reference" />
+            {t("infectionControl.exams.timelineReferenceBand")}
+          </span>
+          <span>
+            <i className="legend-exam-normal" />
+            {t("infectionControl.exams.timelineInRange")}
+          </span>
+          <span>
+            <i className="legend-exam-alert" />
+            {t("infectionControl.exams.timelineOutOfRange")}
+          </span>
+        </section>
+      )}
       {followUps && (
         <section>
           <h4>{t("infectionControl.timeline.legendGroupEvaluation")}</h4>
@@ -414,6 +502,18 @@ export function CourseGantt({
               </Row>
             );
           })}
+
+          {/* hidden, the header of the exams stays to show them again; an
+              embedded timeline has no switch, so it leaves them out */}
+          {hasExams && (!compact || !examsHidden) && (
+            <ExamRows
+              {...exams}
+              range={range}
+              markers={markers}
+              hidden={examsHidden}
+              onToggleHidden={compact ? undefined : toggleExams}
+            />
+          )}
         </GanttGrid>
       </GanttScroll>
 

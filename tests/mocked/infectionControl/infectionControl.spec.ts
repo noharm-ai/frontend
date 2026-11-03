@@ -150,6 +150,40 @@ test("shows the patient and the admission", async ({ page, mockApi }) => {
   ).toHaveCount(0);
 });
 
+test("lays out the page with placeholders while it loads", async ({
+  page,
+  mockApi,
+}) => {
+  // the timeline answers only when the test lets it
+  let release = () => {};
+  const released = new Promise<void>((resolve) => (release = resolve));
+  mockApi.override(ENDPOINT, async (route) => {
+    await released;
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify(timeline(COURSES)),
+    });
+  });
+
+  await page.goto(PAGE_URL);
+
+  const skeleton = page.getByTestId("infection-control-skeleton");
+  await expect(skeleton).toBeVisible({ timeout: 15000 });
+  await expect(skeleton).toHaveAttribute("aria-busy", "true");
+  await expect(skeleton).toHaveAccessibleName("Carregando o atendimento");
+  // the title is there already, the actions not yet
+  await expect(
+    page.getByRole("heading", { name: "Controle de Infecção" }),
+  ).toBeVisible();
+  await expect(page.getByRole("button", { name: "Evoluções" })).toHaveCount(0);
+
+  release();
+  await expect(page.getByText("82 kg")).toBeVisible();
+  await expect(page.getByRole("button", { name: "Evoluções" })).toBeVisible();
+  await expect(skeleton).toHaveCount(0);
+  await expect(page.locator(".header-actions-skeleton")).toHaveCount(0);
+});
+
 test("opens the clinical notes of the admission", async ({ page, mockApi }) => {
   mockApi.override(ENDPOINT, { json: timeline(COURSES) });
 
