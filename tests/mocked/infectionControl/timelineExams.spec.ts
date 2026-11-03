@@ -219,6 +219,47 @@ test("plots CRP, CKD-EPI and leukocytes under the courses on opening", async ({
   await expect(legend).toContainText("fora da referência");
 });
 
+test("holds the place of the exams while their history loads", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override(TIMELINE, { json: timeline("199") });
+  // the history answers only when the test lets it
+  let release = () => {};
+  const released = new Promise<void>((resolve) => (release = resolve));
+  mockApi.override(EXAMS_HISTORY, async (route) => {
+    await released;
+    await route.fulfill({
+      contentType: "application/json",
+      body: JSON.stringify(
+        history({ pcr_s: CRP, ckd: CKD, leuco: LEUKOCYTES }),
+      ),
+    });
+  });
+
+  await page.goto(PAGE_URL);
+
+  await expect(
+    antimicrobialTimeline(page).getByTestId("course-row"),
+  ).toHaveCount(1, { timeout: 15000 });
+  const placeholders = antimicrobialTimeline(page).getByTestId(
+    "exam-timeline-loading",
+  );
+  // one for each exam plotted on opening, under the header
+  await expect(placeholders).toHaveCount(3);
+  await expect(page.getByTestId("exam-timeline-group")).toBeVisible();
+  await expect(examRows(page)).toHaveCount(0);
+  const timelineBox = await antimicrobialTimeline(page).boundingBox();
+
+  release();
+  await expect(examRows(page)).toHaveCount(3);
+  await expect(placeholders).toHaveCount(0);
+  // the exams take the place the placeholders held: the timeline keeps its
+  // height
+  const loadedBox = await antimicrobialTimeline(page).boundingBox();
+  expect(loadedBox!.height).toBeCloseTo(timelineBox!.height, 0);
+});
+
 test("plots CKD-EPI 2021 where CKD-EPI is not configured", async ({
   page,
   mockApi,

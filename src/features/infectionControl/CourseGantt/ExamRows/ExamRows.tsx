@@ -1,7 +1,7 @@
 import { ReactNode, useState } from "react";
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
-import { Button, Popover, Select, Tooltip } from "antd";
+import { Button, Popover, Select, Skeleton, Tooltip } from "antd";
 import {
   CloseOutlined,
   DownOutlined,
@@ -12,7 +12,7 @@ import {
 import NumericValue from "components/NumericValue";
 import { formatDate } from "utils/date";
 
-import { IExamOption, IExamSeries } from "../../exams";
+import { IExamOption, IExamSeries, TIMELINE_EXAMS } from "../../exams";
 import { ITimelineRange, toPercent } from "../../timeline";
 import { DAY_WIDTH, RowLabel, Track } from "../CourseGantt.style";
 import {
@@ -318,9 +318,35 @@ export function ExamRows({
     );
   }
 
-  // while the history loads the timeline shows the courses alone, and so it
-  // does when the patient has no exam to plot
-  if (status !== "succeeded" || (series.length === 0 && options.length === 0)) {
+  // while the history loads, a placeholder for each exam plotted on opening
+  // holds their place, so the timeline does not jump when they come
+  if (status === "idle" || status === "loading") {
+    return (
+      <>
+        {group}
+        {TIMELINE_EXAMS.map((refs) => (
+          <ExamRow
+            key={refs.join()}
+            className="exam-loading"
+            data-testid="exam-timeline-loading"
+            aria-busy
+          >
+            <RowLabel>
+              <Skeleton
+                active
+                title={false}
+                paragraph={{ rows: 2, width: ["70%", "45%"] }}
+              />
+            </RowLabel>
+            <Track $days={range.days.length}>{markers}</Track>
+          </ExamRow>
+        ))}
+      </>
+    );
+  }
+
+  // the timeline shows the courses alone when the patient has no exam to plot
+  if (series.length === 0 && options.length === 0) {
     return null;
   }
 

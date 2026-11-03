@@ -147,6 +147,20 @@ export const ExamRow = styled(Row)`
     color: ${ALERT};
   }
 
+  /* the placeholder while the history loads: two lines, as the name and the
+     latest result, on the height of a row */
+  &.exam-loading .ant-skeleton-paragraph {
+    margin: 0;
+
+    > li {
+      height: 12px;
+    }
+
+    > li + li {
+      margin-block-start: 10px;
+    }
+  }
+
   .exam-sparkline {
     left: 0;
     overflow: visible;

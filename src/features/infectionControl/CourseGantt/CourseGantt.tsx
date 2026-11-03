@@ -134,9 +134,13 @@ export function CourseGantt({
       : null;
 
   const rows = useMemo(() => groupCourseRows(courses), [courses]);
+  // while the history loads the exams keep their place (ExamRows), so the
+  // timeline does not jump when they come
   const hasExams =
     !!exams &&
-    (exams.status === "failed" ||
+    (exams.status === "idle" ||
+      exams.status === "loading" ||
+      exams.status === "failed" ||
       exams.series.length > 0 ||
       exams.options.length > 0);
   const [examsHidden, setExamsHidden] = useState(readExamsHidden);
