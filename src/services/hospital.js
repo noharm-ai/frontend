@@ -9,6 +9,43 @@ import { getStorageItem } from "utils/storage";
 
 const FLAG = "{idPatient}";
 
+// Name GETs in flight at once per call when each patient is one request.
+// Browsers open about 6 connections per host, so more would only queue there
+// and spend their timeout waiting; it also spares rate limited name services.
+export const NAME_REQUEST_CONCURRENCY = 6;
+
+/**
+ * Runs task for each item, at most `limit` at a time. The task gets a `stop`
+ * callback that ends the scheduling; a rejection also stops it and is
+ * rethrown once the running tasks settle.
+ *
+ * @returns {Promise<Array>} the items that were never started
+ */
+const forEachLimited = async (items, limit, task) => {
+  let next = 0;
+  let stopped = false;
+  const stop = () => {
+    stopped = true;
+  };
+
+  const worker = async () => {
+    while (!stopped && next < items.length) {
+      try {
+        await task(items[next++], stop);
+      } catch (error) {
+        stopped = true;
+        throw error;
+      }
+    }
+  };
+
+  await Promise.all(
+    Array.from({ length: Math.min(limit, items.length) }, worker),
+  );
+
+  return items.slice(next);
+};
+
 /**
  * Builds the headers for the configured getname mode: the NoHarm token in
  * proxy mode, a short-lived getname token in auth mode, the configured
@@ -111,13 +148,28 @@ const getPatients = async (requestConfig) => {
       patientCache.clearLoading(requestIds);
     }
   } else {
-    await Promise.all(
-      listToRequest.map(async ({ idPatient, birthdate }) => {
-        if (!forceRefresh && patientCache.getPatient(idPatient)?.cache) {
-          return;
-        }
+    const pending = [];
+    const seen = new Set();
+    listToRequest.forEach((p) => {
+      const key = String(p.idPatient);
+      if (seen.has(key)) return;
+      seen.add(key);
 
-        patientCache.markLoading([idPatient]);
+      if (forceRefresh || !patientCache.getPatient(p.idPatient)?.cache) {
+        pending.push(p);
+      }
+    });
+
+    if (!pending.length) {
+      return;
+    }
+
+    patientCache.markLoading(pending.map((p) => p.idPatient));
+
+    const notStarted = await forEachLimited(
+      pending,
+      NAME_REQUEST_CONCURRENCY,
+      async ({ idPatient, birthdate }, stop) => {
         const cache = birthdate ? moment().diff(birthdate, "years") > 0 : false;
         const urlRequest =
           getnameType === "proxy"
@@ -140,10 +192,18 @@ const getPatients = async (requestConfig) => {
 
           patientCache.setPatient({ ...patient, cache });
         } catch (e) {
+          // rate limited: leave the rest for a later lookup
+          if (e?.response?.status === 429) {
+            stop();
+          }
           patientCache.clearLoading([idPatient]);
         }
-      }),
+      },
     );
+
+    if (notStarted.length) {
+      patientCache.clearLoading(notStarted.map((p) => p.idPatient));
+    }
   }
 };
 
@@ -175,7 +235,8 @@ const getSinglePatient = async (requestConfig) => {
  * for screens that keep names only in page memory (e.g. custom reports, which
  * would otherwise evict the names the rest of the app relies on). The caller
  * chunks the ids: up to ~100 per call with multipleNameUrl, one per call
- * without it (each id is one GET).
+ * without it (each id is one GET, at most NAME_REQUEST_CONCURRENCY in flight
+ * when a call carries several).
  *
  * An id is either found (`names`), reported as not found by the name service
  * (`notFound`, an entry with status "error"), or neither: the lookup failed or
@@ -235,8 +296,10 @@ const getPatientNames = async (requestConfig) => {
     return result;
   }
 
-  await Promise.all(
-    ids.map(async (idPatient) => {
+  await forEachLimited(
+    ids,
+    NAME_REQUEST_CONCURRENCY,
+    async (idPatient, stop) => {
       const urlRequest =
         getnameType === "proxy"
           ? `${import.meta.env.VITE_APP_API_URL}/names/${idPatient}`
@@ -257,9 +320,13 @@ const getPatientNames = async (requestConfig) => {
         if (error?.response?.data?.status === "error") {
           collect(error.response.data, idPatient);
         }
+        // rate limited: the ids not requested yet are left out as well
+        if (error?.response?.status === 429) {
+          stop();
+        }
         // otherwise the lookup failed: the id is left out, to be retried
       }
-    }),
+    },
   );
 
   return result;

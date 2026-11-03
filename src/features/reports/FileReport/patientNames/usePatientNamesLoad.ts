@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useAppSelector } from "src/store";
-import hospital from "src/services/hospital";
+import hospital, { NAME_REQUEST_CONCURRENCY } from "src/services/hospital";
 import {
   trackCustomReportAction,
   TrackedCustomReportAction,
@@ -51,9 +51,9 @@ export function usePatientNamesLoad(
 
   const lookup = useMemo<NameLookup>(
     () => ({
-      // one id per request without a batch endpoint, 10 in flight
+      // one id per request without a batch endpoint, a few in flight
       batchSize: appConfig.multipleNameUrl ? 100 : 1,
-      concurrency: appConfig.multipleNameUrl ? 1 : 10,
+      concurrency: appConfig.multipleNameUrl ? 1 : NAME_REQUEST_CONCURRENCY,
       resolveHeaders: () => hospital.resolveNameHeaders(appConfig),
       fetchNames: (ids, { signal, headers }) =>
         hospital.getPatientNames({
