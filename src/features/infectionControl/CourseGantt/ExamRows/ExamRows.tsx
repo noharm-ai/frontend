@@ -1,13 +1,13 @@
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
-import { Button, Tooltip } from "antd";
-import { ReloadOutlined } from "@ant-design/icons";
+import { Button, Popover, Select, Tooltip } from "antd";
+import { CloseOutlined, PlusOutlined, ReloadOutlined } from "@ant-design/icons";
 
 import NumericValue from "components/NumericValue";
 import { formatDate } from "utils/date";
 
-import { IExamSeries } from "../../exams";
+import { IExamOption, IExamSeries } from "../../exams";
 import { ITimelineRange, toPercent } from "../../timeline";
 import { DAY_WIDTH, RowLabel, Track } from "../CourseGantt.style";
 import {
@@ -20,10 +20,14 @@ import {
 type Status = "idle" | "loading" | "succeeded" | "failed";
 
 export interface IGanttExams {
-  // the exams the timeline plots (getTimelineExams)
+  // the exams the timeline plots, in the order they were added
   series: IExamSeries[];
+  // the other exams of the history, to add
+  options: IExamOption[];
   // of the history the series come from
   status: Status;
+  onAdd: (id: string) => void;
+  onRemove: (id: string) => void;
   onRetry: () => void;
 }
 
@@ -144,19 +148,56 @@ function ExamSparkline({
 }
 
 /**
- * The exams of the timeline (TIMELINE_EXAMS), a row each under the courses
+ * The exams of the timeline, a row each under the courses
  * (CourseGantt), on the same days, so their results read against the courses
  * started and changed. Each exam has its own scale: they differ in unit and in
- * magnitude. The history is the one "Ver todos" shows
+ * magnitude. It opens with some (TIMELINE_EXAMS); "+" adds any other exam of
+ * the history, the one "Ver todos" shows, and each row can be taken out
  */
 export function ExamRows({
   series,
+  options,
   status,
   range,
   markers,
+  onAdd,
+  onRemove,
   onRetry,
 }: ExamRowsProps) {
   const { t } = useTranslation();
+  const [adding, setAdding] = useState(false);
+  // a new picker every time it opens: none of the last search or list is left
+  const [pickerKey, setPickerKey] = useState(0);
+  const openPicker = (open: boolean) => {
+    if (open) setPickerKey((key) => key + 1);
+    setAdding(open);
+  };
+
+  // searched by name; its list opens inside the popover, so a pick does not
+  // count as a click outside of it
+  const picker = (
+    <Select
+      key={pickerKey}
+      data-testid="exam-timeline-picker"
+      className="exam-picker"
+      showSearch
+      autoFocus
+      defaultOpen
+      value={null}
+      placeholder={t("infectionControl.exams.timelineSearch")}
+      optionFilterProp="label"
+      options={options.map((option) => ({
+        value: option.id,
+        label: option.name,
+      }))}
+      onChange={(id: string) => {
+        setAdding(false);
+        onAdd(id);
+      }}
+      getPopupContainer={(trigger) => trigger.parentElement ?? document.body}
+      style={{ width: 260 }}
+    />
+  );
 
   const group = (
     <ExamGroupRow
@@ -168,6 +209,27 @@ export function ExamRows({
           <span className="exam-group-title">
             {t("infectionControl.exams.timelineGroup")}
           </span>
+          {options.length > 0 && (
+            <Popover
+              content={picker}
+              trigger="click"
+              placement="bottomLeft"
+              open={adding}
+              onOpenChange={openPicker}
+              destroyOnHidden
+              arrow={false}
+            >
+              <Tooltip title={t("infectionControl.exams.timelineAdd")}>
+                <Button
+                  type="text"
+                  size="small"
+                  className="exam-group-add"
+                  icon={<PlusOutlined />}
+                  aria-label={t("infectionControl.exams.timelineAdd")}
+                />
+              </Tooltip>
+            </Popover>
+          )}
         </div>
       </RowLabel>
       <Track $days={range.days.length}>{markers}</Track>
@@ -191,8 +253,9 @@ export function ExamRows({
     );
   }
 
-  // while the history loads the timeline shows the courses alone
-  if (status !== "succeeded" || series.length === 0) {
+  // while the history loads the timeline shows the courses alone, and so it
+  // does when the patient has no exam to plot
+  if (status !== "succeeded" || (series.length === 0 && options.length === 0)) {
     return null;
   }
 
@@ -210,6 +273,16 @@ export function ExamRows({
                   <span className="exam-name">{item.name}</span>
                 </Tooltip>
                 {item.unit && <span className="exam-unit">{item.unit}</span>}
+                <Button
+                  type="text"
+                  size="small"
+                  className="exam-remove"
+                  icon={<CloseOutlined />}
+                  aria-label={t("infectionControl.exams.timelineRemove", {
+                    name: item.name,
+                  })}
+                  onClick={() => onRemove(item.key)}
+                />
               </div>
               <div className="exam-label-info">
                 <strong

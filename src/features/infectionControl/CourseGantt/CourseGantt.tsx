@@ -111,7 +111,10 @@ export function CourseGantt({
 
   const rows = useMemo(() => groupCourseRows(courses), [courses]);
   const showExams =
-    !!exams && (exams.status === "failed" || exams.series.length > 0);
+    !!exams &&
+    (exams.status === "failed" ||
+      exams.series.length > 0 ||
+      exams.options.length > 0);
   // the timeline reaches the results of the exams it plots, from a few days
   // before the first course (the baseline before the antimicrobial) on; the
   // older ones are left out, so the courses stay in sight

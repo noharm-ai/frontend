@@ -53,7 +53,7 @@ import {
   getInvalidatedEvaluations,
 } from "../followUp";
 import { sortCourses } from "../timeline";
-import { getTimelineExams } from "../exams";
+import { getDefaultExamIds, getExamOptions, toExamSeries } from "../exams";
 import {
   CulturesAndExams,
   FollowUpError,
@@ -100,6 +100,9 @@ export function InfectionControl() {
   // phones show the courses as a list, the timeline being too wide to read;
   // it is still one tap away
   const [coursesView, setCoursesView] = useState<"list" | "timeline">("list");
+  // the exams on the timeline, by IExamOption id; null until one is added or
+  // taken out, the default ones (getDefaultExamIds) meanwhile
+  const [examIds, setExamIds] = useState<string[] | null>(null);
 
   const isValid = /^\d+$/.test(admissionNumber);
 
@@ -123,6 +126,7 @@ export function InfectionControl() {
       dispatch(reset());
       setClinicalNotesOpen(false);
       setReportOpen(false);
+      setExamIds(null);
       dispatch(setExamsModalAdmissionNumber(null));
     };
   }, [admissionNumber]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -186,17 +190,27 @@ export function InfectionControl() {
     }
   }, [status, hasExams, examHistory.status]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const timelineExams = useMemo(
-    () =>
-      hasExams
-        ? {
-            series: getTimelineExams(examHistory.list),
-            status: examHistory.status,
-            onRetry: loadExamHistory,
-          }
-        : null,
-    [hasExams, examHistory], // eslint-disable-line react-hooks/exhaustive-deps
+  const examOptions = useMemo(
+    () => getExamOptions(examHistory.list),
+    [examHistory.list],
   );
+  const timelineExams = useMemo(() => {
+    if (!hasExams) return null;
+
+    const ids = examIds ?? getDefaultExamIds(examOptions);
+    const plotted = ids
+      .map((id) => examOptions.find((option) => option.id === id))
+      .filter((option) => !!option);
+
+    return {
+      series: plotted.map(toExamSeries),
+      options: examOptions.filter((option) => !ids.includes(option.id)),
+      status: examHistory.status,
+      onAdd: (id: string) => setExamIds([...ids, id]),
+      onRemove: (id: string) => setExamIds(ids.filter((item) => item !== id)),
+      onRetry: loadExamHistory,
+    };
+  }, [hasExams, examIds, examOptions, examHistory.status]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // the next one of the worklist the page came from, by its filters
   const showNextPending =

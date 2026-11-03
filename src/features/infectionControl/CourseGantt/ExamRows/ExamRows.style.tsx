@@ -35,6 +35,10 @@ export const ExamGroupRow = styled(Row)`
     letter-spacing: 0.04em;
     text-transform: uppercase;
   }
+
+  .exam-group-add {
+    color: ${MUTED};
+  }
 `;
 
 // when the history failed to load
@@ -71,6 +75,12 @@ export const ExamRow = styled(Row)`
     color: ${MUTED};
     font-size: 12px;
     white-space: nowrap;
+  }
+
+  .exam-remove {
+    color: ${MUTED};
+    flex: none;
+    margin-left: auto;
   }
 
   .exam-label-info {

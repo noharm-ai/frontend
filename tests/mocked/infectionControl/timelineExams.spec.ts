@@ -8,7 +8,7 @@ import { test, expect } from "../support/mockApi";
  * the same days: CRP, CKD-EPI (or CKD-EPI 2021, where configured instead) and
  * leukocytes. They are picked by their NoHarm identifier (tpexame_ref of the
  * segment exams), not by the tpexame of the schema, from the history "Ver
- * todos" shows.
+ * todos" shows. "+" adds any other exam of it, and each row can be taken out.
  */
 
 const ADMISSION = 9300;
@@ -195,12 +195,9 @@ test("plots CRP, CKD-EPI and leukocytes under the courses on opening", async ({
   await expect(crp.locator(".exam-point.alert")).toHaveCount(2);
   await expect(crp).toContainText("ref. 0 a 5");
 
-  // no picking: the card and the rows have nothing to click
+  // exams are added on the timeline, not picked in the card
   await expect(
     page.locator('[data-kb="infectionControl.exams"] [role="button"]'),
-  ).toHaveCount(0);
-  await expect(
-    antimicrobialTimeline(page).getByRole("button", { name: "Limpar" }),
   ).toHaveCount(0);
 
   // the legend of the timeline tells what the marks of an exam are
@@ -226,7 +223,67 @@ test("plots CKD-EPI 2021 where CKD-EPI is not configured", async ({
   await expect(examRows(page).nth(1)).toContainText("Leucócitos");
 });
 
-test("shows no exam rows when the patient has none of the exams", async ({
+test("adds any exam of the history with + and takes them out", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override(TIMELINE, { json: timeline("199") });
+  mockApi.override(EXAMS_HISTORY, {
+    json: history({
+      pcr_s: CRP,
+      creat: CREATININE,
+      leuco: LEUKOCYTES,
+      // a type the segment maps to no identifier: offered by its own
+      lactato: exam(null, "Lactato", "mmol/L", [0.5, 2], [[3.1, -10]]),
+      laudo: { name: "Laudo", text: true, history: [] },
+    }),
+  });
+
+  await page.goto(PAGE_URL);
+  await expect(examRows(page)).toHaveCount(2, { timeout: 15000 });
+
+  const add = antimicrobialTimeline(page).getByRole("button", {
+    name: "Adicionar exame",
+  });
+  await add.click();
+  const picker = page.getByTestId("exam-timeline-picker");
+  await expect(picker).toBeVisible();
+  // the exams not on the timeline yet, by name; no textual exam
+  const options = page.locator(".ant-select-item-option");
+  await expect(options).toHaveText(["Creatinina", "Lactato"]);
+
+  await page.keyboard.type("lact");
+  await expect(options).toHaveText(["Lactato"]);
+  await page.keyboard.press("Enter");
+
+  // at the end, with its points
+  await expect(examRows(page)).toHaveCount(3);
+  await expect(examRows(page).nth(2)).toContainText("Lactato");
+  await expect(examRows(page).nth(2).getByTestId("exam-point")).toHaveCount(1);
+
+  await add.click();
+  await expect(options).toHaveText(["Creatinina"]);
+  await options.nth(0).click();
+  await expect(examRows(page)).toHaveCount(4);
+  await expect(examRows(page).nth(3)).toContainText("Creatinina");
+
+  // every exam on the timeline: nothing left to add
+  await expect(add).toHaveCount(0);
+
+  // a default one taken out can be added back
+  await examRows(page)
+    .nth(0)
+    .getByRole("button", {
+      name: "Remover PCR ultrassensível da linha do tempo",
+    })
+    .click();
+  await expect(examRows(page)).toHaveCount(3);
+  await expect(examRows(page).nth(0)).toContainText("Leucócitos");
+  await add.click();
+  await expect(options).toHaveText(["PCR ultrassensível"]);
+});
+
+test("offers + when the patient has none of the default exams", async ({
   page,
   mockApi,
 }) => {
@@ -237,6 +294,31 @@ test("shows no exam rows when the patient has none of the exams", async ({
       // a type the segment does not map to the identifier
       pcr_s: { ...CRP, tp_exam_ref: null },
     }),
+  });
+
+  await page.goto(PAGE_URL);
+
+  await expect(page.getByTestId("exam-timeline-group")).toBeVisible({
+    timeout: 15000,
+  });
+  await expect(examRows(page)).toHaveCount(0);
+
+  await antimicrobialTimeline(page)
+    .getByRole("button", { name: "Adicionar exame" })
+    .click();
+  await page
+    .locator(".ant-select-item-option", { hasText: "Creatinina" })
+    .click();
+  await expect(examRows(page)).toHaveCount(1);
+});
+
+test("shows no exams group when the history has no numeric exam", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override(TIMELINE, { json: timeline("199") });
+  mockApi.override(EXAMS_HISTORY, {
+    json: history({ laudo: { name: "Laudo", text: true, history: [] } }),
   });
 
   await page.goto(PAGE_URL);

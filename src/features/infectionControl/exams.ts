@@ -31,7 +31,7 @@ export interface IExamPoint {
 }
 
 export interface IExamSeries {
-  // the NoHarm identifier of the exam (tp_exam_ref)
+  // the id of the exam (IExamOption)
   key: string;
   name: string;
   unit: string | null;
@@ -44,7 +44,8 @@ export interface IExamSeries {
  * The exams the antimicrobial timeline plots, by their NoHarm identifier
  * (tpexame_ref of the segment exams, the same in every schema, unlike the
  * tpexame of each schema). Each slot takes the first of its identifiers the
- * patient has results of: CKD-EPI or, where configured instead, CKD-EPI 2021
+ * patient has results of: CKD-EPI or, where configured instead, CKD-EPI 2021.
+ * Others are added from the timeline
  */
 export const TIMELINE_EXAMS = [["pcru"], ["ckd", "ckd21"], ["h_conleuc"]];
 
@@ -66,19 +67,26 @@ const referenceOf = (item: IExamHistoryItem | undefined) => {
 const hasResults = (history: IExamHistory) =>
   !history.text && history.history.length > 0;
 
-/**
- * The series of an exam from the histories of the types a segment maps to
- * its identifier (more than one type can map to it): their results merged,
- * the name, unit and reference of the type with the latest result
- */
-const toExamSeries = (key: string, histories: IExamHistory[]): IExamSeries => {
-  // the history of a type is newest first
-  const latest = [...histories].sort((a, b) =>
+// an exam the timeline can plot: the types of the schema a segment maps to
+// the same NoHarm identifier are one exam (id "ref:<identifier>"); a type
+// mapped to none is one on its own (id "key:<tpexame>")
+export interface IExamOption {
+  id: string;
+  name: string;
+  histories: IExamHistory[];
+}
+
+// the type with the latest result; the history of a type is newest first
+const latestOf = (histories: IExamHistory[]) =>
+  [...histories].sort((a, b) =>
     b.history[0].date.localeCompare(a.history[0].date),
   )[0];
-  const reference = referenceOf(latest.history[0]);
 
-  const points = histories
+const toPoints = (
+  histories: IExamHistory[],
+  reference: IExamSeries["reference"],
+) =>
+  histories
     .flatMap((item) => item.history)
     .map((item) => ({ date: item.date, value: toNumber(item.value) }))
     .filter(
@@ -100,30 +108,55 @@ const toExamSeries = (key: string, histories: IExamHistory[]): IExamSeries => {
         point.value !== sorted[index - 1].value,
     );
 
-  return {
-    key,
-    name: latest.name ?? latest.initials ?? key,
-    unit: latest.unit ?? latest.history[0].unit ?? null,
-    points,
-    reference,
-  };
+/**
+ * Every exam of the history ("Ver todos") with a numeric result, by name
+ */
+export const getExamOptions = (historyList: IExamHistory[]): IExamOption[] => {
+  const groups = new Map<string, IExamHistory[]>();
+  historyList.filter(hasResults).forEach((item) => {
+    const ref = item.tp_exam_ref?.toLowerCase().trim();
+    const id = ref ? `ref:${ref}` : `key:${item.key.toLowerCase()}`;
+    groups.set(id, [...(groups.get(id) ?? []), item]);
+  });
+
+  return [...groups.entries()]
+    .filter(([, histories]) => toPoints(histories, null).length > 0)
+    .map(([id, histories]) => {
+      const latest = latestOf(histories);
+      return {
+        id,
+        name: latest.name ?? latest.initials ?? latest.key,
+        histories,
+      };
+    })
+    .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
 };
 
 /**
- * The exams of the timeline (TIMELINE_EXAMS) the patient has results of, from
- * the history of every exam ("Ver todos"), in that order; the ones without
- * results are left out
+ * The exams the timeline opens with (TIMELINE_EXAMS), among the options, in
+ * that order; the ones the patient has no results of are left out
  */
-export const getTimelineExams = (historyList: IExamHistory[]) =>
+export const getDefaultExamIds = (options: IExamOption[]) =>
   TIMELINE_EXAMS.flatMap((refs) => {
-    for (const ref of refs) {
-      const histories = historyList.filter(
-        (item) => hasResults(item) && item.tp_exam_ref?.toLowerCase() === ref,
-      );
-      if (histories.length > 0) {
-        const series = toExamSeries(ref, histories);
-        if (series.points.length > 0) return [series];
-      }
-    }
-    return [];
+    const id = refs
+      .map((ref) => `ref:${ref}`)
+      .find((candidate) => options.some((option) => option.id === candidate));
+    return id ? [id] : [];
   });
+
+/**
+ * The series of an exam: the results of its types merged, the name, unit and
+ * reference of the type with the latest result
+ */
+export const toExamSeries = (option: IExamOption): IExamSeries => {
+  const latest = latestOf(option.histories);
+  const reference = referenceOf(latest.history[0]);
+
+  return {
+    key: option.id,
+    name: option.name,
+    unit: latest.unit ?? latest.history[0].unit ?? null,
+    points: toPoints(option.histories, reference),
+    reference,
+  };
+};
