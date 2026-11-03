@@ -1617,6 +1617,7 @@
     "nextPending": "Next pending",
     "moreActions": "More actions",
     "nextPendingEmpty": "There is no other pending patient.",
+    "loading": "Loading the admission",
     "patient": {
       "admission": "Admission",
       "age": "Age",

@@ -15,7 +15,6 @@ import {
 import dayjs from "dayjs";
 
 import { useAppDispatch, useAppSelector } from "src/store";
-import LoadBox, { LoadContainer } from "components/LoadBox";
 import PatientNameCache from "components/PatientName/PatientNameCache";
 import notification from "components/notification";
 import Permission from "models/Permission";
@@ -46,6 +45,8 @@ import { InfectionControlCultures } from "../InfectionControlCultures/InfectionC
 import { InfectionControlExams } from "../InfectionControlExams/InfectionControlExams";
 import { InfectionControlPatient } from "../InfectionControlPatient/InfectionControlPatient";
 import { InfectionControlReportModal } from "../InfectionControlReportModal/InfectionControlReportModal";
+import { InfectionControlSkeleton } from "../InfectionControlSkeleton/InfectionControlSkeleton";
+import { Bone } from "../InfectionControlSkeleton/InfectionControlSkeleton.style";
 import { ReviewModal } from "../ReviewModal/ReviewModal";
 import {
   getDrugNames,
@@ -351,6 +352,17 @@ export function InfectionControl() {
           </Dropdown>
         </div>
       )}
+      {/* the actions keep their place while the timeline loads (wrapped below
+          the title on phones) */}
+      {(status === "idle" || status === "loading") && isValid && (
+        <div
+          className="page-header-actions header-actions-skeleton"
+          aria-hidden
+        >
+          <Bone $width={120} $height={32} $radius={6} />
+          <Bone $width={124} $height={32} $radius={6} />
+        </div>
+      )}
     </Header>
   );
 
@@ -408,9 +420,7 @@ export function InfectionControl() {
     return (
       <>
         {header}
-        <LoadContainer>
-          <LoadBox $absolute={true} />
-        </LoadContainer>
+        <InfectionControlSkeleton />
       </>
     );
   }
