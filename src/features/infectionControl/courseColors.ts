@@ -18,13 +18,23 @@ export const TODAY_COLOR = colors.accentSecondary;
 
 export const DISCHARGE_COLOR = "#2e3c5a";
 
-// an exam plotted under the courses: the line in the ink of the labels, apart
-// from the blues of the bars, the results out of the reference in red and the
-// reference as a band
+// an exam plotted under the courses, as a chart rather than a bar: a dashed
+// line in the ink of the labels, apart from the blues of the bars, the results
+// in range as hollow dots and the ones out of it filled in red, the reference
+// as an outlined green band. The section of the exams has a gray-blue of its
+// own, so its rows are not taken for antimicrobial rows: a thick divider above
+// it, a darker strip for its header and day lines a bit darker than the ones
+// of the courses, so they still show on the tint
 export const EXAM_COLORS = {
   line: "#5b6b8c",
   alert: "#f5222d",
-  reference: "rgba(46, 60, 90, 0.07)",
+  reference: "rgba(82, 196, 26, 0.14)",
+  referenceOutline: "rgba(56, 158, 13, 0.55)",
+  background: "#f7f9fb",
+  hover: "#f0f3f7",
+  header: "#eef2f6",
+  divider: "#e2e7ed",
+  gridLine: "#e9edf1",
 };
 
 // the infectologist's verdict on a course, on the timeline

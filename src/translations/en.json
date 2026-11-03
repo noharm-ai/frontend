@@ -1649,7 +1649,7 @@
       "timelineAdd": "Add exam",
       "timelineSearch": "Search exam",
       "timelineRemove": "Remove {{name}} from the timeline",
-      "timelineResult": "result",
+      "timelineInRange": "in range",
       "timelineReferenceBand": "reference range",
       "timelineOutOfRange": "out of range",
       "timelineReference": "ref. {{min}} to {{max}}",

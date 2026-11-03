@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 import { EXAM_COLORS } from "../../courseColors";
 import { Row, RowLabel } from "../CourseGantt.style";
@@ -11,16 +11,23 @@ const MUTED = "#8c8c8c";
 const LINE = EXAM_COLORS.line;
 const ALERT = EXAM_COLORS.alert;
 
+// every row of the exams, across the label and the track, on a gray-blue of
+// its own: the antimicrobial rows stay white (Row, RowLabel)
+const examBlock = css`
+  --row-bg: ${EXAM_COLORS.background};
+  --row-hover: ${EXAM_COLORS.hover};
+  --grid-line: ${EXAM_COLORS.gridLine};
+`;
+
 // the exams under the courses start with a row naming them
 export const ExamGroupRow = styled(Row)`
-  background: #fafafa;
-  border-top: 1px solid #e0e0e0;
-  min-height: 32px;
+  ${examBlock}
+  /* a strip a shade darker than the rows, with no tint under the pointer */
+  --row-bg: ${EXAM_COLORS.header};
+  --row-hover: ${EXAM_COLORS.header};
 
-  /* the label is sticky over the track, so it carries the tint too */
-  > ${RowLabel} {
-    background-color: #fafafa;
-  }
+  border-top: 6px solid ${EXAM_COLORS.divider};
+  min-height: 32px;
 
   .exam-group {
     align-items: center;
@@ -43,6 +50,8 @@ export const ExamGroupRow = styled(Row)`
 
 // when the history failed to load
 export const ExamStateRow = styled(Row)`
+  ${examBlock}
+
   min-height: 48px;
 
   > ${RowLabel} {
@@ -54,6 +63,8 @@ export const ExamStateRow = styled(Row)`
 `;
 
 export const ExamRow = styled(Row)`
+  ${examBlock}
+
   min-height: ${EXAM_ROW_HEIGHT}px;
 
   .exam-label-name {
@@ -114,11 +125,18 @@ export const ExamRow = styled(Row)`
     fill: ${EXAM_COLORS.reference};
   }
 
+  .exam-reference-edge {
+    stroke: ${EXAM_COLORS.referenceOutline};
+    stroke-width: 1;
+  }
+
+  /* dashed, so nothing on the row reads as a solid course bar */
   .exam-line {
     fill: none;
     stroke: ${LINE};
+    stroke-dasharray: 4 3;
     stroke-linejoin: round;
-    stroke-width: 2;
+    stroke-width: 1.5;
   }
 
   .exam-point {
@@ -129,14 +147,16 @@ export const ExamRow = styled(Row)`
     fill: transparent;
   }
 
+  /* in range: hollow; out of it: filled in red with a white border */
   .exam-point-dot {
-    fill: ${LINE};
-    stroke: #fff;
+    fill: #fff;
+    stroke: ${LINE};
     stroke-width: 2;
   }
 
   .exam-point.alert .exam-point-dot {
     fill: ${ALERT};
+    stroke: #fff;
   }
 
   .exam-point:hover .exam-point-dot {

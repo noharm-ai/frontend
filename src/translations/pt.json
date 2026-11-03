@@ -1659,7 +1659,7 @@
       "timelineAdd": "Adicionar exame",
       "timelineSearch": "Buscar exame",
       "timelineRemove": "Remover {{name}} da linha do tempo",
-      "timelineResult": "resultado",
+      "timelineInRange": "dentro da referência",
       "timelineReferenceBand": "faixa de referência",
       "timelineOutOfRange": "fora da referência",
       "timelineReference": "ref. {{min}} a {{max}}",

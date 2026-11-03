@@ -55,9 +55,10 @@ const valueRange = (series: IExamSeries) => {
 };
 
 /**
- * The history of an exam on the days of the timeline, under the courses: a
- * line through its results on their own scale, the reference of the segment
- * as a band behind it, and the results out of it in red
+ * The history of an exam on the days of the timeline, under the courses, drawn
+ * as a chart and not as a bar: a dashed line through its results on their own
+ * scale, the reference of the segment as an outlined green band behind it, the
+ * results in it as hollow dots and the ones out of it filled in red
  */
 function ExamSparkline({
   series,
@@ -92,13 +93,26 @@ function ExamSparkline({
       aria-label={series.name}
     >
       {series.reference && (
-        <rect
-          className="exam-reference"
-          x={0}
-          width={width}
-          y={y(series.reference.max)}
-          height={y(series.reference.min) - y(series.reference.max)}
-        />
+        <g data-testid="exam-reference">
+          <rect
+            className="exam-reference"
+            x={0}
+            width={width}
+            y={y(series.reference.max)}
+            height={y(series.reference.min) - y(series.reference.max)}
+          />
+          {/* the outline along both limits, not across the ends of the row */}
+          {[series.reference.max, series.reference.min].map((limit) => (
+            <line
+              key={limit}
+              className="exam-reference-edge"
+              x1={0}
+              x2={width}
+              y1={y(limit)}
+              y2={y(limit)}
+            />
+          ))}
+        </g>
       )}
       <polyline
         className="exam-line"
