@@ -1651,6 +1651,7 @@
       "timelineHide": "Hide exams from the timeline",
       "timelineSearch": "Search exam",
       "timelineRemove": "Remove {{name}} from the timeline",
+      "timelineReferenceBand": "reference range",
       "timelineInRange": "in range",
       "timelineOutOfRange": "out of range",
       "timelineReference": "ref. {{min}} to {{max}}",

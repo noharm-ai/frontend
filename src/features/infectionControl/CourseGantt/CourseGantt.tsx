@@ -283,6 +283,10 @@ export function CourseGantt({
         <section>
           <h4>{t("infectionControl.exams.timelineGroup")}</h4>
           <span>
+            <i className="legend-exam-reference" />
+            {t("infectionControl.exams.timelineReferenceBand")}
+          </span>
+          <span>
             <i className="legend-exam-normal" />
             {t("infectionControl.exams.timelineInRange")}
           </span>

@@ -1661,6 +1661,7 @@
       "timelineHide": "Ocultar exames da linha do tempo",
       "timelineSearch": "Buscar exame",
       "timelineRemove": "Remover {{name}} da linha do tempo",
+      "timelineReferenceBand": "faixa de referência",
       "timelineInRange": "dentro da referência",
       "timelineOutOfRange": "fora da referência",
       "timelineReference": "ref. {{min}} a {{max}}",

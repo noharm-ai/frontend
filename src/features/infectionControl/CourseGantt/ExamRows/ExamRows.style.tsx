@@ -155,6 +155,26 @@ export const ExamRow = styled(Row)`
     z-index: 1;
   }
 
+  /* the reference shows only while the pointer is over the row, so the
+     results stand alone at a glance */
+  .exam-reference-band {
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  &:hover .exam-reference-band {
+    opacity: 1;
+  }
+
+  .exam-reference {
+    fill: ${EXAM_COLORS.reference};
+  }
+
+  .exam-reference-edge {
+    stroke: ${EXAM_COLORS.referenceOutline};
+    stroke-width: 1;
+  }
+
   /* dashed, so nothing on the row reads as a solid course bar */
   .exam-line {
     fill: none;

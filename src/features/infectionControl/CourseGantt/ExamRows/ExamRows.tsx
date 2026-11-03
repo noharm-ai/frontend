@@ -51,9 +51,12 @@ const PADDING = 10;
 
 const formatNumber = (value: number) => value.toLocaleString("pt-BR");
 
-// the results fit, with some room above and below
+// the results and the reference both fit, with some room above and below
 const valueRange = (series: IExamSeries) => {
   const values = series.points.map((point) => point.value);
+  if (series.reference) {
+    values.push(series.reference.min, series.reference.max);
+  }
   const min = Math.min(...values);
   const max = Math.max(...values);
   const pad = max > min ? (max - min) * 0.1 : Math.abs(max) * 0.1 || 1;
@@ -63,8 +66,9 @@ const valueRange = (series: IExamSeries) => {
 /**
  * The history of an exam on the days of the timeline, under the courses, drawn
  * as a chart and not as a bar: a dashed line through its results on their own
- * scale, the ones in the reference of the segment as hollow dots and the ones
- * out of it filled in red
+ * scale, the reference of the segment as an outlined green band behind it
+ * (while the pointer is over the row), the results in it as hollow dots and
+ * the ones out of it filled in red
  */
 function ExamSparkline({
   series,
@@ -89,6 +93,14 @@ function ExamSparkline({
       !dayjs(point.date).isBefore(range.start) &&
       dayjs(point.date).isBefore(range.end),
   );
+  // the reference spans the days with results, half a day past the first and
+  // the last, so a single result has one too (oldest first: toPoints)
+  const bandStart =
+    points.length > 0 ? Math.max(0, x(points[0].date) - DAY_WIDTH / 2) : 0;
+  const bandEnd =
+    points.length > 0
+      ? Math.min(width, x(points[points.length - 1].date) + DAY_WIDTH / 2)
+      : 0;
 
   return (
     <svg
@@ -98,6 +110,28 @@ function ExamSparkline({
       role="img"
       aria-label={series.name}
     >
+      {series.reference && points.length > 0 && (
+        <g className="exam-reference-band" data-testid="exam-reference">
+          <rect
+            className="exam-reference"
+            x={bandStart}
+            width={bandEnd - bandStart}
+            y={y(series.reference.max)}
+            height={y(series.reference.min) - y(series.reference.max)}
+          />
+          {/* the outline along both limits, not across the ends of the row */}
+          {[series.reference.max, series.reference.min].map((limit) => (
+            <line
+              key={limit}
+              className="exam-reference-edge"
+              x1={bandStart}
+              x2={bandEnd}
+              y1={y(limit)}
+              y2={y(limit)}
+            />
+          ))}
+        </g>
+      )}
       <polyline
         className="exam-line"
         points={points
