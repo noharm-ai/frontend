@@ -68,16 +68,21 @@ export const GanttGrid = styled.div`
 export const Row = styled.div`
   --bar-center: calc(50% - (var(--lanes, 1) - 1) * ${EVALUATION_LANE / 2}px);
 
+  /* the borders of the row, which the lines of today and the discharge
+     (Marker) cross so they run unbroken down the timeline */
+  --row-border-top: 0px;
+  --row-border-bottom: 1px;
+
   /* a block of rows can have a tint of its own (--row-bg, --row-hover) */
   background-color: var(--row-bg, transparent);
-  border-bottom: 1px solid ${GRID_LINE};
+  border-bottom: var(--row-border-bottom) solid ${GRID_LINE};
   display: flex;
   min-height: calc(
     ${ROW_HEIGHT}px + (var(--lanes, 1) - 1) * ${EVALUATION_LANE}px
   );
 
   &:last-child {
-    border-bottom: 0;
+    --row-border-bottom: 0px;
   }
 
   &.row-header {
@@ -483,11 +488,13 @@ export const EvaluationPending = styled.span`
   }
 `;
 
+// over the borders of its row too (Row), so the line does not break between
+// the rows
 export const Marker = styled.div`
-  bottom: 0;
+  bottom: calc(-1 * var(--row-border-bottom, 0px));
   pointer-events: none;
   position: absolute;
-  top: 0;
+  top: calc(-1 * var(--row-border-top, 0px));
   width: 0;
   z-index: 2;
 

@@ -26,7 +26,9 @@ export const ExamGroupRow = styled(Row)`
   --row-bg: ${EXAM_COLORS.header};
   --row-hover: ${EXAM_COLORS.header};
 
-  border-top: 6px solid ${EXAM_COLORS.divider};
+  --row-border-top: 6px;
+
+  border-top: var(--row-border-top) solid ${EXAM_COLORS.divider};
   min-height: 32px;
 
   .exam-group {
