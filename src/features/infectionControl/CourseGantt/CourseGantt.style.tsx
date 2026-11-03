@@ -667,10 +667,7 @@ export const Legend = styled.div`
 
   .legend-exam-reference {
     background: ${EXAM_COLORS.reference};
-    border-bottom: 1px solid ${EXAM_COLORS.referenceOutline};
-    border-radius: 0;
-    border-top: 1px solid ${EXAM_COLORS.referenceOutline};
-    box-sizing: border-box;
+    border-radius: 2px;
     height: 10px;
     width: 18px;
   }

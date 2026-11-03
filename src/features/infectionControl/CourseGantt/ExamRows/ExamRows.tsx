@@ -66,8 +66,8 @@ const valueRange = (series: IExamSeries) => {
 /**
  * The history of an exam on the days of the timeline, under the courses, drawn
  * as a chart and not as a bar: a dashed line through its results on their own
- * scale, the reference of the segment as an outlined green band behind it
- * (while the pointer is over the row), the results in it as hollow dots and
+ * scale, the reference of the segment as a green band behind it,
+ * what lies out of it tinted red (while the pointer is over the row), the results in it as hollow dots and
  * the ones out of it filled in red
  */
 function ExamSparkline({
@@ -112,6 +112,21 @@ function ExamSparkline({
     >
       {series.reference && points.length > 0 && (
         <g className="exam-reference-band" data-testid="exam-reference">
+          {/* out of the reference: above its top and below its bottom */}
+          <rect
+            className="exam-reference-out"
+            x={bandStart}
+            width={bandEnd - bandStart}
+            y={0}
+            height={Math.max(0, y(series.reference.max))}
+          />
+          <rect
+            className="exam-reference-out"
+            x={bandStart}
+            width={bandEnd - bandStart}
+            y={y(series.reference.min)}
+            height={Math.max(0, height - y(series.reference.min))}
+          />
           <rect
             className="exam-reference"
             x={bandStart}
@@ -119,17 +134,6 @@ function ExamSparkline({
             y={y(series.reference.max)}
             height={y(series.reference.min) - y(series.reference.max)}
           />
-          {/* the outline along both limits, not across the ends of the row */}
-          {[series.reference.max, series.reference.min].map((limit) => (
-            <line
-              key={limit}
-              className="exam-reference-edge"
-              x1={bandStart}
-              x2={bandEnd}
-              y1={y(limit)}
-              y2={y(limit)}
-            />
-          ))}
         </g>
       )}
       <polyline
