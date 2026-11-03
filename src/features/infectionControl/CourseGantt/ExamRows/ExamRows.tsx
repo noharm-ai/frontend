@@ -2,7 +2,12 @@ import { ReactNode, useState } from "react";
 import dayjs from "dayjs";
 import { useTranslation } from "react-i18next";
 import { Button, Popover, Select, Tooltip } from "antd";
-import { CloseOutlined, PlusOutlined, ReloadOutlined } from "@ant-design/icons";
+import {
+  CloseOutlined,
+  DownOutlined,
+  PlusOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
 
 import NumericValue from "components/NumericValue";
 import { formatDate } from "utils/date";
@@ -35,6 +40,10 @@ interface ExamRowsProps extends IGanttExams {
   range: ITimelineRange;
   // the lines of today and the discharge, as the course rows have them
   markers: ReactNode;
+  // the viewer hid the exams: the header alone stays, to show them again
+  hidden?: boolean;
+  // the switch on the header; none when the timeline is embedded (compact)
+  onToggleHidden?: (show: boolean) => void;
 }
 
 // the line keeps clear of the row's edges
@@ -174,9 +183,11 @@ export function ExamRows({
   status,
   range,
   markers,
+  hidden = false,
   onAdd,
   onRemove,
   onRetry,
+  onToggleHidden,
 }: ExamRowsProps) {
   const { t } = useTranslation();
   const [adding, setAdding] = useState(false);
@@ -220,14 +231,39 @@ export function ExamRows({
     >
       <RowLabel>
         <div className="exam-group">
-          <span className="exam-group-title">
-            {t("infectionControl.exams.timelineGroup")}
-          </span>
-          {options.length > 0 && (
+          {onToggleHidden ? (
+            // an accordion: the title collapses the section to this header
+            <Tooltip
+              placement="topLeft"
+              title={t(
+                hidden
+                  ? "infectionControl.exams.timelineShow"
+                  : "infectionControl.exams.timelineHide",
+              )}
+            >
+              <button
+                type="button"
+                className={`exam-group-collapse ${hidden ? "collapsed" : ""}`}
+                data-testid="toggle-exams"
+                aria-expanded={!hidden}
+                onClick={() => onToggleHidden(hidden)}
+              >
+                <DownOutlined className="exam-group-chevron" />
+                <span className="exam-group-title">
+                  {t("infectionControl.exams.timelineGroup")}
+                </span>
+              </button>
+            </Tooltip>
+          ) : (
+            <span className="exam-group-title">
+              {t("infectionControl.exams.timelineGroup")}
+            </span>
+          )}
+          {!hidden && options.length > 0 && (
             <Popover
               content={picker}
               trigger="click"
-              placement="bottomLeft"
+              placement="bottomRight"
               open={adding}
               onOpenChange={openPicker}
               destroyOnHidden
@@ -249,6 +285,8 @@ export function ExamRows({
       <Track $days={range.days.length}>{markers}</Track>
     </ExamGroupRow>
   );
+
+  if (hidden) return group;
 
   if (status === "failed") {
     return (

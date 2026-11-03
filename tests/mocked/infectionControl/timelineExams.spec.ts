@@ -233,6 +233,56 @@ test("plots CKD-EPI 2021 where CKD-EPI is not configured", async ({
   await expect(examRows(page).nth(1)).toContainText("Leucócitos");
 });
 
+test("hides the exams from the timeline and remembers it", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override(TIMELINE, { json: timeline("199") });
+  mockApi.override(EXAMS_HISTORY, {
+    json: history({ pcr_s: CRP, leuco: LEUKOCYTES }),
+  });
+
+  await page.goto(PAGE_URL);
+
+  await expect(examRows(page)).toHaveCount(2, { timeout: 15000 });
+  // the header of the exams collapses them, as an accordion
+  const group = page.getByTestId("exam-timeline-group");
+  const toggle = group.getByTestId("toggle-exams");
+  await expect(toggle).toHaveAttribute("aria-expanded", "true");
+
+  await toggle.click();
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await expect(examRows(page)).toHaveCount(0);
+  // the header stays, to show them again, without adding any
+  await expect(group).toBeVisible();
+  await expect(
+    group.getByRole("button", { name: "Adicionar exame" }),
+  ).toHaveCount(0);
+  await expect(
+    antimicrobialTimeline(page).getByTestId("course-row"),
+  ).toHaveCount(1);
+  // nor does the legend explain them
+  await antimicrobialTimeline(page)
+    .getByRole("button", { name: "Legenda" })
+    .click();
+  await expect(
+    page
+      .locator('[data-kb="infectionControl.antimicrobials.legend"]')
+      .getByText("faixa de referência"),
+  ).toHaveCount(0);
+
+  // still hidden on the next visit, until shown again
+  await page.reload();
+  await expect(
+    antimicrobialTimeline(page).getByTestId("course-row"),
+  ).toHaveCount(1, { timeout: 15000 });
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  await expect(examRows(page)).toHaveCount(0);
+
+  await toggle.click();
+  await expect(examRows(page)).toHaveCount(2);
+});
+
 test("adds any exam of the history with + and takes them out", async ({
   page,
   mockApi,
@@ -340,6 +390,8 @@ test("shows no exams group when the history has no numeric exam", async ({
     .poll(() => mockApi.requests.some((r) => r.path === `/exams/${ADMISSION}`))
     .toBe(true);
   await expect(page.getByTestId("exam-timeline-group")).toHaveCount(0);
+  // nothing to hide
+  await expect(page.getByTestId("toggle-exams")).toHaveCount(0);
 });
 
 test("retries the exam history when it fails to load", async ({

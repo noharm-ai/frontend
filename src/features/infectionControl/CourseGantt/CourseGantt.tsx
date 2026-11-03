@@ -55,6 +55,30 @@ interface CourseGanttProps {
   exams?: IGanttExams | null;
 }
 
+// whether the exams under the courses are hidden: a preference of the viewer,
+// kept in this browser for every patient (storage may be unavailable)
+const EXAMS_HIDDEN_KEY = "infectionControl.timeline.examsHidden";
+
+const readExamsHidden = () => {
+  try {
+    return localStorage.getItem(EXAMS_HIDDEN_KEY) === "1";
+  } catch {
+    return false;
+  }
+};
+
+const saveExamsHidden = (hidden: boolean) => {
+  try {
+    if (hidden) {
+      localStorage.setItem(EXAMS_HIDDEN_KEY, "1");
+    } else {
+      localStorage.removeItem(EXAMS_HIDDEN_KEY);
+    }
+  } catch {
+    // not kept: it holds for this visit only
+  }
+};
+
 // how far before the first course the exams are plotted
 const EXAM_LOOKBACK_DAYS = 7;
 
@@ -110,16 +134,22 @@ export function CourseGantt({
       : null;
 
   const rows = useMemo(() => groupCourseRows(courses), [courses]);
-  const showExams =
+  const hasExams =
     !!exams &&
     (exams.status === "failed" ||
       exams.series.length > 0 ||
       exams.options.length > 0);
+  const [examsHidden, setExamsHidden] = useState(readExamsHidden);
+  const toggleExams = (show: boolean) => {
+    setExamsHidden(!show);
+    saveExamsHidden(!show);
+  };
+  const showExams = hasExams && !examsHidden;
   // the timeline reaches the results of the exams it plots, from a few days
   // before the first course (the baseline before the antimicrobial) on; the
   // older ones are left out, so the courses stay in sight
   const examDates = useMemo(() => {
-    if (!exams || courses.length === 0) return [];
+    if (!exams || !showExams || courses.length === 0) return [];
     const firstStart = Math.min(
       ...courses.map((course) => dayjs(course.start).valueOf()),
     );
@@ -129,7 +159,7 @@ export function CourseGantt({
     return exams.series
       .flatMap((item) => item.points.map((point) => point.date))
       .filter((date) => !dayjs(date).isBefore(since));
-  }, [exams, courses]);
+  }, [exams, showExams, courses]);
   const range = useMemo(
     () =>
       getTimelineRange(
@@ -249,7 +279,7 @@ export function CourseGantt({
           {t("infectionControl.timeline.legendChange")}
         </span>
       </section>
-      {!!exams?.series.length && (
+      {showExams && !!exams?.series.length && (
         <section>
           <h4>{t("infectionControl.exams.timelineGroup")}</h4>
           <span>
@@ -469,7 +499,17 @@ export function CourseGantt({
             );
           })}
 
-          {showExams && <ExamRows {...exams} range={range} markers={markers} />}
+          {/* hidden, the header of the exams stays to show them again; an
+              embedded timeline has no switch, so it leaves them out */}
+          {hasExams && (!compact || !examsHidden) && (
+            <ExamRows
+              {...exams}
+              range={range}
+              markers={markers}
+              hidden={examsHidden}
+              onToggleHidden={compact ? undefined : toggleExams}
+            />
+          )}
         </GanttGrid>
       </GanttScroll>
 

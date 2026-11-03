@@ -1657,6 +1657,8 @@
       "noResult": "sem resultado",
       "timelineGroup": "Exames",
       "timelineAdd": "Adicionar exame",
+      "timelineShow": "Mostrar exames na linha do tempo",
+      "timelineHide": "Ocultar exames da linha do tempo",
       "timelineSearch": "Buscar exame",
       "timelineRemove": "Remover {{name}} da linha do tempo",
       "timelineInRange": "dentro da referência",

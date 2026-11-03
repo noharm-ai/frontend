@@ -43,8 +43,40 @@ export const ExamGroupRow = styled(Row)`
     text-transform: uppercase;
   }
 
+  /* at the right end, over the buttons that take each exam out */
   .exam-group-add {
     color: ${MUTED};
+    margin-left: auto;
+  }
+
+  .exam-group-collapse {
+    align-items: center;
+    background: none;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    gap: 6px;
+    margin-left: -4px;
+    padding: 2px 4px;
+
+    &:hover {
+      background: rgba(46, 60, 90, 0.06);
+    }
+
+    &:focus-visible {
+      outline: 2px solid ${INK};
+    }
+  }
+
+  .exam-group-chevron {
+    color: ${MUTED};
+    font-size: 10px;
+    transition: transform 0.2s;
+  }
+
+  .exam-group-collapse.collapsed .exam-group-chevron {
+    transform: rotate(-90deg);
   }
 `;
 
