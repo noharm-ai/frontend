@@ -1827,7 +1827,7 @@
       "label": "Indication: {{indication}}",
       "treatmentType": "Treatment type",
       "focus": "Infection focus",
-      "focusPlaceholder": "Select the infection focus",
+      "focusPlaceholder": "Select one or more infection foci",
       "treatmentTypes": {
         "1": "Empirical",
         "2": "Culture-guided",

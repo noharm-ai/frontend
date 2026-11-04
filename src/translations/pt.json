@@ -1837,7 +1837,7 @@
       "label": "Indicação: {{indication}}",
       "treatmentType": "Tipo de tratamento",
       "focus": "Foco infeccioso",
-      "focusPlaceholder": "Selecione o foco infeccioso",
+      "focusPlaceholder": "Selecione um ou mais focos infecciosos",
       "treatmentTypes": {
         "1": "Empírico",
         "2": "Guiado por cultura",

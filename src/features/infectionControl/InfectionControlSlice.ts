@@ -240,11 +240,11 @@ export interface IAntimicrobialEvaluation {
   // the interventions it recorded on the drug
   interventions?: IEvaluationIntervention[];
   notes: string | null;
-  // why the drug is given (AntimicrobialTreatmentTypeEnum) and the infection
-  // it is given for (InfectionFocusEnum); empty in evaluations made before
-  // they were asked, and the focus of a prophylaxis may be empty
+  // why the drug is given (AntimicrobialTreatmentTypeEnum) and the infections
+  // it is given for (InfectionFocusEnum, one or more); empty in evaluations
+  // made before they were asked, and the foci of a prophylaxis may be empty
   treatmentType?: number | null;
-  infectionFocus?: number | null;
+  infectionFoci?: number[];
   posology: IEvaluationPosology;
   // when the verdict starts to apply: the review, or earlier when backdated
   validFrom: string;
@@ -313,8 +313,8 @@ export interface IReviewEvaluationPayload {
   notes: string | null;
   // AntimicrobialTreatmentTypeEnum
   treatmentType: number;
-  // InfectionFocusEnum, null only for a prophylaxis
-  infectionFocus: number | null;
+  // InfectionFocusEnum, one or more; empty only for a prophylaxis
+  infectionFoci: number[];
   // between the course start and now; null applies it from the review
   validFrom: string | null;
   validUntil: string;

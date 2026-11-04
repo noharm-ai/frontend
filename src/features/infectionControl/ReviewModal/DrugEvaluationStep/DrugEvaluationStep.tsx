@@ -366,7 +366,7 @@ export function DrugEvaluationStep({
               <div className="drug-notes-header">
                 <label
                   className="drug-section-title"
-                  htmlFor={field("infectionFocus")}
+                  htmlFor={field("infectionFoci")}
                 >
                   {t("infectionControl.indication.focus")}
                 </label>
@@ -381,16 +381,15 @@ export function DrugEvaluationStep({
                 </span>
               </div>
               <Select
-                id={field("infectionFocus")}
-                showSearch
+                id={field("infectionFoci")}
+                mode="multiple"
                 allowClear
                 optionFilterProp="label"
                 style={{ width: "100%" }}
                 placeholder={t("infectionControl.indication.focusPlaceholder")}
-                // the placeholder shows only for undefined
-                value={evaluation.infectionFocus ?? undefined}
+                value={evaluation.infectionFoci}
                 onChange={(value: any) =>
-                  setFieldValue(field("infectionFocus"), value ?? null)
+                  setFieldValue(field("infectionFoci"), value ?? [])
                 }
                 options={InfectionFocusEnum.list.map((focus) => ({
                   value: focus,

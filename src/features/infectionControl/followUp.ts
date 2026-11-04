@@ -33,18 +33,19 @@ export const infectionFocusLabel = (focus: number, t: TFunction) =>
   t(`infectionControl.indication.foci.${focus}`, { defaultValue: `${focus}` });
 
 /**
- * Why the drug is given and the infection focus, as "Empírico · Urinário";
- * null for an evaluation made before they were asked
+ * Why the drug is given and the infection foci, as "Empírico · Urinário,
+ * Abdominal"; null for an evaluation made before they were asked
  */
 export const describeIndication = (
-  indication: { treatmentType?: number | null; infectionFocus?: number | null },
+  indication: { treatmentType?: number | null; infectionFoci?: number[] },
   t: TFunction,
 ) =>
   [
     indication.treatmentType != null &&
       treatmentTypeLabel(indication.treatmentType, t),
-    indication.infectionFocus != null &&
-      infectionFocusLabel(indication.infectionFocus, t),
+    (indication.infectionFoci ?? [])
+      .map((focus) => infectionFocusLabel(focus, t))
+      .join(", "),
   ]
     .filter(Boolean)
     .join(" · ") || null;

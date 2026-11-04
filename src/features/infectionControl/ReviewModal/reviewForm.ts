@@ -70,9 +70,9 @@ export interface IDrugEvaluationFields {
   notes: string;
   // why the drug is given (AntimicrobialTreatmentTypeEnum)
   treatmentType: number | null;
-  // the infection it is given for (InfectionFocusEnum), optional for a
-  // prophylaxis
-  infectionFocus: number | null;
+  // the infections it is given for (InfectionFocusEnum, one or more),
+  // optional for a prophylaxis
+  infectionFoci: number[];
   // the intervention reasons of a non-conformity
   interventionReasons: number[];
   // record an intervention on the drug with those reasons
@@ -253,7 +253,7 @@ export const getInitialValues = (
         // the indication seldom changes within a course: the one on record
         // comes filled, to be changed when it did (e.g. guided by a culture)
         treatmentType: course.evaluation?.treatmentType ?? null,
-        infectionFocus: course.evaluation?.infectionFocus ?? null,
+        infectionFoci: course.evaluation?.infectionFoci ?? [],
         interventionReasons: [],
         // a non-conformity records an intervention unless unchecked
         createIntervention: true,
@@ -341,16 +341,14 @@ export const getEvaluationSchema = (
           then: (schema) =>
             schema.required(t("infectionControl.review.treatmentTypeRequired")),
         }),
-      infectionFocus: Yup.number()
-        .nullable()
+      infectionFoci: Yup.array()
+        .of(Yup.number())
         .when(["evaluate", "treatmentType"], {
           is: (evaluate: boolean, treatmentType: number | null) =>
             evaluate &&
             !AntimicrobialTreatmentTypeEnum.isProphylaxis(treatmentType),
           then: (schema) =>
-            schema.required(
-              t("infectionControl.review.infectionFocusRequired"),
-            ),
+            schema.min(1, t("infectionControl.review.infectionFocusRequired")),
         }),
       // a non-conformity is given its reasons and justified
       interventionReasons: Yup.array()
@@ -498,7 +496,7 @@ export const toReviewPayload = (
         : null,
       notes: e.notes.trim() || null,
       treatmentType: e.treatmentType!,
-      infectionFocus: e.infectionFocus,
+      infectionFoci: e.infectionFoci,
       validFrom: getValidFrom(e),
       // the evaluation holds through the whole chosen day
       validUntil: getValidUntil(e)!.endOf("day").format("YYYY-MM-DDTHH:mm:ss"),
