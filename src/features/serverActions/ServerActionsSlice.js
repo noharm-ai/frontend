@@ -91,6 +91,20 @@ export const updateAllergySubstance = createAsyncThunk(
   },
 );
 
+// no reducer: fetched on each open, so maintainers see admin changes at once
+export const getSchemaParams = createAsyncThunk(
+  "serverActions/get-schema-params",
+  async (_params, thunkAPI) => {
+    try {
+      const response = await api.schemaParams.get();
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  },
+);
+
 export const traceProtocol = createAsyncThunk(
   "serverActions/trace-protocol",
   /**

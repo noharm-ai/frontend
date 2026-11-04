@@ -431,6 +431,41 @@
     "substanceUpdated_one": "Substance changed in {{count}} record",
     "substanceUpdated_other": "Substance changed in {{count}} records"
   },
+  "schemaParams": {
+    "open": "Parameters",
+    "statusFound": "Institution parameters",
+    "statusNotFound": "No parameters: default values",
+    "statusReadError": "The parameters could not be read; the default values are in use",
+    "invalidSections": "Invalid sections, with the default values in use: {{sections}}",
+    "loadError": "The parameters could not be loaded",
+    "alerts": "Alerts",
+    "interactions": "Interactions",
+    "type": "Type",
+    "kind": "Type",
+    "state": "Status",
+    "enabled": "On",
+    "disabled": "Off",
+    "level": "Level",
+    "defaultLevel": "default",
+    "ignoreLevels": "Ignored levels",
+    "ignoreFrequencies": "Ignored frequencies",
+    "requireIntervalIntersection": "Requires a shared time",
+    "yes": "Yes",
+    "no": "No",
+    "none": "none",
+    "notApplicable": "not applicable",
+    "custom": "custom",
+    "kidneyExams": "Kidney adjustment exams",
+    "adultExams": "Adult",
+    "pediatricExams": "Pediatric",
+    "footer": "Changes are made in Admin, under Parameters.",
+    "json": "JSON (custom values only)",
+    "frequency": {
+      "33": "PRN",
+      "44": "At discretion",
+      "66": "Now"
+    }
+  },
   "maintainerBadge": {
     "label": "Maintainer",
     "tooltip": "Only visible to maintainers (Admin and Curator). Client users have no access: do not recommend this action to them."
@@ -440,6 +475,7 @@
     "addDrugMeasureUnit": "Add Drug Unit",
     "interactionTrace": "Interaction evaluation explanation",
     "allergyRecords": "Patient allergy records",
+    "schemaParams": "Parameters",
     "protocolTrace": "Protocol evaluation explanation",
     "protocolTest": "Test protocol",
     "protocolTestResults": "Test results"

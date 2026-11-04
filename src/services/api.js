@@ -647,6 +647,13 @@ api.prescription.updateAllergySubstance = (params) =>
   instance.put(`/allergy-records/substance`, params, setHeaders());
 
 /**
+ * Schema params (read only: edited in admin)
+ */
+api.schemaParams = {};
+// the schema comes from the token
+api.schemaParams.get = () => instance.get(`/schema-params`, setHeaders());
+
+/**
  * Conciliation
  */
 api.conciliation = {};
