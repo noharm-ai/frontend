@@ -397,6 +397,13 @@ export const DrugEvaluation = styled.div`
     gap: 12px;
   }
 
+  /* why the drug is given and the infection focus */
+  .drug-indication {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
   /* a choice told in a line, opened to change it: the period, the triggers */
   .drug-option-box {
     background: #fafafa;

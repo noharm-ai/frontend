@@ -1832,6 +1832,36 @@
         "6": "posologia alterada"
       }
     },
+    "indication": {
+      "title": "Indicação",
+      "label": "Indicação: {{indication}}",
+      "treatmentType": "Tipo de tratamento",
+      "focus": "Foco infeccioso",
+      "focusPlaceholder": "Selecione o foco infeccioso",
+      "treatmentTypes": {
+        "1": "Empírico",
+        "2": "Guiado por cultura",
+        "3": "Profilaxia cirúrgica",
+        "4": "Profilaxia clínica"
+      },
+      "foci": {
+        "1": "Respiratório inferior (pneumonia)",
+        "2": "Vias aéreas superiores",
+        "3": "Urinário",
+        "4": "Abdominal",
+        "5": "Gastrointestinal",
+        "6": "Pele e partes moles",
+        "7": "Osteoarticular",
+        "8": "Corrente sanguínea / cateter",
+        "9": "Sistema nervoso central",
+        "10": "Cardiovascular (endocardite)",
+        "11": "Sítio cirúrgico",
+        "12": "Ginecológico / obstétrico",
+        "13": "Neutropenia febril",
+        "14": "Sem foco definido",
+        "15": "Outro"
+      }
+    },
     "review": {
       "title": "Registrar revisão",
       "antimicrobials": "Antimicrobianos · {{count}}",
@@ -1955,7 +1985,13 @@
       "hintNoPermission": "Você não tem permissão para registrar revisões",
       "nextDrug": "Próximo antimicrobiano",
       "nextPatient": "Próximo: paciente",
-      "save": "Registrar revisão"
+      "save": "Registrar revisão",
+      "requiredMale": "obrigatório",
+      "optionalMale": "opcional",
+      "treatmentTypeRequired": "Informe o tipo de tratamento",
+      "infectionFocusRequired": "Informe o foco infeccioso",
+      "hintTreatmentType": "Informe o tipo de tratamento",
+      "hintInfectionFocus": "Informe o foco infeccioso"
     },
     "clinicalNote": {
       "stepTitle": "Evolução",

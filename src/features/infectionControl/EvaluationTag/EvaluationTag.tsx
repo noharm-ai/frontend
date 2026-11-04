@@ -9,6 +9,7 @@ import {
   IFollowUpPending,
 } from "../InfectionControlSlice";
 import {
+  describeIndication,
   describeInvalidation,
   describeReasons,
   describeSubstitute,
@@ -74,6 +75,7 @@ export function EvaluationTag({
       data-testid="evaluation-tag"
       title={
         [
+          describeIndication(evaluation, t),
           describeReasons(evaluation),
           describeSubstitute(evaluation) &&
             t("infectionControl.evaluation.substitute", {

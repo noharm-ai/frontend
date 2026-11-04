@@ -1822,6 +1822,36 @@
         "6": "posology changed"
       }
     },
+    "indication": {
+      "title": "Indication",
+      "label": "Indication: {{indication}}",
+      "treatmentType": "Treatment type",
+      "focus": "Infection focus",
+      "focusPlaceholder": "Select the infection focus",
+      "treatmentTypes": {
+        "1": "Empirical",
+        "2": "Culture-guided",
+        "3": "Surgical prophylaxis",
+        "4": "Medical prophylaxis"
+      },
+      "foci": {
+        "1": "Lower respiratory (pneumonia)",
+        "2": "Upper respiratory",
+        "3": "Urinary",
+        "4": "Abdominal",
+        "5": "Gastrointestinal",
+        "6": "Skin and soft tissue",
+        "7": "Bone and joint",
+        "8": "Bloodstream / catheter",
+        "9": "Central nervous system",
+        "10": "Cardiovascular (endocarditis)",
+        "11": "Surgical site",
+        "12": "Gynecologic / obstetric",
+        "13": "Febrile neutropenia",
+        "14": "Unknown focus",
+        "15": "Other"
+      }
+    },
     "review": {
       "title": "Register review",
       "antimicrobials": "Antimicrobials · {{count}}",
@@ -1945,7 +1975,13 @@
       "hintNoPermission": "You are not allowed to register reviews",
       "nextDrug": "Next antimicrobial",
       "nextPatient": "Next: patient",
-      "save": "Register review"
+      "save": "Register review",
+      "requiredMale": "required",
+      "optionalMale": "optional",
+      "treatmentTypeRequired": "Inform the treatment type",
+      "infectionFocusRequired": "Inform the infection focus",
+      "hintTreatmentType": "Inform the treatment type",
+      "hintInfectionFocus": "Inform the infection focus"
     },
     "clinicalNote": {
       "stepTitle": "Clinical note",
