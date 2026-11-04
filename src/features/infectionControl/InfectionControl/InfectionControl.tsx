@@ -15,7 +15,6 @@ import {
 import dayjs from "dayjs";
 
 import { useAppDispatch, useAppSelector } from "src/store";
-import LoadBox, { LoadContainer } from "components/LoadBox";
 import PatientNameCache from "components/PatientName/PatientNameCache";
 import notification from "components/notification";
 import Permission from "models/Permission";
@@ -27,6 +26,7 @@ import { useIsMobile } from "hooks/useIsMobile";
 
 import {
   fetchAntimicrobialTimeline,
+  fetchExamHistory,
   fetchFollowUp,
   fetchRecentCultures,
   followAdmission,
@@ -45,6 +45,8 @@ import { InfectionControlCultures } from "../InfectionControlCultures/InfectionC
 import { InfectionControlExams } from "../InfectionControlExams/InfectionControlExams";
 import { InfectionControlPatient } from "../InfectionControlPatient/InfectionControlPatient";
 import { InfectionControlReportModal } from "../InfectionControlReportModal/InfectionControlReportModal";
+import { InfectionControlSkeleton } from "../InfectionControlSkeleton/InfectionControlSkeleton";
+import { Bone } from "../InfectionControlSkeleton/InfectionControlSkeleton.style";
 import { ReviewModal } from "../ReviewModal/ReviewModal";
 import {
   getDrugNames,
@@ -52,6 +54,7 @@ import {
   getInvalidatedEvaluations,
 } from "../followUp";
 import { sortCourses } from "../timeline";
+import { getDefaultExamIds, getExamOptions, toExamSeries } from "../exams";
 import {
   CulturesAndExams,
   FollowUpError,
@@ -87,6 +90,9 @@ export function InfectionControl() {
   const followStatus = useAppSelector(
     (state) => state.infectionControl.follow.status,
   );
+  const examHistory = useAppSelector(
+    (state) => state.infectionControl.examHistory,
+  );
 
   const [clinicalNotesOpen, setClinicalNotesOpen] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
@@ -95,6 +101,9 @@ export function InfectionControl() {
   // phones show the courses as a list, the timeline being too wide to read;
   // it is still one tap away
   const [coursesView, setCoursesView] = useState<"list" | "timeline">("list");
+  // the exams on the timeline, by IExamOption id; null until one is added or
+  // taken out, the default ones (getDefaultExamIds) meanwhile
+  const [examIds, setExamIds] = useState<string[] | null>(null);
 
   const isValid = /^\d+$/.test(admissionNumber);
 
@@ -118,6 +127,7 @@ export function InfectionControl() {
       dispatch(reset());
       setClinicalNotesOpen(false);
       setReportOpen(false);
+      setExamIds(null);
       dispatch(setExamsModalAdmissionNumber(null));
     };
   }, [admissionNumber]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -161,6 +171,47 @@ export function InfectionControl() {
   // an admission with no prescription has no segment to read the exam
   // references from
   const hasExams = !!data?.patient.idPrescription;
+
+  const loadExamHistory = () => {
+    dispatch(
+      fetchExamHistory({
+        admissionNumber,
+        idSegment: data?.patient.idSegment ?? null,
+      }),
+    );
+  };
+
+  // the timeline plots some exams under the courses (getTimelineExams), from
+  // the history "Ver todos" shows: loaded once the timeline brings the segment
+  // to read their references from. A reset (another admission) makes it idle
+  // again
+  useEffect(() => {
+    if (status === "succeeded" && hasExams && examHistory.status === "idle") {
+      loadExamHistory();
+    }
+  }, [status, hasExams, examHistory.status]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const examOptions = useMemo(
+    () => getExamOptions(examHistory.list),
+    [examHistory.list],
+  );
+  const timelineExams = useMemo(() => {
+    if (!hasExams) return null;
+
+    const ids = examIds ?? getDefaultExamIds(examOptions);
+    const plotted = ids
+      .map((id) => examOptions.find((option) => option.id === id))
+      .filter((option) => !!option);
+
+    return {
+      series: plotted.map(toExamSeries),
+      options: examOptions.filter((option) => !ids.includes(option.id)),
+      status: examHistory.status,
+      onAdd: (id: string) => setExamIds([...ids, id]),
+      onRemove: (id: string) => setExamIds(ids.filter((item) => item !== id)),
+      onRetry: loadExamHistory,
+    };
+  }, [hasExams, examIds, examOptions, examHistory.status]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // the next one of the worklist the page came from, by its filters
   const showNextPending =
@@ -301,6 +352,17 @@ export function InfectionControl() {
           </Dropdown>
         </div>
       )}
+      {/* the actions keep their place while the timeline loads (wrapped below
+          the title on phones) */}
+      {(status === "idle" || status === "loading") && isValid && (
+        <div
+          className="page-header-actions header-actions-skeleton"
+          aria-hidden
+        >
+          <Bone $width={120} $height={32} $radius={6} />
+          <Bone $width={124} $height={32} $radius={6} />
+        </div>
+      )}
     </Header>
   );
 
@@ -358,9 +420,7 @@ export function InfectionControl() {
     return (
       <>
         {header}
-        <LoadContainer>
-          <LoadBox $absolute={true} />
-        </LoadContainer>
+        <InfectionControlSkeleton />
       </>
     );
   }
@@ -429,6 +489,7 @@ export function InfectionControl() {
             followUps={followUpCourses}
             invalidatedEvaluations={invalidatedEvaluations}
             actions={coursesViewToggle}
+            exams={timelineExams}
           />
         )}
       </Section>

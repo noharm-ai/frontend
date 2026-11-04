@@ -25,8 +25,18 @@ export const Header = styled(PageHeader)`
     }
   }
 
+  /* the placeholders of the actions while the page loads */
+  .header-actions-skeleton {
+    display: flex;
+  }
+
   @media (max-width: 768px) {
     flex-wrap: wrap;
+
+    .header-actions-skeleton {
+      gap: 4px;
+    }
+
     gap: 12px;
 
     .page-header-actions > * {

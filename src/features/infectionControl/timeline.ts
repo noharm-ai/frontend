@@ -21,14 +21,18 @@ export interface ITimelineRange {
  * The days the timeline spans: from the day before the first course up to
  * whatever comes last among today (or the discharge), the end of the courses,
  * their planned ends and any other date it must reach (`extraEnds`, e.g. how
- * long an evaluation stays valid).
+ * long an evaluation stays valid). `extraStarts` are dates it must reach back
+ * to (e.g. the exams plotted on it), as if a course started there.
  */
 export const getTimelineRange = (
   courses: ICourse[],
   reference: Dayjs,
   extraEnds: string[] = [],
+  extraStarts: string[] = [],
 ): ITimelineRange => {
-  const starts = courses.map((c) => dayjs(c.start).valueOf());
+  const starts = [...courses.map((c) => c.start), ...extraStarts].map((d) =>
+    dayjs(d).valueOf(),
+  );
   const ends = [...courses.flatMap((c) => [c.end, c.plannedEnd]), ...extraEnds]
     .filter(Boolean)
     .map((d) => dayjs(d).valueOf());

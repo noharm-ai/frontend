@@ -2,6 +2,11 @@
   "welcome": {
     "title": "Bem-vindo à NoHarm"
   },
+  "appVersion": {
+    "title": "Nova versão disponível",
+    "description": "A NoHarm foi atualizada. A nova versão será carregada na próxima troca de tela.",
+    "reload": "Atualizar agora"
+  },
   "login": {
     "email": "Email",
     "password": "Senha",
@@ -426,6 +431,41 @@
     "substanceUpdated_one": "Substância alterada em {{count}} registro",
     "substanceUpdated_other": "Substância alterada em {{count}} registros"
   },
+  "schemaParams": {
+    "open": "Parametrização",
+    "statusFound": "Parametrização da instituição",
+    "statusNotFound": "Sem parametrização: valores padrão",
+    "statusReadError": "Não foi possível ler a parametrização; os valores padrão estão em uso",
+    "invalidSections": "Seções inválidas, com os valores padrão em uso: {{sections}}",
+    "loadError": "Não foi possível carregar a parametrização",
+    "alerts": "Alertas",
+    "interactions": "Interações",
+    "type": "Tipo",
+    "kind": "Tipo",
+    "state": "Situação",
+    "enabled": "Ligado",
+    "disabled": "Desligado",
+    "level": "Nível",
+    "defaultLevel": "padrão",
+    "ignoreLevels": "Níveis ignorados",
+    "ignoreFrequencies": "Frequências ignoradas",
+    "requireIntervalIntersection": "Exige horário em comum",
+    "yes": "Sim",
+    "no": "Não",
+    "none": "nenhum",
+    "notApplicable": "não se aplica",
+    "custom": "personalizado",
+    "kidneyExams": "Exames do ajuste renal",
+    "adultExams": "Adulto",
+    "pediatricExams": "Pediátrico",
+    "footer": "Alterações são feitas no Admin, em Parametrização.",
+    "json": "JSON (somente o personalizado)",
+    "frequency": {
+      "33": "SN",
+      "44": "ACM",
+      "66": "Agora"
+    }
+  },
   "maintainerBadge": {
     "label": "Mantenedor",
     "tooltip": "Visível apenas para mantenedores (Administrador e Curadoria). Usuários do cliente não têm acesso: não recomende esta ação a eles."
@@ -435,6 +475,7 @@
     "addDrugMeasureUnit": "Adicionar Unidade de Medida",
     "interactionTrace": "Explicação das interações",
     "allergyRecords": "Registros de alergia do paciente",
+    "schemaParams": "Parametrização",
     "protocolTrace": "Explicação da avaliação de protocolos",
     "protocolTest": "Testar protocolo",
     "protocolTestResults": "Resultados do teste"
@@ -1622,6 +1663,7 @@
     "nextPending": "Próximo pendente",
     "moreActions": "Mais ações",
     "nextPendingEmpty": "Não há outro paciente pendente.",
+    "loading": "Carregando o atendimento",
     "patient": {
       "admission": "Atendimento",
       "age": "Idade",
@@ -1649,7 +1691,18 @@
       "up": "alta",
       "down": "queda",
       "stable": "estável",
-      "noResult": "sem resultado"
+      "noResult": "sem resultado",
+      "timelineGroup": "Exames",
+      "timelineAdd": "Adicionar exame",
+      "timelineShow": "Mostrar exames na linha do tempo",
+      "timelineHide": "Ocultar exames da linha do tempo",
+      "timelineSearch": "Buscar exame",
+      "timelineRemove": "Remover {{name}} da linha do tempo",
+      "timelineReferenceBand": "faixa de referência",
+      "timelineInRange": "dentro da referência",
+      "timelineOutOfRange": "fora da referência",
+      "timelineReference": "ref. {{min}} a {{max}}",
+      "timelineLoadError": "Não foi possível carregar o histórico dos exames"
     },
     "cultures": {
       "title": "Culturas",

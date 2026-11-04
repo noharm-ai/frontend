@@ -27,7 +27,7 @@ const protocolChip = (page: Page) =>
   page.locator(".alert", { has: page.locator(".anticon-file-protect") });
 
 test("the card counts the active protocols", async ({ page, mockApi }) => {
-  mockApi.override("GET /prescriptions", {
+  mockApi.override("POST /prescriptions", {
     json: listWith({ protocolAlerts: [77, 78] }),
   });
 

@@ -205,8 +205,10 @@ const getExams = (bearerToken, admissionNumber, params = {}) =>
  * Prescriptions.
  *
  */
+// the filters go in the body: a long list of them made the URL too long for
+// the server (414 Request-URI Too Large)
 const getPrescriptions = (bearerToken, params = {}) =>
-  instance.get(endpoints.prescriptions, { params, ...setHeaders(bearerToken) });
+  instance.post(endpoints.prescriptions, params, setHeaders(bearerToken));
 
 const getPrescriptionsStatusList = (bearerToken, idPrescriptionList) =>
   instance.post(
@@ -596,15 +598,6 @@ const scoreRemoveOutlier = (params) =>
     },
   );
 
-const scoreConfigDrug = (params) =>
-  instance.post(
-    `/outliers/generate/config/${params.idSegment}/${params.idDrug}`,
-    params,
-    {
-      ...setHeaders(),
-    },
-  );
-
 const scoreConfigDrugV2 = (params) =>
   instance.post(
     `/outliers/generate/config/${params.idSegment}/${params.idDrug}/v2`,
@@ -652,6 +645,13 @@ api.prescription.getAllergyRecords = (idPrescription) =>
 
 api.prescription.updateAllergySubstance = (params) =>
   instance.put(`/allergy-records/substance`, params, setHeaders());
+
+/**
+ * Schema params (read only: edited in admin)
+ */
+api.schemaParams = {};
+// the schema comes from the token
+api.schemaParams.get = () => instance.get(`/schema-params`, setHeaders());
 
 /**
  * Conciliation
@@ -1244,7 +1244,6 @@ const methods = {
   copyPrescriptionMissingDrugs,
   scorePrepareGeneration,
   scoreGenerateSingle,
-  scoreConfigDrug,
   scoreConfigDrugV2,
   scoreAddHistory,
   scoreRemoveOutlier,

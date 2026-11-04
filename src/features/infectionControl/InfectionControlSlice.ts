@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 
 import api from "services/api";
+import { transformExams } from "utils/transformers";
 import hospital from "services/hospital";
 
 // how a course stands at the time of the request
@@ -122,6 +123,31 @@ export interface IExamCardItem {
     name: string | null;
     delta: number | null;
   };
+}
+
+// a result of an exam's history (GET /exams/:admissionNumber), newest first
+export interface IExamHistoryItem {
+  value: number | string | null;
+  unit: string | null;
+  date: string;
+  // the reference of the segment; both 0 when the exam is not configured
+  min: number | null;
+  max: number | null;
+  configured?: boolean;
+}
+
+// every exam of the patient, keyed by the type of the schema (key)
+export interface IExamHistory {
+  key: string;
+  name: string | null;
+  initials: string | null;
+  // the NoHarm identifier the segment maps the type to, when it does
+  tp_exam_ref?: string | null;
+  unit: string | null;
+  configured?: boolean;
+  // the textual exams have no values to plot
+  text: boolean;
+  history: IExamHistoryItem[];
 }
 
 export interface IAntimicrobialTimeline {
@@ -414,6 +440,13 @@ interface IInfectionControlSlice {
     data: ICultureHistory | null;
     requestId: string | null;
   };
+  // the history of every exam, for the exams the antimicrobial timeline
+  // plots: loaded with the timeline
+  examHistory: {
+    status: Status;
+    list: IExamHistory[];
+    requestId: string | null;
+  };
 }
 
 const initialState: IInfectionControlSlice = {
@@ -455,6 +488,11 @@ const initialState: IInfectionControlSlice = {
     culture: null,
     status: "idle",
     data: null,
+    requestId: null,
+  },
+  examHistory: {
+    status: "idle",
+    list: [],
     requestId: null,
   },
 };
@@ -532,6 +570,26 @@ export const fetchCultureHistory = createAsyncThunk(
         params.culture.id,
       );
       return response.data.data as ICultureHistory;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
+// the history the "Ver todos" modal shows, read with the references of the
+// segment. Kept apart from the modal's cache (ExamModalSlice), which is not
+// told which admission its list is of
+export const fetchExamHistory = createAsyncThunk(
+  "infectionControl/fetchExamHistory",
+  async (
+    params: { admissionNumber: string; idSegment: number | null },
+    thunkAPI,
+  ) => {
+    try {
+      const response = await api.getExams(null, params.admissionNumber, {
+        idSegment: params.idSegment ?? undefined,
+      });
+      return transformExams(response.data.data) as IExamHistory[];
     } catch (err) {
       return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
     }
@@ -682,6 +740,20 @@ const infectionControlSlice = createSlice({
         if (state.cultures.requestId !== action.meta.requestId) return;
         state.cultures.status = "failed";
         state.cultures.data = null;
+      })
+      .addCase(fetchExamHistory.pending, (state, action) => {
+        state.examHistory.status = "loading";
+        state.examHistory.requestId = action.meta.requestId;
+      })
+      .addCase(fetchExamHistory.fulfilled, (state, action) => {
+        if (state.examHistory.requestId !== action.meta.requestId) return;
+        state.examHistory.status = "succeeded";
+        state.examHistory.list = action.payload;
+      })
+      .addCase(fetchExamHistory.rejected, (state, action) => {
+        if (state.examHistory.requestId !== action.meta.requestId) return;
+        state.examHistory.status = "failed";
+        state.examHistory.list = [];
       })
       .addCase(fetchCultureHistory.pending, (state, action) => {
         state.cultureHistory.culture = action.meta.arg.culture;

@@ -8,7 +8,7 @@ test("shows an error when the prescriptions endpoint fails", async ({
   page,
   mockApi,
 }) => {
-  mockApi.override("GET /prescriptions", {
+  mockApi.override("POST /prescriptions", {
     status: 500,
     json: { status: "error", message: "Internal server error" },
   });

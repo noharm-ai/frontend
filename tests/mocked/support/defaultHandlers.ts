@@ -79,7 +79,7 @@ export function defaultHandlers(): Record<string, Handler> {
     "GET /user/preferences": emptyList,
 
     // prioritization / screening
-    "GET /prescriptions": json("prescriptions/list.json"),
+    "POST /prescriptions": json("prescriptions/list.json"),
     "GET /prescriptions/:id": json("prescriptions/single-199.json"),
     "GET /exams/:admissionNumber": emptyList,
     "GET /notes/:admissionNumber/v2": emptyList,

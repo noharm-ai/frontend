@@ -294,21 +294,6 @@ export default function Menu({ segments, collapsed }) {
           icon: <LayoutOutlined />,
           id: "gtm-lnk-admin",
         },
-        // {
-        //   key: "/admin/horarios",
-        //   link: "/admin/horarios",
-        //   label: t("menu.schedules"),
-        //   icon: <HourglassOutlined />,
-        //   id: "gtm-lnk-horarios",
-        // },
-        // {
-        //   key: "/admin/memoria-global/nzero",
-        //   link: "/admin/memoria-global/nzero",
-        //   label: "NZero",
-        //   icon: <RobotOutlined />,
-        //   id: "gtm-lnk-nzero",
-        //   permission: [Permission.ADMIN_NZERO],
-        // },
         {
           key: "/admin/protocolos",
           link: "/admin/protocolos",

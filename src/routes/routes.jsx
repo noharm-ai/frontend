@@ -40,18 +40,10 @@ import { InfectionControlPage } from "pages/InfectionControl/InfectionControl";
 import { InfectionControlListPage } from "pages/InfectionControlList/InfectionControlList";
 
 import AdminTag from "pages/Admin/Tag";
-import AdminMemory from "pages/Admin/Memory";
-import AdminMemoryRoutes from "pages/Admin/Memory/Routes";
-import AdminMemoryReports from "pages/Admin/Memory/Reports";
-import AdminMemoryFeatures from "pages/Admin/Memory/Features";
-import AdminMemorySchedules from "pages/Admin/Memory/Schedules";
 
-import AdminIntegration from "pages/Admin/Integration";
-import AdminSegment from "pages/Admin/Segment";
 import AdminExam from "pages/Admin/Exam";
 import AdminProtocol from "pages/Admin/Protocol";
 import AdminProtocolEditor from "pages/Admin/Protocol/ProtocolEditor";
-import AdminGlobalMemoryNZero from "pages/Admin/GlobalMemory/GlobalMemoryNZero";
 
 import PatientDayReport from "pages/Reports/PatientDayReport";
 import PrescriptionReport from "pages/Reports/PrescriptionReport";
@@ -358,44 +350,8 @@ const routes = [
   },
   {
     exact: true,
-    path: "/admin/memoria",
-    element: <WithAuth component={AdminMemory} />,
-  },
-  {
-    exact: true,
-    path: "/admin/vias",
-    element: <WithAuth component={AdminMemoryRoutes} />,
-  },
-  {
-    exact: true,
-    path: "/admin/relatorios",
-    element: <WithAuth component={AdminMemoryReports} />,
-  },
-  {
-    exact: true,
-    path: "/admin/features",
-    element: <WithAuth component={AdminMemoryFeatures} />,
-  },
-
-  {
-    exact: true,
     path: "/admin/tags",
     element: <WithAuth component={AdminTag} />,
-  },
-  {
-    exact: true,
-    path: "/admin/horarios",
-    element: <WithAuth component={AdminMemorySchedules} />,
-  },
-  {
-    exact: true,
-    path: "/admin/integracao",
-    element: <WithAuth component={AdminIntegration} />,
-  },
-  {
-    exact: true,
-    path: "/admin/segmentos",
-    element: <WithAuth component={AdminSegment} />,
   },
   {
     exact: true,
@@ -406,11 +362,6 @@ const routes = [
     exact: true,
     path: "/admin/protocolos/:id",
     element: <WithAuth component={AdminProtocolEditor} />,
-  },
-  {
-    exact: true,
-    path: "/admin/memoria-global/nzero",
-    element: <WithAuth component={AdminGlobalMemoryNZero} />,
   },
   {
     exact: true,

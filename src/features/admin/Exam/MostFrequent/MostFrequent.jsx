@@ -15,8 +15,7 @@ import { Form } from "styles/Form.style";
 
 import { fetchMostFrequent, addMostFrequent } from "../ExamSlice";
 import columns from "./columns";
-//todo: should be central
-import { FilterContainer } from "../../Segment/Segment.style";
+import { FilterContainer } from "./MostFrequent.style";
 
 function MostFrequentForm({ open, setOpen }) {
   const { t } = useTranslation();

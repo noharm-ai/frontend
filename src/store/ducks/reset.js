@@ -5,14 +5,11 @@ import { Creators as MemoryCreators } from "./memory";
 import { Creators as PrescriptionDrugsCreators } from "./prescriptionDrugs";
 import { Creators as PrescriptionsCreators } from "./prescriptions";
 
-import { reset as adminMemoryReset } from "features/admin/Memory/MemorySlice";
 import { reset as adminIntegrationReset } from "features/admin/Integration/IntegrationSlice";
-import { reset as adminSegmentReset } from "features/admin/Segment/SegmentSlice";
 import { reset as adminExamReset } from "features/admin/Exam/ExamSlice";
 import { reset as adminDrugReferenceDrawerReset } from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
 import { reset as adminTagReset } from "features/admin/Tag/TagSlice";
 import { reset as adminProtocolReset } from "features/admin/Protocol/ProtocolSlice";
-import { reset as adminGlobalMemoryReset } from "features/admin/GlobalMemory/GlobalMemorySlice";
 
 import { reset as drugFormStatusReset } from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import { reset as listsReset } from "features/lists/ListsSlice";
@@ -64,14 +61,11 @@ const { prescriptionDrugsReset } = PrescriptionDrugsCreators;
 const { prescriptionsReset } = PrescriptionsCreators;
 
 export const resetReduxState = (dispatch) => {
-  dispatch(adminMemoryReset());
   dispatch(adminIntegrationReset());
-  dispatch(adminSegmentReset());
   dispatch(adminExamReset());
   dispatch(adminDrugReferenceDrawerReset());
   dispatch(adminTagReset());
   dispatch(adminProtocolReset());
-  dispatch(adminGlobalMemoryReset());
 
   dispatch(clinicalNotesReset());
   dispatch(drugsReset());

@@ -1,3 +1,6 @@
+// Must stay the first import: installs built-ins older browsers lack before
+// any dependency is evaluated (see src/lib/polyfills.ts).
+import "./lib/polyfills";
 import React from "react";
 import * as ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
@@ -17,6 +20,7 @@ import { AppThemeProvider } from "features/preferences/AppThemeProvider/AppTheme
 import { SupportDrawer } from "./features/support/SupportDrawer";
 import { KnowledgeBaseArticleModal } from "./features/knowledgeBase/KnowledgeBaseArticleModal/KnowledgeBaseArticleModal";
 import { HelpModeLayer } from "./features/knowledgeBase/HelpMode/HelpModeLayer/HelpModeLayer";
+import { AppVersionWatcher } from "./features/appVersion/AppVersionWatcher/AppVersionWatcher";
 import { store, persistor } from "store/index.ts";
 import * as serviceWorker from "./serviceWorker";
 import { getStorageItem } from "utils/storage";
@@ -75,6 +79,7 @@ root.render(
                   <SupportDrawer />
                   <KnowledgeBaseArticleModal />
                   <HelpModeLayer routes={routes} />
+                  <AppVersionWatcher />
                 </BrowserRouter>
               </App>
             </StyleProvider>

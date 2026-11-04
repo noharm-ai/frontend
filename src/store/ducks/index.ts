@@ -39,15 +39,12 @@ import drugGenerateScoreSlice from "features/drugs/DrugGenerateScore/DrugGenerat
 import drugSubstanceSlice from "features/drugs/DrugSubstance/DrugSubstanceSlice";
 import { userProfileReducer } from "features/user/UserProfile/UserProfileSlice";
 
-import adminMemory from "features/admin/Memory/MemorySlice";
 import adminIntegration from "features/admin/Integration/IntegrationSlice";
-import adminSegment from "features/admin/Segment/SegmentSlice";
 import adminExam from "features/admin/Exam/ExamSlice";
 import adminSubstanceForm from "features/admin/Substance/SubstanceFormSlice";
 import adminDrugReferenceDrawer from "features/admin/DrugReferenceDrawer/DrugReferenceDrawerSlice";
 import adminTag from "features/admin/Tag/TagSlice";
 import adminProtocol from "features/admin/Protocol/ProtocolSlice";
-import adminGlobalMemory from "features/admin/GlobalMemory/GlobalMemorySlice";
 import adminExamForm from "features/admin/Exam/ExamForm/ExamFormSlice";
 
 import { outpatientPrioritizationReducer } from "features/outpatient/OutpatientPrioritization/OutpatientPrioritizationSlice";
@@ -57,6 +54,7 @@ import trainingOverviewSlice from "features/training/TrainingOverviewSlice";
 import trainingPlayerSlice from "features/training/TrainingPlayerSlice";
 import { knowledgeBaseReducer } from "features/knowledgeBase/KnowledgeBaseSlice";
 import { helpModeReducer } from "features/knowledgeBase/HelpMode/HelpModeSlice";
+import { appVersionReducer } from "features/appVersion/AppVersionSlice";
 import { newsReducer } from "features/news/NewsSlice";
 import { infectionControlReducer } from "features/infectionControl/InfectionControlSlice";
 import { infectionControlListReducer } from "features/infectionControl/InfectionControlListSlice";
@@ -90,16 +88,13 @@ import reportPatientObservationReport from "features/reports/PatientObservationR
 import reportCheckedIndexReport from "features/reports/CheckedIndexReport/CheckedIndexReportSlice";
 
 const adminReducers = combineReducers({
-  memory: adminMemory,
   integration: adminIntegration,
-  segment: adminSegment,
   exam: adminExam,
   examForm: adminExamForm,
   substanceForm: adminSubstanceForm,
   drugReferenceDrawer: adminDrugReferenceDrawer,
   tag: adminTag,
   protocol: adminProtocol,
-  globalMemory: adminGlobalMemory,
 });
 
 const regulationReducers = combineReducers({
@@ -186,6 +181,7 @@ const rootReducer = combineReducers({
   infectionControl: infectionControlReducer,
   infectionControlList: infectionControlListReducer,
   helpMode: helpModeReducer,
+  appVersion: appVersionReducer,
 });
 
 export default rootReducer;

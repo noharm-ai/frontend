@@ -2,62 +2,10 @@ import { instance, setHeaders } from "services/api";
 
 const api = {};
 const endpoints = {
-  memory: "/admin/memory",
   drug: "/admin/drug",
   integration: "/admin/integration",
-  segment: "/admin/segments",
   exam: "/admin/exam",
 };
-
-const getMemoryItems = (params = {}) =>
-  instance.post(`${endpoints.memory}/list`, params, setHeaders());
-
-const updateMemoryItem = (bearerToken, params = {}) => {
-  return instance.put(`${endpoints.memory}`, params, {
-    ...setHeaders(bearerToken),
-  });
-};
-
-const refreshPrescription = (params = {}) => {
-  return instance.post(
-    `${endpoints.integration}/refresh-prescription`,
-    params,
-    {
-      ...setHeaders(),
-    },
-  );
-};
-
-const getSegmentDepartments = (params) =>
-  instance.get(`${endpoints.segment}/departments/${params.idSegment}`, {
-    ...setHeaders(),
-  });
-
-const updateSegmentDepartments = (params) =>
-  instance.post(`${endpoints.segment}/departments`, params, {
-    ...setHeaders(),
-  });
-
-const upsertSegment = (params = {}) => {
-  return instance.post(`${endpoints.segment}`, params, {
-    ...setHeaders(),
-  });
-};
-
-/**
- * OUTLIERS
- */
-api.outliers = {};
-api.outliers.refreshAgg = (params) =>
-  instance.get(`/outliers/generate/refresh-agg`, {
-    params,
-    ...setHeaders(),
-  });
-
-api.outliers.generateSegmentOutliers = (params) =>
-  instance.post(`/outliers/generate/segment`, params, {
-    ...setHeaders(),
-  });
 
 /**
  * EXAMS
@@ -199,27 +147,8 @@ api.protocols.getDepartments = (params = {}) =>
     ...setHeaders(),
   });
 
-/**
- * GLOBAL MEMORY
- */
-api.globalMemory = {};
-api.globalMemory.getGlobalMemory = (params = {}) =>
-  instance.post(`/admin/global-memory/list`, params, setHeaders());
-
-api.globalMemory.updateGlobalMemory = (params = {}) => {
-  return instance.post(`/admin/global-memory/update`, params, {
-    ...setHeaders(),
-  });
-};
-
 const methods = {
   ...api,
-  getMemoryItems,
-  updateMemoryItem,
-  refreshPrescription,
-  getSegmentDepartments,
-  updateSegmentDepartments,
-  upsertSegment,
 };
 
 export default methods;

@@ -38,7 +38,7 @@ const conciliation = (
 });
 
 test.beforeEach(async ({ mockApi }) => {
-  mockApi.override("GET /prescriptions", {
+  mockApi.override("POST /prescriptions", {
     json: {
       status: "success",
       data: [
@@ -51,11 +51,16 @@ test.beforeEach(async ({ mockApi }) => {
 });
 
 const isListRequest = (request: Request) =>
-  request.method() === "GET" &&
+  request.method() === "POST" &&
   new URL(request.url()).pathname === "/prescriptions";
 
+// the filters are posted as a JSON body; the backend ignores a null filter
 const listParams = async (request: Promise<Request>) =>
-  new URL((await request).url()).searchParams;
+  new Map<string, unknown>(
+    Object.entries((await request).postDataJSON()).filter(
+      ([, value]) => value !== null && value !== undefined,
+    ),
+  );
 
 const open = async (page: Page) => {
   const request = page.waitForRequest(isListRequest);
@@ -89,8 +94,8 @@ test("asks the backend for conciliations only", async ({ page }) => {
     page.getByRole("heading", { name: "Priorização de Conciliações" }),
   ).toBeVisible();
 
-  expect(params.get("concilia")).toBe("1");
-  expect(params.get("agg")).toBe("0");
+  expect(params.get("concilia")).toBe(1);
+  expect(params.get("agg")).toBe(0);
   // the patient-only filters never leak into a conciliation search
   expect(params.has("hasConciliation")).toBe(false);
 
@@ -164,5 +169,5 @@ test("filters by the professional responsible for the conciliation", async ({
 
   const params = await search(page);
   expect(params.get("prescriber")).toBe("Fulano Beltrano");
-  expect(params.get("concilia")).toBe("1");
+  expect(params.get("concilia")).toBe(1);
 });

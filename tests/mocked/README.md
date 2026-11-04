@@ -46,7 +46,7 @@ import { test, expect } from "../support/mockApi";
 
 test("shows empty state", async ({ page, mockApi }) => {
   // override any default handler (also works mid-test)
-  mockApi.override("GET /prescriptions", {
+  mockApi.override("POST /prescriptions", {
     json: { status: "success", data: [] },
   });
 
