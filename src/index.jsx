@@ -1,3 +1,6 @@
+// Must stay the first import: installs built-ins older browsers lack before
+// any dependency is evaluated (see src/lib/polyfills.ts).
+import "./lib/polyfills";
 import React from "react";
 import * as ReactDOM from "react-dom/client";
 import { Provider } from "react-redux";
