@@ -30,6 +30,7 @@ import ClinicalNotesSchedule from "containers/Forms/ClinicalNotes/ScheduleForm";
 import ClinicalNotesCustomForm from "containers/Forms/ClinicalNotes/CustomForm";
 import { ClinicalNotesList } from "features/clinicalNotes/ClinicalNotesList/ClinicalNotesList";
 import { setListModalOpen } from "features/clinicalNotes/ClinicalNotesSlice";
+import { SchemaParamsButton } from "features/prescription/SchemaParamsButton/SchemaParamsButton";
 import FormClinicalAlert from "containers/Forms/ClinicalAlert";
 import { getErrorMessageFromException } from "utils/errorHandler";
 import pageTimer from "utils/pageTimer";
@@ -526,6 +527,8 @@ export default function PageHeader({
                 {t("carePlan.btnOpen")}
               </Button>
             )}
+
+            <SchemaParamsButton />
 
             <Button type="default" className="gtm-bt-close" onClick={close}>
               {t("screeningHeader.btnClose")}
