@@ -16,7 +16,6 @@ import { EXAM_FIELD_MAX, storedLength } from "../examFieldLength";
 
 export function ExamFormBase() {
   const dispatch = useAppDispatch();
-  //@ts-expect-error - segments is not typed
   const segments = useAppSelector((state) => state.segments.list);
   const examTypes = useAppSelector(
     (state) => state.admin.examForm.examTypes.list,

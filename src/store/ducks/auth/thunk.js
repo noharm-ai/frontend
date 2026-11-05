@@ -3,7 +3,7 @@ import { isEmpty } from "lodash";
 import api from "services/api";
 import appInfo from "utils/appInfo";
 import { errorHandler } from "utils";
-import { Creators as SegmentCreators } from "../segments";
+import { segmentsFetchListSuccess } from "features/segments/SegmentsSlice";
 import { Creators as UserCreators } from "../user";
 import { Creators as AuthCreators } from "./index";
 import { Creators as AppCreators } from "../app";
@@ -17,7 +17,6 @@ import { setNotifications } from "features/notifications/NotificationsSlice";
 import { setStorageItem, removeStorageItem } from "utils/storage";
 
 const { userLogout, userSetLoginStart, userSetCurrentUser } = UserCreators;
-const { segmentsFetchListSuccess } = SegmentCreators;
 const { authSetErrorIdentify, authDelIdentify } = AuthCreators;
 const {
   appSetConfig,
