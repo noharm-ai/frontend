@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 
 import api from "services/api";
 import adminApi from "services/admin/api";
-import { fetchSegmentsListThunk } from "store/ducks/segments/thunk";
+import { fetchSegmentsListThunk } from "features/segments/SegmentsSlice";
 import {
   LabelKind,
   LabelLookup,

@@ -5,7 +5,7 @@ import authReducer from "./auth";
 import userReducer from "./user";
 import drugsReducer from "./drugs";
 import patientsReducer from "./patients";
-import segmentsReducer from "./segments";
+import { segmentsReducer } from "features/segments/SegmentsSlice";
 import interventionReducer from "./intervention";
 import prescriptionsReducer from "./prescriptions";
 import prescriptionDrugsReducer from "./prescriptionDrugs";
