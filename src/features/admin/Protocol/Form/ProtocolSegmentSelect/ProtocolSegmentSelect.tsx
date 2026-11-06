@@ -2,7 +2,7 @@ import { useEffect, useId, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Select } from "components/Inputs";
-import { fetchSegmentsListThunk } from "store/ducks/segments/thunk";
+import { fetchSegmentsListThunk } from "features/segments/SegmentsSlice";
 
 interface Segment {
   id: string | number;

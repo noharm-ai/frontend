@@ -10,7 +10,7 @@ import Button from "components/Button";
 import notification from "components/notification";
 import { InputNumber, Select } from "components/Inputs";
 import { getErrorMessageFromException } from "utils/errorHandler";
-import { fetchSegmentsListThunk } from "store/ducks/segments/thunk";
+import { fetchSegmentsListThunk } from "features/segments/SegmentsSlice";
 
 import { IProtocolFormBaseFields } from "../Form/types";
 import { CHUNK_SIZE } from "./constants";

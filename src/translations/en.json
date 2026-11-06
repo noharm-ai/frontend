@@ -851,7 +851,7 @@
     "USER_MANAGER": "User Administrator",
     "CONFIG_MANAGER": "Configuration Administrator",
     "DISCHARGE_MANAGER": "Discharge Manager",
-    "INFECTION_CONTROLLER": "Infection Control",
+    "INFECTION_CONTROLLER": "Infection Control Analyst",
     "VIEWER": "Viewer",
     "DISPENSING_MANAGER": "Dispensing Manager",
     "REGULATOR": "Regulator",
