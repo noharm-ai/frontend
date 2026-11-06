@@ -348,6 +348,16 @@ export function ReviewModal({
               text: t("infectionControl.review.hintDecision"),
               error: false,
             };
+          } else if (stepErrors?.treatmentType) {
+            hint = {
+              text: t("infectionControl.review.hintTreatmentType"),
+              error: true,
+            };
+          } else if (stepErrors?.infectionFoci) {
+            hint = {
+              text: t("infectionControl.review.hintInfectionFocus"),
+              error: true,
+            };
           } else if (stepErrors?.interventionReasons) {
             hint = {
               text: t("infectionControl.review.hintReasons"),

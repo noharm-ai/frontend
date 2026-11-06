@@ -101,6 +101,36 @@ const pickReason = async (page: Page, drug: Locator, reason: string) => {
 };
 
 /**
+ * Tells why the drug being evaluated is given and its infection foci, both
+ * asked for every drug evaluated
+ */
+const fillIndication = async (
+  page: Page,
+  drug: Locator,
+  treatmentType = "Empírico",
+  foci = ["Urinário"],
+) => {
+  await drug
+    .getByRole("radiogroup", { name: "Tipo de tratamento" })
+    .getByText(treatmentType, { exact: true })
+    .click();
+  for (const focus of foci) {
+    await pickFocus(page, drug, focus);
+  }
+};
+
+/** Picks one more infection focus of the drug being evaluated */
+const pickFocus = async (page: Page, drug: Locator, focus: string) => {
+  const foci = drug.getByTestId("review-infection-focus");
+  await openSelect(foci);
+  await pickOption(page, focus);
+  await expect(foci).toContainText(focus);
+  // the multiple select stays open: a click aside closes it (Escape would
+  // close the review)
+  await drug.getByRole("heading", { level: 3 }).click();
+};
+
+/**
  * Opens the review and waits out its zoom motion: a click landing in the
  * dialog while it still zooms in can be lost
  */
@@ -234,6 +264,8 @@ const vancomycinEvaluation = {
   courseStart: VANCOMYCIN_START,
   conforming: true,
   notes: "Guiado por cultura",
+  treatmentType: 2,
+  infectionFoci: [8, 4],
   posology: {
     idPrescriptionDrug: "298001",
     dose: 1,
@@ -407,6 +439,10 @@ test("shows the follow-up status, its pending reasons and each drug's evaluation
   await expect(review).toContainText("Paciente estável, manter vancomicina");
   await expect(review).toContainText("VANCOMICINA 500 mg SOL INJ");
   await expect(review).toContainText("Guiado por cultura");
+  // with why the drug is given and the infection focus
+  await expect(review.getByTestId("review-evaluation-indication")).toHaveText(
+    "Indicação: Guiado por cultura · Corrente sanguínea / cateter, Abdominal",
+  );
 });
 
 test("lists the reasons and the intervention of a non-conformity in the history", async ({
@@ -1163,6 +1199,53 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(page.getByRole("tooltip")).toContainText(
       `Válida até ${shownDate(MEROPENEM_PLUS_7)}`,
     );
+    // every drug evaluated tells why it is given and the infection focus,
+    // optional for a prophylaxis only
+    const focusHint = drug
+      .getByTestId("review-infection-focus")
+      .locator(".drug-notes-hint");
+    await expect(next).toBeDisabled();
+    await expect(hint).toHaveText("Informe o tipo de tratamento");
+    const treatmentTypes = drug.getByRole("radiogroup", {
+      name: "Tipo de tratamento",
+    });
+    await expect(
+      treatmentTypes.locator(".ant-radio-button-wrapper"),
+    ).toHaveText([
+      "Empírico",
+      "Guiado por cultura",
+      "Profilaxia cirúrgica",
+      "Profilaxia clínica",
+    ]);
+    await expect(
+      treatmentTypes.getByRole("radio", { checked: true }),
+    ).toHaveCount(0);
+    await treatmentTypes
+      .getByText("Profilaxia cirúrgica", { exact: true })
+      .click();
+    await expect(focusHint).toHaveText("opcional");
+    await expect(hint).toHaveText("Informe o motivo da não conformidade");
+    await treatmentTypes.getByText("Empírico", { exact: true }).click();
+    await expect(focusHint).toHaveText("obrigatório");
+    await expect(hint).toHaveText("Informe o foco infeccioso");
+    await openSelect(drug.getByTestId("review-infection-focus"));
+    await expect(
+      page
+        .locator(
+          ".ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option",
+        )
+        .first(),
+    ).toHaveText("Respiratório inferior (pneumonia)");
+    await pickOption(page, "Abdominal");
+    await drug.getByRole("heading", { level: 3 }).click();
+    // more than one focus can be told
+    await pickFocus(page, drug, "Urinário");
+    await expect(
+      drug
+        .getByTestId("review-infection-focus")
+        .locator(".ant-select-selection-item"),
+    ).toHaveText(["Abdominal", "Urinário"]);
+
     // a non-conformity is given its reasons, among the ones enabled for
     // infection control
     await expect(next).toBeDisabled();
@@ -1213,8 +1296,23 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(current).toHaveCount(1);
     await expect(current).not.toHaveClass(/past/);
 
-    // evaluating it again previews the new one replacing the current from now
+    await expect(drug.getByTestId("review-current-indication")).toHaveText(
+      "Indicação: Guiado por cultura · Corrente sanguínea / cateter, Abdominal",
+    );
+
+    // evaluating it again previews the new one replacing the current from now,
+    // with the indication on record filled
     await decisions.getByText("Conforme", { exact: true }).click();
+    await expect(
+      drug
+        .getByRole("radiogroup", { name: "Tipo de tratamento" })
+        .getByRole("radio", { checked: true }),
+    ).toHaveAccessibleName("Guiado por cultura");
+    await expect(
+      drug
+        .getByTestId("review-infection-focus")
+        .locator(".ant-select-selection-item"),
+    ).toHaveText(["Corrente sanguínea / cateter", "Abdominal"]);
     await expect(drug.getByTestId("review-period")).toContainText(
       `→ ${shownDate(VANCOMYCIN_END).slice(0, 5)}`,
     );
@@ -1284,6 +1382,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
           interventionReasons: [31, 32],
           createIntervention: true,
           notes: "Espectro amplo demais",
+          treatmentType: 1,
+          infectionFoci: [4, 3],
           validFrom: MEROPENEM_START,
           // through the whole day
           validUntil: `${MEROPENEM_PLUS_7}T23:59:59`,
@@ -1328,6 +1428,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
 
     // meropenem: the defaults, from the course start to the treatment end
     await decisions.getByText("Conforme", { exact: true }).click();
+    await fillIndication(page, drug);
     await draft.hover();
     // the verdict's own tooltip may still be fading out from the click
     await expect(
@@ -1431,6 +1532,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       .getByRole("radiogroup", { name: "Avaliação" })
       .getByText("Não conforme", { exact: true })
       .click();
+    await fillIndication(page, drug);
     await drug.getByLabel("Justificativa", { exact: true }).fill("Descalonar");
     // a reason with no relation asks for no substitute, a substitution too
     await pickReason(page, drug, "Tempo de tratamento");
@@ -1546,6 +1648,11 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       .getByRole("radiogroup", { name: "Avaliação" })
       .getByText("Conforme", { exact: true })
       .click();
+    // a prophylaxis moves on without a focus
+    await drug
+      .getByRole("radiogroup", { name: "Tipo de tratamento" })
+      .getByText("Profilaxia clínica", { exact: true })
+      .click();
 
     // from the course start to the treatment end, both past: recorded
     // already expired, which keeps the patient pending while it watches
@@ -1588,6 +1695,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     expect(sent.evaluations).toMatchObject([
       {
         idDrug: 12,
+        treatmentType: 4,
+        infectionFoci: [],
         validFrom: OLD_START,
         validUntil: `${localDay(7, OLD_START)}T23:59:59`,
         triggers: [6],
@@ -1770,6 +1879,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
         .getByRole("radiogroup", { name: "Avaliação" })
         .getByText("Não conforme", { exact: true })
         .click();
+      await fillIndication(page, drug, "Empírico", ["Abdominal", "Urinário"]);
       await drug
         .getByLabel("Justificativa", { exact: true })
         .fill("Espectro amplo demais");
@@ -1803,7 +1913,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
         "Atendimento: 9300 · Setor: UTI Adulto · Leito: 7B",
         "Antimicrobianos em uso:\n- MEROPENEM 1 g SOL INJ · D3\n- VANCOMICINA 500 mg SOL INJ · D5",
         "- MEROPENEM 1 g SOL INJ: Não conforme · Vigência",
-        "  Motivos: Antimicrobiano - Espectro inadequado",
+        "  Indicação: Empírico · Abdominal, Urinário\n  Motivos: Antimicrobiano - Espectro inadequado",
         "  Justificativa: Espectro amplo demais",
         "- VANCOMICINA 500 mg SOL INJ: Mantém a avaliação atual",
         "Culturas recentes:\nNenhuma cultura liberada nos últimos 60 dias.",
@@ -2135,6 +2245,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       .getByRole("radiogroup", { name: "Avaliação" })
       .getByText("Conforme", { exact: true })
       .click();
+    await fillIndication(page, drug);
     await dialog.getByRole("button", { name: "Próximo" }).click();
     await expect(drug.getByRole("heading", { level: 3 })).toHaveText(
       "VANCOMICINA 500 mg SOL INJ",
@@ -2567,6 +2678,7 @@ test.describe("with READ_INFECTION_CONTROL only", () => {
       .getByRole("radiogroup", { name: "Avaliação" })
       .getByText("Conforme", { exact: true })
       .click();
+    await fillIndication(page, drug);
     await dialog
       .getByRole("button", { name: "Próximo antimicrobiano" })
       .click();

@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { Row, Col } from "antd";
+import { Row, Col, Table } from "antd";
+import type { TableColumnsType } from "antd";
 
 import { SectionHeader } from "styles/Report.style";
 
@@ -9,18 +10,38 @@ import { BarChart } from "../../BarChart/BarChart";
 import { PieChart } from "../../PieChart/PieChart";
 import { UseTrendChart } from "../../UseTrendChart/UseTrendChart";
 import { AwareTrendChart } from "../../AwareTrendChart/AwareTrendChart";
+import { IndicationTrendChart } from "../../IndicationTrendChart/IndicationTrendChart";
 import {
   BlockHint,
   IndicatorGrid,
   Section,
 } from "../../InfectionControlConsolidatedReport.style";
-import { formatDecimal, formatInteger, toPercent } from "../../format";
-import { AWARE_GROUPS, ROUTE_COLORS, ROUTES } from "../../options";
+import {
+  formatDecimal,
+  formatInteger,
+  formatShare,
+  toPercent,
+} from "../../format";
+import { focusName, shareOf, treatmentTypeName } from "../../indication";
+import {
+  AWARE_GROUPS,
+  ROUTE_COLORS,
+  ROUTES,
+  TREATMENT_TYPE_GROUPS,
+} from "../../options";
 import {
   IConsumption,
+  IFocusDot,
   IOverview,
   IUsePoint,
 } from "../../infectionControlReportTypes";
+
+// a treatment type's days and their AWaRe mix
+interface ITypeRow {
+  key: string;
+  dot: number;
+  aware: Record<string, number>;
+}
 
 interface DotLotProps {
   overview?: IOverview;
@@ -48,6 +69,74 @@ export function DotLot({
   const substanceGroups = AWARE_GROUPS.filter((g) =>
     (consumed.dotBySubstance || []).some((s) => s.aware === g.key),
   );
+  const right = "right" as const;
+  const dot = data.dot || 0;
+
+  // the treatment types with days, each with the AWaRe mix of its days
+  const typeRows: ITypeRow[] = TREATMENT_TYPE_GROUPS.map((g) => ({
+    key: g.key,
+    dot: consumed.treatmentTypeDays?.[g.key] || 0,
+    aware: consumed.awareByTreatmentType?.[g.key] || {},
+  })).filter((row) => row.dot > 0);
+  const typeColumns: TableColumnsType<ITypeRow> = [
+    {
+      title: tk("indication"),
+      dataIndex: "key",
+      key: "key",
+      render: (key: string) => treatmentTypeName(key, t),
+    },
+    {
+      title: tk("indicationDot"),
+      dataIndex: "dot",
+      key: "dot",
+      align: right,
+      render: (value: number) => formatInteger(value),
+    },
+    {
+      title: tk("indicationShare"),
+      key: "share",
+      align: right,
+      render: (_: unknown, row: ITypeRow) => formatShare(shareOf(row.dot, dot)),
+    },
+    ...AWARE_GROUPS.map((g) => ({
+      title: `% ${t(`infectionControlConsolidated.aware.${g.key}`)}`,
+      key: g.key,
+      align: right,
+      render: (_: unknown, row: ITypeRow) =>
+        formatShare(shareOf(row.aware[g.key], row.dot)),
+    })),
+  ];
+
+  const focusColumns: TableColumnsType<IFocusDot> = [
+    {
+      title: tk("focus"),
+      dataIndex: "focus",
+      key: "focus",
+      render: (focus: number) => focusName(focus, t),
+    },
+    {
+      title: tk("indicationDot"),
+      dataIndex: "dot",
+      key: "dot",
+      align: right,
+      render: (value: number) => formatInteger(value),
+    },
+    {
+      title: tk("indicationShare"),
+      dataIndex: "share",
+      key: "share",
+      align: right,
+      render: (value: number | null) => formatShare(value),
+    },
+    {
+      title: tk("focusSubstances"),
+      key: "topSubstances",
+      render: (_: unknown, row: IFocusDot) =>
+        row.topSubstances
+          .map((s) => `${s.substance || "-"} (${formatInteger(s.dot)})`)
+          .join(", ") || "-",
+    },
+  ];
 
   return (
     <Section>
@@ -91,6 +180,21 @@ export function DotLot({
           help={tk("dotLotHelp")}
           loading={loading}
         />
+        <Indicator
+          title={tk("withIndication")}
+          value={formatShare(consumed.dotWithTreatmentTypeShare)}
+          detail={
+            consumed.dotWithTreatmentType != null &&
+            data.dot != null &&
+            t("infectionControlConsolidated.dotLot.withIndicationDetail", {
+              informed: formatInteger(consumed.dotWithTreatmentType),
+              dot: formatInteger(data.dot),
+            })
+          }
+          help={tk("withIndicationHelp")}
+          kb="reports.infectionControl.withIndication"
+          loading={loading}
+        />
       </IndicatorGrid>
 
       <Row gutter={[24, 24]}>
@@ -113,6 +217,55 @@ export function DotLot({
           >
             <BlockHint>{tk("awareMixTarget")}</BlockHint>
             <AwareTrendChart points={monthlyUse || []} loading={loading} />
+          </Block>
+        </Col>
+        <Col xs={24}>
+          <Block
+            title={tk("indicationTrend")}
+            help={tk("indicationTrendHelp")}
+            loading={loading}
+            kb="reports.infectionControl.indicationTrend"
+          >
+            <IndicationTrendChart points={monthlyUse || []} loading={loading} />
+          </Block>
+        </Col>
+        <Col xs={24}>
+          <Block
+            title={tk("byIndication")}
+            help={tk("byIndicationHelp")}
+            loading={loading}
+            kb="reports.infectionControl.dotByIndication"
+          >
+            <Table<ITypeRow>
+              columns={typeColumns}
+              dataSource={typeRows}
+              rowKey={(row: ITypeRow) => row.key}
+              pagination={false}
+              size="small"
+              scroll={{ x: true }}
+            />
+          </Block>
+        </Col>
+        <Col xs={24}>
+          <Block
+            title={tk("byFocus")}
+            help={tk("byFocusHelp")}
+            loading={loading}
+            kb="reports.infectionControl.dotByFocus"
+          >
+            <BlockHint>
+              {t("infectionControlConsolidated.dotLot.byFocusHint", {
+                withFocus: formatShare(consumed.dotWithFocusShare),
+                multiple: formatShare(consumed.multipleFociShare),
+              })}
+            </BlockHint>
+            <Table<IFocusDot>
+              columns={focusColumns}
+              dataSource={consumed.dotByFocus || []}
+              rowKey={(row: IFocusDot) => `${row.focus}`}
+              pagination={{ pageSize: 10, hideOnSinglePage: true }}
+              size="small"
+            />
           </Block>
         </Col>
         <Col xs={24}>

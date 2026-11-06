@@ -10,7 +10,12 @@ import {
   IndicatorGrid,
   Section,
 } from "../../InfectionControlConsolidatedReport.style";
-import { formatDecimal, formatMedian, formatShare } from "../../format";
+import {
+  formatDecimal,
+  formatInteger,
+  formatMedian,
+  formatShare,
+} from "../../format";
 import { IConsumption } from "../../infectionControlReportTypes";
 
 interface ConsumptionProps {
@@ -25,6 +30,8 @@ export function Consumption({ consumption, loading }: ConsumptionProps) {
     t(`infectionControlConsolidated.consumption.${key}`);
   const data: Partial<IConsumption> = consumption || {};
   const days = t("infectionControlConsolidated.units.days");
+  const hours = t("infectionControlConsolidated.units.hours");
+  const prophylaxis = data.surgicalProphylaxis;
 
   return (
     <Section>
@@ -74,6 +81,31 @@ export function Consumption({ consumption, loading }: ConsumptionProps) {
           value={formatShare(data.restartShare)}
           help={tk("restartHelp")}
           color="orange"
+          loading={loading}
+        />
+        <Indicator
+          title={tk("prophylaxisOver24h")}
+          value={formatShare(prophylaxis?.longerThan24hShare)}
+          detail={
+            prophylaxis &&
+            t("infectionControlConsolidated.consumption.prophylaxisDetail", {
+              over: formatInteger(prophylaxis.longerThan24h),
+              courses: formatInteger(prophylaxis.courses),
+            })
+          }
+          help={tk("prophylaxisOver24hHelp")}
+          color="orange"
+          kb="reports.infectionControl.surgicalProphylaxis"
+          loading={loading}
+        />
+        <Indicator
+          title={tk("prophylaxisDuration")}
+          value={formatMedian(prophylaxis?.durationHours, hours)}
+          detail={
+            prophylaxis?.durationHours?.p90 != null &&
+            `p90: ${formatDecimal(prophylaxis.durationHours.p90)} ${hours}`
+          }
+          help={tk("prophylaxisDurationHelp")}
           loading={loading}
         />
       </IndicatorGrid>

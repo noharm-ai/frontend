@@ -12,6 +12,10 @@ import dayjs, { Dayjs } from "dayjs";
 
 import { Checkbox, DatePicker, Select, Textarea } from "components/Inputs";
 import { useAppSelector } from "src/store";
+import {
+  AntimicrobialTreatmentTypeEnum,
+  InfectionFocusEnum,
+} from "models/InfectionControlEnum";
 import { formatDate, formatDateTime } from "utils/date";
 import {
   trackInfectionControlAction,
@@ -25,7 +29,13 @@ import {
   ALERT_LEVELS,
 } from "../../InfectionControlSlice";
 import { CourseGantt } from "../../CourseGantt/CourseGantt";
-import { describeReasons, describeSubstitute } from "../../followUp";
+import {
+  describeIndication,
+  describeReasons,
+  describeSubstitute,
+  infectionFocusLabel,
+  treatmentTypeLabel,
+} from "../../followUp";
 import { formatRegimen } from "../../timeline";
 import { ChoiceChips } from "../ChoiceChips/ChoiceChips";
 import { DecisionCards } from "../DecisionCards/DecisionCards";
@@ -114,6 +124,10 @@ export function DrugEvaluationStep({
   const field = (name: string) => `evaluations.${index}.${name}`;
   const decision = getDecision(evaluation);
   const nonConforming = decision === "nonConforming";
+  // the focus of a drug that prevents an infection may be left empty
+  const focusRequired = !AntimicrobialTreatmentTypeEnum.isProphylaxis(
+    evaluation.treatmentType,
+  );
   // a reason related to another drug asks for the one recommended instead
   const substituteRelation = getSubstituteRelation(
     evaluation,
@@ -260,6 +274,13 @@ export function DrugEvaluationStep({
               user: evaluation.current.createdBy ?? "-",
             })}
           </div>
+          {describeIndication(evaluation.current, t) && (
+            <div data-testid="review-current-indication">
+              {t("infectionControl.indication.label", {
+                indication: describeIndication(evaluation.current, t),
+              })}
+            </div>
+          )}
           {describeReasons(evaluation.current) && (
             <div>
               {t("infectionControl.evaluation.reasons", {
@@ -326,6 +347,69 @@ export function DrugEvaluationStep({
 
       {evaluation.evaluate && decision !== null && (
         <div className="drug-options">
+          <section
+            className="drug-indication"
+            data-kb="infectionControl.review.indication"
+            data-testid="review-indication"
+          >
+            <div className="drug-notes" data-testid="review-treatment-type">
+              <div className="drug-notes-header">
+                <span className="drug-section-title">
+                  {t("infectionControl.indication.treatmentType")}
+                </span>
+                <span className="drug-notes-hint required">
+                  {t("infectionControl.review.requiredMale")}
+                </span>
+              </div>
+              <ChoiceChips<number>
+                aria-label={t("infectionControl.indication.treatmentType")}
+                value={evaluation.treatmentType}
+                onChange={(value) =>
+                  setFieldValue(field("treatmentType"), value)
+                }
+                options={AntimicrobialTreatmentTypeEnum.list.map((type) => ({
+                  value: type,
+                  label: treatmentTypeLabel(type, t),
+                }))}
+              />
+            </div>
+            <div className="drug-notes" data-testid="review-infection-focus">
+              <div className="drug-notes-header">
+                <label
+                  className="drug-section-title"
+                  htmlFor={field("infectionFoci")}
+                >
+                  {t("infectionControl.indication.focus")}
+                </label>
+                <span
+                  className={`drug-notes-hint ${focusRequired ? "required" : ""}`}
+                >
+                  {t(
+                    focusRequired
+                      ? "infectionControl.review.requiredMale"
+                      : "infectionControl.review.optionalMale",
+                  )}
+                </span>
+              </div>
+              <Select
+                id={field("infectionFoci")}
+                mode="multiple"
+                allowClear
+                optionFilterProp="label"
+                style={{ width: "100%" }}
+                placeholder={t("infectionControl.indication.focusPlaceholder")}
+                value={evaluation.infectionFoci}
+                onChange={(value: any) =>
+                  setFieldValue(field("infectionFoci"), value ?? [])
+                }
+                options={InfectionFocusEnum.list.map((focus) => ({
+                  value: focus,
+                  label: infectionFocusLabel(focus, t),
+                }))}
+              />
+            </div>
+          </section>
+
           <section
             className="drug-option-box"
             data-kb="infectionControl.review.validity"

@@ -12,7 +12,7 @@ import {
   IndicatorGrid,
   Section,
 } from "../../InfectionControlConsolidatedReport.style";
-import { formatInteger, formatShare } from "../../format";
+import { formatDecimal, formatInteger, formatShare } from "../../format";
 import {
   IAppropriateness,
   IOverview,
@@ -41,6 +41,7 @@ export function Conformity({
   const tk = (key: string) =>
     t(`infectionControlConsolidated.conformity.${key}`);
   const data: Partial<IOverview> = overview || {};
+  const guided = appropriateness?.empiricalToCultureGuided;
 
   return (
     <Section>
@@ -81,6 +82,20 @@ export function Conformity({
           value={formatShare(data.evaluatedByD3Share)}
           help={tk("d3Help")}
           color="green"
+          loading={loading}
+        />
+        <Indicator
+          title={tk("cultureGuided")}
+          value={formatShare(guided?.becameCultureGuidedShare)}
+          detail={
+            guided?.day.median != null &&
+            t("infectionControlConsolidated.conformity.cultureGuidedDetail", {
+              day: formatDecimal(guided.day.median),
+            })
+          }
+          help={tk("cultureGuidedHelp")}
+          color="green"
+          kb="reports.infectionControl.cultureGuided"
           loading={loading}
         />
         <Indicator

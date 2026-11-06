@@ -22,6 +22,7 @@ import { isExamAlert, sortExams } from "../exams";
 import {
   courseKey,
   describeEvaluationOutcome,
+  describeIndication,
   describePending,
   describeReasons,
   describeSubstitute,
@@ -531,6 +532,10 @@ export function InfectionControlReport({
             {
               label: t("infectionControl.report.outcome"),
               value: outcome(evaluation),
+            },
+            {
+              label: t("infectionControl.indication.title"),
+              value: describeIndication(evaluation, t),
             },
             {
               label: t("infectionControl.report.posology"),

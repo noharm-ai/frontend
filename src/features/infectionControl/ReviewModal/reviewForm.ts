@@ -4,7 +4,10 @@ import dayjs, { Dayjs } from "dayjs";
 import type { TFunction } from "i18next";
 
 import { formatDate } from "utils/date";
-import { InfectionControlPendingTypeEnum } from "models/InfectionControlEnum";
+import {
+  AntimicrobialTreatmentTypeEnum,
+  InfectionControlPendingTypeEnum,
+} from "models/InfectionControlEnum";
 import InterventionReasonRelationType from "models/InterventionReasonRelationType";
 
 import {
@@ -65,6 +68,11 @@ export interface IDrugEvaluationFields {
   // the day chosen when it holds until a date
   endDate: Dayjs | null;
   notes: string;
+  // why the drug is given (AntimicrobialTreatmentTypeEnum)
+  treatmentType: number | null;
+  // the infections it is given for (InfectionFocusEnum, one or more),
+  // optional for a prophylaxis
+  infectionFoci: number[];
   // the intervention reasons of a non-conformity
   interventionReasons: number[];
   // record an intervention on the drug with those reasons
@@ -242,6 +250,10 @@ export const getInitialValues = (
         end: "treatmentEnd",
         endDate: null,
         notes: "",
+        // the indication seldom changes within a course: the one on record
+        // comes filled, to be changed when it did (e.g. guided by a culture)
+        treatmentType: course.evaluation?.treatmentType ?? null,
+        infectionFoci: course.evaluation?.infectionFoci ?? [],
         interventionReasons: [],
         // a non-conformity records an intervention unless unchecked
         createIntervention: true,
@@ -319,6 +331,24 @@ export const getEvaluationSchema = (
           is: (evaluate: boolean, end: EvaluationEnd) =>
             evaluate && end === "date",
           then: (schema) => schema.required(t("validation.requiredField")),
+        }),
+      // every drug evaluated tells why it is given and, unless it prevents
+      // an infection, the infection focus
+      treatmentType: Yup.number()
+        .nullable()
+        .when("evaluate", {
+          is: true,
+          then: (schema) =>
+            schema.required(t("infectionControl.review.treatmentTypeRequired")),
+        }),
+      infectionFoci: Yup.array()
+        .of(Yup.number())
+        .when(["evaluate", "treatmentType"], {
+          is: (evaluate: boolean, treatmentType: number | null) =>
+            evaluate &&
+            !AntimicrobialTreatmentTypeEnum.isProphylaxis(treatmentType),
+          then: (schema) =>
+            schema.min(1, t("infectionControl.review.infectionFocusRequired")),
         }),
       // a non-conformity is given its reasons and justified
       interventionReasons: Yup.array()
@@ -465,6 +495,8 @@ export const toReviewPayload = (
         ? (e.substituteDrug?.id ?? null)
         : null,
       notes: e.notes.trim() || null,
+      treatmentType: e.treatmentType!,
+      infectionFoci: e.infectionFoci,
       validFrom: getValidFrom(e),
       // the evaluation holds through the whole chosen day
       validUntil: getValidUntil(e)!.endOf("day").format("YYYY-MM-DDTHH:mm:ss"),

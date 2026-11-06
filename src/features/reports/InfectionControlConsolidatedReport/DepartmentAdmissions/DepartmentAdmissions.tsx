@@ -17,6 +17,7 @@ import {
   fetchDepartmentAdmissions,
 } from "../InfectionControlConsolidatedReportSlice";
 import { EMPTY, formatDecimal, formatInteger } from "../format";
+import { focusName, treatmentTypeName } from "../indication";
 import {
   IAdmission,
   ICourse,
@@ -188,6 +189,25 @@ export function DepartmentAdmissions({
   const yesNo = (value: boolean | null) =>
     value == null ? EMPTY : value ? tk("yes") : tk("no");
 
+  // the type it started with (and the one it ended with, when it changed)
+  // and its foci
+  const describeCourseIndication = (row: ICourse) => {
+    if (row.treatmentTypeStart == null && !row.infectionFoci?.length) {
+      return EMPTY;
+    }
+    const start = treatmentTypeName(row.treatmentTypeStart, t);
+    const types =
+      row.treatmentTypeEnd != null &&
+      row.treatmentTypeEnd !== row.treatmentTypeStart
+        ? `${start} → ${treatmentTypeName(row.treatmentTypeEnd, t)}`
+        : start;
+    const foci = (row.infectionFoci || [])
+      .map((focus) => focusName(focus, t))
+      .join(", ");
+
+    return foci ? `${types} · ${foci}` : types;
+  };
+
   const courseColumns: TableColumnsType<ICourse> = [
     {
       title: tk("substance"),
@@ -236,6 +256,11 @@ export function DepartmentAdmissions({
       dataIndex: "ivToOralDay",
       key: "ivToOralDay",
       render: (value: number | null) => (value == null ? EMPTY : `D${value}`),
+    },
+    {
+      title: tk("indication"),
+      key: "indication",
+      render: (_: unknown, row: ICourse) => describeCourseIndication(row),
     },
     {
       title: tk("d3"),
