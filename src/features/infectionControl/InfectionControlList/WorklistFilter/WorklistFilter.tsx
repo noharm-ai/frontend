@@ -1,5 +1,9 @@
 import { useAppDispatch, useAppSelector } from "src/store";
 import AdvancedFilter from "components/AdvancedFilter";
+import {
+  trackInfectionControlAction,
+  TrackedInfectionControlAction,
+} from "src/utils/tracker";
 
 import {
   DEFAULT_FILTERS,
@@ -26,9 +30,10 @@ export function WorklistFilter() {
       resetValues={DEFAULT_FILTERS}
       mainFilters={<MainFilters />}
       secondaryFilters={<SecondaryFilters />}
-      onSearch={(values: IInfectionControlListFilters) =>
-        dispatch(setFilters({ ...DEFAULT_FILTERS, ...values }))
-      }
+      onSearch={(values: IInfectionControlListFilters) => {
+        trackInfectionControlAction(TrackedInfectionControlAction.FILTER_LIST);
+        dispatch(setFilters({ ...DEFAULT_FILTERS, ...values }));
+      }}
       onChangeValues={undefined}
       // the saved filters, of this user only
       memoryType={`infection_control_list_${userId}`}

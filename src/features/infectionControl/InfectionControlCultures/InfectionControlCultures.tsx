@@ -10,6 +10,10 @@ import { formatDate } from "utils/date";
 import { CultureReportButton } from "features/culture/CultureReportButton/CultureReportButton";
 import { fetchCultures } from "features/culture/CultureSlice";
 import { isResistantInUse } from "features/culture/cultureResistance";
+import {
+  trackInfectionControlAction,
+  TrackedInfectionControlAction,
+} from "src/utils/tracker";
 
 import {
   fetchCultureHistory,
@@ -86,6 +90,9 @@ export function InfectionControlCultures({
     : 0;
 
   const openHistory = (culture: IRecentCulture) => {
+    trackInfectionControlAction(
+      TrackedInfectionControlAction.OPEN_CULTURE_HISTORY,
+    );
     dispatch(fetchCultureHistory({ admissionNumber, culture }));
   };
 

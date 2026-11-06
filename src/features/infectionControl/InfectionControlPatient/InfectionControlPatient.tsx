@@ -8,6 +8,10 @@ import PatientNameCache from "components/PatientName/PatientNameCache";
 import { getCorporalSurface, getIMC } from "utils/index";
 import { formatDate } from "utils/date";
 import { formatNumber } from "utils/number";
+import {
+  trackInfectionControlAction,
+  TrackedInfectionControlAction,
+} from "src/utils/tracker";
 
 import { IInfectionControlPatient } from "../InfectionControlSlice";
 import { daysSince, getAge } from "../timeline";
@@ -181,7 +185,12 @@ export function InfectionControlPatient({
           type="link"
           size="small"
           className="patient-full-data"
-          onClick={() => setAdmissionOpen(true)}
+          onClick={() => {
+            trackInfectionControlAction(
+              TrackedInfectionControlAction.OPEN_PATIENT_DATA,
+            );
+            setAdmissionOpen(true);
+          }}
         >
           {t("infectionControl.patient.fullData")}
         </Button>
