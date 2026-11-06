@@ -2229,7 +2229,9 @@
       "reviewer": "Reviewer",
       "searchPlaceholder": "Type at least 3 letters to search",
       "antimicrobial": "Antimicrobial",
-      "review": "Review"
+      "review": "Review",
+      "treatmentType": "Treatment type",
+      "infectionFocus": "Infection focus"
     },
     "help": {
       "p1": "This report shows antimicrobial use and the infection control review process, from the follow-up of each admission (courses, conformity evaluations, reviews and pending reasons).",
@@ -2269,7 +2271,7 @@
     },
     "conformity": {
       "title": "Conformity",
-      "description": "Evaluations, the record of the prescribed antimicrobials, non-conformity reasons, substitutions, interventions and evaluations by substance",
+      "description": "Evaluations, the record of the prescribed antimicrobials, culture-guided therapy, conformity by treatment type and focus, non-conformity reasons, substitutions, interventions and evaluations by substance",
       "withRecord": "Antimicrobials with a conformity record",
       "withRecordHelp": "Antimicrobial days (DOT) with an evaluation in force on the day, conforming or non-conforming ÷ DOT of the period. Days not evaluated (no evaluation or an expired one) count only in the total. It is the total of the Prescribed antimicrobials by record chart.",
       "withRecordDetail": "{{recorded}} of {{dot}} DOT",
@@ -2279,11 +2281,14 @@
       "d3Help": "Courses started in the period with an evaluation recorded by the end of treatment day 3 (72 hours) ÷ courses started. Courses still running that have not reached D3 are left out.",
       "admissionsNonConforming": "Admissions with a non-conformity",
       "admissionsNonConformingHelp": "Admissions with at least one non-conforming evaluation recorded in the period.",
-      "evaluations": "evaluations"
+      "evaluations": "evaluations",
+      "cultureGuided": "Empirical courses guided by culture",
+      "cultureGuidedHelp": "Finished courses that started empirical and later had a culture-guided evaluation ÷ finished courses that started empirical. The starting type is the one of the course's evaluation with the earliest validity.",
+      "cultureGuidedDetail": "Median: D{{day}}"
     },
     "dotLot": {
       "title": "DOT/LOT",
-      "description": "Days of therapy and days on antimicrobials of the period, and DOT by AWaRe classification, route and substance",
+      "description": "Days of therapy and days on antimicrobials of the period, and DOT by AWaRe classification, treatment type, infection focus, route and substance",
       "dot": "Days of therapy (DOT)",
       "dotHelp": "Sum, for each antimicrobial of each patient, of the calendar days it was prescribed in the period. Two antimicrobials on the same day count 2. Days the course was interrupted do not count.",
       "dotPer1000": "DOT per 1,000 patient-days",
@@ -2306,7 +2311,22 @@
       "lotPer1000Line": "LOT/1,000 PD",
       "awareTrend": "AWaRe classification by month",
       "awareTrendHelp": "Share of each month's DOT in each WHO AWaRe group. The dashed line marks the 60% target of the Access group, at the bottom of each bar.",
-      "awareTarget": "WHO target: 60% Access"
+      "awareTarget": "WHO target: 60% Access",
+      "withIndication": "DOT with treatment type",
+      "withIndicationHelp": "Antimicrobial days (DOT) with an evaluation in force on the day that tells the treatment type ÷ DOT of the period. Days without an evaluation, or with one recorded before the treatment type was asked, count as not informed.",
+      "withIndicationDetail": "{{informed}} of {{dot}} DOT",
+      "indicationTrend": "DOT by treatment type by month",
+      "indicationTrendHelp": "Share of each month's days of therapy by the treatment type of the evaluation in force on the day. A course that turns from empirical to culture guided counts each day by that day's type.",
+      "byIndication": "DOT by treatment type and AWaRe",
+      "byIndicationHelp": "Days of therapy by the treatment type of the evaluation in force on the day, their share of the period's DOT and, for each type, the share of its days in each AWaRe group.",
+      "indication": "Treatment type",
+      "indicationDot": "DOT",
+      "indicationShare": "% of DOT",
+      "byFocus": "DOT by infection focus",
+      "byFocusHelp": "Days of therapy with each infection focus in the evaluation in force on the day, their share of the period's DOT and the 5 substances with the most days in that focus. A day with more than one focus counts in each, so the shares add up to more than 100%.",
+      "byFocusHint": "{{withFocus}} of the DOT has an informed focus; {{multiple}} of those days have more than one focus and count in each.",
+      "focus": "Infection focus",
+      "focusSubstances": "Top substances (DOT)"
     },
     "monthly": {
       "dot": "DOT",
@@ -2320,7 +2340,7 @@
     "departments": {
       "title": "By department",
       "conformityDescription": "Each number by the department of its own record: antimicrobial days by the department of the day, courses by the starting department, evaluations by the patient's department at the evaluation and admissions by the department at closing",
-      "dotLotDescription": "DOT, LOT and patients by the department of the antimicrobial day (a patient who stayed in more than one department counts in each); patient-days from the Patient-Days report",
+      "dotLotDescription": "DOT, LOT and patients by the department of the antimicrobial day (a patient who stayed in more than one department counts in each), and the share of the DOT by the treatment type of the evaluation in force on the day; patient-days from the Patient-Days report",
       "reviewsDescription": "Each admission by its department at closing, or the current one if still followed. Closed, % reviewed and the reviews count only the admissions closed in the period",
       "department": "Department",
       "admissions": "Admissions",
@@ -2341,7 +2361,10 @@
       "firstReview": "1st review (h)",
       "acceptance": "% acceptance",
       "pendingTime": "% time pending",
-      "drill": "See the department's admissions"
+      "drill": "See the department's admissions",
+      "empirical": "% empirical",
+      "cultureGuided": "% culture-guided",
+      "prophylaxis": "% prophylaxis"
     },
     "drill": {
       "close": "Close",
@@ -2378,7 +2401,8 @@
       "everNonConforming": "Had a non-conforming verdict",
       "yes": "Yes",
       "no": "No",
-      "noCourses": "No antimicrobial recorded for this admission"
+      "noCourses": "No antimicrobial recorded for this admission",
+      "indication": "Treatment type and focus"
     },
     "process": {
       "title": "Reviews",
@@ -2425,11 +2449,20 @@
       "interventions": "Interventions",
       "interventionsHelp": "Interventions recorded from the evaluations of the period, by status, and the median hours between recording and outcome.",
       "recorded": "recorded",
-      "hoursToOutcome": "Hours to outcome (median)"
+      "hoursToOutcome": "Hours to outcome (median)",
+      "byIndication": "Conformity by treatment type",
+      "byIndicationHelp": "Evaluations recorded in the period by treatment type and the share of them judged conforming. Evaluations recorded before the type was asked count as not informed.",
+      "byFocus": "Conformity by infection focus",
+      "byFocusHelp": "Evaluations recorded in the period by infection focus and the share of them judged conforming. An evaluation with more than one focus counts in each.",
+      "indication": "Treatment type",
+      "focus": "Infection focus",
+      "cultureGuidedDay": "Day it became culture guided",
+      "cultureGuidedDayHelp": "Of the finished courses that started empirical and became culture guided, the treatment day the culture-guided evaluation started to apply.",
+      "cultureGuidedSummary": "{{guided}} of {{courses}} finished empirical courses"
     },
     "consumption": {
       "title": "Courses",
-      "description": "Course length, route switch, restarts and combinations",
+      "description": "Course length, route switch, restarts, combinations and surgical prophylaxis duration",
       "courseLength": "Course length",
       "courseLengthHelp": "Treatment days of the finished courses (interruptions not counted); shows the median.",
       "courseLengthBins": "Courses by length (days)",
@@ -2445,7 +2478,12 @@
       "maxSimultaneous": "Simultaneous antimicrobials",
       "maxSimultaneousHelp": "Closed admissions by the highest number of antimicrobials prescribed at the same time.",
       "admissions": "Admissions",
-      "courses": "Courses"
+      "courses": "Courses",
+      "prophylaxisOver24h": "Surgical prophylaxis > 24h",
+      "prophylaxisOver24hHelp": "Finished courses given only as surgical prophylaxis (every evaluation of the course with that treatment type) that lasted more than 24 hours ÷ finished surgical prophylaxis courses. A course that turned into a treatment is left out.",
+      "prophylaxisDetail": "{{over}} of {{courses}} courses",
+      "prophylaxisDuration": "Surgical prophylaxis duration",
+      "prophylaxisDurationHelp": "Hours between the start and the end of the finished courses given only as surgical prophylaxis; shows the median."
     },
     "outcomes": {
       "title": "Patient profile",
@@ -2465,6 +2503,9 @@
     "units": {
       "hours": "h",
       "days": "days"
+    },
+    "indication": {
+      "notInformed": "Not informed"
     }
   }
 }

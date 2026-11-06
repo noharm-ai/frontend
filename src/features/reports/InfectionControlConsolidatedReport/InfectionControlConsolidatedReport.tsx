@@ -52,6 +52,7 @@ import {
   IReportParams,
 } from "./infectionControlReportTypes";
 import { Filter } from "./Filter/Filter";
+import { focusName, treatmentTypeName } from "./indication";
 import { HelpModal } from "./Help/Help";
 import { StickyTabBar } from "./StickyTabBar/StickyTabBar";
 import { Conformity } from "./Sections/Conformity/Conformity";
@@ -82,6 +83,8 @@ const INITIAL_VALUES: Omit<IFilterValues, "dateRange"> = {
   segment: [],
   department: [],
   aware_level: [],
+  treatment_type: [],
+  infection_focus: [],
   substance: [],
   reviewer: [],
 };
@@ -122,6 +125,8 @@ export function InfectionControlConsolidatedReport() {
     segment: { label: tk("filter.segment"), type: "list" },
     department: { label: tk("filter.department"), type: "list" },
     aware_level: { label: tk("filter.aware"), type: "list" },
+    treatment_type: { label: tk("filter.treatmentType"), type: "list" },
+    infection_focus: { label: tk("filter.infectionFocus"), type: "list" },
     substance: { label: tk("filter.substance"), type: "list" },
     reviewer: { label: tk("filter.reviewer"), type: "list", mask: hideNames },
   };
@@ -138,6 +143,8 @@ export function InfectionControlConsolidatedReport() {
       start_date: start.format("YYYY-MM-DD"),
       end_date: end.format("YYYY-MM-DD"),
       reviewer: values(params.reviewer),
+      treatment_type: params.treatment_type,
+      infection_focus: params.infection_focus,
     };
 
     // the store middlewares leave the thunk result untyped
@@ -165,6 +172,12 @@ export function InfectionControlConsolidatedReport() {
           .join(", "),
         aware_level: params.aware_level
           .map((level) => t(`culture.awareLevel.${level}`))
+          .join(", "),
+        treatment_type: params.treatment_type
+          .map((type) => treatmentTypeName(type, t))
+          .join(", "),
+        infection_focus: params.infection_focus
+          .map((focus) => focusName(focus, t))
           .join(", "),
         substance: labels(params.substance),
         reviewer: labels(params.reviewer),

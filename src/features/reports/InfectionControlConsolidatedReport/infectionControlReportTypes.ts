@@ -31,6 +31,11 @@ export interface IVerdictDays {
   expired: number;
 }
 
+// antimicrobial days by the treatment type in force on them, by its code
+// ("1"-"4", AntimicrobialTreatmentTypeEnum) and "none" (no record, or one
+// made before the indication was asked)
+export type ITreatmentTypeDays = Record<string, number>;
+
 export interface IOverview {
   admissionsClosed: number;
   admissionsFollowed: number;
@@ -78,6 +83,8 @@ export interface IDepartmentRow {
   reviewsPerAdmission: number | null;
   reviewsPer100Dot: number | null;
   verdictDays: IVerdictDays;
+  // missing from a private backend before the indication
+  treatmentTypeDays?: ITreatmentTypeDays;
 }
 
 // a month (YYYY-MM) of the use trend: DOT, LOT, their rates and the AWaRe mix
@@ -91,6 +98,7 @@ export interface IUsePoint {
   lotPer1000PatientDays: number | null;
   // days by AWaRe group, as the service names them (consumption.awareMix)
   awareDays: Record<string, number>;
+  treatmentTypeDays?: ITreatmentTypeDays;
 }
 
 // the scale of the trend chart
@@ -152,6 +160,31 @@ export interface ISubstitution {
   count: number;
 }
 
+// evaluations and their conforming share by an indication
+export interface IConformityByTreatmentType {
+  // AntimicrobialTreatmentTypeEnum, null when not informed
+  type: number | null;
+  evaluations: number;
+  conformingShare: number | null;
+}
+
+export interface IConformityByFocus {
+  // InfectionFocusEnum
+  focus: number;
+  evaluations: number;
+  conformingShare: number | null;
+}
+
+// finished courses started empirically and the ones that became culture guided
+export interface IEmpiricalToCultureGuided {
+  courses: number;
+  becameCultureGuided: number;
+  becameCultureGuidedShare: number | null;
+  // the treatment day it became culture guided
+  day: IQuantiles;
+  dayBins: IBin[];
+}
+
 export interface IAppropriateness {
   evaluationsConformingShare: number | null;
   coursesEndingConformingShare: number | null;
@@ -168,6 +201,32 @@ export interface IAppropriateness {
     hoursToOutcome: IQuantiles;
   };
   verdictDays: IVerdictDays;
+  // missing from a private backend before the indication
+  byTreatmentType?: IConformityByTreatmentType[];
+  byFocus?: IConformityByFocus[];
+  empiricalToCultureGuided?: IEmpiricalToCultureGuided;
+}
+
+// days of therapy with an infection focus (a day with several counts in each)
+export interface IFocusDot {
+  // InfectionFocusEnum
+  focus: number;
+  dot: number;
+  // of the whole DOT
+  share: number | null;
+  topSubstances: {
+    idSubstance: number | null;
+    substance: string | null;
+    dot: number;
+  }[];
+}
+
+// finished courses given only as surgical prophylaxis
+export interface ISurgicalProphylaxis {
+  courses: number;
+  longerThan24h: number;
+  longerThan24hShare: number | null;
+  durationHours: IQuantiles;
 }
 
 export interface IConsumption {
@@ -187,6 +246,17 @@ export interface IConsumption {
   ivToOralSwitchShare: number | null;
   ivToOralSwitchDay: IQuantiles;
   restartShare: number | null;
+  // the indication: missing from a private backend before it
+  treatmentTypeDays?: ITreatmentTypeDays;
+  dotWithTreatmentType?: number;
+  dotWithTreatmentTypeShare?: number | null;
+  // AWaRe days (by the service's group names) of each treatment type key
+  awareByTreatmentType?: Record<string, Record<string, number>>;
+  dotByFocus?: IFocusDot[];
+  dotWithFocusShare?: number | null;
+  // days with more than one focus, of the days with a focus
+  multipleFociShare?: number | null;
+  surgicalProphylaxis?: ISurgicalProphylaxis;
 }
 
 export interface IAgeBand {
@@ -261,6 +331,12 @@ export interface ICourse {
   evaluatedByD3: boolean | null;
   finalVerdict: "conforming" | "non_conforming" | null;
   everNonConforming: boolean;
+  // why it was given, as it started and ended, and every focus it had
+  treatmentTypeStart?: number | null;
+  treatmentTypeEnd?: number | null;
+  infectionFoci?: number[];
+  // the treatment day it became culture guided
+  cultureGuidedDay?: number | null;
 }
 
 // the period answers indicators; admissions_of and courses_of the drill-down
@@ -281,6 +357,9 @@ export interface IReportParams {
   substance?: number[];
   aware_level?: number[];
   reviewer?: number[];
+  // AntimicrobialTreatmentTypeEnum and InfectionFocusEnum codes
+  treatment_type?: number[];
+  infection_focus?: number[];
   // the admissions of this department in the period
   admissions_of?: number;
   // the courses of this admission
@@ -298,6 +377,8 @@ export interface IFilterValues {
   segment: string[];
   department: number[];
   aware_level: number[];
+  treatment_type: number[];
+  infection_focus: number[];
   // searched, so they keep their labels (labelInValue)
   substance: IOption[];
   reviewer: IOption[];

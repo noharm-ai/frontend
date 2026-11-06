@@ -2239,7 +2239,9 @@
       "reviewer": "Revisor",
       "searchPlaceholder": "Digite ao menos 3 letras para buscar",
       "antimicrobial": "Antimicrobiano",
-      "review": "Revisão"
+      "review": "Revisão",
+      "treatmentType": "Tipo de tratamento",
+      "infectionFocus": "Foco infeccioso"
     },
     "help": {
       "p1": "Este relatório apresenta o uso de antimicrobianos e o processo de revisão do controle de infecção, a partir do acompanhamento dos atendimentos (cursos, avaliações de conformidade, revisões e pendências).",
@@ -2279,7 +2281,7 @@
     },
     "conformity": {
       "title": "Conformidade",
-      "description": "Avaliações, a situação dos antimicrobianos prescritos, motivos de não conformidade, substituições, intervenções e avaliações por substância",
+      "description": "Avaliações, a situação dos antimicrobianos prescritos, direcionamento por cultura, conformidade por tipo de tratamento e foco, motivos de não conformidade, substituições, intervenções e avaliações por substância",
       "withRecord": "Antimicrobianos com registro de conformidade",
       "withRecordHelp": "Dias de antimicrobiano (DOT) com uma avaliação vigente no dia, conforme ou não conforme ÷ DOT do período. Dias não avaliados (sem avaliação ou com a avaliação vencida) contam só no total. É o total do gráfico Situação dos antimicrobianos prescritos.",
       "withRecordDetail": "{{recorded}} de {{dot}} DOT",
@@ -2289,11 +2291,14 @@
       "d3Help": "Cursos iniciados no período com uma avaliação registrada até o fim do 3º dia de tratamento (72 horas) ÷ cursos iniciados. Cursos ainda em andamento que não chegaram ao D3 ficam de fora da conta.",
       "admissionsNonConforming": "Atendimentos com não conformidade",
       "admissionsNonConformingHelp": "Atendimentos com ao menos uma avaliação não conforme registrada no período.",
-      "evaluations": "avaliações"
+      "evaluations": "avaliações",
+      "cultureGuided": "Empíricos direcionados por cultura",
+      "cultureGuidedHelp": "Cursos encerrados que começaram empíricos e tiveram depois uma avaliação guiada por cultura ÷ cursos encerrados que começaram empíricos. O tipo inicial é o da avaliação com a vigência mais antiga do curso.",
+      "cultureGuidedDetail": "Mediana: D{{day}}"
     },
     "dotLot": {
       "title": "DOT/LOT",
-      "description": "Dias de terapia e dias com antimicrobiano do período, e o DOT por classificação AWaRe, via e substância",
+      "description": "Dias de terapia e dias com antimicrobiano do período, e o DOT por classificação AWaRe, tipo de tratamento, foco infeccioso, via e substância",
       "dot": "Dias de terapia (DOT)",
       "dotHelp": "Soma, para cada antimicrobiano de cada paciente, dos dias de calendário em que ele esteve prescrito no período. Dois antimicrobianos no mesmo dia contam 2. Dias em que o curso estava interrompido não contam.",
       "dotPer1000": "DOT por 1.000 pacientes-dia",
@@ -2316,7 +2321,22 @@
       "lotPer1000Line": "LOT/1.000 PD",
       "awareTrend": "Classificação AWaRe por mês",
       "awareTrendHelp": "Parte do DOT de cada mês em cada grupo AWaRe da OMS. A linha tracejada marca a meta de 60% do grupo Acesso, que fica na base de cada barra.",
-      "awareTarget": "Meta OMS: 60% Acesso"
+      "awareTarget": "Meta OMS: 60% Acesso",
+      "withIndication": "DOT com tipo de tratamento",
+      "withIndicationHelp": "Dias de antimicrobiano (DOT) com uma avaliação vigente no dia que informa o tipo de tratamento ÷ DOT do período. Dias sem avaliação, ou com uma avaliação registrada antes de o tipo de tratamento ser perguntado, ficam como não informados.",
+      "withIndicationDetail": "{{informed}} de {{dot}} DOT",
+      "indicationTrend": "DOT por tipo de tratamento por mês",
+      "indicationTrendHelp": "Parte dos dias de terapia de cada mês por tipo de tratamento da avaliação vigente no dia. Um curso que passa de empírico a guiado por cultura conta cada dia pelo tipo daquele dia.",
+      "byIndication": "DOT por tipo de tratamento e AWaRe",
+      "byIndicationHelp": "Dias de terapia por tipo de tratamento da avaliação vigente no dia, a parte do DOT do período e, de cada tipo, a parte dos dias em cada grupo AWaRe.",
+      "indication": "Tipo de tratamento",
+      "indicationDot": "DOT",
+      "indicationShare": "% do DOT",
+      "byFocus": "DOT por foco infeccioso",
+      "byFocusHelp": "Dias de terapia com cada foco infeccioso na avaliação vigente no dia, a parte do DOT do período e as 5 substâncias com mais dias nesse foco. Um dia com mais de um foco conta em cada um, então as partes somam mais de 100%.",
+      "byFocusHint": "{{withFocus}} do DOT tem foco informado; {{multiple}} desses dias têm mais de um foco e contam em cada um.",
+      "focus": "Foco infeccioso",
+      "focusSubstances": "Principais substâncias (DOT)"
     },
     "monthly": {
       "dot": "DOT",
@@ -2330,7 +2350,7 @@
     "departments": {
       "title": "Por setor",
       "conformityDescription": "Cada número pelo setor do seu próprio registro: dias de antimicrobiano pelo setor do dia, cursos pelo setor de início, avaliações pelo setor do paciente na avaliação e atendimentos pelo setor no encerramento",
-      "dotLotDescription": "DOT, LOT e pacientes pelo setor do dia de antimicrobiano (um paciente que passou por mais de um setor conta em cada um); pacientes-dia do relatório Pacientes-Dia",
+      "dotLotDescription": "DOT, LOT e pacientes pelo setor do dia de antimicrobiano (um paciente que passou por mais de um setor conta em cada um), e a parte do DOT por tipo de tratamento da avaliação vigente no dia; pacientes-dia do relatório Pacientes-Dia",
       "reviewsDescription": "Cada atendimento pelo seu setor no encerramento, ou o atual se ainda em acompanhamento. Encerrados, % revisados e as revisões contam só os atendimentos encerrados no período",
       "department": "Setor",
       "admissions": "Atendimentos",
@@ -2351,7 +2371,10 @@
       "firstReview": "1ª revisão (h)",
       "acceptance": "% aceitação",
       "pendingTime": "% tempo pendente",
-      "drill": "Ver os atendimentos do setor"
+      "drill": "Ver os atendimentos do setor",
+      "empirical": "% empírico",
+      "cultureGuided": "% guiado por cultura",
+      "prophylaxis": "% profilaxia"
     },
     "drill": {
       "close": "Fechar",
@@ -2388,7 +2411,8 @@
       "everNonConforming": "Já teve parecer não conforme",
       "yes": "Sim",
       "no": "Não",
-      "noCourses": "Nenhum antimicrobiano registrado para este atendimento"
+      "noCourses": "Nenhum antimicrobiano registrado para este atendimento",
+      "indication": "Tipo de tratamento e foco"
     },
     "process": {
       "title": "Revisões",
@@ -2435,11 +2459,20 @@
       "interventions": "Intervenções",
       "interventionsHelp": "Intervenções registradas a partir das avaliações do período, por situação, e a mediana de horas entre o registro e o desfecho.",
       "recorded": "registradas",
-      "hoursToOutcome": "Horas até o desfecho (mediana)"
+      "hoursToOutcome": "Horas até o desfecho (mediana)",
+      "byIndication": "Conformidade por tipo de tratamento",
+      "byIndicationHelp": "Avaliações registradas no período por tipo de tratamento e a parte delas com parecer conforme. Avaliações registradas antes de o tipo ser perguntado ficam como não informadas.",
+      "byFocus": "Conformidade por foco infeccioso",
+      "byFocusHelp": "Avaliações registradas no período por foco infeccioso e a parte delas com parecer conforme. Uma avaliação com mais de um foco conta em cada um.",
+      "indication": "Tipo de tratamento",
+      "focus": "Foco infeccioso",
+      "cultureGuidedDay": "Dia do direcionamento por cultura",
+      "cultureGuidedDayHelp": "Dos cursos encerrados que começaram empíricos e foram direcionados por cultura, o dia de tratamento em que a avaliação guiada por cultura passou a valer.",
+      "cultureGuidedSummary": "{{guided}} de {{courses}} cursos empíricos encerrados"
     },
     "consumption": {
       "title": "Cursos",
-      "description": "Duração dos cursos, troca de via, reinícios e associações",
+      "description": "Duração dos cursos, troca de via, reinícios, associações e duração da profilaxia cirúrgica",
       "courseLength": "Duração dos cursos",
       "courseLengthHelp": "Dias de tratamento dos cursos encerrados (sem contar interrupções); mostra a mediana.",
       "courseLengthBins": "Cursos por duração (dias)",
@@ -2455,7 +2488,12 @@
       "maxSimultaneous": "Antimicrobianos simultâneos",
       "maxSimultaneousHelp": "Atendimentos encerrados pelo maior número de antimicrobianos prescritos ao mesmo tempo.",
       "admissions": "Atendimentos",
-      "courses": "Cursos"
+      "courses": "Cursos",
+      "prophylaxisOver24h": "Profilaxia cirúrgica > 24h",
+      "prophylaxisOver24hHelp": "Cursos encerrados dados só como profilaxia cirúrgica (todas as avaliações do curso com esse tipo de tratamento) que duraram mais de 24 horas ÷ cursos encerrados de profilaxia cirúrgica. Um curso que virou tratamento fica de fora.",
+      "prophylaxisDetail": "{{over}} de {{courses}} cursos",
+      "prophylaxisDuration": "Duração da profilaxia cirúrgica",
+      "prophylaxisDurationHelp": "Horas entre o início e o fim dos cursos encerrados dados só como profilaxia cirúrgica; mostra a mediana."
     },
     "outcomes": {
       "title": "Perfil dos pacientes",
@@ -2475,6 +2513,9 @@
     "units": {
       "hours": "h",
       "days": "dias"
+    },
+    "indication": {
+      "notInformed": "Não informado"
     }
   }
 }

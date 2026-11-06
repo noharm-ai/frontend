@@ -8,6 +8,8 @@ import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 
 import { formatDecimal, formatInteger, formatShare } from "../../format";
+import { shareOf } from "../../indication";
+import { PROPHYLAXIS_TYPES } from "../../options";
 import {
   IDepartmentRow,
   IReportParams,
@@ -61,6 +63,27 @@ export function Departments({
     render: (value: number) => format(value),
   });
 
+  // the share of the department's DOT given with these treatment types
+  const typeShare = (row: IDepartmentRow, keys: string[]) =>
+    row.treatmentTypeDays
+      ? shareOf(
+          keys.reduce(
+            (sum, key) => sum + (row.treatmentTypeDays?.[key] || 0),
+            0,
+          ),
+          row.dot,
+        )
+      : null;
+  const typeColumn = (label: string, keys: string[]) => ({
+    title: tk(label),
+    key: label,
+    align: right,
+    sorter: (a: IDepartmentRow, b: IDepartmentRow) =>
+      (typeShare(a, keys) ?? -1) - (typeShare(b, keys) ?? -1),
+    render: (_: unknown, row: IDepartmentRow) =>
+      formatShare(typeShare(row, keys)),
+  });
+
   const byView: Record<DepartmentsView, TableColumnsType<IDepartmentRow>> = {
     conformity: [
       column("admissions", "admissions", formatInteger),
@@ -85,6 +108,9 @@ export function Departments({
       column("lot", "lot", formatInteger),
       column("dotLot", "dotLot", (value) => formatDecimal(value, 2)),
       column("access", "accessShare", formatShare),
+      typeColumn("empirical", ["1"]),
+      typeColumn("cultureGuided", ["2"]),
+      typeColumn("prophylaxis", PROPHYLAXIS_TYPES),
     ],
   };
 

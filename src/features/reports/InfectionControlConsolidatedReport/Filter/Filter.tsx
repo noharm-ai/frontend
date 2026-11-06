@@ -10,7 +10,7 @@ interface FilterProps {
   initialValues: IFilterValues;
 }
 
-/** The report filters: period, segment and department, plus AWaRe, substance and reviewer. */
+/** The report filters: period, segment and department, plus AWaRe, substance, treatment type, infection focus and reviewer. */
 export function Filter({ onSearch, loading, initialValues }: FilterProps) {
   return (
     <AdvancedFilter
