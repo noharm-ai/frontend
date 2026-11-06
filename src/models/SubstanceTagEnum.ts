@@ -11,12 +11,14 @@ export class SubstanceTagEnum {
   static TUBE = "tube";
   static NO_DOSEMAX = "no_dosemax";
 
-  static getSubstanceTags = (t) => {
-    const types = Object.keys(SubstanceTagEnum)
-      .filter((k) => typeof SubstanceTagEnum[k] === "string")
-      .map((k) => ({
-        id: SubstanceTagEnum[k],
-        label: t(`substanceTag.${SubstanceTagEnum[k]}`),
+  static getSubstanceTags = (t: (key: string) => string) => {
+    const enumValues = SubstanceTagEnum as unknown as Record<string, unknown>;
+    const types = Object.keys(enumValues)
+      .map((k) => enumValues[k])
+      .filter((v): v is string => typeof v === "string")
+      .map((id) => ({
+        id,
+        label: t(`substanceTag.${id}`),
       }));
 
     return types.sort((a, b) => `${a?.label}`.localeCompare(`${b?.label}`));
