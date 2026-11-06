@@ -13,6 +13,10 @@ import dayjs, { Dayjs } from "dayjs";
 import { Checkbox, DatePicker, Select, Textarea } from "components/Inputs";
 import { useAppSelector } from "src/store";
 import { formatDate, formatDateTime } from "utils/date";
+import {
+  trackInfectionControlAction,
+  TrackedInfectionControlAction,
+} from "src/utils/tracker";
 
 import {
   ICourse,
@@ -98,6 +102,13 @@ export function DrugEvaluationStep({
   // the drawer with the prescription, the pendings and the alerts of the drug,
   // by its tab
   const [detailsTab, setDetailsTab] = useState<ReviewDetailsTab | null>(null);
+  const openDetails = (tab: ReviewDetailsTab) => {
+    trackInfectionControlAction(
+      TrackedInfectionControlAction.OPEN_DRUG_DETAILS,
+      { tab },
+    );
+    setDetailsTab(tab);
+  };
 
   const evaluation = values.evaluations[index];
   const field = (name: string) => `evaluations.${index}.${name}`;
@@ -158,7 +169,7 @@ export function DrugEvaluationStep({
                 type="button"
                 className="link-button"
                 data-testid="review-prescription-link"
-                onClick={() => setDetailsTab("prescription")}
+                onClick={() => openDetails("prescription")}
               >
                 {t("infectionControl.review.prescriptionDetails")}
               </button>
@@ -174,7 +185,7 @@ export function DrugEvaluationStep({
                 type="button"
                 className="drug-chip pendings"
                 data-testid="review-pendings-chip"
-                onClick={() => setDetailsTab("pendings")}
+                onClick={() => openDetails("pendings")}
               >
                 <span className="drug-chip-dot" />
                 {t("infectionControl.review.pendingsCount", {
@@ -188,7 +199,7 @@ export function DrugEvaluationStep({
                 type="button"
                 className="drug-chip"
                 data-testid="review-alerts-chip"
-                onClick={() => setDetailsTab("alerts")}
+                onClick={() => openDetails("alerts")}
               >
                 {t("infectionControl.review.alertsChip")}
                 {alertLevels.map(({ level, count }) => (

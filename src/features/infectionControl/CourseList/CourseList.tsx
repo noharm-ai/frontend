@@ -7,6 +7,10 @@ import { Dayjs } from "dayjs";
 import { AwareTag } from "components/AwareTag/AwareTag";
 import DrugAlertLevelTag from "components/DrugAlertLevelTag";
 import { formatDate } from "utils/date";
+import {
+  trackInfectionControlAction,
+  TrackedInfectionControlAction,
+} from "src/utils/tracker";
 
 import {
   CourseStatus,
@@ -51,6 +55,12 @@ export function CourseList({
 }: CourseListProps) {
   const { t } = useTranslation();
   const [selected, setSelected] = useState<ICourse | null>(null);
+  const openCourse = (course: ICourse) => {
+    trackInfectionControlAction(TrackedInfectionControlAction.OPEN_COURSE, {
+      origin: "list",
+    });
+    setSelected(course);
+  };
   const rows = useMemo(() => groupCourseRows(courses), [courses]);
 
   return (
@@ -73,7 +83,7 @@ export function CourseList({
             key={idDrug}
             type="button"
             data-testid="course-card"
-            onClick={() => setSelected(course)}
+            onClick={() => openCourse(course)}
           >
             <div className="card-body">
               <div className="card-drug">

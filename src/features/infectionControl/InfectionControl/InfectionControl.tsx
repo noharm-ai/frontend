@@ -23,6 +23,10 @@ import { getErrorMessage } from "utils/errorHandler";
 import ExamsModal from "features/exams/ExamModal/ExamModal";
 import { setExamsModalAdmissionNumber } from "features/exams/ExamModal/ExamModalSlice";
 import { useIsMobile } from "hooks/useIsMobile";
+import {
+  trackInfectionControlAction,
+  TrackedInfectionControlAction,
+} from "src/utils/tracker";
 
 import {
   fetchAntimicrobialTimeline,
@@ -207,8 +211,18 @@ export function InfectionControl() {
       series: plotted.map(toExamSeries),
       options: examOptions.filter((option) => !ids.includes(option.id)),
       status: examHistory.status,
-      onAdd: (id: string) => setExamIds([...ids, id]),
-      onRemove: (id: string) => setExamIds(ids.filter((item) => item !== id)),
+      onAdd: (id: string) => {
+        trackInfectionControlAction(
+          TrackedInfectionControlAction.ADD_TIMELINE_EXAM,
+        );
+        setExamIds([...ids, id]);
+      },
+      onRemove: (id: string) => {
+        trackInfectionControlAction(
+          TrackedInfectionControlAction.REMOVE_TIMELINE_EXAM,
+        );
+        setExamIds(ids.filter((item) => item !== id));
+      },
       onRetry: loadExamHistory,
     };
   }, [hasExams, examIds, examOptions, examHistory.status]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -219,6 +233,7 @@ export function InfectionControl() {
     PermissionService().has(Permission.READ_INFECTION_CONTROL);
 
   const goToNextPending = () => {
+    trackInfectionControlAction(TrackedInfectionControlAction.NEXT_PENDING);
     setNextLoading(true);
     dispatch(
       fetchNextPending({
@@ -242,6 +257,7 @@ export function InfectionControl() {
   };
 
   const follow = () => {
+    trackInfectionControlAction(TrackedInfectionControlAction.FOLLOW_ADMISSION);
     dispatch(followAdmission({ admissionNumber })).then((response: any) => {
       if (response.error) {
         notification.error({ message: getErrorMessage(response, t) });
@@ -251,6 +267,14 @@ export function InfectionControl() {
         });
       }
     });
+  };
+
+  // the report opens from the actions menu and from the review history
+  const openReport = (origin: "menu" | "history") => {
+    trackInfectionControlAction(TrackedInfectionControlAction.OPEN_REPORT, {
+      origin,
+    });
+    setReportOpen(true);
   };
 
   // the secondary actions, grouped so the header keeps Revisar and Evoluções
@@ -293,7 +317,7 @@ export function InfectionControl() {
 
   const onMoreAction: MenuProps["onClick"] = ({ key }) => {
     if (key === "report") {
-      setReportOpen(true);
+      openReport("menu");
     } else if (key === "follow") {
       follow();
     } else if (key === "nextPending") {
@@ -326,14 +350,24 @@ export function InfectionControl() {
             <Button
               type="primary"
               icon={<FileDoneOutlined />}
-              onClick={() => dispatch(setReviewOpen(true))}
+              onClick={() => {
+                trackInfectionControlAction(
+                  TrackedInfectionControlAction.OPEN_REVIEW,
+                );
+                dispatch(setReviewOpen(true));
+              }}
             >
               {t("infectionControl.followUp.register")}
             </Button>
           )}
           <Button
             icon={<FileTextOutlined />}
-            onClick={() => setClinicalNotesOpen(true)}
+            onClick={() => {
+              trackInfectionControlAction(
+                TrackedInfectionControlAction.OPEN_CLINICAL_NOTES,
+              );
+              setClinicalNotesOpen(true);
+            }}
           >
             {t("infectionControl.clinicalNotes")}
           </Button>
@@ -375,10 +409,16 @@ export function InfectionControl() {
   );
 
   const coursesViewToggle = isMobile && (
-    <Segmented
+    <Segmented<"list" | "timeline">
       size="small"
       value={coursesView}
-      onChange={setCoursesView}
+      onChange={(view) => {
+        trackInfectionControlAction(
+          TrackedInfectionControlAction.CHANGE_COURSES_VIEW,
+          { view },
+        );
+        setCoursesView(view);
+      }}
       options={[
         { value: "list", label: t("infectionControl.timeline.viewList") },
         {
@@ -441,7 +481,7 @@ export function InfectionControl() {
             followUp={followUp}
             drugNames={drugNames}
             now={now}
-            onOpenReport={() => setReportOpen(true)}
+            onOpenReport={() => openReport("history")}
           />
         )}
         {followUpStatus === "failed" && (

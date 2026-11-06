@@ -5,6 +5,10 @@ import { SearchOutlined } from "@ant-design/icons";
 import PatientNameCache from "components/PatientName/PatientNameCache";
 import { InfectionControlStatusEnum } from "models/InfectionControlEnum";
 import { formatDate, formatDateTime } from "utils/date";
+import {
+  trackInfectionControlAction,
+  TrackedInfectionControlAction,
+} from "src/utils/tracker";
 
 import { IFollowedAdmission, PAGE_SIZE } from "../../InfectionControlListSlice";
 import { describePending } from "../../followUp";
@@ -33,6 +37,8 @@ export function WorklistCards({
 }: WorklistCardsProps) {
   const { t } = useTranslation();
   const shown = admissions.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+  const trackOpenPatient = () =>
+    trackInfectionControlAction(TrackedInfectionControlAction.OPEN_PATIENT);
 
   const pagination = admissions.length > PAGE_SIZE && (
     <Pagination
@@ -73,6 +79,7 @@ export function WorklistCards({
                 href={patientUrl(admission)}
                 target="_blank"
                 rel="noreferrer"
+                onClick={trackOpenPatient}
                 icon={<SearchOutlined />}
                 aria-label={t("infectionControl.worklist.open")}
               />
@@ -80,7 +87,12 @@ export function WorklistCards({
 
             <div className="card-admission">
               {t("infectionControl.worklist.admission")}{" "}
-              <a href={patientUrl(admission)} target="_blank" rel="noreferrer">
+              <a
+                href={patientUrl(admission)}
+                target="_blank"
+                rel="noreferrer"
+                onClick={trackOpenPatient}
+              >
                 {admission.admissionNumber}
               </a>
               {admission.department && <> · {admission.department}</>}

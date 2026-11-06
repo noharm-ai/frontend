@@ -7,6 +7,10 @@ import dayjs, { Dayjs } from "dayjs";
 import DefaultModal from "components/Modal";
 import { InfectionControlStatusEnum } from "models/InfectionControlEnum";
 import { formatDate } from "utils/date";
+import {
+  trackInfectionControlAction,
+  TrackedInfectionControlAction,
+} from "src/utils/tracker";
 
 import { IFollowUp } from "../InfectionControlSlice";
 import { describePending } from "../followUp";
@@ -92,7 +96,12 @@ export function FollowUpStatus({
                     type="link"
                     className="follow-up-link"
                     data-testid="follow-up-last-review"
-                    onClick={() => setHistoryOpen(true)}
+                    onClick={() => {
+                      trackInfectionControlAction(
+                        TrackedInfectionControlAction.OPEN_REVIEW_HISTORY,
+                      );
+                      setHistoryOpen(true);
+                    }}
                   >
                     {formatDate(lastReview.createdAt)}
                   </Button>
@@ -151,7 +160,12 @@ export function FollowUpStatus({
                   type="link"
                   className="follow-up-link"
                   data-testid="follow-up-pendings-count"
-                  onClick={() => setPendingsOpen(true)}
+                  onClick={() => {
+                    trackInfectionControlAction(
+                      TrackedInfectionControlAction.OPEN_PENDINGS,
+                    );
+                    setPendingsOpen(true);
+                  }}
                 >
                   {t("infectionControl.followUp.pendingsCount", {
                     count: pendings.length,

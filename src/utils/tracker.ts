@@ -78,6 +78,16 @@ export const trackKnowledgeBaseAction = (
   });
 };
 
+export const trackInfectionControlAction = (
+  trackedAction: TrackedInfectionControlAction,
+  details: any = {},
+) => {
+  track(CustomEvent.INFECTION_CONTROL_ACTION, {
+    custom_event: trackedAction,
+    ...details,
+  });
+};
+
 const track = (customEvent: CustomEvent, details: any = {}) => {
   if (!(window as any).cwr) {
     console.log("tracking error: cwr undefined");
@@ -101,6 +111,7 @@ enum CustomEvent {
   CUSTOM_REPORT_ACTION = "CustomReportAction", // action in custom report
   SUPPORT_ACTION = "SupportAction", // action in support drawer
   KNOWLEDGE_BASE_ACTION = "KnowledgeBaseAction", // knowledge base and help mode
+  INFECTION_CONTROL_ACTION = "InfectionControlAction", // infection control worklist and patient page
 }
 
 export enum TrackedReport {
@@ -245,4 +256,31 @@ export enum TrackedKnowledgeBaseAction {
   ACCESS_HOME = "acessar-base-conhecimento",
   VIEW_ARTICLE = "ver-artigo",
   ACTIVATE_HELP_MODE = "ativar-modo-ajuda",
+}
+
+export enum TrackedInfectionControlAction {
+  // worklist
+  FILTER_LIST = "filtrar-lista",
+  CHANGE_PAGE = "trocar-pagina",
+  OPEN_PATIENT = "abrir-paciente",
+  // patient page
+  OPEN_REVIEW = "abrir-revisao",
+  SAVE_REVIEW = "salvar-revisao",
+  OPEN_CLINICAL_NOTES = "abrir-evolucoes",
+  OPEN_REPORT = "abrir-relatorio",
+  PRINT_REPORT = "imprimir-relatorio",
+  FOLLOW_ADMISSION = "iniciar-acompanhamento",
+  NEXT_PENDING = "proximo-pendente",
+  OPEN_REVIEW_HISTORY = "abrir-historico-revisoes",
+  OPEN_PENDINGS = "abrir-pendencias",
+  OPEN_PATIENT_DATA = "abrir-dados-paciente",
+  OPEN_COURSE = "abrir-curso",
+  SHOW_SUPERSEDED = "mostrar-substituidos",
+  CHANGE_COURSES_VIEW = "alterar-visualizacao-cursos",
+  ADD_TIMELINE_EXAM = "adicionar-exame-timeline",
+  REMOVE_TIMELINE_EXAM = "remover-exame-timeline",
+  SHOW_EXAMS = "abrir-exames",
+  OPEN_CULTURE_HISTORY = "abrir-historico-cultura",
+  OPEN_ALERT_HANDLING = "abrir-manejo",
+  OPEN_DRUG_DETAILS = "abrir-detalhes-medicamento",
 }
