@@ -10,7 +10,7 @@ export default class InterventionReasonRelationType {
     ];
   }
 
-  static isRequired(type) {
+  static isRequired(type: number) {
     return type === InterventionReasonRelationType.HAS_REQUIRED_RELATION;
   }
 }
