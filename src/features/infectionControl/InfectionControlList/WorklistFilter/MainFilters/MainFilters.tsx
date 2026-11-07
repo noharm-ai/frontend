@@ -22,7 +22,12 @@ interface ISegmentDepartment {
   label: string;
 }
 
-/** Status, department and admissions, always in sight */
+interface ISegment {
+  id: number | string;
+  description: string;
+}
+
+/** Status, segment, department and admissions, always in sight */
 export function MainFilters() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
@@ -31,6 +36,30 @@ export function MainFilters() {
   const departments = useAppSelector(
     (state: any) => state.lists.getSegmentDepartments,
   );
+  // loaded at login
+  const segments: ISegment[] = useAppSelector(
+    (state: any) => state.segments.list ?? [],
+  );
+
+  // the departments of the chosen segments, all of them with none chosen
+  const departmentsOf = (idSegment: number[]): ISegmentDepartment[] =>
+    getUniqBy(
+      (departments.list as ISegmentDepartment[]).filter(
+        (d) => !idSegment.length || idSegment.includes(d.idSegment),
+      ),
+      "idDepartment",
+    );
+
+  // a department left out of the chosen segments is dropped from the filter
+  const handleSegmentChange = (idSegment: number[]) => {
+    const available = departmentsOf(idSegment).map((d) => d.idDepartment);
+    setFieldValue({
+      idSegment,
+      idDepartment: (values.idDepartment ?? []).filter((id: number) =>
+        available.includes(id),
+      ),
+    });
+  };
 
   useEffect(() => {
     dispatch(getSegmentDepartments() as any);
@@ -38,7 +67,7 @@ export function MainFilters() {
 
   return (
     <>
-      <Col xs={24} md={6}>
+      <Col xs={24} md={5}>
         <Heading
           {...({ as: "label", htmlFor: "status", $size: "14px" } as any)}
         >
@@ -57,6 +86,32 @@ export function MainFilters() {
           {STATUSES.map((value) => (
             <Select.Option key={value} value={value}>
               {t(`infectionControl.followUp.status.${value}`)}
+            </Select.Option>
+          ))}
+        </Select>
+      </Col>
+      <Col xs={24} md={5}>
+        <Heading
+          {...({ as: "label", htmlFor: "segments", $size: "14px" } as any)}
+        >
+          {t("infectionControl.worklist.filters.segment")}:
+        </Heading>
+        <Select
+          id="segments"
+          style={{ width: "100%" }}
+          mode="multiple"
+          allowClear
+          maxTagCount="responsive"
+          optionFilterProp="children"
+          placeholder={t(
+            "infectionControl.worklist.filters.segmentPlaceholder",
+          )}
+          value={values.idSegment ?? []}
+          onChange={(idSegment) => handleSegmentChange(idSegment as number[])}
+        >
+          {segments.map(({ id, description }) => (
+            <Select.Option key={id} value={Number(id)}>
+              {description}
             </Select.Option>
           ))}
         </Select>
@@ -80,16 +135,16 @@ export function MainFilters() {
           value={values.idDepartment}
           onChange={(idDepartment: any) => setFieldValue({ idDepartment })}
         >
-          {(
-            getUniqBy(departments.list, "idDepartment") as ISegmentDepartment[]
-          ).map(({ idDepartment, idSegment, label }) => (
-            <Select.Option
-              key={`${idSegment}-${idDepartment}`}
-              value={idDepartment}
-            >
-              {label}
-            </Select.Option>
-          ))}
+          {departmentsOf(values.idSegment ?? []).map(
+            ({ idDepartment, idSegment, label }) => (
+              <Select.Option
+                key={`${idSegment}-${idDepartment}`}
+                value={idDepartment}
+              >
+                {label}
+              </Select.Option>
+            ),
+          )}
         </Select>
       </Col>
       <Col xs={24} md={4}>

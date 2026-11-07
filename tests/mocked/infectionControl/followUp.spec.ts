@@ -3319,6 +3319,73 @@ test.describe("worklist", () => {
     );
   });
 
+  test.describe("by segment", () => {
+    test.use({ storageState: { cookies: [], origins: [] } });
+
+    test.beforeEach(async ({ page, mockApi }) => {
+      await loginWithAuth(page, mockApi, {
+        permissions: BASE_PERMISSIONS,
+        segments: [
+          { id: 1, description: "Adulto", status: 1 },
+          { id: 2, description: "Pediatria", status: 1 },
+        ],
+      });
+      mockApi.override("GET /segments/departments", {
+        json: {
+          status: "success",
+          data: [
+            { idDepartment: 10, idSegment: 1, label: "UTI Adulto" },
+            { idDepartment: 20, idSegment: 1, label: "Clínica Médica" },
+            { idDepartment: 30, idSegment: 2, label: "UTI Pediátrica" },
+          ],
+        },
+      });
+      mockApi.override(LIST, {
+        json: {
+          status: "success",
+          data: { count: 1, admissions: [admission] },
+        },
+      });
+    });
+
+    test("filters by segment, its departments only, and takes it to the patient page", async ({
+      page,
+      mockApi,
+    }) => {
+      await page.goto("/controle-infeccao");
+      const link = page
+        .getByRole("row", { name: new RegExp(`${ADMISSION}`) })
+        .getByRole("link", { name: "Abrir" });
+      await expect(link).toHaveAttribute("href", PAGE_URL, { timeout: 15000 });
+
+      // a department of another segment is dropped when the segment is picked
+      await pickOption(page, "#departments", "UTI Pediátrica");
+      await pickOption(page, "#segments", "Adulto");
+      await page.locator(".gtm-btn-search").click();
+      await expect
+        .poll(() => lists(mockApi).at(-1))
+        .toMatchObject({ idSegment: [1], idDepartment: [] });
+
+      // only the departments of the segment are offered
+      await page.locator("#departments").click();
+      const options = page.locator(
+        ".ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option",
+      );
+      await expect(options).toHaveText(["UTI Adulto", "Clínica Médica"]);
+      await options.filter({ hasText: "UTI Adulto" }).click();
+      await page.keyboard.press("Escape");
+      await page.locator(".gtm-btn-search").click();
+
+      await expect
+        .poll(() => lists(mockApi).at(-1))
+        .toMatchObject({ idSegment: [1], idDepartment: [10] });
+      await expect(link).toHaveAttribute(
+        "href",
+        `${PAGE_URL}?idSegment=1&idDepartment=10`,
+      );
+    });
+  });
+
   test("keeps the filter picked last when an earlier list answers late", async ({
     page,
     mockApi,
@@ -3774,7 +3841,7 @@ test.describe("next pending", () => {
       },
     ];
     const search =
-      "idDepartment=10,20&pendingTypes=2&awareLevels=3" +
+      "idSegment=1&idDepartment=10,20&pendingTypes=2&awareLevels=3" +
       `&antimicrobials=${encodeURIComponent(JSON.stringify(antimicrobials))}` +
       "&antimicrobialsMatchAll=1&overdueReview=1&nonConforming=1";
 
@@ -3783,6 +3850,7 @@ test.describe("next pending", () => {
 
     expect(lists(mockApi)[0]).toMatchObject({
       status: [1],
+      idSegment: [1],
       idDepartment: [10, 20],
       pendingTypes: [2],
       admissionNumbers: [],
