@@ -2186,7 +2186,6 @@
       "filters": {
         "segment": "Segments",
         "segmentPlaceholder": "Select segments",
-        "allStatuses": "All statuses",
         "closedDays": "Closed in the last",
         "closedDaysOption_one": "{{count}} day",
         "closedDaysOption_other": "{{count}} days",

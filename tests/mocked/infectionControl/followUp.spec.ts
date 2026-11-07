@@ -2743,6 +2743,14 @@ test.describe("worklist", () => {
     await page.keyboard.press("Escape");
   };
 
+  // the statuses are checkboxes, always in sight: a click checks or unchecks one
+  const toggleStatus = async (page: Page, status: string) => {
+    await page
+      .locator("#status")
+      .getByRole("checkbox", { name: status, exact: true })
+      .click();
+  };
+
   test("lists the followed patients, the pending ones by default", async ({
     page,
     mockApi,
@@ -2953,7 +2961,7 @@ test.describe("worklist", () => {
     await expect.poll(() => lists(mockApi).length).toBeGreaterThan(0);
 
     // status and department, always in sight
-    await pickOption(page, "#status", "Revisado");
+    await toggleStatus(page, "Revisado");
     await pickOption(page, "#departments", "UTI Adulto");
 
     // pending reason and overdue review, under "see more"
@@ -2976,8 +2984,8 @@ test.describe("worklist", () => {
       });
 
     // no status picked: every status
-    await pickOption(page, "#status", "Pendente");
-    await pickOption(page, "#status", "Revisado");
+    await toggleStatus(page, "Pendente");
+    await toggleStatus(page, "Revisado");
     await page.locator(".gtm-btn-search").click();
     await expect
       .poll(() => lists(mockApi).at(-1))
@@ -3013,7 +3021,7 @@ test.describe("worklist", () => {
     await expect(closedWindow).toHaveCount(0);
 
     // the period is under "see more"
-    await pickOption(page, "#status", "Encerrado");
+    await toggleStatus(page, "Encerrado");
     await openMoreFilters(page);
     await pickOption(page, "#closedDays", "90 dias");
     await page.locator(".gtm-btn-search").click();
@@ -3028,7 +3036,9 @@ test.describe("worklist", () => {
       ),
     ).toBeVisible();
 
-    // searched by admission number, every closed one of them is listed
+    // searched by admission number (under "see more"), every closed one of
+    // them is listed
+    await openMoreFilters(page);
     await page.locator("#admissionNumbers").fill(String(ADMISSION));
     await page.keyboard.press("Enter");
     await page.locator(".gtm-btn-search").click();
@@ -3057,8 +3067,8 @@ test.describe("worklist", () => {
     ).toBeVisible({ timeout: 15000 });
 
     // only the closed ones
-    await pickOption(page, "#status", "Encerrado");
-    await pickOption(page, "#status", "Pendente");
+    await toggleStatus(page, "Encerrado");
+    await toggleStatus(page, "Pendente");
 
     await openMoreFilters(page);
     await expect(
@@ -3086,8 +3096,8 @@ test.describe("worklist", () => {
     await page.locator("#nonConforming").click();
 
     // then only the closed ones: the reason is disabled, and not sent
-    await pickOption(page, "#status", "Encerrado");
-    await pickOption(page, "#status", "Pendente");
+    await toggleStatus(page, "Encerrado");
+    await toggleStatus(page, "Pendente");
     await page.locator(".gtm-btn-search").click();
 
     await expect
@@ -3358,6 +3368,14 @@ test.describe("worklist", () => {
         .getByRole("link", { name: "Abrir" });
       await expect(link).toHaveAttribute("href", PAGE_URL, { timeout: 15000 });
 
+      // status, segment and department up front: every status in sight, the
+      // pending ones checked
+      const statuses = page.locator("#status").getByRole("checkbox");
+      await expect(statuses).toHaveCount(3);
+      await expect(
+        page.locator("#status").getByRole("checkbox", { name: "Pendente" }),
+      ).toBeChecked();
+
       // a department of another segment is dropped when the segment is picked
       await pickOption(page, "#departments", "UTI Pediátrica");
       await pickOption(page, "#segments", "Adulto");
@@ -3417,8 +3435,8 @@ test.describe("worklist", () => {
     ).toBeVisible({ timeout: 15000 });
 
     // pending (held) -> revised
-    await pickOption(page, "#status", "Pendente");
-    await pickOption(page, "#status", "Revisado");
+    await toggleStatus(page, "Pendente");
+    await toggleStatus(page, "Revisado");
     await page.locator(".gtm-btn-search").click();
     const empty = page.getByText("Nenhum paciente encontrado.");
     await expect(empty).toBeVisible();
@@ -3456,7 +3474,7 @@ test.describe("worklist", () => {
     ).toBeVisible({ timeout: 15000 });
     await expect.poll(() => lists(mockApi).length).toBeGreaterThan(0);
 
-    await pickOption(page, "#status", "Revisado");
+    await toggleStatus(page, "Revisado");
 
     await pickMenuItem(page, savedFiltersButton(page), /Salvar filtro atual/);
     const modal = page.locator(".ant-modal:visible");
@@ -3549,12 +3567,10 @@ test.describe("worklist", () => {
       });
 
     // the filter card shows what was applied
-    await expect(
-      page.locator(".ant-select-selection-item", { hasText: "Revisado" }),
-    ).toBeVisible();
-    await expect(
-      page.locator(".ant-select-selection-item", { hasText: "Pendente" }),
-    ).toHaveCount(0);
+    const status = (name: string) =>
+      page.locator("#status").getByRole("checkbox", { name, exact: true });
+    await expect(status("Revisado")).toBeChecked();
+    await expect(status("Pendente")).not.toBeChecked();
     await openMoreFilters(page);
     await expect(
       page.locator(".ant-select-selection-item", {
