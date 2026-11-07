@@ -166,10 +166,11 @@ test.describe("schedule flow (PRIMARYCARE)", () => {
     // confirm via the picker's OK button: the form is a native <form>, so
     // pressing Enter would trigger a native submit and reload the page
     await page.locator(".ant-modal .ant-picker input").fill(dateText);
+    // by role, not class: antd 6.7 moved `.ant-picker-ok` from a wrapper onto
+    // the button itself
     await page
-      .locator(
-        ".ant-picker-dropdown:not(.ant-picker-dropdown-hidden) .ant-picker-ok button",
-      )
+      .locator(".ant-picker-dropdown:not(.ant-picker-dropdown-hidden)")
+      .getByRole("button", { name: "OK" })
       .click();
 
     await page.locator(".gtm-bt-save-clinical-notes").click();
