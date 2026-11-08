@@ -2194,7 +2194,8 @@
         }
       },
       "filters": {
-        "allStatuses": "Todas as situações",
+        "segment": "Segmentos",
+        "segmentPlaceholder": "Selecione os segmentos",
         "closedDays": "Encerrados nos últimos",
         "closedDaysOption_one": "{{count}} dia",
         "closedDaysOption_other": "{{count}} dias",

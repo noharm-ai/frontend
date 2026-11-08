@@ -92,6 +92,8 @@ export interface IInfectionControlListFilters {
   status: number[];
   // department of the latest prescription of the admission
   idDepartment: number[];
+  // segment of the latest prescription of the admission
+  idSegment: number[];
   // InfectionControlPendingTypeEnum: admissions with any of these open
   pendingTypes: number[];
   admissionNumbers: number[];
@@ -120,6 +122,7 @@ export const CLOSED_DAYS_OPTIONS = [7, 30, 90, 180, 365];
 export const DEFAULT_FILTERS: IInfectionControlListFilters = {
   status: [InfectionControlStatusEnum.PENDING],
   idDepartment: [],
+  idSegment: [],
   pendingTypes: [],
   admissionNumbers: [],
   overdueReview: false,
@@ -176,7 +179,13 @@ export const filtersToSearch = (filters: IInfectionControlListFilters) => {
   const params = new URLSearchParams();
   const request = filtersToRequest(filters);
   (
-    ["idDepartment", "pendingTypes", "admissionNumbers", "awareLevels"] as const
+    [
+      "idSegment",
+      "idDepartment",
+      "pendingTypes",
+      "admissionNumbers",
+      "awareLevels",
+    ] as const
   ).forEach((key) => {
     if (request[key].length) params.set(key, request[key].join(","));
   });
@@ -245,6 +254,7 @@ export const filtersFromSearch = (
   return {
     ...DEFAULT_FILTERS,
     idDepartment: numbers("idDepartment"),
+    idSegment: numbers("idSegment"),
     pendingTypes: numbers("pendingTypes"),
     admissionNumbers: numbers("admissionNumbers"),
     overdueReview: params.get("overdueReview") === "1",

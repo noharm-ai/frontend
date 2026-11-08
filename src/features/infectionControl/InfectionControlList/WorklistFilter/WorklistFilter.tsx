@@ -15,7 +15,7 @@ import { SecondaryFilters } from "./SecondaryFilters/SecondaryFilters";
 
 /**
  * The worklist filter card, the same one the prescription prioritization
- * shows: status, department and admissions up front, the other filters
+ * shows: status, segment and department up front, the other filters
  * under "see more". Each user can save filters to apply them again
  */
 export function WorklistFilter() {
@@ -42,8 +42,8 @@ export function WorklistFilter() {
       loading={false}
       skipFilterList={[
         "status",
+        "idSegment",
         "idDepartment",
-        "admissionNumbers",
         "antimicrobialsMatchAll",
         "closedDays",
       ]}
