@@ -14,7 +14,8 @@ export interface IChoiceChip<T> {
 
 interface ChoiceChipsProps<T> {
   options: IChoiceChip<T>[];
-  value: T;
+  // null while nothing is chosen
+  value: T | null;
   onChange: (value: T) => void;
   "aria-label": string;
 }
@@ -71,9 +72,10 @@ const Chips = styled(Radio.Group)`
 
 /**
  * Choices laid out side by side, each with the day it stands for: when an
- * evaluation starts, until when it holds, when the next review is
+ * evaluation starts, until when it holds, when the next review is, why the
+ * drug is given
  */
-export function ChoiceChips<T extends string>({
+export function ChoiceChips<T extends string | number>({
   options,
   value,
   onChange,

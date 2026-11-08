@@ -32,8 +32,8 @@ const PENDING_TYPES = [
 /**
  * The filters under "see more", in group cards like the prescription
  * prioritization: the antimicrobials running (each on its treatment days, and
- * the AWaRe level) and the follow-up (how far back the closed ones go, pending
- * reason, non-conformity and overdue review). The cards are not forms, nothing submits on Enter.
+ * the AWaRe level) and the follow-up (admission numbers, how far back the
+ * closed ones go, pending reason, non-conformity and overdue review). The cards are not forms, nothing submits on Enter.
  *
  * A closed admission has nothing running, no open reason and no evaluation in
  * force, so with only the closed ones chosen those filters are disabled
@@ -117,6 +117,37 @@ export function SecondaryFilters() {
           data-kb="infectionControl.worklist.filters.followUp"
         >
           <Form as="div">
+            <div className="form-row">
+              <div className="form-label-actions">
+                <label htmlFor="admissionNumbers">
+                  {t("infectionControl.worklist.filters.admissionNumbers")}:
+                </label>
+              </div>
+              <div className="form-input">
+                <Select
+                  id="admissionNumbers"
+                  mode="tags"
+                  allowClear
+                  maxTagCount="responsive"
+                  tokenSeparators={[",", " "]}
+                  placeholder={t(
+                    "infectionControl.worklist.filters.admissionNumbersPlaceholder",
+                  )}
+                  notFoundContent={t(
+                    "infectionControl.worklist.filters.admissionNumbersPlaceholder",
+                  )}
+                  value={(values.admissionNumbers ?? []).map(String)}
+                  onChange={(list: any) =>
+                    setFieldValue({
+                      admissionNumbers: list
+                        .filter((value: string) => /^\d+$/.test(value))
+                        .map(Number),
+                    })
+                  }
+                />
+              </div>
+            </div>
+
             <div className="form-row">
               <div className="form-label-actions">
                 <label htmlFor="closedDays">

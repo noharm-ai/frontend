@@ -1,5 +1,9 @@
 import { useAppDispatch, useAppSelector } from "src/store";
 import AdvancedFilter from "components/AdvancedFilter";
+import {
+  trackInfectionControlAction,
+  TrackedInfectionControlAction,
+} from "src/utils/tracker";
 
 import {
   DEFAULT_FILTERS,
@@ -11,7 +15,7 @@ import { SecondaryFilters } from "./SecondaryFilters/SecondaryFilters";
 
 /**
  * The worklist filter card, the same one the prescription prioritization
- * shows: status, department and admissions up front, the other filters
+ * shows: status, segment and department up front, the other filters
  * under "see more". Each user can save filters to apply them again
  */
 export function WorklistFilter() {
@@ -26,9 +30,10 @@ export function WorklistFilter() {
       resetValues={DEFAULT_FILTERS}
       mainFilters={<MainFilters />}
       secondaryFilters={<SecondaryFilters />}
-      onSearch={(values: IInfectionControlListFilters) =>
-        dispatch(setFilters({ ...DEFAULT_FILTERS, ...values }))
-      }
+      onSearch={(values: IInfectionControlListFilters) => {
+        trackInfectionControlAction(TrackedInfectionControlAction.FILTER_LIST);
+        dispatch(setFilters({ ...DEFAULT_FILTERS, ...values }));
+      }}
       onChangeValues={undefined}
       // the saved filters, of this user only
       memoryType={`infection_control_list_${userId}`}
@@ -37,8 +42,8 @@ export function WorklistFilter() {
       loading={false}
       skipFilterList={[
         "status",
+        "idSegment",
         "idDepartment",
-        "admissionNumbers",
         "antimicrobialsMatchAll",
         "closedDays",
       ]}

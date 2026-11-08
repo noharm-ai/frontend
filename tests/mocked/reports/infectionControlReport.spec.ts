@@ -2,6 +2,7 @@ import type { Page, Request } from "@playwright/test";
 
 import { test, expect } from "../support/mockApi";
 import { openSelectById, pickOption } from "../support/antd";
+import { openMoreFilters } from "../support/advancedFilter";
 
 /**
  * Infection control report (/relatorios/consolidado/controle-infeccao,
@@ -76,6 +77,8 @@ const indicators = {
         not_evaluated: 100,
         expired: 34,
       },
+      // by the treatment type in force on the day ("none": not informed)
+      treatmentTypeDays: { "1": 500, "2": 400, "3": 80, "4": 20, none: 234 },
     },
   ],
   monthly: [
@@ -132,6 +135,7 @@ const indicators = {
       dotPer1000PatientDays: 600,
       lotPer1000PatientDays: 400,
       awareDays: { access: 330, watch: 200, reserve: 70 },
+      treatmentTypeDays: { "1": 300, "2": 150, "3": 40, "4": 10, none: 100 },
     },
     {
       period: "2026-02",
@@ -142,6 +146,7 @@ const indicators = {
       dotPer1000PatientDays: 634,
       lotPer1000PatientDays: 400,
       awareDays: { access: 425, watch: 170, reserve: 39 },
+      treatmentTypeDays: { "1": 200, "2": 250, "3": 40, "4": 10, none: 134 },
     },
   ],
   process: {
@@ -214,6 +219,27 @@ const indicators = {
       not_evaluated: 100,
       expired: 34,
     },
+    byTreatmentType: [
+      { type: 1, evaluations: 20, conformingShare: 0.6 },
+      { type: 2, evaluations: 15, conformingShare: 0.9333 },
+      { type: null, evaluations: 5, conformingShare: 0.8 },
+    ],
+    byFocus: [
+      { focus: 3, evaluations: 12, conformingShare: 0.8333 },
+      { focus: 1, evaluations: 10, conformingShare: 0.5 },
+    ],
+    empiricalToCultureGuided: {
+      courses: 10,
+      becameCultureGuided: 4,
+      becameCultureGuidedShare: 0.4,
+      day: quantiles(4, 6),
+      dayBins: [
+        { label: "D1-3", count: 1, share: 0.25 },
+        { label: "D4-5", count: 2, share: 0.5 },
+        { label: "D6-7", count: 1, share: 0.25 },
+        { label: ">D7", count: 0, share: 0 },
+      ],
+    },
   },
   consumption: {
     awareMix: { access: 0.612, watch: 0.3, reserve: 0.088 },
@@ -233,6 +259,43 @@ const indicators = {
     ivToOralSwitchShare: 0.25,
     ivToOralSwitchDay: quantiles(4),
     restartShare: 0.1,
+    treatmentTypeDays: { "1": 500, "2": 400, "3": 80, "4": 20, none: 234 },
+    dotWithTreatmentType: 1000,
+    dotWithTreatmentTypeShare: 0.8104,
+    awareByTreatmentType: {
+      "1": { access: 200, watch: 300 },
+      "2": { access: 300, watch: 60, reserve: 40 },
+      "3": { access: 80 },
+      "4": { access: 20 },
+      none: { access: 155, watch: 79 },
+    },
+    dotByFocus: [
+      {
+        focus: 3,
+        dot: 400,
+        share: 0.3241,
+        topSubstances: [
+          { idSubstance: 100, substance: "SUBSTANCIA TESTE", dot: 300 },
+          { idSubstance: 200, substance: "OUTRA SUBSTANCIA TESTE", dot: 100 },
+        ],
+      },
+      {
+        focus: 1,
+        dot: 350,
+        share: 0.2836,
+        topSubstances: [
+          { idSubstance: 100, substance: "SUBSTANCIA TESTE", dot: 350 },
+        ],
+      },
+    ],
+    dotWithFocusShare: 0.6,
+    multipleFociShare: 0.1,
+    surgicalProphylaxis: {
+      courses: 8,
+      longerThan24h: 2,
+      longerThan24hShare: 0.25,
+      durationHours: quantiles(22, 50),
+    },
   },
   outcomes: {
     lengthOfStayDays: quantiles(14),
@@ -301,6 +364,10 @@ const courses = [
     evaluatedByD3: true,
     finalVerdict: "non_conforming",
     everNonConforming: true,
+    treatmentTypeStart: 1,
+    treatmentTypeEnd: 2,
+    infectionFoci: [3, 4],
+    cultureGuidedDay: 3,
   },
   {
     course: 2,
@@ -501,6 +568,7 @@ test("shows the period indicators in the browser's number format", async ({
     "DOT por 1.000 pacientes-dia",
     "Dias com antimicrobiano (LOT)",
     "DOT / LOT",
+    "DOT com tipo de tratamento",
   ]);
 
   // the DOT by route and substance sit in the DOT/LOT tab, the substances the
@@ -787,6 +855,118 @@ test("sends the chosen filters with the period", async ({ page, mockApi }) => {
   );
 });
 
+test("filters by treatment type and infection focus", async ({
+  page,
+  mockApi,
+}) => {
+  mockReport(mockApi);
+
+  await page.goto(PAGE_URL);
+  await expect(
+    indicator(page, "Avaliações conformes").first().locator(".indicator-value"),
+  ).toHaveText("75,0%");
+
+  await openMoreFilters(page);
+  await openSelectById(page, "infection-control-treatment-type");
+  await pickOption(page, "Guiado por cultura");
+  await page.keyboard.press("Escape");
+  await openSelectById(page, "infection-control-infection-focus");
+  await pickOption(page, "Urinário");
+  await page.keyboard.press("Escape");
+
+  const period = page.waitForRequest(isReport);
+  await page.locator(".gtm-btn-search").click();
+
+  const params = (await period).postDataJSON();
+  expect(params.treatment_type).toEqual([2]);
+  expect(params.infection_focus).toEqual([3]);
+  const filters = page.locator(".report-filter-list");
+  await expect(filters).toContainText("Tipo de tratamento: Guiado por cultura");
+  await expect(filters).toContainText("Foco infeccioso: Urinário");
+});
+
+test("shows the indication of the antimicrobials in the tabs", async ({
+  page,
+  mockApi,
+}) => {
+  mockReport(mockApi);
+
+  await page.goto(PAGE_URL);
+
+  const value = (title: string) =>
+    indicator(page, title).first().locator(".indicator-value");
+
+  // conformity: empirical courses guided by culture, conformity by indication
+  await expect(value("Empíricos direcionados por cultura")).toHaveText("40,0%");
+  await expect(
+    indicator(page, "Empíricos direcionados por cultura").first(),
+  ).toContainText("Mediana: D4,0");
+  const byType = page.locator(
+    '[data-kb="reports.infectionControl.conformityByIndication"]',
+  );
+  await expect(byType.getByRole("row", { name: /^Empírico/ })).toContainText(
+    "60,0%",
+  );
+  await expect(
+    byType.getByRole("row", { name: /^Não informado/ }),
+  ).toContainText("5");
+  await expect(
+    page
+      .locator('[data-kb="reports.infectionControl.conformityByFocus"]')
+      .getByRole("row", { name: /^Urinário/ }),
+  ).toContainText("83,3%");
+  await expect(
+    page.locator('[data-kb="reports.infectionControl.cultureGuidedDay"]'),
+  ).toContainText("4 de 10 cursos empíricos encerrados");
+
+  // DOT/LOT: the days with a type, by month, by type and AWaRe, by focus
+  await openTab(page, "DOT/LOT");
+  await expect(value("DOT com tipo de tratamento")).toHaveText("81,0%");
+  await expect(
+    indicator(page, "DOT com tipo de tratamento").first(),
+  ).toContainText("1.000 de 1.234 DOT");
+  await expect(
+    page.locator('[data-kb="reports.infectionControl.indicationTrend"] canvas'),
+  ).toBeVisible();
+  const byIndication = page.locator(
+    '[data-kb="reports.infectionControl.dotByIndication"]',
+  );
+  // DOT, % of the DOT, then % Access and % Watch of the type's days
+  await expect(
+    byIndication.getByRole("row", { name: /^Empírico/ }),
+  ).toContainText("50040,5%40,0%60,0%");
+  await expect(byIndication.getByRole("row")).toHaveCount(6);
+  const byFocus = page.locator(
+    '[data-kb="reports.infectionControl.dotByFocus"]',
+  );
+  await expect(byFocus).toContainText(
+    "60,0% do DOT tem foco informado; 10,0% desses dias têm mais de um foco",
+  );
+  await expect(byFocus.getByRole("row", { name: /^Urinário/ })).toContainText(
+    "SUBSTANCIA TESTE (300), OUTRA SUBSTANCIA TESTE (100)",
+  );
+  const departments = page.locator(
+    '[data-kb="reports.infectionControl.dotLotDepartments"]',
+  );
+  await expect(departments.getByRole("columnheader")).toContainText([
+    "% empírico",
+    "% guiado por cultura",
+    "% profilaxia",
+  ]);
+  // 500, 400 and 80 + 20 of 1,234 DOT
+  await expect(
+    departments.getByRole("row", { name: /UTI Teste/ }),
+  ).toContainText("40,5%32,4%8,1%");
+
+  // courses: how long surgical prophylaxis lasted
+  await openTab(page, "Cursos");
+  await expect(value("Profilaxia cirúrgica > 24h")).toHaveText("25,0%");
+  await expect(
+    indicator(page, "Profilaxia cirúrgica > 24h").first(),
+  ).toContainText("2 de 8 cursos");
+  await expect(value("Duração da profilaxia cirúrgica")).toHaveText("22,0 h");
+});
+
 test("the period picker offers the current and the last month", async ({
   page,
   mockApi,
@@ -956,6 +1136,10 @@ test("an admission lists its antimicrobial courses", async ({
   await expect(first).toContainText("D4");
   await expect(first).toContainText("Não conforme");
   await expect(first).toContainText("Já teve parecer não conforme");
+  // the type it started and ended with, and its foci
+  await expect(first).toContainText(
+    "Empírico → Guiado por cultura · Urinário, Abdominal",
+  );
   const running = list.getByRole("row", { name: /OUTRA SUBSTANCIA TESTE/ });
   await expect(running).toContainText("Em andamento");
   await expect(running).toContainText("Acesso");

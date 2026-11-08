@@ -6,6 +6,10 @@ import { useReactToPrint } from "react-to-print";
 import { Dayjs } from "dayjs";
 
 import DefaultModal from "components/Modal";
+import {
+  trackInfectionControlAction,
+  TrackedInfectionControlAction,
+} from "src/utils/tracker";
 
 import {
   IAntimicrobialTimeline,
@@ -70,7 +74,12 @@ export function InfectionControlReportModal({
           <Button
             type="primary"
             icon={<PrinterOutlined />}
-            onClick={() => handlePrint()}
+            onClick={() => {
+              trackInfectionControlAction(
+                TrackedInfectionControlAction.PRINT_REPORT,
+              );
+              handlePrint();
+            }}
           >
             {t("infectionControl.report.print")}
           </Button>

@@ -12,6 +12,10 @@ import { useAppDispatch } from "src/store";
 import NumericValue from "components/NumericValue";
 import { formatDate } from "utils/date";
 import { setExamsModalAdmissionNumber } from "features/exams/ExamModal/ExamModalSlice";
+import {
+  trackInfectionControlAction,
+  TrackedInfectionControlAction,
+} from "src/utils/tracker";
 
 import {
   IExamCardItem,
@@ -105,9 +109,12 @@ export function InfectionControlExams({
           type="link"
           size="small"
           className="exams-all"
-          onClick={() =>
-            dispatch(setExamsModalAdmissionNumber(patient.admissionNumber))
-          }
+          onClick={() => {
+            trackInfectionControlAction(
+              TrackedInfectionControlAction.SHOW_EXAMS,
+            );
+            dispatch(setExamsModalAdmissionNumber(patient.admissionNumber));
+          }}
         >
           {t("infectionControl.exams.showAll")}
         </Button>

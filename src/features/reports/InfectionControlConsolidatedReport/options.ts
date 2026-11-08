@@ -39,3 +39,16 @@ export const ROUTE_COLORS: Record<string, string> = {
   other: "#f2b530",
   unknown: "#bdbdbd",
 };
+
+// the treatment types as the service keys them (AntimicrobialTreatmentTypeEnum
+// codes), "none" for days or evaluations without one
+export const TREATMENT_TYPE_GROUPS: { key: string; color: string }[] = [
+  { key: "1", color: "#f2b530" },
+  { key: "2", color: "#74b077" },
+  { key: "3", color: "#1e88e5" },
+  { key: "4", color: "#7e57c2" },
+  { key: "none", color: "#bdbdbd" },
+];
+
+// the prophylaxis types, together in the department table
+export const PROPHYLAXIS_TYPES = ["3", "4"];

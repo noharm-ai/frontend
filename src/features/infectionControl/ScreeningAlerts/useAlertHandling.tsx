@@ -8,8 +8,8 @@ import RichTextView from "components/RichTextView";
 import { getErrorMessage } from "utils/errorHandler";
 import { getSubstanceHandling } from "features/serverActions/ServerActionsSlice";
 import {
-  trackPrescriptionAction,
-  TrackedPrescriptionAction,
+  trackInfectionControlAction,
+  TrackedInfectionControlAction,
 } from "src/utils/tracker";
 
 /**
@@ -23,7 +23,10 @@ export function useAlertHandling(idSubstance?: string | null) {
   const [loadingType, setLoadingType] = useState<string | null>(null);
 
   const showHandling = (alertType: string) => {
-    trackPrescriptionAction(TrackedPrescriptionAction.CLICK_ALERT_HANDLING);
+    trackInfectionControlAction(
+      TrackedInfectionControlAction.OPEN_ALERT_HANDLING,
+      { alertType },
+    );
 
     setLoadingType(alertType);
     // the thunk is untyped (ServerActionsSlice.js)

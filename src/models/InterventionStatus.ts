@@ -1,8 +1,13 @@
+type Translate = (key: string) => string;
+
 const interventionStatus = {
-  getClosedStatuses: () => {
+  getClosedStatuses: (): string[] => {
     return ["a", "n", "x", "j"];
   },
-  translate: (status, t) => {
+  translate: (
+    status: string,
+    t: Translate
+  ): { label: string; color: string | null } => {
     switch (status) {
       case "a":
         return {

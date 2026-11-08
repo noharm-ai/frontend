@@ -11,6 +11,7 @@ import {
   IRecentCulture,
 } from "../InfectionControlSlice";
 import { formatRegimen, getAge } from "../timeline";
+import { describeIndication } from "../followUp";
 import {
   describeDrugEvaluation,
   getDecision,
@@ -56,8 +57,9 @@ const orNotInformed = (value: string | null | undefined, t: TFunction) =>
 const listOr = (lines: string[], empty: string) =>
   lines.length ? lines.join("\n") : empty;
 
-// "- MEROPENEM: Não conforme · Vigência ...", with the reasons, the
-// substitute and the notes of a non-conformity on lines of their own
+// "- MEROPENEM: Não conforme · Vigência ...", with the indication, the
+// reasons, the substitute and the notes of a non-conformity on lines of their
+// own
 const describeEvaluation = (
   evaluation: IDrugEvaluationFields,
   context: IClinicalNoteContext,
@@ -73,6 +75,10 @@ const describeEvaluation = (
   const lines = [
     `- ${evaluation.drug}: ${verdictLabel(!!evaluation.conforming, t)} · ${detail}`,
   ];
+  const indication = describeIndication(evaluation, t);
+  if (indication) {
+    lines.push(`  ${t("infectionControl.indication.label", { indication })}`);
+  }
   if (!evaluation.conforming) {
     const reasonNames = reasons
       .filter((reason) => evaluation.interventionReasons.includes(reason.id))

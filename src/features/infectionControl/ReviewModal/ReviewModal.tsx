@@ -13,6 +13,10 @@ import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/Know
 import { useAppDispatch, useAppSelector } from "src/store";
 import { getErrorMessage } from "utils/errorHandler";
 import { Form } from "styles/Form.style";
+import {
+  trackInfectionControlAction,
+  TrackedInfectionControlAction,
+} from "src/utils/tracker";
 
 import {
   fetchClinicalNoteTypes,
@@ -202,6 +206,9 @@ export function ReviewModal({
       if (response.error) {
         notification.error({ message: getErrorMessage(response, t) });
       } else {
+        trackInfectionControlAction(TrackedInfectionControlAction.SAVE_REVIEW, {
+          drugs: values.evaluations.length,
+        });
         notification.success({
           message: t("infectionControl.review.success"),
         });
@@ -340,6 +347,16 @@ export function ReviewModal({
             hint = {
               text: t("infectionControl.review.hintDecision"),
               error: false,
+            };
+          } else if (stepErrors?.treatmentType) {
+            hint = {
+              text: t("infectionControl.review.hintTreatmentType"),
+              error: true,
+            };
+          } else if (stepErrors?.infectionFoci) {
+            hint = {
+              text: t("infectionControl.review.hintInfectionFocus"),
+              error: true,
             };
           } else if (stepErrors?.interventionReasons) {
             hint = {

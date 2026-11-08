@@ -24,6 +24,32 @@ export const describeReasons = (evaluation: IAntimicrobialEvaluation) =>
     .filter(Boolean)
     .join(", ");
 
+// the treatment type and the infection focus, by name
+export const treatmentTypeLabel = (type: number, t: TFunction) =>
+  t(`infectionControl.indication.treatmentTypes.${type}`, {
+    defaultValue: `${type}`,
+  });
+export const infectionFocusLabel = (focus: number, t: TFunction) =>
+  t(`infectionControl.indication.foci.${focus}`, { defaultValue: `${focus}` });
+
+/**
+ * Why the drug is given and the infection foci, as "Empírico · Urinário,
+ * Abdominal"; null for an evaluation made before they were asked
+ */
+export const describeIndication = (
+  indication: { treatmentType?: number | null; infectionFoci?: number[] },
+  t: TFunction,
+) =>
+  [
+    indication.treatmentType != null &&
+      treatmentTypeLabel(indication.treatmentType, t),
+    (indication.infectionFoci ?? [])
+      .map((focus) => infectionFocusLabel(focus, t))
+      .join(", "),
+  ]
+    .filter(Boolean)
+    .join(" · ") || null;
+
 // the drug an evaluation recommends instead, by name
 export const describeSubstitute = (evaluation: IAntimicrobialEvaluation) =>
   evaluation.substituteDrug

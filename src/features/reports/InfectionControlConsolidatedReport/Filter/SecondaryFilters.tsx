@@ -11,12 +11,17 @@ import notification from "components/notification";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
 import { searchSubstances, searchUsers } from "features/lists/ListsSlice";
 import { AWARE_LEVELS } from "features/culture/awareLevel";
+import {
+  AntimicrobialTreatmentTypeEnum,
+  InfectionFocusEnum,
+} from "models/InfectionControlEnum";
 import { getErrorMessage } from "utils/errorHandler";
 import { FeatureService } from "services/FeatureService";
 import Feature from "models/Feature";
 import { HIDDEN_NAME } from "utils/report";
 import { Form } from "styles/Form.style";
 
+import { focusName, treatmentTypeName } from "../indication";
 import { IFilterContext, IOption } from "../infectionControlReportTypes";
 
 // letters typed before searching
@@ -74,7 +79,7 @@ const toUser = (u: { id: number; name: string }) => ({
   label: u.name,
 });
 
-/** AWaRe classification, substance and reviewer. */
+/** AWaRe classification, substance, indication (treatment type and infection focus) and reviewer. */
 export function SecondaryFilters() {
   const { t } = useTranslation();
   const { values, setFieldValue } = useContext(
@@ -165,6 +170,59 @@ export function SecondaryFilters() {
               </div>
               <div className="form-input">
                 {searchSelect("substance", substances)}
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-label">
+                <label>{tk("treatmentType")}:</label>
+              </div>
+              <div className="form-input">
+                <Select
+                  id="infection-control-treatment-type"
+                  style={{ width: "100%" }}
+                  value={values.treatment_type}
+                  onChange={(val) =>
+                    setFieldValue({ treatment_type: val as number[] })
+                  }
+                  mode="multiple"
+                  allowClear
+                  maxTagCount="responsive"
+                  aria-label={tk("treatmentType")}
+                >
+                  {AntimicrobialTreatmentTypeEnum.list.map((type) => (
+                    <Select.Option key={type} value={type}>
+                      {treatmentTypeName(type, t)}
+                    </Select.Option>
+                  ))}
+                </Select>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-label">
+                <label>{tk("infectionFocus")}:</label>
+              </div>
+              <div className="form-input">
+                <Select
+                  id="infection-control-infection-focus"
+                  style={{ width: "100%" }}
+                  value={values.infection_focus}
+                  onChange={(val) =>
+                    setFieldValue({ infection_focus: val as number[] })
+                  }
+                  mode="multiple"
+                  allowClear
+                  maxTagCount="responsive"
+                  optionFilterProp="children"
+                  aria-label={tk("infectionFocus")}
+                >
+                  {InfectionFocusEnum.list.map((focus) => (
+                    <Select.Option key={focus} value={focus}>
+                      {focusName(focus, t)}
+                    </Select.Option>
+                  ))}
+                </Select>
               </div>
             </div>
           </Form>

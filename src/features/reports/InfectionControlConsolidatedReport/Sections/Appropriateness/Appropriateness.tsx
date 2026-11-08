@@ -6,8 +6,12 @@ import { Block } from "../../Block/Block";
 import { BarChart } from "../../BarChart/BarChart";
 import { PieChart } from "../../PieChart/PieChart";
 import { formatDecimal, formatInteger, formatShare } from "../../format";
+import { focusName, treatmentTypeName } from "../../indication";
 import {
   IAppropriateness,
+  IConformityByFocus,
+  IConformityByTreatmentType,
+  IEmpiricalToCultureGuided,
   ISubstanceEvaluations,
   ISubstitution,
 } from "../../infectionControlReportTypes";
@@ -46,6 +50,42 @@ export function Appropriateness({
       render: (value: number) => formatShare(value),
     },
   ];
+
+  const evaluationsColumns = [
+    {
+      title: tk("evaluations"),
+      dataIndex: "evaluations",
+      key: "evaluations",
+      align: right,
+    },
+    {
+      title: tk("conforming"),
+      dataIndex: "conformingShare",
+      key: "conformingShare",
+      align: right,
+      render: (value: number | null) => formatShare(value),
+    },
+  ];
+  const typeColumns: TableColumnsType<IConformityByTreatmentType> = [
+    {
+      title: tk("indication"),
+      dataIndex: "type",
+      key: "type",
+      render: (type: number | null) => treatmentTypeName(type, t),
+    },
+    ...evaluationsColumns,
+  ];
+  const focusColumns: TableColumnsType<IConformityByFocus> = [
+    {
+      title: tk("focus"),
+      dataIndex: "focus",
+      key: "focus",
+      render: (focus: number) => focusName(focus, t),
+    },
+    ...evaluationsColumns,
+  ];
+  const guided: Partial<IEmpiricalToCultureGuided> =
+    data.empiricalToCultureGuided || {};
 
   const substitutionColumns: TableColumnsType<ISubstitution> = [
     { title: tk("from"), dataIndex: "from", key: "from" },
@@ -116,6 +156,63 @@ export function Appropriateness({
                 value: count,
               }),
             )}
+          />
+        </Block>
+      </Col>
+      <Col xs={24} lg={12}>
+        <Block
+          title={tk("byIndication")}
+          help={tk("byIndicationHelp")}
+          loading={loading}
+          kb="reports.infectionControl.conformityByIndication"
+        >
+          <Table<IConformityByTreatmentType>
+            columns={typeColumns}
+            dataSource={data.byTreatmentType || []}
+            rowKey={(row: IConformityByTreatmentType) => `${row.type}`}
+            pagination={false}
+            size="small"
+          />
+        </Block>
+      </Col>
+      <Col xs={24} lg={12}>
+        <Block
+          title={tk("byFocus")}
+          help={tk("byFocusHelp")}
+          loading={loading}
+          kb="reports.infectionControl.conformityByFocus"
+        >
+          <Table<IConformityByFocus>
+            columns={focusColumns}
+            dataSource={data.byFocus || []}
+            rowKey={(row: IConformityByFocus) => `${row.focus}`}
+            pagination={{ pageSize: 10, hideOnSinglePage: true }}
+            size="small"
+          />
+        </Block>
+      </Col>
+      <Col xs={24} lg={12}>
+        <Block
+          title={tk("cultureGuidedDay")}
+          help={tk("cultureGuidedDayHelp")}
+          loading={loading}
+          kb="reports.infectionControl.cultureGuidedDay"
+        >
+          <div style={{ textAlign: "center" }}>
+            {t(
+              "infectionControlConsolidated.appropriateness.cultureGuidedSummary",
+              {
+                guided: formatInteger(guided.becameCultureGuided),
+                courses: formatInteger(guided.courses),
+              },
+            )}
+          </div>
+          <BarChart
+            loading={loading}
+            items={(guided.dayBins || []).map((b) => ({
+              name: b.label,
+              value: b.count,
+            }))}
           />
         </Block>
       </Col>

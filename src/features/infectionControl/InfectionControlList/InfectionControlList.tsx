@@ -14,6 +14,10 @@ import { formatDate, formatDateTime } from "utils/date";
 import { peekPatient, subscribe } from "utils/patientCache";
 import { PageCard } from "styles/Utils.style";
 import { useIsMobile } from "hooks/useIsMobile";
+import {
+  trackInfectionControlAction,
+  TrackedInfectionControlAction,
+} from "src/utils/tracker";
 
 import {
   fetchFollowedAdmissions,
@@ -102,6 +106,14 @@ export function InfectionControlList() {
   const patientUrl = (admission: IFollowedAdmission) =>
     `/controle-infeccao/${admission.admissionNumber}${filtersSearch ? `?${filtersSearch}` : ""}`;
 
+  const trackOpenPatient = () =>
+    trackInfectionControlAction(TrackedInfectionControlAction.OPEN_PATIENT);
+
+  const changePage = (value: number) => {
+    trackInfectionControlAction(TrackedInfectionControlAction.CHANGE_PAGE);
+    setPage(value);
+  };
+
   const now = dayjs();
   const isPast = (date: string | null) => !!date && dayjs(date).isBefore(now);
 
@@ -120,7 +132,12 @@ export function InfectionControlList() {
       title: t("infectionControl.worklist.admission"),
       key: "admissionNumber",
       render: (_, admission) => (
-        <a href={patientUrl(admission)} target="_blank" rel="noreferrer">
+        <a
+          href={patientUrl(admission)}
+          target="_blank"
+          rel="noreferrer"
+          onClick={trackOpenPatient}
+        >
           {admission.admissionNumber}
         </a>
       ),
@@ -205,6 +222,7 @@ export function InfectionControlList() {
             href={patientUrl(admission)}
             target="_blank"
             rel="noreferrer"
+            onClick={trackOpenPatient}
             icon={<SearchOutlined />}
             aria-label={t("infectionControl.worklist.open")}
           />
@@ -306,7 +324,7 @@ export function InfectionControlList() {
             admissions={shownList}
             loading={status === "loading" || status === "idle"}
             page={page}
-            onPageChange={setPage}
+            onPageChange={changePage}
             patientUrl={patientUrl}
             isPast={isPast}
           />
@@ -327,7 +345,7 @@ export function InfectionControlList() {
                 position: ["topRight", "bottomRight"],
                 showSizeChanger: false,
                 hideOnSinglePage: true,
-                onChange: setPage,
+                onChange: changePage,
               }}
             />
           </PageCard>

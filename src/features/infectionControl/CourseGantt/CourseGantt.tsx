@@ -8,6 +8,10 @@ import { AwareTag } from "components/AwareTag/AwareTag";
 import DrugAlertLevelTag from "components/DrugAlertLevelTag";
 import { formatDate } from "utils/date";
 import { AntimicrobialEvaluationStatusEnum } from "models/InfectionControlEnum";
+import {
+  trackInfectionControlAction,
+  TrackedInfectionControlAction,
+} from "src/utils/tracker";
 
 import {
   CourseStatus,
@@ -107,6 +111,12 @@ export function CourseGantt({
   const { t } = useTranslation();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [selected, setSelected] = useState<ICourse | null>(null);
+  const openCourse = (course: ICourse) => {
+    trackInfectionControlAction(TrackedInfectionControlAction.OPEN_COURSE, {
+      origin: "timeline",
+    });
+    setSelected(course);
+  };
   const [showSuperseded, setShowSuperseded] = useState(false);
 
   const isSuperseded = (evaluation: IAntimicrobialEvaluation) =>
@@ -338,7 +348,13 @@ export function CourseGantt({
                   size="small"
                   data-testid="toggle-superseded"
                   checked={showSuperseded}
-                  onChange={setShowSuperseded}
+                  onChange={(checked) => {
+                    trackInfectionControlAction(
+                      TrackedInfectionControlAction.SHOW_SUPERSEDED,
+                      { checked },
+                    );
+                    setShowSuperseded(checked);
+                  }}
                 />
                 {t("infectionControl.timeline.superseded", {
                   count: supersededCount,
@@ -445,7 +461,7 @@ export function CourseGantt({
                           <button
                             type="button"
                             className="label-name"
-                            onClick={() => setSelected(course)}
+                            onClick={() => openCourse(course)}
                           >
                             {course.drug}
                           </button>
@@ -461,7 +477,7 @@ export function CourseGantt({
                             <DrugAlertLevelTag
                               levels={course.alerts.map((alert) => alert.level)}
                               count={course.alerts.length}
-                              onClick={() => setSelected(course)}
+                              onClick={() => openCourse(course)}
                             />
                           </span>
                         )}
@@ -493,7 +509,7 @@ export function CourseGantt({
                       draftLane={layouts[index].draftLane}
                       nextStart={drugCourses[index + 1]?.start}
                       onOpen={
-                        compact ? undefined : () => setSelected(drugCourse)
+                        compact ? undefined : () => openCourse(drugCourse)
                       }
                     />
                   ))}
