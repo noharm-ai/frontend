@@ -2,7 +2,12 @@ import type { Locator, Page, Route } from "@playwright/test";
 
 import { test, expect, type MockApi } from "../support/mockApi";
 import { loginWithAuth, loginWithPermissions } from "../support/featureLogin";
-import { openSelect, pickMenuItem, pickOption } from "../support/antd";
+import {
+  openSelect,
+  openSelectById,
+  pickMenuItem,
+  pickOption,
+} from "../support/antd";
 import { openMoreFilters } from "../support/advancedFilter";
 
 /**
@@ -21,6 +26,12 @@ import { openMoreFilters } from "../support/advancedFilter";
  * /infection-control/clinical-note-types (none by default: no note). A note is
  * written only with MULTI_CLINICAL_NOTES, which the review tests tagged
  * @multiClinicalNotes log in with.
+ * A review turns on, per drug, the schema's exam trigger rules of GET
+ * /infection-control/exam-triggers (none by default); a result meeting one
+ * sends the patient back to pending (reason 7). Who writes reviews adds,
+ * changes and deletes the rules from the review (PUT
+ * /infection-control/exam-triggers replaces the whole list and answers like
+ * the GET).
  * /controle-infeccao lists the followed admissions
  * (POST /infection-control/admissions); its menu entry needs
  * READ_INFECTION_CONTROL, READ_PRESCRIPTION alone does not reach it.
@@ -1007,6 +1018,72 @@ test("does not offer to review nor follow an admission not followed without perm
   ).toHaveCount(0);
   await expect(page.getByRole("button", { name: "Revisar" })).toHaveCount(0);
 });
+
+// the exam trigger rules of the schema (GET /infection-control/exam-triggers)
+const examRule = (overrides: Record<string, unknown>) => ({
+  valueAbove: null,
+  valueAtLeast: null,
+  valueBelow: null,
+  valueAtMost: null,
+  variationAbove: null,
+  variationAtLeast: null,
+  variationBelow: null,
+  variationAtMost: null,
+  fromCourseDay: null,
+  enabledByDefault: false,
+  available: true,
+  ...overrides,
+});
+// the schema's rules: a CRP rise with no results in the schema (on by
+// default, to show an unavailable rule never comes on), a vancocinemia
+// rise and a fever on by default, an eGFR fall off
+const EXAM_RULES = [
+  examRule({
+    id: "pcr-rise",
+    name: "PCR em elevação",
+    examRef: "pcru",
+    valueAbove: 50,
+    variationAtLeast: 20,
+    enabledByDefault: true,
+    available: false,
+  }),
+  examRule({
+    id: "van",
+    name: "Vancocinemia",
+    examRef: "van",
+    valueAbove: 20,
+    variationAbove: 30,
+    enabledByDefault: true,
+  }),
+  examRule({
+    id: "tfg",
+    name: "TFG",
+    examRef: "ckd21",
+    valueBelow: 60,
+    variationBelow: -25,
+  }),
+  examRule({
+    id: "temp",
+    name: "Temperatura",
+    examRef: "temp",
+    valueAbove: 38,
+    fromCourseDay: 4,
+    enabledByDefault: true,
+  }),
+];
+const EXAMS = [
+  { examRef: "pcru", name: "PCR", available: false },
+  { examRef: "temp", name: "Temperatura", available: true },
+  { examRef: "ckd", name: "CKD", available: true },
+  { examRef: "ckd21", name: "CKD21", available: true },
+  { examRef: "h_conleuc", name: "Leucócitos Absoluto", available: true },
+  {
+    examRef: "procalcitonina_adult",
+    name: "Procalcitonina",
+    available: true,
+  },
+  { examRef: "van", name: "Vancocinemia", available: true },
+];
 
 test.describe("with WRITE_INFECTION_CONTROL", () => {
   test.use({ storageState: { cookies: [], origins: [] } });
@@ -2643,6 +2720,620 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     ).toHaveCount(0);
     await expect(page.getByRole("button", { name: "Revisar" })).toHaveCount(0);
   });
+
+  test.describe("exam triggers", () => {
+    const UNIT = "ml/min/1.73";
+    const BASELINE_DATE = hoursFromNow(-31);
+    const RESULT_DATE = hoursFromNow(-4);
+    const shownDateTime = (isoDate: string) =>
+      `${shownDate(isoDate)} ${isoDate.slice(11, 16)}`;
+    // an eGFR carries the creatinine it was calculated from
+    const tfgBaseline = {
+      examType: "ckd21",
+      date: BASELINE_DATE,
+      value: 72,
+      unit: UNIT,
+      rawValue: 1.1,
+      rawUnit: "mg/dL",
+    };
+    // the eGFR rule and the CRP one turned on in the evaluation of the
+    // vancomycin, and a rule the schema no longer has, recorded without a
+    // baseline
+    const recorded = ({
+      enabledByDefault: _,
+      available: __,
+      ...condition
+    }: ReturnType<typeof examRule>) => condition;
+    const evaluatedRules = [
+      { ...recorded(EXAM_RULES[2]), baseline: tfgBaseline },
+      { ...recorded(EXAM_RULES[0]), baseline: null },
+      {
+        ...recorded(
+          examRule({
+            id: "gone",
+            name: "Leucócitos",
+            examRef: "h_conleuc",
+            variationAbove: 50,
+          }),
+        ),
+        baseline: null,
+      },
+    ];
+    const withExamTriggers = {
+      ...vancomycinEvaluation,
+      examTriggers: evaluatedRules,
+    };
+
+    test.beforeEach(({ mockApi }) => {
+      mockApi.override("GET /infection-control/exam-triggers", {
+        json: { status: "success", data: { rules: EXAM_RULES, exams: EXAMS } },
+      });
+    });
+
+    test("turns on the rules on by default for a new drug and the ones kept for a drug evaluated before", async ({
+      page,
+      mockApi,
+    }) => {
+      mockPage(
+        mockApi,
+        followUp({
+          courses: [
+            {
+              idDrug: 11,
+              start: MEROPENEM_START,
+              ongoing: true,
+              evaluation: null,
+              history: [],
+            },
+            {
+              idDrug: 12,
+              start: VANCOMYCIN_START,
+              ongoing: true,
+              evaluation: withExamTriggers,
+              history: [withExamTriggers],
+            },
+          ],
+        }),
+      );
+      let sent: any = null;
+      mockApi.override(REVIEW, async (route) => {
+        sent = JSON.parse(route.request().postData()!);
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify(followUp({ status: 2, pendings: [] })),
+        });
+      });
+
+      await page.goto(PAGE_URL);
+      await openReview(page);
+
+      const dialog = page.getByRole("dialog");
+      const drug = dialog.getByTestId("review-drug");
+      const decisions = drug.getByRole("radiogroup", { name: "Avaliação" });
+      const triggers = drug.getByTestId("review-triggers");
+      const triggersCount = drug.getByTestId("review-triggers-count");
+      const vancocinemia = drug.getByRole("checkbox", {
+        name: /^Vancocinemia/,
+      });
+      const tfg = drug.getByRole("checkbox", { name: /^TFG/ });
+      const fever = drug.getByRole("checkbox", { name: /^Temperatura/ });
+      const crpRise = drug.getByRole("checkbox", { name: /^PCR em elevação/ });
+
+      // the meropenem was never evaluated: the rules on by default, beside
+      // the expiry and the posology
+      await expect(drug.getByRole("heading", { level: 3 })).toHaveText(
+        "MEROPENEM 1 g SOL INJ",
+      );
+      await decisions.getByText("Conforme", { exact: true }).click();
+      await fillIndication(page, drug);
+      await expect(triggersCount).toHaveText("4 ativos");
+      await triggers.getByRole("button", { name: "Alterar" }).click();
+      const rules = drug.getByTestId("review-exam-triggers");
+      await expect(rules).toContainText("Gatilhos de exame");
+      await expect(vancocinemia).toHaveAccessibleName(
+        "Vancocinemia > 20 e variação > +30%",
+      );
+      await expect(tfg).toHaveAccessibleName("TFG < 60 e variação < -25%");
+      await expect(fever).toHaveAccessibleName(
+        "Temperatura > 38 a partir do D4",
+      );
+      // an inclusive variation
+      await expect(crpRise).toHaveAccessibleName(
+        "PCR em elevação > 50 e variação ≥ +20%",
+      );
+      // the schema has no CRP results: it never fires, so it is not turned
+      // on, even when on by default, nor can it be
+      await expect(crpRise).not.toBeChecked();
+      await expect(crpRise).toBeDisabled();
+      await expect(
+        drug.getByTestId("review-exam-trigger-unavailable-pcr-rise"),
+      ).toHaveText(
+        "Sem resultados de PCR neste hospital: o gatilho não dispara",
+      );
+      await expect(vancocinemia).toBeEnabled();
+      await expect(vancocinemia).toBeChecked();
+      await expect(tfg).not.toBeChecked();
+      await expect(fever).toBeChecked();
+      await fever.uncheck();
+      await expect(triggersCount).toHaveText("3 ativos");
+
+      await dialog.getByRole("button", { name: "Próximo" }).click();
+
+      // the vancomycin keeps the rules it had that the schema still has; its
+      // evaluation lists them with the result they compare with
+      await expect(drug.getByRole("heading", { level: 3 })).toHaveText(
+        "VANCOMICINA 500 mg SOL INJ",
+      );
+      const current = drug.getByTestId("review-current-evaluation");
+      const recorded = current.getByTestId("evaluation-exam-trigger");
+      await expect(recorded).toHaveCount(3);
+      await expect(recorded.first()).toHaveText(
+        `TFG < 60 e variação < -25% · Referência: 72 ${UNIT} em ${shownDateTime(BASELINE_DATE)} (creatinina 1,1 mg/dL)`,
+      );
+      // without a result at review time, a variation never fires
+      await expect(recorded.last()).toHaveText(
+        "Leucócitos variação > +50% · sem valor de referência: as condições de variação não disparam",
+      );
+
+      await decisions.getByText("Conforme", { exact: true }).click();
+      await expect(triggersCount).toHaveText("2 ativos");
+      await triggers.getByRole("button", { name: "Alterar" }).click();
+      await expect(tfg).toBeChecked();
+      await expect(vancocinemia).not.toBeChecked();
+      await expect(fever).not.toBeChecked();
+      // the CRP rule kept from before, though unmapped, can be turned off,
+      // and then not on again
+      await expect(crpRise).toBeChecked();
+      await expect(crpRise).toBeEnabled();
+      await crpRise.uncheck();
+      await expect(crpRise).toBeDisabled();
+      await expect(triggersCount).toHaveText("1 ativo");
+
+      await dialog.getByRole("button", { name: "Próximo" }).click();
+      await saveReview(dialog);
+
+      await expect(
+        page.getByText("Revisão registrada com sucesso!"),
+      ).toBeVisible();
+      expect(sent.evaluations).toMatchObject([
+        { idDrug: 11, examTriggers: ["van"] },
+        { idDrug: 12, examTriggers: ["tfg"] },
+      ]);
+    });
+
+    test("shows the exam result that sent the patient back to pending and selects its drug", async ({
+      page,
+      mockApi,
+    }) => {
+      const tfgOnly = {
+        ...vancomycinEvaluation,
+        examTriggers: [evaluatedRules[0]],
+      };
+      mockPage(
+        mockApi,
+        followUp({
+          pendings: [
+            {
+              id: "804",
+              type: 7,
+              origin: 2,
+              idDrug: 12,
+              idPrescription: "299",
+              details: {
+                drug: "VANCOMICINA 500 mg SOL INJ",
+                courseStart: VANCOMYCIN_START,
+                matches: [
+                  {
+                    id: "tfg",
+                    name: "TFG",
+                    examRef: "ckd21",
+                    result: {
+                      examType: "ckd21",
+                      date: RESULT_DATE,
+                      value: 52,
+                      unit: UNIT,
+                      rawValue: 1.9,
+                      rawUnit: "mg/dL",
+                    },
+                    baseline: tfgBaseline,
+                    variation: -27.78,
+                  },
+                ],
+              },
+              createdAt: hoursFromNow(-2),
+            },
+          ],
+          courses: [
+            {
+              idDrug: 12,
+              start: VANCOMYCIN_START,
+              ongoing: true,
+              evaluation: tfgOnly,
+              history: [tfgOnly],
+            },
+          ],
+        }),
+      );
+
+      await page.goto(PAGE_URL);
+      await page.getByTestId("follow-up-pendings-count").click({
+        timeout: 15000,
+      });
+      const pendingsList = page.getByTestId("follow-up-pendings-list");
+      await expect(pendingsList).toContainText(
+        "Resultado de exame de VANCOMICINA 500 mg SOL INJ",
+      );
+      const match = pendingsList.getByTestId("exam-result-match");
+      await expect(match).toContainText("TFG");
+      await expect(match).toContainText(
+        `Resultado: 52 ${UNIT} em ${shownDateTime(RESULT_DATE)} (creatinina 1,9 mg/dL)`,
+      );
+      await expect(match).toContainText(
+        `Referência: 72 ${UNIT} em ${shownDateTime(BASELINE_DATE)} (creatinina 1,1 mg/dL)`,
+      );
+      await expect(match).toContainText("Variação: -27,78%");
+      await page.keyboard.press("Escape");
+      await expect(pendingsList).toHaveCount(0);
+
+      // the verdict no longer holds
+      const mark = page
+        .getByTestId("course-row")
+        .filter({ hasText: "VANCOMICINA" })
+        .getByTestId("course-evaluation");
+      await expect(mark).toHaveClass(/invalidated/);
+      await mark.hover();
+      await expect(page.getByRole("tooltip")).toContainText(
+        "resultado de exame",
+      );
+      await page.mouse.move(0, 0);
+
+      // the drug is to be evaluated again, the drawer telling why
+      await openReview(page);
+      const dialog = page.getByRole("dialog");
+      const drug = dialog.getByTestId("review-drug");
+      const decisions = drug.getByRole("radiogroup", { name: "Avaliação" });
+      await expect(decisions.getByRole("radio", { checked: true })).toHaveCount(
+        0,
+      );
+      await drug.getByTestId("review-pendings-chip").click();
+      const pendings = page.getByTestId("review-pendings");
+      await expect(pendings).toContainText(
+        "Um resultado de exame atingiu um gatilho:",
+      );
+      await expect(pendings.getByTestId("exam-result-match")).toContainText(
+        "Variação: -27,78%",
+      );
+      await expect(
+        pendings
+          .getByTestId("review-current-evaluation")
+          .getByTestId("evaluation-exam-trigger"),
+      ).toContainText("TFG");
+    });
+
+    const EXAM_TRIGGERS = "GET /infection-control/exam-triggers";
+    const SAVE_EXAM_TRIGGERS = "PUT /infection-control/exam-triggers";
+
+    // a rule as the review sends it: without the availability, which the
+    // backend works out
+    const sentRule = ({
+      available: _,
+      ...fields
+    }: ReturnType<typeof examRule>) => fields;
+
+    /**
+     * Answers the save of the rules with the ones sent, giving the new ones
+     * an id, and returns what was sent
+     */
+    const mockSaveRules = (mockApi: MockApi) => {
+      const sent: any[] = [];
+      mockApi.override(SAVE_EXAM_TRIGGERS, async (route) => {
+        const body = JSON.parse(route.request().postData()!);
+        sent.push(body);
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            status: "success",
+            data: {
+              rules: body.rules.map((item: any, index: number) => ({
+                available: true,
+                ...item,
+                id: item.id ?? `new${index}`,
+              })),
+              exams: EXAMS,
+            },
+          }),
+        });
+      });
+      return sent;
+    };
+
+    /**
+     * Picks the operator of a condition of the rule form ("value" or
+     * "variation"): both selects offer the same ones, so the dropdown is
+     * found by the listbox of the select (one may still be closing as the
+     * other opens)
+     */
+    const pickOperator = async (
+      page: Page,
+      condition: "value" | "variation",
+      operator: string,
+    ) => {
+      const id = `exam-trigger-${condition}-operator`;
+      await openSelectById(page, id);
+      const dropdown = page
+        .locator(".ant-select-dropdown")
+        .filter({ has: page.locator(`#${id}_list`) });
+      // a click while it still slides in can be lost
+      await expect(dropdown).not.toHaveClass(/-(enter|appear)/);
+      await dropdown
+        .locator(`.ant-select-item-option[title="${operator}"]`)
+        .click();
+      await expect(
+        page.locator(".ant-select").filter({ has: page.locator(`#${id}`) }),
+      ).toContainText(operator);
+    };
+
+    /** Opens the review on the drug and the choice of its triggers */
+    const openTriggers = async (page: Page) => {
+      await page.goto(PAGE_URL);
+      await openReview(page);
+      const drug = page.getByRole("dialog").getByTestId("review-drug");
+      await drug
+        .getByRole("radiogroup", { name: "Avaliação" })
+        .getByText("Conforme", { exact: true })
+        .click();
+      await fillIndication(page, drug);
+      await drug
+        .getByTestId("review-triggers")
+        .getByRole("button", { name: "Alterar" })
+        .click();
+      return drug;
+    };
+
+    test("adds, changes and deletes the rules from the review", async ({
+      page,
+      mockApi,
+    }) => {
+      mockPage(mockApi, followUp());
+      const saved = mockSaveRules(mockApi);
+      let sent: any = null;
+      mockApi.override(REVIEW, async (route) => {
+        sent = JSON.parse(route.request().postData()!);
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify(followUp({ status: 2, pendings: [] })),
+        });
+      });
+
+      const drug = await openTriggers(page);
+      const dialog = page.getByRole("dialog");
+      const rules = drug.getByTestId("review-exam-triggers");
+      const ruleRow = (name: string) =>
+        rules.getByTestId("review-exam-trigger-rule").filter({ hasText: name });
+      const triggersCount = drug.getByTestId("review-triggers-count");
+      const form = page.getByTestId("exam-trigger-form");
+      // the expiry, the posology, the vancocinemia and the fever
+      await expect(triggersCount).toHaveText("4 ativos");
+      await expect(
+        rules.getByRole("button", { name: "Editar regra" }),
+      ).toHaveCount(4);
+
+      // a new rule: a condition is required
+      await rules.getByTestId("exam-trigger-add").click();
+      await expect(form).toBeVisible();
+      await form.getByLabel("Nome").fill("TFG em queda");
+      await openSelectById(page, "exam-trigger-exam");
+      await pickOption(page, "CKD21");
+      await form.getByRole("button", { name: "Salvar" }).click();
+      await expect(form).toContainText(
+        "Informe ao menos uma condição (valor ou variação)",
+      );
+      expect(saved).toHaveLength(0);
+
+      // "< 60" and a fall of 25% or more: "≤ -25%"
+      await pickOperator(page, "value", "<");
+      await form.getByRole("spinbutton", { name: "Valor" }).fill("60");
+      await pickOperator(page, "variation", "≤");
+      await form.getByRole("spinbutton", { name: "Variação" }).fill("-25");
+      await form.getByLabel("A partir do dia de tratamento").fill("2");
+      await form.getByRole("button", { name: "Salvar" }).click();
+
+      await expect(page.getByText("Gatilhos de exame salvos")).toBeVisible();
+      await expect(form).toHaveCount(0);
+      // sent with the ones there, without an id
+      expect(saved[0]).toEqual({
+        rules: [
+          ...EXAM_RULES.map(sentRule),
+          {
+            name: "TFG em queda",
+            examRef: "ckd21",
+            valueAbove: null,
+            valueAtLeast: null,
+            valueBelow: 60,
+            valueAtMost: null,
+            variationAbove: null,
+            variationAtLeast: null,
+            variationBelow: null,
+            variationAtMost: -25,
+            fromCourseDay: 2,
+            enabledByDefault: false,
+          },
+        ],
+      });
+      // added from the drug, it is on for it, though not on by default
+      const added = drug.getByRole("checkbox", { name: /^TFG em queda/ });
+      await expect(added).toHaveAccessibleName(
+        "TFG em queda < 60 e variação ≤ -25% a partir do D2",
+      );
+      await expect(added).toBeChecked();
+      await expect(triggersCount).toHaveText("5 ativos");
+
+      // a change keeps the id
+      await ruleRow("Vancocinemia")
+        .getByRole("button", { name: "Editar regra" })
+        .click();
+      await expect(form.getByLabel("Nome")).toHaveValue("Vancocinemia");
+      await expect(form.getByRole("spinbutton", { name: "Valor" })).toHaveValue(
+        "20",
+      );
+      await form.getByRole("spinbutton", { name: "Valor" }).fill("25");
+      await form.getByRole("button", { name: "Salvar" }).click();
+      await expect(form).toHaveCount(0);
+      expect(saved[1].rules[1]).toEqual({
+        ...sentRule(EXAM_RULES[1]),
+        valueAbove: 25,
+      });
+      await expect(
+        drug.getByRole("checkbox", { name: /^Vancocinemia/ }),
+      ).toHaveAccessibleName("Vancocinemia > 25 e variação > +30%");
+
+      // Escape closes the form, not the review
+      await ruleRow("Vancocinemia")
+        .getByRole("button", { name: "Editar regra" })
+        .click();
+      await expect(form).toBeVisible();
+      await page.keyboard.press("Escape");
+      await expect(form).toHaveCount(0);
+      await expect(drug).toBeVisible();
+      expect(saved).toHaveLength(2);
+
+      // a rule left out of the list is deleted, and no longer sent on
+      await ruleRow("Temperatura")
+        .getByRole("button", { name: "Excluir" })
+        .click();
+      await page
+        .locator(".ant-popconfirm")
+        .getByRole("button", { name: "Excluir" })
+        .click();
+      await expect(ruleRow("Temperatura")).toHaveCount(0);
+      expect(saved[2].rules.map((item: any) => item.id)).toEqual([
+        "pcr-rise",
+        "van",
+        "tfg",
+        "new4",
+      ]);
+      await expect(triggersCount).toHaveText("4 ativos");
+
+      await dialog.getByRole("button", { name: "Próximo" }).click();
+      await dialog.getByRole("button", { name: "Próximo" }).click();
+      await saveReview(dialog);
+      await expect(
+        page.getByText("Revisão registrada com sucesso!"),
+      ).toBeVisible();
+      expect(sent.evaluations).toMatchObject([
+        { idDrug: 11, examTriggers: ["van", "new4"] },
+      ]);
+    });
+
+    test("keeps the rule form open with the backend message when its save fails", async ({
+      page,
+      mockApi,
+    }) => {
+      mockPage(mockApi, followUp());
+      mockApi.override(SAVE_EXAM_TRIGGERS, {
+        status: 400,
+        json: {
+          status: "error",
+          code: "errors.invalidParams",
+          message: "Gatilho de exame inválido: nome repetido",
+        },
+      });
+
+      const drug = await openTriggers(page);
+      await drug
+        .getByTestId("review-exam-trigger-rule")
+        .filter({ hasText: "TFG" })
+        .getByRole("button", { name: "Editar regra" })
+        .click();
+      const form = page.getByTestId("exam-trigger-form");
+      await form.getByLabel("Nome").fill("Vancocinemia");
+      await form.getByRole("button", { name: "Salvar" }).click();
+
+      await expect(
+        page.getByText("Gatilho de exame inválido: nome repetido"),
+      ).toBeVisible();
+      await expect(form).toBeVisible();
+      await expect(drug.getByRole("checkbox", { name: /^TFG/ })).toBeVisible();
+    });
+
+    test("does not change the rules when they could not be loaded", async ({
+      page,
+      mockApi,
+    }) => {
+      mockApi.override(EXAM_TRIGGERS, {
+        status: 500,
+        json: { status: "error", message: "erro" },
+      });
+      mockPage(
+        mockApi,
+        followUp({
+          courses: [
+            {
+              idDrug: 12,
+              start: VANCOMYCIN_START,
+              ongoing: true,
+              evaluation: withExamTriggers,
+              history: [withExamTriggers],
+            },
+          ],
+        }),
+      );
+
+      // the ones the evaluation keeps, which a save would replace the
+      // schema's with
+      const drug = await openTriggers(page);
+      const rules = drug.getByTestId("review-exam-triggers");
+      await expect(rules.getByRole("checkbox", { name: /^TFG/ })).toBeChecked();
+      await expect(rules.getByTestId("exam-trigger-add")).toHaveCount(0);
+      await expect(
+        rules.getByRole("button", { name: "Editar regra" }),
+      ).toHaveCount(0);
+    });
+
+    test("offers to add the first rule when the schema has none", async ({
+      page,
+      mockApi,
+    }) => {
+      mockApi.override(EXAM_TRIGGERS, {
+        json: { status: "success", data: { rules: [], exams: EXAMS } },
+      });
+      mockPage(mockApi, followUp());
+      let sent: any = null;
+      mockApi.override(REVIEW, async (route) => {
+        sent = JSON.parse(route.request().postData()!);
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify(followUp({ status: 2, pendings: [] })),
+        });
+      });
+
+      const drug = await openTriggers(page);
+      const dialog = page.getByRole("dialog");
+      await expect(drug.getByTestId("review-triggers-count")).toHaveText(
+        "2 ativos",
+      );
+      await expect(
+        drug.getByRole("checkbox", { name: WATCH_EXPIRY }),
+      ).toBeVisible();
+      const rules = drug.getByTestId("review-exam-triggers");
+      await expect(rules).toContainText("Nenhuma regra cadastrada");
+      await expect(rules.getByTestId("exam-trigger-add")).toBeEnabled();
+
+      await dialog.getByRole("button", { name: "Próximo" }).click();
+      await dialog.getByRole("button", { name: "Próximo" }).click();
+      await saveReview(dialog);
+      await expect(
+        page.getByText("Revisão registrada com sucesso!"),
+      ).toBeVisible();
+      expect(sent.evaluations).toMatchObject([
+        { idDrug: 11, examTriggers: [] },
+      ]);
+    });
+  });
 });
 
 test.describe("with READ_INFECTION_CONTROL only", () => {
@@ -2693,6 +3384,37 @@ test.describe("with READ_INFECTION_CONTROL only", () => {
       "Você não tem permissão para registrar revisões",
     );
     expect(saved).toBe(0);
+  });
+
+  test("turns the exam trigger rules on and off but does not change them", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override("GET /infection-control/exam-triggers", {
+      json: { status: "success", data: { rules: EXAM_RULES, exams: EXAMS } },
+    });
+    mockPage(mockApi, followUp());
+
+    await page.goto(PAGE_URL);
+    await openReview(page);
+    const drug = page.getByRole("dialog").getByTestId("review-drug");
+    await drug
+      .getByRole("radiogroup", { name: "Avaliação" })
+      .getByText("Conforme", { exact: true })
+      .click();
+    await drug
+      .getByTestId("review-triggers")
+      .getByRole("button", { name: "Alterar" })
+      .click();
+    const rules = drug.getByTestId("review-exam-triggers");
+    await expect(
+      rules.getByRole("checkbox", { name: /^Vancocinemia/ }),
+    ).toBeChecked();
+    await expect(rules.getByTestId("exam-trigger-add")).toHaveCount(0);
+    await expect(
+      rules.getByRole("button", { name: "Editar regra" }),
+    ).toHaveCount(0);
+    await expect(rules.getByRole("button", { name: "Excluir" })).toHaveCount(0);
   });
 
   test("does not start the follow-up", async ({ page, mockApi }) => {

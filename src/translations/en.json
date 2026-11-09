@@ -1837,7 +1837,8 @@
         "3": "{{drug}} evaluation expired",
         "4": "Scheduled review date reached",
         "5": "Alert fired",
-        "6": "{{drug}} posology changed"
+        "6": "{{drug}} posology changed",
+        "7": "{{drug}} exam result"
       },
       "unknownDrug": "Antimicrobial",
       "register": "Review",
@@ -1855,7 +1856,8 @@
       "intervention": "Intervention: {{status}}",
       "invalidated": {
         "3": "expired on {{date}}",
-        "6": "posology changed"
+        "6": "posology changed",
+        "7": "exam result"
       }
     },
     "indication": {
@@ -2017,7 +2019,8 @@
       "treatmentTypeRequired": "Inform the treatment type",
       "infectionFocusRequired": "Inform the infection focus",
       "hintTreatmentType": "Inform the treatment type",
-      "hintInfectionFocus": "Inform the infection focus"
+      "hintInfectionFocus": "Inform the infection focus",
+      "invalidatedExam": "An exam result met a trigger:"
     },
     "clinicalNote": {
       "stepTitle": "Clinical note",
@@ -2226,8 +2229,53 @@
         "3": "Evaluation expired",
         "4": "Scheduled review date reached",
         "5": "Alert fired",
-        "6": "Posology changed"
+        "6": "Posology changed",
+        "7": "Exam result"
       }
+    },
+    "examTriggers": {
+      "title": "Exam triggers",
+      "and": " and ",
+      "variationAbove": "variation > {{value}}",
+      "variationAtLeast": "variation ≥ {{value}}",
+      "variationBelow": "variation < {{value}}",
+      "variationAtMost": "variation ≤ {{value}}",
+      "unavailable": "No {{exam}} results in this hospital: the trigger won't fire",
+      "settings": {
+        "add": "New rule",
+        "edit": "Edit rule",
+        "delete": "Delete",
+        "deleteConfirm": "Delete this rule?",
+        "deleteDescription": "Evaluations already made keep the copy they saved.",
+        "cancel": "Cancel",
+        "save": "Save",
+        "saved": "Exam triggers saved",
+        "name": "Name",
+        "exam": "Exam",
+        "examPlaceholder": "Select the exam",
+        "noResults": "no results",
+        "value": "Value",
+        "valueOperator": "Value operator",
+        "variation": "Variation",
+        "variationOperator": "Variation operator",
+        "variationHint": "From the result at review time; a fall is negative (e.g. < -25%)",
+        "fromCourseDay": "From treatment day",
+        "fromCourseDayHint": "E.g. 4 applies from D4 on",
+        "fromCourseDayMin": "Enter a day from 1 on",
+        "enabledByDefault": "On by default",
+        "nameTooLong": "Use up to 100 characters",
+        "conditionRequired": "Enter at least one condition (value or variation)",
+        "limit": "Limit of {{count}} rules reached",
+        "empty": "No rules yet"
+      },
+      "fromCourseDay": "from D{{day}} on",
+      "resultOn": "{{value}} on {{date}}",
+      "rawValue": "creatinine {{value}}",
+      "result": "Result: {{result}}",
+      "baseline": "Baseline: {{result}}",
+      "variation": "Variation: {{value}}",
+      "noBaseline": "no baseline value",
+      "noBaselineVariation": "no baseline value: the variation conditions won't fire"
     }
   },
   "accessibility": {

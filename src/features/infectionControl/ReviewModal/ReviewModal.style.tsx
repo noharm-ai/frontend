@@ -445,6 +445,47 @@ export const DrugEvaluation = styled.div`
     }
   }
 
+  /* the exam trigger rules of the schema, under the other triggers */
+  .drug-exam-triggers {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .drug-exam-triggers-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .drug-exam-triggers-empty {
+    color: #8c8c8c;
+  }
+
+  .drug-exam-trigger-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .drug-exam-trigger-actions {
+    display: flex;
+    flex-shrink: 0;
+  }
+
+  .drug-exam-trigger-conditions {
+    color: #8c8c8c;
+  }
+
+  .drug-exam-trigger-unavailable {
+    color: #d46b08;
+    font-size: 12px;
+    padding-left: 24px;
+  }
+
   .drug-notes {
     display: flex;
     flex-direction: column;

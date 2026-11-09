@@ -924,6 +924,12 @@ api.infectionControl.getInterventionReasons = () =>
 // the active clinical note types, for the note of a review
 api.infectionControl.getClinicalNoteTypes = () =>
   instance.get("/infection-control/clinical-note-types", setHeaders());
+// the schema's exam trigger rules a review can turn on per drug
+api.infectionControl.getExamTriggers = () =>
+  instance.get("/infection-control/exam-triggers", setHeaders());
+// replaces the whole list of rules: a rule left out is deleted
+api.infectionControl.saveExamTriggers = (rules) =>
+  instance.put("/infection-control/exam-triggers", { rules }, setHeaders());
 
 // the antimicrobials, by name
 api.infectionControl.searchAntimicrobials = (term) =>

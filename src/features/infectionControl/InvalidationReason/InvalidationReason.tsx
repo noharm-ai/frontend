@@ -9,6 +9,7 @@ import {
   IFollowUpPending,
 } from "../InfectionControlSlice";
 import { formatRegimen } from "../timeline";
+import { ExamResultMatches } from "../ExamResultMatches/ExamResultMatches";
 
 interface InvalidationReasonProps {
   pending: IFollowUpPending;
@@ -18,8 +19,9 @@ interface InvalidationReasonProps {
 }
 
 /**
- * Why the evaluation on record no longer holds: when its validity ended, or
- * that the posology changed, from what to what
+ * Why the evaluation on record no longer holds: when its validity ended,
+ * which exam results met a rule it turned on, or that the posology changed,
+ * from what to what
  */
 export function InvalidationReason({
   pending,
@@ -36,6 +38,15 @@ export function InvalidationReason({
             pending.details?.validUntil ?? evaluation.validUntil,
           ),
         })}
+      </li>
+    );
+  }
+
+  if (pending.type === InfectionControlPendingTypeEnum.EXAM_RESULT) {
+    return (
+      <li>
+        {t("infectionControl.review.invalidatedExam")}
+        <ExamResultMatches matches={pending.details?.matches} />
       </li>
     );
   }

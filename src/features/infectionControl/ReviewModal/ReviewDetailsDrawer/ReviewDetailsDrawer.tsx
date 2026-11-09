@@ -13,6 +13,7 @@ import {
   ALERT_LEVELS,
 } from "../../InfectionControlSlice";
 import { InvalidationReason } from "../../InvalidationReason/InvalidationReason";
+import { EvaluationExamTriggers } from "../../EvaluationExamTriggers/EvaluationExamTriggers";
 import { useAlertHandling } from "../../ScreeningAlerts/useAlertHandling";
 import {
   describeIndication,
@@ -248,6 +249,7 @@ export function ReviewDetailsDrawer({
                 })}
               </div>
             )}
+            <EvaluationExamTriggers evaluation={evaluation} />
             {evaluation.notes && (
               <em className="details-notes">{evaluation.notes}</em>
             )}

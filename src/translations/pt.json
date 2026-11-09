@@ -1847,7 +1847,8 @@
         "3": "Avaliação de {{drug}} vencida",
         "4": "Data de revisão agendada chegou",
         "5": "Alerta disparado",
-        "6": "Posologia de {{drug}} alterada"
+        "6": "Posologia de {{drug}} alterada",
+        "7": "Resultado de exame de {{drug}}"
       },
       "unknownDrug": "Antimicrobiano",
       "register": "Revisar",
@@ -1865,7 +1866,8 @@
       "intervention": "Intervenção: {{status}}",
       "invalidated": {
         "3": "vencida em {{date}}",
-        "6": "posologia alterada"
+        "6": "posologia alterada",
+        "7": "resultado de exame"
       }
     },
     "indication": {
@@ -2027,7 +2029,8 @@
       "treatmentTypeRequired": "Informe o tipo de tratamento",
       "infectionFocusRequired": "Informe o foco infeccioso",
       "hintTreatmentType": "Informe o tipo de tratamento",
-      "hintInfectionFocus": "Informe o foco infeccioso"
+      "hintInfectionFocus": "Informe o foco infeccioso",
+      "invalidatedExam": "Um resultado de exame atingiu um gatilho:"
     },
     "clinicalNote": {
       "stepTitle": "Evolução",
@@ -2236,8 +2239,53 @@
         "3": "Avaliação vencida",
         "4": "Data de revisão agendada chegou",
         "5": "Alerta disparado",
-        "6": "Posologia alterada"
+        "6": "Posologia alterada",
+        "7": "Resultado de exame"
       }
+    },
+    "examTriggers": {
+      "title": "Gatilhos de exame",
+      "and": " e ",
+      "variationAbove": "variação > {{value}}",
+      "variationAtLeast": "variação ≥ {{value}}",
+      "variationBelow": "variação < {{value}}",
+      "variationAtMost": "variação ≤ {{value}}",
+      "unavailable": "Sem resultados de {{exam}} neste hospital: o gatilho não dispara",
+      "settings": {
+        "add": "Nova regra",
+        "edit": "Editar regra",
+        "delete": "Excluir",
+        "deleteConfirm": "Excluir esta regra?",
+        "deleteDescription": "As avaliações já feitas mantêm a cópia que guardaram dela.",
+        "cancel": "Cancelar",
+        "save": "Salvar",
+        "saved": "Gatilhos de exame salvos",
+        "name": "Nome",
+        "exam": "Exame",
+        "examPlaceholder": "Selecione o exame",
+        "noResults": "sem resultados",
+        "value": "Valor",
+        "valueOperator": "Operador do valor",
+        "variation": "Variação",
+        "variationOperator": "Operador da variação",
+        "variationHint": "Em relação ao resultado da revisão; uma queda é negativa (ex.: < -25%)",
+        "fromCourseDay": "A partir do dia de tratamento",
+        "fromCourseDayHint": "Ex.: 4 vale a partir do D4",
+        "fromCourseDayMin": "Informe um dia a partir de 1",
+        "enabledByDefault": "Ligado por padrão",
+        "nameTooLong": "Use até 100 caracteres",
+        "conditionRequired": "Informe ao menos uma condição (valor ou variação)",
+        "limit": "Limite de {{count}} regras atingido",
+        "empty": "Nenhuma regra cadastrada"
+      },
+      "fromCourseDay": "a partir do D{{day}}",
+      "resultOn": "{{value}} em {{date}}",
+      "rawValue": "creatinina {{value}}",
+      "result": "Resultado: {{result}}",
+      "baseline": "Referência: {{result}}",
+      "variation": "Variação: {{value}}",
+      "noBaseline": "sem valor de referência",
+      "noBaselineVariation": "sem valor de referência: as condições de variação não disparam"
     }
   },
   "accessibility": {
