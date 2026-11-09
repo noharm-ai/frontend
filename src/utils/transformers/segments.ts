@@ -1,5 +1,15 @@
 import { stringify, createSlug } from './utils';
 
+interface SegmentInput {
+  minAge?: number | string | null;
+  maxAge?: number | string | null;
+  minWeight?: number | string | null;
+  maxWeight?: number | string | null;
+  id: number | string;
+  description: string;
+  [key: string]: unknown;
+}
+
 export const transformSegment = ({
   minAge,
   maxAge,
@@ -8,7 +18,7 @@ export const transformSegment = ({
   id,
   description,
   ...segment
-}) => ({
+}: SegmentInput) => ({
   ...segment,
   id,
   minAge,
@@ -21,4 +31,4 @@ export const transformSegment = ({
   slug: createSlug(description, id)
 });
 
-export const transformSegments = segments => segments.map(transformSegment);
+export const transformSegments = (segments: SegmentInput[]) => segments.map(transformSegment);
