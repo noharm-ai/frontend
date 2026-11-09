@@ -2,21 +2,23 @@ import slugify from "slugify";
 import { isEmpty } from "lodash";
 import moment from "moment";
 
-const noValues = [0, "None", null, undefined];
+const noValues: unknown[] = [0, "None", null, undefined];
 
-export const stringify = (data = [], noValueSymbol = "#", separator = " | ") =>
+export const stringify = (
+  data: unknown[] = [],
+  noValueSymbol = "#",
+  separator = " | "
+) =>
   !isEmpty(data)
     ? data
         .map((item) => (noValues.includes(item) ? noValueSymbol : item))
         .join(separator)
     : "";
 
-export const createSlug = function (/* arguments */) {
-  const args = arguments;
-  return slugify(Array.from(args).join("-")).toLowerCase();
-};
+export const createSlug = (...args: unknown[]) =>
+  slugify(args.join("-")).toLowerCase();
 
-export const formatAge = (birthdate) => {
+export const formatAge = (birthdate: moment.MomentInput) => {
   const now = moment();
   const mBirthdate = moment(birthdate);
 
@@ -39,7 +41,7 @@ export const formatAge = (birthdate) => {
   return `${years}a ${months}m ${days}d`;
 };
 
-export const textToHtml = (obs) => {
+export const textToHtml = (obs?: string | null) => {
   if (obs && obs !== "None") {
     return obs.replace(/(?:\r\n|\r|\n)/g, "<br>");
   }
