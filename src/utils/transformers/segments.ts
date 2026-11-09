@@ -1,4 +1,4 @@
-import { stringify, createSlug } from './utils';
+import { stringify, createSlug } from "./utils";
 
 interface SegmentInput {
   minAge?: number | string | null;
@@ -26,9 +26,10 @@ export const transformSegment = ({
   minWeight,
   maxWeight,
   description,
-  minMaxAge: stringify([minAge, maxAge], '#', ' - '),
-  minMaxWeight: stringify([minWeight, maxWeight], '#', ' - '),
-  slug: createSlug(description, id)
+  minMaxAge: stringify([minAge, maxAge], "#", " - "),
+  minMaxWeight: stringify([minWeight, maxWeight], "#", " - "),
+  slug: createSlug(description, id),
 });
 
-export const transformSegments = (segments: SegmentInput[]) => segments.map(transformSegment);
+export const transformSegments = (segments: SegmentInput[]) =>
+  segments.map(transformSegment);
