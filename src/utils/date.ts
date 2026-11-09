@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs, { type Dayjs } from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
 
@@ -6,7 +6,10 @@ import timezone from "dayjs/plugin/timezone";
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
-export const formatDate = (isoDate, format = "DD/MM/YYYY") => {
+export const formatDate = (
+  isoDate?: dayjs.ConfigType,
+  format = "DD/MM/YYYY"
+) => {
   if (!isoDate) {
     return null;
   }
@@ -14,7 +17,7 @@ export const formatDate = (isoDate, format = "DD/MM/YYYY") => {
   return dayjs(isoDate).format(format);
 };
 
-export const formatDateTime = (isoDate) => {
+export const formatDateTime = (isoDate?: dayjs.ConfigType) => {
   if (!isoDate) {
     return null;
   }
@@ -22,7 +25,7 @@ export const formatDateTime = (isoDate) => {
   return dayjs(isoDate).format("DD/MM/YYYY HH:mm");
 };
 
-export const isDate = (value) => {
+export const isDate = (value: dayjs.ConfigType) => {
   return (
     dayjs(value, "YYYY-MM-DD", true).isValid() ||
     dayjs(`${value}`.split(".")[0], "YYYY-MM-DDTHH:mm:ss", true).isValid()
@@ -30,8 +33,8 @@ export const isDate = (value) => {
 };
 
 export const datepickerRangeLimit =
-  (maxDays) =>
-  (current, { from }) => {
+  (maxDays: number) =>
+  (current: Dayjs, { from }: { from?: Dayjs | null }) => {
     if (from) {
       return Math.abs(current.diff(from, "days")) >= maxDays;
     }
@@ -43,7 +46,7 @@ export const datepickerRangeLimit =
  * @param {string} serverDate - Date string from server (always in UTC-3)
  * @returns {number} - Difference in minutes
  */
-export const getMinutesDiffFromServerDate = (serverDate) => {
+export const getMinutesDiffFromServerDate = (serverDate?: string | null) => {
   if (!serverDate) {
     return Infinity;
   }
@@ -63,7 +66,7 @@ export const getMinutesDiffFromServerDate = (serverDate) => {
  * @param {string} serverDate - Date string from server (always in UTC-3)
  * @returns {dayjs.Dayjs} - dayjs object in local timezone
  */
-export const serverDateToLocal = (serverDate) => {
+export const serverDateToLocal = (serverDate?: string | null) => {
   if (!serverDate) {
     return null;
   }

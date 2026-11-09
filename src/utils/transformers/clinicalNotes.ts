@@ -1,7 +1,9 @@
 import { uniq } from "utils/lodash";
 
-export const flatClinicalNotes = (groups) => {
-  const flatList = [];
+export const flatClinicalNotes = (
+  groups: Record<string, { roles?: string[] } | undefined>
+) => {
+  const flatList: string[] = [];
 
   Object.keys(groups).forEach((key) => {
     if (groups[key]?.roles) {
@@ -12,6 +14,6 @@ export const flatClinicalNotes = (groups) => {
   return flatList;
 };
 
-export const getPositionList = (list) => {
+export const getPositionList = (list: string[]) => {
   return uniq(list).sort();
 };
