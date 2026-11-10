@@ -4,7 +4,7 @@ import appReducer from "./app";
 import authReducer from "./auth";
 import userReducer from "./user";
 import drugsReducer from "./drugs";
-import patientsReducer from "./patients";
+import { patientsReducer } from "./patients/patientsSlice";
 import { segmentsReducer } from "features/segments/SegmentsSlice";
 import interventionReducer from "./intervention";
 import prescriptionsReducer from "./prescriptions";
