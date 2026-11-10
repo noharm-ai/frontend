@@ -4,11 +4,10 @@ import moment from "moment";
 import { useTranslation } from "react-i18next";
 
 import Alert from "components/Alert";
-import { Row } from "components/Grid";
 import notification from "components/notification";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
-import { FormContainer } from "components/Forms/Form.style";
+import { Form } from "styles/Form.style";
 import { getErrorMessageFromException } from "utils/errorHandler";
 import { getPatient, setPatient } from "utils/patientCache";
 import PermissionService from "services/PermissionService";
@@ -137,13 +136,14 @@ export function PatientForm({ afterSavePatient = () => {}, ...props }) {
               showIcon
             />
           )}
-          <form onSubmit={handleSubmit}>
-            <FormContainer>
-              <Row type="flex" gutter={[16, 24]}>
-                <PatientFormBase />
-              </Row>
-            </FormContainer>
-          </form>
+          <Form
+            onSubmit={handleSubmit}
+            className="highlight-labels"
+            data-kb="prescription.patientForm"
+            style={{ marginTop: 20 }}
+          >
+            <PatientFormBase />
+          </Form>
         </DefaultModal>
       )}
     </Formik>
