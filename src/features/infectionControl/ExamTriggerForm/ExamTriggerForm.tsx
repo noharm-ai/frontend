@@ -7,6 +7,7 @@ import styled from "styled-components";
 
 import DefaultModal from "components/Modal";
 import { Checkbox, Input, InputNumber } from "components/Inputs";
+import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
 
 import { IExamTriggerExam, IExamTriggerRule } from "../InfectionControlSlice";
 import {
@@ -30,6 +31,32 @@ const FormBody = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  .form-header {
+    align-items: center;
+    display: flex;
+    gap: 8px;
+    /* room for the close button */
+    padding-right: 32px;
+
+    .modal-title {
+      margin: 0;
+    }
+  }
+
+  .form-conditions {
+    border: 1px solid #f0f0f0;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .form-optional {
+    color: #8c8c8c;
+    font-weight: 400;
+  }
 
   .form-field {
     display: flex;
@@ -121,13 +148,19 @@ export function ExamTriggerForm({
               data-kb="infectionControl.examTriggers.form"
               data-testid="exam-trigger-form"
             >
-              <h2 className="modal-title">
-                {t(
-                  rule
-                    ? "infectionControl.examTriggers.settings.edit"
-                    : "infectionControl.examTriggers.settings.add",
-                )}
-              </h2>
+              <header className="form-header">
+                <h2 className="modal-title">
+                  {t(
+                    rule
+                      ? "infectionControl.examTriggers.settings.edit"
+                      : "infectionControl.examTriggers.settings.add",
+                  )}
+                </h2>
+                <KnowledgeBaseIcon
+                  anchor="infectionControl.examTriggers.form.articles"
+                  label="Regra de gatilho de exame"
+                />
+              </header>
 
               <div className="form-field">
                 <label className="form-label" htmlFor="exam-trigger-name">
@@ -179,75 +212,91 @@ export function ExamTriggerForm({
                 )}
               </div>
 
-              <div className="form-field">
-                <span className="form-label">
-                  {t("infectionControl.examTriggers.settings.value")}
-                </span>
-                <div
-                  className="form-condition"
-                  data-testid="exam-trigger-value"
-                >
-                  <Select
-                    id="exam-trigger-value-operator"
-                    aria-label={t(
-                      "infectionControl.examTriggers.settings.valueOperator",
-                    )}
-                    value={values.valueOperator}
-                    onChange={(value: any) =>
-                      setFieldValue("valueOperator", value)
-                    }
-                    options={operatorOptions}
-                  />
-                  <InputNumber
-                    aria-label={t(
-                      "infectionControl.examTriggers.settings.value",
-                    )}
-                    decimalSeparator=","
-                    value={values.value}
-                    onChange={(value: number | null) =>
-                      setFieldValue("value", value ?? null)
-                    }
-                  />
+              <div
+                className="form-conditions"
+                data-kb="infectionControl.examTriggers.form.conditions"
+                data-testid="exam-trigger-conditions"
+              >
+                <div className="form-field">
+                  <span className="form-label">
+                    {t("infectionControl.examTriggers.settings.conditions")}
+                  </span>
+                  <span className="form-hint">
+                    {t("infectionControl.examTriggers.settings.conditionsHint")}
+                  </span>
                 </div>
+
+                <div className="form-field">
+                  <span className="form-label">
+                    {t("infectionControl.examTriggers.settings.value")}
+                  </span>
+                  <div
+                    className="form-condition"
+                    data-testid="exam-trigger-value"
+                  >
+                    <Select
+                      id="exam-trigger-value-operator"
+                      aria-label={t(
+                        "infectionControl.examTriggers.settings.valueOperator",
+                      )}
+                      value={values.valueOperator}
+                      onChange={(value: any) =>
+                        setFieldValue("valueOperator", value)
+                      }
+                      options={operatorOptions}
+                    />
+                    <InputNumber
+                      aria-label={t(
+                        "infectionControl.examTriggers.settings.value",
+                      )}
+                      decimalSeparator=","
+                      value={values.value}
+                      onChange={(value: number | null) =>
+                        setFieldValue("value", value ?? null)
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="form-field">
+                  <span className="form-label">
+                    {t("infectionControl.examTriggers.settings.variation")}
+                  </span>
+                  <div
+                    className="form-condition"
+                    data-testid="exam-trigger-variation"
+                  >
+                    <Select
+                      id="exam-trigger-variation-operator"
+                      aria-label={t(
+                        "infectionControl.examTriggers.settings.variationOperator",
+                      )}
+                      value={values.variationOperator}
+                      onChange={(value: any) =>
+                        setFieldValue("variationOperator", value)
+                      }
+                      options={operatorOptions}
+                    />
+                    <InputNumber
+                      aria-label={t(
+                        "infectionControl.examTriggers.settings.variation",
+                      )}
+                      decimalSeparator=","
+                      suffix="%"
+                      value={values.variation}
+                      onChange={(value: number | null) =>
+                        setFieldValue("variation", value ?? null)
+                      }
+                    />
+                  </div>
+                  <span className="form-hint">
+                    {t("infectionControl.examTriggers.settings.variationHint")}
+                  </span>
+                </div>
+
                 {errors.value && (
                   <span className="form-error">{errors.value}</span>
                 )}
-              </div>
-
-              <div className="form-field">
-                <span className="form-label">
-                  {t("infectionControl.examTriggers.settings.variation")}
-                </span>
-                <div
-                  className="form-condition"
-                  data-testid="exam-trigger-variation"
-                >
-                  <Select
-                    id="exam-trigger-variation-operator"
-                    aria-label={t(
-                      "infectionControl.examTriggers.settings.variationOperator",
-                    )}
-                    value={values.variationOperator}
-                    onChange={(value: any) =>
-                      setFieldValue("variationOperator", value)
-                    }
-                    options={operatorOptions}
-                  />
-                  <InputNumber
-                    aria-label={t(
-                      "infectionControl.examTriggers.settings.variation",
-                    )}
-                    decimalSeparator=","
-                    suffix="%"
-                    value={values.variation}
-                    onChange={(value: number | null) =>
-                      setFieldValue("variation", value ?? null)
-                    }
-                  />
-                </div>
-                <span className="form-hint">
-                  {t("infectionControl.examTriggers.settings.variationHint")}
-                </span>
               </div>
 
               <div className="form-field">
@@ -255,7 +304,10 @@ export function ExamTriggerForm({
                   className="form-label"
                   htmlFor="exam-trigger-from-course-day"
                 >
-                  {t("infectionControl.examTriggers.settings.fromCourseDay")}
+                  {t("infectionControl.examTriggers.settings.fromCourseDay")}{" "}
+                  <span className="form-optional">
+                    ({t("infectionControl.examTriggers.settings.optional")})
+                  </span>
                 </label>
                 <InputNumber
                   id="exam-trigger-from-course-day"

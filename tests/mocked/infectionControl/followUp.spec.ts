@@ -3124,6 +3124,16 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       // a new rule: a condition is required
       await rules.getByTestId("exam-trigger-add").click();
       await expect(form).toBeVisible();
+      await expect(
+        form.getByRole("button", { name: "Artigos da base de conhecimento" }),
+      ).toBeVisible();
+      // the value, the variation or both; the treatment day is optional
+      await expect(form.getByTestId("exam-trigger-conditions")).toContainText(
+        "Informe o valor, a variação ou ambos",
+      );
+      await expect(
+        form.getByLabel("A partir do dia de tratamento (opcional)"),
+      ).toBeVisible();
       await form.getByLabel("Nome").fill("TFG em queda");
       await openSelectById(page, "exam-trigger-exam");
       await pickOption(page, "CKD21");
