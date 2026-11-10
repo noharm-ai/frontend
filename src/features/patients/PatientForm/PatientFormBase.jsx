@@ -14,9 +14,9 @@ import Permission from "models/Permission";
 import { FieldTag } from "features/fields/FieldTag/FieldTag";
 import { TagTypeEnum } from "models/TagTypeEnum";
 
-import { Box, EditorBox } from "../Form.style";
+import { Box, EditorBox } from "components/Forms/Form.style";
 
-export default function Base() {
+export function PatientFormBase() {
   const { values, setFieldValue, errors } = useFormikContext();
   const {
     name,

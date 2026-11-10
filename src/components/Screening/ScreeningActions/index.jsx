@@ -10,7 +10,7 @@ import { FloatButton } from "antd";
 
 import DefaultModal from "components/Modal";
 
-import FormPatientModal from "containers/Forms/Patient";
+import { PatientForm } from "features/patients/PatientForm/PatientForm";
 import { shouldUpdatePrescription } from "features/serverActions/ServerActionsSlice";
 import InterventionOutcome from "features/intervention/InterventionOutcome/InterventionOutcome";
 import { MultipleOutcome } from "features/intervention/MultipleOutcome/MultipleOutcome";
@@ -125,7 +125,7 @@ export default function ScreeningActions({
         </ScreeningFloatButtonGroup>
       )}
 
-      <FormPatientModal
+      <PatientForm
         open={patientEditVisible}
         onCancel={() => setModalVisibility("patientEdit", false)}
         okText="Salvar"

@@ -4,7 +4,7 @@ import api from "services/api";
 import { errorHandler } from "utils/index";
 import { removeStorageItem } from "utils/storage";
 
-interface IPatientsState {
+interface IPatientFormState {
   save: {
     isSaving: boolean;
     success: boolean;
@@ -17,7 +17,7 @@ interface ISavePatientParams {
   [key: string]: unknown;
 }
 
-const initialState: IPatientsState = {
+const initialState: IPatientFormState = {
   save: {
     isSaving: false,
     success: false,
@@ -32,7 +32,7 @@ export const savePatientThunk = createAsyncThunk<
     state: { auth: { identify: { access_token?: string } } };
     rejectValue: unknown;
   }
->("patients/save", async ({ admissionNumber, ...params }, thunkAPI) => {
+>("patientForm/save", async ({ admissionNumber, ...params }, thunkAPI) => {
   const { access_token } = thunkAPI.getState().auth.identify;
 
   // errorHandler (JS) resolves to { status, error } on failure
@@ -51,8 +51,8 @@ export const savePatientThunk = createAsyncThunk<
   return data;
 });
 
-const patientsSlice = createSlice({
-  name: "patients",
+const patientFormSlice = createSlice({
+  name: "patientForm",
   initialState,
   reducers: {},
   extraReducers(builder) {
@@ -72,7 +72,7 @@ const patientsSlice = createSlice({
   },
 });
 
-export const patientsReducer = patientsSlice.reducer;
+export const patientFormReducer = patientFormSlice.reducer;
 
 /**
  * This slice used to persist a patient name cache under "persist:patients".

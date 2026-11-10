@@ -1,4 +1,3 @@
-import React from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import moment from "moment";
@@ -9,13 +8,15 @@ import { Row } from "components/Grid";
 import notification from "components/notification";
 import Heading from "components/Heading";
 import DefaultModal from "components/Modal";
+import { FormContainer } from "components/Forms/Form.style";
 import { getErrorMessageFromException } from "utils/errorHandler";
 import { getPatient, setPatient } from "utils/patientCache";
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
+import { useAppDispatch, useAppSelector } from "store/index";
 
-import Base from "./Base";
-import { FormContainer } from "./Patient.style";
+import { PatientFormBase } from "./PatientFormBase";
+import { savePatientThunk } from "./PatientFormSlice";
 
 const saveMessage = {
   message: "Uhu! Dados do paciente salvo com sucesso! :)",
@@ -25,28 +26,26 @@ const validationSchema = Yup.object().shape({
   height: Yup.number().nullable().min(3),
 });
 
-export default function Patient({
-  saveStatus,
-  savePatient,
-  afterSavePatient,
-  idPrescription,
-  admissionNumber,
-  weight,
-  height,
-  birthdate,
-  skinColor,
-  gender,
-  observation,
-  dialysis,
-  notesInfo,
-  notesInfoDate,
-  dischargeDate,
-  patient,
-  idPatient,
-  ...props
-}) {
+export function PatientForm({ afterSavePatient = () => {}, ...props }) {
   const { t } = useTranslation();
-  const { isSaving } = saveStatus;
+  const dispatch = useAppDispatch();
+  const isSaving = useAppSelector((state) => state.patientForm.save.isSaving);
+  const {
+    idPrescription,
+    admissionNumber,
+    weight,
+    height,
+    birthdate,
+    skinColor,
+    gender,
+    observation,
+    dialysis,
+    notesInfo,
+    notesInfoDate,
+    dischargeDate,
+    patient,
+    idPatient,
+  } = useAppSelector((state) => state.prescriptions.single.data);
 
   const initialValues = {
     idPrescription,
@@ -71,7 +70,17 @@ export default function Patient({
     if (PermissionService().has(Permission.WRITE_NAME) && name) {
       payload.name = { name, data: patientData };
     }
-    savePatient(payload)
+    // Not .unwrap(): the autoRefreshToken middleware wraps thunk dispatches
+    // in a plain Promise, so the result has no unwrap method.
+    dispatch(savePatientThunk(payload))
+      .then((action) => {
+        if (savePatientThunk.rejected.match(action)) {
+          throw action.payload;
+        }
+        return savePatientThunk.fulfilled.match(action)
+          ? action.payload
+          : action;
+      })
       .then((response) => {
         const existing = getPatient(idPatient);
         if (existing) {
@@ -131,7 +140,7 @@ export default function Patient({
           <form onSubmit={handleSubmit}>
             <FormContainer>
               <Row type="flex" gutter={[16, 24]}>
-                <Base />
+                <PatientFormBase />
               </Row>
             </FormContainer>
           </form>
@@ -140,11 +149,3 @@ export default function Patient({
     </Formik>
   );
 }
-
-Patient.defaultProps = {
-  afterSavePatient: () => {},
-  initialValues: {
-    weight: "",
-    height: "",
-  },
-};
