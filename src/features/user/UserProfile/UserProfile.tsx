@@ -9,7 +9,6 @@ import Card from "components/Card";
 import Button from "components/Button";
 import notification from "components/notification";
 import { useAppDispatch, useAppSelector, IRootState } from "store/index";
-import { cleanCacheThunk } from "store/ducks/patients/thunk";
 import { clearCache as cleanPatientCache } from "utils/patientCache";
 import { Creators as AppCreators } from "store/ducks/app/index";
 import { FeatureService } from "src/services/FeatureService";
@@ -35,7 +34,6 @@ export function UserProfile() {
   );
 
   const executeCleanCache = async () => {
-    dispatch(cleanCacheThunk());
     dispatch(appResetScreeningListFilter({}));
     cleanPatientCache();
 

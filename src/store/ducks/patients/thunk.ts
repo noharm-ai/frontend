@@ -4,7 +4,6 @@ import {
   patientsSaveSingleStart,
   patientsSaveSingleSuccess,
   patientsSaveSingleError,
-  patientsCleanCache,
 } from "./patientsSlice";
 
 type Dispatch = (action: unknown) => unknown;
@@ -39,7 +38,3 @@ export const savePatientThunk =
     dispatch(patientsSaveSingleSuccess());
     return data;
   };
-
-export const cleanCacheThunk = () => async (dispatch: Dispatch) => {
-  dispatch(patientsCleanCache());
-};
