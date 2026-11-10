@@ -46,6 +46,51 @@ const Editor = forwardRef(function Editor({
   editable = true,
 }, ref) {
   const editorInstanceRef = useRef(null);
+  const onEditRef = useRef(onEdit);
+  const pendingEditRef = useRef(null);
+  const editTimerRef = useRef(null);
+
+  useEffect(() => {
+    onEditRef.current = onEdit;
+  });
+
+  // Hands the new content to onEdit in a task of its own instead of inside
+  // ProseMirror's input/keydown/paste handler. Called from there, the
+  // caller's setState (usually Formik's setFieldValue) is a discrete,
+  // synchronous React update. While keystrokes are handled back to back,
+  // every one of those commits re-renders the antd Portals under the form
+  // (a Modal it wraps, the dropdown of a Select opened once), whose effect
+  // schedules one more default-priority update. React then never commits
+  // with no work left, its nested-update counter climbs by about two per
+  // keystroke and, past 50, the next setState throws "Maximum update depth
+  // exceeded" (#185).
+  // Updates fired from a task are default-priority, so that counter resets.
+  // Several transactions in the same tick collapse into one call with the
+  // latest value.
+  const emitEdit = (value) => {
+    pendingEditRef.current = { value };
+    if (editTimerRef.current !== null) return;
+
+    editTimerRef.current = setTimeout(() => {
+      editTimerRef.current = null;
+      const pending = pendingEditRef.current;
+      pendingEditRef.current = null;
+      if (pending) onEditRef.current?.(pending.value);
+    }, 0);
+  };
+
+  // An edit still pending on unmount is delivered right away, never dropped.
+  useEffect(
+    () => () => {
+      if (editTimerRef.current === null) return;
+      clearTimeout(editTimerRef.current);
+      editTimerRef.current = null;
+      const pending = pendingEditRef.current;
+      pendingEditRef.current = null;
+      if (pending) onEditRef.current?.(pending.value);
+    },
+    [],
+  );
 
   useImperativeHandle(ref, () => ({
     insertContent: (html) =>
@@ -131,11 +176,11 @@ const Editor = forwardRef(function Editor({
     });
 
     if (!editor.state.doc.textContent.trim().length && !hasVideo) {
-      onEdit(null);
+      emitEdit(null);
       return;
     }
 
-    onEdit(editor.getHTML());
+    emitEdit(editor.getHTML());
   };
 
   const onCreate = ({ editor }) => {
