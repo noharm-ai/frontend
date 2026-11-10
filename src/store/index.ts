@@ -6,6 +6,7 @@ import storage from "redux-persist/lib/storage";
 
 import autoRefreshToken from "./middlewares/autoRefreshToken";
 import reducers from "./ducks/index.ts";
+import { removeLegacyPatientsPersist } from "features/patients/PatientForm/PatientFormSlice";
 
 const isDev = import.meta.env.DEV;
 
@@ -37,6 +38,7 @@ const store: any = configureStore({
 });
 
 const persistor = persistStore(store);
+removeLegacyPatientsPersist();
 
 export { store, persistor };
 

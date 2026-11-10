@@ -46,7 +46,7 @@ export const fetchRegulationList = createAsyncThunk(
     try {
       const response = await api.fetchRegulationList(params);
 
-      return { response, patients: thunkAPI.getState().patients.list };
+      return { response };
     } catch (err) {
       return thunkAPI.rejectWithValue(err.response.data);
     }
