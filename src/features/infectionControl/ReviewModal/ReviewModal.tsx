@@ -20,6 +20,7 @@ import {
 
 import {
   fetchClinicalNoteTypes,
+  fetchExamTriggers,
   fetchInterventionReasons,
   IAntimicrobialTimeline,
   ICourse,
@@ -92,6 +93,9 @@ export function ReviewModal({
   const clinicalNoteTypes = useAppSelector(
     (state) => state.infectionControl.clinicalNoteTypes,
   );
+  const examTriggerRules = useAppSelector(
+    (state) => state.infectionControl.examTriggers,
+  );
   const cultures = useAppSelector((state) => state.infectionControl.cultures);
   // the user ducks are untyped legacy JS
   const account = useAppSelector((state: any) => state.user.account);
@@ -114,10 +118,13 @@ export function ReviewModal({
     stepRef.current?.scrollTo({ top: 0 });
   }, [step]);
 
-  // the reasons a non-conformity can be given and the types of a note
+  // the reasons a non-conformity can be given, the exam trigger rules and
+  // the types of a note
   useEffect(() => {
     if (open) {
       dispatch(fetchInterventionReasons());
+      // the rules may have changed since the last review
+      dispatch(fetchExamTriggers());
       if (hasMultiClinicalNotes) dispatch(fetchClinicalNoteTypes());
     }
   }, [open, hasMultiClinicalNotes, dispatch]);
@@ -200,6 +207,7 @@ export function ReviewModal({
           followUp.admissionNumber,
           reasons,
           !noteUnavailable,
+          examTriggerRules,
         ),
       ),
     ).then((response: any) => {
@@ -452,6 +460,7 @@ export function ReviewModal({
                       drugErrors={drugErrors[step]}
                       dischargeDate={dischargeDate}
                       now={now}
+                      canEditExamTriggers={canSave}
                     />
                   )}
                   {/* lets Enter submit with more than one field (a field

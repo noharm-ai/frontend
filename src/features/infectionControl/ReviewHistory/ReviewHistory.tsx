@@ -9,6 +9,7 @@ import {
   describeReasons,
   describeSubstitute,
 } from "../followUp";
+import { EvaluationExamTriggers } from "../EvaluationExamTriggers/EvaluationExamTriggers";
 import { ReviewList } from "./ReviewHistory.style";
 
 interface ReviewHistoryProps {
@@ -110,6 +111,10 @@ export function ReviewHistory({ followUp, drugNames }: ReviewHistoryProps) {
                         })}
                       </div>
                     )}
+                    <EvaluationExamTriggers
+                      evaluation={evaluation}
+                      className="review-evaluation-notes"
+                    />
                     {(evaluation.interventions ?? []).map((intervention) => (
                       <Tag
                         key={intervention.id}

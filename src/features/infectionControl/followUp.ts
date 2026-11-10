@@ -90,11 +90,13 @@ export function getDrugNames(courses: ICourse[]): Record<number, string> {
 const INVALIDATING_REASONS = [
   InfectionControlPendingTypeEnum.EXPIRED,
   InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
+  InfectionControlPendingTypeEnum.EXAM_RESULT,
 ];
 
 /**
  * The open reasons that make each evaluation of a running course no longer
- * hold (its validity ran out, the posology changed), by evaluation id: the
+ * hold (its validity ran out, the posology changed, an exam result met a
+ * rule it turned on), by evaluation id: the
  * evaluation stays on record until a review replaces it, but its verdict no
  * longer stands
  */
@@ -118,10 +120,10 @@ export function getInvalidatedEvaluations(
 }
 
 /**
- * When an evaluation stopped holding: its validity ran out, or the course
- * moved to the posology it is on now. A reason keeps the details of when it
- * opened, so the change comes from the course; when the open time is all
- * there is, that.
+ * When an evaluation stopped holding: its validity ran out, an exam result
+ * met a rule (the first result), or the course moved to the posology it is
+ * on now. A reason keeps the details of when it opened, so the change comes
+ * from the course; when the open time is all there is, that.
  */
 export function invalidatedSince(
   reasons: IFollowUpPending[],
@@ -134,6 +136,14 @@ export function invalidatedSince(
     .map((reason) => {
       if (reason.type === InfectionControlPendingTypeEnum.EXPIRED) {
         return reason.details?.validUntil ?? evaluation.validUntil;
+      }
+      if (reason.type === InfectionControlPendingTypeEnum.EXAM_RESULT) {
+        return (reason.details?.matches ?? [])
+          .map((match) => match.result.date)
+          .reduce(
+            (first, date) => (dayjs(date).isBefore(first) ? date : first),
+            reason.createdAt,
+          );
       }
       if (
         latestRegimen &&

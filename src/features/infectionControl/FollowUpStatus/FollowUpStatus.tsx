@@ -15,6 +15,7 @@ import {
 import { IFollowUp } from "../InfectionControlSlice";
 import { describePending } from "../followUp";
 import { ReviewHistory } from "../ReviewHistory/ReviewHistory";
+import { ExamResultMatches } from "../ExamResultMatches/ExamResultMatches";
 import { FollowUpBox, HistoryBody, PendingsBody } from "./FollowUpStatus.style";
 
 interface FollowUpStatusProps {
@@ -230,6 +231,7 @@ export function FollowUpStatus({
                 <WarningOutlined className="pending-icon" />
                 <div>
                   <div>{describePending(pending, drugNames, t)}</div>
+                  <ExamResultMatches matches={pending.details?.matches} />
                   <div className="pending-date">
                     {formatDate(pending.createdAt, "DD/MM/YYYY · HH:mm")}
                   </div>

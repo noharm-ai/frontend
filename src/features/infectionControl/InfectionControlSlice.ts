@@ -186,8 +186,94 @@ export interface IFollowUpPending {
     // POSOLOGY_CHANGED: the posology evaluated and the one prescribed now
     evaluated?: IEvaluationPosology;
     current?: IEvaluationPosology;
+    // EXAM_RESULT: every rule the exam results met
+    matches?: IExamTriggerMatch[];
   } | null;
   createdAt: string;
+}
+
+/**
+ * An exam trigger rule of the schema (schema params
+ * infectionControl.examTriggers): a review turns it on per drug, and an exam
+ * result meeting every condition it sets sends the patient back to pending
+ * (EXAM_RESULT). Comparisons are strict.
+ */
+export interface IExamTriggerCondition {
+  id: string;
+  name: string;
+  // the exam of the catalog (IExamTriggerExam): a NoHarm exam identifier
+  // (tp_exam_ref), or ckd / ckd21, the eGFR the backend calculates from the
+  // creatinine
+  examRef: string;
+  // above / below are strict (> <), at least / at most inclusive (>= <=)
+  valueAbove: number | null;
+  valueAtLeast: number | null;
+  valueBelow: number | null;
+  valueAtMost: number | null;
+  // signed percent from the value at review time: 30 is a rise of more than
+  // 30%, -25 a fall of more than 25%
+  variationAbove: number | null;
+  variationAtLeast: number | null;
+  variationBelow: number | null;
+  variationAtMost: number | null;
+  // from this day of the course on (4: from D4)
+  fromCourseDay: number | null;
+}
+
+export interface IExamTriggerRule extends IExamTriggerCondition {
+  // turned on for a drug evaluated for the first time
+  enabledByDefault: boolean;
+  // false when the schema has no results for its exam: it never fires
+  available: boolean;
+}
+
+// an exam of the fixed catalog a rule is set on
+export interface IExamTriggerExam {
+  examRef: string;
+  name: string;
+  // false when the schema has no results for it (no active exam mapped to
+  // it, or no creatinine for the eGFRs)
+  available: boolean;
+}
+
+// the schema's rules, set by its users, and the catalog of exams
+export interface IExamTriggers {
+  rules: IExamTriggerRule[];
+  exams: IExamTriggerExam[];
+}
+
+// a rule as saved: a new one has no id yet, the backend gives it one
+export type IExamTriggerRulePayload = Omit<
+  IExamTriggerRule,
+  "id" | "available"
+> & { id?: string };
+
+// an exam result a rule is compared with
+export interface IExamTriggerResult {
+  examType: string;
+  date: string;
+  value: number;
+  unit: string | null;
+  // the creatinine an eGFR (ckd, ckd21) is calculated from
+  rawValue?: number | null;
+  rawUnit?: string | null;
+}
+
+// a rule an evaluation turned on, copied at review time with the result of
+// then; a null baseline (no result at review time) never fires a variation
+export interface IEvaluationExamTrigger extends IExamTriggerCondition {
+  baseline: IExamTriggerResult | null;
+}
+
+// a rule an exam result met (EXAM_RESULT)
+export interface IExamTriggerMatch {
+  id: string;
+  name: string;
+  examRef: string;
+  result: IExamTriggerResult;
+  baseline: IExamTriggerResult | null;
+  // percent from the baseline, null without one
+  variation: number | null;
 }
 
 // how the posology was when the drug was evaluated
@@ -252,6 +338,9 @@ export interface IAntimicrobialEvaluation {
   // optional reasons it sends the patient back to pending for
   // (InfectionControlPendingTypeEnum)
   triggers: number[];
+  // the exam trigger rules it turned on, with their baselines; absent in
+  // evaluations made before they existed
+  examTriggers?: IEvaluationExamTrigger[];
   // AntimicrobialEvaluationStatusEnum
   status: number;
   closedAt: string | null;
@@ -319,6 +408,8 @@ export interface IReviewEvaluationPayload {
   validFrom: string | null;
   validUntil: string;
   triggers: number[];
+  // the ids of the exam trigger rules turned on
+  examTriggers: string[];
 }
 
 // a type a clinical note is given (tipoevolucao)
@@ -428,6 +519,14 @@ interface IInfectionControlSlice {
     status: Status;
     list: IClinicalNoteType[];
   };
+  // the schema's exam trigger rules and the exams they can be set on,
+  // loaded each time a review or the settings open
+  examTriggers: {
+    status: Status;
+    list: IExamTriggerRule[];
+    exams: IExamTriggerExam[];
+    saveStatus: Status;
+  };
   // the drugs found for a substitute, by the latest search
   substituteSearch: {
     status: Status;
@@ -482,6 +581,12 @@ const initialState: IInfectionControlSlice = {
   clinicalNoteTypes: {
     status: "idle",
     list: [],
+  },
+  examTriggers: {
+    status: "idle",
+    list: [],
+    exams: [],
+    saveStatus: "idle",
   },
   substituteSearch: {
     status: "idle",
@@ -672,6 +777,34 @@ export const fetchClinicalNoteTypes = createAsyncThunk(
   },
 );
 
+// the rules an admin may change between reviews: loaded each time one opens
+export const fetchExamTriggers = createAsyncThunk(
+  "infectionControl/fetchExamTriggers",
+  async (_, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.getExamTriggers();
+      return response.data.data as IExamTriggers;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
+// replaces the whole list: a rule left out is deleted
+export const saveExamTriggers = createAsyncThunk(
+  "infectionControl/saveExamTriggers",
+  async (params: { rules: IExamTriggerRulePayload[] }, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.saveExamTriggers(
+        params.rules,
+      );
+      return response.data.data as IExamTriggers;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
 export const searchSubstituteDrugs = createAsyncThunk(
   "infectionControl/searchSubstituteDrugs",
   async (params: { term: string }, thunkAPI) => {
@@ -812,6 +945,32 @@ const infectionControlSlice = createSlice({
       })
       .addCase(fetchClinicalNoteTypes.rejected, (state) => {
         state.clinicalNoteTypes.status = "failed";
+      })
+      .addCase(fetchExamTriggers.pending, (state) => {
+        state.examTriggers.status = "loading";
+      })
+      .addCase(fetchExamTriggers.fulfilled, (state, action) => {
+        state.examTriggers.status = "succeeded";
+        state.examTriggers.list = action.payload?.rules ?? [];
+        state.examTriggers.exams = action.payload?.exams ?? [];
+      })
+      .addCase(fetchExamTriggers.rejected, (state) => {
+        state.examTriggers.status = "failed";
+        state.examTriggers.list = [];
+        state.examTriggers.exams = [];
+      })
+      // the backend gives the new rules their ids: the list is the one saved
+      .addCase(saveExamTriggers.pending, (state) => {
+        state.examTriggers.saveStatus = "loading";
+      })
+      .addCase(saveExamTriggers.fulfilled, (state, action) => {
+        state.examTriggers.saveStatus = "succeeded";
+        state.examTriggers.status = "succeeded";
+        state.examTriggers.list = action.payload?.rules ?? [];
+        state.examTriggers.exams = action.payload?.exams ?? [];
+      })
+      .addCase(saveExamTriggers.rejected, (state) => {
+        state.examTriggers.saveStatus = "failed";
       })
       // only the latest search fills the list
       .addCase(searchSubstituteDrugs.pending, (state, action) => {
