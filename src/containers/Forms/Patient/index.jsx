@@ -1,7 +1,6 @@
 import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
 
-import { savePatientThunk } from "store/ducks/patients/thunk";
+import { savePatientThunk } from "store/ducks/patients/patientsSlice";
 
 import FormPatient from "components/Forms/Patient";
 
@@ -24,12 +23,20 @@ const mapStateToProps = ({ prescriptions, patients, user }) => ({
   idPatient: prescriptions.single.data.idPatient,
   roles: user.account.roles,
 });
-const mapDispatchToProps = (dispatch) =>
-  bindActionCreators(
-    {
-      savePatient: savePatientThunk,
-    },
-    dispatch
-  );
+const mapDispatchToProps = (dispatch) => ({
+  // Resolve with the response data and reject with the API error, as the form
+  // expects. Not .unwrap(): the autoRefreshToken middleware wraps thunk
+  // dispatches in a plain Promise, so the result has no unwrap method.
+  savePatient: (params) =>
+    dispatch(savePatientThunk(params)).then((action) => {
+      if (savePatientThunk.rejected.match(action)) {
+        throw action.payload;
+      }
+      if (savePatientThunk.fulfilled.match(action)) {
+        return action.payload;
+      }
+      return action;
+    }),
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(FormPatient);
