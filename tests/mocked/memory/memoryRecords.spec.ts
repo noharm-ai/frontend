@@ -2,6 +2,8 @@ import type { Page } from "@playwright/test";
 
 import { test, expect } from "../support/mockApi";
 import type { MockApi } from "../support/mockApi";
+import { loginWithPermissions } from "../support/featureLogin";
+import { NAVIGATION_VIEWER_PERMISSIONS } from "../support/navigationViewer";
 
 /**
  * Memory records (/configuracoes/memoria, src/features/memory).
@@ -390,4 +392,60 @@ test("leaving with unsaved changes asks for confirmation first", async ({
   await expect(page).toHaveURL(/\/configuracoes\/memoria$/);
   // bailing out never saves
   expect(putCalls(mockApi)).toHaveLength(0);
+});
+
+test.describe("as a NAVIGATION_VIEWER", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  test.beforeEach(async ({ page, mockApi }) => {
+    await loginWithPermissions(page, mockApi, NAVIGATION_VIEWER_PERMISSIONS);
+  });
+
+  test("the list opens the records without offering a new one", async ({
+    page,
+    mockApi,
+  }) => {
+    await openList(page, mockApi, []);
+
+    // the kind is free, so only the missing permission hides the button
+    await expect(
+      page.getByRole("button", { name: "Novo registro" }),
+    ).toHaveCount(0);
+  });
+
+  test("the editor shows the record read-only and saves nothing", async ({
+    page,
+    mockApi,
+  }) => {
+    await openEditor(page, mockApi);
+
+    await expect(page.getByText("Somente visualização")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Salvar" })).toHaveCount(0);
+    await expect(page.getByPlaceholder("Nome do registro")).toBeDisabled();
+    await expect(
+      pane(page).getByPlaceholder("Título do modelo").first(),
+    ).toBeDisabled();
+
+    // the template text is shown, but the rich text editor takes no input
+    const content = pane(page).locator(".ProseMirror").first();
+    await expect(content).toContainText("orientado");
+    await expect(content).toHaveAttribute("contenteditable", "false");
+
+    await expect(
+      pane(page).getByRole("button", { name: "Adicionar modelo" }),
+    ).toHaveCount(0);
+    await expect(templateDelete(page, 0)).toHaveCount(0);
+
+    await page.getByRole("button", { name: "Voltar" }).click();
+    await expect(page).toHaveURL(/\/configuracoes\/memoria$/);
+    expect(putCalls(mockApi)).toHaveLength(0);
+  });
+
+  test("a new record cannot be opened", async ({ page, mockApi }) => {
+    mockApi.override("GET /memory", { json: { status: "success", data: [] } });
+    await page.goto("/configuracoes/memoria/new?kind=tpl-care-plan");
+
+    await expect(page).toHaveURL(/\/configuracoes\/memoria$/);
+    await expect(page.getByRole("heading", { name: "Memória" })).toBeVisible();
+  });
 });

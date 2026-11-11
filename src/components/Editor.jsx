@@ -5,7 +5,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Youtube from "@tiptap/extension-youtube";
 import { Slice, Fragment, Node } from "prosemirror-model";
-import { Space, Divider } from "antd";
+import { ConfigProvider, Space, Divider } from "antd";
 import {
   BoldOutlined,
   DisconnectOutlined,
@@ -43,8 +43,12 @@ const Editor = forwardRef(function Editor({
   onEdit,
   utilities = ["basic"],
   onCreateFocus = false,
-  editable = true,
+  editable: editableProp = true,
 }, ref) {
+  // like antd's own inputs, the editor goes read-only inside
+  // <ConfigProvider componentDisabled>
+  const { componentDisabled } = ConfigProvider.useConfig();
+  const editable = editableProp && !componentDisabled;
   const editorInstanceRef = useRef(null);
   const onEditRef = useRef(onEdit);
   const pendingEditRef = useRef(null);

@@ -515,7 +515,7 @@ export default function PageHeader({
                 </Button>
               )}
 
-            {hasPrimaryCare && PermissionService().has(Permission.READ_NAV) && (
+            {hasPrimaryCare && PermissionService().has(Permission.WRITE_NAV) && (
               <Button
                 type="primary"
                 className="gtm-bt-care-plan"

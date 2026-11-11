@@ -1,11 +1,18 @@
 import { useEffect } from "react";
-import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  Navigate,
+  useParams,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Spin } from "antd";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
+import Permission from "models/Permission";
+import PermissionService from "services/PermissionService";
 
 import {
   fetchMemoryRecord,
@@ -31,14 +38,14 @@ export default function MemoryEditor() {
     (state: any) => state.memoryList.saveStatus,
   );
   const isSaving = saveStatus === "loading";
+  // READ_NAV alone (NAVIGATION_VIEWER) opens the record read-only
+  const readOnly = !PermissionService().has(Permission.WRITE_BASIC_FEATURES);
 
   const kindFromQuery = searchParams.get("kind");
 
   const isNew = id === "new";
 
-  const kind = isNew
-    ? (kindFromQuery ?? "")
-    : (currentRecord?.kind ?? "");
+  const kind = isNew ? (kindFromQuery ?? "") : (currentRecord?.kind ?? "");
 
   useEffect(() => {
     if (!isNew && id) {
@@ -72,6 +79,10 @@ export default function MemoryEditor() {
     navigate(LIST_PATH);
   };
 
+  if (readOnly && isNew) {
+    return <Navigate to={LIST_PATH} replace />;
+  }
+
   const EditorComponent = kind ? KIND_EDITORS[kind] : null;
 
   const isWaitingForRecord = !isNew && status === "loading" && !currentRecord;
@@ -94,6 +105,7 @@ export default function MemoryEditor() {
     <EditorComponent
       recordValue={recordValue}
       isSaving={isSaving}
+      readOnly={readOnly}
       onSave={handleSave}
       onCancel={handleCancel}
     />

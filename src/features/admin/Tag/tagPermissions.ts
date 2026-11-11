@@ -8,13 +8,13 @@ export const canWriteTags = (): boolean =>
 
 /**
  * WRITE_PATIENT_TAGS grants write access to navigation tags only (see the
- * tagType/NAVEGACAO_ checks in admin_tag_service.upsert_tag), and navigation
- * tags are only listed and selectable with READ_NAV — so without it there is
- * nothing this permission can actually write here.
+ * tagType/NAVEGACAO_ checks in admin_tag_service.upsert_tag), and only to a
+ * navigator (WRITE_NAV): READ_NAV just lists them, and on its own
+ * (NAVIGATION_VIEWER) it writes nothing.
  */
 const canWriteNavigationTags = (): boolean =>
   PermissionService().has(Permission.WRITE_PATIENT_TAGS) &&
-  PermissionService().has(Permission.READ_NAV);
+  PermissionService().has(Permission.WRITE_NAV);
 
 /** Any write access at all: enables "Adicionar marcador". */
 export const canCreateTags = (): boolean =>
