@@ -20,7 +20,6 @@ export default function MainFilters() {
   return (
     <>
       <Col md={7} lg={8} xxl={7}>
-        {/* @ts-expect-error legacy code */}
         <Heading as="label" htmlFor="date" $size="14px">
           Indicador
         </Heading>
@@ -35,7 +34,6 @@ export default function MainFilters() {
         />
       </Col>
       <Col md={7} lg={6} xxl={5}>
-        {/* @ts-expect-error legacy code */}
         <Heading as="label" htmlFor="date" $size="14px">
           Situação
         </Heading>

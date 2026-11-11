@@ -31,7 +31,6 @@ export function Base({ success }: BaseProps) {
       {/* @ts-expect-error - Box is a JS styled component without TypeScript prop types */}
       <Box hasError={errors.password && touched.password}>
         <Col xs={layout.label}>
-          {/* @ts-expect-error - Heading is a JS component without TypeScript prop types */}
           <Heading as="label" $size="14px">
             Senha atual:
           </Heading>
@@ -51,7 +50,6 @@ export function Base({ success }: BaseProps) {
       {/* @ts-expect-error - Box is a JS styled component without TypeScript prop types */}
       <Box hasError={errors.newpassword && touched.newpassword}>
         <Col xs={layout.label}>
-          {/* @ts-expect-error - Heading is a JS component without TypeScript prop types */}
           <Heading as="label" $size="14px">
             Nova senha:
           </Heading>
@@ -71,7 +69,6 @@ export function Base({ success }: BaseProps) {
       {/* @ts-expect-error - Box is a JS styled component without TypeScript prop types */}
       <Box hasError={errors.confirmPassword && touched.confirmPassword}>
         <Col xs={layout.label}>
-          {/* @ts-expect-error - Heading is a JS component without TypeScript prop types */}
           <Heading as="label" $size="14px">
             Confirmar senha:
           </Heading>

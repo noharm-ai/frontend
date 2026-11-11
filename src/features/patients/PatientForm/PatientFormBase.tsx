@@ -1,6 +1,7 @@
+import type { ReactNode } from "react";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
-import dayjs from "dayjs";
+import dayjs, { type Dayjs } from "dayjs";
 
 import { Input, InputNumber, Select, DatePicker } from "components/Inputs";
 import Editor from "components/Editor";
@@ -9,6 +10,32 @@ import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
 import { FieldTag } from "features/fields/FieldTag/FieldTag";
 import { TagTypeEnum } from "models/TagTypeEnum";
+
+export interface IPatientFormValues {
+  idPrescription?: number | string;
+  admissionNumber: number | string;
+  name: string;
+  patientData: Record<string, unknown>;
+  weight?: number | null;
+  height?: number | null;
+  observation?: string | null;
+  dialysis?: string | null;
+  birthdate?: string | null;
+  skinColor?: string | null;
+  gender?: string | null;
+  dischargeDate?: string | null;
+  lactating?: boolean | null;
+  pregnant?: boolean | null;
+  tags?: string[] | null;
+}
+
+interface FormRowProps {
+  label: ReactNode;
+  htmlFor?: string;
+  error?: ReactNode;
+  info?: ReactNode;
+  children: ReactNode;
+}
 
 const dialysisOptions = [
   { value: "c", label: "Contínua" },
@@ -32,7 +59,7 @@ const yesNoOptions = [
   { value: false, label: "Não" },
 ];
 
-function FormRow({ label, htmlFor, error, info, children }) {
+function FormRow({ label, htmlFor, error, info, children }: FormRowProps) {
   return (
     <div className={`form-row ${error ? "error" : ""}`}>
       <div className="form-label">
@@ -46,7 +73,8 @@ function FormRow({ label, htmlFor, error, info, children }) {
 }
 
 export function PatientFormBase() {
-  const { values, setFieldValue, errors } = useFormikContext();
+  const { values, setFieldValue, errors } =
+    useFormikContext<IPatientFormValues>();
   const {
     name,
     weight,
@@ -85,7 +113,7 @@ export function PatientFormBase() {
               >
                 <Input
                   id={`patient-data-${key}`}
-                  value={value ?? ""}
+                  value={(value ?? "") as string}
                   onChange={(e) =>
                     setFieldValue("patientData", {
                       ...values.patientData,
@@ -108,7 +136,7 @@ export function PatientFormBase() {
             suffix="kg"
             value={weight}
             status={errors.weight ? "error" : undefined}
-            onChange={(value) => setFieldValue("weight", value)}
+            onChange={(value: number | null) => setFieldValue("weight", value)}
           />
         </FormRow>
 
@@ -125,7 +153,7 @@ export function PatientFormBase() {
             suffix="cm"
             value={height}
             status={errors.height ? "error" : undefined}
-            onChange={(value) => setFieldValue("height", value)}
+            onChange={(value: number | null) => setFieldValue("height", value)}
           />
         </FormRow>
       </div>
@@ -164,7 +192,7 @@ export function PatientFormBase() {
             id="patient-birthdate"
             format="DD/MM/YYYY"
             value={birthdate ? dayjs(birthdate) : null}
-            onChange={(value) =>
+            onChange={(value: Dayjs | null) =>
               setFieldValue(
                 "birthdate",
                 value ? value.format("YYYY-MM-DD") : null,
@@ -218,7 +246,7 @@ export function PatientFormBase() {
           id="patient-tags"
           mode="tags"
           style={{ width: "100%" }}
-          onChange={(v) => setFieldValue("tags", v)}
+          onChange={(v: string[]) => setFieldValue("tags", v)}
           value={values.tags}
           maxCount={10}
           tagType={TagTypeEnum.PATIENT}
@@ -235,7 +263,7 @@ export function PatientFormBase() {
             id="patient-discharge-date"
             format="DD/MM/YYYY HH:mm"
             value={dischargeDate ? dayjs(dischargeDate) : null}
-            onChange={(value) =>
+            onChange={(value: Dayjs | null) =>
               setFieldValue(
                 "dischargeDate",
                 value ? value.format("YYYY-MM-DD HH:mm") : null,

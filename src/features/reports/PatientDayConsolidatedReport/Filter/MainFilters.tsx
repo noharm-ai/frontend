@@ -61,7 +61,6 @@ export default function MainFilters() {
   return (
     <>
       <Col md={5}>
-        {/* @ts-expect-error missing types */}
         <Heading as="label" $size="14px">
           {t("tableHeader.period")}:
         </Heading>
@@ -77,7 +76,6 @@ export default function MainFilters() {
         />
       </Col>
       <Col md={6}>
-        {/* @ts-expect-error missing types */}
         <Heading as="label" $size="14px">
           Segmento:
         </Heading>
@@ -100,7 +98,6 @@ export default function MainFilters() {
         </SelectCustom>
       </Col>
       <Col md={6}>
-        {/* @ts-expect-error missing types */}
         <Heading as="label" $size="14px">
           Setor:
         </Heading>

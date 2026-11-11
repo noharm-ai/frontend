@@ -2,7 +2,13 @@ import styled from "styled-components";
 
 import { get } from "styles/utils";
 
-const Heading = styled.h1`
+interface HeadingProps {
+  $size?: string;
+  $textAlign?: string;
+  $margin?: string;
+}
+
+const Heading = styled.h1<HeadingProps>`
   color: ${get("colors.primary")};
   display: block;
   font-size: ${({ $size }) => $size || "18px"};
@@ -26,7 +32,7 @@ const Heading = styled.h1`
   }
 `;
 
-export const AffixedHeader = styled.h1`
+export const AffixedHeader = styled.h1<Pick<HeadingProps, "$margin">>`
   color: ${get("colors.primary")};
   display: block;
   font-size: 14px;
