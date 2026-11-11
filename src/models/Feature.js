@@ -32,6 +32,10 @@ export default class Feature {
   static MULTI_CLINICAL_NOTES = "MULTI_CLINICAL_NOTES";
   static CULTURE = "CULTURE";
   static INFECTION_CONTROL = "INFECTION_CONTROL";
+  // test case prescriptions (menu Curadoria), for maintainers; read from the
+  // schema's own features only (FeatureService.hasSchemaFeature), like the
+  // backend, never from the user's
+  static PRESCRIPTION_TEST_CASE = "PRESCRIPTION_TEST_CASE";
 
   // driven by the backend FEATURE_USER_ONBOARDING env var, not schema config,
   // so it is intentionally absent from getFeatures() / the admin toggles
@@ -218,6 +222,12 @@ export default class Feature {
         label: "Controle de Infecção",
         description:
           "Habilita o acompanhamento dos pacientes em uso de antimicrobianos: lista de pendências, revisões e avaliação de conformidade pelo infectologista.",
+      },
+      {
+        id: Feature.PRESCRIPTION_TEST_CASE,
+        label: "Prescrição de teste",
+        description:
+          "Habilita para a curadoria a página Prescrição de teste (menu Curadoria), que cria prescrições como se viessem do hospital e as processa. Somente para o schema de testes da curadoria, nunca para o de um cliente.",
       },
     ];
   }

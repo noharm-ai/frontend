@@ -105,6 +105,22 @@ export const getSchemaParams = createAsyncThunk(
   },
 );
 
+export const createPrescriptionTestCase = createAsyncThunk(
+  "serverActions/create-prescription-test-case",
+  /**
+   * @param {object} params the test case (PrescriptionTestCase's payload)
+   */
+  async (params, thunkAPI) => {
+    try {
+      const response = await api.prescription.createTestCase(params);
+
+      return response.data;
+    } catch (err) {
+      return thunkAPI.rejectWithValue(err.response.data);
+    }
+  },
+);
+
 export const traceProtocol = createAsyncThunk(
   "serverActions/trace-protocol",
   /**

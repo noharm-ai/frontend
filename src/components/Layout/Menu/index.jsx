@@ -64,6 +64,14 @@ export default function Menu({ segments, collapsed }) {
       return;
     }
 
+    // a feature of the schema itself, never a user's
+    if (
+      item.schemafeature &&
+      !FeatureService.hasSchemaFeature(item.schemafeature)
+    ) {
+      return;
+    }
+
     if (item.key === "/priorizacao/prescricoes") {
       if (segments.filter((s) => s.cpoe).length === segments.length) {
         // all cpoe segments
@@ -301,6 +309,15 @@ export default function Menu({ segments, collapsed }) {
           icon: <FilePptOutlined />,
           id: "gtm-lnk-protocols",
           permission: [Permission.READ_PROTOCOLS],
+        },
+        {
+          key: "/prescricao-teste",
+          link: "/prescricao-teste",
+          label: t("menu.prescriptionTestCase"),
+          icon: <ExperimentOutlined />,
+          id: "gtm-lnk-prescription-test-case",
+          permission: [Permission.MAINTAINER],
+          schemafeature: Feature.PRESCRIPTION_TEST_CASE,
         },
       ],
     },

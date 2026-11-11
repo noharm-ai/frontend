@@ -142,6 +142,8 @@ export const setUser = (userData, keepMeLogged, dispatch) => {
   setStorageItem("ac2", identify.access_token.substring(10));
 
   user.features = [...features, ...userFeatures];
+  // the schema's own, for what a user feature must not turn on
+  user.schemaFeatures = [...features];
   appInfo.apiKey = apiKey;
 
   if (userData.preferences) {
