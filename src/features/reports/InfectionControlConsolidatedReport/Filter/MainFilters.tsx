@@ -86,7 +86,6 @@ export function MainFilters() {
   return (
     <>
       <Col md={5}>
-        {/* @ts-expect-error missing types */}
         <Heading as="label" $size="14px">
           {tk("period")}:
         </Heading>
@@ -102,7 +101,6 @@ export function MainFilters() {
         />
       </Col>
       <Col md={6}>
-        {/* @ts-expect-error missing types */}
         <Heading as="label" $size="14px">
           {tk("segment")}:
         </Heading>
@@ -125,7 +123,6 @@ export function MainFilters() {
         </SelectCustom>
       </Col>
       <Col md={6}>
-        {/* @ts-expect-error missing types */}
         <Heading as="label" $size="14px">
           {tk("department")}:
         </Heading>

@@ -1,3 +1,4 @@
+import type { ComponentProps } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import moment from "moment";
@@ -15,6 +16,7 @@ import Permission from "models/Permission";
 import { useAppDispatch, useAppSelector } from "store/index";
 
 import { PatientFormBase } from "./PatientFormBase";
+import type { IPatientFormValues } from "./PatientFormBase";
 import { savePatientThunk } from "./PatientFormSlice";
 
 const saveMessage = {
@@ -25,7 +27,43 @@ const validationSchema = Yup.object().shape({
   height: Yup.number().nullable().min(3),
 });
 
-export function PatientForm({ afterSavePatient = () => {}, ...props }) {
+/** Fields of state.prescriptions.single.data (untyped legacy duck) read here. */
+interface IPrescriptionPatientData {
+  idPrescription?: number | string;
+  admissionNumber: number | string;
+  weight?: number | null;
+  height?: number | null;
+  birthdate?: string | null;
+  skinColor?: string | null;
+  gender?: string | null;
+  observation?: string | null;
+  dialysis?: string | null;
+  notesInfo?: string | null;
+  notesInfoDate?: string | null;
+  dischargeDate?: string | null;
+  patient?: {
+    lactating?: boolean | null;
+    pregnant?: boolean | null;
+    tags?: string[] | null;
+  } | null;
+  idPatient: number | string;
+}
+
+type SavePatientAction =
+  | ReturnType<typeof savePatientThunk.fulfilled>
+  | ReturnType<typeof savePatientThunk.rejected>;
+
+type PatientFormProps = Omit<
+  ComponentProps<typeof DefaultModal>,
+  "onOk" | "confirmLoading"
+> & {
+  afterSavePatient?: (data: unknown) => void;
+};
+
+export function PatientForm({
+  afterSavePatient = () => {},
+  ...props
+}: PatientFormProps) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const isSaving = useAppSelector((state) => state.patientForm.save.isSaving);
@@ -44,9 +82,11 @@ export function PatientForm({ afterSavePatient = () => {}, ...props }) {
     dischargeDate,
     patient,
     idPatient,
-  } = useAppSelector((state) => state.prescriptions.single.data);
+  } = useAppSelector(
+    (state) => state.prescriptions?.single.data as IPrescriptionPatientData,
+  );
 
-  const initialValues = {
+  const initialValues: IPatientFormValues = {
     idPrescription,
     admissionNumber,
     name: getPatient(idPatient)?.name ?? "",
@@ -64,15 +104,15 @@ export function PatientForm({ afterSavePatient = () => {}, ...props }) {
     tags: patient?.tags,
   };
 
-  const submit = ({ name, patientData, ...params }) => {
-    const payload = { ...params };
+  const submit = ({ name, patientData, ...params }: IPatientFormValues) => {
+    const payload: Parameters<typeof savePatientThunk>[0] = { ...params };
     if (PermissionService().has(Permission.WRITE_NAME) && name) {
       payload.name = { name, data: patientData };
     }
     // Not .unwrap(): the autoRefreshToken middleware wraps thunk dispatches
     // in a plain Promise, so the result has no unwrap method.
     dispatch(savePatientThunk(payload))
-      .then((action) => {
+      .then((action: SavePatientAction) => {
         if (savePatientThunk.rejected.match(action)) {
           throw action.payload;
         }
@@ -80,7 +120,8 @@ export function PatientForm({ afterSavePatient = () => {}, ...props }) {
           ? action.payload
           : action;
       })
-      .then((response) => {
+      .then((response: unknown) => {
+        const savedData = (response as { data?: unknown } | undefined)?.data;
         const existing = getPatient(idPatient);
         if (existing) {
           setPatient({
@@ -88,13 +129,16 @@ export function PatientForm({ afterSavePatient = () => {}, ...props }) {
             ...(PermissionService().has(Permission.WRITE_NAME) && name
               ? { name }
               : {}),
-            data: { ...existing.data, ...patientData },
+            data: {
+              ...(existing.data as Record<string, unknown> | undefined),
+              ...patientData,
+            },
           });
         }
         notification.success(saveMessage);
-        afterSavePatient(response?.data);
+        afterSavePatient(savedData);
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error("error", err);
         notification.error({
           message: t("error.title"),
@@ -115,7 +159,7 @@ export function PatientForm({ afterSavePatient = () => {}, ...props }) {
           centered
           destroyOnHidden
           {...props}
-          onOk={handleSubmit}
+          onOk={() => handleSubmit()}
           confirmLoading={isSaving}
           width="max(400px, 45vw)"
           cancelButtonProps={{

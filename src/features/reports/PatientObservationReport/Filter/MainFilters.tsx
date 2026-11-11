@@ -23,7 +23,6 @@ export default function MainFilters() {
   return (
     <>
       <Col md={7} lg={5} xxl={5}>
-        {/* @ts-expect-error legacy code */}
         <Heading as="label" $size="14px">
           Data de Criação:
         </Heading>
@@ -36,7 +35,6 @@ export default function MainFilters() {
         />
       </Col>
       <Col md={7} lg={5} xxl={5}>
-        {/* @ts-expect-error legacy code */}
         <Heading as="label" $size="14px">
           Texto:
         </Heading>
@@ -51,7 +49,6 @@ export default function MainFilters() {
         ></Input>
       </Col>
       <Col md={7} lg={5} xxl={5}>
-        {/* @ts-expect-error legacy code */}
         <Heading as="label" $size="14px">
           Criado por:
         </Heading>
