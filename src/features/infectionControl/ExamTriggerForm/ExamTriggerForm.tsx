@@ -9,7 +9,12 @@ import DefaultModal from "components/Modal";
 import { Checkbox, Input, InputNumber } from "components/Inputs";
 import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
 
-import { IExamTriggerExam, IExamTriggerRule } from "../InfectionControlSlice";
+import {
+  IExamTriggerExam,
+  IExamTriggerResult,
+  IExamTriggerRule,
+} from "../InfectionControlSlice";
+import { describeCurrentResult } from "../examTriggers";
 import {
   getValidationSchema,
   IExamTriggerFormFields,
@@ -22,6 +27,8 @@ interface ExamTriggerFormProps {
   // the rule edited, null for a new one
   rule: IExamTriggerRule | null;
   exams: IExamTriggerExam[];
+  // the patient's current result of each exam, by its reference
+  current: Record<string, IExamTriggerResult | null>;
   saving: boolean;
   onSave: (fields: IExamTriggerFormFields) => void;
   onCancel: () => void;
@@ -112,6 +119,7 @@ export function ExamTriggerForm({
   open,
   rule,
   exams,
+  current,
   saving,
   onSave,
   onCancel,
@@ -193,7 +201,7 @@ export function ExamTriggerForm({
                     value: item.examRef,
                     label: item.available
                       ? item.name
-                      : `${item.name} (${t("infectionControl.examTriggers.settings.noResults")})`,
+                      : `${item.name} (${t("infectionControl.examTriggers.settings.notConfigured")})`,
                   }))}
                 />
                 {errors.examRef && (
@@ -208,6 +216,14 @@ export function ExamTriggerForm({
                     {t("infectionControl.examTriggers.unavailable", {
                       exam: exam.name,
                     })}
+                  </span>
+                )}
+                {exam?.available && exam.examRef in current && (
+                  <span
+                    className="form-hint"
+                    data-testid="exam-trigger-form-current"
+                  >
+                    {describeCurrentResult(current[exam.examRef], t)}
                   </span>
                 )}
               </div>

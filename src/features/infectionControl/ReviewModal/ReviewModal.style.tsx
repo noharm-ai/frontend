@@ -486,6 +486,12 @@ export const DrugEvaluation = styled.div`
     padding-left: 24px;
   }
 
+  .drug-exam-trigger-current {
+    color: #8c8c8c;
+    font-size: 12px;
+    padding-left: 24px;
+  }
+
   .drug-notes {
     display: flex;
     flex-direction: column;

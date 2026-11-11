@@ -21,6 +21,7 @@ import {
   saveExamTriggers,
 } from "../../InfectionControlSlice";
 import {
+  describeCurrentResult,
   describeExamTriggerRule,
   isExamTriggerAvailable,
 } from "../../examTriggers";
@@ -58,7 +59,7 @@ export function ExamTriggerChoice({
 }: ExamTriggerChoiceProps) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const { list, exams, saveStatus } = useAppSelector(
+  const { list, exams, current, saveStatus } = useAppSelector(
     (state) => state.infectionControl.examTriggers,
   );
   // the rule in the form: null for a new one, undefined while it is closed
@@ -224,6 +225,14 @@ export function ExamTriggerChoice({
                 })}
               </div>
             )}
+            {available && rule.examRef in current && (
+              <div
+                className="drug-exam-trigger-current"
+                data-testid={`review-exam-trigger-current-${rule.id}`}
+              >
+                {describeCurrentResult(current[rule.examRef], t)}
+              </div>
+            )}
           </div>
         );
       })}
@@ -232,6 +241,7 @@ export function ExamTriggerChoice({
           open={editing !== undefined}
           rule={editing ?? null}
           exams={exams}
+          current={current}
           saving={saving}
           onSave={onSaveRule}
           onCancel={() => setEditing(undefined)}
