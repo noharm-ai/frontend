@@ -227,12 +227,12 @@ export interface IExamTriggerRule extends IExamTriggerCondition {
   available: boolean;
 }
 
-// an exam of the fixed catalog a rule is set on
+// an exam of the catalog (public.exame) a rule is set on
 export interface IExamTriggerExam {
   examRef: string;
   name: string;
-  // false when the schema has no results for it (no active exam mapped to
-  // it, or no creatinine for the eGFRs)
+  // false when the schema doesn't configure it (no active exam mapped to it,
+  // or no creatinine for the eGFRs)
   available: boolean;
 }
 
@@ -240,6 +240,9 @@ export interface IExamTriggerExam {
 export interface IExamTriggers {
   rules: IExamTriggerRule[];
   exams: IExamTriggerExam[];
+  // asked for an admission: its patient's latest result of each exam the
+  // schema has (null without one), the baseline a review saved now keeps
+  current?: Record<string, IExamTriggerResult | null>;
 }
 
 // a rule as saved: a new one has no id yet, the backend gives it one
@@ -525,6 +528,8 @@ interface IInfectionControlSlice {
     status: Status;
     list: IExamTriggerRule[];
     exams: IExamTriggerExam[];
+    // the patient's current result of each exam, by its reference
+    current: Record<string, IExamTriggerResult | null>;
     saveStatus: Status;
   };
   // the drugs found for a substitute, by the latest search
@@ -586,6 +591,7 @@ const initialState: IInfectionControlSlice = {
     status: "idle",
     list: [],
     exams: [],
+    current: {},
     saveStatus: "idle",
   },
   substituteSearch: {
@@ -777,12 +783,15 @@ export const fetchClinicalNoteTypes = createAsyncThunk(
   },
 );
 
-// the rules an admin may change between reviews: loaded each time one opens
+// the rules an admin may change between reviews: loaded each time one opens,
+// with the current results of the admission reviewed
 export const fetchExamTriggers = createAsyncThunk(
   "infectionControl/fetchExamTriggers",
-  async (_, thunkAPI) => {
+  async (params: { admissionNumber: number }, thunkAPI) => {
     try {
-      const response = await api.infectionControl.getExamTriggers();
+      const response = await api.infectionControl.getExamTriggers(
+        params.admissionNumber,
+      );
       return response.data.data as IExamTriggers;
     } catch (err) {
       return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
@@ -946,20 +955,25 @@ const infectionControlSlice = createSlice({
       .addCase(fetchClinicalNoteTypes.rejected, (state) => {
         state.clinicalNoteTypes.status = "failed";
       })
+      // another admission's results are never shown while loading
       .addCase(fetchExamTriggers.pending, (state) => {
         state.examTriggers.status = "loading";
+        state.examTriggers.current = {};
       })
       .addCase(fetchExamTriggers.fulfilled, (state, action) => {
         state.examTriggers.status = "succeeded";
         state.examTriggers.list = action.payload?.rules ?? [];
         state.examTriggers.exams = action.payload?.exams ?? [];
+        state.examTriggers.current = action.payload?.current ?? {};
       })
       .addCase(fetchExamTriggers.rejected, (state) => {
         state.examTriggers.status = "failed";
         state.examTriggers.list = [];
         state.examTriggers.exams = [];
+        state.examTriggers.current = {};
       })
       // the backend gives the new rules their ids: the list is the one saved
+      // (the current results stay: a save doesn't send them)
       .addCase(saveExamTriggers.pending, (state) => {
         state.examTriggers.saveStatus = "loading";
       })

@@ -81,6 +81,21 @@ export const formatExamResult = (result: IExamTriggerResult) =>
   [formatExamValue(result.value), result.unit].filter(Boolean).join(" ");
 
 /**
+ * The patient's current result of an exam, the baseline a review saved now
+ * keeps: "Resultado atual do paciente: 40 mg/L em 05/11/2026 14:00", or that
+ * there is none
+ */
+export const describeCurrentResult = (
+  result: IExamTriggerResult | null,
+  t: TFunction,
+) =>
+  result
+    ? t("infectionControl.examTriggers.current", {
+        result: describeExamResult(result, t),
+      })
+    : t("infectionControl.examTriggers.noCurrent");
+
+/**
  * A result with its unit and date, and the creatinine an eGFR was calculated
  * from: "52 ml/min/1.73 em 05/11/2026 14:00 (creatinina 1,9 mg/dL)"
  */

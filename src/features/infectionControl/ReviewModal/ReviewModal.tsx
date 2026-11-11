@@ -123,11 +123,13 @@ export function ReviewModal({
   useEffect(() => {
     if (open) {
       dispatch(fetchInterventionReasons());
-      // the rules may have changed since the last review
-      dispatch(fetchExamTriggers());
+      // the rules may have changed since the last review, and the results
+      dispatch(
+        fetchExamTriggers({ admissionNumber: followUp.admissionNumber }),
+      );
       if (hasMultiClinicalNotes) dispatch(fetchClinicalNoteTypes());
     }
-  }, [open, hasMultiClinicalNotes, dispatch]);
+  }, [open, hasMultiClinicalNotes, followUp.admissionNumber, dispatch]);
 
   // a note is written on the prescription-day of the record, with a type,
   // only where the schema has the multiple clinical notes

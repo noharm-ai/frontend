@@ -2848,9 +2848,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       await expect(crpRise).toBeDisabled();
       await expect(
         drug.getByTestId("review-exam-trigger-unavailable-pcr-rise"),
-      ).toHaveText(
-        "Sem resultados de PCR neste hospital: o gatilho não dispara",
-      );
+      ).toHaveText("PCR não configurado neste hospital: o gatilho não dispara");
       await expect(vancocinemia).toBeEnabled();
       await expect(vancocinemia).toBeChecked();
       await expect(tfg).not.toBeChecked();
@@ -3267,6 +3265,85 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       ).toBeVisible();
       await expect(form).toBeVisible();
       await expect(drug.getByRole("checkbox", { name: /^TFG/ })).toBeVisible();
+    });
+
+    test("shows the patient's current result of each rule's exam, in the list and in the rule form", async ({
+      page,
+      mockApi,
+    }) => {
+      mockPage(mockApi, followUp());
+      let admissionNumber: string | null = null;
+      mockApi.override(EXAM_TRIGGERS, async (route) => {
+        admissionNumber = new URL(route.request().url()).searchParams.get(
+          "admissionNumber",
+        );
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify({
+            status: "success",
+            data: {
+              rules: EXAM_RULES,
+              exams: EXAMS,
+              current: {
+                temp: null,
+                ckd: null,
+                ckd21: {
+                  examType: "cr",
+                  date: "2026-11-10T08:30:00",
+                  value: 72,
+                  unit: "mL/min/1.73m²",
+                  rawValue: 1.1,
+                  rawUnit: "mg/dL",
+                },
+                h_conleuc: null,
+                procalcitonina_adult: null,
+                van: null,
+              },
+            },
+          }),
+        });
+      });
+
+      const drug = await openTriggers(page);
+      expect(admissionNumber).toBe(`${ADMISSION}`);
+
+      // under each rule of the list; none for one the hospital doesn't
+      // configure
+      await expect(
+        drug.getByTestId("review-exam-trigger-current-tfg"),
+      ).toHaveText(
+        "Resultado atual do paciente: 72 mL/min/1.73m² em 10/11/2026 08:30 (creatinina 1,1 mg/dL)",
+      );
+      await expect(
+        drug.getByTestId("review-exam-trigger-current-temp"),
+      ).toHaveText("Paciente sem resultado deste exame");
+      await expect(
+        drug.getByTestId("review-exam-trigger-current-pcr-rise"),
+      ).toHaveCount(0);
+
+      await drug.getByTestId("exam-trigger-add").click();
+      const form = page.getByTestId("exam-trigger-form");
+      const current = form.getByTestId("exam-trigger-form-current");
+
+      // the baseline a review saved now would keep
+      await openSelectById(page, "exam-trigger-exam");
+      await pickOption(page, "CKD21");
+      await expect(current).toHaveText(
+        "Resultado atual do paciente: 72 mL/min/1.73m² em 10/11/2026 08:30 (creatinina 1,1 mg/dL)",
+      );
+
+      await openSelectById(page, "exam-trigger-exam");
+      await pickOption(page, "Temperatura");
+      await expect(current).toHaveText("Paciente sem resultado deste exame");
+
+      // an exam the hospital doesn't configure has no result to show
+      await openSelectById(page, "exam-trigger-exam");
+      await pickOption(page, "PCR (não configurado)");
+      await expect(
+        form.getByTestId("exam-trigger-form-unavailable"),
+      ).toHaveText("PCR não configurado neste hospital: o gatilho não dispara");
+      await expect(current).toHaveCount(0);
     });
 
     test("does not change the rules when they could not be loaded", async ({
