@@ -34,20 +34,35 @@ const ADMIN_MENU_ITEM = "#gtm-lnk-admin";
 
 const respond = (data: unknown) => ({ json: { status: "success", data } });
 
-/** Opens the Curadoria submenu (its items render once it opens) */
-async function openCuration(page: Page) {
+/** Hovers Curadoria once, until its submenu shows (its items render then) */
+async function hoverCuration(page: Page) {
   await page
     .locator(".ant-menu-submenu-title")
     .filter({ hasText: "Curadoria" })
-    .hover();
-  await expect(page.locator(ADMIN_MENU_ITEM)).toBeVisible();
+    .hover({ timeout: 2000 });
+  await expect(page.locator(ADMIN_MENU_ITEM)).toBeVisible({ timeout: 2000 });
+}
+
+/*
+ * Right after login the landing page (the patient cards) is still loading, and
+ * the Curadoria submenu can close again under the pointer: a click on one of
+ * its items then lands on a card, or waits for an item that no longer shows.
+ * Hover again until the step it is needed for gets through.
+ */
+const RETRY = { timeout: 15000 };
+
+/** Opens the Curadoria submenu */
+async function openCuration(page: Page) {
+  await expect(() => hoverCuration(page)).toPass(RETRY);
 }
 
 /** The page, through the menu */
 async function openPage(page: Page) {
-  await openCuration(page);
-  await page.locator(MENU_ITEM).click();
-  await expect(page).toHaveURL(new RegExp(`${PAGE}$`));
+  await expect(async () => {
+    await hoverCuration(page);
+    await page.locator(MENU_ITEM).click({ timeout: 2000 });
+    await expect(page).toHaveURL(new RegExp(`${PAGE}$`), { timeout: 2000 });
+  }).toPass(RETRY);
   await expect(page.getByText("Novo atendimento")).toBeVisible();
 }
 
