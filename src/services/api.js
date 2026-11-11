@@ -646,6 +646,10 @@ api.prescription.getAllergyRecords = (idPrescription) =>
 api.prescription.updateAllergySubstance = (params) =>
   instance.put(`/allergy-records/substance`, params, setHeaders());
 
+// maintainers, test schema only (the backend refuses any other)
+api.prescription.createTestCase = (params) =>
+  instance.post(`/prescriptions/test-case`, params, setHeaders());
+
 /**
  * Schema params (read only: edited in admin)
  */

@@ -22,6 +22,7 @@ import { OutpatientPrioritizationPage } from "pages/OutpatientPrioritization/Out
 import Prioritization from "pages/Prioritization";
 import ClinicalNotes from "pages/Screening/ClinicalNotes";
 import { AdmissionPrescriptionPage } from "pages/AdmissionPrescription/AdmissionPrescription";
+import { PrescriptionTestCasePage } from "pages/PrescriptionTestCase/PrescriptionTestCase";
 import Summary from "pages/Summary";
 import SummarySearch from "pages/Summary/SummarySearch";
 import SupportCenter from "pages/SupportCenter";
@@ -362,6 +363,11 @@ const routes = [
     exact: true,
     path: "/admin/protocolos/:id",
     element: <WithAuth component={AdminProtocolEditor} />,
+  },
+  {
+    exact: true,
+    path: "/prescricao-teste",
+    element: <WithAuth component={PrescriptionTestCasePage} />,
   },
   {
     exact: true,
