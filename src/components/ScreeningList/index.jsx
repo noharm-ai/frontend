@@ -25,7 +25,7 @@ import Tag from "components/Tag";
 import { InfoIcon } from "components/Icon";
 import BackTop from "components/BackTop";
 import { Input, Select } from "components/Inputs";
-import InitialPage from "features/preferences/InitialPage/InitialPage";
+import { InitialPage } from "features/preferences/InitialPage/InitialPage";
 import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
 import Dropdown from "components/Dropdown";
 import DefaultModal from "components/Modal";

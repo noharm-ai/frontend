@@ -1,16 +1,17 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
 import { useLocation } from "react-router-dom";
 
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import notification from "components/notification";
+import { useAppDispatch, useAppSelector } from "store/index";
 import { setInitialPage, savePreferences } from "../PreferencesSlice";
 
-export default function InitialPage() {
+export function InitialPage() {
   const location = useLocation();
-  const dispatch = useDispatch();
-  const initialPage = useSelector((state) => state.preferences.app.initialPage);
+  const dispatch = useAppDispatch();
+  const initialPage = useAppSelector(
+    (state) => state.preferences.app.initialPage,
+  );
 
   const setConfig = () => {
     dispatch(setInitialPage(location.pathname));
@@ -20,11 +21,13 @@ export default function InitialPage() {
     });
   };
 
-  if (location.pathname !== initialPage) {
-    return (
-      <Tooltip title="Definir esta página como Página Inicial">
-        <Button onClick={setConfig}>Definir como Página Inicial</Button>
-      </Tooltip>
-    );
+  if (location.pathname === initialPage) {
+    return null;
   }
+
+  return (
+    <Tooltip title="Definir esta página como Página Inicial">
+      <Button onClick={setConfig}>Definir como Página Inicial</Button>
+    </Tooltip>
+  );
 }
