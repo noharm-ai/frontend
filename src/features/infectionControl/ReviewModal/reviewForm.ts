@@ -87,8 +87,7 @@ export interface IDrugEvaluationFields {
   watchExpiry: boolean;
   // back to pending when the posology changes
   watchPosology: boolean;
-  // a culture result released after the evaluation sends the patient back to
-  // pending; only offered where the schema has the cultures
+  // back to pending when a culture result is released after the evaluation
   watchCulture: boolean;
   // the ids of the exam trigger rules turned on; null until changed, when
   // they follow the rules of the schema (getExamTriggerIds), which load
@@ -227,7 +226,6 @@ export const getInitialValues = (
   followUp: IFollowUp,
   courses: ICourse[],
   drugNames: Record<number, string>,
-  hasCultures = false,
 ): IReviewFields => {
   const ongoing = (followUp.courses ?? []).filter((course) => course.ongoing);
   const drugsWithReason = new Set(
@@ -285,12 +283,10 @@ export const getInitialValues = (
           course.evaluation,
           InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
         ),
-        watchCulture:
-          hasCultures &&
-          watches(
-            course.evaluation,
-            InfectionControlPendingTypeEnum.CULTURE_RESULT,
-          ),
+        watchCulture: watches(
+          course.evaluation,
+          InfectionControlPendingTypeEnum.CULTURE_RESULT,
+        ),
         examTriggers: null,
       };
 

@@ -103,8 +103,6 @@ export function ReviewModal({
   const hasMultiClinicalNotes = FeatureService.has(
     Feature.MULTI_CLINICAL_NOTES,
   );
-  // the culture trigger reads the antibiogram integration
-  const hasCultures = FeatureService.has(Feature.CULTURE);
   const [step, setStep] = useState(0);
   const stepRef = useRef<HTMLFormElement>(null);
 
@@ -187,8 +185,8 @@ export function ReviewModal({
   }, [courses, followUp]);
 
   const initialValues = useMemo(
-    () => getInitialValues(followUp, courses, drugNames, hasCultures),
-    [followUp, courses, drugNames, hasCultures],
+    () => getInitialValues(followUp, courses, drugNames),
+    [followUp, courses, drugNames],
   );
   const evaluationSchema = useMemo(
     () => getEvaluationSchema(t, reasons),
@@ -465,7 +463,6 @@ export function ReviewModal({
                       dischargeDate={dischargeDate}
                       now={now}
                       canEditExamTriggers={canSave}
-                      hasCultures={hasCultures}
                     />
                   )}
                   {/* lets Enter submit with more than one field (a field
