@@ -91,12 +91,13 @@ const INVALIDATING_REASONS = [
   InfectionControlPendingTypeEnum.EXPIRED,
   InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
   InfectionControlPendingTypeEnum.EXAM_RESULT,
+  InfectionControlPendingTypeEnum.CULTURE_RESULT,
 ];
 
 /**
  * The open reasons that make each evaluation of a running course no longer
  * hold (its validity ran out, the posology changed, an exam result met a
- * rule it turned on), by evaluation id: the
+ * rule it turned on, a culture result came out), by evaluation id: the
  * evaluation stays on record until a review replaces it, but its verdict no
  * longer stands
  */
@@ -121,9 +122,10 @@ export function getInvalidatedEvaluations(
 
 /**
  * When an evaluation stopped holding: its validity ran out, an exam result
- * met a rule (the first result), or the course moved to the posology it is
- * on now. A reason keeps the details of when it opened, so the change comes
- * from the course; when the open time is all there is, that.
+ * met a rule (the first result), a culture result came out (the first
+ * release), or the course moved to the posology it is on now. A reason keeps
+ * the details of when it opened, so the change comes from the course; when
+ * the open time is all there is, that.
  */
 export function invalidatedSince(
   reasons: IFollowUpPending[],
@@ -140,6 +142,14 @@ export function invalidatedSince(
       if (reason.type === InfectionControlPendingTypeEnum.EXAM_RESULT) {
         return (reason.details?.matches ?? [])
           .map((match) => match.result.date)
+          .reduce(
+            (first, date) => (dayjs(date).isBefore(first) ? date : first),
+            reason.createdAt,
+          );
+      }
+      if (reason.type === InfectionControlPendingTypeEnum.CULTURE_RESULT) {
+        return (reason.details?.cultures ?? [])
+          .map((culture) => culture.releaseDate)
           .reduce(
             (first, date) => (dayjs(date).isBefore(first) ? date : first),
             reason.createdAt,

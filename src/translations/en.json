@@ -1887,7 +1887,8 @@
         "4": "Scheduled review date reached",
         "5": "Alert fired",
         "6": "{{drug}} posology changed",
-        "7": "{{drug}} exam result"
+        "7": "{{drug}} exam result",
+        "8": "Culture result released for {{drug}}"
       },
       "unknownDrug": "Antimicrobial",
       "register": "Review",
@@ -1906,7 +1907,8 @@
       "invalidated": {
         "3": "expired on {{date}}",
         "6": "posology changed",
-        "7": "exam result"
+        "7": "exam result",
+        "8": "culture result"
       }
     },
     "indication": {
@@ -1952,6 +1954,7 @@
       "success": "Review registered!",
       "triggerExpired": "When the evaluation expires",
       "triggerPosology": "When the posology changes (dose, frequency or route)",
+      "triggerCulture": "When a culture result comes out",
       "currentEvaluation": "Current evaluation",
       "evaluatedBy": "on {{date}} by {{user}}",
       "toEvaluate": "To evaluate",
@@ -2069,7 +2072,9 @@
       "infectionFocusRequired": "Inform the infection focus",
       "hintTreatmentType": "Inform the treatment type",
       "hintInfectionFocus": "Inform the infection focus",
-      "invalidatedExam": "An exam result met a trigger:"
+      "invalidatedExam": "An exam result met a trigger:",
+      "invalidatedCulture": "A culture result came out:",
+      "cultureUnnamed": "Culture"
     },
     "clinicalNote": {
       "stepTitle": "Clinical note",
@@ -2279,7 +2284,8 @@
         "4": "Scheduled review date reached",
         "5": "Alert fired",
         "6": "Posology changed",
-        "7": "Exam result"
+        "7": "Exam result",
+        "8": "Culture result"
       }
     },
     "examTriggers": {

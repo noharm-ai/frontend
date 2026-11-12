@@ -87,6 +87,8 @@ interface DrugEvaluationStepProps {
   now: Dayjs;
   // who writes reviews also adds, changes and deletes the exam trigger rules
   canEditExamTriggers: boolean;
+  // the schema has the antibiogram integration the culture trigger reads
+  hasCultures: boolean;
 }
 
 const shortDate = (date: string | Dayjs | null | undefined) =>
@@ -105,6 +107,7 @@ export function DrugEvaluationStep({
   dischargeDate,
   now,
   canEditExamTriggers,
+  hasCultures,
 }: DrugEvaluationStepProps) {
   const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<IReviewFields>();
@@ -189,8 +192,11 @@ export function DrugEvaluationStep({
 
   // how many reasons send the patient back to pending
   const activeTriggers =
-    [evaluation.watchExpiry, evaluation.watchPosology].filter(Boolean).length +
-    examTriggerIds.length;
+    [
+      evaluation.watchExpiry,
+      evaluation.watchPosology,
+      evaluation.watchCulture,
+    ].filter(Boolean).length + examTriggerIds.length;
 
   return (
     <DrugEvaluation data-testid="review-drug">
@@ -648,6 +654,17 @@ export function DrugEvaluationStep({
                 >
                   {t("infectionControl.review.triggerPosology")}
                 </Checkbox>
+                {hasCultures && (
+                  <Checkbox
+                    checked={evaluation.watchCulture}
+                    onChange={(e: any) =>
+                      setFieldValue(field("watchCulture"), e.target.checked)
+                    }
+                    data-testid="review-trigger-culture"
+                  >
+                    {t("infectionControl.review.triggerCulture")}
+                  </Checkbox>
+                )}
                 <ExamTriggerChoice
                   rules={examRules}
                   checkedIds={examTriggerIds}

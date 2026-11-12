@@ -57,6 +57,8 @@ const TRIGGER_LABELS: Record<number, string> = {
     "infectionControl.review.triggerExpired",
   [InfectionControlPendingTypeEnum.POSOLOGY_CHANGED]:
     "infectionControl.review.triggerPosology",
+  [InfectionControlPendingTypeEnum.CULTURE_RESULT]:
+    "infectionControl.review.triggerCulture",
 };
 
 interface IField {

@@ -50,6 +50,7 @@ const LIST = "POST /infection-control/admissions";
 const SKIP = "Não avaliar agora";
 const WATCH_EXPIRY = /Quando a avaliação vencer/;
 const WATCH_POSOLOGY = /Quando a posologia mudar/;
+const WATCH_CULTURE = /Quando sair um resultado de cultura/;
 
 // the intervention reasons; only the ones flagged for infection control can
 // justify a non-conformity. relationType 2 requires a substitute drug,
@@ -1091,9 +1092,12 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
   test.beforeEach(async ({ page, mockApi }, testInfo) => {
     await loginWithAuth(page, mockApi, {
       permissions: [...BASE_PERMISSIONS, "WRITE_INFECTION_CONTROL"],
-      features: testInfo.tags.includes("@multiClinicalNotes")
-        ? ["MULTI_CLINICAL_NOTES"]
-        : [],
+      features: [
+        ...(testInfo.tags.includes("@multiClinicalNotes")
+          ? ["MULTI_CLINICAL_NOTES"]
+          : []),
+        ...(testInfo.tags.includes("@culture") ? ["CULTURE"] : []),
+      ],
     });
     mockApi.override("GET /intervention/reasons", {
       json: { status: "success", data: REASONS },
@@ -2550,6 +2554,137 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
         triggers: [3],
       },
     ]);
+  });
+
+  test(
+    "selects the drug a culture result came out for and keeps watching the cultures",
+    { tag: "@culture" },
+    async ({ page, mockApi }) => {
+      const released = hoursFromNow(-3);
+      const watching = { ...vancomycinEvaluation, triggers: [3, 8] };
+      mockPage(
+        mockApi,
+        followUp({
+          pendings: [
+            {
+              id: "805",
+              type: 8,
+              origin: 2,
+              idDrug: 12,
+              idPrescription: "300",
+              details: {
+                drug: "VANCOMICINA 500 mg SOL INJ",
+                releaseDate: released,
+                cultures: [
+                  {
+                    material: "URINA",
+                    microorganism: "ESCHERICHIA COLI",
+                    releaseDate: released,
+                  },
+                ],
+              },
+              createdAt: hoursFromNow(-2),
+            },
+          ],
+          courses: [
+            {
+              idDrug: 12,
+              start: VANCOMYCIN_START,
+              ongoing: true,
+              evaluation: watching,
+              history: [watching],
+            },
+          ],
+        }),
+      );
+      let sent: any = null;
+      mockApi.override(REVIEW, async (route) => {
+        sent = JSON.parse(route.request().postData()!);
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify(followUp({ status: 2, pendings: [] })),
+        });
+      });
+
+      await page.goto(PAGE_URL);
+      await page.getByTestId("follow-up-pendings-count").click({
+        timeout: 15000,
+      });
+      await expect(page.getByTestId("follow-up-pendings-list")).toContainText(
+        "Resultado de cultura liberado para VANCOMICINA 500 mg SOL INJ",
+      );
+      await page.keyboard.press("Escape");
+
+      await openReview(page);
+      const dialog = page.getByRole("dialog");
+      const drug = dialog.getByTestId("review-drug");
+      const decisions = drug.getByRole("radiogroup", { name: "Avaliação" });
+      // its evaluation no longer holds: the drug is to be evaluated again
+      await expect(decisions.getByRole("radio", { checked: true })).toHaveCount(
+        0,
+      );
+
+      // the drawer tells which cultures came out
+      await drug.getByTestId("review-pendings-chip").click();
+      const pendings = page.getByTestId("review-pendings");
+      await expect(pendings.getByTestId("invalidated-culture")).toContainText(
+        "Saiu um resultado de cultura:",
+      );
+      await expect(pendings.getByTestId("invalidated-culture")).toContainText(
+        "URINA · ESCHERICHIA COLI",
+      );
+      await page.keyboard.press("Escape");
+      await expect(pendings).toHaveCount(0);
+
+      await decisions.getByText("Conforme", { exact: true }).click();
+      const triggers = drug.getByTestId("review-triggers");
+      // the choices made last time: expiry and cultures
+      await expect(triggers.getByTestId("review-triggers-count")).toHaveText(
+        "2 ativos",
+      );
+      await triggers.getByRole("button", { name: "Alterar" }).click();
+      await expect(
+        drug.getByRole("checkbox", { name: WATCH_CULTURE }),
+      ).toBeChecked();
+      await expect(
+        drug.getByRole("checkbox", { name: WATCH_POSOLOGY }),
+      ).not.toBeChecked();
+      await dialog.getByRole("button", { name: "Próximo: paciente" }).click();
+      await saveReview(dialog);
+
+      await expect(
+        page.getByText("Revisão registrada com sucesso!"),
+      ).toBeVisible();
+      expect(sent.evaluations).toMatchObject([
+        { idDrug: 12, conforming: true, triggers: [3, 8] },
+      ]);
+    },
+  );
+
+  test("offers the culture trigger only where the schema has the cultures", async ({
+    page,
+    mockApi,
+  }) => {
+    mockPage(mockApi, followUp());
+    await page.goto(PAGE_URL);
+    await openReview(page);
+
+    const drug = page.getByRole("dialog").getByTestId("review-drug");
+    await drug
+      .getByRole("radiogroup", { name: "Avaliação" })
+      .getByText("Conforme", { exact: true })
+      .click();
+    await drug
+      .getByTestId("review-triggers")
+      .getByRole("button", { name: "Alterar" })
+      .click();
+    await expect(
+      drug.getByRole("checkbox", { name: WATCH_EXPIRY }),
+    ).toBeVisible();
+    await expect(
+      drug.getByRole("checkbox", { name: WATCH_CULTURE }),
+    ).toHaveCount(0);
   });
 
   test("shows an expired evaluation no longer holds and keeps the patient pending when it is not evaluated again", async ({
