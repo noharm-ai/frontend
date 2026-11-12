@@ -1897,7 +1897,8 @@
         "4": "Data de revisão agendada chegou",
         "5": "Alerta disparado",
         "6": "Posologia de {{drug}} alterada",
-        "7": "Resultado de exame de {{drug}}"
+        "7": "Resultado de exame de {{drug}}",
+        "8": "Resultado de cultura liberado para {{drug}}"
       },
       "unknownDrug": "Antimicrobiano",
       "register": "Revisar",
@@ -1916,7 +1917,8 @@
       "invalidated": {
         "3": "vencida em {{date}}",
         "6": "posologia alterada",
-        "7": "resultado de exame"
+        "7": "resultado de exame",
+        "8": "resultado de cultura"
       }
     },
     "indication": {
@@ -1962,6 +1964,7 @@
       "success": "Revisão registrada com sucesso!",
       "triggerExpired": "Quando a avaliação vencer",
       "triggerPosology": "Quando a posologia mudar (dose, frequência ou via)",
+      "triggerCulture": "Quando sair um resultado de cultura",
       "currentEvaluation": "Avaliação atual",
       "evaluatedBy": "em {{date}} por {{user}}",
       "toEvaluate": "A avaliar",
@@ -2079,7 +2082,9 @@
       "infectionFocusRequired": "Informe o foco infeccioso",
       "hintTreatmentType": "Informe o tipo de tratamento",
       "hintInfectionFocus": "Informe o foco infeccioso",
-      "invalidatedExam": "Um resultado de exame atingiu um gatilho:"
+      "invalidatedExam": "Um resultado de exame atingiu um gatilho:",
+      "invalidatedCulture": "Saiu um resultado de cultura:",
+      "cultureUnnamed": "Cultura"
     },
     "clinicalNote": {
       "stepTitle": "Evolução",
@@ -2289,7 +2294,8 @@
         "4": "Data de revisão agendada chegou",
         "5": "Alerta disparado",
         "6": "Posologia alterada",
-        "7": "Resultado de exame"
+        "7": "Resultado de exame",
+        "8": "Resultado de cultura"
       }
     },
     "examTriggers": {

@@ -20,8 +20,8 @@ interface InvalidationReasonProps {
 
 /**
  * Why the evaluation on record no longer holds: when its validity ended,
- * which exam results met a rule it turned on, or that the posology changed,
- * from what to what
+ * which exam results met a rule it turned on, which cultures came out, or
+ * that the posology changed, from what to what
  */
 export function InvalidationReason({
   pending,
@@ -47,6 +47,27 @@ export function InvalidationReason({
       <li>
         {t("infectionControl.review.invalidatedExam")}
         <ExamResultMatches matches={pending.details?.matches} />
+      </li>
+    );
+  }
+
+  if (pending.type === InfectionControlPendingTypeEnum.CULTURE_RESULT) {
+    return (
+      <li data-testid="invalidated-culture">
+        {t("infectionControl.review.invalidatedCulture")}
+        <ul>
+          {(pending.details?.cultures ?? []).map((culture) => (
+            <li
+              key={`${culture.material}-${culture.microorganism}-${culture.releaseDate}`}
+            >
+              {[culture.material, culture.microorganism]
+                .filter(Boolean)
+                .join(" · ") ||
+                t("infectionControl.review.cultureUnnamed")}{" "}
+              ({formatDateTime(culture.releaseDate)})
+            </li>
+          ))}
+        </ul>
       </li>
     );
   }

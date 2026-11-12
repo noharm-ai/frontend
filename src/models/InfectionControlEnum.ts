@@ -32,6 +32,9 @@ export class InfectionControlPendingTypeEnum {
   static POSOLOGY_CHANGED = 6;
   // an exam result met an exam trigger rule the evaluation turned on
   static EXAM_RESULT = 7;
+  // a culture result was released after the evaluation (a trigger the
+  // evaluation opts into)
+  static CULTURE_RESULT = 8;
 }
 
 // status of an antimicrobial evaluation (ci_avaliacao_atm.tp_status)

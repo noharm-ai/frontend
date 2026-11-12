@@ -50,6 +50,7 @@ const LIST = "POST /infection-control/admissions";
 const SKIP = "Não avaliar agora";
 const WATCH_EXPIRY = /Quando a avaliação vencer/;
 const WATCH_POSOLOGY = /Quando a posologia mudar/;
+const WATCH_CULTURE = /Quando sair um resultado de cultura/;
 
 // the intervention reasons; only the ones flagged for infection control can
 // justify a non-conformity. relationType 2 requires a substitute drug,
@@ -1244,13 +1245,14 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       `Fim do tratamento ${shownDate(MEROPENEM_END).slice(0, 5)}`,
     );
 
-    // expiry and a posology change send it back to pending unless unchecked,
-    // counted until opened
+    // expiry, a posology change and a new culture result send it back to
+    // pending unless unchecked, counted until opened
     const triggersCount = drug.getByTestId("review-triggers-count");
+    const cultureBox = drug.getByRole("checkbox", { name: WATCH_CULTURE });
     await expect(drug.getByTestId("review-triggers")).toContainText(
       "Gatilhos de pendência:",
     );
-    await expect(triggersCount).toHaveText("2 ativos");
+    await expect(triggersCount).toHaveText("3 ativos");
     await expect(expiryBox).toHaveCount(0);
     await drug
       .getByTestId("review-triggers")
@@ -1258,9 +1260,11 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       .click();
     await expect(expiryBox).toBeChecked();
     await expect(posologyBox).toBeChecked();
+    await expect(cultureBox).toBeChecked();
     await expiryBox.uncheck();
-    await expect(triggersCount).toHaveText("1 ativo");
+    await expect(triggersCount).toHaveText("2 ativos");
     await posologyBox.uncheck();
+    await cultureBox.uncheck();
     await expect(triggersCount).toHaveText("Nenhum ativo");
     await expiryBox.check();
     await posologyBox.check();
@@ -1776,7 +1780,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
         infectionFoci: [],
         validFrom: OLD_START,
         validUntil: `${localDay(7, OLD_START)}T23:59:59`,
-        triggers: [6],
+        triggers: [6, 8],
       },
     ]);
   });
@@ -2552,6 +2556,134 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     ]);
   });
 
+  test("selects the drug a culture result came out for and keeps watching the cultures", async ({
+    page,
+    mockApi,
+  }) => {
+    const released = hoursFromNow(-3);
+    const watching = { ...vancomycinEvaluation, triggers: [3, 8] };
+    mockPage(
+      mockApi,
+      followUp({
+        pendings: [
+          {
+            id: "805",
+            type: 8,
+            origin: 2,
+            idDrug: 12,
+            idPrescription: "300",
+            details: {
+              drug: "VANCOMICINA 500 mg SOL INJ",
+              releaseDate: released,
+              cultures: [
+                {
+                  material: "URINA",
+                  microorganism: "ESCHERICHIA COLI",
+                  releaseDate: released,
+                },
+              ],
+            },
+            createdAt: hoursFromNow(-2),
+          },
+        ],
+        courses: [
+          {
+            idDrug: 12,
+            start: VANCOMYCIN_START,
+            ongoing: true,
+            evaluation: watching,
+            history: [watching],
+          },
+        ],
+      }),
+    );
+    let sent: any = null;
+    mockApi.override(REVIEW, async (route) => {
+      sent = JSON.parse(route.request().postData()!);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(followUp({ status: 2, pendings: [] })),
+      });
+    });
+
+    await page.goto(PAGE_URL);
+    await page.getByTestId("follow-up-pendings-count").click({
+      timeout: 15000,
+    });
+    await expect(page.getByTestId("follow-up-pendings-list")).toContainText(
+      "Resultado de cultura liberado para VANCOMICINA 500 mg SOL INJ",
+    );
+    await page.keyboard.press("Escape");
+
+    await openReview(page);
+    const dialog = page.getByRole("dialog");
+    const drug = dialog.getByTestId("review-drug");
+    const decisions = drug.getByRole("radiogroup", { name: "Avaliação" });
+    // its evaluation no longer holds: the drug is to be evaluated again
+    await expect(decisions.getByRole("radio", { checked: true })).toHaveCount(
+      0,
+    );
+
+    // the drawer tells which cultures came out
+    await drug.getByTestId("review-pendings-chip").click();
+    const pendings = page.getByTestId("review-pendings");
+    await expect(pendings.getByTestId("invalidated-culture")).toContainText(
+      "Saiu um resultado de cultura:",
+    );
+    await expect(pendings.getByTestId("invalidated-culture")).toContainText(
+      "URINA · ESCHERICHIA COLI",
+    );
+    await page.keyboard.press("Escape");
+    await expect(pendings).toHaveCount(0);
+
+    await decisions.getByText("Conforme", { exact: true }).click();
+    const triggers = drug.getByTestId("review-triggers");
+    // the choices made last time: expiry and cultures
+    await expect(triggers.getByTestId("review-triggers-count")).toHaveText(
+      "2 ativos",
+    );
+    await triggers.getByRole("button", { name: "Alterar" }).click();
+    await expect(
+      drug.getByRole("checkbox", { name: WATCH_CULTURE }),
+    ).toBeChecked();
+    await expect(
+      drug.getByRole("checkbox", { name: WATCH_POSOLOGY }),
+    ).not.toBeChecked();
+    await dialog.getByRole("button", { name: "Próximo: paciente" }).click();
+    await saveReview(dialog);
+
+    await expect(
+      page.getByText("Revisão registrada com sucesso!"),
+    ).toBeVisible();
+    expect(sent.evaluations).toMatchObject([
+      { idDrug: 12, conforming: true, triggers: [3, 8] },
+    ]);
+  });
+
+  test("a new evaluation watches the cultures by default", async ({
+    page,
+    mockApi,
+  }) => {
+    mockPage(mockApi, followUp());
+    await page.goto(PAGE_URL);
+    await openReview(page);
+
+    const drug = page.getByRole("dialog").getByTestId("review-drug");
+    await drug
+      .getByRole("radiogroup", { name: "Avaliação" })
+      .getByText("Conforme", { exact: true })
+      .click();
+    await drug
+      .getByTestId("review-triggers")
+      .getByRole("button", { name: "Alterar" })
+      .click();
+    // whatever the schema's features: every schema feeds the cultures
+    await expect(
+      drug.getByRole("checkbox", { name: WATCH_CULTURE }),
+    ).toBeChecked();
+  });
+
   test("shows an expired evaluation no longer holds and keeps the patient pending when it is not evaluated again", async ({
     page,
     mockApi,
@@ -2821,13 +2953,13 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       const crpRise = drug.getByRole("checkbox", { name: /^PCR em elevação/ });
 
       // the meropenem was never evaluated: the rules on by default, beside
-      // the expiry and the posology
+      // the expiry, the posology and the cultures
       await expect(drug.getByRole("heading", { level: 3 })).toHaveText(
         "MEROPENEM 1 g SOL INJ",
       );
       await decisions.getByText("Conforme", { exact: true }).click();
       await fillIndication(page, drug);
-      await expect(triggersCount).toHaveText("4 ativos");
+      await expect(triggersCount).toHaveText("5 ativos");
       await triggers.getByRole("button", { name: "Alterar" }).click();
       const rules = drug.getByTestId("review-exam-triggers");
       await expect(rules).toContainText("Gatilhos de exame");
@@ -2854,7 +2986,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       await expect(tfg).not.toBeChecked();
       await expect(fever).toBeChecked();
       await fever.uncheck();
-      await expect(triggersCount).toHaveText("3 ativos");
+      await expect(triggersCount).toHaveText("4 ativos");
 
       await dialog.getByRole("button", { name: "Próximo" }).click();
 
@@ -3113,8 +3245,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
         rules.getByTestId("review-exam-trigger-rule").filter({ hasText: name });
       const triggersCount = drug.getByTestId("review-triggers-count");
       const form = page.getByTestId("exam-trigger-form");
-      // the expiry, the posology, the vancocinemia and the fever
-      await expect(triggersCount).toHaveText("4 ativos");
+      // the expiry, the posology, the cultures, the vancocinemia and the fever
+      await expect(triggersCount).toHaveText("5 ativos");
       await expect(
         rules.getByRole("button", { name: "Editar regra" }),
       ).toHaveCount(4);
@@ -3177,7 +3309,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
         "TFG em queda < 60 e variação ≤ -25% a partir do D2",
       );
       await expect(added).toBeChecked();
-      await expect(triggersCount).toHaveText("5 ativos");
+      await expect(triggersCount).toHaveText("6 ativos");
 
       // a change keeps the id
       await ruleRow("Vancocinemia")
@@ -3223,7 +3355,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
         "tfg",
         "new4",
       ]);
-      await expect(triggersCount).toHaveText("4 ativos");
+      await expect(triggersCount).toHaveText("5 ativos");
 
       await dialog.getByRole("button", { name: "Próximo" }).click();
       await dialog.getByRole("button", { name: "Próximo" }).click();
@@ -3401,7 +3533,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       const drug = await openTriggers(page);
       const dialog = page.getByRole("dialog");
       await expect(drug.getByTestId("review-triggers-count")).toHaveText(
-        "2 ativos",
+        "3 ativos",
       );
       await expect(
         drug.getByRole("checkbox", { name: WATCH_EXPIRY }),

@@ -32,6 +32,7 @@ const DRUG_REASONS = [
   InfectionControlPendingTypeEnum.EXPIRED,
   InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
   InfectionControlPendingTypeEnum.EXAM_RESULT,
+  InfectionControlPendingTypeEnum.CULTURE_RESULT,
 ];
 
 // how many days from today the next review can be quickly scheduled for
@@ -86,6 +87,8 @@ export interface IDrugEvaluationFields {
   watchExpiry: boolean;
   // back to pending when the posology changes
   watchPosology: boolean;
+  // back to pending when a culture result is released after the evaluation
+  watchCulture: boolean;
   // the ids of the exam trigger rules turned on; null until changed, when
   // they follow the rules of the schema (getExamTriggerIds), which load
   // after the form opens
@@ -279,6 +282,10 @@ export const getInitialValues = (
         watchPosology: watches(
           course.evaluation,
           InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
+        ),
+        watchCulture: watches(
+          course.evaluation,
+          InfectionControlPendingTypeEnum.CULTURE_RESULT,
         ),
         examTriggers: null,
       };
@@ -552,6 +559,7 @@ export const toReviewPayload = (
       triggers: [
         e.watchExpiry && InfectionControlPendingTypeEnum.EXPIRED,
         e.watchPosology && InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
+        e.watchCulture && InfectionControlPendingTypeEnum.CULTURE_RESULT,
       ].filter((trigger): trigger is number => !!trigger),
       examTriggers: getExamTriggerIds(e, examTriggerRules),
     })),

@@ -170,6 +170,13 @@ interface IAntimicrobialTimelineResponse extends IAntimicrobialTimeline {
   followUp: IFollowUp | null;
 }
 
+// a culture released after an evaluation watching cultures (CULTURE_RESULT)
+export interface IReleasedCulture {
+  material: string | null;
+  microorganism: string | null;
+  releaseDate: string;
+}
+
 // an open reason that keeps the admission pending
 export interface IFollowUpPending {
   id: string;
@@ -188,6 +195,10 @@ export interface IFollowUpPending {
     current?: IEvaluationPosology;
     // EXAM_RESULT: every rule the exam results met
     matches?: IExamTriggerMatch[];
+    // CULTURE_RESULT: the latest release and the new cultures, one per
+    // material and microorganism, newest first
+    releaseDate?: string;
+    cultures?: IReleasedCulture[];
   } | null;
   createdAt: string;
 }

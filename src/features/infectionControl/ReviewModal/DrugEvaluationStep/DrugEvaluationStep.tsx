@@ -189,8 +189,11 @@ export function DrugEvaluationStep({
 
   // how many reasons send the patient back to pending
   const activeTriggers =
-    [evaluation.watchExpiry, evaluation.watchPosology].filter(Boolean).length +
-    examTriggerIds.length;
+    [
+      evaluation.watchExpiry,
+      evaluation.watchPosology,
+      evaluation.watchCulture,
+    ].filter(Boolean).length + examTriggerIds.length;
 
   return (
     <DrugEvaluation data-testid="review-drug">
@@ -647,6 +650,15 @@ export function DrugEvaluationStep({
                   }
                 >
                   {t("infectionControl.review.triggerPosology")}
+                </Checkbox>
+                <Checkbox
+                  checked={evaluation.watchCulture}
+                  onChange={(e: any) =>
+                    setFieldValue(field("watchCulture"), e.target.checked)
+                  }
+                  data-testid="review-trigger-culture"
+                >
+                  {t("infectionControl.review.triggerCulture")}
                 </Checkbox>
                 <ExamTriggerChoice
                   rules={examRules}
