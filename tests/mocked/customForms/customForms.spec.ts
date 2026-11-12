@@ -4,6 +4,7 @@ import { test, expect } from "../support/mockApi";
 import type { MockApi } from "../support/mockApi";
 import { loginWithPermissions } from "../support/featureLogin";
 import { openSelect, pickOption } from "../support/antd";
+import { NAVIGATION_VIEWER_PERMISSIONS } from "../support/navigationViewer";
 
 /**
  * Custom evolution forms (/configuracoes/forms-personalizados,
@@ -86,6 +87,33 @@ const FORMS = [
 ];
 
 const LIST_PATH = "/configuracoes/forms-personalizados";
+
+/**
+ * Without WRITE_CUSTOM_FORMS the pages open read-only, and the shared session
+ * does not carry it, so every test logs in with the permissions of the role
+ * its describe block names (a form editor outside of any block).
+ */
+const EDITOR_PERMISSIONS = [
+  "READ_BASIC_FEATURES",
+  "READ_PRESCRIPTION",
+  "WRITE_CUSTOM_FORMS",
+];
+
+const PERMISSIONS_BY_ROLE: Record<string, string[]> = {
+  "as a MAINTAINER": [...EDITOR_PERMISSIONS, "MAINTAINER"],
+  "as a NAVIGATION_VIEWER": NAVIGATION_VIEWER_PERMISSIONS,
+};
+
+test.use({ storageState: { cookies: [], origins: [] } });
+
+test.beforeEach(async ({ page, mockApi }, testInfo) => {
+  const role = testInfo.titlePath.find((title) => title in PERMISSIONS_BY_ROLE);
+  await loginWithPermissions(
+    page,
+    mockApi,
+    role ? PERMISSIONS_BY_ROLE[role] : EDITOR_PERMISSIONS,
+  );
+});
 
 const rows = (page: Page) => page.locator(".ant-table-tbody tr.ant-table-row");
 
@@ -280,8 +308,9 @@ test("two questions cannot share an id", async ({ page, mockApi }) => {
   await expect(page).toHaveURL(new RegExp(`${LIST_PATH}$`));
   const saved = saveCalls(mockApi)[0];
   expect(saved.path).toBe("/memory/custom-forms");
-  expect((saved.body as any).value.data[0].questions.map((q: any) => q.id))
-    .toEqual(["peso", "altura"]);
+  expect(
+    (saved.body as any).value.data[0].questions.map((q: any) => q.id),
+  ).toEqual(["peso", "altura"]);
 });
 
 test("duplicating a form prefills the copy and saves it as a new record", async ({
@@ -292,11 +321,7 @@ test("duplicating a form prefills the copy and saves it as a new record", async 
   await openList(page);
 
   // "Avaliação Farmacêutica" is the second row once the list is sorted
-  await rows(page)
-    .nth(1)
-    .locator("button")
-    .first()
-    .click();
+  await rows(page).nth(1).locator("button").first().click();
 
   await expect(page).toHaveURL(new RegExp(`${LIST_PATH}/new\\?copyFrom=1$`));
   await expect(page.getByPlaceholder("Nome do formulário")).toHaveValue(
@@ -331,18 +356,11 @@ test("the raw JSON of a form is out of reach without MAINTAINER", async ({
 });
 
 test.describe("as a MAINTAINER", () => {
-  test.use({ storageState: { cookies: [], origins: [] } });
-
   test("a pasted JSON replaces the form being edited", async ({
     page,
     mockApi,
   }) => {
     installHandlers(mockApi);
-    await loginWithPermissions(page, mockApi, [
-      "READ_BASIC_FEATURES",
-      "READ_PRESCRIPTION",
-      "MAINTAINER",
-    ]);
 
     await openEditor(page, `${LIST_PATH}/1`, "Avaliação Farmacêutica");
 
@@ -395,11 +413,6 @@ test.describe("as a MAINTAINER", () => {
     mockApi,
   }) => {
     installHandlers(mockApi);
-    await loginWithPermissions(page, mockApi, [
-      "READ_BASIC_FEATURES",
-      "READ_PRESCRIPTION",
-      "MAINTAINER",
-    ]);
 
     await openEditor(page, `${LIST_PATH}/1`, "Avaliação Farmacêutica");
 
@@ -414,5 +427,62 @@ test.describe("as a MAINTAINER", () => {
     await expect(page.getByPlaceholder("Nome do formulário")).toHaveValue(
       "Avaliação Farmacêutica",
     );
+  });
+});
+
+test.describe("as a NAVIGATION_VIEWER", () => {
+  test("the list opens the forms without offering to create or copy one", async ({
+    page,
+    mockApi,
+  }) => {
+    installHandlers(mockApi);
+    await openList(page);
+
+    await expect(rows(page)).toHaveCount(2);
+    await expect(
+      page.getByRole("button", { name: "Adicionar formulário" }),
+    ).toHaveCount(0);
+    await expect(page.locator('button:has([aria-label="copy"])')).toHaveCount(
+      0,
+    );
+
+    await rows(page).nth(1).locator('button:has([aria-label="eye"])').click();
+    await expect(
+      page.getByRole("heading", { name: "Avaliação Farmacêutica" }),
+    ).toBeVisible();
+  });
+
+  test("the editor shows the form read-only and saves nothing", async ({
+    page,
+    mockApi,
+  }) => {
+    installHandlers(mockApi);
+    await openEditor(page, `${LIST_PATH}/1`, "Avaliação Farmacêutica");
+
+    await expect(page.getByText("Somente visualização")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Salvar" })).toHaveCount(0);
+    await expect(page.getByPlaceholder("Nome do formulário")).toBeDisabled();
+    await expect(questionId(page, 0)).toHaveValue("peso");
+    await expect(questionId(page, 0)).toBeDisabled();
+    await expect(
+      page.getByRole("button", { name: "Adicionar Questão" }),
+    ).toBeDisabled();
+
+    // the preview still opens: it is how the form looks to whoever fills it
+    await page.getByRole("button", { name: "Pré-visualizar" }).click();
+    await expect(page.getByText("Pré-visualização")).toBeVisible();
+    await page.keyboard.press("Escape");
+
+    await page.getByRole("button", { name: "Voltar" }).click();
+    await expect(page).toHaveURL(new RegExp(`${LIST_PATH}$`));
+    expect(saveCalls(mockApi)).toEqual([]);
+  });
+
+  test("a new form cannot be opened", async ({ page, mockApi }) => {
+    installHandlers(mockApi);
+    await page.goto(`${LIST_PATH}/new`);
+
+    await expect(page).toHaveURL(new RegExp(`${LIST_PATH}$`));
+    await expect(rows(page)).toHaveCount(2);
   });
 });

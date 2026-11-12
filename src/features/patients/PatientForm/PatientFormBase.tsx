@@ -253,7 +253,7 @@ export function PatientFormBase() {
         />
       </FormRow>
 
-      {permission.hasAny([Permission.ADMIN_PATIENT, Permission.READ_NAV]) && (
+      {permission.hasAny([Permission.ADMIN_PATIENT, Permission.WRITE_NAV]) && (
         <FormRow
           label={`${t("labels.dischargeDate")}:`}
           htmlFor="patient-discharge-date"

@@ -40,7 +40,8 @@ function BaseForm({ open }) {
             label: "Marcador do paciente",
           },
         ]),
-    ...(PermissionService().has(Permission.READ_NAV)
+    // creating a navigation tag is a navigator's action, not READ_NAV's
+    ...(PermissionService().has(Permission.WRITE_NAV)
       ? [
           {
             value: TagTypeEnum.PATIENT_NAVIGATION,

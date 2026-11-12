@@ -402,7 +402,7 @@ export default function View({
             <>
               {!edit &&
                 selected.source !== "prescription" &&
-                PermissionService().has(Permission.READ_NAV) && (
+                PermissionService().has(Permission.WRITE_NAV) && (
                   <Tooltip
                     title={
                       canGenerateSoap
@@ -462,7 +462,7 @@ export default function View({
               {!edit &&
                 selected.source !== "prescription" &&
                 (selected.text || selected.template) &&
-                PermissionService().has(Permission.READ_NAV) && (
+                PermissionService().has(Permission.WRITE_NAV) && (
                   <Tooltip title={t("digitalSignature.btnTooltip")}>
                     <Button
                       type="primary"

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { Input, Tabs, Switch, Popconfirm, Tag } from "antd";
+import { ConfigProvider, Input, Tabs, Switch, Popconfirm, Tag } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 
 import Button from "components/Button";
@@ -76,9 +76,11 @@ function DirtyGuard({ dirty }: { dirty: boolean }) {
 function TemplateContentEditor({
   content,
   onEdit,
+  readOnly,
 }: {
   content: string;
   onEdit: (html: string) => void;
+  readOnly: boolean;
 }) {
   const editorRef = useRef<any>(null);
   return (
@@ -89,18 +91,20 @@ function TemplateContentEditor({
         onEdit={(html: string | null) => onEdit(html ?? "")}
         utilities={["basic"]}
       />
-      <VariableTagsRow>
-        {CARE_PLAN_VARIABLES.map(({ label, variable }) => (
-          <Tag
-            key={variable}
-            className="var-tag"
-            color="blue"
-            onClick={() => editorRef.current?.insertContent(variable)}
-          >
-            {label}
-          </Tag>
-        ))}
-      </VariableTagsRow>
+      {!readOnly && (
+        <VariableTagsRow>
+          {CARE_PLAN_VARIABLES.map(({ label, variable }) => (
+            <Tag
+              key={variable}
+              className="var-tag"
+              color="blue"
+              onClick={() => editorRef.current?.insertContent(variable)}
+            >
+              {label}
+            </Tag>
+          ))}
+        </VariableTagsRow>
+      )}
     </>
   );
 }
@@ -108,6 +112,7 @@ function TemplateContentEditor({
 function TplCarePlanEditorInner({
   recordValue,
   isSaving,
+  readOnly = false,
   onSave,
   onCancel,
 }: KindEditorProps) {
@@ -239,14 +244,18 @@ function TplCarePlanEditorInner({
                     <EditorCard key={tpl._id}>
                       <CardHeader>
                         <span className="card-title">Modelo {idx + 1}</span>
-                        <Button
-                          danger
-                          icon={<DeleteOutlined />}
-                          disabled={templates.length <= 1}
-                          onClick={() => removeTemplate(idx)}
-                        />
+                        {!readOnly && (
+                          <Button
+                            danger
+                            icon={<DeleteOutlined />}
+                            disabled={templates.length <= 1}
+                            onClick={() => removeTemplate(idx)}
+                          />
+                        )}
                       </CardHeader>
-                      <div className={`form-row ${tplErr?.title ? "error" : ""}`}>
+                      <div
+                        className={`form-row ${tplErr?.title ? "error" : ""}`}
+                      >
                         <div className="form-label">
                           <label>Título *</label>
                         </div>
@@ -271,18 +280,25 @@ function TplCarePlanEditorInner({
                           <Input
                             value={tpl.description}
                             onChange={(e) =>
-                              setTemplateField(idx, "description", e.target.value)
+                              setTemplateField(
+                                idx,
+                                "description",
+                                e.target.value,
+                              )
                             }
                             placeholder="Breve descrição do modelo"
                           />
                         </div>
                       </div>
-                      <div className={`form-row ${tplErr?.content ? "error" : ""}`}>
+                      <div
+                        className={`form-row ${tplErr?.content ? "error" : ""}`}
+                      >
                         <div className="form-label">
                           <label>Conteúdo *</label>
                         </div>
                         <div className="form-input">
                           <TemplateContentEditor
+                            readOnly={readOnly}
                             content={tpl.content}
                             onEdit={(html) =>
                               setTemplateField(idx, "content", html)
@@ -296,14 +312,16 @@ function TplCarePlanEditorInner({
                     </EditorCard>
                   );
                 })}
-                <Button
-                  type="dashed"
-                  icon={<PlusOutlined />}
-                  onClick={addTemplate}
-                  style={{ width: "100%" }}
-                >
-                  Adicionar modelo
-                </Button>
+                {!readOnly && (
+                  <Button
+                    type="dashed"
+                    icon={<PlusOutlined />}
+                    onClick={addTemplate}
+                    style={{ width: "100%" }}
+                  >
+                    Adicionar modelo
+                  </Button>
+                )}
               </>
             ),
           },
@@ -327,12 +345,14 @@ function TplCarePlanEditorInner({
                           }
                           placeholder="Nome da categoria"
                         />
-                        <Button
-                          danger
-                          icon={<DeleteOutlined />}
-                          disabled={snippets.length <= 1}
-                          onClick={() => removeCategory(catIdx)}
-                        />
+                        {!readOnly && (
+                          <Button
+                            danger
+                            icon={<DeleteOutlined />}
+                            disabled={snippets.length <= 1}
+                            onClick={() => removeCategory(catIdx)}
+                          />
+                        )}
                       </CategoryHeader>
                       {catErr?.category && (
                         <div className="form-error">{catErr.category}</div>
@@ -372,11 +392,13 @@ function TplCarePlanEditorInner({
                                   utilities={["basic"]}
                                 />
                               </div>
-                              <Button
-                                icon={<DeleteOutlined />}
-                                disabled={cat.items.length <= 1}
-                                onClick={() => removeItem(catIdx, itemIdx)}
-                              />
+                              {!readOnly && (
+                                <Button
+                                  icon={<DeleteOutlined />}
+                                  disabled={cat.items.length <= 1}
+                                  onClick={() => removeItem(catIdx, itemIdx)}
+                                />
+                              )}
                             </SnippetItemRow>
                             {(itemErr?.title || itemErr?.text) && (
                               <div className="form-error">
@@ -387,26 +409,30 @@ function TplCarePlanEditorInner({
                         );
                       })}
 
-                      <Button
-                        type="dashed"
-                        size="small"
-                        icon={<PlusOutlined />}
-                        onClick={() => addItem(catIdx)}
-                        style={{ marginTop: 4 }}
-                      >
-                        Adicionar texto
-                      </Button>
+                      {!readOnly && (
+                        <Button
+                          type="dashed"
+                          size="small"
+                          icon={<PlusOutlined />}
+                          onClick={() => addItem(catIdx)}
+                          style={{ marginTop: 4 }}
+                        >
+                          Adicionar texto
+                        </Button>
+                      )}
                     </CategoryContainer>
                   );
                 })}
-                <Button
-                  type="dashed"
-                  icon={<PlusOutlined />}
-                  onClick={addCategory}
-                  style={{ width: "100%" }}
-                >
-                  Adicionar categoria
-                </Button>
+                {!readOnly && (
+                  <Button
+                    type="dashed"
+                    icon={<PlusOutlined />}
+                    onClick={addCategory}
+                    style={{ width: "100%" }}
+                  >
+                    Adicionar categoria
+                  </Button>
+                )}
               </>
             ),
           },
@@ -417,7 +443,10 @@ function TplCarePlanEditorInner({
             <DirtyGuard dirty={dirty} />
             <PageHeader>
               <div>
-                <h1 className="page-header-title" data-kb="memory.carePlanEditor.title">
+                <h1
+                  className="page-header-title"
+                  data-kb="memory.carePlanEditor.title"
+                >
                   Modelo de Plano de Cuidado
                 </h1>
                 <div className="page-header-legend">
@@ -430,7 +459,8 @@ function TplCarePlanEditorInner({
                     Formulário com erros
                   </Tag>
                 )}
-                {dirty ? (
+                {readOnly && <Tag variant="outlined">Somente visualização</Tag>}
+                {dirty && !readOnly ? (
                   <>
                     <Tag color="warning" variant="outlined">
                       Alterações não salvas
@@ -448,54 +478,64 @@ function TplCarePlanEditorInner({
                   </>
                 ) : (
                   <Button onClick={onCancel} disabled={isSaving}>
-                    Cancelar
+                    {readOnly ? "Voltar" : "Cancelar"}
                   </Button>
                 )}
-                <Button
-                  type="primary"
-                  loading={isSaving}
-                  disabled={isSaving}
-                  onClick={() => handleSubmit()}
-                  danger={hasErrors}
-                >
-                  Salvar
-                </Button>
+                {!readOnly && (
+                  <Button
+                    type="primary"
+                    loading={isSaving}
+                    disabled={isSaving}
+                    onClick={() => handleSubmit()}
+                    danger={hasErrors}
+                  >
+                    Salvar
+                  </Button>
+                )}
               </div>
             </PageHeader>
 
             <PageCard>
-              <Form onSubmit={() => handleSubmit()}>
-                <div className="form-row form-row-flex">
-                  <div className={`form-row ${(errors as any).name ? "error" : ""}`}>
-                    <div className="form-label">
-                      <label>Nome *</label>
+              <ConfigProvider componentDisabled={readOnly}>
+                <Form onSubmit={() => handleSubmit()}>
+                  <div className="form-row form-row-flex">
+                    <div
+                      className={`form-row ${(errors as any).name ? "error" : ""}`}
+                    >
+                      <div className="form-label">
+                        <label>Nome *</label>
+                      </div>
+                      <div className="form-input">
+                        <Input
+                          value={values.name}
+                          onChange={(e) =>
+                            setFieldValue("name", e.target.value)
+                          }
+                          placeholder="Nome do registro"
+                        />
+                      </div>
+                      {(errors as any).name && (
+                        <div className="form-error">{(errors as any).name}</div>
+                      )}
                     </div>
-                    <div className="form-input">
-                      <Input
-                        value={values.name}
-                        onChange={(e) => setFieldValue("name", e.target.value)}
-                        placeholder="Nome do registro"
-                      />
+                    <div className="form-row">
+                      <div className="form-label">
+                        <label>Ativo</label>
+                      </div>
+                      <div className="form-input">
+                        <Switch
+                          checked={values.active}
+                          onChange={(checked) =>
+                            setFieldValue("active", checked)
+                          }
+                        />
+                      </div>
                     </div>
-                    {(errors as any).name && (
-                      <div className="form-error">{(errors as any).name}</div>
-                    )}
                   </div>
-                  <div className="form-row">
-                    <div className="form-label">
-                      <label>Ativo</label>
-                    </div>
-                    <div className="form-input">
-                      <Switch
-                        checked={values.active}
-                        onChange={(checked) => setFieldValue("active", checked)}
-                      />
-                    </div>
-                  </div>
-                </div>
 
-                <Tabs items={tabItems} />
-              </Form>
+                  <Tabs items={tabItems} />
+                </Form>
+              </ConfigProvider>
             </PageCard>
           </>
         );

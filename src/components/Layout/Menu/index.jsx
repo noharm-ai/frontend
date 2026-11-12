@@ -248,7 +248,8 @@ export default function Menu({ segments, collapsed }) {
           label: "Formulários de evolução",
           icon: <FormOutlined />,
           id: "gtm-lnk-customForms",
-          permission: [Permission.WRITE_CUSTOM_FORMS],
+          // READ_NAV opens the page read-only (NAVIGATION_VIEWER)
+          permission: [Permission.WRITE_CUSTOM_FORMS, Permission.READ_NAV],
         },
         {
           key: "/configuracoes/memoria",
