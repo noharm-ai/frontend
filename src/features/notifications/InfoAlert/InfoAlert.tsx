@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BellOutlined, CheckOutlined } from "@ant-design/icons";
 import { Badge } from "antd";
@@ -14,29 +13,36 @@ import { formatDate } from "utils/date";
 import { INFO_ALERT_MEMORY_TYPE } from "utils/memory";
 import { putMemory } from "features/serverActions/ServerActionsSlice";
 import { removeNotification } from "features/notifications/NotificationsSlice";
+import type { INotification } from "features/notifications/NotificationsSlice";
+import { useAppDispatch, useAppSelector } from "store/index";
 
 import { NotificationCard, NotificationTrigger } from "./InfoAlert.style";
 
 export function InfoAlert() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { t } = useTranslation();
-  const notifications = useSelector((state) => state.notifications.list);
-  const userId = useSelector((state) => state.user.account.userId);
+  const notifications = useAppSelector((state) => state.notifications.list);
+  const userId = useAppSelector(
+    // the user duck is untyped JS, so its state is not in IRootState
+    (state: any) => state.user.account.userId,
+  );
   const [modalOpen, setModalOpen] = useState(false);
-  const [loadingId, setLoadingId] = useState(null);
+  const [loadingId, setLoadingId] = useState<INotification["id"] | null>(null);
 
   if (!notifications || notifications.length === 0) {
     return null;
   }
 
-  const onMarkAsRead = (notification) => {
+  const onMarkAsRead = (notification: INotification) => {
     setLoadingId(notification.id);
     dispatch(
-      putMemory({
+      // TODO(ts): ServerActionsSlice is untyped JS and its thunk args infer as
+      // undefined; drop the cast once it is migrated
+      (putMemory as any)({
         type: `${INFO_ALERT_MEMORY_TYPE}-${notification.id}-${userId}`,
         value: true,
       }),
-    ).then((response) => {
+    ).then((response: { error?: unknown; payload?: unknown }) => {
       setLoadingId(null);
       if (response.error) {
         toast.error({ message: getErrorMessage(response, t) });

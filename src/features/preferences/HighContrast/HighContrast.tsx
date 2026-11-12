@@ -8,8 +8,7 @@ export function HighContrast() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const highContrast = useAppSelector(
-    // PreferencesSlice is untyped JS, so its state is not in IRootState
-    (state: any) => !!state.preferences.app.highContrast,
+    (state) => !!state.preferences.app.highContrast,
   );
 
   const onChange = (checked: boolean) => {
