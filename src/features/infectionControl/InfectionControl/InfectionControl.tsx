@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Affix, Button, Dropdown, Empty, Segmented } from "antd";
@@ -34,9 +34,11 @@ import {
   fetchFollowUp,
   fetchRecentCultures,
   followAdmission,
+  ICultureCollection,
   reset,
   setReviewOpen,
 } from "../InfectionControlSlice";
+import { collectionsOf } from "../InfectionControlCultures/cultureCollections";
 import {
   fetchNextPending,
   filtersFromSearch,
@@ -96,6 +98,23 @@ export function InfectionControl() {
   );
   const examHistory = useAppSelector(
     (state) => state.infectionControl.examHistory,
+  );
+  // the culture open in the drawer of the culture card, which the timeline
+  // opens too
+  const [openCultureId, setOpenCultureId] = useState<string | null>(null);
+  const cultureCollections = useMemo(
+    () => (culturesStatus === "succeeded" ? collectionsOf(cultures) : []),
+    [cultures, culturesStatus],
+  );
+  const openCultureFromTimeline = useCallback(
+    (collection: ICultureCollection) => {
+      trackInfectionControlAction(
+        TrackedInfectionControlAction.OPEN_CULTURE_HISTORY,
+        { source: "timeline" },
+      );
+      setOpenCultureId(collection.id);
+    },
+    [],
   );
 
   const [clinicalNotesOpen, setClinicalNotesOpen] = useState(false);
@@ -530,6 +549,8 @@ export function InfectionControl() {
             invalidatedEvaluations={invalidatedEvaluations}
             actions={coursesViewToggle}
             exams={timelineExams}
+            cultures={cultureCollections}
+            onOpenCulture={openCultureFromTimeline}
           />
         )}
       </Section>
@@ -541,6 +562,8 @@ export function InfectionControl() {
               admissionNumber={admissionNumber}
               patient={data.patient}
               idPrescription={data.patient.idPrescription}
+              openId={openCultureId}
+              onOpenIdChange={setOpenCultureId}
             />
           </div>
           {hasExams && (

@@ -44,6 +44,8 @@ interface ExamRowsProps extends IGanttExams {
   hidden?: boolean;
   // the switch on the header; none when the timeline is embedded (compact)
   onToggleHidden?: (show: boolean) => void;
+  // the culture collections (CultureRow), the first row of the group
+  cultures?: ReactNode;
 }
 
 // the line keeps clear of the row's edges
@@ -197,6 +199,7 @@ export function ExamRows({
   range,
   markers,
   hidden = false,
+  cultures,
   onAdd,
   onRemove,
   onRetry,
@@ -305,6 +308,7 @@ export function ExamRows({
     return (
       <>
         {group}
+        {cultures}
         <ExamStateRow data-testid="exam-timeline-error">
           <RowLabel>
             <span>{t("infectionControl.exams.timelineLoadError")}</span>
@@ -324,6 +328,7 @@ export function ExamRows({
     return (
       <>
         {group}
+        {cultures}
         {TIMELINE_EXAMS.map((refs) => (
           <ExamRow
             key={refs.join()}
@@ -346,13 +351,15 @@ export function ExamRows({
   }
 
   // the timeline shows the courses alone when the patient has no exam to plot
-  if (series.length === 0 && options.length === 0) {
+  // nor culture
+  if (series.length === 0 && options.length === 0 && !cultures) {
     return null;
   }
 
   return (
     <>
       {group}
+      {cultures}
       {series.map((item) => {
         const latest = item.points[item.points.length - 1];
 

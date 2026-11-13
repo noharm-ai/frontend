@@ -735,7 +735,7 @@ test("adds the recent cultures and the exams the page shows to the report", asyn
   );
 
   await page.goto(PAGE_URL);
-  await expect(page.getByTestId("recent-culture")).toBeVisible({
+  await expect(page.getByTestId("culture-collection")).toBeVisible({
     timeout: 15000,
   });
   await pickMoreAction(page, "Relatório");
@@ -2483,6 +2483,9 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       "Posologia de VANCOMICINA 500 mg SOL INJ alterada",
     );
     await page.keyboard.press("Escape");
+    // the page scrolls back as the modal closes, and the header unsticks
+    // after it: the timeline settles only then, under the mark's hover
+    await expect(page.getByTestId("follow-up-pendings-list")).toBeHidden();
 
     // the conforming verdict no longer holds: the timeline band stays green
     // up to when the posology changed, in the pending color from then on

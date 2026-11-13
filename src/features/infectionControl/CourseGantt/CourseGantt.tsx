@@ -17,6 +17,7 @@ import {
   CourseStatus,
   IAntimicrobialEvaluation,
   ICourse,
+  ICultureCollection,
   IFollowUpCourse,
   IFollowUpPending,
 } from "../InfectionControlSlice";
@@ -24,6 +25,7 @@ import { CourseDetails } from "../CourseDetails/CourseDetails";
 import { courseKey } from "../followUp";
 import { getTimelineRange, groupCourseRows, toPercent } from "../timeline";
 import { CourseBars } from "./CourseBars/CourseBars";
+import { CultureRow } from "./CultureRow/CultureRow";
 import { ExamRows, IGanttExams } from "./ExamRows/ExamRows";
 import { IDraftEvaluation, layoutEvaluations } from "./ganttLayout";
 import {
@@ -57,6 +59,10 @@ interface CourseGanttProps {
   actions?: ReactNode;
   // the exams plotted under the courses (getTimelineExams)
   exams?: IGanttExams | null;
+  // the culture collections of the patient, a mark each on the moment they
+  // were collected, which opens it (not shown when compact)
+  cultures?: ICultureCollection[] | null;
+  onOpenCulture?: (collection: ICultureCollection) => void;
 }
 
 // whether the exams under the courses are hidden: a preference of the viewer,
@@ -83,8 +89,21 @@ const saveExamsHidden = (hidden: boolean) => {
   }
 };
 
-// how far before the first course the exams are plotted
+// how far before the first course the exams and cultures are plotted
 const EXAM_LOOKBACK_DAYS = 7;
+
+const NO_CULTURES: ICultureCollection[] = [];
+
+// the group of the exams with the cultures alone (no prescription, so no
+// exams)
+const NO_EXAMS: IGanttExams = {
+  series: [],
+  options: [],
+  status: "succeeded",
+  onAdd: () => {},
+  onRemove: () => {},
+  onRetry: () => {},
+};
 
 const STATUS_TAG_COLORS: Record<CourseStatus, string> = {
   active: "blue",
@@ -107,6 +126,8 @@ export function CourseGantt({
   draftEvaluation,
   actions,
   exams,
+  cultures,
+  onOpenCulture,
 }: CourseGanttProps) {
   const { t } = useTranslation();
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -174,6 +195,37 @@ export function CourseGantt({
       .flatMap((item) => item.points.map((point) => point.date))
       .filter((date) => !dayjs(date).isBefore(since));
   }, [exams, showExams, courses]);
+  // the cultures collected from a few days before the first course on (the
+  // baseline before the antimicrobial), as the exams
+  const plottedCultures = useMemo(() => {
+    if (
+      compact ||
+      !onOpenCulture ||
+      !cultures?.length ||
+      courses.length === 0
+    ) {
+      return [];
+    }
+    const firstStart = Math.min(
+      ...courses.map((course) => dayjs(course.start).valueOf()),
+    );
+    const since = dayjs(firstStart)
+      .startOf("day")
+      .subtract(EXAM_LOOKBACK_DAYS, "day");
+    return cultures.filter(
+      (collection) =>
+        !!collection.collectionDate &&
+        !dayjs(collection.collectionDate).isBefore(since),
+    );
+  }, [compact, onOpenCulture, cultures, courses]);
+  // a row of the group of the exams, which keeps its header to show them again
+  // and hides them with the exams
+  const hasCultures = plottedCultures.length > 0;
+  const timelineCultures = examsHidden ? NO_CULTURES : plottedCultures;
+  const cultureDates = useMemo(
+    () => timelineCultures.map((collection) => collection.collectionDate!),
+    [timelineCultures],
+  );
   const range = useMemo(
     () =>
       getTimelineRange(
@@ -187,8 +239,9 @@ export function CourseGantt({
           ),
           draftEvaluation?.validUntil,
           ...examDates,
+          ...cultureDates,
         ].filter((date): date is string => !!date),
-        examDates,
+        [...examDates, ...cultureDates],
       ),
     [
       courses,
@@ -197,6 +250,7 @@ export function CourseGantt({
       followUps,
       draftEvaluation?.validUntil,
       examDates,
+      cultureDates,
     ],
   );
   const todayPercent = toPercent(now, range);
@@ -521,13 +575,23 @@ export function CourseGantt({
 
           {/* hidden, the header of the exams stays to show them again; an
               embedded timeline has no switch, so it leaves them out */}
-          {hasExams && (!compact || !examsHidden) && (
+          {(hasExams || hasCultures) && (!compact || !examsHidden) && (
             <ExamRows
-              {...exams}
+              {...(exams ?? NO_EXAMS)}
               range={range}
               markers={markers}
               hidden={examsHidden}
               onToggleHidden={compact ? undefined : toggleExams}
+              cultures={
+                timelineCultures.length > 0 && onOpenCulture ? (
+                  <CultureRow
+                    collections={timelineCultures}
+                    range={range}
+                    markers={markers}
+                    onOpen={onOpenCulture}
+                  />
+                ) : undefined
+              }
             />
           )}
         </GanttGrid>
