@@ -492,14 +492,16 @@ export const validateDrug = (
 };
 
 /**
- * What keeps the clinical note from being saved: its type, its text, or
- * null when it is ready or not written
+ * What keeps the clinical note from being saved: its type (asked only when
+ * the schema has types to choose from), its text, or null when it is ready
+ * or not written
  */
 export const validateClinicalNote = (
   clinicalNote: IClinicalNoteFields,
+  hasTypes: boolean,
 ): "idClinicalNoteType" | "text" | null => {
   if (!clinicalNote.create) return null;
-  if (!clinicalNote.idClinicalNoteType) return "idClinicalNoteType";
+  if (hasTypes && !clinicalNote.idClinicalNoteType) return "idClinicalNoteType";
   if (!clinicalNote.text.trim()) return "text";
 
   return null;
@@ -528,7 +530,8 @@ export const toReviewPayload = (
   clinicalNote:
     canWriteNote && values.clinicalNote.create
       ? {
-          idClinicalNoteType: values.clinicalNote.idClinicalNoteType!,
+          // none when the schema has no type to give it
+          idClinicalNoteType: values.clinicalNote.idClinicalNoteType,
           text: values.clinicalNote.text,
         }
       : null,

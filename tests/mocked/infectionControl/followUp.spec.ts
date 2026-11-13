@@ -2183,6 +2183,53 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
   );
 
   test(
+    "writes the clinical note without a type when the schema has none",
+    { tag: "@multiClinicalNotes" },
+    async ({ page, mockApi }) => {
+      // the default handler lists no clinical note type
+      mockPage(mockApi, followUp());
+      let sent: any = null;
+      mockApi.override(REVIEW, async (route) => {
+        sent = JSON.parse(route.request().postData()!);
+        await route.fulfill({
+          status: 200,
+          contentType: "application/json",
+          body: JSON.stringify(followUp({ status: 2, pendings: [] })),
+        });
+      });
+
+      await page.goto(PAGE_URL);
+      await openReview(page);
+
+      const dialog = page.getByRole("dialog");
+      const save = dialog.getByRole("button", { name: "Registrar revisão" });
+      await dialog
+        .getByTestId("review-drug")
+        .getByText(SKIP, { exact: true })
+        .click();
+      const next = dialog.getByRole("button", { name: "Próximo" });
+      await next.click();
+      await next.click();
+      await next.click();
+
+      // no type to pick: only the text is asked
+      const step = dialog.getByTestId("review-clinical-note");
+      await step.getByText("Registrar evolução", { exact: true }).click();
+      const note = step.getByTestId("review-note-text");
+      await expect(note).toHaveValue(/^CONTROLE DE INFECÇÃO/);
+      await expect(step.getByTestId("review-note-type")).toHaveCount(0);
+      const text = await note.inputValue();
+      await expect(save).toBeEnabled();
+      await save.click();
+
+      await expect(
+        page.getByText("Revisão registrada com sucesso!"),
+      ).toBeVisible();
+      expect(sent.clinicalNote).toEqual({ idClinicalNoteType: null, text });
+    },
+  );
+
+  test(
     "offers no clinical note when the record has no prescription-day",
     { tag: "@multiClinicalNotes" },
     async ({ page, mockApi }) => {
