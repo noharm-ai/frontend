@@ -18,6 +18,8 @@ interface ChoiceChipsProps<T> {
   value: T | null;
   onChange: (value: T) => void;
   "aria-label": string;
+  // nothing chosen where a choice is required, after the user tried to move on
+  invalid?: boolean;
 }
 
 const Chips = styled(Radio.Group)`
@@ -59,6 +61,10 @@ const Chips = styled(Radio.Group)`
     font-weight: 500;
   }
 
+  &.invalid .ant-radio-button-wrapper:not(.ant-radio-button-wrapper-disabled) {
+    border-color: #cf1322;
+  }
+
   && .ant-radio-button-wrapper-disabled {
     background: #f5f5f5;
     color: #bfbfbf;
@@ -80,12 +86,15 @@ export function ChoiceChips<T extends string | number>({
   value,
   onChange,
   "aria-label": ariaLabel,
+  invalid = false,
 }: ChoiceChipsProps<T>) {
   return (
     <Chips
       optionType="button"
       value={value}
       aria-label={ariaLabel}
+      aria-invalid={invalid || undefined}
+      className={invalid ? "invalid" : undefined}
       onChange={(e) => onChange(e.target.value)}
       options={options.map((option) => ({
         value: option.value,

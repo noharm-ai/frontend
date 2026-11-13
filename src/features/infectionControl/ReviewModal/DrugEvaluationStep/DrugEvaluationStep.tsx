@@ -41,6 +41,7 @@ import { EvaluationExamTriggers } from "../../EvaluationExamTriggers/EvaluationE
 import { ChoiceChips } from "../ChoiceChips/ChoiceChips";
 import { DecisionCards } from "../DecisionCards/DecisionCards";
 import { ExamTriggerChoice } from "../ExamTriggerChoice/ExamTriggerChoice";
+import { FieldError } from "../FieldError/FieldError";
 import {
   ReviewDetailsDrawer,
   ReviewDetailsTab,
@@ -83,6 +84,8 @@ interface DrugEvaluationStepProps {
   invalidatedEvaluations: Record<string, IFollowUpPending[]>;
   // what keeps the drug from being done, checked as it is filled
   drugErrors: FormikErrors<IDrugEvaluationFields> | null;
+  // the user tried to move on: what is missing shows at the fields
+  showErrors: boolean;
   dischargeDate: string | null;
   now: Dayjs;
   // who writes reviews also adds, changes and deletes the exam trigger rules
@@ -102,6 +105,7 @@ export function DrugEvaluationStep({
   timeline,
   invalidatedEvaluations,
   drugErrors,
+  showErrors,
   dischargeDate,
   now,
   canEditExamTriggers,
@@ -168,8 +172,16 @@ export function DrugEvaluationStep({
   const validUntil = getValidUntil(evaluation);
   const period = getValidityPeriod(evaluation);
   const periodError = drugErrors?.end ?? null;
-  // dates that do not make a period keep the choices in sight
-  const validityShown = validityOpen || !!periodError;
+  // what keeps a field from being done, once the user tried to move on
+  const fieldError = (name: keyof IDrugEvaluationFields) =>
+    showErrors ? ((drugErrors?.[name] as string | undefined) ?? null) : null;
+  // dates that do not make a period, or a date missing, keep the choices in
+  // sight
+  const validityShown =
+    validityOpen ||
+    !!periodError ||
+    !!fieldError("startDate") ||
+    !!fieldError("endDate");
 
   // the exam trigger rules of the schema and the ones turned on for the drug;
   // until they load (or when they failed to), the ones the evaluation on
@@ -342,6 +354,7 @@ export function DrugEvaluationStep({
             setFieldValue(field("evaluate"), fields.evaluate);
             setFieldValue(field("conforming"), fields.conforming);
           }}
+          invalid={!!fieldError("conforming")}
           options={[
             {
               value: "conforming",
@@ -363,6 +376,12 @@ export function DrugEvaluationStep({
               ),
             },
           ]}
+        />
+        <FieldError
+          message={
+            fieldError("conforming") &&
+            t("infectionControl.review.decisionRequired")
+          }
         />
       </section>
 
@@ -395,11 +414,13 @@ export function DrugEvaluationStep({
                 onChange={(value) =>
                   setFieldValue(field("treatmentType"), value)
                 }
+                invalid={!!fieldError("treatmentType")}
                 options={AntimicrobialTreatmentTypeEnum.list.map((type) => ({
                   value: type,
                   label: treatmentTypeLabel(type, t),
                 }))}
               />
+              <FieldError message={fieldError("treatmentType")} />
             </div>
             <div className="drug-notes" data-testid="review-infection-focus">
               <div className="drug-notes-header">
@@ -421,6 +442,7 @@ export function DrugEvaluationStep({
               </div>
               <Select
                 id={field("infectionFoci")}
+                status={fieldError("infectionFoci") ? "error" : undefined}
                 mode="multiple"
                 allowClear
                 optionFilterProp="label"
@@ -435,6 +457,7 @@ export function DrugEvaluationStep({
                   label: infectionFocusLabel(focus, t),
                 }))}
               />
+              <FieldError message={fieldError("infectionFoci")} />
             </div>
           </section>
 
@@ -509,6 +532,7 @@ export function DrugEvaluationStep({
                       onChange={(value: Dayjs | null) =>
                         setFieldValue(field("startDate"), value)
                       }
+                      status={fieldError("startDate") ? "error" : undefined}
                       // from the day the course started up to today
                       disabledDate={(current: Dayjs) =>
                         !!current &&
@@ -518,6 +542,7 @@ export function DrugEvaluationStep({
                       aria-label={t("infectionControl.review.start")}
                     />
                   )}
+                  <FieldError message={fieldError("startDate")} />
                 </div>
 
                 <span className="drug-validity-label">
@@ -565,6 +590,7 @@ export function DrugEvaluationStep({
                       onChange={(value: Dayjs | null) =>
                         setFieldValue(field("endDate"), value)
                       }
+                      status={fieldError("endDate") ? "error" : undefined}
                       // from the day it starts, even if already over
                       disabledDate={(current: Dayjs) =>
                         !!current &&
@@ -573,6 +599,7 @@ export function DrugEvaluationStep({
                       aria-label={t("infectionControl.review.validUntil")}
                     />
                   )}
+                  <FieldError message={fieldError("endDate")} />
                 </div>
               </div>
             )}
@@ -692,6 +719,7 @@ export function DrugEvaluationStep({
               </div>
               <Select
                 id={field("interventionReasons")}
+                status={fieldError("interventionReasons") ? "error" : undefined}
                 mode="multiple"
                 allowClear
                 optionFilterProp="children"
@@ -714,6 +742,7 @@ export function DrugEvaluationStep({
                   </Select.Option>
                 ))}
               </Select>
+              <FieldError message={fieldError("interventionReasons")} />
               {substituteRelation && (
                 <div className="drug-notes" data-testid="review-substitute">
                   <div className="drug-notes-header">
@@ -739,7 +768,9 @@ export function DrugEvaluationStep({
                     onChange={(drug) =>
                       setFieldValue(field("substituteDrug"), drug)
                     }
+                    status={fieldError("substituteDrug") ? "error" : undefined}
                   />
+                  <FieldError message={fieldError("substituteDrug")} />
                 </div>
               )}
               {canRecordIntervention(evaluation) && (
@@ -786,6 +817,7 @@ export function DrugEvaluationStep({
             </div>
             <Textarea
               id={field("notes")}
+              status={fieldError("notes") ? "error" : undefined}
               autoSize={{ minRows: 3, maxRows: 6 }}
               placeholder={t(
                 nonConforming
@@ -797,6 +829,7 @@ export function DrugEvaluationStep({
                 setFieldValue(field("notes"), e.target.value)
               }
             />
+            <FieldError message={fieldError("notes")} />
           </div>
         </div>
       )}

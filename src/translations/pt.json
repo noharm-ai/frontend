@@ -2094,6 +2094,8 @@
       "nextReviewDays_other": "Em {{count}} dias",
       "notesPlaceholder": "Ex.: aguardar resultado de cultura antes de descalonar",
       "stepOf": "Etapa {{step}} de {{total}}",
+      "decisionRequired": "Selecione uma avaliação",
+      "stepUnfinished": "Etapa incompleta",
       "hintDecision": "Selecione uma avaliação para continuar",
       "hintJustification": "Informe a justificativa",
       "hintValidity": "Revise a vigência",
