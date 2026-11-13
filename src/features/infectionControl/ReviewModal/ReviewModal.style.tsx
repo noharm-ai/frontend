@@ -137,15 +137,49 @@ export const ReviewBody = styled.div`
     color: ${muted};
   }
 
+  /* why the step cannot move on yet, just before the buttons */
   .review-footer-hint {
+    align-items: center;
     color: ${muted};
+    display: inline-flex;
+    font-size: 13px;
+    gap: 6px;
+    line-height: 1.4;
+    margin-right: 8px;
+    max-width: 360px;
+    text-align: right;
+
+    .anticon {
+      flex: none;
+    }
 
     &.error {
       color: ${danger};
+      font-weight: 500;
+    }
+
+    /* phones: a line of its own, over the buttons */
+    @media (max-width: 768px) {
+      flex: 1 0 100%;
+      justify-content: flex-end;
+      margin-right: 0;
+      max-width: none;
     }
   }
 
+  /* what keeps a field from being done, under it, once the user tried to
+     move on */
+  .review-field-error {
+    align-items: center;
+    color: ${danger};
+    display: flex;
+    font-size: 13px;
+    gap: 6px;
+    line-height: 1.4;
+  }
+
   .review-footer-actions {
+    align-items: center;
     display: flex;
     gap: 8px;
 

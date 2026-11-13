@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
-import { CheckOutlined } from "@ant-design/icons";
+import { CheckOutlined, ExclamationOutlined } from "@ant-design/icons";
 import { Tag } from "antd";
 import styled from "styled-components";
 
@@ -14,6 +14,8 @@ export interface IReviewRailItem {
   status: { label: string; color: string };
   // filled and valid, and not the one open
   done: boolean;
+  // left unfinished after the user tried to move on
+  error?: boolean;
 }
 
 interface ReviewRailProps {
@@ -22,8 +24,12 @@ interface ReviewRailProps {
   step: number;
   // what is chosen for the clinical note
   noteStatus: { label: string; color?: string };
+  // the note left unfinished after the user tried to save
+  noteInvalid?: boolean;
   onSelect: (step: number) => void;
 }
+
+const danger = "#cf1322";
 
 const Rail = styled.nav`
   background: #fcfcfc;
@@ -84,6 +90,14 @@ const Rail = styled.nav`
       background: #eaf6f7;
       border-color: ${get("colors.accentSecondary")};
       color: ${get("colors.accentSecondary")};
+    }
+
+    /* an icon, not the color alone: on phones only the number shows */
+    &.error .rail-number,
+    &.error.active .rail-number {
+      background: #fff1f0;
+      border-color: ${danger};
+      color: ${danger};
     }
   }
 
@@ -181,12 +195,27 @@ export function ReviewRail({
   drugs,
   step,
   noteStatus,
+  noteInvalid = false,
   onSelect,
 }: ReviewRailProps) {
   const { t } = useTranslation();
   const railRef = useRef<HTMLElement>(null);
   const patientStep = drugs.length;
   const noteStep = patientStep + 1;
+
+  // what the number of a step shows: done, unfinished or its number
+  const stepMark = (done: boolean, error: boolean, number: number) => {
+    if (error) {
+      return (
+        <ExclamationOutlined
+          aria-label={t("infectionControl.review.stepUnfinished")}
+          data-testid="review-rail-error"
+        />
+      );
+    }
+
+    return done ? <CheckOutlined /> : number;
+  };
 
   // on phones the rail is a line that scrolls sideways: keep the open step in
   // sight
@@ -213,14 +242,14 @@ export function ReviewRail({
         <button
           key={drug.key}
           type="button"
-          className={`rail-item ${index === step ? "active" : ""} ${drug.done ? "done" : ""}`}
+          className={`rail-item ${index === step ? "active" : ""} ${drug.done ? "done" : ""} ${drug.error ? "error" : ""}`}
           aria-current={index === step ? "step" : undefined}
           title={drug.title}
           onClick={() => onSelect(index)}
           data-testid="review-rail-drug"
         >
           <span className="rail-number">
-            {drug.done ? <CheckOutlined /> : index + 1}
+            {stepMark(drug.done, !!drug.error, index + 1)}
           </span>
           <span className="rail-text">
             <span className="rail-title">{drug.title}</span>
@@ -255,12 +284,14 @@ export function ReviewRail({
       </button>
       <button
         type="button"
-        className={`rail-item ${step === noteStep ? "active" : ""}`}
+        className={`rail-item ${step === noteStep ? "active" : ""} ${noteInvalid ? "error" : ""}`}
         aria-current={step === noteStep ? "step" : undefined}
         onClick={() => onSelect(noteStep)}
         data-testid="review-rail-note"
       >
-        <span className="rail-number">{noteStep + 1}</span>
+        <span className="rail-number">
+          {stepMark(false, noteInvalid, noteStep + 1)}
+        </span>
         <span className="rail-text">
           <span className="rail-title">
             {t("infectionControl.clinicalNote.stepTitle")}

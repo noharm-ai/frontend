@@ -17,6 +17,7 @@ interface SubstituteDrugSelectProps {
   id: string;
   value: ISubstituteDrug | null;
   onChange: (drug: ISubstituteDrug | null) => void;
+  status?: "error";
 }
 
 /**
@@ -28,6 +29,7 @@ export function SubstituteDrugSelect({
   id,
   value,
   onChange,
+  status: fieldStatus,
 }: SubstituteDrugSelectProps) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
@@ -52,6 +54,7 @@ export function SubstituteDrugSelect({
   return (
     <Select
       id={id}
+      status={fieldStatus}
       allowClear
       style={{ width: "100%" }}
       placeholder={t("infectionControl.review.substitutePlaceholder")}

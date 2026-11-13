@@ -22,6 +22,7 @@ import {
   getDefaultTemplate,
   IClinicalNoteContext,
 } from "../clinicalNoteTemplate";
+import { FieldError } from "../FieldError/FieldError";
 import { IReviewFields } from "../reviewForm";
 import { ClinicalNote, NoteVariables } from "../ReviewModal.style";
 
@@ -36,6 +37,8 @@ interface ClinicalNoteStepProps {
   types: IClinicalNoteType[];
   // what the variables are read from, but the review being filled
   context: Omit<IClinicalNoteContext, "values" | "t">;
+  // what keeps the note from being saved, once the user tried to save
+  error?: "idClinicalNoteType" | "text" | null;
 }
 
 // the type the user gave their last note, picked again for the next one
@@ -66,6 +69,7 @@ export function ClinicalNoteStep({
   unavailable,
   types,
   context,
+  error = null,
 }: ClinicalNoteStepProps) {
   const { t } = useTranslation();
   const { values, setFieldValue } = useFormikContext<IReviewFields>();
@@ -232,6 +236,7 @@ export function ClinicalNoteStep({
                 id="review-note-type"
                 className="note-type"
                 data-testid="review-note-type"
+                status={error === "idClinicalNoteType" ? "error" : undefined}
                 placeholder={t("infectionControl.clinicalNote.typePlaceholder")}
                 value={clinicalNote.idClinicalNoteType}
                 onChange={(value: any) => {
@@ -244,6 +249,12 @@ export function ClinicalNoteStep({
                 }))}
                 showSearch
                 optionFilterProp="label"
+              />
+              <FieldError
+                message={
+                  error === "idClinicalNoteType" &&
+                  t("infectionControl.clinicalNote.hintType")
+                }
               />
             </section>
           )}
@@ -329,10 +340,16 @@ export function ClinicalNoteStep({
             <Textarea
               id="review-note-text"
               data-testid="review-note-text"
+              status={error === "text" ? "error" : undefined}
               autoSize={{ minRows: 12, maxRows: 24 }}
               value={clinicalNote.text}
               onChange={(e: any) =>
                 setFieldValue("clinicalNote.text", e.target.value)
+              }
+            />
+            <FieldError
+              message={
+                error === "text" && t("infectionControl.clinicalNote.hintText")
               }
             />
           </section>

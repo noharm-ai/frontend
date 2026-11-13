@@ -1183,6 +1183,11 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     const expiryBox = drug.getByRole("checkbox", { name: WATCH_EXPIRY });
     const posologyBox = drug.getByRole("checkbox", { name: WATCH_POSOLOGY });
     const hint = dialog.getByTestId("review-hint");
+    const fieldErrors = drug.getByTestId("review-field-error");
+    const firstRailError = dialog
+      .getByTestId("review-rail-drug")
+      .first()
+      .getByTestId("review-rail-error");
 
     // one step per running drug, then the patient and the clinical note
     await expect(dialog.getByTestId("review-rail-drug")).toHaveCount(2);
@@ -1206,10 +1211,16 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     // the step names the drug, its timeline shows only the day of treatment
     await expect(timeline.getByTestId("course-row")).toHaveText(/^D3/);
 
-    // the verdict is required to move on
+    // the verdict is required to move on: the step tells it at the field,
+    // and the rail marks the drug, only once the user tried
     const MEROPENEM_PLUS_7 = localDay(7, MEROPENEM_START);
-    await expect(next).toBeDisabled();
     await expect(hint).toHaveText("Selecione uma avaliação para continuar");
+    await expect(fieldErrors).toHaveCount(0);
+    await expect(firstRailError).toHaveCount(0);
+    await next.click();
+    await expect(dialog.getByText("Etapa 1 de 4")).toBeVisible();
+    await expect(fieldErrors).toHaveText(["Selecione uma avaliação"]);
+    await expect(firstRailError).toBeVisible();
 
     // the timeline plots the evaluation as it is filled: grey until the
     // verdict comes
@@ -1217,6 +1228,9 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(draft).toHaveClass(/undecided/);
     await decisions.getByText("Não conforme", { exact: true }).click();
     await expect(draft).toHaveClass(/non-conforming/);
+    // the verdict asks for other fields, told only on the next try
+    await expect(fieldErrors).toHaveCount(0);
+    await expect(firstRailError).toHaveCount(0);
     // what each verdict means is told on hover
     await decisions.getByText("Não conforme", { exact: true }).hover();
     await expect(page.getByRole("tooltip")).toHaveText("Exige justificativa");
@@ -1285,7 +1299,19 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     const focusHint = drug
       .getByTestId("review-infection-focus")
       .locator(".drug-notes-hint");
-    await expect(next).toBeDisabled();
+    // what is still missing shows at each field, the first one in sight
+    await next.click();
+    await expect(drug.getByRole("heading", { level: 3 })).toHaveText(
+      "MEROPENEM 1 g SOL INJ",
+    );
+    await expect(fieldErrors.first()).toBeInViewport();
+    await expect(firstRailError).toBeVisible();
+    await expect(fieldErrors).toHaveText([
+      "Informe o tipo de tratamento",
+      "Informe o foco infeccioso",
+      "Informe o motivo da não conformidade",
+      "Informe a justificativa",
+    ]);
     await expect(hint).toHaveText("Informe o tipo de tratamento");
     const treatmentTypes = drug.getByRole("radiogroup", {
       name: "Tipo de tratamento",
@@ -1329,7 +1355,10 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
 
     // a non-conformity is given its reasons, among the ones enabled for
     // infection control
-    await expect(next).toBeDisabled();
+    await expect(fieldErrors).toHaveText([
+      "Informe o motivo da não conformidade",
+      "Informe a justificativa",
+    ]);
     await expect(hint).toHaveText("Informe o motivo da não conformidade");
     await openSelect(drug.getByTestId("review-reasons"));
     await expect(
@@ -1352,6 +1381,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       .getByLabel("Justificativa", { exact: true })
       .fill("Espectro amplo demais");
     await expect(hint).toHaveCount(0);
+    await expect(fieldErrors).toHaveCount(0);
+    await expect(firstRailError).toHaveCount(0);
 
     // an intervention on the drug is recorded by default
     const createIntervention = drug.getByRole("checkbox", {
@@ -1529,8 +1560,14 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await openValidity(drug);
     await start.getByText("Agora", { exact: true }).click();
     await validity.getByText("Outra data", { exact: true }).click();
-    // a chosen day is required once picked
-    await expect(next).toBeDisabled();
+    // a chosen day is required once picked, told at the field on the try
+    await next.click();
+    await expect(drug.getByTestId("review-field-error")).toHaveText([
+      "Campo obrigatório",
+    ]);
+    await expect(drug.getByRole("heading", { level: 3 })).toHaveText(
+      "VANCOMICINA 500 mg SOL INJ",
+    );
     await expect(drug.getByTestId("review-period")).toHaveText(
       "Selecione as datas",
     );
@@ -1626,7 +1663,12 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
 
     await pickReason(page, drug, "Trocar antimicrobiano");
     await expect(substitute).toContainText("obrigatório");
-    await expect(next).toBeDisabled();
+    await next.click();
+    await expect(heading).toHaveText("MEROPENEM 1 g SOL INJ");
+    await expect(substitute.getByTestId("review-field-error")).toHaveText(
+      "Informe o medicamento substituto",
+    );
+    await expect(substitute.getByTestId("review-field-error")).toBeInViewport();
     await expect(dialog.getByTestId("review-hint")).toHaveText(
       "Informe o medicamento substituto",
     );
@@ -1759,7 +1801,11 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await expect(drug.getByTestId("review-period")).toHaveText(
       "Data final antes do início",
     );
-    await expect(next).toBeDisabled();
+    // the try stays on the step
+    await next.click();
+    await expect(drug.getByTestId("review-period")).toHaveText(
+      "Data final antes do início",
+    );
     await validity.getByText("+7 dias", { exact: true }).click();
     await expect(drug.getByTestId("review-period")).toHaveText(/· 8 dias$/);
     await expect(pastNotice).toHaveCount(0);
@@ -2043,6 +2089,70 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     },
   );
 
+  test("takes the save back to the first drug left unfinished", async ({
+    page,
+    mockApi,
+  }) => {
+    mockPage(mockApi, followUp());
+    let sent: any = null;
+    mockApi.override(REVIEW, async (route) => {
+      sent = JSON.parse(route.request().postData()!);
+      await route.fulfill({
+        status: 200,
+        contentType: "application/json",
+        body: JSON.stringify(followUp({ status: 2, pendings: [] })),
+      });
+    });
+
+    await page.goto(PAGE_URL);
+    await openReview(page);
+
+    const dialog = page.getByRole("dialog");
+    const drug = dialog.getByTestId("review-drug");
+    const meropenem = dialog.getByTestId("review-rail-drug").first();
+    const save = dialog.getByRole("button", { name: "Registrar revisão" });
+
+    // straight to the note: the save is on, and tells what is missing
+    await dialog.getByTestId("review-rail-note").click();
+    await expect(dialog.getByTestId("review-hint")).toHaveText(
+      "Conclua a avaliação de todos os antimicrobianos",
+    );
+    await expect(save).toBeEnabled();
+    await save.click();
+
+    // back at meropenem, marked in the rail, its verdict asked at the field
+    await expect(drug.getByRole("heading", { level: 3 })).toHaveText(
+      "MEROPENEM 1 g SOL INJ",
+    );
+    await expect(meropenem).toHaveAttribute("aria-current", "step");
+    await expect(meropenem.getByTestId("review-rail-error")).toBeVisible();
+    await expect(
+      dialog
+        .getByTestId("review-rail-drug")
+        .nth(1)
+        .getByTestId("review-rail-error"),
+    ).toHaveCount(0);
+    await expect(drug.getByTestId("review-field-error")).toHaveText([
+      "Selecione uma avaliação",
+    ]);
+    expect(sent).toBeNull();
+
+    // a verdict asks for other fields, told on the next try: the marks go
+    await drug
+      .getByRole("radiogroup", { name: "Avaliação" })
+      .getByText("Conforme", { exact: true })
+      .click();
+    await expect(drug.getByTestId("review-field-error")).toHaveCount(0);
+    await expect(meropenem.getByTestId("review-rail-error")).toHaveCount(0);
+    await fillIndication(page, drug);
+    await dialog
+      .getByRole("button", { name: "Próximo antimicrobiano" })
+      .click();
+    await expect(drug.getByRole("heading", { level: 3 })).toHaveText(
+      "VANCOMICINA 500 mg SOL INJ",
+    );
+  });
+
   test(
     "keeps the clinical note text in step with the review, until it is edited",
     { tag: "@multiClinicalNotes" },
@@ -2151,19 +2261,33 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       const note = step.getByTestId("review-note-text");
       await step.getByText("Registrar evolução", { exact: true }).click();
       await expect(note).toHaveValue(/^CONTROLE DE INFECÇÃO/);
-      await expect(save).toBeDisabled();
+      const noteErrors = step.getByTestId("review-field-error");
       await expect(hint).toHaveText("Informe o tipo de evolução");
+      await expect(noteErrors).toHaveCount(0);
+      await save.click();
+      await expect(noteErrors).toHaveText(["Informe o tipo de evolução"]);
+      await expect(
+        dialog.getByTestId("review-rail-note").getByTestId("review-rail-error"),
+      ).toBeVisible();
+      expect(sent).toBeNull();
       await openSelect(step.getByTestId("review-note-type"));
       await pickOption(page, "Farmácia clínica");
-      await expect(save).toBeEnabled();
+      await expect(noteErrors).toHaveCount(0);
 
-      // and writes something
+      // and writes something, told below the text, brought into sight
       await note.fill("");
-      await expect(save).toBeDisabled();
+      await expect(noteErrors).toHaveText(["Informe o texto da evolução"]);
+      await step.evaluate((element) =>
+        element.closest(".review-step")!.scrollTo({ top: 0 }),
+      );
+      await expect(noteErrors).not.toBeInViewport();
+      await save.click();
+      await expect(noteErrors).toBeInViewport();
+      expect(sent).toBeNull();
       await expect(hint).toHaveText("Informe o texto da evolução");
       await step.getByTestId("review-note-default").click();
       await expect(note).toHaveValue(/^CONTROLE DE INFECÇÃO/);
-      await expect(save).toBeEnabled();
+      await expect(noteErrors).toHaveCount(0);
 
       // or saves the review without a note
       await step.getByText("Não registrar", { exact: true }).click();

@@ -2084,6 +2084,8 @@
       "nextReviewDays_other": "In {{count}} days",
       "notesPlaceholder": "E.g.: wait for the culture result before de-escalating",
       "stepOf": "Step {{step}} of {{total}}",
+      "decisionRequired": "Select an evaluation",
+      "stepUnfinished": "Unfinished step",
       "hintDecision": "Select an evaluation to continue",
       "hintJustification": "Enter the justification",
       "hintValidity": "Check the validity",
