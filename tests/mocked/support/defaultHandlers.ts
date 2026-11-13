@@ -108,19 +108,7 @@ export function defaultHandlers(): Record<string, Handler> {
         data: {
           admissionNumber: 0,
           releasedSince: "2026-01-01T00:00:00",
-          cultures: [],
-        },
-      },
-    },
-    // every collection of one culture's exam and material, each with its
-    // antibiogram, opened from its row
-    "GET /infection-control/admission/:admissionNumber/cultures/:idCulture": {
-      json: {
-        status: "success",
-        data: {
-          admissionNumber: 0,
-          examName: null,
-          material: null,
+          collections: [],
           cultures: [],
         },
       },

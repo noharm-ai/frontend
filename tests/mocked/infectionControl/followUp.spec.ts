@@ -735,7 +735,7 @@ test("adds the recent cultures and the exams the page shows to the report", asyn
   );
 
   await page.goto(PAGE_URL);
-  await expect(page.getByTestId("recent-culture")).toBeVisible({
+  await expect(page.getByTestId("culture-collection")).toBeVisible({
     timeout: 15000,
   });
   await pickMoreAction(page, "Relatório");

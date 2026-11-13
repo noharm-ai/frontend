@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Badge, Button, Empty, Tabs, Tooltip } from "antd";
 import { ReloadOutlined } from "@ant-design/icons";
@@ -16,15 +16,20 @@ import {
 } from "src/utils/tracker";
 
 import {
-  fetchCultureHistory,
   fetchRecentCultures,
+  ICultureCollection,
   IInfectionControlPatient,
-  IRecentCulture,
 } from "../InfectionControlSlice";
-import { CultureHistoryModal } from "./CultureHistoryModal/CultureHistoryModal";
+import {
+  CollectionFilter,
+  collectionsOf,
+  filterCollections,
+  prescribedDrugsOf,
+} from "./cultureCollections";
+import { CultureCollectionDrawer } from "./CultureCollectionDrawer/CultureCollectionDrawer";
+import { CultureCollectionList } from "./CultureCollectionList/CultureCollectionList";
 import { CulturesByDrug } from "./CulturesByDrug/CulturesByDrug";
 import { CulturesBox, CulturesError } from "./InfectionControlCultures.style";
-import { RecentCultureList } from "./RecentCultureList/RecentCultureList";
 
 interface InfectionControlCulturesProps {
   admissionNumber: string;
@@ -35,12 +40,11 @@ interface InfectionControlCulturesProps {
 }
 
 /**
- * The culture exams of the patient at a glance, in one card: the latest
- * collection of each exam and material released in the last 60 days, with its
- * gram, the microorganisms of its antibiogram and the lab's result. Only
+ * The culture exams of the patient at a glance, in one card: every collection
+ * released in the last 60 days, each with the microorganisms it found and
+ * their antibiogram summed up, the drugs of the prescription first. Only
  * informative: loaded with the page but apart from it, and a failure stays in
- * here. A row opens its antibiogram, and a tab away every collection of its
- * exam and material.
+ * here. A collection opens whole in a drawer, which moves through the list.
  *
  * For a schema with the antibiogram integration (models/Feature.CULTURE) the
  * same cultures read by drug (the culture card of the screening) are a tab
@@ -66,6 +70,25 @@ export function InfectionControlCultures({
 
   const hasByDrug = !!idPrescription && FeaturesService(features).hasCulture();
 
+  const [filter, setFilter] = useState<CollectionFilter>("all");
+  const [openId, setOpenId] = useState<string | null>(null);
+
+  const collections = useMemo(() => collectionsOf(data), [data]);
+  // the cultures by drug know which drugs the prescription carries
+  const prescribed = useMemo(
+    () => prescribedDrugsOf(hasByDrug ? culturesByDrug : null),
+    [hasByDrug, culturesByDrug],
+  );
+  // a filter that can no longer apply (no drug of the prescription) lists all
+  const activeFilter =
+    filter === "resistantInUse" && prescribed.size === 0 ? "all" : filter;
+  const visible = useMemo(
+    () => filterCollections(collections, activeFilter, prescribed),
+    [collections, activeFilter, prescribed],
+  );
+  const openCollection =
+    collections.find((collection) => collection.id === openId) ?? null;
+
   useEffect(() => {
     // the slice skips the request while the cached list is current
     if (hasByDrug && idPrescription) {
@@ -89,12 +112,18 @@ export function InfectionControlCultures({
     ? (culturesByDrug ?? []).filter(isResistantInUse).length
     : 0;
 
-  const openHistory = (culture: IRecentCulture) => {
+  const openDetails = useCallback((collection: ICultureCollection) => {
     trackInfectionControlAction(
       TrackedInfectionControlAction.OPEN_CULTURE_HISTORY,
     );
-    dispatch(fetchCultureHistory({ admissionNumber, culture }));
-  };
+    setOpenId(collection.id);
+  }, []);
+
+  // moving through the list from the drawer
+  const selectCollection = useCallback(
+    (collection: ICultureCollection) => setOpenId(collection.id),
+    [],
+  );
 
   const byExam = (
     <div
@@ -102,7 +131,6 @@ export function InfectionControlCultures({
       data-kb="infectionControl.cultures.byExam"
       data-testid="recent-cultures"
     >
-      <div className="legend">{t("infectionControl.cultures.legend")}</div>
       {status === "failed" ? (
         <CulturesError>
           <Empty
@@ -117,10 +145,13 @@ export function InfectionControlCultures({
           </Button>
         </CulturesError>
       ) : (
-        <RecentCultureList
-          cultures={data?.cultures ?? []}
+        <CultureCollectionList
+          collections={collections}
           loading={status === "loading" || status === "idle"}
-          onOpen={openHistory}
+          prescribed={prescribed}
+          filter={activeFilter}
+          onFilterChange={setFilter}
+          onOpen={openDetails}
         />
       )}
     </div>
@@ -187,7 +218,13 @@ export function InfectionControlCultures({
           <div className="cultures-body">{byExam}</div>
         </>
       )}
-      <CultureHistoryModal admissionNumber={admissionNumber} />
+      <CultureCollectionDrawer
+        collections={visible}
+        collection={openCollection}
+        prescribed={prescribed}
+        onSelect={selectCollection}
+        onClose={() => setOpenId(null)}
+      />
     </CulturesBox>
   );
 }
