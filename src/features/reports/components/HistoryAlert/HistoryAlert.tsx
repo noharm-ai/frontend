@@ -1,11 +1,15 @@
-import React from "react";
 import dayjs from "dayjs";
 import { Alert } from "antd";
 
 import Button from "components/Button";
 import { formatDate } from "utils/date";
 
-const Content = ({ activeReport, reportDate }) => (
+interface ContentProps {
+  activeReport: string;
+  reportDate?: string | null;
+}
+
+const Content = ({ activeReport, reportDate }: ContentProps) => (
   <>
     <div>
       Você está visualizando o relatório consolidado do mês de{" "}
@@ -19,11 +23,15 @@ const Content = ({ activeReport, reportDate }) => (
   </>
 );
 
-export default function HistoryAlert({
+interface HistoryAlertProps extends ContentProps {
+  loadArchive: (filename: string) => void;
+}
+
+export function HistoryAlert({
   activeReport,
   loadArchive,
   reportDate,
-}) {
+}: HistoryAlertProps) {
   if (activeReport === "current") {
     return null;
   }

@@ -21,7 +21,7 @@ export const Wrapper = styled.div`
   }
 `;
 
-export const Excerpt = styled.p`
+export const Excerpt = styled.p<{ $margin?: string }>`
   font-size: 16px;
   margin: ${({ $margin }) => $margin || 0};
 `;

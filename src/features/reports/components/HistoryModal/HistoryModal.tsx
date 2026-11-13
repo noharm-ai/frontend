@@ -1,5 +1,4 @@
-import React from "react";
-import { useDispatch } from "react-redux";
+import type { UnknownAction } from "@reduxjs/toolkit";
 import dayjs from "dayjs";
 import { HistoryOutlined, DownloadOutlined } from "@ant-design/icons";
 import { List, Avatar } from "antd";
@@ -9,17 +8,31 @@ import Modal from "components/Modal";
 import Button from "components/Button";
 import Alert from "components/Alert";
 import { formatDate } from "utils/date";
+import { useAppDispatch } from "src/store";
 
-export default function HistoryModal({
+export interface AvailableReport {
+  name: string;
+  updateAt?: string | null;
+}
+
+interface HistoryModalProps {
+  availableReports?: AvailableReport[] | null;
+  loadArchive: (filename: string) => void;
+  open: boolean;
+  setOpen: (open: boolean) => UnknownAction;
+  onOpenYearlyReport?: (() => void) | null;
+}
+
+export function HistoryModal({
   availableReports,
   loadArchive,
   open,
   setOpen,
   onOpenYearlyReport = null,
-}) {
-  const dispatch = useDispatch();
+}: HistoryModalProps) {
+  const dispatch = useAppDispatch();
 
-  const load = (filename) => {
+  const load = (filename: string) => {
     loadArchive(filename);
     dispatch(setOpen(false));
   };
