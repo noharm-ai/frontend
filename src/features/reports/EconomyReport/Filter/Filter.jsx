@@ -36,8 +36,8 @@ import {
   decompressDatasource,
 } from "utils/report";
 import useFetchReport from "hooks/useFetchReport";
-import HistoryModal from "features/reports/components/HistoryModal/HistoryModal";
-import HistoryAlert from "features/reports/components/HistoryAlert/HistoryAlert";
+import { HistoryModal } from "features/reports/components/HistoryModal/HistoryModal";
+import { HistoryAlert } from "features/reports/components/HistoryAlert/HistoryAlert";
 import { trackReport, TrackedReport } from "src/utils/tracker";
 
 export default function Filter({ printRef }) {

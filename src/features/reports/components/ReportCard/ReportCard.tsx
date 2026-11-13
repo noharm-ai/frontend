@@ -1,4 +1,3 @@
-import React from "react";
 import { Avatar } from "antd";
 
 import Heading from "components/Heading";
@@ -8,10 +7,34 @@ import Alert from "components/Alert";
 import { Wrapper, Excerpt } from "./ReportCard.style";
 import { PieChartOutlined, BarChartOutlined } from "@ant-design/icons";
 
-export default function ReportCard({ id, reportData, showReport, ...props }) {
+export interface ReportCardData {
+  title?: string;
+  description?: string;
+  icon?: string;
+  type?: string;
+  visible?: boolean;
+}
+
+interface ReportCardProps<T extends ReportCardData> {
+  id?: string | number;
+  className?: string;
+  reportData: T;
+  showReport: (reportData: T) => void;
+}
+
+export function ReportCard<T extends ReportCardData>({
+  id,
+  reportData,
+  showReport,
+  ...props
+}: ReportCardProps<T>) {
   return (
     <Tooltip title="Abrir Relatório">
-      <Wrapper id={id} {...props} onClick={() => showReport(reportData)}>
+      <Wrapper
+        id={id === undefined ? undefined : String(id)}
+        {...props}
+        onClick={() => showReport(reportData)}
+      >
         {reportData.icon && (
           <Avatar
             icon={<PieChartOutlined />}

@@ -6,7 +6,7 @@ import Empty from "components/Empty";
 import { ReportStatusEnum } from "src/models/ReportStatusEnum";
 import { selectReport, getCustomReports } from "../../ReportsSlice";
 import { DownloadModal } from "./components/DownloadModal/DownloadModal";
-import ReportCard from "../ReportCard/ReportCard";
+import { ReportCard } from "../ReportCard/ReportCard";
 
 export function CustomReports() {
   const dispatch = useAppDispatch();
