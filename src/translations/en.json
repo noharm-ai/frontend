@@ -1807,6 +1807,7 @@
       "culturesCount_one": "{{count}} collection",
       "culturesCount_other": "{{count}} collections",
       "cultureOpen": "View the {{exam}} collection on {{date}}",
+      "cultureDay": "{{count}} collections on {{date}}: pick one",
       "title": "Antimicrobial timeline",
       "empty": "No antimicrobial prescribed in this admission.",
       "today": "Today",

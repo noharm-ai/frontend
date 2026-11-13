@@ -1817,6 +1817,7 @@
       "culturesCount_one": "{{count}} coleta",
       "culturesCount_other": "{{count}} coletas",
       "cultureOpen": "Ver a coleta de {{exam}} em {{date}}",
+      "cultureDay": "{{count}} coletas em {{date}}: escolher uma",
       "title": "Linha do tempo de antimicrobianos",
       "empty": "Nenhum antimicrobiano prescrito neste atendimento.",
       "today": "Hoje",

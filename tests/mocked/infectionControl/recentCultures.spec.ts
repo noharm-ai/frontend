@@ -372,9 +372,7 @@ test.describe("on the timeline", () => {
     });
   });
 
-  test("marks each collection on the moment it was collected", async ({
-    page,
-  }) => {
+  test("marks each day of collection", async ({ page }) => {
     await page.goto(PAGE_URL);
 
     const row = page.getByTestId("timeline-cultures");
@@ -382,14 +380,18 @@ test.describe("on the timeline", () => {
     await expect(row).toContainText("3 coletas");
     const marks = row.getByTestId("timeline-culture");
     await expect(marks).toHaveCount(3);
-    // red where a microorganism grew
+    // a red ring where a microorganism grew
     await expect(marks.and(page.locator(".isolated"))).toHaveCount(2);
 
     const urine = row.getByRole("button", { name: /Urocultura teste/ });
     await urine.hover();
-    await expect(page.getByRole("tooltip")).toContainText(
+    const day = page.getByTestId("timeline-culture-day");
+    await expect(day).toContainText("Urina teste");
+    await expect(day).toContainText(
       "Microrganismo B teste, Microrganismo C teste",
     );
+    await page.mouse.move(5, 5);
+    await expect(day).toBeHidden();
 
     // a row of the group of the exams, even without exams: it hides with it
     await expect(
@@ -401,6 +403,66 @@ test.describe("on the timeline", () => {
     await expect(row).toHaveCount(0);
     await page.getByTestId("toggle-exams").click();
     await expect(row.getByTestId("timeline-culture")).toHaveCount(3);
+  });
+
+  test("a day of several collections is one mark, with their count", async ({
+    page,
+    mockApi,
+  }) => {
+    // three collections on one day, two hours apart, and one days later
+    const day = hoursFromNow(-72).slice(0, 10);
+    const at = (time: string, id: string, examName: string, found = false) =>
+      collection([
+        culture({
+          id,
+          examName,
+          collectionDate: `${day}T${time}`,
+          releaseDate: hoursFromNow(-6),
+          previousResult: found ? "Positivo" : "Negativo",
+          microorganisms: found ? ["Microrganismo D teste"] : [],
+        }),
+      ]);
+    mockApi.override(ENDPOINT, {
+      json: payload([
+        at("14:00:00", "63", "Hemocultura 3 teste"),
+        at("12:00:00", "62", "Hemocultura 2 teste", true),
+        at("10:00:00", "61", "Hemocultura 1 teste"),
+        PENDING,
+      ]),
+    });
+
+    await page.goto(PAGE_URL);
+
+    const row = page.getByTestId("timeline-cultures");
+    await expect(row).toContainText("4 coletas", { timeout: 15000 });
+    // a mark per day, the row one line tall whatever their number
+    const marks = row.getByTestId("timeline-culture");
+    await expect(marks).toHaveCount(2);
+    expect((await row.boundingBox())!.height).toBeLessThan(45);
+
+    const several = row.getByRole("button", { name: /^3 coletas em/ });
+    await expect(several).toHaveText("3");
+    // a red ring: one of them found a microorganism
+    await expect(several).toHaveClass(/isolated/);
+
+    // hovering lists them in the order they were collected
+    await several.hover();
+    const list = page.getByTestId("timeline-culture-day");
+    await expect(list).toContainText("3 coletas");
+    const items = list.getByRole("button");
+    await expect(items).toHaveCount(3);
+    await expect(items.nth(0)).toContainText("10:00");
+    await expect(items.nth(0)).toContainText("Hemocultura 1 teste");
+    await expect(items.nth(1)).toContainText("Microrganismo D teste");
+
+    // a click on the mark keeps the list open; one of them opens in the drawer
+    await several.click();
+    await expect(list).toBeVisible();
+    await list.getByRole("button", { name: /Hemocultura 2 teste/ }).click();
+    await expect(list).toBeHidden();
+    const drawer = page.getByRole("dialog");
+    await expect(drawer).toContainText("Hemocultura 2 teste");
+    await expect(drawer).toContainText("Microrganismo D teste");
   });
 
   test("opens the collection in the drawer", async ({ page }) => {
