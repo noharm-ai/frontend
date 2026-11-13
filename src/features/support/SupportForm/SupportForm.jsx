@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { Formik } from "formik";
@@ -6,18 +6,16 @@ import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
 import { Spin, Result, Divider } from "antd";
 
-import notification from "components/notification";
 import Button from "components/Button";
 import DefaultModal from "components/Modal";
-import { getErrorMessage } from "utils/errorHandler";
 import { createTicket, setSupportOpen, resetAIForm } from "../SupportSlice";
 import { useTicketCreationBlock } from "../useTicketCreationBlock";
 import { handlePendingTrainingError } from "../pendingTrainingError";
+import { attachmentListSchema } from "../attachmentLimits";
+import { showTicketSendError } from "../ticketSendError";
 import Base from "./Base";
 
 import { Form } from "styles/Form.style";
-
-const MAX_FILE_SIZE = 2000000;
 
 export default function SupportForm() {
   const { t } = useTranslation();
@@ -25,6 +23,9 @@ export default function SupportForm() {
   const navigate = useNavigate();
   const status = useSelector((state) => state.support.form.status);
   const { requiresUrgent } = useTicketCreationBlock();
+  // set synchronously, so a second submit in the same tick (double click,
+  // Enter while the button re-renders) is dropped before it dispatches
+  const submittingRef = useRef(false);
 
   const validationSchema = Yup.object().shape({
     // pending mandatory training: an ADMIN_SUPPORT holder must confirm urgency
@@ -39,20 +40,7 @@ export default function SupportForm() {
     description: Yup.string()
       .nullable()
       .required(t("validation.requiredField")),
-    fileList: Yup.array().of(
-      Yup.mixed()
-        .nullable()
-        .test("is-valid-size", function (value) {
-          if (!value) return true;
-
-          return value.size <= MAX_FILE_SIZE
-            ? true
-            : this.createError({
-                message: `${value.name}: ${t("validation.max2mb")}`,
-                path: "fileList",
-              });
-        }),
-    ),
+    fileList: attachmentListSchema(t, "fileList"),
   });
 
   const initialValues = {
@@ -76,6 +64,9 @@ export default function SupportForm() {
   };
 
   const onSave = (params, formikBag) => {
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+
     const payload = {
       ...params,
       fromUrl: window.location.href,
@@ -94,35 +85,15 @@ export default function SupportForm() {
       payload.description += `<hr/><br/<br/><h4>Exemplos:</h4> ${evidences}`;
     }
 
-    dispatch(createTicket(payload)).then((response) => {
+    return dispatch(createTicket(payload)).then((response) => {
+      submittingRef.current = false;
+
       if (response.error) {
         if (handlePendingTrainingError(response, goToTraining)) {
           return;
         }
 
-        notification.error({
-          message: getErrorMessage(response, t),
-        });
-
-        if (response?.payload?.statusCode >= 500) {
-          DefaultModal.error({
-            title: "Serviço Offline",
-            content: (
-              <>
-                <p>
-                  Nosso serviço de registro de chamados está fora do ar. Por
-                  favor, encaminhe o seu pedido de ajuda para{" "}
-                  <strong>{import.meta.env.VITE_APP_SUPPORT_EMAIL}</strong>.
-                </p>
-              </>
-            ),
-            mask: { blur: false },
-            width: 500,
-            okText: "Fechar",
-            okButtonProps: { type: "default" },
-            wrapClassName: "default-modal",
-          });
-        }
+        showTicketSendError(response, t);
       } else {
         formikBag.resetForm();
         dispatch(resetAIForm());
@@ -236,6 +207,7 @@ export default function SupportForm() {
                 onClick={handleSubmit}
                 size="large"
                 loading={status === "loading"}
+                disabled={status === "loading"}
                 style={{ padding: "6px 50px" }}
               >
                 Enviar

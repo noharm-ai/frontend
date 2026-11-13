@@ -4,6 +4,7 @@ import { UploadOutlined } from "@ant-design/icons";
 import { Input, Radio, Textarea } from "src/components/Inputs";
 import notification from "components/notification";
 import Button from "components/Button";
+import { MAX_ATTACHMENTS } from "../../attachmentLimits";
 
 interface ISupportFieldProps {
   label: string;
@@ -28,7 +29,7 @@ export function SupportField({
       setFieldValue(label, newFileList);
     },
     beforeUpload: (file: any) => {
-      if (value.length >= 2) {
+      if (value && value.length >= MAX_ATTACHMENTS) {
         notification.error({ message: "Máximo de arquivos anexos atingido." });
       } else {
         if (value) {

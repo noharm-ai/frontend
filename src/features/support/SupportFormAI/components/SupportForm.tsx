@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Skeleton, Space, Result, Popconfirm } from "antd";
 import { Formik } from "formik";
 import { SendOutlined } from "@ant-design/icons";
@@ -10,7 +10,6 @@ import { useAppSelector, useAppDispatch } from "src/store";
 import Button from "src/components/Button";
 import notification from "components/notification";
 import DefaultModal from "components/Modal";
-import { getErrorMessage } from "src/utils/errorHandler";
 import { SupportField } from "./SupportField";
 import {
   resetAIForm,
@@ -22,11 +21,11 @@ import SupportFormLegacy from "../../SupportForm/SupportForm";
 import { PendingTrainingNotice } from "../../PendingTrainingNotice/PendingTrainingNotice";
 import { useTicketCreationBlock } from "../../useTicketCreationBlock";
 import { handlePendingTrainingError } from "../../pendingTrainingError";
+import { attachmentListSchema } from "../../attachmentLimits";
+import { showTicketSendError } from "../../ticketSendError";
 
 import { Form } from "src/styles/Form.style";
 import { ChatContainer, ChatBubble } from "../SupportFormAI.style";
-
-const MAX_FILE_SIZE = 2000000;
 
 export function SupportForm() {
   const { t } = useTranslation();
@@ -40,6 +39,9 @@ export function SupportForm() {
     (state) => (state.app as any).config.integrationStatus
   );
   const [loading, setLoading] = useState<boolean>(false);
+  // set synchronously, so a second submit in the same tick is dropped before
+  // it dispatches (the loading state only applies on the next render)
+  const submittingRef = useRef(false);
   const { blocked, requiresUrgent } = useTicketCreationBlock();
 
   const goToSupportCenter = () => {
@@ -48,6 +50,17 @@ export function SupportForm() {
   };
 
   const sendTicket = async (params: any) => {
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+
+    try {
+      await submitTicket(params);
+    } finally {
+      submittingRef.current = false;
+    }
+  };
+
+  const submitTicket = async (params: any) => {
     setLoading(true);
 
     const payload: any = {
@@ -103,41 +116,34 @@ export function SupportForm() {
         return;
       }
 
-      notification.error({
-        message: getErrorMessage(response, t),
-      });
-
-      if (response?.payload?.statusCode >= 500) {
-        DefaultModal.error({
-          title: "Serviço Offline",
-          content: (
-            <>
-              <p>
-                Nosso serviço de registro de chamados está fora do ar. Por
-                favor, encaminhe o seu pedido de ajuda para{" "}
-                <strong>{import.meta.env.VITE_APP_SUPPORT_EMAIL}</strong>.
-              </p>
-            </>
-          ),
-          mask: { blur: false },
-          width: 500,
-          okText: "Fechar",
-          okButtonProps: { type: "default" },
-          wrapClassName: "default-modal",
-        });
-      }
+      showTicketSendError(response, t);
     } else {
-      data.extra_fields.forEach(async (field: any) => {
-        if (field.type === "archive") {
+      // attachments go in their own request once the ticket exists; a failure
+      // there used to be swallowed, leaving the user unaware files were lost
+      let attachmentsFailed = false;
+      for (const field of data.extra_fields) {
+        if (field.type === "archive" && params[field.label]?.length) {
           const attachmentPayload = {
             id_ticket: response.payload.data[0]?.id,
             [field.label]: params[field.label],
           };
 
-          // @ts-expect-error ts 2554 (legacy code)
-          await dispatch(addAttachment(attachmentPayload));
+          const attachmentResponse: any = await dispatch(
+            // @ts-expect-error ts 2554 (legacy code)
+            addAttachment(attachmentPayload)
+          );
+          if (attachmentResponse.error) {
+            attachmentsFailed = true;
+          }
         }
-      });
+      }
+
+      if (attachmentsFailed) {
+        notification.warning({
+          message: t("errors.supportAttachmentNotSent"),
+          duration: 0,
+        });
+      }
 
       setLoading(false);
 
@@ -221,19 +227,9 @@ export function SupportForm() {
       initialValues[field.label] = "";
 
       if (field.type === "archive") {
-        validationSchemaShape[field.label] = Yup.array().of(
-          Yup.mixed()
-            .nullable()
-            .test("is-valid-size", function (value: any) {
-              if (!value) return true;
-
-              return value.size <= MAX_FILE_SIZE
-                ? true
-                : this.createError({
-                    message: `${value.name}: ${t("validation.max2mb")}`,
-                    path: field.label,
-                  });
-            })
+        validationSchemaShape[field.label] = attachmentListSchema(
+          t,
+          field.label
         );
       }
     });
@@ -326,6 +322,7 @@ export function SupportForm() {
                             onClick={() => handleSubmit()}
                             icon={<SendOutlined />}
                             loading={loading}
+                            disabled={loading}
                             size="large"
                           >
                             Abrir chamado

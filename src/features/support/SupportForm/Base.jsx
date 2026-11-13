@@ -13,6 +13,10 @@ import Tooltip from "components/Tooltip";
 import IntegrationStatus from "models/IntegrationStatus";
 
 import { useTicketCreationBlock } from "../useTicketCreationBlock";
+import {
+  MAX_ATTACHMENTS,
+  MAX_TOTAL_ATTACHMENTS_SIZE,
+} from "../attachmentLimits";
 
 const TicketType = {
   DUVIDA: 4,
@@ -48,7 +52,7 @@ function BaseForm() {
       setFieldValue("fileList", newFileList);
     },
     beforeUpload: (file) => {
-      if (values.fileList.length >= 2) {
+      if (values.fileList.length >= MAX_ATTACHMENTS) {
         notification.error({ message: "Máximo de arquivos anexos atingido." });
       } else {
         setFieldValue("fileList", [...values.fileList, file]);
@@ -277,6 +281,10 @@ function BaseForm() {
               a abertura do chamado)
             </li>
             <li>* Tamanho máximo do arquivo: 2mb</li>
+            <li>
+              * Tamanho máximo somado dos anexos:{" "}
+              {MAX_TOTAL_ATTACHMENTS_SIZE / 1_000_000}mb
+            </li>
             <li>* Extensões permitidas: .png, .jpg, .doc, .docx, .pdf</li>
           </ul>
         </div>

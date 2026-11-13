@@ -1,6 +1,34 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import api from "services/api";
 
+/** code the forms translate when a ticket request never got an HTTP answer */
+export const SUPPORT_NETWORK_ERROR = "errors.supportTicketNetwork";
+
+/**
+ * Builds the rejectWithValue payload for the support thunks.
+ *
+ * A request refused before it reaches the backend (API Gateway / edge
+ * returning without CORS headers, a dropped connection, a timeout) reaches
+ * axios as a network error with no `err.response`: reading
+ * `err.response.data` there threw inside the catch, so the thunk rejected
+ * with a TypeError and no payload the forms could act on.
+ */
+const toRejectPayload = (err) => {
+  if (err?.response) {
+    const data = err.response.data;
+    return {
+      ...(data && typeof data === "object" ? data : {}),
+      statusCode: err.response.status,
+    };
+  }
+
+  return {
+    code: SUPPORT_NETWORK_ERROR,
+    message: err?.message ?? "Network Error",
+    statusCode: 0,
+  };
+};
+
 const initialState = {
   open: false,
   knowledgeBase: {
@@ -57,10 +85,7 @@ export const createTicket = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue({
-        ...err.response.data,
-        statusCode: err.response.status,
-      });
+      return thunkAPI.rejectWithValue(toRejectPayload(err));
     }
   }
 );
@@ -73,10 +98,7 @@ export const createClosedTicket = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue({
-        ...err.response.data,
-        statusCode: err.response.status,
-      });
+      return thunkAPI.rejectWithValue(toRejectPayload(err));
     }
   }
 );
@@ -89,10 +111,7 @@ export const addAttachment = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue({
-        ...err.response.data,
-        statusCode: err.response.status,
-      });
+      return thunkAPI.rejectWithValue(toRejectPayload(err));
     }
   }
 );
@@ -105,7 +124,7 @@ export const fetchRequesters = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
+      return thunkAPI.rejectWithValue(toRejectPayload(err));
     }
   }
 );
@@ -118,7 +137,7 @@ export const fetchTickets = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
+      return thunkAPI.rejectWithValue(toRejectPayload(err));
     }
   }
 );
@@ -131,7 +150,7 @@ export const fetchPendingActionTickets = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
+      return thunkAPI.rejectWithValue(toRejectPayload(err));
     }
   }
 );
@@ -144,7 +163,7 @@ export const fetchN0Response = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
+      return thunkAPI.rejectWithValue(toRejectPayload(err));
     }
   }
 );
@@ -157,7 +176,7 @@ export const fetchN0Form = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
+      return thunkAPI.rejectWithValue(toRejectPayload(err));
     }
   }
 );
@@ -170,7 +189,7 @@ export const fetchKnowledgeBaseArticles = createAsyncThunk(
 
       return response.data;
     } catch (err) {
-      return thunkAPI.rejectWithValue(err.response.data);
+      return thunkAPI.rejectWithValue(toRejectPayload(err));
     }
   }
 );

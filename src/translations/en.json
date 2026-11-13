@@ -815,6 +815,11 @@
     "unauthorizedUser": "Unauthorized user",
     "serviceUnavailable": "AI service unavailable. Please try again shortly.",
     "pendingMandatoryTraining": "Complete the mandatory training modules to open support tickets.",
+    "supportAttachmentNotSent": "The ticket was opened, but the attachments were not sent. Send them from the Help Center.",
+    "supportTicketNetworkTitle": "Could not send",
+    "supportTicketNetwork": "Your request did not reach our server.",
+    "supportTicketNetworkAttachments": "This usually happens when the attachments are too large. Shrink or remove the attachments and try again — they can be sent after the ticket is open.",
+    "supportTicketNetworkEmail": "If the problem persists, send your request for help to",
     "trainingNotFinished": "Complete every lesson of the module to get the certificate.",
     "nameExists": "There is already a user with this name!",
     "emailExists": "There is already a user with this email!",
@@ -826,6 +831,8 @@
     "requiredField": "Required field",
     "atLeastOne": "At least one item must be selected",
     "max2mb": "Max file size: 2mb",
+    "maxAttachments": "Maximum of {{max}} attachments",
+    "maxTotalAttachmentsSize": "Attachments together must be up to {{max}}mb. Send the others after the ticket is open.",
     "maxChars": "Maximum of {{max}} characters"
   },
 
