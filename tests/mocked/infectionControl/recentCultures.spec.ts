@@ -213,9 +213,6 @@ test("lists each collection with what it found", async ({ page, mockApi }) => {
   );
   // no drug of the prescription is known without the cultures by drug
   await expect(blood.getByTestId("organism-in-use")).toHaveCount(0);
-  await expect(
-    page.getByTestId("collection-filter-resistantInUse"),
-  ).toHaveCount(0);
 
   // a microorganism per line; a result the backend could not classify is
   // neither resistant nor susceptible
@@ -229,7 +226,7 @@ test("lists each collection with what it found", async ({ page, mockApi }) => {
   );
 });
 
-test("filters the collections that found a microorganism", async ({
+test("narrows the collections by exam, material or microorganism", async ({
   page,
   mockApi,
 }) => {
@@ -238,15 +235,196 @@ test("filters the collections that found a microorganism", async ({
   await page.goto(PAGE_URL);
   await expect(rows(page)).toHaveCount(3, { timeout: 15000 });
 
-  await expect(page.getByTestId("collection-filter-isolated")).toHaveText(
-    "Com microrganismo (2)",
+  // secondary: out of sight until asked for
+  const form = page.getByTestId("collection-details-form");
+  await expect(form).toBeHidden();
+  await expect(page.getByTestId("collection-details")).toHaveText("Filtros");
+  await page.getByTestId("collection-details").click();
+  await expect(form).toContainText("Microrganismo");
+  await expect(form.getByTestId("collection-details-clear")).toHaveText(
+    "Limpar filtros",
   );
-  await page.getByTestId("collection-filter-isolated").click();
-  await expect(rows(page)).toHaveCount(2);
-  await expect(rows(page).nth(0)).toContainText("Hemocultura teste");
+  await expect(form).toBeVisible();
 
-  await page.getByTestId("collection-filter-all").click();
+  // every microorganism of the collections, once, in alphabetical order
+  await form.getByTestId("collection-details-microorganisms").click();
+  const options = page.locator(
+    ".ant-select-dropdown:visible .ant-select-item-option",
+  );
+  await expect(options).toHaveText([
+    "Microrganismo A teste",
+    "Microrganismo B teste",
+    "Microrganismo C teste",
+  ]);
+  await options.filter({ hasText: "Microrganismo B teste" }).click();
+
+  // picking an option keeps the filters open
+  await expect(form).toBeVisible();
+  await expect(rows(page)).toHaveCount(1);
+  await expect(rows(page).nth(0)).toContainText("Urocultura teste");
+  // the button counts the filters in use
+  await expect(
+    page.getByTestId("collection-details").locator("xpath=.."),
+  ).toContainText("1");
+
+  // an exam the urine collection is not: nothing left
+  await form.getByTestId("collection-details-exams").click();
+  await page
+    .locator(".ant-select-dropdown:visible .ant-select-item-option")
+    .filter({ hasText: "Hemocultura teste" })
+    .click();
+  await expect(rows(page)).toHaveCount(0);
+  await expect(page.getByText("Nenhuma coleta neste filtro.")).toBeVisible();
+
+  await form.getByTestId("collection-details-clear").click();
   await expect(rows(page)).toHaveCount(3);
+});
+
+test("the day of the collections in sight stays under the toolbar", async ({
+  page,
+  mockApi,
+}) => {
+  // more collections of one day than the card shows
+  const many = Array.from({ length: 12 }, (_, index) =>
+    collection([
+      culture({
+        id: `5${index}`,
+        examName: `Hemocultura ${index} teste`,
+        previousResult: "Negativo",
+      }),
+    ]),
+  );
+  mockApi.override(ENDPOINT, { json: payload(many) });
+
+  await page.goto(PAGE_URL);
+  await expect(rows(page)).toHaveCount(12, { timeout: 15000 });
+
+  const day = page.getByTestId("collection-day");
+  await expect(day).toHaveCount(1);
+  const toolbar = page
+    .getByTestId("recent-cultures")
+    .locator(".collections-toolbar");
+
+  await rows(page).last().scrollIntoViewIfNeeded();
+
+  // the day, right under the toolbar, both in sight
+  const toolbarBox = (await toolbar.boundingBox())!;
+  const dayBox = (await day.boundingBox())!;
+  const firstRow = (await rows(page).first().boundingBox())!;
+  expect(Math.abs(dayBox.y - (toolbarBox.y + toolbarBox.height))).toBeLessThan(
+    2,
+  );
+  // the first row went by under them
+  expect(firstRow.y).toBeLessThan(dayBox.y);
+});
+
+test.describe("on the timeline", () => {
+  // a course from four days ago on, so the timeline is drawn
+  const withCourse = {
+    ...timeline,
+    data: {
+      ...timeline.data,
+      courses: [
+        {
+          idDrug: 11,
+          drug: "MEROPENEM 1 g SOL INJ",
+          substance: null,
+          atbLevel: null,
+          cpoe: false,
+          status: "active",
+          start: hoursFromNow(-96),
+          end: hoursFromNow(24),
+          plannedEnd: null,
+          plannedDays: null,
+          days: 4,
+          lastIdPrescription: "199",
+          prescriptionCount: 1,
+          gaps: [],
+          regimens: [
+            {
+              start: hoursFromNow(-96),
+              end: hoursFromNow(24),
+              dose: 1,
+              measureUnit: "g",
+              frequency: "8h/8h",
+              route: "IV",
+            },
+          ],
+        },
+      ],
+    },
+  };
+  // collected long before the course: in the card, not on the timeline
+  const OLD = collection([
+    culture({
+      id: "41",
+      examName: "Hemocultura antiga teste",
+      collectionDate: hoursFromNow(-24 * 30),
+      releaseDate: hoursFromNow(-24 * 28),
+      previousResult: "Negativo",
+    }),
+  ]);
+
+  test.beforeEach(({ mockApi }) => {
+    mockApi.override(TIMELINE_ENDPOINT, { json: withCourse });
+    mockApi.override(ENDPOINT, {
+      json: payload([PENDING, BLOOD, URINE, OLD]),
+    });
+  });
+
+  test("marks each collection on the moment it was collected", async ({
+    page,
+  }) => {
+    await page.goto(PAGE_URL);
+
+    const row = page.getByTestId("timeline-cultures");
+    await expect(row).toBeVisible({ timeout: 15000 });
+    await expect(row).toContainText("3 coletas");
+    const marks = row.getByTestId("timeline-culture");
+    await expect(marks).toHaveCount(3);
+    // red where a microorganism grew
+    await expect(marks.and(page.locator(".isolated"))).toHaveCount(2);
+
+    const urine = row.getByRole("button", { name: /Urocultura teste/ });
+    await urine.hover();
+    await expect(page.getByRole("tooltip")).toContainText(
+      "Microrganismo B teste, Microrganismo C teste",
+    );
+
+    // a row of the group of the exams, even without exams: it hides with it
+    await expect(
+      page
+        .getByTestId("exam-timeline-group")
+        .locator("xpath=following-sibling::*[1]"),
+    ).toHaveAttribute("data-testid", "timeline-cultures");
+    await page.getByTestId("toggle-exams").click();
+    await expect(row).toHaveCount(0);
+    await page.getByTestId("toggle-exams").click();
+    await expect(row.getByTestId("timeline-culture")).toHaveCount(3);
+  });
+
+  test("opens the collection in the drawer", async ({ page }) => {
+    await page.goto(PAGE_URL);
+    await expect(rows(page)).toHaveCount(4, { timeout: 15000 });
+
+    // one the filters of the card hide still opens, among all of them
+    await page.getByTestId("collection-details").click();
+    await page.getByTestId("collection-details-microorganisms").click();
+    await page
+      .locator(".ant-select-dropdown:visible .ant-select-item-option")
+      .filter({ hasText: "Microrganismo A teste" })
+      .click();
+    await expect(rows(page)).toHaveCount(1);
+    await page.keyboard.press("Escape");
+
+    await page
+      .getByTestId("timeline-cultures")
+      .getByRole("button", { name: /Urocultura teste/ })
+      .click();
+    const drawer = page.getByRole("dialog");
+    await expect(drawer).toContainText("Urocultura teste");
+    await expect(drawer.getByTestId("culture-nav")).toContainText("3 de 4");
+  });
 });
 
 test("the lab's HTML is laid out, never run", async ({ page, mockApi }) => {
@@ -296,7 +474,10 @@ test("a long gram is cut at two lines, whole in the drawer", async ({
   });
   expect(lines).toBe(2);
 
-  await rows(page).first().getByRole("button", { name: "Detalhes" }).click();
+  await rows(page)
+    .first()
+    .getByRole("button", { name: "Ver detalhes" })
+    .click();
   await expect(
     page.getByTestId("culture-history").getByTestId("culture-gram"),
   ).toHaveText(longGram);
@@ -386,7 +567,7 @@ test.describe("details of a collection", () => {
 
     await rows(page)
       .nth(1)
-      .getByRole("button", { name: "Detalhes" })
+      .getByRole("button", { name: "Ver detalhes" })
       .click({ timeout: 15000 });
 
     const drawer = page.getByRole("dialog");
@@ -470,9 +651,16 @@ test.describe("details of a collection", () => {
   test("moves through the filtered collections only", async ({ page }) => {
     await page.goto(PAGE_URL);
 
-    await page
-      .getByTestId("collection-filter-isolated")
-      .click({ timeout: 15000 });
+    // the collections of two of the three microorganisms
+    await page.getByTestId("collection-details").click({ timeout: 15000 });
+    await page.getByTestId("collection-details-microorganisms").click();
+    const options = page.locator(
+      ".ant-select-dropdown:visible .ant-select-item-option",
+    );
+    await options.filter({ hasText: "Microrganismo A teste" }).click();
+    await options.filter({ hasText: "Microrganismo B teste" }).click();
+    await expect(rows(page)).toHaveCount(2);
+    await page.keyboard.press("Escape");
     await rows(page).first().click();
 
     const nav = page.getByRole("dialog").getByTestId("culture-nav");
@@ -525,14 +713,8 @@ test.describe("drugs of the prescription", () => {
       "AMICACINA Rem uso",
     );
 
-    await expect(
-      page.getByTestId("collection-filter-resistantInUse"),
-    ).toHaveText("Resistente a medicamento em uso (2)");
-    await page.getByTestId("collection-filter-resistantInUse").click();
-    await expect(rows(page)).toHaveCount(2);
-
     // first in the antibiogram too
-    await rows(page).first().click();
+    await rows(page).nth(1).click();
     const antibiogram = page
       .getByRole("dialog")
       .getByTestId("culture-antibiogram");
@@ -616,14 +798,14 @@ test.describe("by drug", () => {
       await page.goto(PAGE_URL);
       await culturesRequest;
 
-      // one card: the summary by exam first, the cultures by drug a tab away.
+      // one card: the list by exam first, the cultures by drug a tab away.
       // They are loaded with the page, so the tab flags the resistant drug in
       // use before it is opened
       const byDrug = page.getByTestId("cultures-by-drug");
       await expect(page.getByTestId("recent-cultures")).toBeVisible({
         timeout: 15000,
       });
-      await expect(page.getByRole("tab", { name: "Resumo" })).toHaveAttribute(
+      await expect(page.getByRole("tab", { name: "Lista" })).toHaveAttribute(
         "aria-selected",
         "true",
       );

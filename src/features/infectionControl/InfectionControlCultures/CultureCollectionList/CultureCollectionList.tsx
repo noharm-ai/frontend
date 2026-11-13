@@ -1,11 +1,23 @@
-import { Fragment } from "react";
+import {
+  CSSProperties,
+  Fragment,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
-import { Empty, Spin, Tag } from "antd";
+import { Empty, Spin } from "antd";
 
 import { formatDate } from "utils/date";
 
 import { ICultureCollection } from "../../InfectionControlSlice";
-import { CollectionFilter, filterCollections } from "../cultureCollections";
+import {
+  CollectionDetail,
+  filterCollections,
+  ICollectionDetails,
+  IDetailOption,
+} from "../cultureCollections";
+import { CollectionDetailsFilter } from "../CollectionDetailsFilter/CollectionDetailsFilter";
 import { CultureCollectionRow } from "../CultureCollectionRow/CultureCollectionRow";
 import { CollectionList } from "./CultureCollectionList.style";
 
@@ -15,25 +27,45 @@ interface CultureCollectionListProps {
   // the drugs of the prescription, by drugKey: empty without the cultures by
   // drug, and then the list can't tell a resistance in use
   prescribed: Set<string>;
-  filter: CollectionFilter;
-  onFilterChange: (filter: CollectionFilter) => void;
+  // the filters (exam, material, microorganism) and their options
+  details: ICollectionDetails;
+  detailOptions: Record<CollectionDetail, IDetailOption[]>;
+  onDetailsChange: (details: ICollectionDetails) => void;
   onOpen: (collection: ICultureCollection) => void;
 }
 
 /**
  * The collections of the patient, newest first, under the day they were
- * collected. The filters narrow them to the ones that found a microorganism,
- * or to the ones resistant to a drug of the prescription
+ * collected, the day of the ones in sight held under the toolbar as the card
+ * scrolls. The filters, a button away, narrow them to an exam, material or
+ * microorganism
  */
 export function CultureCollectionList({
   collections,
   loading,
   prescribed,
-  filter,
-  onFilterChange,
+  details,
+  detailOptions,
+  onDetailsChange,
   onOpen,
 }: CultureCollectionListProps) {
   const { t } = useTranslation();
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const [toolbarHeight, setToolbarHeight] = useState(0);
+
+  // the day rows stick right under the toolbar, which wraps on a narrow card
+  const hasList = !loading && collections.length > 0;
+  useLayoutEffect(() => {
+    const toolbar = toolbarRef.current;
+    if (!toolbar) return;
+
+    const measure = () => setToolbarHeight(toolbar.offsetHeight);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(toolbar);
+
+    return () => observer.disconnect();
+  }, [hasList]);
 
   if (loading) {
     return (
@@ -52,39 +84,23 @@ export function CultureCollectionList({
     );
   }
 
-  const filters: CollectionFilter[] = [
-    "all",
-    "isolated",
-    // only the cultures by drug tell the drugs of the prescription
-    ...(prescribed.size > 0 ? (["resistantInUse"] as const) : []),
-  ];
-  const visible = filterCollections(collections, filter, prescribed);
+  const visible = filterCollections(collections, details);
 
   let lastDay: string | null | undefined;
 
   return (
-    <CollectionList>
-      <div className="collections-toolbar">
+    <CollectionList
+      style={{ "--toolbar-height": `${toolbarHeight}px` } as CSSProperties}
+    >
+      <div className="collections-toolbar" ref={toolbarRef}>
         <span className="legend">
           {t("infectionControl.cultures.collections.legend")}
         </span>
-        <div
-          className="collections-filters"
-          role="group"
-          aria-label={t("infectionControl.cultures.collections.filter")}
-        >
-          {filters.map((key) => (
-            <Tag.CheckableTag
-              key={key}
-              checked={filter === key}
-              onChange={() => onFilterChange(key)}
-              data-testid={`collection-filter-${key}`}
-            >
-              {t(`infectionControl.cultures.collections.filters.${key}`)} (
-              {filterCollections(collections, key, prescribed).length})
-            </Tag.CheckableTag>
-          ))}
-        </div>
+        <CollectionDetailsFilter
+          options={detailOptions}
+          details={details}
+          onChange={onDetailsChange}
+        />
       </div>
 
       {visible.length ? (
@@ -92,7 +108,7 @@ export function CultureCollectionList({
           const day = formatDate(collection.collectionDate);
           const dayHeader =
             day !== lastDay ? (
-              <div className="collections-day">
+              <div className="collections-day" data-testid="collection-day">
                 {day
                   ? t("infectionControl.cultures.collections.collectedOn", {
                       date: day,

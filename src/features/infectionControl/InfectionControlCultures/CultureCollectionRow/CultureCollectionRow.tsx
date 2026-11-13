@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
-import { Button, Tag } from "antd";
+import { Button, Tag, Tooltip } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 
 import { formatDate, formatDateTime } from "utils/date";
 import { RESULT_RESISTANT } from "features/culture/cultureResistance";
@@ -221,15 +222,17 @@ export function CultureCollectionRow({
       </div>
 
       <div className="collection-action">
-        <Button
-          size="small"
-          onClick={(event) => {
-            event.stopPropagation();
-            onOpen(collection);
-          }}
-        >
-          {t("infectionControl.cultures.collections.details")}
-        </Button>
+        <Tooltip title={t("infectionControl.cultures.collections.details")}>
+          <Button
+            size="small"
+            icon={<SearchOutlined />}
+            aria-label={t("infectionControl.cultures.collections.details")}
+            onClick={(event) => {
+              event.stopPropagation();
+              onOpen(collection);
+            }}
+          />
+        </Tooltip>
       </div>
     </CollectionRow>
   );

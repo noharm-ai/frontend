@@ -1,7 +1,12 @@
 import styled from "styled-components";
 
+import { FILTER_TEAL as TEAL } from "../filterTeal";
+
 // the collections across the card's width, by day of collection. The rows
-// (CultureCollectionRow) lay out by the width of the list, the container
+// (CultureCollectionRow) lay out by the width of the list, the container.
+// The toolbar and the day of the collections in sight stay at the top of the
+// card as it scrolls: the day under the toolbar, whose height (it wraps) is
+// measured into --toolbar-height
 export const CollectionList = styled.div`
   container-type: inline-size;
 
@@ -16,17 +21,17 @@ export const CollectionList = styled.div`
     padding: 8px 16px;
     position: sticky;
     top: 0;
-    z-index: 2;
+    z-index: 3;
 
     .legend {
       padding: 0;
     }
   }
 
-  .collections-filters {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+  /* the filters in use: the button turns teal */
+  .details-active {
+    border-color: ${TEAL};
+    color: ${TEAL};
   }
 
   .collections-day {
@@ -37,7 +42,10 @@ export const CollectionList = styled.div`
     font-weight: 600;
     letter-spacing: 0.05em;
     padding: 4px 16px;
+    position: sticky;
     text-transform: uppercase;
+    top: var(--toolbar-height, 0px);
+    z-index: 2;
   }
 
   .collections-empty {

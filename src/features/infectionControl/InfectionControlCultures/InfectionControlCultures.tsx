@@ -21,9 +21,12 @@ import {
   IInfectionControlPatient,
 } from "../InfectionControlSlice";
 import {
-  CollectionFilter,
+  availableDetails,
   collectionsOf,
+  detailOptionsOf,
   filterCollections,
+  ICollectionDetails,
+  NO_DETAILS,
   prescribedDrugsOf,
 } from "./cultureCollections";
 import { CultureCollectionDrawer } from "./CultureCollectionDrawer/CultureCollectionDrawer";
@@ -37,6 +40,9 @@ interface InfectionControlCulturesProps {
   // the latest prescription of the admission, whose drugs the cultures by
   // drug flag; without one there are no cultures by drug
   idPrescription: string | null;
+  // the collection open in the drawer, by id: the timeline opens them too
+  openId: string | null;
+  onOpenIdChange: (id: string | null) => void;
 }
 
 /**
@@ -55,6 +61,8 @@ export function InfectionControlCultures({
   admissionNumber,
   patient,
   idPrescription,
+  openId,
+  onOpenIdChange,
 }: InfectionControlCulturesProps) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
@@ -70,8 +78,7 @@ export function InfectionControlCultures({
 
   const hasByDrug = !!idPrescription && FeaturesService(features).hasCulture();
 
-  const [filter, setFilter] = useState<CollectionFilter>("all");
-  const [openId, setOpenId] = useState<string | null>(null);
+  const [details, setDetails] = useState<ICollectionDetails>(NO_DETAILS);
 
   const collections = useMemo(() => collectionsOf(data), [data]);
   // the cultures by drug know which drugs the prescription carries
@@ -79,15 +86,26 @@ export function InfectionControlCultures({
     () => prescribedDrugsOf(hasByDrug ? culturesByDrug : null),
     [hasByDrug, culturesByDrug],
   );
-  // a filter that can no longer apply (no drug of the prescription) lists all
-  const activeFilter =
-    filter === "resistantInUse" && prescribed.size === 0 ? "all" : filter;
+  const detailOptions = useMemo(
+    () => detailOptionsOf(collections),
+    [collections],
+  );
+  // a secondary filter no longer among the collections (reloaded) is let go
+  const activeDetails = useMemo(
+    () => availableDetails(details, detailOptions),
+    [details, detailOptions],
+  );
+  // the drawer moves through the list as filtered
   const visible = useMemo(
-    () => filterCollections(collections, activeFilter, prescribed),
-    [collections, activeFilter, prescribed],
+    () => filterCollections(collections, activeDetails),
+    [collections, activeDetails],
   );
   const openCollection =
     collections.find((collection) => collection.id === openId) ?? null;
+  // the drawer moves through the list as filtered, or through all of them
+  // when it opened one the filters hide (from the timeline)
+  const drawerCollections =
+    !openCollection || visible.includes(openCollection) ? visible : collections;
 
   useEffect(() => {
     // the slice skips the request while the cached list is current
@@ -112,17 +130,20 @@ export function InfectionControlCultures({
     ? (culturesByDrug ?? []).filter(isResistantInUse).length
     : 0;
 
-  const openDetails = useCallback((collection: ICultureCollection) => {
-    trackInfectionControlAction(
-      TrackedInfectionControlAction.OPEN_CULTURE_HISTORY,
-    );
-    setOpenId(collection.id);
-  }, []);
+  const openDetails = useCallback(
+    (collection: ICultureCollection) => {
+      trackInfectionControlAction(
+        TrackedInfectionControlAction.OPEN_CULTURE_HISTORY,
+      );
+      onOpenIdChange(collection.id);
+    },
+    [onOpenIdChange],
+  );
 
   // moving through the list from the drawer
   const selectCollection = useCallback(
-    (collection: ICultureCollection) => setOpenId(collection.id),
-    [],
+    (collection: ICultureCollection) => onOpenIdChange(collection.id),
+    [onOpenIdChange],
   );
 
   const byExam = (
@@ -149,8 +170,9 @@ export function InfectionControlCultures({
           collections={collections}
           loading={status === "loading" || status === "idle"}
           prescribed={prescribed}
-          filter={activeFilter}
-          onFilterChange={setFilter}
+          details={activeDetails}
+          detailOptions={detailOptions}
+          onDetailsChange={setDetails}
           onOpen={openDetails}
         />
       )}
@@ -219,11 +241,11 @@ export function InfectionControlCultures({
         </>
       )}
       <CultureCollectionDrawer
-        collections={visible}
+        collections={drawerCollections}
         collection={openCollection}
         prescribed={prescribed}
         onSelect={selectCollection}
-        onClose={() => setOpenId(null)}
+        onClose={() => onOpenIdChange(null)}
       />
     </CulturesBox>
   );

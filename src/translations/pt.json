@@ -1756,7 +1756,7 @@
     "cultures": {
       "title": "Culturas",
       "legend": "Última coleta de cada exame e material, liberada nos últimos 60 dias",
-      "summary": "Resumo",
+      "summary": "Lista",
       "byDrug": "Por medicamento",
       "byDrugLegend": "Antibiograma de cada medicamento, com os em uso nesta prescrição em destaque",
       "empty": "Nenhuma cultura liberada nos últimos 60 dias.",
@@ -1779,11 +1779,14 @@
       "inUse": "em uso",
       "collections": {
         "legend": "Coletas liberadas nos últimos 60 dias, da mais recente para a mais antiga",
-        "filter": "Filtrar coletas",
-        "filters": {
-          "all": "Todas",
-          "isolated": "Com microrganismo",
-          "resistantInUse": "Resistente a medicamento em uso"
+        "moreFilters": {
+          "button": "Filtros",
+          "exams": "Exame",
+          "materials": "Material",
+          "microorganisms": "Microrganismo",
+          "any": "Todos",
+          "none": "Nenhum nas coletas",
+          "clear": "Limpar filtros"
         },
         "emptyFilter": "Nenhuma coleta neste filtro.",
         "collectedOn": "Coleta em {{date}}",
@@ -1802,7 +1805,7 @@
         "otherCount_one": "{{count}} outro",
         "otherCount_other": "{{count}} outros",
         "resistantTo": "R:",
-        "details": "Detalhes",
+        "details": "Ver detalhes",
         "resultOf": "Resultado {{current}} de {{total}}",
         "previous": "Coleta anterior",
         "next": "Próxima coleta",
@@ -1810,6 +1813,10 @@
       }
     },
     "timeline": {
+      "cultures": "Culturas",
+      "culturesCount_one": "{{count}} coleta",
+      "culturesCount_other": "{{count}} coletas",
+      "cultureOpen": "Ver a coleta de {{exam}} em {{date}}",
       "title": "Linha do tempo de antimicrobianos",
       "empty": "Nenhum antimicrobiano prescrito neste atendimento.",
       "today": "Hoje",

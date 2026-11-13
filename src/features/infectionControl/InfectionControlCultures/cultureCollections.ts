@@ -159,17 +159,114 @@ export const hasResistantInUse = (
     ),
   );
 
-export type CollectionFilter = "all" | "isolated" | "resistantInUse";
+/**
+ * The secondary filters, out of sight until asked for: the exams, materials
+ * and microorganisms to keep, by drugKey (the lab's case and accents vary from
+ * one report to the next). An empty list keeps them all
+ */
+export interface ICollectionDetails {
+  exams: string[];
+  materials: string[];
+  microorganisms: string[];
+}
+
+export type CollectionDetail = keyof ICollectionDetails;
+
+export const NO_DETAILS: ICollectionDetails = {
+  exams: [],
+  materials: [],
+  microorganisms: [],
+};
+
+export const COLLECTION_DETAILS: CollectionDetail[] = [
+  "exams",
+  "materials",
+  "microorganisms",
+];
+
+// the values of a collection for each secondary filter
+const detailValuesOf = (
+  collection: ICultureCollection,
+  detail: CollectionDetail,
+): string[] => {
+  if (detail === "exams")
+    return collection.examName ? [collection.examName] : [];
+  if (detail === "materials") {
+    return collection.material ? [collection.material] : [];
+  }
+
+  return organismsOf(collection)
+    .map((organism) => organism.microorganism)
+    .filter((name): name is string => !!name);
+};
+
+export interface IDetailOption {
+  value: string;
+  label: string;
+}
+
+/**
+ * What each secondary filter can choose from: the values the collections
+ * carry, each once, in alphabetical order, as the lab first wrote it
+ */
+export const detailOptionsOf = (
+  collections: ICultureCollection[],
+): Record<CollectionDetail, IDetailOption[]> => {
+  const optionsOf = (detail: CollectionDetail) => {
+    const labels = new Map<string, string>();
+    collections.forEach((collection) =>
+      detailValuesOf(collection, detail).forEach((label) => {
+        const value = drugKey(label);
+        if (value && !labels.has(value)) labels.set(value, label);
+      }),
+    );
+
+    return [...labels.entries()]
+      .map(([value, label]) => ({ value, label }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+  };
+
+  return {
+    exams: optionsOf("exams"),
+    materials: optionsOf("materials"),
+    microorganisms: optionsOf("microorganisms"),
+  };
+};
+
+// the secondary filters still among the options (the list was reloaded)
+export const availableDetails = (
+  details: ICollectionDetails,
+  options: Record<CollectionDetail, IDetailOption[]>,
+): ICollectionDetails => {
+  const keep = (detail: CollectionDetail) => {
+    const values = new Set(options[detail].map((option) => option.value));
+    return details[detail].filter((value) => values.has(value));
+  };
+
+  return {
+    exams: keep("exams"),
+    materials: keep("materials"),
+    microorganisms: keep("microorganisms"),
+  };
+};
+
+export const countDetails = (details: ICollectionDetails) =>
+  COLLECTION_DETAILS.filter((detail) => details[detail].length > 0).length;
+
+const matchesDetails = (
+  collection: ICultureCollection,
+  details: ICollectionDetails,
+) =>
+  COLLECTION_DETAILS.every((detail) => {
+    if (!details[detail].length) return true;
+    const values = detailValuesOf(collection, detail).map(drugKey);
+    return values.some((value) => details[detail].includes(value));
+  });
 
 export const filterCollections = (
   collections: ICultureCollection[],
-  filter: CollectionFilter,
-  prescribed: Set<string>,
-) => {
-  if (filter === "isolated") return collections.filter(hasIsolate);
-  if (filter === "resistantInUse") {
-    return collections.filter((c) => hasResistantInUse(c, prescribed));
-  }
-
-  return collections;
-};
+  details: ICollectionDetails,
+) =>
+  countDetails(details)
+    ? collections.filter((c) => matchesDetails(c, details))
+    : collections;

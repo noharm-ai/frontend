@@ -2436,6 +2436,9 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       "Posologia de VANCOMICINA 500 mg SOL INJ alterada",
     );
     await page.keyboard.press("Escape");
+    // the page scrolls back as the modal closes, and the header unsticks
+    // after it: the timeline settles only then, under the mark's hover
+    await expect(page.getByTestId("follow-up-pendings-list")).toBeHidden();
 
     // the conforming verdict no longer holds: the timeline band stays green
     // up to when the posology changed, in the pending color from then on
