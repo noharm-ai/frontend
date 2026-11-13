@@ -214,36 +214,39 @@ export function ClinicalNoteStep({
 
       {!unavailable && clinicalNote.create && (
         <>
-          <section className="summary-section">
-            <div className="summary-notes-header">
-              <label
-                className="summary-section-title"
-                htmlFor="review-note-type"
-              >
-                {t("infectionControl.clinicalNote.type")}
-              </label>
-              <span className="summary-hint">
-                {t("infectionControl.review.required")}
-              </span>
-            </div>
-            <Select
-              id="review-note-type"
-              className="note-type"
-              data-testid="review-note-type"
-              placeholder={t("infectionControl.clinicalNote.typePlaceholder")}
-              value={clinicalNote.idClinicalNoteType}
-              onChange={(value: any) => {
-                setFieldValue("clinicalNote.idClinicalNoteType", value);
-                writeLastType(value);
-              }}
-              options={types.map((type) => ({
-                value: type.id,
-                label: type.name,
-              }))}
-              showSearch
-              optionFilterProp="label"
-            />
-          </section>
+          {/* a schema with no type writes the note without one */}
+          {types.length > 0 && (
+            <section className="summary-section">
+              <div className="summary-notes-header">
+                <label
+                  className="summary-section-title"
+                  htmlFor="review-note-type"
+                >
+                  {t("infectionControl.clinicalNote.type")}
+                </label>
+                <span className="summary-hint">
+                  {t("infectionControl.review.required")}
+                </span>
+              </div>
+              <Select
+                id="review-note-type"
+                className="note-type"
+                data-testid="review-note-type"
+                placeholder={t("infectionControl.clinicalNote.typePlaceholder")}
+                value={clinicalNote.idClinicalNoteType}
+                onChange={(value: any) => {
+                  setFieldValue("clinicalNote.idClinicalNoteType", value);
+                  writeLastType(value);
+                }}
+                options={types.map((type) => ({
+                  value: type.id,
+                  label: type.name,
+                }))}
+                showSearch
+                optionFilterProp="label"
+              />
+            </section>
+          )}
 
           <section className="summary-section">
             <div className="note-text-header">

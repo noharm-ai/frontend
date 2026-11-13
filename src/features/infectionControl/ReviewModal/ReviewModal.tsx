@@ -253,7 +253,10 @@ export function ReviewModal({
         // written, and the review is saved without it
         const noteError = noteUnavailable
           ? null
-          : validateClinicalNote(values.clinicalNote);
+          : validateClinicalNote(
+              values.clinicalNote,
+              clinicalNoteTypes.list.length > 0,
+            );
 
         // what is chosen for each drug, as a tag
         const drugStatus = values.evaluations.map((evaluation) => {

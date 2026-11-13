@@ -434,7 +434,8 @@ export interface IClinicalNoteType {
 
 // the clinical note a review writes in the patient's record
 export interface IReviewClinicalNotePayload {
-  idClinicalNoteType: string;
+  // null when the schema has no clinical note type
+  idClinicalNoteType: string | null;
   text: string;
 }
 
