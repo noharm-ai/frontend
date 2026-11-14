@@ -1,11 +1,15 @@
 import ifvisible from "ifvisible.js";
 
+// ifvisible.js 1.x considered the user idle after 60s without activity; 3.x
+// defaults to 30s. Keep the 60s so the measured time stays comparable.
+ifvisible.setIdleDuration(60);
+
 const pageTimer = ({ debug = false }) => {
   let currentTime = 0;
   let interval = null;
 
   const start = () => {
-    clearInterval(interval?.code);
+    interval?.stop();
 
     interval = ifvisible.onEvery(1, () => {
       currentTime += 1;
@@ -16,7 +20,8 @@ const pageTimer = ({ debug = false }) => {
   };
 
   const stop = () => {
-    clearInterval(interval?.code);
+    interval?.stop();
+    interval = null;
     currentTime = 0;
   };
 
