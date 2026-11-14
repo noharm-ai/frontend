@@ -12,6 +12,11 @@ const pageTimer = ({ debug = false }) => {
     interval?.stop();
 
     interval = ifvisible.onEvery(1, () => {
+      // 3.x starts the timer regardless of status and only pauses it on the
+      // next status change, so a timer started in a hidden tab or while idle
+      // would keep counting. 1.x checked this on every tick; keep doing it.
+      if (!ifvisible.now()) return;
+
       currentTime += 1;
       if (debug) {
         console.debug("pagetimer", currentTime);
