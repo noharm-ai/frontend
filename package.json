@@ -65,7 +65,12 @@
     "browserslist": "4.28.9",
     "baseline-browser-mapping": "2.11.22",
     "@humanfs/node": "0.16.8",
-    "minimatch@10": "11.0.8"
+    "eslint": {
+      "minimatch": "11.0.8"
+    },
+    "@typescript-eslint/typescript-estree": {
+      "minimatch": "11.0.8"
+    }
   },
   "devDependencies": {
     "@eslint/js": "10.0.1",
