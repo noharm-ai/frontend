@@ -2,21 +2,26 @@ import { test, expect } from "../support/mockApi";
 import { loginWithFeatures } from "../support/featureLogin";
 
 /**
- * Recent cultures of the infection control page (/controle-infeccao/:admissionNumber,
+ * Cultures of the infection control page (/controle-infeccao/:admissionNumber,
  * src/features/infectionControl/InfectionControlCultures).
  *
- * GET /infection-control/admission/:admissionNumber/cultures brings the latest
- * collection of each exam and material of the patient released in the last
- * 60 days. It is loaded apart from the timeline: a failure stays in its
- * section, which retries it alone. With the culture feature the cultures by
- * drug (GET /prescriptions/:id/cultures), the view the screening card has in
- * its culture tab, sit beside them.
+ * GET /infection-control/admission/:admissionNumber/cultures brings every
+ * collection (exam, material and collection date) of the patient released in
+ * the last 60 days, each with its cultures and their antibiograms. The card
+ * lists them with each microorganism's antibiogram summed up, and a collection
+ * opens whole in a drawer. It is loaded apart from the timeline: a failure
+ * stays in its section, which retries it alone. With the culture feature the
+ * cultures by drug (GET /prescriptions/:id/cultures), the view the screening
+ * card has in its culture tab, sit beside them, and tell which drugs the
+ * prescription carries.
  */
 
 const ADMISSION = 9300;
 const PATIENT_ID = 4330;
 const PAGE_URL = `/controle-infeccao/${ADMISSION}`;
 const ENDPOINT = "GET /infection-control/admission/:admissionNumber/cultures";
+const TIMELINE_ENDPOINT =
+  "GET /infection-control/antimicrobial-timeline/:admissionNumber";
 
 const hoursFromNow = (hours: number) =>
   new Date(Date.now() + hours * 60 * 60 * 1000).toISOString().slice(0, 19);
@@ -50,171 +55,493 @@ const timeline = {
   },
 };
 
+const withPrescription = (idPrescription: string | null) => ({
+  status: "success",
+  data: {
+    ...timeline.data,
+    patient: { ...timeline.data.patient, idPrescription },
+  },
+});
+
+const BLOOD_COLLECTED = hoursFromNow(-30);
+
 const culture = (overrides: Record<string, unknown>) => ({
   examName: "Hemocultura teste",
   material: "Sangue teste",
-  collectionDate: hoursFromNow(-30),
+  collectionDate: BLOOD_COLLECTED,
   releaseDate: hoursFromNow(-6),
   gram: null,
   previousResult: null,
   microorganisms: [],
+  antibiogram: [],
   ...overrides,
 });
 
-const cultures = (list: unknown[]) => ({
+const result = (
+  microorganism: string | null,
+  drug: string,
+  resultType: string,
+  text: string,
+  mic: string | null = null,
+) => ({
+  microorganism,
+  drug,
+  result: text,
+  resultType,
+  resultDetail: null,
+  mic,
+});
+
+// a collection: its exam, material and date are its first culture's
+const collection = (cultures: Record<string, any>[]) => ({
+  id: cultures[0].id,
+  examName: cultures[0].examName,
+  material: cultures[0].material,
+  collectionDate: cultures[0].collectionDate,
+  cultures,
+});
+
+const payload = (collections: unknown[]) => ({
   status: "success",
   data: {
     admissionNumber: ADMISSION,
     releasedSince: hoursFromNow(-60 * 24),
-    cultures: list,
+    collections,
+    cultures: [],
   },
 });
+
+// a blood collection: a partial report, then the final one with the
+// antibiogram of the microorganism it found
+const PARTIAL = culture({
+  id: "11",
+  releaseDate: hoursFromNow(-20),
+  gram: "Cocos gram positivos agrupados em cachos.",
+  previousResult: "Crescimento bacteriano em 14 horas.",
+});
+const FINAL = culture({
+  id: "12",
+  releaseDate: hoursFromNow(-6),
+  gram: "Cocos gram positivos agrupados em cachos.",
+  previousResult: "<div><label>RESULTADO: </label><span>Positivo</span></div>",
+  microorganisms: ["Microrganismo A teste"],
+  antibiogram: [
+    result("Microrganismo A teste", "OXACILINA", "R", "Resistente", ">2"),
+    result("Microrganismo A teste", "PENICILINA", "R", "Resistente"),
+    result("Microrganismo A teste", "CLINDAMICINA", "R", "Resistente"),
+    result("Microrganismo A teste", "VANCOMICINA", "S", "Sensível", "1"),
+    result("Microrganismo A teste", "LINEZOLIDA", "S", "Sensível"),
+  ],
+});
+const BLOOD = collection([PARTIAL, FINAL]);
+
+// an older urine collection with two microorganisms in one culture
+const URINE = collection([
+  culture({
+    id: "21",
+    examName: "Urocultura teste",
+    material: "Urina teste",
+    collectionDate: hoursFromNow(-80),
+    releaseDate: hoursFromNow(-50),
+    previousResult: "Positivo",
+    microorganisms: ["Microrganismo B teste", "Microrganismo C teste"],
+    antibiogram: [
+      result("Microrganismo B teste", "AMICACINA", "S", "Sensível", "<=2"),
+      result("Microrganismo B teste", "MEROPENEM", "R", "Resistente", ">8"),
+      result("Microrganismo C teste", "AMICACINA", "R", "Resistente"),
+      result("Microrganismo C teste", "AMPICILINA", "U", "Intermediário"),
+    ],
+  }),
+]);
+
+// a collection still waiting for the lab: no microorganism, the lab's words
+const PENDING = collection([
+  culture({
+    id: "31",
+    examName: "Cultura de ponta de cateter teste",
+    material: "Ponta de cateter teste",
+    collectionDate: hoursFromNow(-2),
+    releaseDate: hoursFromNow(-2),
+    previousResult: "Coleta aguardando liberação",
+  }),
+]);
 
 test.beforeEach(({ mockApi }) => {
   mockApi.override("GET /names/:idPatient", {
     json: { status: "success", idPatient: PATIENT_ID, name: "Maria Teste" },
   });
-  mockApi.override(
-    "GET /infection-control/antimicrobial-timeline/:admissionNumber",
-    { json: timeline },
+  mockApi.override(TIMELINE_ENDPOINT, { json: timeline });
+});
+
+const rows = (page: any) =>
+  page.getByTestId("recent-cultures").getByTestId("culture-collection");
+
+test("lists each collection with what it found", async ({ page, mockApi }) => {
+  mockApi.override(ENDPOINT, { json: payload([PENDING, BLOOD, URINE]) });
+
+  await page.goto(PAGE_URL);
+
+  await expect(
+    page.getByRole("heading", { name: "Culturas", exact: true }),
+  ).toBeVisible({ timeout: 15000 });
+  await expect(rows(page)).toHaveCount(3);
+
+  // newest collection first
+  await expect(rows(page).nth(0)).toContainText(
+    "Cultura de ponta de cateter teste",
+  );
+  await expect(rows(page).nth(1)).toContainText("Hemocultura teste");
+  await expect(rows(page).nth(2)).toContainText("Urocultura teste");
+
+  // nothing found: the lab's words
+  await expect(rows(page).nth(0)).toContainText("Coleta aguardando liberação");
+  await expect(
+    rows(page).nth(0).getByTestId("collection-organism"),
+  ).toHaveCount(0);
+
+  // the two reports of the blood collection, its microorganism and how its
+  // antibiogram reads
+  const blood = rows(page).nth(1);
+  await expect(blood).toContainText("Sangue teste");
+  await expect(blood).toContainText("2 resultados");
+  const organism = blood.getByTestId("collection-organism");
+  await expect(organism).toHaveCount(1);
+  await expect(organism).toContainText("Microrganismo A teste");
+  await expect(organism.getByTestId("organism-counts")).toHaveText("3 R · 2 S");
+  await expect(organism.getByTestId("organism-resistant")).toHaveText(
+    "R: OXACILINA, PENICILINA, CLINDAMICINA",
+  );
+  // no drug of the prescription is known without the cultures by drug
+  await expect(blood.getByTestId("organism-in-use")).toHaveCount(0);
+
+  // a microorganism per line; a result the backend could not classify is
+  // neither resistant nor susceptible
+  const urine = rows(page).nth(2).getByTestId("collection-organism");
+  await expect(urine).toHaveCount(2);
+  await expect(urine.nth(0).getByTestId("organism-counts")).toHaveText(
+    "1 R · 1 S",
+  );
+  await expect(urine.nth(1).getByTestId("organism-counts")).toHaveText(
+    "1 R · 1 outro",
   );
 });
 
-test("shows the gram, microorganism and result of each culture", async ({
+test("narrows the collections by exam, material or microorganism", async ({
   page,
   mockApi,
 }) => {
+  mockApi.override(ENDPOINT, { json: payload([PENDING, BLOOD, URINE]) });
+
+  await page.goto(PAGE_URL);
+  await expect(rows(page)).toHaveCount(3, { timeout: 15000 });
+
+  // secondary: out of sight until asked for
+  const form = page.getByTestId("collection-details-form");
+  await expect(form).toBeHidden();
+  await expect(page.getByTestId("collection-details")).toHaveText("Filtros");
+  await page.getByTestId("collection-details").click();
+  await expect(form).toContainText("Microrganismo");
+  await expect(form.getByTestId("collection-details-clear")).toHaveText(
+    "Limpar filtros",
+  );
+  await expect(form).toBeVisible();
+
+  // every microorganism of the collections, once, in alphabetical order
+  await form.getByTestId("collection-details-microorganisms").click();
+  const options = page.locator(
+    ".ant-select-dropdown:visible .ant-select-item-option",
+  );
+  await expect(options).toHaveText([
+    "Microrganismo A teste",
+    "Microrganismo B teste",
+    "Microrganismo C teste",
+  ]);
+  await options.filter({ hasText: "Microrganismo B teste" }).click();
+
+  // picking an option keeps the filters open
+  await expect(form).toBeVisible();
+  await expect(rows(page)).toHaveCount(1);
+  await expect(rows(page).nth(0)).toContainText("Urocultura teste");
+  // the button counts the filters in use
+  await expect(
+    page.getByTestId("collection-details").locator("xpath=.."),
+  ).toContainText("1");
+
+  // an exam the urine collection is not: nothing left
+  await form.getByTestId("collection-details-exams").click();
+  await page
+    .locator(".ant-select-dropdown:visible .ant-select-item-option")
+    .filter({ hasText: "Hemocultura teste" })
+    .click();
+  await expect(rows(page)).toHaveCount(0);
+  await expect(page.getByText("Nenhuma coleta neste filtro.")).toBeVisible();
+
+  await form.getByTestId("collection-details-clear").click();
+  await expect(rows(page)).toHaveCount(3);
+});
+
+test("the day of the collections in sight stays under the toolbar", async ({
+  page,
+  mockApi,
+}) => {
+  // more collections of one day than the card shows
+  const many = Array.from({ length: 12 }, (_, index) =>
+    collection([
+      culture({
+        id: `5${index}`,
+        examName: `Hemocultura ${index} teste`,
+        previousResult: "Negativo",
+      }),
+    ]),
+  );
+  mockApi.override(ENDPOINT, { json: payload(many) });
+
+  await page.goto(PAGE_URL);
+  await expect(rows(page)).toHaveCount(12, { timeout: 15000 });
+
+  const day = page.getByTestId("collection-day");
+  await expect(day).toHaveCount(1);
+  const toolbar = page
+    .getByTestId("recent-cultures")
+    .locator(".collections-toolbar");
+
+  await rows(page).last().scrollIntoViewIfNeeded();
+
+  // the day, right under the toolbar, both in sight
+  const toolbarBox = (await toolbar.boundingBox())!;
+  const dayBox = (await day.boundingBox())!;
+  const firstRow = (await rows(page).first().boundingBox())!;
+  expect(Math.abs(dayBox.y - (toolbarBox.y + toolbarBox.height))).toBeLessThan(
+    2,
+  );
+  // the first row went by under them
+  expect(firstRow.y).toBeLessThan(dayBox.y);
+});
+
+test.describe("on the timeline", () => {
+  // a course from four days ago on, so the timeline is drawn
+  const withCourse = {
+    ...timeline,
+    data: {
+      ...timeline.data,
+      courses: [
+        {
+          idDrug: 11,
+          drug: "MEROPENEM 1 g SOL INJ",
+          substance: null,
+          atbLevel: null,
+          cpoe: false,
+          status: "active",
+          start: hoursFromNow(-96),
+          end: hoursFromNow(24),
+          plannedEnd: null,
+          plannedDays: null,
+          days: 4,
+          lastIdPrescription: "199",
+          prescriptionCount: 1,
+          gaps: [],
+          regimens: [
+            {
+              start: hoursFromNow(-96),
+              end: hoursFromNow(24),
+              dose: 1,
+              measureUnit: "g",
+              frequency: "8h/8h",
+              route: "IV",
+            },
+          ],
+        },
+      ],
+    },
+  };
+  // collected long before the course: in the card, not on the timeline
+  const OLD = collection([
+    culture({
+      id: "41",
+      examName: "Hemocultura antiga teste",
+      collectionDate: hoursFromNow(-24 * 30),
+      releaseDate: hoursFromNow(-24 * 28),
+      previousResult: "Negativo",
+    }),
+  ]);
+
+  test.beforeEach(({ mockApi }) => {
+    mockApi.override(TIMELINE_ENDPOINT, { json: withCourse });
+    mockApi.override(ENDPOINT, {
+      json: payload([PENDING, BLOOD, URINE, OLD]),
+    });
+  });
+
+  test("marks each day of collection", async ({ page }) => {
+    await page.goto(PAGE_URL);
+
+    const row = page.getByTestId("timeline-cultures");
+    await expect(row).toBeVisible({ timeout: 15000 });
+    await expect(row).toContainText("3 coletas");
+    const marks = row.getByTestId("timeline-culture");
+    await expect(marks).toHaveCount(3);
+    // a red ring where a microorganism grew
+    await expect(marks.and(page.locator(".isolated"))).toHaveCount(2);
+
+    const urine = row.getByRole("button", { name: /Urocultura teste/ });
+    await urine.hover();
+    const day = page.getByTestId("timeline-culture-day");
+    await expect(day).toContainText("Urina teste");
+    await expect(day).toContainText(
+      "Microrganismo B teste, Microrganismo C teste",
+    );
+    await page.mouse.move(5, 5);
+    await expect(day).toBeHidden();
+
+    // a row of the group of the exams, even without exams: it hides with it
+    await expect(
+      page
+        .getByTestId("exam-timeline-group")
+        .locator("xpath=following-sibling::*[1]"),
+    ).toHaveAttribute("data-testid", "timeline-cultures");
+    await page.getByTestId("toggle-exams").click();
+    await expect(row).toHaveCount(0);
+    await page.getByTestId("toggle-exams").click();
+    await expect(row.getByTestId("timeline-culture")).toHaveCount(3);
+  });
+
+  test("a day of several collections is one mark, with their count", async ({
+    page,
+    mockApi,
+  }) => {
+    // three collections on one day, two hours apart, and one days later
+    const day = hoursFromNow(-72).slice(0, 10);
+    const at = (time: string, id: string, examName: string, found = false) =>
+      collection([
+        culture({
+          id,
+          examName,
+          collectionDate: `${day}T${time}`,
+          releaseDate: hoursFromNow(-6),
+          previousResult: found ? "Positivo" : "Negativo",
+          microorganisms: found ? ["Microrganismo D teste"] : [],
+        }),
+      ]);
+    mockApi.override(ENDPOINT, {
+      json: payload([
+        at("14:00:00", "63", "Hemocultura 3 teste"),
+        at("12:00:00", "62", "Hemocultura 2 teste", true),
+        at("10:00:00", "61", "Hemocultura 1 teste"),
+        PENDING,
+      ]),
+    });
+
+    await page.goto(PAGE_URL);
+
+    const row = page.getByTestId("timeline-cultures");
+    await expect(row).toContainText("4 coletas", { timeout: 15000 });
+    // a mark per day, the row one line tall whatever their number
+    const marks = row.getByTestId("timeline-culture");
+    await expect(marks).toHaveCount(2);
+    expect((await row.boundingBox())!.height).toBeLessThan(45);
+
+    const several = row.getByRole("button", { name: /^3 coletas em/ });
+    await expect(several).toHaveText("3");
+    // a red ring: one of them found a microorganism
+    await expect(several).toHaveClass(/isolated/);
+
+    // hovering lists them in the order they were collected
+    await several.hover();
+    const list = page.getByTestId("timeline-culture-day");
+    await expect(list).toContainText("3 coletas");
+    const items = list.getByRole("button");
+    await expect(items).toHaveCount(3);
+    await expect(items.nth(0)).toContainText("10:00");
+    await expect(items.nth(0)).toContainText("Hemocultura 1 teste");
+    await expect(items.nth(1)).toContainText("Microrganismo D teste");
+
+    // a click on the mark keeps the list open; one of them opens in the drawer
+    await several.click();
+    await expect(list).toBeVisible();
+    await list.getByRole("button", { name: /Hemocultura 2 teste/ }).click();
+    await expect(list).toBeHidden();
+    const drawer = page.getByRole("dialog");
+    await expect(drawer).toContainText("Hemocultura 2 teste");
+    await expect(drawer).toContainText("Microrganismo D teste");
+  });
+
+  test("opens the collection in the drawer", async ({ page }) => {
+    await page.goto(PAGE_URL);
+    await expect(rows(page)).toHaveCount(4, { timeout: 15000 });
+
+    // one the filters of the card hide still opens, among all of them
+    await page.getByTestId("collection-details").click();
+    await page.getByTestId("collection-details-microorganisms").click();
+    await page
+      .locator(".ant-select-dropdown:visible .ant-select-item-option")
+      .filter({ hasText: "Microrganismo A teste" })
+      .click();
+    await expect(rows(page)).toHaveCount(1);
+    await page.keyboard.press("Escape");
+
+    await page
+      .getByTestId("timeline-cultures")
+      .getByRole("button", { name: /Urocultura teste/ })
+      .click();
+    const drawer = page.getByRole("dialog");
+    await expect(drawer).toContainText("Urocultura teste");
+    await expect(drawer.getByTestId("culture-nav")).toContainText("3 de 4");
+  });
+});
+
+test("the lab's HTML is laid out, never run", async ({ page, mockApi }) => {
   mockApi.override(ENDPOINT, {
-    json: cultures([
-      culture({
-        id: "1",
-        gram: "Crescimento de bacilos gram negativos.",
-        previousResult:
-          '<div><label>RESULTADO: </label><span>Positivo</span></div><img src="x" onerror="window.__xss = true">',
-        microorganisms: ["Microrganismo teste"],
-      }),
-      culture({
-        id: "2",
-        examName: "Urocultura teste",
-        material: "Urina teste",
-        previousResult: "Coleta aguardando liberação",
-      }),
+    json: payload([
+      collection([
+        culture({
+          id: "1",
+          previousResult:
+            '<div><label>RESULTADO: </label><span>Negativo</span></div><img src="x" onerror="window.__xss = true">',
+        }),
+      ]),
     ]),
   });
 
   await page.goto(PAGE_URL);
 
-  const section = page.getByTestId("recent-cultures");
-  await expect(
-    page.getByRole("heading", { name: "Culturas", exact: true }),
-  ).toBeVisible({ timeout: 15000 });
-  await expect(section.getByTestId("recent-culture")).toHaveCount(2);
-
-  const positive = section
-    .getByTestId("recent-culture")
-    .filter({ hasText: "Hemocultura teste" });
-  await expect(positive.getByTestId("culture-gram")).toHaveText(
-    "Crescimento de bacilos gram negativos.",
-  );
-  await expect(positive).toContainText("Sangue teste");
-  await expect(positive).toContainText("Microrganismo teste");
-  // the lab's HTML is laid out, never run
-  await expect(positive.locator("label")).toHaveText("RESULTADO:");
-  await expect(positive).toContainText("Positivo");
-  await expect(positive.locator("img")).toHaveCount(0);
+  const row = rows(page).first();
+  await expect(row.locator("label")).toHaveText("RESULTADO:", {
+    timeout: 15000,
+  });
+  await expect(row).toContainText("Negativo");
+  await expect(row.locator("img")).toHaveCount(0);
   expect(await page.evaluate(() => (window as any).__xss)).toBeUndefined();
-
-  const pending = section
-    .getByTestId("recent-culture")
-    .filter({ hasText: "Urocultura teste" });
-  await expect(pending).toContainText("Coleta aguardando liberação");
-  await expect(pending.getByTestId("culture-gram")).toHaveCount(0);
-  // every line keeps its label, a dash when the lab has not written it
-  await expect(pending.locator(".recent-culture-texts dt")).toHaveText([
-    "Microrganismo",
-    "Gram",
-    "Resultado",
-  ]);
-  await expect(pending.locator(".recent-culture-texts dd").nth(0)).toHaveText(
-    "-",
-  );
-  await expect(pending.locator(".recent-culture-texts dd").nth(1)).toHaveText(
-    "-",
-  );
 });
 
-test("a long gram or result is cut at two lines, whole in the culture", async ({
+test("a long gram is cut at two lines, whole in the drawer", async ({
   page,
   mockApi,
 }) => {
   const longGram = `K P C - ${"Texto longo de teste do laboratório sobre o método. ".repeat(8)}`;
   mockApi.override(ENDPOINT, {
-    json: cultures([
-      culture({
-        id: "1",
-        gram: longGram,
-        previousResult: `Positivo. ${"Observação longa de teste do laboratório. ".repeat(8)}`,
-        microorganisms: ["Microrganismo A teste", "Microrganismo B teste"],
-      }),
-      culture({
-        id: "2",
-        examName: "Urocultura teste",
-        material: "Urina teste",
-        gram: "Bacilos gram negativos.",
-        previousResult: "Positivo",
-      }),
+    json: payload([
+      collection([culture({ id: "1", gram: longGram, previousResult: "-" })]),
     ]),
   });
   // beside the exams card, as with a prescription, the card is narrower
-  mockApi.override(
-    "GET /infection-control/antimicrobial-timeline/:admissionNumber",
-    {
-      json: {
-        ...timeline,
-        data: {
-          ...timeline.data,
-          patient: { ...timeline.data.patient, idPrescription: "199" },
-        },
-      },
-    },
-  );
+  mockApi.override(TIMELINE_ENDPOINT, { json: withPrescription("199") });
 
   await page.goto(PAGE_URL);
 
-  const long = page
-    .getByTestId("recent-cultures")
-    .getByTestId("recent-culture")
-    .first();
-  const gram = long.getByTestId("culture-gram");
-  await expect(gram).toHaveAttribute("title", longGram);
-  const lines = await gram.evaluate((element) => {
+  const gram = rows(page).first().getByTestId("culture-gram");
+  await expect(gram).toHaveAttribute("title", longGram, { timeout: 15000 });
+  const lines = await gram.evaluate((element: HTMLElement) => {
     const lineHeight = parseFloat(getComputedStyle(element).lineHeight);
     return Math.round(element.clientHeight / lineHeight);
   });
   expect(lines).toBe(2);
-  expect(
-    await gram.evaluate(
-      (element) => element.scrollHeight > element.clientHeight,
-    ),
-  ).toBe(true);
 
-  mockApi.override(
-    "GET /infection-control/admission/:admissionNumber/cultures/:idCulture",
-    {
-      json: {
-        status: "success",
-        data: {
-          admissionNumber: ADMISSION,
-          examName: "Hemocultura teste",
-          material: "Sangue teste",
-          cultures: [culture({ id: "1", gram: longGram, antibiogram: [] })],
-        },
-      },
-    },
-  );
-  await long.click();
+  await rows(page)
+    .first()
+    .getByRole("button", { name: "Ver detalhes" })
+    .click();
   await expect(
-    page.getByTestId("culture-antibiogram").getByTestId("culture-gram"),
+    page.getByTestId("culture-history").getByTestId("culture-gram"),
   ).toHaveText(longGram);
 });
 
@@ -240,9 +567,7 @@ test("a failure stays in its section and is retried alone", async ({
   // the rest of the page is there
   await expect(page.getByText("64 kg")).toBeVisible();
 
-  mockApi.override(ENDPOINT, {
-    json: cultures([culture({ id: "1", gram: "Cocos gram positivos." })]),
-  });
+  mockApi.override(ENDPOINT, { json: payload([BLOOD]) });
   const timelineRequests = mockApi.requests.filter((r) =>
     r.path.includes("antimicrobial-timeline"),
   ).length;
@@ -252,344 +577,219 @@ test("a failure stays in its section and is retried alone", async ({
     .getByRole("button", { name: "Tentar novamente" })
     .click();
 
-  await expect(page.getByTestId("culture-gram")).toHaveText(
-    "Cocos gram positivos.",
-  );
+  await expect(rows(page)).toHaveCount(1);
   expect(
     mockApi.requests.filter((r) => r.path.includes("antimicrobial-timeline"))
       .length,
   ).toBe(timelineRequests);
 });
 
-const HISTORY_ENDPOINT =
-  "GET /infection-control/admission/:admissionNumber/cultures/:idCulture";
-
-const LATEST = culture({
-  id: "31",
-  previousResult: "Coleta aguardando liberação",
-});
-
-const history = (list: unknown[]) => ({
-  status: "success",
-  data: {
-    admissionNumber: ADMISSION,
-    examName: "Hemocultura teste",
-    material: "Sangue teste",
-    cultures: list,
-  },
-});
-
-// a culture of the history: it carries its antibiogram, empty while pending
-const collection = (
-  base: Record<string, unknown>,
-  antibiogram: unknown[] = [],
-) => ({ ...base, antibiogram });
-
-const result = (
-  microorganism: string | null,
-  drug: string,
-  resultType: string,
-  text: string,
-  mic: string | null = null,
-) => ({
-  microorganism,
-  drug,
-  result: text,
-  resultType,
-  resultDetail: null,
-  mic,
-});
-
-const RELEASED = culture({
-  id: "22",
-  collectionDate: hoursFromNow(-200),
-  releaseDate: hoursFromNow(-150),
-  gram: "Crescimento de bacilos gram negativos.",
-  previousResult: "<div><label>RESULTADO: </label><span>Positivo</span></div>",
-  microorganisms: ["Microrganismo teste"],
-});
-
-test.describe("antibiogram and history of a culture", () => {
-  test.beforeEach(({ mockApi }) => {
-    mockApi.override(ENDPOINT, { json: cultures([LATEST]) });
+test("a backend without collections lists the latest culture of each exam", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override(ENDPOINT, {
+    json: {
+      status: "success",
+      data: {
+        admissionNumber: ADMISSION,
+        releasedSince: hoursFromNow(-60 * 24),
+        cultures: [
+          {
+            id: "1",
+            examName: "Hemocultura teste",
+            material: "Sangue teste",
+            collectionDate: BLOOD_COLLECTED,
+            releaseDate: hoursFromNow(-6),
+            gram: null,
+            previousResult: "Positivo",
+            microorganisms: ["Microrganismo A teste"],
+          },
+        ],
+      },
+    },
   });
 
-  test("a row opens its antibiogram, and its other collections a tab away", async ({
+  await page.goto(PAGE_URL);
+
+  await expect(rows(page)).toHaveCount(1, { timeout: 15000 });
+  await expect(rows(page).first()).toContainText("Microrganismo A teste");
+  await expect(rows(page).first()).toContainText("Sem antibiograma liberado");
+});
+
+test.describe("details of a collection", () => {
+  test.beforeEach(({ mockApi }) => {
+    mockApi.override(ENDPOINT, { json: payload([PENDING, BLOOD, URINE]) });
+  });
+
+  test("open in a drawer with each report and the antibiogram", async ({
     page,
-    mockApi,
   }) => {
-    const latest = {
-      ...LATEST,
-      previousResult: "Positivo",
-      microorganisms: ["Microrganismo A teste", "Microrganismo B teste"],
-    };
-    mockApi.override(ENDPOINT, { json: cultures([latest]) });
-    mockApi.override(HISTORY_ENDPOINT, {
-      json: history([
-        collection(latest, [
-          result("Microrganismo A teste", "DROGA A", "R", "Resistente", ">=32"),
-          result("Microrganismo A teste", "DROGA B", "S", "Sensível", "<=0.5"),
-          result("Microrganismo B teste", "DROGA C", "U", "Indeterminado"),
-        ]),
-        collection(RELEASED, [
-          result("Microrganismo teste", "DROGA D", "S", "Sensível"),
-        ]),
-        collection(
-          culture({
-            id: "13",
-            collectionDate: hoursFromNow(-2000),
-            releaseDate: hoursFromNow(-1950),
-            previousResult: "Negativo",
-          }),
-        ),
-      ]),
-    });
-
     await page.goto(PAGE_URL);
-    const row = page
-      .getByTestId("recent-cultures")
-      .getByTestId("recent-culture");
-    await expect(row).toHaveCount(1, { timeout: 15000 });
 
-    const historyRequest = page.waitForRequest((r) =>
-      r.url().endsWith(`/infection-control/admission/${ADMISSION}/cultures/31`),
+    await rows(page)
+      .nth(1)
+      .getByRole("button", { name: "Ver detalhes" })
+      .click({ timeout: 15000 });
+
+    const drawer = page.getByRole("dialog");
+    await expect(drawer).toContainText("Hemocultura teste");
+    await expect(drawer).toContainText("Sangue teste");
+
+    const reports = drawer.getByTestId("collection-culture");
+    await expect(reports).toHaveCount(2);
+    // in the order the lab released them
+    await expect(reports.nth(0)).toContainText("Resultado 1 de 2");
+    await expect(reports.nth(0)).toContainText("Crescimento bacteriano");
+    await expect(reports.nth(0)).toContainText("Nenhum isolado");
+    await expect(reports.nth(0).getByTestId("culture-antibiogram")).toHaveCount(
+      0,
     );
-    await row.click();
-    await historyRequest;
 
-    const modal = page.getByTestId("culture-history");
-    await expect(modal).toBeVisible();
+    const antibiogram = reports.nth(1).getByTestId("culture-antibiogram");
     await expect(
-      modal.getByRole("heading", { name: "Hemocultura teste" }),
+      antibiogram.getByRole("columnheader", { name: "Microrganismo A teste" }),
     ).toBeVisible();
-    await expect(modal).toContainText("Sangue teste");
-
-    // the antibiogram of the clicked culture comes first, by microorganism
-    await expect(
-      modal.getByRole("tab", { name: "Antibiograma" }),
-    ).toHaveAttribute("aria-selected", "true");
-    const antibiogram = modal.getByTestId("culture-antibiogram");
-    await expect(antibiogram).toContainText("Positivo");
-    const groups = antibiogram.getByTestId("antibiogram-microorganism");
-    await expect(groups).toHaveCount(2);
-    await expect(groups.nth(0).getByRole("heading")).toHaveText(
-      "Microrganismo A teste",
-    );
-    const resistant = groups
-      .nth(0)
-      .locator("tr")
-      .filter({ hasText: "DROGA A" });
-    await expect(resistant.locator(".antibiogram-result")).toHaveText(
-      "Resistente",
-    );
-    await expect(resistant).toContainText(">=32");
-    await expect(
-      groups.nth(0).locator("tr").filter({ hasText: "DROGA B" }),
-    ).toContainText("<=0.5");
-    await expect(groups.nth(1)).toContainText("Indeterminado");
-
-    // every collection of the exam and material, the open one standing out
-    await modal.getByRole("tab", { name: "Coletas (3)" }).click();
-    const rows = modal
-      .getByTestId("culture-collections")
-      .locator("tbody tr.ant-table-row");
-    await expect(rows).toHaveCount(3);
-    await expect(rows.nth(0)).toHaveClass(/culture-current/);
-    await expect(rows.nth(1)).not.toHaveClass(/culture-current/);
-    await expect(rows.nth(1).getByTestId("culture-gram")).toHaveText(
-      "Crescimento de bacilos gram negativos.",
-    );
-    await expect(rows.nth(1)).toContainText("Microrganismo teste");
-    await expect(rows.nth(1).locator("label")).toHaveText("RESULTADO:");
-    await expect(rows.nth(2)).toContainText("Negativo");
-
-    // a previous collection opens its own antibiogram, with no other request
-    const cultureRequests = () =>
-      mockApi.requests.filter((r) => r.path.includes("/cultures")).length;
-    const requests = cultureRequests();
-    await rows.nth(1).click();
-    await expect(
-      modal.getByRole("tab", { name: "Antibiograma" }),
-    ).toHaveAttribute("aria-selected", "true");
-    await expect(antibiogram.getByTestId("culture-gram")).toHaveText(
-      "Crescimento de bacilos gram negativos.",
-    );
-    await expect(groups).toHaveCount(1);
-    await expect(groups.nth(0)).toContainText("DROGA D");
-    expect(cultureRequests()).toBe(requests);
-
-    await modal.getByRole("tab", { name: "Coletas (3)" }).click();
-    await expect(rows.nth(1)).toHaveClass(/culture-current/);
-    await expect(rows.nth(0)).not.toHaveClass(/culture-current/);
+    const oxacillin = antibiogram.getByRole("row", { name: /OXACILINA/ });
+    await expect(oxacillin).toContainText("Resistente");
+    await expect(oxacillin).toContainText("CIM >2");
 
     await page.keyboard.press("Escape");
-    await expect(modal).toBeHidden();
+    await expect(drawer).toBeHidden();
   });
 
-  test("a pending culture points to the newest released antibiogram", async ({
-    page,
-    mockApi,
-  }) => {
-    mockApi.override(HISTORY_ENDPOINT, {
-      json: history([
-        collection(LATEST),
-        collection(RELEASED, [
-          result("Microrganismo teste", "DROGA D", "S", "Sensível"),
-        ]),
-      ]),
-    });
-
+  test("a microorganism per column", async ({ page }) => {
     await page.goto(PAGE_URL);
-    await page
-      .getByTestId("recent-cultures")
-      .getByTestId("recent-culture")
-      .click({ timeout: 15000 });
+
+    await rows(page).nth(2).click({ timeout: 15000 });
 
     const antibiogram = page
-      .getByTestId("culture-history")
+      .getByRole("dialog")
       .getByTestId("culture-antibiogram");
-    await expect(antibiogram).toContainText("Coleta aguardando liberação");
+    await expect(antibiogram.getByRole("columnheader")).toHaveText([
+      "Medicamento",
+      "Microrganismo B teste",
+      "Microrganismo C teste",
+    ]);
+    const amikacin = antibiogram.getByRole("row", { name: /AMICACINA/ });
+    await expect(amikacin.getByRole("cell")).toHaveText([
+      "AMICACINA",
+      "SensívelCIM <=2",
+      "Resistente",
+    ]);
+    // not tested against the other microorganism
     await expect(
-      antibiogram.getByText("Nenhum antibiograma liberado para esta coleta."),
-    ).toBeVisible();
-
-    await antibiogram
-      .getByRole("button", { name: /Ver o antibiograma da coleta de/ })
-      .click();
-
-    await expect(
-      antibiogram.getByTestId("antibiogram-microorganism"),
-    ).toContainText("DROGA D");
-    await expect(
-      antibiogram.getByText("Nenhum antibiograma liberado para esta coleta."),
-    ).toHaveCount(0);
+      antibiogram.getByRole("row", { name: /MEROPENEM/ }).getByRole("cell"),
+    ).toHaveText(["MEROPENEM", "ResistenteCIM >8", "—"]);
   });
 
-  test("moves to the next and previous culture of the card", async ({
-    page,
-    mockApi,
-  }) => {
-    const urine = culture({
-      id: "41",
-      examName: "Urocultura teste",
-      material: "Urina teste",
-      collectionDate: hoursFromNow(-60),
-      previousResult: "Negativo",
-    });
-    mockApi.override(ENDPOINT, { json: cultures([LATEST, urine]) });
-    mockApi.override(HISTORY_ENDPOINT, {
-      json: history([collection(LATEST)]),
-    });
-
+  test("moves through the collections of the list", async ({ page }) => {
     await page.goto(PAGE_URL);
-    await page
-      .getByTestId("recent-cultures")
-      .getByTestId("recent-culture")
-      .first()
-      .click({ timeout: 15000 });
 
-    const modal = page.getByTestId("culture-history");
-    // in the footer, out of the modal's body
+    await rows(page).first().click({ timeout: 15000 });
+
+    const drawer = page.getByRole("dialog");
+    const nav = drawer.getByTestId("culture-nav");
+    await expect(nav).toContainText("1 de 3");
+    await expect(
+      nav.getByRole("button", { name: "Coleta anterior" }),
+    ).toBeDisabled();
+
+    await nav.getByRole("button", { name: "Próxima coleta" }).click();
+    await expect(nav).toContainText("2 de 3");
+    await expect(drawer).toContainText("Hemocultura teste");
+
+    await page.keyboard.press("ArrowRight");
+    await expect(nav).toContainText("3 de 3");
+    await expect(drawer).toContainText("Urocultura teste");
+    await expect(
+      nav.getByRole("button", { name: "Próxima coleta" }),
+    ).toBeDisabled();
+
+    await page.keyboard.press("ArrowLeft");
+    await expect(nav).toContainText("2 de 3");
+  });
+
+  test("moves through the filtered collections only", async ({ page }) => {
+    await page.goto(PAGE_URL);
+
+    // the collections of two of the three microorganisms
+    await page.getByTestId("collection-details").click({ timeout: 15000 });
+    await page.getByTestId("collection-details-microorganisms").click();
+    const options = page.locator(
+      ".ant-select-dropdown:visible .ant-select-item-option",
+    );
+    await options.filter({ hasText: "Microrganismo A teste" }).click();
+    await options.filter({ hasText: "Microrganismo B teste" }).click();
+    await expect(rows(page)).toHaveCount(2);
+    await page.keyboard.press("Escape");
+    await rows(page).first().click();
+
     const nav = page.getByRole("dialog").getByTestId("culture-nav");
     await expect(nav).toContainText("1 de 2");
-    await expect(
-      nav.getByRole("button", { name: "Cultura anterior" }),
-    ).toBeDisabled();
-
-    // the next one opens on its own antibiogram, even from the other tab
-    await modal.getByRole("tab", { name: "Coletas (1)" }).click();
-    mockApi.override(HISTORY_ENDPOINT, { json: history([collection(urine)]) });
-    const nextRequest = page.waitForRequest((r) =>
-      r.url().endsWith(`/infection-control/admission/${ADMISSION}/cultures/41`),
-    );
-    await nav.getByRole("button", { name: "Próxima cultura" }).click();
-    await nextRequest;
-
-    await expect(
-      modal.getByRole("heading", { name: "Urocultura teste" }),
-    ).toBeVisible();
-    await expect(modal).toContainText("Urina teste");
-    await expect(nav).toContainText("2 de 2");
-    await expect(
-      nav.getByRole("button", { name: "Próxima cultura" }),
-    ).toBeDisabled();
-    await expect(
-      modal.getByRole("tab", { name: "Antibiograma" }),
-    ).toHaveAttribute("aria-selected", "true");
-    await expect(modal.getByTestId("culture-antibiogram")).toContainText(
-      "Negativo",
-    );
-
-    mockApi.override(HISTORY_ENDPOINT, { json: history([collection(LATEST)]) });
-    await nav.getByRole("button", { name: "Cultura anterior" }).click();
-    await expect(
-      modal.getByRole("heading", { name: "Hemocultura teste" }),
-    ).toBeVisible();
-    await expect(nav).toContainText("1 de 2");
   });
+});
 
-  test("no navigation with a single culture", async ({ page }) => {
-    await page.goto(PAGE_URL);
-    await page
-      .getByTestId("recent-cultures")
-      .getByTestId("recent-culture")
-      .click({ timeout: 15000 });
+test.describe("drugs of the prescription", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
 
-    await expect(page.getByTestId("culture-history")).toBeVisible();
-    await expect(page.getByTestId("culture-nav")).toHaveCount(0);
-  });
-
-  test("the keyboard opens it too", async ({ page }) => {
-    await page.goto(PAGE_URL);
-    const row = page
-      .getByTestId("recent-cultures")
-      .getByTestId("recent-culture");
-    await expect(row).toHaveCount(1, { timeout: 15000 });
-
-    await row.focus();
-    await page.keyboard.press("Enter");
-
-    await expect(page.getByTestId("culture-history")).toBeVisible();
-  });
-
-  test("a failed load says so and retries", async ({ page, mockApi }) => {
-    mockApi.override(HISTORY_ENDPOINT, {
-      status: 500,
-      json: { status: "error" },
+  test.beforeEach(async ({ page, mockApi }) => {
+    await loginWithFeatures(page, mockApi, ["CULTURE"]);
+    mockApi.override(TIMELINE_ENDPOINT, { json: withPrescription("199") });
+    mockApi.override(ENDPOINT, { json: payload([PENDING, BLOOD, URINE]) });
+    // the cultures by drug tell the drugs of the prescription, by the lab's
+    // name of the drug
+    mockApi.override("GET /prescriptions/:id/cultures", {
+      json: {
+        status: "success",
+        data: [
+          { drug: "Oxacilina", prescribed: true, items: [] },
+          { drug: "AMICACINA", prescribed: true, items: [] },
+          { drug: "VANCOMICINA", prescribed: false, items: [] },
+        ],
+      },
     });
+  });
 
+  test("come first, a resistant one flagged", async ({ page }) => {
     await page.goto(PAGE_URL);
-    await page
-      .getByTestId("recent-cultures")
-      .getByTestId("recent-culture")
-      .click({ timeout: 15000 });
 
-    const modal = page.getByTestId("culture-history");
-    await expect(
-      modal.getByText("Não foi possível carregar as coletas desta cultura."),
-    ).toBeVisible();
+    const blood = rows(page).nth(1);
+    await expect(blood.getByTestId("organism-in-use")).toHaveText(
+      "OXACILINA Rem uso",
+      { timeout: 15000 },
+    );
+    await expect(blood).toHaveClass(/resistant-in-use/);
+    // the other resistances, without the drug in use
+    await expect(blood.getByTestId("organism-resistant")).toHaveText(
+      "R: PENICILINA, CLINDAMICINA",
+    );
+    await expect(rows(page).nth(0)).not.toHaveClass(/resistant-in-use/);
 
-    mockApi.override(HISTORY_ENDPOINT, {
-      json: history([collection(LATEST)]),
-    });
-    await modal.getByRole("button", { name: "Tentar novamente" }).click();
+    // resistant for one microorganism of the urine, susceptible for the other
+    const urine = rows(page).nth(2).getByTestId("collection-organism");
+    await expect(urine.nth(0).getByTestId("organism-in-use")).toHaveText(
+      "AMICACINA Sem uso",
+    );
+    await expect(urine.nth(1).getByTestId("organism-in-use")).toHaveText(
+      "AMICACINA Rem uso",
+    );
 
-    await expect(modal.getByTestId("culture-antibiogram")).toBeVisible();
-    await expect(modal.getByRole("tab", { name: "Coletas (1)" })).toBeVisible();
+    // first in the antibiogram too
+    await rows(page).nth(1).click();
+    const antibiogram = page
+      .getByRole("dialog")
+      .getByTestId("culture-antibiogram");
+    await expect(antibiogram).toContainText(
+      "Medicamento em uso com resultado resistente",
+    );
+    const first = antibiogram.locator("tbody tr.ant-table-row").first();
+    await expect(first).toContainText("OXACILINAem uso");
+    await expect(first).toHaveClass(/resistant-in-use/);
   });
 });
 
 test.describe("by drug", () => {
-  const TIMELINE_ENDPOINT =
-    "GET /infection-control/antimicrobial-timeline/:admissionNumber";
-  const withPrescription = (idPrescription: string | null) => ({
-    status: "success",
-    data: {
-      ...timeline.data,
-      patient: { ...timeline.data.patient, idPrescription },
-    },
-  });
-
   test("not offered without the culture feature", async ({ page, mockApi }) => {
     mockApi.override(TIMELINE_ENDPOINT, { json: withPrescription("199") });
 
@@ -660,14 +860,14 @@ test.describe("by drug", () => {
       await page.goto(PAGE_URL);
       await culturesRequest;
 
-      // one card: the summary by exam first, the cultures by drug a tab away.
+      // one card: the list by exam first, the cultures by drug a tab away.
       // They are loaded with the page, so the tab flags the resistant drug in
       // use before it is opened
       const byDrug = page.getByTestId("cultures-by-drug");
       await expect(page.getByTestId("recent-cultures")).toBeVisible({
         timeout: 15000,
       });
-      await expect(page.getByRole("tab", { name: "Resumo" })).toHaveAttribute(
+      await expect(page.getByRole("tab", { name: "Lista" })).toHaveAttribute(
         "aria-selected",
         "true",
       );

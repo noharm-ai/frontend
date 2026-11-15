@@ -9,6 +9,7 @@ import {
   IFollowUpPending,
 } from "../InfectionControlSlice";
 import { formatRegimen } from "../timeline";
+import { ExamResultMatches } from "../ExamResultMatches/ExamResultMatches";
 
 interface InvalidationReasonProps {
   pending: IFollowUpPending;
@@ -18,7 +19,8 @@ interface InvalidationReasonProps {
 }
 
 /**
- * Why the evaluation on record no longer holds: when its validity ended, or
+ * Why the evaluation on record no longer holds: when its validity ended,
+ * which exam results met a rule it turned on, which cultures came out, or
  * that the posology changed, from what to what
  */
 export function InvalidationReason({
@@ -36,6 +38,36 @@ export function InvalidationReason({
             pending.details?.validUntil ?? evaluation.validUntil,
           ),
         })}
+      </li>
+    );
+  }
+
+  if (pending.type === InfectionControlPendingTypeEnum.EXAM_RESULT) {
+    return (
+      <li>
+        {t("infectionControl.review.invalidatedExam")}
+        <ExamResultMatches matches={pending.details?.matches} />
+      </li>
+    );
+  }
+
+  if (pending.type === InfectionControlPendingTypeEnum.CULTURE_RESULT) {
+    return (
+      <li data-testid="invalidated-culture">
+        {t("infectionControl.review.invalidatedCulture")}
+        <ul>
+          {(pending.details?.cultures ?? []).map((culture) => (
+            <li
+              key={`${culture.material}-${culture.microorganism}-${culture.releaseDate}`}
+            >
+              {[culture.material, culture.microorganism]
+                .filter(Boolean)
+                .join(" · ") ||
+                t("infectionControl.review.cultureUnnamed")}{" "}
+              ({formatDateTime(culture.releaseDate)})
+            </li>
+          ))}
+        </ul>
       </li>
     );
   }

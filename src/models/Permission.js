@@ -75,7 +75,10 @@ export default class Permission {
   static READ_PROTOCOLS = "READ_PROTOCOLS";
   static WRITE_PROTOCOLS = "WRITE_PROTOCOLS";
 
+  // READ_NAV views navigation data; WRITE_NAV acts on it (SOAP, signature,
+  // care plan)
   static READ_NAV = "READ_NAV";
+  static WRITE_NAV = "WRITE_NAV";
   static NAV_COPY_PATIENT = "NAV_COPY_PATIENT";
 
   static WRITE_CUSTOM_FORMS = "WRITE_CUSTOM_FORMS";

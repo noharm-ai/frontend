@@ -2,7 +2,12 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { Tag } from "antd";
-import { PlusOutlined, EditOutlined, CopyOutlined } from "@ant-design/icons";
+import {
+  PlusOutlined,
+  EditOutlined,
+  CopyOutlined,
+  EyeOutlined,
+} from "@ant-design/icons";
 import { Space } from "antd";
 
 import { useAppDispatch, useAppSelector } from "src/store";
@@ -13,6 +18,8 @@ import notification from "components/notification";
 import Tooltip from "src/components/Tooltip";
 import { PageCard } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
+import Permission from "models/Permission";
+import PermissionService from "services/PermissionService";
 
 import { fetchCustomForms, reset } from "./CustomFormsSlice";
 
@@ -24,6 +31,8 @@ function MemoryCustomForms() {
     (state: any) => state.memoryCustomForms.forms,
   );
   const status = useAppSelector((state: any) => state.memoryCustomForms.status);
+  // READ_NAV alone (NAVIGATION_VIEWER) opens the forms read-only
+  const canWrite = PermissionService().has(Permission.WRITE_CUSTOM_FORMS);
 
   useEffect(() => {
     dispatch(fetchCustomForms());
@@ -80,17 +89,23 @@ function MemoryCustomForms() {
       align: "center" as const,
       render: (_: any, record: any) => (
         <Space>
-          <Tooltip title="Duplicar">
+          {canWrite && (
+            <Tooltip title="Duplicar">
+              <Button
+                icon={<CopyOutlined />}
+                onClick={() =>
+                  navigate(`${basePath}/new?copyFrom=${record.key}`)
+                }
+              />
+            </Tooltip>
+          )}
+          <Tooltip title={canWrite ? "Editar" : "Visualizar"}>
             <Button
-              icon={<CopyOutlined />}
-              onClick={() => navigate(`${basePath}/new?copyFrom=${record.key}`)}
+              type="primary"
+              icon={canWrite ? <EditOutlined /> : <EyeOutlined />}
+              onClick={() => navigate(`${basePath}/${record.key}`)}
             />
           </Tooltip>
-          <Button
-            type="primary"
-            icon={<EditOutlined />}
-            onClick={() => navigate(`${basePath}/${record.key}`)}
-          />
         </Space>
       ),
     },
@@ -100,19 +115,25 @@ function MemoryCustomForms() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title" data-kb="customForms.title">Formulários de evolução</h1>
+          <h1 className="page-header-title" data-kb="customForms.title">
+            Formulários de evolução
+          </h1>
           <div className="page-header-legend">
-            Crie e edite formulários de evolução
+            {canWrite
+              ? "Crie e edite formulários de evolução"
+              : "Consulte os formulários de evolução"}
           </div>
         </div>
         <div className="page-header-actions">
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={() => navigate(`${basePath}/new`)}
-          >
-            Adicionar formulário
-          </Button>
+          {canWrite && (
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={() => navigate(`${basePath}/new`)}
+            >
+              Adicionar formulário
+            </Button>
+          )}
         </div>
       </PageHeader>
 

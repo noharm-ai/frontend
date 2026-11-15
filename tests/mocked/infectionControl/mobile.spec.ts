@@ -296,5 +296,23 @@ test.describe("the review", () => {
     expect(save.x + save.width).toBeLessThanOrEqual(
       dialogBox.x + dialogBox.width,
     );
+
+    // saving with a drug unfinished goes back to it, marked in the one-line
+    // rail, what is missing in sight
+    await dialog.getByRole("button", { name: "Registrar revisão" }).click();
+    const drug = dialog.getByTestId("review-drug");
+    await expect(drug.getByRole("heading", { level: 3 })).toHaveText(
+      "MEROPENEM 1 g SOL INJ",
+    );
+    await expect(
+      rail
+        .getByTestId("review-rail-drug")
+        .first()
+        .getByTestId("review-rail-error"),
+    ).toBeInViewport();
+    await expect(drug.getByTestId("review-field-error")).toHaveText([
+      "Selecione uma avaliação",
+    ]);
+    await expect(drug.getByTestId("review-field-error")).toBeInViewport();
   });
 });

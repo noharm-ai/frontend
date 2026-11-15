@@ -170,6 +170,13 @@ interface IAntimicrobialTimelineResponse extends IAntimicrobialTimeline {
   followUp: IFollowUp | null;
 }
 
+// a culture released after an evaluation watching cultures (CULTURE_RESULT)
+export interface IReleasedCulture {
+  material: string | null;
+  microorganism: string | null;
+  releaseDate: string;
+}
+
 // an open reason that keeps the admission pending
 export interface IFollowUpPending {
   id: string;
@@ -186,8 +193,101 @@ export interface IFollowUpPending {
     // POSOLOGY_CHANGED: the posology evaluated and the one prescribed now
     evaluated?: IEvaluationPosology;
     current?: IEvaluationPosology;
+    // EXAM_RESULT: every rule the exam results met
+    matches?: IExamTriggerMatch[];
+    // CULTURE_RESULT: the latest release and the new cultures, one per
+    // material and microorganism, newest first
+    releaseDate?: string;
+    cultures?: IReleasedCulture[];
   } | null;
   createdAt: string;
+}
+
+/**
+ * An exam trigger rule of the schema (schema params
+ * infectionControl.examTriggers): a review turns it on per drug, and an exam
+ * result meeting every condition it sets sends the patient back to pending
+ * (EXAM_RESULT). Comparisons are strict.
+ */
+export interface IExamTriggerCondition {
+  id: string;
+  name: string;
+  // the exam of the catalog (IExamTriggerExam): a NoHarm exam identifier
+  // (tp_exam_ref), or ckd / ckd21, the eGFR the backend calculates from the
+  // creatinine
+  examRef: string;
+  // above / below are strict (> <), at least / at most inclusive (>= <=)
+  valueAbove: number | null;
+  valueAtLeast: number | null;
+  valueBelow: number | null;
+  valueAtMost: number | null;
+  // signed percent from the value at review time: 30 is a rise of more than
+  // 30%, -25 a fall of more than 25%
+  variationAbove: number | null;
+  variationAtLeast: number | null;
+  variationBelow: number | null;
+  variationAtMost: number | null;
+  // from this day of the course on (4: from D4)
+  fromCourseDay: number | null;
+}
+
+export interface IExamTriggerRule extends IExamTriggerCondition {
+  // turned on for a drug evaluated for the first time
+  enabledByDefault: boolean;
+  // false when the schema has no results for its exam: it never fires
+  available: boolean;
+}
+
+// an exam of the catalog (public.exame) a rule is set on
+export interface IExamTriggerExam {
+  examRef: string;
+  name: string;
+  // false when the schema doesn't configure it (no active exam mapped to it,
+  // or no creatinine for the eGFRs)
+  available: boolean;
+}
+
+// the schema's rules, set by its users, and the catalog of exams
+export interface IExamTriggers {
+  rules: IExamTriggerRule[];
+  exams: IExamTriggerExam[];
+  // asked for an admission: its patient's latest result of each exam the
+  // schema has (null without one), the baseline a review saved now keeps
+  current?: Record<string, IExamTriggerResult | null>;
+}
+
+// a rule as saved: a new one has no id yet, the backend gives it one
+export type IExamTriggerRulePayload = Omit<
+  IExamTriggerRule,
+  "id" | "available"
+> & { id?: string };
+
+// an exam result a rule is compared with
+export interface IExamTriggerResult {
+  examType: string;
+  date: string;
+  value: number;
+  unit: string | null;
+  // the creatinine an eGFR (ckd, ckd21) is calculated from
+  rawValue?: number | null;
+  rawUnit?: string | null;
+}
+
+// a rule an evaluation turned on, copied at review time with the result of
+// then; a null baseline (no result at review time) never fires a variation
+export interface IEvaluationExamTrigger extends IExamTriggerCondition {
+  baseline: IExamTriggerResult | null;
+}
+
+// a rule an exam result met (EXAM_RESULT)
+export interface IExamTriggerMatch {
+  id: string;
+  name: string;
+  examRef: string;
+  result: IExamTriggerResult;
+  baseline: IExamTriggerResult | null;
+  // percent from the baseline, null without one
+  variation: number | null;
 }
 
 // how the posology was when the drug was evaluated
@@ -252,6 +352,9 @@ export interface IAntimicrobialEvaluation {
   // optional reasons it sends the patient back to pending for
   // (InfectionControlPendingTypeEnum)
   triggers: number[];
+  // the exam trigger rules it turned on, with their baselines; absent in
+  // evaluations made before they existed
+  examTriggers?: IEvaluationExamTrigger[];
   // AntimicrobialEvaluationStatusEnum
   status: number;
   closedAt: string | null;
@@ -319,6 +422,8 @@ export interface IReviewEvaluationPayload {
   validFrom: string | null;
   validUntil: string;
   triggers: number[];
+  // the ids of the exam trigger rules turned on
+  examTriggers: string[];
 }
 
 // a type a clinical note is given (tipoevolucao)
@@ -329,7 +434,8 @@ export interface IClinicalNoteType {
 
 // the clinical note a review writes in the patient's record
 export interface IReviewClinicalNotePayload {
-  idClinicalNoteType: string;
+  // null when the schema has no clinical note type
+  idClinicalNoteType: string | null;
   text: string;
 }
 
@@ -343,9 +449,9 @@ export interface IReviewPayload {
 }
 
 /**
- * The latest culture of an exam and material of the patient, released in the
- * last 60 days (backend services/infection_control/recent_cultures_service.py).
- * The latest is the newest collection, so it may still be waiting for the lab
+ * A culture of the patient released in the last 60 days (backend
+ * services/infection_control/recent_cultures_service.py). A collection still
+ * waiting for the lab gets a release date too, about the collection time
  */
 export interface IRecentCulture {
   id: string;
@@ -363,6 +469,11 @@ export interface IRecentCulture {
 export interface IRecentCultures {
   admissionNumber: number;
   releasedSince: string;
+  // every collection, newest first: what the culture card lists. Missing
+  // from a backend older than them (cultureCollections.collectionsOf)
+  collections?: ICultureCollection[];
+  // the latest culture of each exam and material, newest collection first:
+  // what the report and the review's clinical note list
   cultures: IRecentCulture[];
 }
 
@@ -386,12 +497,14 @@ export interface ICultureWithAntibiogram extends IRecentCulture {
   antibiogram: IAntibiogramResult[];
 }
 
-// every culture of the patient with the exam and material of one culture,
-// each with its antibiogram
-export interface ICultureHistory {
-  admissionNumber: number;
+// an exam and material collected at one time, with each of its cultures (a
+// bottle, a partial and a final report...) in the order the lab released them
+export interface ICultureCollection {
+  // the first culture of the collection
+  id: string;
   examName: string | null;
   material: string | null;
+  collectionDate: string | null;
   cultures: ICultureWithAntibiogram[];
 }
 
@@ -428,6 +541,16 @@ interface IInfectionControlSlice {
     status: Status;
     list: IClinicalNoteType[];
   };
+  // the schema's exam trigger rules and the exams they can be set on,
+  // loaded each time a review or the settings open
+  examTriggers: {
+    status: Status;
+    list: IExamTriggerRule[];
+    exams: IExamTriggerExam[];
+    // the patient's current result of each exam, by its reference
+    current: Record<string, IExamTriggerResult | null>;
+    saveStatus: Status;
+  };
   // the drugs found for a substitute, by the latest search
   substituteSearch: {
     status: Status;
@@ -438,15 +561,6 @@ interface IInfectionControlSlice {
   cultures: {
     status: Status;
     data: IRecentCultures | null;
-    requestId: string | null;
-  };
-  // the antibiogram of a row of the recent cultures and the other collections
-  // of its exam and material, opened on click
-  cultureHistory: {
-    // the culture whose row was clicked, null while it is closed
-    culture: IRecentCulture | null;
-    status: Status;
-    data: ICultureHistory | null;
     requestId: string | null;
   };
   // the history of every exam, for the exams the antimicrobial timeline
@@ -483,18 +597,19 @@ const initialState: IInfectionControlSlice = {
     status: "idle",
     list: [],
   },
+  examTriggers: {
+    status: "idle",
+    list: [],
+    exams: [],
+    current: {},
+    saveStatus: "idle",
+  },
   substituteSearch: {
     status: "idle",
     list: [],
     requestId: null,
   },
   cultures: {
-    status: "idle",
-    data: null,
-    requestId: null,
-  },
-  cultureHistory: {
-    culture: null,
     status: "idle",
     data: null,
     requestId: null,
@@ -561,24 +676,6 @@ export const fetchRecentCultures = createAsyncThunk(
         params.admissionNumber,
       );
       return response.data.data as IRecentCultures;
-    } catch (err) {
-      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
-    }
-  },
-);
-
-export const fetchCultureHistory = createAsyncThunk(
-  "infectionControl/fetchCultureHistory",
-  async (
-    params: { admissionNumber: string; culture: IRecentCulture },
-    thunkAPI,
-  ) => {
-    try {
-      const response = await api.infectionControl.getCultureHistory(
-        params.admissionNumber,
-        params.culture.id,
-      );
-      return response.data.data as ICultureHistory;
     } catch (err) {
       return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
     }
@@ -672,6 +769,37 @@ export const fetchClinicalNoteTypes = createAsyncThunk(
   },
 );
 
+// the rules an admin may change between reviews: loaded each time one opens,
+// with the current results of the admission reviewed
+export const fetchExamTriggers = createAsyncThunk(
+  "infectionControl/fetchExamTriggers",
+  async (params: { admissionNumber: number }, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.getExamTriggers(
+        params.admissionNumber,
+      );
+      return response.data.data as IExamTriggers;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
+// replaces the whole list: a rule left out is deleted
+export const saveExamTriggers = createAsyncThunk(
+  "infectionControl/saveExamTriggers",
+  async (params: { rules: IExamTriggerRulePayload[] }, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.saveExamTriggers(
+        params.rules,
+      );
+      return response.data.data as IExamTriggers;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
 export const searchSubstituteDrugs = createAsyncThunk(
   "infectionControl/searchSubstituteDrugs",
   async (params: { term: string }, thunkAPI) => {
@@ -715,9 +843,6 @@ const infectionControlSlice = createSlice({
     },
     setReviewOpen(state, action: PayloadAction<boolean>) {
       state.review.open = action.payload;
-    },
-    closeCultureHistory(state) {
-      state.cultureHistory = initialState.cultureHistory;
     },
   },
   extraReducers(builder) {
@@ -764,22 +889,6 @@ const infectionControlSlice = createSlice({
         state.examHistory.status = "failed";
         state.examHistory.list = [];
       })
-      .addCase(fetchCultureHistory.pending, (state, action) => {
-        state.cultureHistory.culture = action.meta.arg.culture;
-        state.cultureHistory.status = "loading";
-        state.cultureHistory.data = null;
-        state.cultureHistory.requestId = action.meta.requestId;
-      })
-      .addCase(fetchCultureHistory.fulfilled, (state, action) => {
-        if (state.cultureHistory.requestId !== action.meta.requestId) return;
-        state.cultureHistory.status = "succeeded";
-        state.cultureHistory.data = action.payload;
-      })
-      .addCase(fetchCultureHistory.rejected, (state, action) => {
-        if (state.cultureHistory.requestId !== action.meta.requestId) return;
-        state.cultureHistory.status = "failed";
-        state.cultureHistory.data = null;
-      })
       .addCase(saveReview.pending, (state) => {
         state.review.status = "loading";
       })
@@ -812,6 +921,37 @@ const infectionControlSlice = createSlice({
       })
       .addCase(fetchClinicalNoteTypes.rejected, (state) => {
         state.clinicalNoteTypes.status = "failed";
+      })
+      // another admission's results are never shown while loading
+      .addCase(fetchExamTriggers.pending, (state) => {
+        state.examTriggers.status = "loading";
+        state.examTriggers.current = {};
+      })
+      .addCase(fetchExamTriggers.fulfilled, (state, action) => {
+        state.examTriggers.status = "succeeded";
+        state.examTriggers.list = action.payload?.rules ?? [];
+        state.examTriggers.exams = action.payload?.exams ?? [];
+        state.examTriggers.current = action.payload?.current ?? {};
+      })
+      .addCase(fetchExamTriggers.rejected, (state) => {
+        state.examTriggers.status = "failed";
+        state.examTriggers.list = [];
+        state.examTriggers.exams = [];
+        state.examTriggers.current = {};
+      })
+      // the backend gives the new rules their ids: the list is the one saved
+      // (the current results stay: a save doesn't send them)
+      .addCase(saveExamTriggers.pending, (state) => {
+        state.examTriggers.saveStatus = "loading";
+      })
+      .addCase(saveExamTriggers.fulfilled, (state, action) => {
+        state.examTriggers.saveStatus = "succeeded";
+        state.examTriggers.status = "succeeded";
+        state.examTriggers.list = action.payload?.rules ?? [];
+        state.examTriggers.exams = action.payload?.exams ?? [];
+      })
+      .addCase(saveExamTriggers.rejected, (state) => {
+        state.examTriggers.saveStatus = "failed";
       })
       // only the latest search fills the list
       .addCase(searchSubstituteDrugs.pending, (state, action) => {
@@ -869,7 +1009,6 @@ const infectionControlSlice = createSlice({
   },
 });
 
-export const { reset, setReviewOpen, closeCultureHistory } =
-  infectionControlSlice.actions;
+export const { reset, setReviewOpen } = infectionControlSlice.actions;
 
 export const infectionControlReducer = infectionControlSlice.reducer;

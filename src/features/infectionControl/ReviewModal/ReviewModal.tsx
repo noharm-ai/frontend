@@ -1,7 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Formik } from "formik";
 import { useTranslation } from "react-i18next";
-import { LeftOutlined } from "@ant-design/icons";
+import {
+  ExclamationCircleOutlined,
+  InfoCircleOutlined,
+  LeftOutlined,
+} from "@ant-design/icons";
 import { Button } from "antd";
 import { Dayjs } from "dayjs";
 
@@ -20,6 +24,7 @@ import {
 
 import {
   fetchClinicalNoteTypes,
+  fetchExamTriggers,
   fetchInterventionReasons,
   IAntimicrobialTimeline,
   ICourse,
@@ -38,6 +43,7 @@ import { ReviewRail } from "./ReviewRail/ReviewRail";
 import { ReviewSummaryStep } from "./ReviewSummaryStep/ReviewSummaryStep";
 import {
   findEvaluatedCourse,
+  EvaluationDecision,
   getDecision,
   getEvaluationSchema,
   getInitialValues,
@@ -92,6 +98,9 @@ export function ReviewModal({
   const clinicalNoteTypes = useAppSelector(
     (state) => state.infectionControl.clinicalNoteTypes,
   );
+  const examTriggerRules = useAppSelector(
+    (state) => state.infectionControl.examTriggers,
+  );
   const cultures = useAppSelector((state) => state.infectionControl.cultures);
   // the user ducks are untyped legacy JS
   const account = useAppSelector((state: any) => state.user.account);
@@ -101,26 +110,71 @@ export function ReviewModal({
   );
   const [step, setStep] = useState(0);
   const stepRef = useRef<HTMLFormElement>(null);
+  // the steps the user tried to move on from, with the verdict of the drug
+  // then: their errors show at the fields, and in the rail while not fixed.
+  // Another verdict asks for other fields, shown again only on the next try.
+  const [attempted, setAttempted] = useState<
+    ReadonlyMap<number, EvaluationDecision | null>
+  >(new Map());
+  // bumped to bring the first error of the step into sight
+  const [revealTick, setRevealTick] = useState(0);
+  const revealRef = useRef(false);
 
-  // every review starts at the first drug
+  // every review starts at the first drug, with no error shown
   const [prevOpen, setPrevOpen] = useState(open);
   if (open !== prevOpen) {
     setPrevOpen(open);
-    if (open) setStep(0);
+    if (open) {
+      setStep(0);
+      setAttempted(new Map());
+    }
   }
 
-  // each step opens at its top
-  useEffect(() => {
-    stepRef.current?.scrollTo({ top: 0 });
-  }, [step]);
+  const reveal = (steps: [number, EvaluationDecision | null][]) => {
+    setAttempted((previous) => new Map([...previous, ...steps]));
+    revealRef.current = true;
+    setRevealTick((tick) => tick + 1);
+  };
 
-  // the reasons a non-conformity can be given and the types of a note
+  // each step opens at its top, or at its first error when the user tried
+  // to move on: in the middle of the screen, the field focused
+  useEffect(() => {
+    if (!revealRef.current) {
+      stepRef.current?.scrollTo({ top: 0 });
+      return;
+    }
+
+    revealRef.current = false;
+    // a message under a field, or the period that ends before it starts
+    const error = stepRef.current?.querySelector<HTMLElement>(
+      ".review-field-error, .drug-period.error",
+    );
+    if (!error) return;
+    error.scrollIntoView({ block: "center", behavior: "smooth" });
+    // the field marked, else the first one beside the message
+    const container = error.parentElement;
+    const field =
+      container?.querySelector<HTMLElement>(
+        ".ant-select-status-error input, .ant-picker-status-error input, textarea.ant-input-status-error",
+      ) ??
+      container?.querySelector<HTMLElement>(
+        "input:not([type=hidden]), textarea",
+      );
+    field?.focus({ preventScroll: true });
+  }, [step, revealTick]);
+
+  // the reasons a non-conformity can be given, the exam trigger rules and
+  // the types of a note
   useEffect(() => {
     if (open) {
       dispatch(fetchInterventionReasons());
+      // the rules may have changed since the last review, and the results
+      dispatch(
+        fetchExamTriggers({ admissionNumber: followUp.admissionNumber }),
+      );
       if (hasMultiClinicalNotes) dispatch(fetchClinicalNoteTypes());
     }
-  }, [open, hasMultiClinicalNotes, dispatch]);
+  }, [open, hasMultiClinicalNotes, followUp.admissionNumber, dispatch]);
 
   // a note is written on the prescription-day of the record, with a type,
   // only where the schema has the multiple clinical notes
@@ -200,6 +254,7 @@ export function ReviewModal({
           followUp.admissionNumber,
           reasons,
           !noteUnavailable,
+          examTriggerRules,
         ),
       ),
     ).then((response: any) => {
@@ -239,11 +294,26 @@ export function ReviewModal({
           validateDrug(evaluationSchema, evaluation),
         );
         const allDrugsDone = drugErrors.every((drugError) => !drugError);
+        // a try at a step, with the verdict of its drug
+        const attempt = (
+          index: number,
+        ): [number, EvaluationDecision | null] => [
+          index,
+          index < drugCount ? getDecision(values.evaluations[index]) : null,
+        ];
+        // whether the errors of a step show: tried, with the same verdict
+        const showErrors = (index: number) => {
+          const [, decision] = attempt(index);
+          return attempted.has(index) && attempted.get(index) === decision;
+        };
         // what keeps the note from being saved; nothing when none can be
         // written, and the review is saved without it
         const noteError = noteUnavailable
           ? null
-          : validateClinicalNote(values.clinicalNote);
+          : validateClinicalNote(
+              values.clinicalNote,
+              clinicalNoteTypes.list.length > 0,
+            );
 
         // what is chosen for each drug, as a tag
         const drugStatus = values.evaluations.map((evaluation) => {
@@ -292,8 +362,10 @@ export function ReviewModal({
                 : t("infectionControl.timeline.day", { count: course.days })),
             status: drugStatus[index],
             done: index !== step && !drugErrors[index],
+            error: showErrors(index) && !!drugErrors[index],
           };
         });
+        const noteInvalid = showErrors(lastStep) && !!noteError;
 
         let noteStatus: { label: string; color?: string };
         if (noteUnavailable && noteUnavailable !== "loading") {
@@ -380,18 +452,33 @@ export function ReviewModal({
             };
           }
         }
-        let canMoveOn = !drugErrors[step];
-        if (isPatientStep) {
-          canMoveOn = true;
-        } else if (isNoteStep) {
-          canMoveOn =
-            canSave &&
-            allDrugsDone &&
-            noteUnavailable !== "loading" &&
-            !noteError;
-        }
+        const hintError = !!hint?.error && showErrors(step);
+
+        // what the user cannot fix in the review keeps the button off; what
+        // is missing is shown at the fields when it is clicked
+        const blocked =
+          isNoteStep && (!canSave || noteUnavailable === "loading");
         const moveOn = () => {
-          if (!canMoveOn) return;
+          if (blocked) return;
+
+          if (isNoteStep && !allDrugsDone) {
+            // back to the first drug left unfinished, every one of them
+            // marked in the rail
+            const unfinished = drugErrors.flatMap((drugError, index) =>
+              drugError ? [index] : [],
+            );
+            reveal([
+              ...unfinished.map((index) => attempt(index)),
+              ...(noteError ? [attempt(lastStep)] : []),
+            ]);
+            setStep(unfinished[0]);
+            return;
+          }
+          if (isNoteStep ? noteError : !isPatientStep && drugErrors[step]) {
+            reveal([attempt(step)]);
+            return;
+          }
+
           if (isNoteStep) save();
           else setStep(step + 1);
         };
@@ -423,6 +510,7 @@ export function ReviewModal({
                   drugs={railDrugs}
                   step={step}
                   noteStatus={noteStatus}
+                  noteInvalid={noteInvalid}
                   onSelect={setStep}
                 />
 
@@ -440,6 +528,7 @@ export function ReviewModal({
                       unavailable={noteUnavailable}
                       types={clinicalNoteTypes.list}
                       context={noteContext}
+                      error={noteInvalid ? noteError : null}
                     />
                   )}
                   {isPatientStep && <ReviewSummaryStep />}
@@ -450,8 +539,10 @@ export function ReviewModal({
                       timeline={drugTimelines[values.evaluations[step].idDrug]}
                       invalidatedEvaluations={invalidatedEvaluations}
                       drugErrors={drugErrors[step]}
+                      showErrors={showErrors(step)}
                       dischargeDate={dischargeDate}
                       now={now}
+                      canEditExamTriggers={canSave}
                     />
                   )}
                   {/* lets Enter submit with more than one field (a field
@@ -469,16 +560,23 @@ export function ReviewModal({
                       total: lastStep + 1,
                     })}
                   </span>
-                  {hint && (
-                    <span
-                      className={`review-footer-hint ${hint.error ? "error" : ""}`}
-                      data-testid="review-hint"
-                    >
-                      {hint.text}
-                    </span>
-                  )}
                 </div>
                 <div className="review-footer-actions">
+                  {/* beside the button it keeps from moving on */}
+                  {hint && (
+                    <span
+                      // red once the user tried to move on
+                      className={`review-footer-hint ${hintError ? "error" : ""}`}
+                      data-testid="review-hint"
+                    >
+                      {hintError ? (
+                        <ExclamationCircleOutlined aria-hidden="true" />
+                      ) : (
+                        <InfoCircleOutlined aria-hidden="true" />
+                      )}
+                      <span>{hint.text}</span>
+                    </span>
+                  )}
                   <Button type="text" onClick={onClose} disabled={isSaving}>
                     {t("actions.cancel")}
                   </Button>
@@ -494,7 +592,7 @@ export function ReviewModal({
                   <Button
                     type="primary"
                     onClick={moveOn}
-                    disabled={!canMoveOn}
+                    disabled={blocked}
                     loading={isNoteStep && isSaving}
                   >
                     {t(

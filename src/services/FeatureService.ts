@@ -11,6 +11,18 @@ export class FeatureService {
     return features.indexOf(f) !== -1;
   };
 
+  /**
+   * A feature of the schema itself, not one of the user's (account.features
+   * holds both). Empty until the next login for sessions that predate it.
+   */
+  static hasSchemaFeature = (f: string) => {
+    const features = (store.getState().user as any).account.schemaFeatures;
+
+    if (isEmpty(features)) return false;
+
+    return features.indexOf(f) !== -1;
+  };
+
   static hasCPOE = () => {
     const segments = (store.getState().segments as any).list;
 

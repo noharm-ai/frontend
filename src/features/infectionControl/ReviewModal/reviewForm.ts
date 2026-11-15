@@ -13,6 +13,7 @@ import InterventionReasonRelationType from "models/InterventionReasonRelationTyp
 import {
   IAntimicrobialEvaluation,
   ICourse,
+  IExamTriggerRule,
   IFollowUp,
   IFollowUpPending,
   IInterventionReason,
@@ -20,6 +21,7 @@ import {
   ISubstituteDrug,
 } from "../InfectionControlSlice";
 import { endsBeforeInForce } from "../followUp";
+import { isExamTriggerAvailable } from "../examTriggers";
 import { IDraftEvaluation } from "../CourseGantt/ganttLayout";
 
 // how many days from its start an evaluation can be quickly held for
@@ -29,6 +31,8 @@ const DRUG_REASONS = [
   InfectionControlPendingTypeEnum.NO_EVALUATION,
   InfectionControlPendingTypeEnum.EXPIRED,
   InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
+  InfectionControlPendingTypeEnum.EXAM_RESULT,
+  InfectionControlPendingTypeEnum.CULTURE_RESULT,
 ];
 
 // how many days from today the next review can be quickly scheduled for
@@ -83,6 +87,18 @@ export interface IDrugEvaluationFields {
   watchExpiry: boolean;
   // back to pending when the posology changes
   watchPosology: boolean;
+  // back to pending when a culture result is released after the evaluation
+  watchCulture: boolean;
+  // the ids of the exam trigger rules turned on; null until changed, when
+  // they follow the rules of the schema (getExamTriggerIds), which load
+  // after the form opens
+  examTriggers: string[] | null;
+}
+
+// the schema's exam trigger rules, as loaded for the review
+export interface IExamTriggerRules {
+  status: "idle" | "loading" | "succeeded" | "failed";
+  list: IExamTriggerRule[];
 }
 
 // the clinical note the review writes in the patient's record
@@ -267,11 +283,50 @@ export const getInitialValues = (
           course.evaluation,
           InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
         ),
+        watchCulture: watches(
+          course.evaluation,
+          InfectionControlPendingTypeEnum.CULTURE_RESULT,
+        ),
+        examTriggers: null,
       };
 
       return { ...fields, end: treatmentEnd ? "treatmentEnd" : "days7" };
     }),
   };
+};
+
+/**
+ * The exam trigger rules turned on for a drug: the ones chosen, or else a
+ * drug evaluated for the first time starts with the rules on by default that
+ * the schema can fire (an exam mapped to them), and
+ * one evaluated before with the rules it had that the schema still has.
+ * While the rules are not loaded (or failed to), the ones it had are kept as
+ * they were, so a review never turns them off unseen.
+ */
+export const getExamTriggerIds = (
+  evaluation: Pick<IDrugEvaluationFields, "current" | "examTriggers">,
+  rules: IExamTriggerRules,
+): string[] => {
+  if (evaluation.examTriggers) {
+    // less the ones deleted since they were chosen
+    return rules.status === "succeeded"
+      ? evaluation.examTriggers.filter((id) =>
+          rules.list.some((rule) => rule.id === id),
+        )
+      : evaluation.examTriggers;
+  }
+
+  const previous = (evaluation.current?.examTriggers ?? []).map(
+    (rule) => rule.id,
+  );
+  if (rules.status !== "succeeded") return previous;
+  if (!evaluation.current) {
+    return rules.list
+      .filter((rule) => rule.enabledByDefault && isExamTriggerAvailable(rule))
+      .map((rule) => rule.id);
+  }
+
+  return previous.filter((id) => rules.list.some((rule) => rule.id === id));
 };
 
 /**
@@ -437,14 +492,16 @@ export const validateDrug = (
 };
 
 /**
- * What keeps the clinical note from being saved: its type, its text, or
- * null when it is ready or not written
+ * What keeps the clinical note from being saved: its type (asked only when
+ * the schema has types to choose from), its text, or null when it is ready
+ * or not written
  */
 export const validateClinicalNote = (
   clinicalNote: IClinicalNoteFields,
+  hasTypes: boolean,
 ): "idClinicalNoteType" | "text" | null => {
   if (!clinicalNote.create) return null;
-  if (!clinicalNote.idClinicalNoteType) return "idClinicalNoteType";
+  if (hasTypes && !clinicalNote.idClinicalNoteType) return "idClinicalNoteType";
   if (!clinicalNote.text.trim()) return "text";
 
   return null;
@@ -466,13 +523,15 @@ export const toReviewPayload = (
   admissionNumber: number,
   reasons: IInterventionReason[],
   canWriteNote: boolean,
+  examTriggerRules: IExamTriggerRules,
 ): IReviewPayload => ({
   admissionNumber,
   notes: values.notes.trim() || null,
   clinicalNote:
     canWriteNote && values.clinicalNote.create
       ? {
-          idClinicalNoteType: values.clinicalNote.idClinicalNoteType!,
+          // none when the schema has no type to give it
+          idClinicalNoteType: values.clinicalNote.idClinicalNoteType,
           text: values.clinicalNote.text,
         }
       : null,
@@ -503,7 +562,9 @@ export const toReviewPayload = (
       triggers: [
         e.watchExpiry && InfectionControlPendingTypeEnum.EXPIRED,
         e.watchPosology && InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
+        e.watchCulture && InfectionControlPendingTypeEnum.CULTURE_RESULT,
       ].filter((trigger): trigger is number => !!trigger),
+      examTriggers: getExamTriggerIds(e, examTriggerRules),
     })),
 });
 

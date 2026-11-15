@@ -92,7 +92,7 @@ export const CulturesAndExams = styled.div`
   @container (min-width: 1100px) {
     &.with-exams > .panes {
       grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-      grid-template-rows: 420px;
+      grid-template-rows: 640px;
 
       > * {
         min-height: 0;

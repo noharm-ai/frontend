@@ -13,6 +13,8 @@ export interface MemoryRecord {
 export interface KindEditorProps {
   recordValue: MemoryRecord["value"] | null;
   isSaving: boolean;
+  // shows the record without any way to change it
+  readOnly?: boolean;
   onSave: (values: MemoryRecord["value"]) => void;
   onCancel: () => void;
 }

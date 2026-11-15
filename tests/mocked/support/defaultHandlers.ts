@@ -108,19 +108,7 @@ export function defaultHandlers(): Record<string, Handler> {
         data: {
           admissionNumber: 0,
           releasedSince: "2026-01-01T00:00:00",
-          cultures: [],
-        },
-      },
-    },
-    // every collection of one culture's exam and material, each with its
-    // antibiogram, opened from its row
-    "GET /infection-control/admission/:admissionNumber/cultures/:idCulture": {
-      json: {
-        status: "success",
-        data: {
-          admissionNumber: 0,
-          examName: null,
-          material: null,
+          collections: [],
           cultures: [],
         },
       },
@@ -128,6 +116,11 @@ export function defaultHandlers(): Record<string, Handler> {
     // the clinical note types of a review's note: none active by default, so
     // a review is saved without a note
     "GET /infection-control/clinical-note-types": emptyList,
+    // the schema's exam trigger rules: none by default, so the review shows
+    // no exam trigger
+    "GET /infection-control/exam-triggers": {
+      json: { status: "success", data: { rules: [], exams: [] } },
+    },
     "POST /infection-control/admissions": {
       json: { status: "success", data: { count: 0, admissions: [] } },
     },

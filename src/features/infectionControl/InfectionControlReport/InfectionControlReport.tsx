@@ -31,6 +31,8 @@ import {
 } from "../followUp";
 import { LabResult } from "../InfectionControlCultures/LabResult/LabResult";
 import { formatDose, formatRegimen, getAge } from "../timeline";
+import { EvaluationExamTriggers } from "../EvaluationExamTriggers/EvaluationExamTriggers";
+import { ExamResultMatches } from "../ExamResultMatches/ExamResultMatches";
 import { ReportDocument } from "./InfectionControlReport.style";
 
 interface InfectionControlReportProps {
@@ -55,6 +57,8 @@ const TRIGGER_LABELS: Record<number, string> = {
     "infectionControl.review.triggerExpired",
   [InfectionControlPendingTypeEnum.POSOLOGY_CHANGED]:
     "infectionControl.review.triggerPosology",
+  [InfectionControlPendingTypeEnum.CULTURE_RESULT]:
+    "infectionControl.review.triggerCulture",
 };
 
 interface IField {
@@ -286,6 +290,7 @@ export function InfectionControlReport({
                 <span className="report-muted">
                   ({formatDateTime(pending.createdAt)})
                 </span>
+                <ExamResultMatches matches={pending.details?.matches} />
               </li>
             ))}
           </ul>
@@ -553,6 +558,19 @@ export function InfectionControlReport({
                     .join("; ")
                 : t("infectionControl.review.triggersNone"),
             },
+            ...(evaluation.examTriggers?.length
+              ? [
+                  {
+                    label: t("infectionControl.examTriggers.title"),
+                    value: (
+                      <EvaluationExamTriggers
+                        evaluation={evaluation}
+                        showTitle={false}
+                      />
+                    ),
+                  },
+                ]
+              : []),
             ...(!evaluation.conforming || reasons
               ? [
                   {

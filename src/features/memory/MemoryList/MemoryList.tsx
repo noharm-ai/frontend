@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Tag, Space, Modal, List, Tooltip } from "antd";
-import { PlusOutlined, EditOutlined } from "@ant-design/icons";
+import { PlusOutlined, EditOutlined, EyeOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
 import Table from "components/Table";
@@ -10,6 +10,8 @@ import BackTop from "components/BackTop";
 import notification from "components/notification";
 import { PageCard } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
+import Permission from "models/Permission";
+import PermissionService from "services/PermissionService";
 import { KIND_META } from "features/memory/MemoryEditor/editors/registry";
 
 import { fetchEditableMemories, reset } from "./MemoryListSlice";
@@ -25,6 +27,8 @@ function MemoryList() {
     (state: any) => state.memoryList.records,
   );
   const status = useAppSelector((state: any) => state.memoryList.status);
+  // READ_NAV alone (NAVIGATION_VIEWER) opens the records read-only
+  const canWrite = PermissionService().has(Permission.WRITE_BASIC_FEATURES);
 
   useEffect(() => {
     dispatch(fetchEditableMemories());
@@ -90,11 +94,13 @@ function MemoryList() {
       align: "center" as const,
       render: (_: any, record: any) => (
         <Space>
-          <Button
-            type="primary"
-            icon={<EditOutlined />}
-            onClick={() => navigate(`${BASE_PATH}/${record.key}`)}
-          />
+          <Tooltip title={canWrite ? "Editar" : "Visualizar"}>
+            <Button
+              type="primary"
+              icon={canWrite ? <EditOutlined /> : <EyeOutlined />}
+              onClick={() => navigate(`${BASE_PATH}/${record.key}`)}
+            />
+          </Tooltip>
         </Space>
       ),
     },
@@ -104,13 +110,15 @@ function MemoryList() {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title" data-kb="memory.title">Memória</h1>
+          <h1 className="page-header-title" data-kb="memory.title">
+            Memória
+          </h1>
           <div className="page-header-legend">
             Gerencie modelos e textos de memória
           </div>
         </div>
         <div className="page-header-actions">
-          {!allKindsTaken && (
+          {canWrite && !allKindsTaken && (
             <Button
               type="primary"
               icon={<PlusOutlined />}

@@ -46,7 +46,11 @@ test("an already signed note reuses the request and keeps the modal open", async
   page,
   mockApi,
 }) => {
-  await loginWithPermissions(page, mockApi, ["READ_NAV", "READ_PRESCRIPTION"]);
+  await loginWithPermissions(page, mockApi, [
+    "READ_NAV",
+    "WRITE_NAV",
+    "READ_PRESCRIPTION",
+  ]);
 
   mockApi.override("GET /notes/:admissionNumber/v2", { json: notesPayload });
   mockApi.override("POST /notes/digital-signature", {
@@ -83,9 +87,7 @@ test("an already signed note reuses the request and keeps the modal open", async
 
   // the modal must stay open and switch to the result view
   await expect(page.getByText(SIGN_LINK)).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: /Abrir link/ }),
-  ).toBeVisible();
+  await expect(page.getByRole("button", { name: /Abrir link/ })).toBeVisible();
 
   // and the note itself must still be on screen (the view must not unmount)
   await expect(page.getByText("Evolução de teste").first()).toBeVisible();

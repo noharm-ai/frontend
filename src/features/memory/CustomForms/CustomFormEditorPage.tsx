@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate, useSearchParams } from "react-router-dom";
+import {
+  Navigate,
+  useParams,
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { Button, Input, Popconfirm, Tag } from "antd";
+import { Button, ConfigProvider, Input, Popconfirm, Tag } from "antd";
 import { MaintainerGroup } from "components/MaintainerGroup/MaintainerGroup";
 import { CopyOutlined, EyeOutlined, UploadOutlined } from "@ant-design/icons";
 
@@ -126,6 +131,7 @@ function PreviewButton({ template }: { template: FormGroup[] }) {
 
 interface InnerPageProps {
   title: string;
+  readOnly: boolean;
   dirty: boolean;
   hasErrors: boolean;
   isSaving: boolean;
@@ -137,6 +143,7 @@ interface InnerPageProps {
 
 function InnerPage({
   title,
+  readOnly,
   dirty,
   hasErrors,
   isSaving,
@@ -170,7 +177,9 @@ function InnerPage({
       <DirtyGuard dirty={dirty} />
       <PageHeader>
         <div>
-          <h1 className="page-header-title" data-kb="customForms.editor.title">{title}</h1>
+          <h1 className="page-header-title" data-kb="customForms.editor.title">
+            {title}
+          </h1>
           <div className="page-header-legend">Formulários de evolução</div>
         </div>
         <div className="page-header-actions">
@@ -183,7 +192,12 @@ function InnerPage({
               Formulário com erros
             </Tag>
           )}
-          {dirty ? (
+          {readOnly && (
+            <Tag variant="outlined" style={{ verticalAlign: "middle" }}>
+              Somente visualização
+            </Tag>
+          )}
+          {dirty && !readOnly ? (
             <>
               <Tag
                 color="warning"
@@ -206,10 +220,10 @@ function InnerPage({
             </>
           ) : (
             <Button onClick={handleCancel} disabled={isSaving}>
-              Cancelar
+              {readOnly ? "Voltar" : "Cancelar"}
             </Button>
           )}
-          {isMaintainer && (
+          {isMaintainer && !readOnly && (
             <MaintainerGroup>
               <Button icon={<CopyOutlined />} onClick={handleCopyJson}>
                 Copiar JSON
@@ -223,15 +237,17 @@ function InnerPage({
             </MaintainerGroup>
           )}
           <PreviewButton template={values.data} />
-          <Button
-            type="primary"
-            loading={isSaving}
-            disabled={isSaving}
-            onClick={handleSubmit}
-            danger={hasErrors}
-          >
-            Salvar
-          </Button>
+          {!readOnly && (
+            <Button
+              type="primary"
+              loading={isSaving}
+              disabled={isSaving}
+              onClick={handleSubmit}
+              danger={hasErrors}
+            >
+              Salvar
+            </Button>
+          )}
         </div>
       </PageHeader>
 
@@ -257,9 +273,11 @@ function InnerPage({
         />
       </DefaultModal>
 
-      <Form onSubmit={handleSubmit}>
-        <FormBody />
-      </Form>
+      <ConfigProvider componentDisabled={readOnly}>
+        <Form onSubmit={handleSubmit}>
+          <FormBody />
+        </Form>
+      </ConfigProvider>
     </>
   );
 }
@@ -279,6 +297,8 @@ function CustomFormEditorPage() {
     (state: any) => state.memoryCustomForms.saveStatus,
   );
   const isSaving = saveStatus === "loading";
+  // READ_NAV alone (NAVIGATION_VIEWER) opens the form read-only
+  const readOnly = !PermissionService().has(Permission.WRITE_CUSTOM_FORMS);
 
   useEffect(() => {
     dispatch(fetchCustomForms());
@@ -326,6 +346,10 @@ function CustomFormEditorPage() {
     navigate(listPath);
   };
 
+  if (readOnly && isNew) {
+    return <Navigate to={listPath} replace />;
+  }
+
   const title = isNew
     ? "Novo Formulário"
     : formRecord?.value?.name || "Editar Formulário";
@@ -342,6 +366,7 @@ function CustomFormEditorPage() {
       {({ handleSubmit, values, dirty, errors, setValues }) => (
         <InnerPage
           title={title}
+          readOnly={readOnly}
           dirty={dirty}
           hasErrors={Object.keys(errors).length > 0}
           isSaving={isSaving}

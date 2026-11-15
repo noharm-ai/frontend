@@ -1,0 +1,87 @@
+import { Avatar } from "antd";
+
+import Heading from "components/Heading";
+import Tooltip from "components/Tooltip";
+import { MaintainerBadge } from "components/MaintainerBadge/MaintainerBadge";
+import Alert from "components/Alert";
+import { Wrapper, Excerpt } from "./ReportCard.style";
+import { PieChartOutlined, BarChartOutlined } from "@ant-design/icons";
+
+export interface ReportCardData {
+  title?: string;
+  description?: string;
+  icon?: string;
+  type?: string;
+  visible?: boolean;
+}
+
+interface ReportCardProps<T extends ReportCardData> {
+  id?: string | number;
+  className?: string;
+  reportData: T;
+  showReport: (reportData: T) => void;
+}
+
+export function ReportCard<T extends ReportCardData>({
+  id,
+  reportData,
+  showReport,
+  ...props
+}: ReportCardProps<T>) {
+  return (
+    <Tooltip title="Abrir Relatório">
+      <Wrapper
+        id={id === undefined ? undefined : String(id)}
+        {...props}
+        onClick={() => showReport(reportData)}
+      >
+        {reportData.icon && (
+          <Avatar
+            icon={<PieChartOutlined />}
+            style={{
+              backgroundColor: "#a991d6",
+              color: "#fff",
+              display: "block",
+            }}
+            size="large"
+          />
+        )}
+        {reportData.type === "custom" && (
+          <Avatar
+            icon={<BarChartOutlined />}
+            style={{
+              backgroundColor: "#a991d6",
+              color: "#fff",
+              display: "block",
+            }}
+            size="large"
+          />
+        )}
+        <Heading as="h4" $size="16px" $margin="18px 0 15px" $textAlign="center">
+          {reportData.title}
+          {reportData.type === "internal" && !reportData.visible && (
+            <>
+              {" "}
+              <MaintainerBadge />
+            </>
+          )}
+        </Heading>
+
+        <Excerpt $margin="0 0 30px">{reportData.description}</Excerpt>
+
+        {reportData.type === "internal" && !reportData.visible && (
+          <Alert
+            type="warning"
+            description="Este relatório não está habilitado para os usuários. Acesse Curadoria->Relatórios para ativá-lo."
+          ></Alert>
+        )}
+        {reportData.type === "custom" && !reportData.visible && (
+          <Alert
+            type="warning"
+            description="Este relatório não está ativo para os usuários. Acesse Curadoria->Relatórios Customizados para ativá-lo."
+          ></Alert>
+        )}
+      </Wrapper>
+    </Tooltip>
+  );
+}

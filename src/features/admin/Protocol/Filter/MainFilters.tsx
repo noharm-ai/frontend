@@ -27,7 +27,6 @@ export default function MainFilters() {
   return (
     <>
       <Col md={7} lg={6} xxl={5}>
-        {/* @ts-expect-error legacy code */}
         <Heading as="label" $size="14px">
           Nome:
         </Heading>
@@ -40,7 +39,6 @@ export default function MainFilters() {
         />
       </Col>
       <Col md={5} lg={4} xxl={3}>
-        {/* @ts-expect-error legacy code */}
         <Heading as="label" $size="14px">
           Situação:
         </Heading>
@@ -55,7 +53,6 @@ export default function MainFilters() {
         ></Select>
       </Col>
       <Col md={7} lg={6} xxl={5}>
-        {/* @ts-expect-error legacy code */}
         <Heading as="label" $size="14px">
           Origem:
         </Heading>

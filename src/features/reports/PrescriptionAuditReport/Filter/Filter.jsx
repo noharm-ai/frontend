@@ -34,8 +34,8 @@ import {
   onAfterPrint,
   decompressDatasource,
 } from "utils/report";
-import HistoryModal from "features/reports/components/HistoryModal/HistoryModal";
-import HistoryAlert from "features/reports/components/HistoryAlert/HistoryAlert";
+import { HistoryModal } from "features/reports/components/HistoryModal/HistoryModal";
+import { HistoryAlert } from "features/reports/components/HistoryAlert/HistoryAlert";
 
 export default function Filter({ printRef }) {
   const { t } = useTranslation();

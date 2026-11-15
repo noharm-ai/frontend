@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useFormikContext } from "formik";
-import { Tabs, Card, Popconfirm, Modal } from "antd";
+import { Tabs, Card, ConfigProvider, Popconfirm, Modal } from "antd";
 import {
   PlusOutlined,
   DeleteOutlined,
@@ -473,62 +473,65 @@ export function FormBody() {
                   return (
                     <>
                       {totalPages > 1 && (
-                        <CarouselNav>
-                          <Button
-                            icon={<LeftOutlined />}
-                            size="small"
-                            disabled={!canPrev}
-                            onClick={() =>
-                              setCarouselPages((p) => ({
-                                ...p,
-                                [gIdx]: currentPage - 1,
-                              }))
-                            }
-                          />
-                          <span
-                            style={{
-                              display: "flex",
-                              gap: "6px",
-                              alignItems: "center",
-                            }}
-                          >
-                            {Array.from({ length: totalPages }, (_, pIdx) => {
-                              const isActive = pIdx === currentPage;
-                              const hasError =
-                                submitCount > 0 &&
-                                pageHasErrors(groupErrors, gIdx, pIdx);
-                              return (
-                                <CarouselDot
-                                  key={pIdx}
-                                  className={
-                                    hasError
-                                      ? "error"
-                                      : isActive
-                                        ? "active"
-                                        : undefined
-                                  }
-                                  onClick={() =>
-                                    setCarouselPages((p) => ({
-                                      ...p,
-                                      [gIdx]: pIdx,
-                                    }))
-                                  }
-                                />
-                              );
-                            })}
-                          </span>
-                          <Button
-                            icon={<RightOutlined />}
-                            size="small"
-                            disabled={!canNext}
-                            onClick={() =>
-                              setCarouselPages((p) => ({
-                                ...p,
-                                [gIdx]: currentPage + 1,
-                              }))
-                            }
-                          />
-                        </CarouselNav>
+                        // browsing stays enabled when the page is read-only
+                        <ConfigProvider componentDisabled={false}>
+                          <CarouselNav>
+                            <Button
+                              icon={<LeftOutlined />}
+                              size="small"
+                              disabled={!canPrev}
+                              onClick={() =>
+                                setCarouselPages((p) => ({
+                                  ...p,
+                                  [gIdx]: currentPage - 1,
+                                }))
+                              }
+                            />
+                            <span
+                              style={{
+                                display: "flex",
+                                gap: "6px",
+                                alignItems: "center",
+                              }}
+                            >
+                              {Array.from({ length: totalPages }, (_, pIdx) => {
+                                const isActive = pIdx === currentPage;
+                                const hasError =
+                                  submitCount > 0 &&
+                                  pageHasErrors(groupErrors, gIdx, pIdx);
+                                return (
+                                  <CarouselDot
+                                    key={pIdx}
+                                    className={
+                                      hasError
+                                        ? "error"
+                                        : isActive
+                                          ? "active"
+                                          : undefined
+                                    }
+                                    onClick={() =>
+                                      setCarouselPages((p) => ({
+                                        ...p,
+                                        [gIdx]: pIdx,
+                                      }))
+                                    }
+                                  />
+                                );
+                              })}
+                            </span>
+                            <Button
+                              icon={<RightOutlined />}
+                              size="small"
+                              disabled={!canNext}
+                              onClick={() =>
+                                setCarouselPages((p) => ({
+                                  ...p,
+                                  [gIdx]: currentPage + 1,
+                                }))
+                              }
+                            />
+                          </CarouselNav>
+                        </ConfigProvider>
                       )}
 
                       <CarouselWrapper>

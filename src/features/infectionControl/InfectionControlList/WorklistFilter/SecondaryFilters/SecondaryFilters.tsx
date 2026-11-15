@@ -25,6 +25,8 @@ const PENDING_TYPES = [
   InfectionControlPendingTypeEnum.NO_EVALUATION,
   InfectionControlPendingTypeEnum.EXPIRED,
   InfectionControlPendingTypeEnum.POSOLOGY_CHANGED,
+  InfectionControlPendingTypeEnum.EXAM_RESULT,
+  InfectionControlPendingTypeEnum.CULTURE_RESULT,
   InfectionControlPendingTypeEnum.SCHEDULED_DATE,
   InfectionControlPendingTypeEnum.ALERT_FIRED,
 ];

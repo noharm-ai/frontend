@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 // one card for the cultures: the title beside the tabs of its two views, the
-// summary by exam and the antibiogram by drug
+// list by exam and the antibiogram by drug
 export const CulturesBox = styled.div`
   background: #fff;
   border: 1px solid #e0e0e0;
@@ -15,8 +15,15 @@ export const CulturesBox = styled.div`
   height: 100%;
   overflow: hidden;
 
+  /* as tall as beside the exams card (CulturesAndExams) when alone or
+     stacked, so the list scrolls within, under its toolbar and day. Phones
+     keep it in the flow of the page (useIsMobile) */
+  @media (min-width: 992px) {
+    max-height: 640px;
+  }
+
   /* the title and the tab bar stay, the open view fills the rest when the
-     card is given a height (beside the exams card): the summary scrolls in
+     card is given a height (beside the exams card): the list scrolls in
      it, the list by drug scrolls on its own, under its sticky header */
   .ant-tabs {
     flex: 1;

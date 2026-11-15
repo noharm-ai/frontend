@@ -17,6 +17,8 @@ interface DecisionCardsProps {
   value: EvaluationDecision | null;
   onChange: (value: EvaluationDecision) => void;
   "aria-label": string;
+  // no verdict yet, after the user tried to move on
+  invalid?: boolean;
 }
 
 // the color of each verdict, as its tag shows it
@@ -97,6 +99,10 @@ const Cards = styled.div`
   `,
   )}
 
+  &.invalid .ant-radio-wrapper {
+    border-color: #cf1322;
+  }
+
   .decision-card {
     align-items: center;
     display: flex;
@@ -132,12 +138,14 @@ export function DecisionCards({
   value,
   onChange,
   "aria-label": ariaLabel,
+  invalid = false,
 }: DecisionCardsProps) {
   return (
-    <Cards>
+    <Cards className={invalid ? "invalid" : undefined}>
       <Radio.Group
         value={value}
         aria-label={ariaLabel}
+        aria-invalid={invalid || undefined}
         onChange={(e) => onChange(e.target.value)}
         options={options.map((option) => ({
           value: option.value,

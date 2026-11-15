@@ -137,15 +137,49 @@ export const ReviewBody = styled.div`
     color: ${muted};
   }
 
+  /* why the step cannot move on yet, just before the buttons */
   .review-footer-hint {
+    align-items: center;
     color: ${muted};
+    display: inline-flex;
+    font-size: 13px;
+    gap: 6px;
+    line-height: 1.4;
+    margin-right: 8px;
+    max-width: 360px;
+    text-align: right;
+
+    .anticon {
+      flex: none;
+    }
 
     &.error {
       color: ${danger};
+      font-weight: 500;
+    }
+
+    /* phones: a line of its own, over the buttons */
+    @media (max-width: 768px) {
+      flex: 1 0 100%;
+      justify-content: flex-end;
+      margin-right: 0;
+      max-width: none;
     }
   }
 
+  /* what keeps a field from being done, under it, once the user tried to
+     move on */
+  .review-field-error {
+    align-items: center;
+    color: ${danger};
+    display: flex;
+    font-size: 13px;
+    gap: 6px;
+    line-height: 1.4;
+  }
+
   .review-footer-actions {
+    align-items: center;
     display: flex;
     gap: 8px;
 
@@ -443,6 +477,53 @@ export const DrugEvaluation = styled.div`
       font-size: 13px;
       margin-inline-start: 0;
     }
+  }
+
+  /* the exam trigger rules of the schema, under the other triggers */
+  .drug-exam-triggers {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 4px;
+  }
+
+  .drug-exam-triggers-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .drug-exam-triggers-empty {
+    color: #8c8c8c;
+  }
+
+  .drug-exam-trigger-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .drug-exam-trigger-actions {
+    display: flex;
+    flex-shrink: 0;
+  }
+
+  .drug-exam-trigger-conditions {
+    color: #8c8c8c;
+  }
+
+  .drug-exam-trigger-unavailable {
+    color: #d46b08;
+    font-size: 12px;
+    padding-left: 24px;
+  }
+
+  .drug-exam-trigger-current {
+    color: #8c8c8c;
+    font-size: 12px;
+    padding-left: 24px;
   }
 
   .drug-notes {

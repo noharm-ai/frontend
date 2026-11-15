@@ -111,7 +111,7 @@ test("READ_TAGS alone shows the tags read-only", async ({ page, mockApi }) => {
   ).toBeVisible();
 });
 
-// WRITE_PATIENT_TAGS + READ_NAV (NAVIGATOR) may write navigation tags only,
+// WRITE_PATIENT_TAGS + WRITE_NAV (NAVIGATOR) may write navigation tags only,
 // matching the tagType check in admin_tag_service.upsert_tag.
 test("WRITE_PATIENT_TAGS writes navigation tags only", async ({
   page,
@@ -123,6 +123,7 @@ test("WRITE_PATIENT_TAGS writes navigation tags only", async ({
     "READ_TAGS",
     "WRITE_PATIENT_TAGS",
     "READ_NAV",
+    "WRITE_NAV",
   ]);
 
   await page.goto("/admin/tags");
@@ -195,6 +196,33 @@ test("WRITE_PATIENT_TAGS without READ_NAV stays read-only", async ({
     page.getByRole("button", { name: "Editar marcador" }),
   ).toHaveCount(0);
   await expect(page.getByTestId("config-manager-link")).toBeVisible();
+});
+
+// READ_NAV next to WRITE_PATIENT_TAGS (an analyst that is also a
+// NAVIGATION_VIEWER) lists the navigation tags but still writes none of them.
+test("WRITE_PATIENT_TAGS with READ_NAV alone stays read-only", async ({
+  page,
+  mockApi,
+}) => {
+  installTagHandlers(mockApi);
+  await loginWithPermissions(page, mockApi, [
+    ...BASE_PERMISSIONS,
+    "READ_TAGS",
+    "WRITE_PATIENT_TAGS",
+    "READ_NAV",
+  ]);
+
+  await page.goto("/admin/tags");
+
+  await expect(
+    page.getByRole("cell", { name: "ALTO RISCO", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Adicionar marcador" }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Editar marcador" }),
+  ).toHaveCount(0);
 });
 
 test("WRITE_TAGS enables the write actions", async ({ page, mockApi }) => {

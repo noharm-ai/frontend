@@ -646,6 +646,10 @@ api.prescription.getAllergyRecords = (idPrescription) =>
 api.prescription.updateAllergySubstance = (params) =>
   instance.put(`/allergy-records/substance`, params, setHeaders());
 
+// maintainers, test schema only (the backend refuses any other)
+api.prescription.createTestCase = (params) =>
+  instance.post(`/prescriptions/test-case`, params, setHeaders());
+
 /**
  * Schema params (read only: edited in admin)
  */
@@ -899,11 +903,6 @@ api.infectionControl.getRecentCultures = (admissionNumber) =>
   instance.get(`/infection-control/admission/${admissionNumber}/cultures`, {
     ...setHeaders(),
   });
-api.infectionControl.getCultureHistory = (admissionNumber, idCulture) =>
-  instance.get(
-    `/infection-control/admission/${admissionNumber}/cultures/${idCulture}`,
-    { ...setHeaders() },
-  );
 api.infectionControl.followAdmission = (admissionNumber) =>
   instance.post(
     `/infection-control/admission/${admissionNumber}/follow`,
@@ -924,6 +923,16 @@ api.infectionControl.getInterventionReasons = () =>
 // the active clinical note types, for the note of a review
 api.infectionControl.getClinicalNoteTypes = () =>
   instance.get("/infection-control/clinical-note-types", setHeaders());
+// the schema's exam trigger rules a review can turn on per drug; with an
+// admission, its patient's current result of each exam
+api.infectionControl.getExamTriggers = (admissionNumber) =>
+  instance.get("/infection-control/exam-triggers", {
+    ...setHeaders(),
+    params: { admissionNumber },
+  });
+// replaces the whole list of rules: a rule left out is deleted
+api.infectionControl.saveExamTriggers = (rules) =>
+  instance.put("/infection-control/exam-triggers", { rules }, setHeaders());
 
 // the antimicrobials, by name
 api.infectionControl.searchAntimicrobials = (term) =>

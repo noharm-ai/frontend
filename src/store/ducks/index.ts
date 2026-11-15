@@ -4,7 +4,6 @@ import appReducer from "./app";
 import authReducer from "./auth";
 import userReducer from "./user";
 import drugsReducer from "./drugs";
-import patientsReducer from "./patients";
 import { segmentsReducer } from "features/segments/SegmentsSlice";
 import interventionReducer from "./intervention";
 import prescriptionsReducer from "./prescriptions";
@@ -38,6 +37,7 @@ import drugGeneratePrescriptionHistorySlice from "features/drugs/DrugGeneratePre
 import drugGenerateScoreSlice from "features/drugs/DrugGenerateScore/DrugGenerateScoreSlice";
 import drugSubstanceSlice from "features/drugs/DrugSubstance/DrugSubstanceSlice";
 import { userProfileReducer } from "features/user/UserProfile/UserProfileSlice";
+import { patientFormReducer } from "features/patients/PatientForm/PatientFormSlice";
 
 import adminIntegration from "features/admin/Integration/IntegrationSlice";
 import adminExam from "features/admin/Exam/ExamSlice";
@@ -134,7 +134,6 @@ const rootReducer = combineReducers({
   auth: authReducer,
   user: userReducer,
   drugs: drugsReducer,
-  patients: patientsReducer,
   segments: segmentsReducer,
   intervention: interventionReducer,
   prescriptions: prescriptionsReducer,
@@ -172,6 +171,7 @@ const rootReducer = combineReducers({
   drugSubstance: drugSubstanceSlice,
   outpatient: outpatientPrioritizationReducer,
   userProfile: userProfileReducer,
+  patientForm: patientFormReducer,
   notifications: notificationsSlice,
   trainingCentral: trainingCentralSlice,
   trainingOverview: trainingOverviewSlice,

@@ -14,7 +14,7 @@ import { Input } from "components/Inputs";
 import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import { Row, Col } from "components/Grid";
-import InitialPage from "features/preferences/InitialPage/InitialPage";
+import { InitialPage } from "features/preferences/InitialPage/InitialPage";
 import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
 import FeatureService from "services/features";
 import {

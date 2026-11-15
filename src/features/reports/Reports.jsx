@@ -10,7 +10,7 @@ import { PageHeader } from "styles/PageHeader.style";
 import { PageContainer } from "styles/Utils.style";
 import { getConfig, reset } from "./ReportsSlice";
 import Button from "components/Button";
-import ReportCard from "./components/ReportCard/ReportCard";
+import { ReportCard } from "./components/ReportCard/ReportCard";
 import Empty from "components/Empty";
 import { PageCard } from "styles/Utils.style";
 import Permission from "models/Permission";
