@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Navigate,
   useParams,
@@ -6,9 +6,9 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { Formik } from "formik";
+import { Formik, useFormikContext } from "formik";
 import * as Yup from "yup";
-import { Button, ConfigProvider, Input, Popconfirm, Tag } from "antd";
+import { Button, ConfigProvider, Input, Popconfirm, Tabs, Tag } from "antd";
 import { MaintainerGroup } from "components/MaintainerGroup/MaintainerGroup";
 import { CopyOutlined, EyeOutlined, UploadOutlined } from "@ant-design/icons";
 
@@ -25,6 +25,9 @@ import PermissionService from "services/PermissionService";
 
 import { fetchCustomForms, saveCustomForms, reset } from "./CustomFormsSlice";
 import { FormBody } from "./FormBody";
+import { CustomTextBody } from "./CustomTextBody/CustomTextBody";
+import { CustomTextPreview } from "./CustomTextPreview/CustomTextPreview";
+import { validateCustomText } from "./customText";
 import { CustomForm, FormGroup, emptyForm } from "./types";
 
 const validationSchema = Yup.object().shape({
@@ -82,6 +85,26 @@ const validationSchema = Yup.object().shape({
         return true;
       },
     ),
+  customText: Yup.mixed().test(
+    "custom-text-rules",
+    "Texto personalizado inválido",
+    function () {
+      const errors = validateCustomText(this.parent);
+      if (errors.length === 0) return true;
+
+      // Formik keeps one message per field: the ones of a field are joined
+      const byPath = new Map<string, string[]>();
+      errors.forEach(({ path, message }) => {
+        byPath.set(path, [...(byPath.get(path) ?? []), message]);
+      });
+
+      throw new Yup.ValidationError(
+        Array.from(byPath.entries()).map(([path, messages]) =>
+          this.createError({ path, message: messages.join(" ") }),
+        ),
+      );
+    },
+  ),
 });
 
 function DirtyGuard({ dirty }: { dirty: boolean }) {
@@ -129,6 +152,33 @@ function PreviewButton({ template }: { template: FormGroup[] }) {
   );
 }
 
+/**
+ * A failed save opens the tab holding the errors: the questions first (their
+ * tab points at the field on its own, see FormBody), then the custom text.
+ */
+function useErrorTabFocus(setActiveTab: (tab: string) => void) {
+  const { errors, isSubmitting } = useFormikContext<CustomForm>();
+  const wasSubmitting = useRef(false);
+
+  // a submit that fails validation ends (isSubmitting back to false) only
+  // after its errors are set, so they are the ones of this attempt
+  useEffect(() => {
+    const failed = wasSubmitting.current && !isSubmitting;
+    wasSubmitting.current = isSubmitting;
+    if (!failed) return;
+
+    const hasFormErrors = !!(errors as any).data || !!(errors as any).name;
+    if (hasFormErrors) {
+      setActiveTab("form");
+    } else if ((errors as any).customText) {
+      setActiveTab("text");
+      notification.error({
+        message: "Verifique o texto personalizado antes de salvar.",
+      });
+    }
+  }, [isSubmitting, errors, setActiveTab]);
+}
+
 interface InnerPageProps {
   title: string;
   readOnly: boolean;
@@ -154,6 +204,11 @@ function InnerPage({
 }: InnerPageProps) {
   const [jsonModalOpen, setJsonModalOpen] = useState(false);
   const [jsonInput, setJsonInput] = useState("");
+  const [activeTab, setActiveTab] = useState("form");
+  const { errors } = useFormikContext<CustomForm>();
+  const customTextHasErrors = !!(errors as any).customText;
+  const blockCount = values.customText?.blocks?.length ?? 0;
+  useErrorTabFocus(setActiveTab);
   const isMaintainer = PermissionService().has(Permission.MAINTAINER);
 
   const handleCopyJson = () => {
@@ -237,6 +292,7 @@ function InnerPage({
             </MaintainerGroup>
           )}
           <PreviewButton template={values.data} />
+          <CustomTextPreview form={values} />
           {!readOnly && (
             <Button
               type="primary"
@@ -275,7 +331,31 @@ function InnerPage({
 
       <ConfigProvider componentDisabled={readOnly}>
         <Form onSubmit={handleSubmit}>
-          <FormBody />
+          <Tabs
+            activeKey={activeTab}
+            onChange={setActiveTab}
+            items={[
+              {
+                key: "form",
+                label: "Formulário",
+                children: <FormBody />,
+              },
+              {
+                key: "text",
+                label: (
+                  <span
+                    style={
+                      customTextHasErrors ? { color: "#ff4d4f" } : undefined
+                    }
+                  >
+                    Texto personalizado
+                    {blockCount > 0 ? ` (${blockCount})` : ""}
+                  </span>
+                ),
+                children: <CustomTextBody />,
+              },
+            ]}
+          />
         </Form>
       </ConfigProvider>
     </>

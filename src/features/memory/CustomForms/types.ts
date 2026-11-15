@@ -25,10 +25,46 @@ export interface FormGroup {
   questions: Question[];
 }
 
+export type TextConditionOperator =
+  | "equals"
+  | "not_equals"
+  | "contains"
+  | "not_contains"
+  | "gt"
+  | "gte"
+  | "lt"
+  | "lte"
+  | "filled"
+  | "empty";
+
+export interface TextCondition {
+  questionId: string;
+  operator: TextConditionOperator | "";
+  value?: string | number | null;
+}
+
+/**
+ * A block of the custom text: rich text (HTML) taking {{questionId}} answers
+ * and the clinical note variables. A block without conditions is always
+ * part of the text; otherwise its conditions are joined by `logic`.
+ */
+export interface TextBlock {
+  id: string;
+  name?: string;
+  content: string;
+  logic: "and" | "or";
+  conditions: TextCondition[];
+}
+
+export interface CustomText {
+  blocks: TextBlock[];
+}
+
 export interface CustomForm {
   name: string;
   active?: boolean;
   data: FormGroup[];
+  customText?: CustomText;
 }
 
 export const emptyQuestion = (): Question => ({
@@ -51,6 +87,23 @@ export const emptyForm = (): CustomForm => ({
   name: "",
   active: true,
   data: [emptyGroup()],
+});
+
+const newBlockId = () =>
+  `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+
+export const emptyCondition = (): TextCondition => ({
+  questionId: "",
+  operator: "",
+  value: null,
+});
+
+export const emptyTextBlock = (): TextBlock => ({
+  id: newBlockId(),
+  name: "",
+  content: "",
+  logic: "and",
+  conditions: [],
 });
 
 export const questionTypeOptions = [
