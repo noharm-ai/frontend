@@ -22,7 +22,7 @@ import ChartSegments from "./Charts/ChartSegments";
 import { NoHarmLogoHorizontal as Brand } from "assets/NoHarmLogoHorizontal";
 import { filtersToDescription, formatDuration } from "utils/report";
 import ChartScores from "./Charts/ChartScores";
-import { HelpModal } from "./Help/Help";
+import { ReportHelpModal } from "../ReportHelpModal/ReportHelpModal";
 import { setHelpModal } from "./PatientDayReportSlice";
 import Tooltip from "components/Tooltip";
 import { FeatureService } from "services/FeatureService";
@@ -355,7 +355,17 @@ export default function PatientDayReport() {
           </Space>
         </div>
       </ReportContainer>
-      <HelpModal />
+      <ReportHelpModal
+        area="patientDay"
+        description={
+          <>
+            Este relatório apresenta as métricas de avaliação de{" "}
+            <strong>Pacientes por Dia</strong>.
+          </>
+        }
+        articleId={41}
+        onClose={() => dispatch(setHelpModal(false))}
+      />
     </>
   );
 }

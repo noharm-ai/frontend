@@ -1,10 +1,13 @@
 import { gzipSync } from "node:zlib";
 import dayjs from "dayjs";
+import type { Page, Route } from "@playwright/test";
 
 import { test, expect, API_URL } from "../support/mockApi";
+import type { MockApi } from "../support/mockApi";
 
 /**
- * Help modal of the cached reports (src/features/reports/<Report>/Help).
+ * Help modal of the cached reports
+ * (src/features/reports/ReportHelpModal, shared by the five reports below).
  *
  * The "?" button next to the page title opens a modal that shows when the
  * cached file was updated, the period the file covers (`header.date -
@@ -18,6 +21,7 @@ const REPORTS = [
     url: "/relatorios/pacientes-dia",
     report: "PATIENT_DAY",
     kb: "reports.patientDay.title",
+    help: "reports.patientDay.help",
     text: "Pacientes por Dia",
     article: 41,
   },
@@ -26,6 +30,7 @@ const REPORTS = [
     url: "/relatorios/prescricoes",
     report: "PRESCRIPTION",
     kb: "reports.prescription.title",
+    help: "reports.prescription.help",
     text: "Prescrições",
     article: 42,
   },
@@ -34,6 +39,7 @@ const REPORTS = [
     url: "/relatorios/intervencoes",
     report: "INTERVENTION",
     kb: "reports.intervention.title",
+    help: "reports.intervention.help",
     text: "Intervenções",
     article: 43,
   },
@@ -42,6 +48,7 @@ const REPORTS = [
     url: "/relatorios/audit",
     report: "PRESCRIPTION_AUDIT",
     kb: "reports.prescriptionAudit.title",
+    help: "reports.prescriptionAudit.help",
     text: "checagens e deschecagens",
     article: 44,
   },
@@ -50,6 +57,7 @@ const REPORTS = [
     url: "/relatorios/economia",
     report: "ECONOMY",
     kb: "reports.economy.title",
+    help: "reports.economy.help",
     text: "economia calculada",
     article: 45,
   },
@@ -61,7 +69,7 @@ const DATE_RANGE = 30;
 
 const ok = (data: unknown) => ({ json: { status: "success", data } });
 
-const mockCachedReport = (mockApi: any, report: string) => {
+const mockCachedReport = (mockApi: MockApi, report: string) => {
   const cachePath = `/cache/${report.toLowerCase()}.json.gz`;
 
   mockApi.override(
@@ -81,7 +89,7 @@ const mockCachedReport = (mockApi: any, report: string) => {
     body: [],
   };
 
-  mockApi.override(`GET ${cachePath}`, (route: any) =>
+  mockApi.override(`GET ${cachePath}`, (route: Route) =>
     route.fulfill({
       status: 200,
       contentType: "application/octet-stream",
@@ -90,7 +98,7 @@ const mockCachedReport = (mockApi: any, report: string) => {
   );
 };
 
-const mockArticle = (mockApi: any, id: number) => {
+const mockArticle = (mockApi: MockApi, id: number) => {
   mockApi.override(
     "GET /knowledge-base/articles/:id",
     ok({
@@ -109,8 +117,11 @@ const mockArticle = (mockApi: any, id: number) => {
   mockApi.override("POST /support/knowledge-base-articles", ok([]));
 };
 
-const helpButton = (page: any, kb: string) =>
+const helpButton = (page: Page, kb: string) =>
   page.locator(`[data-kb="${kb}"]`).getByRole("button");
+
+/** The help modal's content, by the anchor curators pin articles to */
+const helpModal = (page: Page, kb: string) => page.locator(`[data-kb="${kb}"]`);
 
 for (const r of REPORTS) {
   test.describe(`${r.name} report`, () => {
@@ -129,9 +140,7 @@ for (const r of REPORTS) {
       });
       await button.click();
 
-      const modal = page.locator(".ant-modal").filter({
-        hasText: "Informações",
-      });
+      const modal = helpModal(page, r.help);
       await expect(modal).toBeVisible();
       await expect(modal).toContainText(r.text);
       await expect(modal).toContainText(
@@ -145,7 +154,7 @@ for (const r of REPORTS) {
       await expect
         .poll(() =>
           mockApi.requests.some(
-            (req: any) => req.path === `/knowledge-base/articles/${r.article}`,
+            (req) => req.path === `/knowledge-base/articles/${r.article}`,
           ),
         )
         .toBe(true);
@@ -174,19 +183,29 @@ test("the help still opens when the report request fails", async ({
     .getByRole("dialog")
     .filter({ hasText: "Não foi possível exibir este relatório." });
   await expect(errorModal.first()).toBeVisible({ timeout: 15000 });
-  for (let open = await errorModal.count(); open > 0; open--) {
+  // one modal per report request: wait for all of them before closing, or a
+  // late one would cover the help button
+  const fetches = mockApi.requests.filter(
+    (req) => req.path === "/reports/general/PRESCRIPTION",
+  ).length;
+  await expect(errorModal).toHaveCount(fetches);
+  for (let open = fetches; open > 0; open--) {
     await errorModal.last().getByRole("button", { name: "Fechar" }).click();
     await expect(errorModal).toHaveCount(open - 1);
   }
 
   await helpButton(page, "reports.prescription.title").click();
 
-  const modal = page.locator(".ant-modal").filter({ hasText: "Informações" });
+  const modal = helpModal(page, "reports.prescription.help");
   await expect(modal).toBeVisible();
   await expect(modal).toContainText("Prescrições");
   await expect(modal).toContainText("O período disponibilizado para consulta");
 
   // closing it goes through setHelpModal(false)
-  await modal.locator(".ant-modal-close").click();
+  await page
+    .locator(".ant-modal")
+    .filter({ has: modal })
+    .locator(".ant-modal-close")
+    .click();
   await expect(modal).toBeHidden();
 });

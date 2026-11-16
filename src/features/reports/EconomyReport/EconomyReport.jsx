@@ -17,7 +17,7 @@ import {
 import Filter from "./Filter/Filter";
 import { NoHarmLogoHorizontal as Brand } from "assets/NoHarmLogoHorizontal";
 import { filtersToDescription } from "utils/report";
-import { HelpModal } from "./Help/Help";
+import { ReportHelpModal } from "../ReportHelpModal/ReportHelpModal";
 import { setHelpModal } from "./EconomyReportSlice";
 import Tooltip from "components/Tooltip";
 import { FeatureService } from "services/FeatureService";
@@ -239,7 +239,12 @@ export default function EconomyReport() {
           </Space>
         </div>
       </ReportContainer>
-      <HelpModal />
+      <ReportHelpModal
+        area="economy"
+        description="Este relatório apresenta a economia calculada com base nas intervenções aplicadas."
+        articleId={45}
+        onClose={() => dispatch(setHelpModal(false))}
+      />
     </>
   );
 }

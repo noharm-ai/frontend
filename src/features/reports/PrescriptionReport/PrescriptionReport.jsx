@@ -24,7 +24,7 @@ import ChartScores from "./Charts/ChartScores";
 import ChartAgeRange from "./Charts/ChartAgeRange";
 import { NoHarmLogoHorizontal as Brand } from "assets/NoHarmLogoHorizontal";
 import { filtersToDescription } from "utils/report";
-import { HelpModal } from "./Help/Help";
+import { ReportHelpModal } from "../ReportHelpModal/ReportHelpModal";
 import { setHelpModal } from "./PrescriptionReportSlice";
 import Tooltip from "components/Tooltip";
 import { FeatureService } from "services/FeatureService";
@@ -431,7 +431,17 @@ export default function PrescriptionReport() {
           </Space>
         </div>
       </ReportContainer>
-      <HelpModal />
+      <ReportHelpModal
+        area="prescription"
+        description={
+          <>
+            Este relatório apresenta as métricas de avaliação de{" "}
+            <strong>Prescrições</strong>.
+          </>
+        }
+        articleId={42}
+        onClose={() => dispatch(setHelpModal(false))}
+      />
     </>
   );
 }
