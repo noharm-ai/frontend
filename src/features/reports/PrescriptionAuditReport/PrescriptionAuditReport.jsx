@@ -20,7 +20,7 @@ import ChartResponsibles from "./Charts/ChartResponsibles";
 import ChartDepartments from "./Charts/ChartDepartments";
 import { NoHarmLogoHorizontal as Brand } from "assets/NoHarmLogoHorizontal";
 import { filtersToDescription } from "utils/report";
-import HelpModal from "./Help/Help";
+import { HelpModal } from "./Help/Help";
 import { setHelpModal } from "./PrescriptionAuditReportSlice";
 import Tooltip from "components/Tooltip";
 import { FeatureService } from "services/FeatureService";

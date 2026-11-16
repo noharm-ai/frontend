@@ -17,7 +17,7 @@ import {
 import Filter from "./Filter/Filter";
 import { NoHarmLogoHorizontal as Brand } from "assets/NoHarmLogoHorizontal";
 import { filtersToDescription } from "utils/report";
-import HelpModal from "./Help/Help";
+import { HelpModal } from "./Help/Help";
 import { setHelpModal } from "./EconomyReportSlice";
 import Tooltip from "components/Tooltip";
 import { FeatureService } from "services/FeatureService";

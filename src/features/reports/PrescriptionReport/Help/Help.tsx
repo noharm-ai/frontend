@@ -1,30 +1,30 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
 import dayjs from "dayjs";
 import { ExportOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 
+import { useAppDispatch, useAppSelector } from "src/store";
 import Heading from "components/Heading";
 import Modal from "components/Modal";
 import Button from "components/Button";
 import Alert from "components/Alert";
 import { useArticleModal } from "features/knowledgeBase/useArticleModal";
 
-import { setHelpModal } from "../PrescriptionAuditReportSlice";
+import { setHelpModal } from "../PrescriptionReportSlice";
 
-export default function HelpModal() {
-  const dispatch = useDispatch();
+export function HelpModal() {
+  const dispatch = useAppDispatch();
   const { openArticle } = useArticleModal();
-  const open = useSelector(
-    (state) => state.reportsArea.prescriptionAudit.helpModal,
+  const open = useAppSelector(
+    (state) => state.reportsArea.prescription.helpModal,
   );
-  const updatedAt = useSelector(
-    (state) => state.reportsArea.prescriptionAudit.updatedAt,
+  const updatedAt = useAppSelector(
+    (state) => state.reportsArea.prescription.updatedAt,
   );
-  const dateRange = useSelector(
-    (state) => state.reportsArea.prescriptionAudit.dateRange,
+  // The JS slice infers `null` from its initial state; it holds a number once loaded.
+  const dateRange = useAppSelector(
+    (state): number | null => state.reportsArea.prescription.dateRange,
   );
-  const reportDate = useSelector(
-    (state) => state.reportsArea.prescriptionAudit.date,
+  const reportDate = useAppSelector(
+    (state) => state.reportsArea.prescription.date,
   );
 
   return (
@@ -50,13 +50,15 @@ export default function HelpModal() {
         type="info"
       />
       <p>
-        Este relatório apresenta em detalhe as checagens e deschecagens
-        efetuadas.
+        Este relatório apresenta as métricas de avaliação de{" "}
+        <strong>Prescrições</strong>.
       </p>
       <p>
         O período disponibilizado para consulta é:{" "}
         <strong>
-          {dayjs(reportDate).subtract(dateRange, "day").format("DD/MM/YY")}
+          {dayjs(reportDate)
+            .subtract(dateRange ?? 0, "day")
+            .format("DD/MM/YY")}
         </strong>{" "}
         até{" "}
         <strong>
@@ -72,7 +74,7 @@ export default function HelpModal() {
           size="large"
           style={{ marginTop: "10px" }}
           block
-          onClick={() => openArticle(44)}
+          onClick={() => openArticle(42)}
         >
           Base de Conhecimento
         </Button>

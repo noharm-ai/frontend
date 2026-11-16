@@ -22,7 +22,7 @@ import ChartResponsibles from "./Charts/ChartResponsibles";
 import ChartReasons from "./Charts/ChartReasons";
 import ChartDrugs from "./Charts/ChartDrugs";
 import ChartDepartments from "./Charts/ChartDepartments";
-import HelpModal from "./Help/Help";
+import { HelpModal } from "./Help/Help";
 import { setHelpModal } from "./InterventionReportSlice";
 import Tooltip from "components/Tooltip";
 import { FeatureService } from "services/FeatureService";

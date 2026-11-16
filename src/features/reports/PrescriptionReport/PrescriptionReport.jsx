@@ -24,7 +24,7 @@ import ChartScores from "./Charts/ChartScores";
 import ChartAgeRange from "./Charts/ChartAgeRange";
 import { NoHarmLogoHorizontal as Brand } from "assets/NoHarmLogoHorizontal";
 import { filtersToDescription } from "utils/report";
-import HelpModal from "./Help/Help";
+import { HelpModal } from "./Help/Help";
 import { setHelpModal } from "./PrescriptionReportSlice";
 import Tooltip from "components/Tooltip";
 import { FeatureService } from "services/FeatureService";
