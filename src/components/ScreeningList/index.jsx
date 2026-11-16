@@ -45,7 +45,6 @@ import { FeatureService } from "services/FeatureService";
 
 import { toDataSource } from "utils";
 
-import Feature from "models/Feature";
 import columnsTable, { expandedRowRender } from "./columns";
 import Filter from "../Prioritization/Filter";
 import {
@@ -343,11 +342,8 @@ export default function ScreeningList({
   // the sort can also be changed from the column headers, which bypass
   // handleSortColumnChange, so the filter is applied only while the tracked
   // sort is still the next prescription one
-  // agg prescriptions can be prioritized by their inner prescription dates,
-  // rolled out per user for now
-  const hasPrescriptionDates =
-    prioritizationType === "patient" &&
-    featureService.hasFeature(Feature.PRIORITIZATION_PRESCRIPTION_DATES);
+  // agg prescriptions can be prioritized by their inner prescription dates
+  const hasPrescriptionDates = prioritizationType === "patient";
   const prescriptionDatesActive =
     hasPrescriptionDates &&
     isPrescriptionDatesPrioritization(sortOrder.columnKey);

@@ -1,5 +1,4 @@
 import * as patientCache from "utils/patientCache";
-import Feature from "models/Feature";
 import { getPrescriptionDatesInfo } from "utils/transformers/prescriptions";
 
 export const PAGE_SIZE = 24;
@@ -111,15 +110,8 @@ export const ORDER_OPTIONS = [
     key: "nextPrescriptionDate",
     formattedKey: "nextPrescriptionDateFormated",
     type: "date",
-    feature: Feature.PRIORITIZATION_PRESCRIPTION_DATES,
   },
 ].sort((a, b) => a.label.localeCompare(b.label));
-
-// options the user can pick: the ones bound to a feature need it enabled
-export const getOrderOptions = (featureService) =>
-  ORDER_OPTIONS.filter(
-    (o) => !o.feature || featureService.hasFeature(o.feature),
-  );
 
 export const getListStats = (list) => {
   const listStats = {
