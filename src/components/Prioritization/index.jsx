@@ -33,7 +33,6 @@ import {
   sortList,
   filterList,
   getListStats,
-  getOrderOptions,
   PAGE_SIZE,
   ORDER_OPTIONS,
 } from "./Util";
@@ -283,7 +282,7 @@ export default function Prioritization({
                       value={state.prioritization}
                       style={{ width: 200 }}
                     >
-                      {getOrderOptions(featureService).map((o) => (
+                      {ORDER_OPTIONS.map((o) => (
                         <Select.Option value={o.key} key={o.key}>
                           {o.label}
                         </Select.Option>
