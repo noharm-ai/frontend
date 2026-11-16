@@ -5,6 +5,7 @@ import { Creators as UserCreators } from "store/ducks/user";
 import api from "services/api";
 import { FeatureService } from "services/FeatureService";
 import Feature from "models/Feature";
+import IntegrationStatus from "models/IntegrationStatus";
 
 import { WelcomeOnboardingModal } from "../WelcomeOnboardingModal/WelcomeOnboardingModal";
 
@@ -16,7 +17,16 @@ export function WelcomeOnboarding() {
     (state: any) => state.user.account.onboardingStatus,
   );
 
-  const open = onboardingStatus === "pending";
+  const integrationStatus = useAppSelector(
+    (state: any) => state.app.config.integrationStatus,
+  );
+
+  // during integration the team is still setting the client up, so the welcome
+  // (which points users at mandatory training) waits for production; the status
+  // stays pending meanwhile and the modal shows on the first login after go-live
+  const open =
+    onboardingStatus === "pending" &&
+    integrationStatus === IntegrationStatus.PRODUCTION;
 
   const markAsSeen = () => {
     dispatch(
