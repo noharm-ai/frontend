@@ -2,7 +2,6 @@ import type { Page } from "@playwright/test";
 
 import { test, expect } from "../support/mockApi";
 import { openSelect, pickOption } from "../support/antd";
-import { loginWithFeatures } from "../support/featureLogin";
 
 /**
  * The prescription dates filter keeps agg prescriptions having at least one
@@ -10,10 +9,6 @@ import { loginWithFeatures } from "../support/featureLogin";
  * only available while prioritizing by next prescription: picking that
  * prioritization turns it on from the current point in time, any other one
  * turns it off.
- *
- * The whole thing is behind the per-user PRIORITIZATION_PRESCRIPTION_DATES
- * feature while it is tested with a few users, so every test logs in with an
- * explicit feature list instead of the shared storage state.
  *
  * The clock is frozen at noon of the current day so the "two hours ago" and
  * "in two hours" prescriptions below always land on the same day.
@@ -149,9 +144,6 @@ const prescription = (
 
 const UPCOMING = "Paciente 99";
 const PAST = "Paciente 98";
-const FEATURE = "PRIORITIZATION_PRESCRIPTION_DATES";
-
-test.use({ storageState: { cookies: [], origins: [] } });
 
 test.beforeEach(async ({ page, mockApi }) => {
   await page.clock.setFixedTime(FIXED_NOW);
@@ -213,24 +205,6 @@ const prioritizeBy = async (page: Page, label: string) => {
   await pickOption(page, label);
 };
 
-test("the prioritization is hidden from users without the feature", async ({
-  page,
-  mockApi,
-}) => {
-  await loginWithFeatures(page, mockApi, []);
-  await search(page);
-
-  await expect(page.getByText(UPCOMING)).toBeVisible();
-  await expect(page.getByText(PAST)).toBeVisible();
-
-  await openPrioritizationSelect(page);
-  await scrollToOption(page, "Próxima prescrição");
-  await expect(dropdownOptions(page).first()).toBeVisible();
-  await expect(
-    dropdownOptions(page).filter({ hasText: "Próxima prescrição" }),
-  ).toHaveCount(0);
-});
-
 test("the dates tab lists the inner prescription times grouped by day", async ({
   page,
   mockApi,
@@ -252,7 +226,6 @@ test("the dates tab lists the inner prescription times grouped by day", async ({
     json: [{ status: "success", idPatient: 99, name: UPCOMING }],
   });
 
-  await loginWithFeatures(page, mockApi, [FEATURE]);
   await search(page);
 
   // the card is a styled anchor
@@ -269,17 +242,6 @@ test("the dates tab lists the inner prescription times grouped by day", async ({
       .locator(".prescription-dates-day", { hasText: dayLabel(tomorrow) })
       .locator(".ant-tag"),
   ).toHaveText("12:00");
-});
-
-test("the dates tab is not offered to users without the feature", async ({
-  page,
-  mockApi,
-}) => {
-  await loginWithFeatures(page, mockApi, []);
-  await search(page);
-
-  await expect(page.getByText(UPCOMING)).toBeVisible();
-  await expect(page.locator(".tab-prescription-dates")).toHaveCount(0);
 });
 
 test("picking a prioritization applies its default order", async ({
@@ -306,7 +268,6 @@ test("picking a prioritization applies its default order", async ({
     ],
   });
 
-  await loginWithFeatures(page, mockApi, [FEATURE]);
   await search(page);
   // global score, desc: the highest score leads
   await expect(page.getByRole("link").first()).toContainText("Paciente 97");
@@ -334,9 +295,7 @@ test("picking a prioritization applies its default order", async ({
 
 test("is off until the user prioritizes by next prescription", async ({
   page,
-  mockApi,
 }) => {
-  await loginWithFeatures(page, mockApi, [FEATURE]);
   await search(page);
 
   await expect(page.getByText(UPCOMING)).toBeVisible();
@@ -346,9 +305,7 @@ test("is off until the user prioritizes by next prescription", async ({
 
 test("prioritizing by next prescription starts from the current point in time, hiding past prescriptions", async ({
   page,
-  mockApi,
 }) => {
-  await loginWithFeatures(page, mockApi, [FEATURE]);
   await search(page);
   await prioritizeBy(page, "Próxima prescrição");
 
@@ -357,11 +314,7 @@ test("prioritizing by next prescription starts from the current point in time, h
   await expect(page.getByText(PAST)).toBeHidden();
 });
 
-test("tells the user how many patients the pointer hides", async ({
-  page,
-  mockApi,
-}) => {
-  await loginWithFeatures(page, mockApi, [FEATURE]);
+test("tells the user how many patients the pointer hides", async ({ page }) => {
   await search(page);
   await prioritizeBy(page, "Próxima prescrição");
 
@@ -379,8 +332,7 @@ test("tells the user how many patients the pointer hides", async ({
   await expect(filter.locator(".prescription-dates-hidden")).toHaveCount(0);
 });
 
-test("show all turns the filter off", async ({ page, mockApi }) => {
-  await loginWithFeatures(page, mockApi, [FEATURE]);
+test("show all turns the filter off", async ({ page }) => {
   await search(page);
   await prioritizeBy(page, "Próxima prescrição");
   await expect(page.getByText(PAST)).toBeHidden();
@@ -396,9 +348,7 @@ test("show all turns the filter off", async ({ page, mockApi }) => {
 
 test("switching to another prioritization turns the filter off", async ({
   page,
-  mockApi,
 }) => {
-  await loginWithFeatures(page, mockApi, [FEATURE]);
   await search(page);
   await prioritizeBy(page, "Próxima prescrição");
   await expect(page.getByText(PAST)).toBeHidden();
@@ -410,11 +360,7 @@ test("switching to another prioritization turns the filter off", async ({
   await expect(page.getByText(PAST)).toBeVisible();
 });
 
-test("clearing the date brings every prescription back", async ({
-  page,
-  mockApi,
-}) => {
-  await loginWithFeatures(page, mockApi, [FEATURE]);
+test("clearing the date brings every prescription back", async ({ page }) => {
   await search(page);
   await prioritizeBy(page, "Próxima prescrição");
   await expect(page.getByText(UPCOMING)).toBeVisible();
@@ -430,9 +376,7 @@ test("clearing the date brings every prescription back", async ({
 
 test("dragging the time slider back includes earlier prescriptions", async ({
   page,
-  mockApi,
 }) => {
-  await loginWithFeatures(page, mockApi, [FEATURE]);
   await search(page);
   await prioritizeBy(page, "Próxima prescrição");
   await expect(page.getByText(PAST)).toBeHidden();
@@ -454,9 +398,7 @@ test("dragging the time slider back includes earlier prescriptions", async ({
 
 test("moving to the next day hides prescriptions of the current day", async ({
   page,
-  mockApi,
 }) => {
-  await loginWithFeatures(page, mockApi, [FEATURE]);
   await search(page);
   await prioritizeBy(page, "Próxima prescrição");
   await expect(page.getByText(UPCOMING)).toBeVisible();

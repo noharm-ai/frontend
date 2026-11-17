@@ -213,9 +213,6 @@ function BaseForm() {
                       <Select.Option value="STAGING_ACCESS">
                         Acesso ao ambiente de homologação
                       </Select.Option>
-                      <Select.Option value="PRIORITIZATION_PRESCRIPTION_DATES">
-                        Priorização por datas das prescrições
-                      </Select.Option>
                     </Select>
                   </div>
                   <div className="form-info">

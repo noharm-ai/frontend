@@ -22,7 +22,7 @@ import ChartResponsibles from "./Charts/ChartResponsibles";
 import ChartReasons from "./Charts/ChartReasons";
 import ChartDrugs from "./Charts/ChartDrugs";
 import ChartDepartments from "./Charts/ChartDepartments";
-import HelpModal from "./Help/Help";
+import { ReportHelpModal } from "../ReportHelpModal/ReportHelpModal";
 import { setHelpModal } from "./InterventionReportSlice";
 import Tooltip from "components/Tooltip";
 import { FeatureService } from "services/FeatureService";
@@ -324,7 +324,17 @@ export default function InterventionReport() {
           </Space>
         </div>
       </ReportContainer>
-      <HelpModal />
+      <ReportHelpModal
+        area="intervention"
+        description={
+          <>
+            Este relatório apresenta as métricas de avaliação de{" "}
+            <strong>Intervenções</strong>.
+          </>
+        }
+        articleId={43}
+        onClose={() => dispatch(setHelpModal(false))}
+      />
     </>
   );
 }

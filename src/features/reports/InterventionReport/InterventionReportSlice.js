@@ -11,7 +11,7 @@ const initialState = {
   updatedAt: null,
   version: null,
   date: null,
-  dateRange: null,
+  dateRange: /** @type {number | null} */ (null),
   responsibles: [],
   prescribers: [],
   departments: [],

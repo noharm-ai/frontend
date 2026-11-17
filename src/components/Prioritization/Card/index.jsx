@@ -23,14 +23,10 @@ import {
 } from "src/utils/tracker";
 import PermissionService from "src/services/PermissionService";
 import Permission from "src/models/Permission";
-import Feature from "models/Feature";
 import { Card, AlertContainer } from "./index.style";
 
-// the inner prescription dates of an agg prescription are being rolled out
-// per user, so their tab only exists for those users
-const hasPrescriptionDatesTab = (prescription, featureService) =>
-  !!prescription.agg &&
-  featureService.hasFeature(Feature.PRIORITIZATION_PRESCRIPTION_DATES);
+// only agg prescriptions have inner prescription dates
+const hasPrescriptionDatesTab = (prescription) => !!prescription.agg;
 
 const TabContent = ({ tab: requestedTab, prescription, featureService }) => {
   const { t } = useTranslation();
@@ -38,7 +34,7 @@ const TabContent = ({ tab: requestedTab, prescription, featureService }) => {
   // the dates tab falls back to the patient one
   const tab =
     requestedTab === "prescriptionDates" &&
-    !hasPrescriptionDatesTab(prescription, featureService)
+    !hasPrescriptionDatesTab(prescription)
       ? "patient"
       : requestedTab;
 
@@ -567,7 +563,7 @@ export default function PrioritizationCard({
           </Badge>
         </div>
 
-        {hasPrescriptionDatesTab(prescription, featureService) && (
+        {hasPrescriptionDatesTab(prescription) && (
           <div
             className={`tab tab-prescription-dates ${
               activeTab === "prescriptionDates" ? "active" : ""

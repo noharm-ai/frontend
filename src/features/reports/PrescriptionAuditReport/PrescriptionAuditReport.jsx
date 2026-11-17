@@ -20,7 +20,7 @@ import ChartResponsibles from "./Charts/ChartResponsibles";
 import ChartDepartments from "./Charts/ChartDepartments";
 import { NoHarmLogoHorizontal as Brand } from "assets/NoHarmLogoHorizontal";
 import { filtersToDescription } from "utils/report";
-import HelpModal from "./Help/Help";
+import { ReportHelpModal } from "../ReportHelpModal/ReportHelpModal";
 import { setHelpModal } from "./PrescriptionAuditReportSlice";
 import Tooltip from "components/Tooltip";
 import { FeatureService } from "services/FeatureService";
@@ -206,7 +206,12 @@ export default function PrescriptionReport() {
           </Space>
         </div>
       </ReportContainer>
-      <HelpModal />
+      <ReportHelpModal
+        area="prescriptionAudit"
+        description="Este relatório apresenta em detalhe as checagens e deschecagens efetuadas."
+        articleId={44}
+        onClose={() => dispatch(setHelpModal(false))}
+      />
     </>
   );
 }
