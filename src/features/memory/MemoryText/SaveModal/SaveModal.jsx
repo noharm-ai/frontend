@@ -26,7 +26,7 @@ export function SaveModal({
   memoryType,
   // [{ label, items: [{ key: "{{var}}", label }] }]: the variables a text
   // takes, in place of the prescription clinical note ones
-  variableGroups = /** @type {{ label: string, items: { key: string, label: string }[] }[] | null} */ (
+  variableGroups = /** @type {import("../MemoryText").IMemoryTextVariableGroup[] | null} */ (
     null
   ),
 }) {

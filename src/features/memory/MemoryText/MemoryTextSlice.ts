@@ -37,7 +37,8 @@ interface IMemoryTextState {
 }
 
 export interface ISaveMemoryParams {
-  id?: number | string | null;
+  // no id creates a new record
+  id: number | string | null | undefined;
   type: string;
   value: unknown;
 }
@@ -66,7 +67,7 @@ const requestMemory = async (type: string) => {
 
 const requestSaveMemory = async (params: ISaveMemoryParams) => {
   const { data, error } = (await api
-    .putMemory(null, { ...params, id: params.id })
+    .putMemory(null, params)
     .catch(errorHandler)) as ApiResult;
 
   // PUT /memory answers with the key of the saved record
