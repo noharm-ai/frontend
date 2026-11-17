@@ -1,7 +1,6 @@
 import { Creators as ClinicalNotesCreators } from "./clinicalNotes";
 import { Creators as DrugsCreators } from "./drugs";
 import { Creators as InterventionCreators } from "./intervention";
-import { Creators as MemoryCreators } from "./memory";
 import { Creators as PrescriptionDrugsCreators } from "./prescriptionDrugs";
 import { Creators as PrescriptionsCreators } from "./prescriptions";
 
@@ -13,6 +12,7 @@ import { reset as adminProtocolReset } from "features/admin/Protocol/ProtocolSli
 
 import { reset as drugFormStatusReset } from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import { reset as listsReset } from "features/lists/ListsSlice";
+import { reset as memoryTextReset } from "features/memory/MemoryText/MemoryTextSlice";
 import { reset as memoryDraftReset } from "features/memory/MemoryDraft/MemoryDraftSlice";
 import { reset as memoryFilterReset } from "features/memory/MemoryFilter/MemoryFilterSlice";
 import { reset as serverActionsReset } from "features/serverActions/ServerActionsSlice";
@@ -56,7 +56,6 @@ import { reset as regulationIndicatorsPanelReportReset } from "features/regulati
 const { clinicalNotesReset } = ClinicalNotesCreators;
 const { drugsReset } = DrugsCreators;
 const { interventionReset } = InterventionCreators;
-const { memoryReset } = MemoryCreators;
 const { prescriptionDrugsReset } = PrescriptionDrugsCreators;
 const { prescriptionsReset } = PrescriptionsCreators;
 
@@ -70,7 +69,7 @@ export const resetReduxState = (dispatch) => {
   dispatch(clinicalNotesReset());
   dispatch(drugsReset());
   dispatch(interventionReset());
-  dispatch(memoryReset());
+  dispatch(memoryTextReset());
   dispatch(prescriptionDrugsReset());
   dispatch(prescriptionsReset());
   dispatch(reportsReset());

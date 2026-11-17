@@ -13,25 +13,14 @@ import {
   searchDrugsThunk,
   fetchDrugSummaryThunk,
 } from "store/ducks/drugs/thunk";
-import {
-  memoryFetchReasonTextThunk,
-  memorySaveReasonTextThunk,
-} from "store/ducks/memory/thunk";
 
 import Intervention from "components/Forms/Intervention";
 
-const mapStateToProps = ({
-  intervention,
-  drugs,
-  memory,
-  user,
-  prescriptions,
-}) => ({
+const mapStateToProps = ({ intervention, drugs, user, prescriptions }) => ({
   intervention: intervention.maybeCreateOrUpdate,
   reasons: intervention.reasons,
   drugs: drugs.search,
   drugSummary: drugs.summary,
-  reasonTextMemory: memory.reasonText,
   roles: user.account.roles,
   features: user.account.features,
   aggPrescription: prescriptions.single.data.agg,
@@ -52,8 +41,6 @@ const mapDispatchToProps = (dispatch) =>
         updateSelectedItemToSaveInterventionThunk,
       searchDrugs: searchDrugsThunk,
       fetchDrugSummary: fetchDrugSummaryThunk,
-      memorySaveReasonText: memorySaveReasonTextThunk,
-      memoryFetchReasonText: memoryFetchReasonTextThunk,
     },
     dispatch,
   );

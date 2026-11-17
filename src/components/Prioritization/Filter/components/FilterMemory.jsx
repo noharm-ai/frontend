@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { isEmpty } from "lodash";
+import { useDispatch, useSelector } from "react-redux";
+import { cloneDeep, isEmpty } from "lodash";
 import { useTranslation } from "react-i18next";
 import { FilterOutlined, LoadingOutlined } from "@ant-design/icons";
 
@@ -12,6 +13,10 @@ import {
   FILTER_PUBLIC_MEMORY_TYPE,
 } from "utils/memory";
 import notification from "components/notification";
+import {
+  fetchMemoryThunk,
+  saveMemoryThunk,
+} from "features/memory/MemoryText/MemoryTextSlice";
 import SaveFilterModal from "./SaveFilterModal";
 import ConfigModal from "./ConfigModal";
 import {
@@ -19,12 +24,10 @@ import {
   TrackedPrescriptionPrioritizationAction,
 } from "src/utils/tracker";
 
+const NO_FILTERS = [];
+
 export default function FilterMemory({
-  fetchMemory,
   account,
-  publicFilters,
-  privateFilters,
-  saveMemory,
   filter,
   setScreeningListFilter,
   loadFilter,
@@ -34,6 +37,21 @@ export default function FilterMemory({
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const privateFilters = useSelector(
+    (state) =>
+      state.memoryText.stores[FILTER_PRIVATE_STORE_ID]?.list ?? NO_FILTERS,
+  );
+  const publicFilters = useSelector(
+    (state) =>
+      state.memoryText.stores[FILTER_PUBLIC_STORE_ID]?.list ?? NO_FILTERS,
+  );
+
+  const fetchMemory = (storeId, type) =>
+    dispatch(fetchMemoryThunk({ storeId, type }));
+
+  const saveMemory = (storeId, params) =>
+    dispatch(saveMemoryThunk({ storeId, params }));
 
   const filterActive = (item) =>
     item.active || !Object.prototype.hasOwnProperty.call(item, "active");
@@ -44,7 +62,7 @@ export default function FilterMemory({
       const filters = hasFilter ? [...publicFilters[0].value] : [];
       filters.push({
         name: filterName,
-        data: filter,
+        data: cloneDeep(filter),
       });
 
       saveMemory(FILTER_PUBLIC_STORE_ID, {
@@ -57,7 +75,7 @@ export default function FilterMemory({
       const filters = hasFilter ? [...privateFilters[0].value] : [];
       filters.push({
         name: filterName,
-        data: filter,
+        data: cloneDeep(filter),
       });
 
       saveMemory(FILTER_PRIVATE_STORE_ID, {
@@ -77,7 +95,8 @@ export default function FilterMemory({
       type === "public" ? publicFilters[0] : privateFilters[0];
     const filters = [...storeElement.value];
 
-    filters[index].active = false;
+    // the saved filters are frozen store state: replace the item, don't edit it
+    filters[index] = { ...filters[index], active: false };
 
     if (type === "public") {
       saveMemory(FILTER_PUBLIC_STORE_ID, {
@@ -96,7 +115,11 @@ export default function FilterMemory({
     notification.success({ message: "Filtro removido com sucesso!" });
   };
 
-  const loadFilterAction = (filterData) => {
+  const loadFilterAction = (savedFilter) => {
+    // a copy: the saved filter is frozen store state, and goes on to the
+    // prioritization filter, which must not share it
+    const filterData = cloneDeep(savedFilter);
+
     // keep compatibility between different versions
     if (filterData.idSegment && !Array.isArray(filterData.idSegment)) {
       filterData.idSegment = [filterData.idSegment];
@@ -152,10 +175,15 @@ export default function FilterMemory({
       FILTER_PRIVATE_STORE_ID,
       `${FILTER_PRIVATE_MEMORY_TYPE}_${account.userId}`
     );
-    fetchMemory(FILTER_PUBLIC_STORE_ID, FILTER_PUBLIC_MEMORY_TYPE).then(() => {
-      setLoading(false);
-      setLoaded(true);
-    });
+    fetchMemory(FILTER_PUBLIC_STORE_ID, FILTER_PUBLIC_MEMORY_TYPE).then(
+      (action) => {
+        // a failed request keeps the button loading, as it always did
+        if (fetchMemoryThunk.rejected.match(action)) return;
+
+        setLoading(false);
+        setLoaded(true);
+      },
+    );
   };
 
   const filterMenu = () => {

@@ -14,13 +14,8 @@ import {
   searchDrugsThunk,
   fetchDrugsFrequenciesListThunk,
 } from "store/ducks/drugs/thunk";
-import { memoryFetchThunk, memorySaveThunk } from "store/ducks/memory/thunk";
 
 import Prioritization from "components/Prioritization";
-import {
-  FILTER_PRIVATE_MEMORY_TYPE,
-  FILTER_PUBLIC_MEMORY_TYPE,
-} from "utils/memory";
 
 const mapStateToProps = ({
   segments,
@@ -28,7 +23,6 @@ const mapStateToProps = ({
   app,
   drugs,
   user,
-  memory,
 }) => ({
   segments: {
     error: segments.error,
@@ -52,12 +46,6 @@ const mapStateToProps = ({
   currentJourney: app.preferences.journey,
   features: user.account.features,
   account: user.account,
-  privateFilters: memory[FILTER_PRIVATE_MEMORY_TYPE]
-    ? memory[FILTER_PRIVATE_MEMORY_TYPE].list
-    : [],
-  publicFilters: memory[FILTER_PUBLIC_MEMORY_TYPE]
-    ? memory[FILTER_PUBLIC_MEMORY_TYPE].list
-    : [],
 });
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
@@ -69,8 +57,6 @@ const mapDispatchToProps = (dispatch) =>
       searchDrugs: searchDrugsThunk,
       fetchFrequencies: fetchDrugsFrequenciesListThunk,
       setJourney: setJourneyThunk,
-      fetchMemory: memoryFetchThunk,
-      saveMemory: memorySaveThunk,
     },
     dispatch
   );

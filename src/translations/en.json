@@ -35,7 +35,6 @@
   "success": {
     "generic": "Yeah! Saved successfully! :)",
     "intervention": "Yeah! Your Intervention has been saved! :)",
-    "defaultObservation": "Yeah! Your Observation has been saved!",
     "applyDefaultObservation": "Observation applied"
   },
   "menu": {

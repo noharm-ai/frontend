@@ -46,9 +46,6 @@ export default function Intervention({
   fetchReasonsList,
   searchDrugs,
   drugs,
-  reasonTextMemory,
-  memorySaveReasonText,
-  memoryFetchReasonText,
   drugSummary,
   fetchDrugSummary,
   features,
@@ -470,9 +467,6 @@ export default function Intervention({
                 reasons={reasons}
                 searchDrugs={searchDrugs}
                 drugs={drugs}
-                reasonTextMemory={reasonTextMemory}
-                memorySaveReasonText={memorySaveReasonText}
-                memoryFetchReasonText={memoryFetchReasonText}
                 featureService={featureService}
                 prescriptionStatus={prescriptionStatus}
                 prescriptionHeaders={prescriptionHeaders}

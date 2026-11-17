@@ -5,7 +5,7 @@ import { Alert, Button, Popconfirm, Popover } from "antd";
 import { DownloadOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 
 import { Select, Textarea } from "components/Inputs";
-import MemoryText from "containers/MemoryText";
+import { MemoryText } from "features/memory/MemoryText/MemoryText";
 import {
   IC_CLINICAL_NOTES_MEMORY_TYPE,
   IC_CLINICAL_NOTES_PRIVATE_MEMORY_TYPE,
