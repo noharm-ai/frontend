@@ -41,11 +41,30 @@ export const DoseCellPopover = styled.div`
     }
   }
 
-  .differentiated-dose-note {
+  .differentiated-dose-note,
+  .missing-convert-factor-note {
     max-width: 320px;
     margin-top: 8px;
     font-size: 12px;
     line-height: 1.4;
     color: #595959;
+  }
+`;
+
+// the dose of an item whose unit has no conversion factor to the drug's
+// default unit: underlined like a drug without substance (DrugLink)
+export const DoseValue = styled.span`
+  &.missing-convert-factor {
+    position: relative;
+
+    &:after {
+      position: absolute;
+      content: "";
+      left: 0;
+      bottom: 0;
+      height: 0;
+      width: 100%;
+      border: 1px dashed #ffa39e;
+    }
   }
 `;

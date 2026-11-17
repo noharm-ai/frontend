@@ -16,6 +16,7 @@ import {
 import PermissionService from "services/PermissionService";
 import Permission from "models/Permission";
 import { getDifferentiatedDose } from "src/utils/dose";
+import { formatNumber } from "src/utils/number";
 
 import { DrugLink } from "../../index.style";
 import { DrugCellPopover } from "./DrugCell.style";
@@ -39,6 +40,10 @@ export interface DrugRecord {
   dose?: number | string;
   differentiatedDose?: string | null;
   doseconv?: number | string;
+  // the dose in the default unit (dose x current factor), as the alerts read it
+  convertedDose?: number | null;
+  // set for a drug with dose ranges: doseconv is then a range, not a dose
+  doseRange?: number | string;
   dayFrequency?: number | string;
   intravenous?: boolean;
   tube?: boolean;
@@ -185,6 +190,26 @@ const allergyReason = (record: DrugRecord): string | null => {
   }
 };
 
+// the converted dose when prescalc's stored doseconv no longer matches it (the
+// item was sent again with another dose or unit, or the factor changed after
+// prescalc), for the maintainers: the dose alerts read the live one, the score
+// the stored one. Not for a range drug (doseconv is a range) nor without a
+// factor (no live dose); float4 noise is ignored
+const doseconvMismatch = (record: DrugRecord): number | null => {
+  const live = record.convertedDose;
+  if (record.doseRange || live == null || record.doseconv == null) {
+    return null;
+  }
+
+  const stored = Number(record.doseconv);
+  if (Number.isNaN(stored)) {
+    return null;
+  }
+
+  const tolerance = Math.max(Math.abs(live), 1) * 1e-4;
+  return Math.abs(stored - live) > tolerance ? live : null;
+};
+
 function DrugCell({ record, bag }: DrugCellProps): React.ReactElement | null {
   if (record.total || record.emptyRow) {
     return null;
@@ -242,6 +267,7 @@ function DrugCell({ record, bag }: DrugCellProps): React.ReactElement | null {
         : (record.periodDayInterval ?? 0) + 1;
     const differentiatedDose = getDifferentiatedDose(record);
     const allergy = allergyReason(record);
+    const liveDoseconv = doseconvMismatch(record);
 
     content = (
       <DrugCellPopover>
@@ -277,6 +303,16 @@ function DrugCell({ record, bag }: DrugCellProps): React.ReactElement | null {
             {record.idMeasureUnitDefault || "Unidade indefinida"}
             {differentiatedDose && " (soma das doses diferenciadas)"}
           </span>
+
+          {liveDoseconv != null && (
+            <div className="substance-warning doseconv-warning">
+              A doseconv armazenada difere da dose atual × fator (
+              {formatNumber(liveDoseconv, 2)} {record.idMeasureUnitDefault}): o
+              item foi reenviado com outra dose ou unidade, ou o fator mudou
+              depois do prescalc. Os alertas de dose usam a dose atual; o
+              escore, a armazenada.
+            </div>
+          )}
 
           <span className="info-label">frequenciadia:</span>
           <span className="info-value">
