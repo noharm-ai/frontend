@@ -56,6 +56,15 @@ test("embeds YouTube videos and drops any other iframe", async ({
 test.describe("with WRITE_HELP_TEXT", () => {
   test.use({ storageState: { cookies: [], origins: [] } });
 
+  // the YouTube url is asked with window.prompt: closing it returns focus to
+  // the window, and the prioritization refreshes its card statuses on focus
+  // (see prioritization/statusRefresh.spec.ts)
+  test.beforeEach(({ mockApi }) => {
+    mockApi.override("POST /prescriptions/status-list", {
+      json: { status: "success", data: [] },
+    });
+  });
+
   test("adds a YouTube video from its url and saves it", async ({
     page,
     mockApi,
