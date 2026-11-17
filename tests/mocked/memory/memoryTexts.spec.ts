@@ -40,11 +40,16 @@ test.describe("clinical note texts", () => {
   const openTextsMenu = async (page: Page) => {
     const button = page.locator(".ant-modal .gtm-bt-memorytext").first();
     await expect(button).not.toHaveClass(/ant-btn-loading/);
-    // leave any menu still open, so the hover opens a fresh one
-    await page.mouse.move(0, 0);
-    await expect(page.locator(".ant-dropdown:visible")).toHaveCount(0);
-    await button.hover();
-    await page.getByRole("menuitem", { name: "Aplicar" }).hover();
+    // a hover-triggered antd menu can miss a hover that lands while it is
+    // still closing, so retry the whole gesture from a closed menu
+    await expect(async () => {
+      await page.mouse.move(0, 0);
+      await expect(page.locator(".ant-dropdown:visible")).toHaveCount(0);
+      await button.hover();
+      await page
+        .getByRole("menuitem", { name: "Aplicar" })
+        .hover({ timeout: 2000 });
+    }).toPass({ timeout: 15000 });
   };
 
   test("applies a saved text and saves a new one", async ({
@@ -105,15 +110,25 @@ test.describe("clinical note texts", () => {
       ],
     });
 
-    // the saved record replaces the list (re-opening an antd submenu right
-    // after a modal closes can miss the hover, so retry the whole gesture)
-    await expect(async () => {
-      await openTextsMenu(page);
-      await expect(page.locator("#gtm-btn-memorytext-load:visible")).toHaveText(
-        ["Modelo A", "Modelo B", "Modelo C"],
-        { timeout: 2000 },
-      );
-    }).toPass();
+    // the saved record replaces the list: the next save builds on it
+    await page.locator(".ant-modal .gtm-bt-memorytext").first().hover();
+    await page.getByRole("menuitem", { name: "Novo" }).click();
+    await saveModal.locator("input").fill("Modelo D");
+    await saveModal.locator("textarea").fill("Texto do modelo D");
+    await saveModal.getByRole("button", { name: "Salvar" }).click();
+
+    await expect.poll(() => putMemoryCalls(mockApi).length).toBe(2);
+    const second = putMemoryCalls(mockApi)[1];
+    expect(second.path).toBe("/memory/7");
+    expect(
+      JSON.parse(second.postData!).value.map((t: { name: string }) => t.name),
+    ).toEqual([
+      "Modelo B",
+      "Modelo A",
+      "Modelo inativo",
+      "Modelo C",
+      "Modelo D",
+    ]);
   });
 
   test("reads the private texts from the user's own record", async ({
@@ -138,6 +153,39 @@ test.describe("clinical note texts", () => {
         ].sort(),
       )
       .toEqual(["/memory/clinical-notes", "/memory/clinical-notes-private_1"]);
+  });
+
+  test("starts a new record when the answer has no texts", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override("GET /memory/clinical-notes", {
+      json: { status: "success" },
+    });
+    mockApi.override("PUT /memory", { json: { status: "success", data: 9 } });
+
+    await openClinicalNotes(page);
+    await openTextsMenu(page);
+    await expect(
+      page.getByText("Nenhum texto padrão encontrado."),
+    ).toBeVisible();
+
+    await page.locator(".ant-modal .gtm-bt-memorytext").first().hover();
+    await page.getByRole("menuitem", { name: "Novo" }).click();
+    const saveModal = page
+      .locator(".ant-modal")
+      .filter({ hasText: "Nome do texto padrão:" });
+    await saveModal.locator("input").fill("Modelo novo");
+    await saveModal.locator("textarea").fill("Texto novo");
+    await saveModal.getByRole("button", { name: "Salvar" }).click();
+
+    await expect.poll(() => putMemoryCalls(mockApi).length).toBe(1);
+    const [call] = putMemoryCalls(mockApi);
+    expect(call.path).toBe("/memory");
+    expect(JSON.parse(call.postData!)).toEqual({
+      type: "clinical-notes",
+      value: [{ name: "Modelo novo", data: "Texto novo" }],
+    });
   });
 
   test("shows no texts when the request fails", async ({ page, mockApi }) => {
@@ -270,6 +318,31 @@ test.describe("intervention default observation", () => {
     ).toHaveCount(0);
   });
 
+  test("says so when the reason text can't be saved", async ({
+    page,
+    mockApi,
+  }) => {
+    mockApi.override("PUT /memory", serverError);
+
+    await openWithReason(page);
+    await page.locator(".gtm-bt-interv-mem-save").click();
+
+    const modal = page.locator(".ant-modal").last();
+    await modal.locator("textarea").fill("Texto novo");
+    await modal.getByRole("button", { name: "Salvar" }).click();
+
+    await expect(
+      page.getByText("Ops! Algo de errado aconteceu."),
+    ).toBeVisible();
+    await expect(
+      page.getByText("Observação modelo aplicada com sucesso!"),
+    ).toHaveCount(0);
+    // the text still goes to the observation
+    await expect(page.locator(".ant-modal textarea").first()).toHaveValue(
+      "Texto novo",
+    );
+  });
+
   test("shows an error when the saved text can't be read", async ({
     page,
     mockApi,
@@ -363,27 +436,57 @@ test.describe("prioritization saved filters", () => {
     ).toBeVisible();
   });
 
-  test("keeps loading when the public filters can't be read", async ({
-    page,
-    mockApi,
-  }) => {
-    mockApi.override("GET /memory/filter-public", serverError);
+  for (const failing of ["filter-public", "filter-private_1"]) {
+    test(`retries when the ${failing} filters can't be read`, async ({
+      page,
+      mockApi,
+    }) => {
+      mockApi.override(`GET /memory/${failing}`, serverError);
+
+      await openFilterMenu(page);
+
+      await expect(
+        page.getByText("Ops! Algo de errado aconteceu."),
+      ).toBeVisible();
+      // the button stops loading, and saving waits for both lists
+      await expect(
+        page.locator(".gtm-btn-filter .anticon-loading"),
+      ).toHaveCount(0);
+      await expect(
+        page.getByRole("menuitem", { name: "Salvar filtro atual" }),
+      ).toHaveAttribute("aria-disabled", "true");
+
+      // the next click reads both lists again
+      mockApi.override(`GET /memory/${failing}`, memoryList([]));
+      await page.keyboard.press("Escape");
+      await expect(page.locator(".ant-dropdown:visible")).toHaveCount(0);
+      await page.locator(".gtm-btn-filter").click();
+      await expect(
+        page.locator("#gtm-btn-menu-filter-save:visible"),
+      ).not.toHaveAttribute("aria-disabled", "true");
+      expect(
+        mockApi.requests.filter((r) => r.path === `/memory/${failing}`).length,
+      ).toBeGreaterThanOrEqual(2);
+    });
+  }
+
+  test("says so when a filter can't be saved", async ({ page, mockApi }) => {
+    mockApi.override("PUT /memory", serverError);
 
     await openFilterMenu(page);
+    await page.getByRole("menuitem", { name: "Salvar filtro atual" }).click();
+    const modal = page
+      .locator(".ant-modal")
+      .filter({ hasText: "Nome do filtro:" });
+    await modal.locator("input").fill("Outro filtro");
+    await modal.getByRole("button", { name: "Salvar" }).click();
 
-    await expect
-      .poll(
-        () =>
-          mockApi.requests.filter((r) => r.path === "/memory/filter-public")
-            .length,
-      )
-      .toBe(1);
     await expect(
-      page.locator(".gtm-btn-filter .anticon-loading"),
+      page.getByText("Ops! Algo de errado aconteceu."),
     ).toBeVisible();
-    await page.getByRole("menuitem", { name: "Filtros públicos" }).hover();
-    await expect(
-      page.getByRole("menuitem", { name: "Nenhum filtro disponível." }),
-    ).toBeVisible();
+    await expect(page.getByText("Uhu! Filtro salvo com sucesso!")).toHaveCount(
+      0,
+    );
+    expect(putMemoryCalls(mockApi)).toHaveLength(1);
   });
 });

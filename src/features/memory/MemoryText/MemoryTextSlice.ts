@@ -21,6 +21,9 @@ export interface IMemoryRecord<TValue = unknown> {
 export interface IMemoryStore<TValue = unknown> {
   isFetching: boolean;
   list: IMemoryRecord<TValue>[];
+  // the fetch whose answer is still awaited: an answer from an older fetch,
+  // or one that arrives after a save, is stale and ignored
+  fetchRequestId?: string | null;
 }
 
 interface IMemoryTextState {
@@ -39,12 +42,10 @@ export interface ISaveMemoryParams {
   value: unknown;
 }
 
-type ThunkConfig = {
-  state: { auth: { identify: { access_token?: string } } };
-  rejectValue: unknown;
-};
+type ThunkConfig = { rejectValue: unknown };
 
-// errorHandler (JS) resolves to { status, error } on failure
+// errorHandler (JS) resolves to { error } on failure. services/api builds the
+// auth header from localStorage, so no token is passed
 type ApiResult = { data?: { data?: unknown }; error?: unknown };
 
 const initialState: IMemoryTextState = {
@@ -55,30 +56,31 @@ const initialState: IMemoryTextState = {
   },
 };
 
-const getMemory = async (accessToken: string | undefined, type: string) =>
-  (await api.getMemory(accessToken, type).catch(errorHandler)) as ApiResult;
-
-const putMemory = async (
-  accessToken: string | undefined,
-  params: ISaveMemoryParams,
-) =>
-  (await api
-    .putMemory(accessToken, { ...params, id: params.id })
+const requestMemory = async (type: string) => {
+  const { data, error } = (await api
+    .getMemory(null, type)
     .catch(errorHandler)) as ApiResult;
+
+  return { records: (data?.data ?? []) as IMemoryRecord[], error };
+};
+
+const requestSaveMemory = async (params: ISaveMemoryParams) => {
+  const { data, error } = (await api
+    .putMemory(null, { ...params, id: params.id })
+    .catch(errorHandler)) as ApiResult;
+
+  // PUT /memory answers with the key of the saved record
+  return { key: data?.data as number | string, error };
+};
 
 export const fetchMemoryThunk = createAsyncThunk<
   IMemoryRecord[],
   { storeId: string; type: string },
   ThunkConfig
 >("memoryText/fetch", async ({ type }, thunkAPI) => {
-  const { access_token } = thunkAPI.getState().auth.identify;
-  const { data, error } = await getMemory(access_token, type);
+  const { records, error } = await requestMemory(type);
 
-  if (!isEmpty(error)) {
-    return thunkAPI.rejectWithValue(error);
-  }
-
-  return data?.data as IMemoryRecord[];
+  return isEmpty(error) ? records : thunkAPI.rejectWithValue(error);
 });
 
 /** Saves a memory record and makes it the only record of its store. */
@@ -87,14 +89,9 @@ export const saveMemoryThunk = createAsyncThunk<
   { storeId: string; params: ISaveMemoryParams },
   ThunkConfig
 >("memoryText/save", async ({ params }, thunkAPI) => {
-  const { access_token } = thunkAPI.getState().auth.identify;
-  const { data, error } = await putMemory(access_token, params);
+  const { key, error } = await requestSaveMemory(params);
 
-  if (!isEmpty(error)) {
-    return thunkAPI.rejectWithValue(error);
-  }
-
-  return { ...params, key: data?.data as number | string };
+  return isEmpty(error) ? { ...params, key } : thunkAPI.rejectWithValue(error);
 });
 
 export const fetchReasonTextThunk = createAsyncThunk<
@@ -102,29 +99,21 @@ export const fetchReasonTextThunk = createAsyncThunk<
   string,
   ThunkConfig
 >("memoryText/fetchReasonText", async (type, thunkAPI) => {
-  const { access_token } = thunkAPI.getState().auth.identify;
-  const { data, error } = await getMemory(access_token, type);
+  const { records, error } = await requestMemory(type);
 
-  if (!isEmpty(error)) {
-    return thunkAPI.rejectWithValue(error);
-  }
-
-  return data?.data as IMemoryRecord<{ text: string }>[];
+  return isEmpty(error)
+    ? (records as IMemoryRecord<{ text: string }>[])
+    : thunkAPI.rejectWithValue(error);
 });
 
 export const saveReasonTextThunk = createAsyncThunk<
-  unknown,
+  number | string,
   ISaveMemoryParams,
   ThunkConfig
 >("memoryText/saveReasonText", async (params, thunkAPI) => {
-  const { access_token } = thunkAPI.getState().auth.identify;
-  const { data, error } = await putMemory(access_token, params);
+  const { key, error } = await requestSaveMemory(params);
 
-  if (!isEmpty(error)) {
-    return thunkAPI.rejectWithValue(error);
-  }
-
-  return data?.data;
+  return isEmpty(error) ? key : thunkAPI.rejectWithValue(error);
 });
 
 const memoryTextSlice = createSlice({
@@ -142,24 +131,30 @@ const memoryTextSlice = createSlice({
         state.stores[storeId] = {
           list: state.stores[storeId]?.list ?? [],
           isFetching: true,
+          fetchRequestId: action.meta.requestId,
         };
       })
       .addCase(fetchMemoryThunk.fulfilled, (state, action) => {
-        state.stores[action.meta.arg.storeId] = {
-          isFetching: false,
-          list: action.payload,
-        };
+        const store = state.stores[action.meta.arg.storeId];
+        if (store?.fetchRequestId !== action.meta.requestId) return;
+
+        store.isFetching = false;
+        store.fetchRequestId = null;
+        store.list = action.payload;
       })
       .addCase(fetchMemoryThunk.rejected, (state, action) => {
         const store = state.stores[action.meta.arg.storeId];
-        if (store) {
-          store.isFetching = false;
-        }
+        if (store?.fetchRequestId !== action.meta.requestId) return;
+
+        store.isFetching = false;
+        store.fetchRequestId = null;
       })
       .addCase(saveMemoryThunk.fulfilled, (state, action) => {
         const { storeId } = action.meta.arg;
+        // the saved record is newer than any fetch still in flight
         state.stores[storeId] = {
-          isFetching: state.stores[storeId]?.isFetching ?? false,
+          isFetching: false,
+          fetchRequestId: null,
           list: [action.payload],
         };
       })

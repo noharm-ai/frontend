@@ -267,7 +267,7 @@ export default function Observations({
     });
   };
 
-  const saveDefaultText = (value) => {
+  const saveDefaultText = async (value) => {
     const { idReason, memoryKey } = saveTextModal;
     const payload = {
       type: `reasonsDefaultText-${idReason}`,
@@ -277,9 +277,18 @@ export default function Observations({
     if (memoryKey) {
       payload.id = memoryKey;
     }
-    dispatch(saveReasonTextThunk(payload));
 
+    // the text goes to the observation either way; the message says whether
+    // it was also stored as the reason's default
     setFieldValue("observation", applyVariables(value));
+
+    const action = await dispatch(saveReasonTextThunk(payload));
+
+    if (saveReasonTextThunk.rejected.match(action)) {
+      notification.error({ message: t("error.title") });
+      return;
+    }
+
     notification.success({ message: t("success.applyDefaultObservation") });
 
     trackInterventionAction(TrackedInterventionAction.SAVE_DEFAULT_TEXT);
