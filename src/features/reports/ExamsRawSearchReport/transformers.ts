@@ -1,4 +1,29 @@
-const filterDatasource = (datasource, filters) => {
+import type { Dayjs } from "dayjs";
+
+// an exam result as GET /reports/exams/raw lists it
+export interface RawExam {
+  idExam: number;
+  idPatient: number;
+  dateExam: string;
+  typeExam: string;
+  value: string;
+  unit?: string | null;
+}
+
+export interface ExamsRawSearchFilters {
+  dateRange: Dayjs[];
+  typesList: string[];
+  valueString: string;
+}
+
+export interface ExamsRawSearchReportData {
+  list: RawExam[];
+}
+
+const filterDatasource = (
+  datasource: RawExam[],
+  filters: ExamsRawSearchFilters,
+): RawExam[] => {
   return datasource
     .filter((i) => {
       if (filters.dateRange && filters.dateRange.length) {
@@ -26,7 +51,10 @@ const filterDatasource = (datasource, filters) => {
     });
 };
 
-export const getReportData = (datasource, filters) => {
+export const getReportData = (
+  datasource: RawExam[],
+  filters: ExamsRawSearchFilters,
+): ExamsRawSearchReportData => {
   const filteredList = filterDatasource(datasource, filters);
 
   const reportData = {
