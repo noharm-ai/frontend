@@ -1,6 +1,7 @@
-import React, { useContext } from "react";
-import { useSelector } from "react-redux";
+import { useContext, type ChangeEvent } from "react";
+import type { Dayjs } from "dayjs";
 
+import { useAppSelector } from "src/store";
 import {
   RangeDatePicker,
   Select,
@@ -10,15 +11,24 @@ import {
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
+import type { ExamsRawSearchFilters } from "../../transformers";
 
-export default function MainFilters() {
-  const types = useSelector(
-    (state) => state.reportsArea.examsRawSearch.filterData.types
+// what components/AdvancedFilter (still JS) hands its filters through context
+interface FilterContextValue {
+  values: ExamsRawSearchFilters;
+  setFieldValue: (values: Partial<ExamsRawSearchFilters>) => void;
+}
+
+export function MainFilters() {
+  const types = useAppSelector(
+    (state) => state.reportsArea.examsRawSearch.filterData.types,
   );
-  const status = useSelector(
-    (state) => state.reportsArea.examsRawSearch.status
+  const status = useAppSelector(
+    (state) => state.reportsArea.examsRawSearch.status,
   );
-  const { values, setFieldValue } = useContext(AdvancedFilterContext);
+  const { values, setFieldValue } = useContext(
+    AdvancedFilterContext,
+  ) as FilterContextValue;
 
   return (
     <>
@@ -29,7 +39,7 @@ export default function MainFilters() {
         <RangeDatePicker
           format="DD/MM/YYYY"
           value={values.dateRange}
-          onChange={(val) => setFieldValue({ dateRange: val })}
+          onChange={(val: Dayjs[] | null) => setFieldValue({ dateRange: val })}
           allowClear
           style={{ width: "100%" }}
         />
@@ -41,7 +51,7 @@ export default function MainFilters() {
         <Input
           placeholder={"Ex: 0.6"}
           style={{ width: "100%", maxWidth: "400px" }}
-          onChange={(event) => {
+          onChange={(event: ChangeEvent<HTMLInputElement>) => {
             setFieldValue({ valueString: event.target.value });
           }}
           allowClear
@@ -55,7 +65,7 @@ export default function MainFilters() {
         <SelectCustom
           style={{ width: "100%", maxWidth: "700px" }}
           value={values.typesList}
-          onChange={(val) => setFieldValue({ typesList: val })}
+          onChange={(val: string[]) => setFieldValue({ typesList: val })}
           showSearch
           optionFilterProp="children"
           mode="multiple"

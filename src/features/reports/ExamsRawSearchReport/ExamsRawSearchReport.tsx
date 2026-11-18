@@ -1,22 +1,30 @@
-import React from "react";
-import { useSelector } from "react-redux";
 import { Row, Col, Space, Spin } from "antd";
 
+import { useAppSelector } from "src/store";
 import { PageHeader } from "styles/PageHeader.style";
 import { ReportContainer, ReportFilterContainer } from "styles/Report.style";
-import Filter from "./Filter/Filter";
 import { filtersToDescription } from "utils/report";
-import ExamsList from "./ExamsList/ExamsList";
+import { Filter } from "./Filter/Filter";
+import { ExamsList } from "./ExamsList/ExamsList";
 
-export default function ExamsRawSearchReport({ prescription }) {
-  const status = useSelector(
-    (state) => state.reportsArea.examsRawSearch.status
+interface ExamsRawSearchReportProps {
+  prescription: {
+    admissionNumber: number | string;
+    idPatient: number;
+  };
+}
+
+export function ExamsRawSearchReport({
+  prescription,
+}: ExamsRawSearchReportProps) {
+  const status = useAppSelector(
+    (state) => state.reportsArea.examsRawSearch.status,
   );
-  const filteredStatus = useSelector(
-    (state) => state.reportsArea.examsRawSearch.filtered.status
+  const filteredStatus = useAppSelector(
+    (state) => state.reportsArea.examsRawSearch.filtered.status,
   );
-  const filters = useSelector(
-    (state) => state.reportsArea.examsRawSearch.filters
+  const filters = useAppSelector(
+    (state) => state.reportsArea.examsRawSearch.filters,
   );
   const isLoading = status === "loading" || filteredStatus === "loading";
   const filtersConfig = {
@@ -38,7 +46,10 @@ export default function ExamsRawSearchReport({ prescription }) {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title" data-kb="reports.examsRawSearch.title">
+          <h1
+            className="page-header-title"
+            data-kb="reports.examsRawSearch.title"
+          >
             Relatório: Busca de Exames - Atendimento{" "}
             {prescription.admissionNumber}
           </h1>

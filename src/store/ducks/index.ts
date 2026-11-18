@@ -83,7 +83,7 @@ import reportCultureReport from "features/reports/CultureReport/CultureReportSli
 import reportDrugHistoryReport from "features/reports/DrugHistoryReport/DrugHistoryReportSlice";
 import reportPrescriptionHistoryReport from "features/reports/PrescriptionHistoryReport/PrescriptionHistoryReportSlice";
 import reportAlertListReport from "features/reports/AlertListReport/AlertListReportSlice";
-import reportExamsRawSearchReport from "features/reports/ExamsRawSearchReport/ExamsRawSearchReportSlice";
+import { examsRawSearchReportReducer } from "features/reports/ExamsRawSearchReport/ExamsRawSearchReportSlice";
 import reportPatientObservationReport from "features/reports/PatientObservationReport/PatientObservationReportSlice";
 import reportCheckedIndexReport from "features/reports/CheckedIndexReport/CheckedIndexReportSlice";
 
@@ -119,7 +119,7 @@ const reportReducers = combineReducers({
   culture: reportCultureReport,
   drugHistory: reportDrugHistoryReport,
   prescriptionHistory: reportPrescriptionHistoryReport,
-  examsRawSearch: reportExamsRawSearchReport,
+  examsRawSearch: examsRawSearchReportReducer,
   patientObservation: reportPatientObservationReport,
   checkedIndex: reportCheckedIndexReport,
   alertList: reportAlertListReport,
