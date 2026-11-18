@@ -49,4 +49,9 @@ export const DrugCellPopover = styled.div`
     line-height: 1.4;
     margin-bottom: 8px;
   }
+
+  .doseconv-warning {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+  }
 `;
