@@ -17,7 +17,7 @@ import Empty from "components/Empty";
 
 import { ConfigModalContainer } from "./ConfigModal.style";
 
-export default function ConfigModal({ save, open, setOpen, list }) {
+export function ConfigModal({ save, open, setOpen, list }) {
   const [dataSource, setDataSource] = useState([]);
   const [openIndex, setOpenIndex] = useState(null);
   const [active, setActive] = useState(true);

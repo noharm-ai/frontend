@@ -15,10 +15,10 @@ import DrugAlertTypeEnum from "models/DrugAlertTypeEnum";
 import FieldSubstanceAutocomplete from "features/fields/FieldSubstanceAutocomplete/FieldSubstanceAutocomplete";
 import FieldSubstanceClassAutocomplete from "features/fields/FieldSubstanceClassAutocomplete/FieldSubstanceClassAutocomplete";
 
-import { VariableContainer } from "../index.style";
+import { VariableContainer } from "./SaveModal.style";
 import { Form } from "styles/Form.style";
 
-export default function SaveModal({
+export function SaveModal({
   save,
   open,
   setOpen,
@@ -26,7 +26,9 @@ export default function SaveModal({
   memoryType,
   // [{ label, items: [{ key: "{{var}}", label }] }]: the variables a text
   // takes, in place of the prescription clinical note ones
-  variableGroups = null,
+  variableGroups = /** @type {import("../MemoryText").IMemoryTextVariableGroup[] | null} */ (
+    null
+  ),
 }) {
   const { t } = useTranslation();
   const prescription = useSelector((state) => state.prescriptions.single.data);

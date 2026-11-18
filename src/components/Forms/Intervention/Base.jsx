@@ -28,9 +28,6 @@ export default function Base({
   reasons,
   searchDrugs,
   drugs,
-  reasonTextMemory,
-  memorySaveReasonText,
-  memoryFetchReasonText,
   drugSummary,
   fetchDrugSummary,
   featureService,
@@ -429,9 +426,6 @@ export default function Base({
         <Observation
           content={observation}
           setFieldValue={setFieldValue}
-          memory={reasonTextMemory}
-          fetchMemory={memoryFetchReasonText}
-          saveMemory={memorySaveReasonText}
           currentReason={idInterventionReason}
           reasons={reasons.list}
           drugData={drugData}

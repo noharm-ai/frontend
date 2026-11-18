@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { isEmpty } from "lodash";
+import { useDispatch, useSelector } from "react-redux";
+import { cloneDeep, isEmpty } from "lodash";
 import { useTranslation } from "react-i18next";
 import { FilterOutlined, LoadingOutlined } from "@ant-design/icons";
 
@@ -12,6 +13,10 @@ import {
   FILTER_PUBLIC_MEMORY_TYPE,
 } from "utils/memory";
 import notification from "components/notification";
+import {
+  fetchMemoryThunk,
+  saveMemoryThunk,
+} from "features/memory/MemoryText/MemoryTextSlice";
 import SaveFilterModal from "./SaveFilterModal";
 import ConfigModal from "./ConfigModal";
 import {
@@ -19,12 +24,10 @@ import {
   TrackedPrescriptionPrioritizationAction,
 } from "src/utils/tracker";
 
+const NO_FILTERS = [];
+
 export default function FilterMemory({
-  fetchMemory,
   account,
-  publicFilters,
-  privateFilters,
-  saveMemory,
   filter,
   setScreeningListFilter,
   loadFilter,
@@ -34,6 +37,29 @@ export default function FilterMemory({
   const [loading, setLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const privateFilters = useSelector(
+    (state) =>
+      state.memoryText.stores[FILTER_PRIVATE_STORE_ID]?.list ?? NO_FILTERS,
+  );
+  const publicFilters = useSelector(
+    (state) =>
+      state.memoryText.stores[FILTER_PUBLIC_STORE_ID]?.list ?? NO_FILTERS,
+  );
+
+  const fetchMemory = (storeId, type) =>
+    dispatch(fetchMemoryThunk({ storeId, type }));
+
+  // shows the message only once the backend has stored the filters
+  const saveMemory = (storeId, params, successMessage) =>
+    dispatch(saveMemoryThunk({ storeId, params })).then((action) => {
+      if (saveMemoryThunk.rejected.match(action)) {
+        notification.error({ message: t("error.title") });
+        return;
+      }
+
+      notification.success({ message: successMessage });
+    });
 
   const filterActive = (item) =>
     item.active || !Object.prototype.hasOwnProperty.call(item, "active");
@@ -44,30 +70,36 @@ export default function FilterMemory({
       const filters = hasFilter ? [...publicFilters[0].value] : [];
       filters.push({
         name: filterName,
-        data: filter,
+        data: cloneDeep(filter),
       });
 
-      saveMemory(FILTER_PUBLIC_STORE_ID, {
-        id: hasFilter ? publicFilters[0].key : null,
-        type: FILTER_PUBLIC_MEMORY_TYPE,
-        value: filters,
-      });
+      saveMemory(
+        FILTER_PUBLIC_STORE_ID,
+        {
+          id: hasFilter ? publicFilters[0].key : null,
+          type: FILTER_PUBLIC_MEMORY_TYPE,
+          value: filters,
+        },
+        "Uhu! Filtro salvo com sucesso!",
+      );
     } else {
       const hasFilter = privateFilters && privateFilters.length;
       const filters = hasFilter ? [...privateFilters[0].value] : [];
       filters.push({
         name: filterName,
-        data: filter,
+        data: cloneDeep(filter),
       });
 
-      saveMemory(FILTER_PRIVATE_STORE_ID, {
-        id: hasFilter ? privateFilters[0].key : null,
-        type: `${FILTER_PRIVATE_MEMORY_TYPE}_${account.userId}`,
-        value: filters,
-      });
+      saveMemory(
+        FILTER_PRIVATE_STORE_ID,
+        {
+          id: hasFilter ? privateFilters[0].key : null,
+          type: `${FILTER_PRIVATE_MEMORY_TYPE}_${account.userId}`,
+          value: filters,
+        },
+        "Uhu! Filtro salvo com sucesso!",
+      );
     }
-
-    notification.success({ message: "Uhu! Filtro salvo com sucesso!" });
   };
 
   const sortFilters = (a, b) => `${a?.name}`.localeCompare(`${b?.name}`);
@@ -77,26 +109,37 @@ export default function FilterMemory({
       type === "public" ? publicFilters[0] : privateFilters[0];
     const filters = [...storeElement.value];
 
-    filters[index].active = false;
+    // the saved filters are frozen store state: replace the item, don't edit it
+    filters[index] = { ...filters[index], active: false };
 
     if (type === "public") {
-      saveMemory(FILTER_PUBLIC_STORE_ID, {
-        id: storeElement.key,
-        type: FILTER_PUBLIC_MEMORY_TYPE,
-        value: filters,
-      });
+      saveMemory(
+        FILTER_PUBLIC_STORE_ID,
+        {
+          id: storeElement.key,
+          type: FILTER_PUBLIC_MEMORY_TYPE,
+          value: filters,
+        },
+        "Filtro removido com sucesso!",
+      );
     } else {
-      saveMemory(FILTER_PRIVATE_STORE_ID, {
-        id: storeElement.key,
-        type: `${FILTER_PRIVATE_MEMORY_TYPE}_${account.userId}`,
-        value: filters,
-      });
+      saveMemory(
+        FILTER_PRIVATE_STORE_ID,
+        {
+          id: storeElement.key,
+          type: `${FILTER_PRIVATE_MEMORY_TYPE}_${account.userId}`,
+          value: filters,
+        },
+        "Filtro removido com sucesso!",
+      );
     }
-
-    notification.success({ message: "Filtro removido com sucesso!" });
   };
 
-  const loadFilterAction = (filterData) => {
+  const loadFilterAction = (savedFilter) => {
+    // a copy: the saved filter is frozen store state, and goes on to the
+    // prioritization filter, which must not share it
+    const filterData = cloneDeep(savedFilter);
+
     // keep compatibility between different versions
     if (filterData.idSegment && !Array.isArray(filterData.idSegment)) {
       filterData.idSegment = [filterData.idSegment];
@@ -142,18 +185,29 @@ export default function FilterMemory({
   };
 
   const loadFiltersFromMemory = () => {
-    if (loaded) {
+    if (loaded || loading) {
       return;
     }
 
     setLoading(true);
 
-    fetchMemory(
-      FILTER_PRIVATE_STORE_ID,
-      `${FILTER_PRIVATE_MEMORY_TYPE}_${account.userId}`
-    );
-    fetchMemory(FILTER_PUBLIC_STORE_ID, FILTER_PUBLIC_MEMORY_TYPE).then(() => {
+    Promise.all([
+      fetchMemory(
+        FILTER_PRIVATE_STORE_ID,
+        `${FILTER_PRIVATE_MEMORY_TYPE}_${account.userId}`,
+      ),
+      fetchMemory(FILTER_PUBLIC_STORE_ID, FILTER_PUBLIC_MEMORY_TYPE),
+    ]).then((actions) => {
       setLoading(false);
+
+      // both lists must be known before a filter is saved into them:
+      // otherwise the save starts a new record and hides the existing one.
+      // Left not loaded, the next click on the button tries again
+      if (actions.some((action) => fetchMemoryThunk.rejected.match(action))) {
+        notification.error({ message: t("error.title") });
+        return;
+      }
+
       setLoaded(true);
     });
   };
@@ -164,6 +218,8 @@ export default function FilterMemory({
         key: "save",
         label: t("screeningList.saveFilter"),
         id: "gtm-btn-menu-filter-save",
+        // saving appends to the loaded lists, so wait for them
+        disabled: !loaded,
       },
     ];
 
@@ -176,6 +232,7 @@ export default function FilterMemory({
       key: "remove",
       label: "Gerenciar filtros",
       danger: true,
+      disabled: !loaded,
     });
 
     return items;

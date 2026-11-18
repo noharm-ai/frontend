@@ -8,13 +8,13 @@ import { segmentsReducer } from "features/segments/SegmentsSlice";
 import interventionReducer from "./intervention";
 import prescriptionsReducer from "./prescriptions";
 import prescriptionDrugsReducer from "./prescriptionDrugs";
-import memoryReducer from "./memory";
 import clinicalNotesReducer from "./clinicalNotes";
 import drugUnitConversionSlice from "features/drugs/DrugUnitConversion/DrugUnitConversionSlice";
 import drugFormStatus from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import lists from "features/lists/ListsSlice";
 import serverActionsSlice from "features/serverActions/ServerActionsSlice";
 import summaryReducer from "features/summary/SummarySlice";
+import { memoryTextReducer } from "features/memory/MemoryText/MemoryTextSlice";
 import memoryDraftSlice from "features/memory/MemoryDraft/MemoryDraftSlice";
 import memoryFilterSlice from "features/memory/MemoryFilter/MemoryFilterSlice";
 import memoryCustomFormsSlice from "features/memory/CustomForms/CustomFormsSlice";
@@ -138,7 +138,7 @@ const rootReducer = combineReducers({
   intervention: interventionReducer,
   prescriptions: prescriptionsReducer,
   prescriptionDrugs: prescriptionDrugsReducer,
-  memory: memoryReducer,
+  memoryText: memoryTextReducer,
   memoryDraft: memoryDraftSlice,
   memoryFilter: memoryFilterSlice,
   memoryCustomForms: memoryCustomFormsSlice,

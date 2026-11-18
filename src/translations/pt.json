@@ -35,7 +35,6 @@
   "success": {
     "generic": "Uhu! Salvo com sucesso! :)",
     "intervention": "Uhu! Intervenção salva com sucesso! :)",
-    "defaultObservation": "Uhu! Observação modelo salva com sucesso!",
     "applyDefaultObservation": "Observação modelo aplicada com sucesso!"
   },
   "menu": {

@@ -46,11 +46,7 @@ export default function Filter({
   frequencies,
   searchDrugs,
   prioritizationType,
-  fetchMemory,
-  saveMemory,
   account,
-  privateFilters,
-  publicFilters,
   featureService,
 }) {
   const dispatch = useDispatch();
@@ -437,11 +433,7 @@ export default function Filter({
                 />
               </Tooltip>
               <FilterMemory
-                fetchMemory={fetchMemory}
                 account={account}
-                publicFilters={publicFilters}
-                privateFilters={privateFilters}
-                saveMemory={saveMemory}
                 filter={filter}
                 setScreeningListFilter={setScreeningListFilter}
                 loadFilter={loadFilter}

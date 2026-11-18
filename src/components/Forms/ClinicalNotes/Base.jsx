@@ -26,7 +26,7 @@ import notification from "components/notification";
 import { getErrorMessage } from "utils/errorHandler";
 
 import Modal from "components/Modal";
-import MemoryText from "containers/MemoryText";
+import { MemoryText } from "features/memory/MemoryText/MemoryText";
 import MemoryDraft from "features/memory/MemoryDraft/MemoryDraft";
 import { getUserLastClinicalNotesList } from "features/serverActions/ServerActionsSlice";
 
@@ -237,7 +237,6 @@ export default function Base({ prescription, account, signature, action }) {
             <MemoryText
               storeId={CLINICAL_NOTES_STORE_ID}
               memoryType={CLINICAL_NOTES_MEMORY_TYPE}
-              content={notes}
               onLoad={(value) => loadNote(value)}
             />
             <span style={{ marginLeft: "5px" }}>
@@ -245,7 +244,6 @@ export default function Base({ prescription, account, signature, action }) {
                 storeId={CLINICAL_NOTES_PRIVATE_STORE_ID}
                 memoryType={CLINICAL_NOTES_PRIVATE_MEMORY_TYPE}
                 privateMemory={true}
-                content={notes}
                 onLoad={(value) => loadNote(value)}
               />
             </span>
