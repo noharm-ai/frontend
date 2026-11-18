@@ -11,7 +11,8 @@ export interface RawExam {
 }
 
 export interface ExamsRawSearchFilters {
-  dateRange: Dayjs[];
+  // antd's RangePicker clears to null
+  dateRange: Dayjs[] | null;
   typesList: string[];
   valueString: string;
 }

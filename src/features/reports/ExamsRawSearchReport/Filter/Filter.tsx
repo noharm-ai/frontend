@@ -16,7 +16,7 @@ import {
   type ExamsRawSearchFilters,
   type RawExam,
 } from "../transformers";
-import { MainFilters } from "./MainFilters";
+import { MainFilters } from "./MainFilters/MainFilters";
 
 type FetchReportDataAction =
   | ReturnType<typeof fetchReportData.fulfilled>
@@ -40,15 +40,10 @@ export function Filter({ idPatient }: FilterProps) {
     valueString: "",
   };
 
-  const search = async (params: ExamsRawSearchFilters, forceDs?: RawExam[]) => {
-    let ds: RawExam[] = [];
-    if (!forceDs) {
-      ds = datasource;
-    }
-
+  const search = (params: ExamsRawSearchFilters, forceDs?: RawExam[]) => {
     dispatch(setFilteredStatus("loading"));
     dispatch(setFilters(params));
-    const reportData = getReportData(forceDs || ds, params);
+    const reportData = getReportData(forceDs ?? datasource, params);
     dispatch(setFilteredResult(reportData));
 
     setTimeout(() => {

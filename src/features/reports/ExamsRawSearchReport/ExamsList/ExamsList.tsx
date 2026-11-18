@@ -50,7 +50,7 @@ export function ExamsList() {
         bordered
         columns={columns}
         rowKey={(row) => `${row.idExam}-${row.idPatient}-${row.typeExam}`}
-        dataSource={datasource.length === 0 ? [] : datasource}
+        dataSource={datasource}
         footer={() => (
           <div style={{ textAlign: "center" }}>
             {datasource.length} registro(s)

@@ -11,7 +11,7 @@ import {
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
-import type { ExamsRawSearchFilters } from "../transformers";
+import type { ExamsRawSearchFilters } from "../../transformers";
 
 // what components/AdvancedFilter (still JS) hands its filters through context
 interface FilterContextValue {
@@ -39,7 +39,7 @@ export function MainFilters() {
         <RangeDatePicker
           format="DD/MM/YYYY"
           value={values.dateRange}
-          onChange={(val: Dayjs[]) => setFieldValue({ dateRange: val })}
+          onChange={(val: Dayjs[] | null) => setFieldValue({ dateRange: val })}
           allowClear
           style={{ width: "100%" }}
         />
