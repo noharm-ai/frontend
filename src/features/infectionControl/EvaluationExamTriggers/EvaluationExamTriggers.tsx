@@ -68,9 +68,11 @@ export function EvaluationExamTriggers({
             ) : (
               <span className="exam-trigger-no-baseline">
                 {t(
-                  hasVariation(rule)
-                    ? "infectionControl.examTriggers.noBaselineVariation"
-                    : "infectionControl.examTriggers.noBaseline",
+                  !hasVariation(rule)
+                    ? "infectionControl.examTriggers.noBaseline"
+                    : rule.variationOptional
+                      ? "infectionControl.examTriggers.noBaselineValueOnly"
+                      : "infectionControl.examTriggers.noBaselineVariation",
                 )}
               </span>
             )}

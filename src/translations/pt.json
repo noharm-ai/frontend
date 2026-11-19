@@ -2335,6 +2335,7 @@
       "variationAtLeast": "variação ≥ {{value}}",
       "variationBelow": "variação < {{value}}",
       "variationAtMost": "variação ≤ {{value}}",
+      "variationOptional": "(se houver referência)",
       "unavailable": "{{exam}} não configurado neste hospital: o gatilho não dispara",
       "current": "Resultado atual do paciente: {{result}}",
       "noCurrent": "Paciente sem resultado deste exame",
@@ -2358,6 +2359,7 @@
         "variation": "Variação",
         "variationOperator": "Operador da variação",
         "variationHint": "Em relação ao resultado da revisão; uma queda é negativa (ex.: < -25%)",
+        "variationOptional": "Sem resultado na revisão, considerar só o valor",
         "fromCourseDay": "A partir do dia de tratamento",
         "fromCourseDayHint": "Ex.: 4 vale a partir do D4. Em branco, vale desde o início do tratamento",
         "optional": "opcional",
@@ -2365,6 +2367,7 @@
         "enabledByDefault": "Ligado por padrão",
         "nameTooLong": "Use até 100 caracteres",
         "conditionRequired": "Informe ao menos uma condição (valor ou variação)",
+        "variationOptionalNeedsValue": "Informe também a condição de valor",
         "limit": "Limite de {{count}} regras atingido",
         "empty": "Nenhuma regra cadastrada"
       },
@@ -2375,7 +2378,8 @@
       "baseline": "Referência: {{result}}",
       "variation": "Variação: {{value}}",
       "noBaseline": "sem valor de referência",
-      "noBaselineVariation": "sem valor de referência: as condições de variação não disparam"
+      "noBaselineVariation": "sem valor de referência: as condições de variação não disparam",
+      "noBaselineValueOnly": "sem valor de referência: vale só a condição de valor"
     }
   },
   "accessibility": {

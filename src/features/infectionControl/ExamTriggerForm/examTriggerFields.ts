@@ -47,6 +47,8 @@ export interface IExamTriggerFormFields {
   value: number | null;
   variationOperator: ConditionOperator;
   variation: number | null;
+  // without a result at review time, the value condition decides alone
+  variationOptional: boolean;
   fromCourseDay: number | null;
   enabledByDefault: boolean;
 }
@@ -79,6 +81,7 @@ export const toFormFields = (
       value: null,
       variationOperator: "above",
       variation: null,
+      variationOptional: false,
       fromCourseDay: null,
       enabledByDefault: false,
     };
@@ -95,6 +98,7 @@ export const toFormFields = (
     value: value.value,
     variationOperator: variation.operator,
     variation: variation.value,
+    variationOptional: rule.variationOptional ?? false,
     fromCourseDay: rule.fromCourseDay,
     enabledByDefault: rule.enabledByDefault,
   };
@@ -130,6 +134,8 @@ export const toRulePayload = (
     name: fields.name.trim(),
     examRef: fields.examRef!,
     ...conditions,
+    // nothing to skip without a variation
+    variationOptional: fields.variation != null && fields.variationOptional,
     fromCourseDay: fields.fromCourseDay,
     enabledByDefault: fields.enabledByDefault,
   };
@@ -152,6 +158,7 @@ export const getValidationSchema = (t: TFunction) =>
       examRef: Yup.string().nullable().required(t("validation.requiredField")),
       value: Yup.number().nullable(),
       variation: Yup.number().nullable(),
+      variationOptional: Yup.boolean(),
       fromCourseDay: Yup.number()
         .nullable()
         .integer(t("infectionControl.examTriggers.settings.fromCourseDayMin"))
@@ -164,5 +171,23 @@ export const getValidationSchema = (t: TFunction) =>
       return this.createError({
         path: "value",
         message: t("infectionControl.examTriggers.settings.conditionRequired"),
+      });
+    })
+    // an optional variation needs a value: without a baseline the rule would
+    // fire on any result
+    .test("variationOptional", function (fields) {
+      if (
+        !fields.variationOptional ||
+        fields.variation == null ||
+        fields.value != null
+      ) {
+        return true;
+      }
+
+      return this.createError({
+        path: "value",
+        message: t(
+          "infectionControl.examTriggers.settings.variationOptionalNeedsValue",
+        ),
       });
     });
