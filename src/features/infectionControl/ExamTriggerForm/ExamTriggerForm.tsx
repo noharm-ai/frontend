@@ -308,6 +308,18 @@ export function ExamTriggerForm({
                   <span className="form-hint">
                     {t("infectionControl.examTriggers.settings.variationHint")}
                   </span>
+                  <Checkbox
+                    data-testid="exam-trigger-variation-optional"
+                    checked={values.variationOptional}
+                    disabled={values.variation == null}
+                    onChange={(e: any) =>
+                      setFieldValue("variationOptional", e.target.checked)
+                    }
+                  >
+                    {t(
+                      "infectionControl.examTriggers.settings.variationOptional",
+                    )}
+                  </Checkbox>
                 </div>
 
                 {errors.value && (

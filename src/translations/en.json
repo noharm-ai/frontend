@@ -2325,6 +2325,7 @@
       "variationAtLeast": "variation ≥ {{value}}",
       "variationBelow": "variation < {{value}}",
       "variationAtMost": "variation ≤ {{value}}",
+      "variationOptional": "(when there is a baseline)",
       "unavailable": "{{exam}} isn't configured in this hospital: the trigger won't fire",
       "current": "Patient's current result: {{result}}",
       "noCurrent": "The patient has no result of this exam",
@@ -2348,6 +2349,7 @@
         "variation": "Variation",
         "variationOperator": "Variation operator",
         "variationHint": "From the result at review time; a fall is negative (e.g. < -25%)",
+        "variationOptional": "Without a result at review time, use the value only",
         "fromCourseDay": "From treatment day",
         "fromCourseDayHint": "E.g. 4 applies from D4 on. Leave it blank to apply from the start of the treatment",
         "optional": "optional",
@@ -2355,6 +2357,7 @@
         "enabledByDefault": "On by default",
         "nameTooLong": "Use up to 100 characters",
         "conditionRequired": "Enter at least one condition (value or variation)",
+        "variationOptionalNeedsValue": "Also set the value condition",
         "limit": "Limit of {{count}} rules reached",
         "empty": "No rules yet"
       },
@@ -2365,7 +2368,8 @@
       "baseline": "Baseline: {{result}}",
       "variation": "Variation: {{value}}",
       "noBaseline": "no baseline value",
-      "noBaselineVariation": "no baseline value: the variation conditions won't fire"
+      "noBaselineVariation": "no baseline value: the variation conditions won't fire",
+      "noBaselineValueOnly": "no baseline value: only the value condition applies"
     }
   },
   "accessibility": {

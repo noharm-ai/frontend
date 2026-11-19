@@ -3054,9 +3054,9 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       rawValue: 1.1,
       rawUnit: "mg/dL",
     };
-    // the eGFR rule and the CRP one turned on in the evaluation of the
-    // vancomycin, and a rule the schema no longer has, recorded without a
-    // baseline
+    // the eGFR rule and the CRP one (its variation optional) turned on in the
+    // evaluation of the vancomycin, and a rule the schema no longer has,
+    // recorded without a baseline
     const recorded = ({
       enabledByDefault: _,
       available: __,
@@ -3064,7 +3064,11 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     }: ReturnType<typeof examRule>) => condition;
     const evaluatedRules = [
       { ...recorded(EXAM_RULES[2]), baseline: tfgBaseline },
-      { ...recorded(EXAM_RULES[0]), baseline: null },
+      {
+        ...recorded(EXAM_RULES[0]),
+        variationOptional: true,
+        baseline: null,
+      },
       {
         ...recorded(
           examRule({
@@ -3187,7 +3191,11 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       await expect(recorded.first()).toHaveText(
         `TFG < 60 e variação < -25% · Referência: 72 ${UNIT} em ${shownDateTime(BASELINE_DATE)} (creatinina 1,1 mg/dL)`,
       );
-      // without a result at review time, a variation never fires
+      // without a result at review time, an optional variation is skipped
+      await expect(recorded.nth(1)).toHaveText(
+        "PCR em elevação > 50 e variação ≥ +20% (se houver referência) · sem valor de referência: vale só a condição de valor",
+      );
+      // and any other never fires
       await expect(recorded.last()).toHaveText(
         "Leucócitos variação > +50% · sem valor de referência: as condições de variação não disparam",
       );
@@ -3484,6 +3492,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
             variationAtLeast: null,
             variationBelow: null,
             variationAtMost: -25,
+            variationOptional: false,
             fromCourseDay: 2,
             enabledByDefault: false,
           },
@@ -3511,6 +3520,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       expect(saved[1].rules[1]).toEqual({
         ...sentRule(EXAM_RULES[1]),
         valueAbove: 25,
+        variationOptional: false,
       });
       await expect(
         drug.getByRole("checkbox", { name: /^Vancocinemia/ }),
@@ -3552,6 +3562,77 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       expect(sent.evaluations).toMatchObject([
         { idDrug: 11, examTriggers: ["van", "new4"] },
       ]);
+    });
+
+    test("makes the variation optional: without a result at review time, the value decides", async ({
+      page,
+      mockApi,
+    }) => {
+      mockPage(mockApi, followUp());
+      const saved = mockSaveRules(mockApi);
+
+      const drug = await openTriggers(page);
+      const rules = drug.getByTestId("review-exam-triggers");
+      const form = page.getByTestId("exam-trigger-form");
+      const optional = form.getByRole("checkbox", {
+        name: "Sem resultado na revisão, considerar só o valor",
+      });
+
+      await rules.getByTestId("exam-trigger-add").click();
+      await form.getByLabel("Nome").fill("Procalcitonina");
+      await openSelectById(page, "exam-trigger-exam");
+      await pickOption(page, "Procalcitonina");
+      // nothing to skip without a variation
+      await expect(optional).toBeDisabled();
+      await pickOperator(page, "variation", ">");
+      await form.getByRole("spinbutton", { name: "Variação" }).fill("-50");
+      await expect(optional).toBeEnabled();
+      await optional.check();
+
+      // alone, it would fire on any result without a baseline
+      await form.getByRole("button", { name: "Salvar" }).click();
+      await expect(form).toContainText("Informe também a condição de valor");
+      expect(saved).toHaveLength(0);
+
+      await form.getByRole("spinbutton", { name: "Valor" }).fill("2");
+      await form.getByLabel("A partir do dia de tratamento").fill("3");
+      await form.getByRole("button", { name: "Salvar" }).click();
+      await expect(form).toHaveCount(0);
+      expect(saved[0].rules.at(-1)).toEqual({
+        name: "Procalcitonina",
+        examRef: "procalcitonina_adult",
+        valueAbove: 2,
+        valueAtLeast: null,
+        valueBelow: null,
+        valueAtMost: null,
+        variationAbove: -50,
+        variationAtLeast: null,
+        variationBelow: null,
+        variationAtMost: null,
+        variationOptional: true,
+        fromCourseDay: 3,
+        enabledByDefault: false,
+      });
+      await expect(
+        drug.getByRole("checkbox", { name: /^Procalcitonina/ }),
+      ).toHaveAccessibleName(
+        "Procalcitonina > 2 e variação > -50% (se houver referência) a partir do D3",
+      );
+
+      // it comes back checked; without the variation it is not sent on
+      await rules
+        .getByTestId("review-exam-trigger-rule")
+        .filter({ hasText: "Procalcitonina" })
+        .getByRole("button", { name: "Editar regra" })
+        .click();
+      await expect(optional).toBeChecked();
+      await form.getByRole("spinbutton", { name: "Variação" }).clear();
+      await form.getByRole("button", { name: "Salvar" }).click();
+      await expect(form).toHaveCount(0);
+      expect(saved[1].rules.at(-1)).toMatchObject({
+        variationAbove: null,
+        variationOptional: false,
+      });
     });
 
     test("keeps the rule form open with the backend message when its save fails", async ({
