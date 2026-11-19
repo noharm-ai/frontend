@@ -111,6 +111,9 @@ export interface IInfectionControlListFilters {
   awareLevels: number[];
   // admissions with an evaluation in force judged non conforming
   nonConforming: boolean;
+  // also the admissions running only antimicrobials that need no review
+  // (the review exceptions), hidden otherwise
+  includeNotRequired: boolean;
   // the closed admissions listed are the ones closed within this many days
   // (all of them when searched by admission number)
   closedDays: number;
@@ -130,6 +133,7 @@ export const DEFAULT_FILTERS: IInfectionControlListFilters = {
   antimicrobialsMatchAll: false,
   awareLevels: [],
   nonConforming: false,
+  includeNotRequired: false,
   closedDays: 30,
 };
 
@@ -196,6 +200,7 @@ export const filtersToSearch = (filters: IInfectionControlListFilters) => {
   }
   if (filters.overdueReview) params.set("overdueReview", "1");
   if (filters.nonConforming) params.set("nonConforming", "1");
+  if (filters.includeNotRequired) params.set("includeNotRequired", "1");
 
   return params.toString();
 };
@@ -262,6 +267,7 @@ export const filtersFromSearch = (
     antimicrobialsMatchAll: params.get("antimicrobialsMatchAll") === "1",
     awareLevels: numbers("awareLevels"),
     nonConforming: params.get("nonConforming") === "1",
+    includeNotRequired: params.get("includeNotRequired") === "1",
   };
 };
 
@@ -378,6 +384,64 @@ export const searchAntimicrobials = createAsyncThunk(
       );
 
       return response.data.data as IAntimicrobialOption[];
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
+// a substance or a drug of the review exceptions, with its name
+export interface IReviewExceptionItem {
+  id: string;
+  name: string | null;
+}
+
+// the antimicrobials whose courses need no review: substances (each covers
+// every drug of it) and drugs without a substance
+export interface IReviewExceptions {
+  substances: IReviewExceptionItem[];
+  drugs: IReviewExceptionItem[];
+}
+
+/** The schema's review exceptions; kept by the caller */
+export const fetchReviewExceptions = createAsyncThunk(
+  "infectionControlList/fetchReviewExceptions",
+  async (_: void, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.getReviewExceptions();
+
+      return response.data.data as IReviewExceptions;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
+/** Substances of antimicrobials and antimicrobial drugs without a
+ * substance, by name, for the review exceptions; kept by the caller */
+export const searchReviewExceptionOptions = createAsyncThunk(
+  "infectionControlList/searchReviewExceptionOptions",
+  async (params: { term: string }, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.searchReviewExceptionOptions(
+        params.term,
+      );
+
+      return response.data.data as IReviewExceptions;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
+/** Replaces the schema's review exceptions (WRITE_INFECTION_CONTROL) */
+export const saveReviewExceptions = createAsyncThunk(
+  "infectionControlList/saveReviewExceptions",
+  async (params: { substances: number[]; drugs: number[] }, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.saveReviewExceptions(params);
+
+      return response.data.data as IReviewExceptions;
     } catch (err) {
       return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
     }

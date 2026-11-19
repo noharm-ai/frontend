@@ -13,6 +13,8 @@ export const REGISTRY_STATUSES = [
   "non_conforming",
   "not_evaluated",
   "expired",
+  // a day of a course exempt from review without a record
+  "not_required",
 ] as const;
 
 export const REGISTRY_COLORS: Record<string, string> = {
@@ -20,6 +22,7 @@ export const REGISTRY_COLORS: Record<string, string> = {
   non_conforming: "#e6744e",
   not_evaluated: "#bdbdbd",
   expired: "#f2b530",
+  not_required: "#9ecae1",
 };
 
 // the AWaRe groups as the service names them (consumption.awareMix)

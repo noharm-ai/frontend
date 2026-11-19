@@ -373,6 +373,9 @@ export interface IFollowUpCourse {
   idDrug: number;
   start: string;
   ongoing: boolean;
+  // false when its drug is among the schema's review exceptions: it opens no
+  // reason, but may still be evaluated
+  reviewRequired?: boolean;
   evaluation: IAntimicrobialEvaluation | null;
   // every evaluation of the course, latest first
   history: IAntimicrobialEvaluation[];

@@ -525,6 +525,13 @@ export function CourseGantt({
                         <Tag color={STATUS_TAG_COLORS[course.status]}>
                           {t(`infectionControl.status.${course.status}`)}
                         </Tag>
+                        {followUps?.[courseKey(course.idDrug, course.start)]
+                          ?.reviewRequired === false && (
+                          // its drug is among the review exceptions
+                          <Tag data-testid="course-exempt">
+                            {t("infectionControl.reviewExceptions.exemptTag")}
+                          </Tag>
+                        )}
                         {!!course.alerts?.length && (
                           // the alerts themselves are in the details
                           <span data-testid="course-alerts">
