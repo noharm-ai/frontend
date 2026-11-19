@@ -2118,7 +2118,7 @@
     },
     "clinicalNote": {
       "stepTitle": "Evolução",
-      "stepLegend": "Opcional. Registre a revisão no prontuário do paciente: o texto parte do que foi revisado e pode ser editado.",
+      "stepLegend": "Opcional. Registre a revisão no prontuário do paciente: escreva o texto ou aplique o texto padrão ou um modelo salvo, e edite como quiser.",
       "next": "Próximo: evolução",
       "create": "Registrar evolução",
       "skip": "Não registrar",

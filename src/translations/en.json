@@ -2108,7 +2108,7 @@
     },
     "clinicalNote": {
       "stepTitle": "Clinical note",
-      "stepLegend": "Optional. Record the review in the patient's chart: the text starts from what was reviewed and can be edited.",
+      "stepLegend": "Optional. Record the review in the patient's chart: write the text, or apply the default text or a saved template, and edit it as you like.",
       "next": "Next: clinical note",
       "create": "Write clinical note",
       "skip": "Don't write",
