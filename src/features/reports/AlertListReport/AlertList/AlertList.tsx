@@ -1,14 +1,26 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useState, type ComponentType, type MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Descriptions, Alert } from "antd";
+import type { DescriptionsProps, TableProps } from "antd";
 
+import { useAppSelector } from "src/store";
 import { CardTable } from "components/Table";
 import DrugAlertLevelTag from "components/DrugAlertLevelTag";
 import RichTextView from "components/RichTextView";
 import { formatDateTime } from "utils/date";
+import type { AlertListItem } from "../transformers";
 
-const ExpandColumn = ({ expand, toggleExpansion }) => {
+// CardTable is styled(antd Table), which drops the Table's record type
+const AlertsTable = CardTable as unknown as ComponentType<
+  TableProps<AlertListItem>
+>;
+
+interface ExpandColumnProps {
+  expand: boolean;
+  toggleExpansion: (event: MouseEvent<HTMLButtonElement>) => void;
+}
+
+const ExpandColumn = ({ expand, toggleExpansion }: ExpandColumnProps) => {
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
       <button
@@ -22,14 +34,14 @@ const ExpandColumn = ({ expand, toggleExpansion }) => {
   );
 };
 
-export default function AlertList() {
+export function AlertList() {
   const { t } = useTranslation();
-  const [expandedRows, setExpandedRows] = useState([]);
-  const datasource = useSelector(
+  const [expandedRows, setExpandedRows] = useState<string[]>([]);
+  const datasource = useAppSelector(
     (state) => state.reportsArea.alertList.filtered.result.list,
   );
 
-  const updateExpandedRows = (list, key) => {
+  const updateExpandedRows = (list: string[], key: string) => {
     if (list.includes(key)) {
       return list.filter((i) => i !== key);
     }
@@ -37,7 +49,7 @@ export default function AlertList() {
     return [...list, key];
   };
 
-  const handleRowExpand = (record) => {
+  const handleRowExpand = (record: AlertListItem) => {
     setExpandedRows(updateExpandedRows(expandedRows, record.rowKey));
   };
 
@@ -49,11 +61,11 @@ export default function AlertList() {
     }
   };
 
-  const columns = [
+  const columns: TableProps<AlertListItem>["columns"] = [
     {
       title: "Nível",
       align: "center",
-      render: (_, record) => {
+      render: (_: unknown, record: AlertListItem) => {
         return (
           <DrugAlertLevelTag
             levels={[record.level]}
@@ -66,18 +78,19 @@ export default function AlertList() {
     },
     {
       title: "Medicamento",
-      render: (_, record) => record.drugName,
+      render: (_: unknown, record: AlertListItem) => record.drugName,
     },
 
     {
       title: "Tipo",
-      render: (_, record) => t(`drugAlertType.${record.type}`),
+      render: (_: unknown, record: AlertListItem) =>
+        t(`drugAlertType.${record.type}`),
     },
   ];
 
   return (
     <>
-      <CardTable
+      <AlertsTable
         bordered
         columns={columns}
         rowKey="rowKey"
@@ -89,8 +102,16 @@ export default function AlertList() {
         )}
         expandable={{
           expandedRowRender: (record) => <ExpandedRow record={record} />,
-          onExpand: (expanded, record) => handleRowExpand(record),
+          onExpand: (_expanded, record) => handleRowExpand(record),
           expandedRowKeys: expandedRows,
+          // the expand-all header; it used to be a top-level Table prop, which
+          // rc-table merges into expandable all the same
+          columnTitle: (
+            <ExpandColumn
+              expand={!expandedRows.length}
+              toggleExpansion={toggleExpansion}
+            />
+          ),
         }}
         onRow={(record) => {
           return {
@@ -99,12 +120,6 @@ export default function AlertList() {
             },
           };
         }}
-        columnTitle={
-          <ExpandColumn
-            expand={!expandedRows.length}
-            toggleExpansion={toggleExpansion}
-          />
-        }
         size="small"
         pagination={{ showSizeChanger: true }}
       />
@@ -112,8 +127,12 @@ export default function AlertList() {
   );
 }
 
-const ExpandedRow = ({ record }) => {
-  let items;
+interface ExpandedRowProps {
+  record: AlertListItem;
+}
+
+const ExpandedRow = ({ record }: ExpandedRowProps) => {
+  let items: DescriptionsProps["items"];
   if (record.type === "protocolGeneral") {
     items = [
       {
@@ -131,7 +150,7 @@ const ExpandedRow = ({ record }) => {
         children: (
           <Alert
             type="error"
-            message={<RichTextView text={record.text} />}
+            message={<RichTextView text={record.text} maxWidth={undefined} />}
             showIcon
           />
         ),
@@ -169,7 +188,7 @@ const ExpandedRow = ({ record }) => {
         children: (
           <Alert
             type="error"
-            message={<RichTextView text={record.text} />}
+            message={<RichTextView text={record.text} maxWidth={undefined} />}
             showIcon
           />
         ),

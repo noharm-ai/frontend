@@ -13,7 +13,7 @@ import PrescriptionCard from "components/PrescriptionCard";
 import Tooltip from "components/Tooltip";
 import DefaultModal from "components/Modal";
 import Button from "components/Button";
-import AlertListReport from "features/reports/AlertListReport/AlertListReport";
+import { AlertListReport } from "features/reports/AlertListReport/AlertListReport";
 import {
   setInitialFilters,
   setReportData,
