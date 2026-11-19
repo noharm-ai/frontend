@@ -2018,8 +2018,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
         .fill("Aguardar cultura");
       await next.click();
 
-      // skipped unless chosen; then the only type there is comes picked, and the
-      // text tells the review
+      // skipped unless chosen; then the only type there is comes picked, the
+      // text starts empty, and the default one tells the review
       const step = dialog.getByTestId("review-clinical-note");
       await expect(step.getByTestId("review-note-skipped")).toBeVisible();
       await expect(dialog.getByTestId("review-rail-note")).toContainText(
@@ -2033,6 +2033,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
         "Registrar",
       );
       const note = step.getByTestId("review-note-text");
+      await expect(note).toHaveValue("");
+      await step.getByTestId("review-note-default").click();
       await expect(note).toHaveValue(/^CONTROLE DE INFECÇÃO/);
       const text = await note.inputValue();
       for (const line of [
@@ -2154,7 +2156,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
   });
 
   test(
-    "keeps the clinical note text in step with the review, until it is edited",
+    "keeps the applied clinical note text in step with the review, until it is edited",
     { tag: "@multiClinicalNotes" },
     async ({ page, mockApi }) => {
       mockPage(mockApi, followUp());
@@ -2179,6 +2181,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       // straight to the note: meropenem is not evaluated yet
       await toNote();
       await dialog.getByText("Registrar evolução", { exact: true }).click();
+      await expect(note).toHaveValue("");
+      await dialog.getByTestId("review-note-default").click();
       await expect(note).toHaveValue(
         /- MEROPENEM 1 g SOL INJ: Avaliação não preenchida/,
       );
@@ -2260,7 +2264,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       const step = dialog.getByTestId("review-clinical-note");
       const note = step.getByTestId("review-note-text");
       await step.getByText("Registrar evolução", { exact: true }).click();
-      await expect(note).toHaveValue(/^CONTROLE DE INFECÇÃO/);
+      await expect(note).toHaveValue("");
       const noteErrors = step.getByTestId("review-field-error");
       await expect(hint).toHaveText("Informe o tipo de evolução");
       await expect(noteErrors).toHaveCount(0);
@@ -2272,10 +2276,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       expect(sent).toBeNull();
       await openSelect(step.getByTestId("review-note-type"));
       await pickOption(page, "Farmácia clínica");
-      await expect(noteErrors).toHaveCount(0);
 
       // and writes something, told below the text, brought into sight
-      await note.fill("");
       await expect(noteErrors).toHaveText(["Informe o texto da evolução"]);
       await step.evaluate((element) =>
         element.closest(".review-step")!.scrollTo({ top: 0 }),
@@ -2340,9 +2342,19 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       const step = dialog.getByTestId("review-clinical-note");
       await step.getByText("Registrar evolução", { exact: true }).click();
       const note = step.getByTestId("review-note-text");
-      await expect(note).toHaveValue(/^CONTROLE DE INFECÇÃO/);
+      await expect(note).toHaveValue("");
       await expect(step.getByTestId("review-note-type")).toHaveCount(0);
+      await note.fill("Revisão do controle de infecção");
       const text = await note.inputValue();
+
+      // the text the user wrote is only replaced by the default one when told
+      await step.getByTestId("review-note-default").click();
+      await expect(
+        page.getByText("Substituir o texto atual pelo texto padrão?"),
+      ).toBeVisible();
+      await page.getByRole("button", { name: "Não", exact: true }).click();
+      await expect(note).toHaveValue(text);
+
       await expect(save).toBeEnabled();
       await save.click();
 
