@@ -4,12 +4,12 @@ import { loadFixture } from "../support/defaultHandlers";
 /**
  * Interventions recorded by an infection control review
  * (POST /infection-control/review with createIntervention) carry
- * idInfectionControlEvaluation and are kept by infection control: without
- * WRITE_INFECTION_CONTROL the screening shows them, tagged, but neither the
- * intervention form (src/components/Forms/Intervention) nor the outcome form
- * (features/intervention/InterventionOutcome) lets them be changed. The
- * outcome form learns it from GET /intervention/outcome-data (header.locked);
- * the backend refuses the change either way.
+ * idInfectionControlEvaluation. Anyone who changes interventions may edit and
+ * close them: the screening tags them, and both the intervention form
+ * (src/components/Forms/Intervention) and the outcome form
+ * (features/intervention/InterventionOutcome, from GET
+ * /intervention/outcome-data header.infectionControl) stay open and only tell
+ * where the intervention came from.
  */
 
 const icIntervention = {
@@ -27,8 +27,8 @@ const icIntervention = {
   observation: "Espectro amplo demais",
 };
 
-const LOCKED_MESSAGE =
-  "Esta intervenção foi registrada pelo controle de infecção e só pode ser alterada por ele.";
+const CREATED_BY_IC_MESSAGE =
+  "Esta intervenção foi registrada pelo controle de infecção.";
 
 test.beforeEach(({ mockApi }) => {
   const prescription = loadFixture<{ data: { interventions: unknown[] } }>(
@@ -57,7 +57,7 @@ test.beforeEach(({ mockApi }) => {
   });
 });
 
-test("the outcome form is locked for whoever is not infection control", async ({
+test("the outcome form is open to the screening and tells it came from infection control", async ({
   page,
   mockApi,
 }) => {
@@ -67,8 +67,11 @@ test("the outcome form is locked for whoever is not infection control", async ({
     }>("interventions/outcome-data-null.json");
     fixture.data.idIntervention = icIntervention.idIntervention;
     fixture.data.header.infectionControl = true;
-    fixture.data.header.locked = true;
+    fixture.data.header.locked = false;
     return route.fulfill({ status: 200, json: fixture });
+  });
+  mockApi.override("POST /intervention/set-outcome", {
+    json: { status: "success", data: true },
   });
 
   await page.goto("/prescricao/199");
@@ -87,20 +90,23 @@ test("the outcome form is locked for whoever is not infection control", async ({
   const modal = page.locator(".ant-modal", {
     hasText: "Aceitar Intervenção",
   });
-  await expect(modal.getByTestId("intervention-outcome-locked")).toHaveText(
-    LOCKED_MESSAGE,
-  );
-  // only closing is left
   await expect(
-    modal.getByRole("button", { name: "Aceitar Intervenção" }),
-  ).toHaveCount(0);
-  await expect(modal.getByRole("button", { name: "Cancelar" })).toBeVisible();
-  expect(
-    mockApi.requests.filter((r) => r.path === "/intervention/set-outcome"),
-  ).toHaveLength(0);
+    modal.getByTestId("intervention-outcome-infection-control"),
+  ).toHaveText(CREATED_BY_IC_MESSAGE);
+  await expect(modal.getByTestId("intervention-outcome-locked")).toHaveCount(0);
+
+  await modal.getByRole("button", { name: "Aceitar Intervenção" }).click();
+  await expect
+    .poll(
+      () =>
+        mockApi.requests.filter(
+          (r) => r.method === "POST" && r.path === "/intervention/set-outcome",
+        ).length,
+    )
+    .toBe(1);
 });
 
-test("the intervention form is locked for whoever is not infection control", async ({
+test("the intervention form is open and tells it came from infection control", async ({
   page,
 }) => {
   await page.goto("/prescricao/199");
@@ -113,14 +119,13 @@ test("the intervention form is locked for whoever is not infection control", asy
   await choose.locator(".intervention").click();
 
   const form = page.locator(".ant-modal", {
-    has: page.getByTestId("intervention-form-locked"),
+    has: page.getByTestId("intervention-form-infection-control"),
   });
-  await expect(form.getByTestId("intervention-form-locked")).toHaveText(
-    LOCKED_MESSAGE,
-  );
+  await expect(
+    form.getByTestId("intervention-form-infection-control"),
+  ).toHaveText(CREATED_BY_IC_MESSAGE);
   await expect(
     form.locator("#btn-interv-save-action button").first(),
-  ).toBeDisabled();
-  // nor undone
-  await expect(form.locator(".gtm-bt-undo-interv")).toHaveCount(0);
+  ).toBeEnabled();
+  await expect(form.locator(".gtm-bt-undo-interv")).toBeVisible();
 });

@@ -379,6 +379,7 @@
     "prescriber": "Prescritor",
     "economyType": "Tipo de economia",
     "hasEconomy": "Possui economia",
+    "recordedByInfectionControl": "Registrada pelo controle de infecção",
     "selectAll": "Selecionar todos",
     "protocols": "Protocolos",
     "protocolAlerts": "Alertas de protocolo",
@@ -674,8 +675,8 @@
     "title": "Intervenção",
     "titleMultiple": "Intervenção Múltipla",
     "infectionControlTag": "Controle de infecção",
-    "lockedInfectionControl": "Esta intervenção foi registrada pelo controle de infecção e só pode ser alterada por ele.",
     "locked": "Você não tem permissão para alterar esta intervenção.",
+    "createdByInfectionControl": "Esta intervenção foi registrada pelo controle de infecção.",
 
     "labelPrescriptionError": "Possível erro de prescrição",
     "labelPrescriptionErrorHint": "Erro de prescrição com significado clínico é definido como um erro de decisão, não intencional, que pode reduzir a probabilidade do tratamento ser efetivo ou aumentar o risco de lesão no paciente, quando comparado com as praticas clínicas estabelecidas e aceitas. Ref: CFF,  Prot.: MS e Anvisa",

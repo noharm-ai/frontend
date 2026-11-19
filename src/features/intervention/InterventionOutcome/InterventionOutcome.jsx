@@ -44,9 +44,9 @@ export default function InterventionOutcome({ ...props }) {
   const isInvalid =
     selectedIntervention.view &&
     ["s", "0"].indexOf(outcomeData?.header?.status) !== -1;
-  // the user cannot change it: infection control keeps the ones its reviews
-  // recorded
+  // the user cannot set the outcome (the backend checks it again on save)
   const isLocked = !!outcomeData?.header?.locked;
+  const isInfectionControl = !!outcomeData?.header?.infectionControl;
 
   useEffect(() => {
     if (selectedIntervention.open) {
@@ -319,11 +319,17 @@ export default function InterventionOutcome({ ...props }) {
               type="warning"
               showIcon
               data-testid="intervention-outcome-locked"
-              message={t(
-                outcomeData.header.infectionControl
-                  ? "interventionForm.lockedInfectionControl"
-                  : "interventionForm.locked",
-              )}
+              message={t("interventionForm.locked")}
+              style={{ marginTop: "15px" }}
+            ></Alert>
+          )}
+
+          {isInfectionControl && !isLocked && (
+            <Alert
+              type="info"
+              showIcon
+              data-testid="intervention-outcome-infection-control"
+              message={t("interventionForm.createdByInfectionControl")}
               style={{ marginTop: "15px" }}
             ></Alert>
           )}

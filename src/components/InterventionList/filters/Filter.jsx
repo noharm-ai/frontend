@@ -30,6 +30,7 @@ export default function Filter({
     idSegment: null,
     idDrug: [],
     hasEconomy: "",
+    infectionControl: "",
   };
 
   const memoryFilterType = `intervention_list_${userId}`;

@@ -3,6 +3,7 @@ import type { Page } from "@playwright/test";
 import { test, expect } from "../support/mockApi";
 import type { MockApi } from "../support/mockApi";
 import { openSelectById, pickOption } from "../support/antd";
+import { loginWithFeatures } from "../support/featureLogin";
 
 /**
  * The intervention list page (/intervencoes,
@@ -256,4 +257,46 @@ test("an empty search result shows the empty state and no bulk action", async ({
   await expect(
     page.getByRole("button", { name: "Ativar seleção múltipla" }),
   ).toBeDisabled();
+});
+
+test("the infection control filter is hidden without the feature", async ({
+  page,
+  mockApi,
+}) => {
+  installHandlers(mockApi);
+  await openList(page);
+  await page.getByRole("button", { name: "Ver mais" }).click();
+
+  await expect(page.getByText("Possui economia:")).toBeVisible();
+  await expect(
+    page.getByText("Registrada pelo controle de infecção:"),
+  ).toHaveCount(0);
+});
+
+test.describe("with the infection control feature", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  test("the infection control filter goes to the search", async ({
+    page,
+    mockApi,
+  }) => {
+    installHandlers(mockApi);
+    await loginWithFeatures(page, mockApi, ["INFECTION_CONTROL"]);
+    await openList(page);
+    await page.getByRole("button", { name: "Ver mais" }).click();
+
+    const filter = page.locator(
+      '[data-kb="interventions.infectionControlFilter"]',
+    );
+    await expect(filter).toContainText("Registrada pelo controle de infecção:");
+    await filter.getByText("Sim", { exact: true }).click();
+
+    const request = page.waitForRequest(
+      (r) => r.method() === "POST" && r.url().endsWith("/intervention/search"),
+    );
+    await page.locator(".gtm-btn-search").click();
+    expect((await request).postDataJSON()).toMatchObject({
+      infectionControl: 1,
+    });
+  });
 });
