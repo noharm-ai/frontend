@@ -1,5 +1,6 @@
 import { test, expect } from "../support/mockApi";
 import { loginWithFeatures } from "../support/featureLogin";
+import { pickMenuItem } from "../support/antd";
 
 /**
  * Cultures of the infection control page (/controle-infeccao/:admissionNumber,
@@ -786,6 +787,47 @@ test.describe("drugs of the prescription", () => {
     const first = antibiogram.locator("tbody tr.ant-table-row").first();
     await expect(first).toContainText("OXACILINAem uso");
     await expect(first).toHaveClass(/resistant-in-use/);
+  });
+
+  test("print in the report as the card lists them", async ({ page }) => {
+    await page.goto(PAGE_URL);
+    await expect(rows(page)).toHaveCount(3, { timeout: 15000 });
+
+    await pickMenuItem(
+      page,
+      page.getByRole("button", { name: "Mais ações" }),
+      /Relatório/,
+    );
+    const section = page
+      .getByTestId("infection-control-report")
+      .getByTestId("report-cultures");
+    await expect(section).toContainText("Culturas (3)");
+    await expect(section).toContainText(
+      "Coletas liberadas nos últimos 60 dias",
+    );
+
+    // the same rows, under the day they were collected
+    const printed = section.getByTestId("culture-collection");
+    await expect(printed).toHaveCount(3);
+    for (let index = 0; index < 3; index += 1) {
+      await expect(printed.nth(index)).toHaveText(
+        (await rows(page).nth(index).textContent()) ?? "",
+      );
+    }
+    await expect(section.getByTestId("collection-day").first()).toContainText(
+      "Coleta em",
+    );
+    await expect(printed.nth(1)).toHaveClass(/resistant-in-use/);
+    await expect(printed.nth(1).getByTestId("organism-in-use")).toHaveText(
+      "OXACILINA Rem uso",
+    );
+
+    // on paper nothing opens, and the lab's words are not cut
+    await expect(section.getByRole("button")).toHaveCount(0);
+    await expect(printed.nth(0).locator(".clamp")).toHaveCSS(
+      "overflow",
+      "visible",
+    );
   });
 });
 

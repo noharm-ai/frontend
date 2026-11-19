@@ -1755,7 +1755,6 @@
     },
     "cultures": {
       "title": "Culturas",
-      "legend": "Última coleta de cada exame e material, liberada nos últimos 60 dias",
       "summary": "Lista",
       "byDrug": "Por medicamento",
       "byDrugLegend": "Antibiograma de cada medicamento, com os em uso nesta prescrição em destaque",

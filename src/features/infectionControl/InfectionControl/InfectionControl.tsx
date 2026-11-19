@@ -592,9 +592,7 @@ export function InfectionControl() {
         courses={courses}
         drugNames={drugNames}
         // the report tells apart the cultures it could not include
-        cultures={
-          culturesStatus === "succeeded" ? (cultures?.cultures ?? []) : null
-        }
+        collections={culturesStatus === "succeeded" ? cultureCollections : null}
         now={now}
       />
 

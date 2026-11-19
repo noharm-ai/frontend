@@ -4,7 +4,6 @@ import { Badge, Button, Empty, Tabs, Tooltip } from "antd";
 import { ReloadOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
-import FeaturesService from "services/features";
 import { usePatientName } from "hooks/usePatientName";
 import { formatDate } from "utils/date";
 import { CultureReportButton } from "features/culture/CultureReportButton/CultureReportButton";
@@ -27,12 +26,12 @@ import {
   filterCollections,
   ICollectionDetails,
   NO_DETAILS,
-  prescribedDrugsOf,
 } from "./cultureCollections";
 import { CultureCollectionDrawer } from "./CultureCollectionDrawer/CultureCollectionDrawer";
 import { CultureCollectionList } from "./CultureCollectionList/CultureCollectionList";
 import { CulturesByDrug } from "./CulturesByDrug/CulturesByDrug";
 import { CulturesBox, CulturesError } from "./InfectionControlCultures.style";
+import { usePrescribedDrugs } from "./usePrescribedDrugs";
 
 interface InfectionControlCulturesProps {
   admissionNumber: string;
@@ -72,20 +71,13 @@ export function InfectionControlCultures({
   const { list: culturesByDrug, status: culturesByDrugStatus } = useAppSelector(
     (state) => state.cultures,
   );
-  // the legacy ducks are persisted untyped
-  const features = useAppSelector((state: any) => state.user.account.features);
   const { name: patientName } = usePatientName(patient.idPatient);
-
-  const hasByDrug = !!idPrescription && FeaturesService(features).hasCulture();
+  // the cultures by drug know which drugs the prescription carries
+  const { hasByDrug, prescribed } = usePrescribedDrugs(idPrescription);
 
   const [details, setDetails] = useState<ICollectionDetails>(NO_DETAILS);
 
   const collections = useMemo(() => collectionsOf(data), [data]);
-  // the cultures by drug know which drugs the prescription carries
-  const prescribed = useMemo(
-    () => prescribedDrugsOf(hasByDrug ? culturesByDrug : null),
-    [hasByDrug, culturesByDrug],
-  );
   const detailOptions = useMemo(
     () => detailOptionsOf(collections),
     [collections],

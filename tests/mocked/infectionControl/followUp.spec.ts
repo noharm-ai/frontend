@@ -742,15 +742,17 @@ test("adds the recent cultures and the exams the page shows to the report", asyn
   const report = page.getByTestId("infection-control-report");
   await expect(report).toBeVisible();
 
-  // the cultures whole: the gram and the result are not cut on paper
+  // the collections as the culture card lists them (recentCultures.spec
+  // goes through them); a backend without collections sends the latest
+  // culture of each exam, without its antibiogram
   const cultures = report.getByTestId("report-cultures");
   await expect(cultures).toContainText("Culturas (1)");
-  const culture = cultures.getByTestId("report-culture");
+  const culture = cultures.getByTestId("culture-collection");
+  await expect(culture).toHaveCount(1);
   await expect(culture).toContainText("Hemocultura teste");
   await expect(culture).toContainText("Sangue teste");
   await expect(culture).toContainText("Staphylococcus aureus");
-  await expect(culture).toContainText("após 18 horas de incubação");
-  await expect(culture).toContainText("RESULTADO: Positivo");
+  await expect(culture).toContainText("Sem antibiograma liberado");
 
   // the exams of the screening prescription, the ones out of range first
   const exams = report.getByTestId("report-exams");

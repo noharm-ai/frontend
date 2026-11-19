@@ -1745,7 +1745,6 @@
     },
     "cultures": {
       "title": "Cultures",
-      "legend": "Latest collection of each exam and material, released in the last 60 days",
       "summary": "List",
       "byDrug": "By drug",
       "byDrugLegend": "Antibiogram of each drug, the ones in use in this prescription flagged",

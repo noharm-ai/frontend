@@ -15,8 +15,8 @@ import {
   IAntimicrobialEvaluation,
   IAntimicrobialTimeline,
   ICourse,
+  ICultureCollection,
   IFollowUp,
-  IRecentCulture,
 } from "../InfectionControlSlice";
 import { isExamAlert, sortExams } from "../exams";
 import {
@@ -29,7 +29,9 @@ import {
   getFollowUpCourses,
   getInvalidatedEvaluations,
 } from "../followUp";
-import { LabResult } from "../InfectionControlCultures/LabResult/LabResult";
+import { CultureCollectionDays } from "../InfectionControlCultures/CultureCollectionDays/CultureCollectionDays";
+import { CollectionList } from "../InfectionControlCultures/CultureCollectionList/CultureCollectionList.style";
+import { usePrescribedDrugs } from "../InfectionControlCultures/usePrescribedDrugs";
 import { formatDose, formatRegimen, getAge } from "../timeline";
 import { EvaluationExamTriggers } from "../EvaluationExamTriggers/EvaluationExamTriggers";
 import { ExamResultMatches } from "../ExamResultMatches/ExamResultMatches";
@@ -44,9 +46,9 @@ interface InfectionControlReportProps {
   // as the timeline sorts them
   courses: ICourse[];
   drugNames: Record<number, string>;
-  // the recent cultures the page loaded; null while they load, or when they
-  // failed to
-  cultures: IRecentCulture[] | null;
+  // the culture collections the page loaded, newest first, as the culture
+  // card lists them; null while they load, or when they failed to
+  collections: ICultureCollection[] | null;
   now: Dayjs;
 }
 
@@ -93,11 +95,13 @@ export function InfectionControlReport({
   followUp,
   courses,
   drugNames,
-  cultures,
+  collections,
   now,
 }: InfectionControlReportProps) {
   const { t } = useTranslation();
   const { patient } = data;
+  // the drugs of the prescription, which the cultures flag as the card does
+  const { prescribed } = usePrescribedDrugs(patient.idPrescription);
 
   const followUpEnabled = !!followUp?.enabled;
   const followUpCourses = useMemo(
@@ -710,57 +714,29 @@ export function InfectionControlReport({
 
       <section data-testid="report-cultures">
         <h2>
-          {cultures === null
+          {collections === null
             ? t("infectionControl.cultures.title")
             : t("infectionControl.report.cultures", {
-                count: cultures.length,
+                count: collections.length,
               })}
         </h2>
-        <p className="report-muted">{t("infectionControl.cultures.legend")}</p>
-        {cultures === null ? (
+        <p className="report-muted">
+          {t("infectionControl.cultures.collections.legend")}
+        </p>
+        {collections === null ? (
           <p className="report-muted">
             {t("infectionControl.report.culturesNotLoaded")}
           </p>
-        ) : cultures.length === 0 ? (
+        ) : collections.length === 0 ? (
           <p className="report-muted">{t("infectionControl.cultures.empty")}</p>
         ) : (
-          <table className="report-table">
-            <thead>
-              <tr>
-                <th>{t("infectionControl.cultures.exam")}</th>
-                <th>{t("infectionControl.cultures.collectionDate")}</th>
-                <th>{t("infectionControl.cultures.releaseDate")}</th>
-                <th>{t("infectionControl.cultures.microorganism")}</th>
-                <th>{t("infectionControl.cultures.gram")}</th>
-                <th>{t("infectionControl.cultures.result")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cultures.map((culture) => (
-                <tr key={culture.id} data-testid="report-culture">
-                  <td>
-                    {culture.examName ?? "-"}
-                    {culture.material && (
-                      <div className="report-muted">{culture.material}</div>
-                    )}
-                  </td>
-                  <td>{formatDateTime(culture.collectionDate) ?? "-"}</td>
-                  <td>{formatDateTime(culture.releaseDate) ?? "-"}</td>
-                  <td>
-                    {culture.microorganisms.length
-                      ? culture.microorganisms.map((name) => (
-                          <div key={name}>{name}</div>
-                        ))
-                      : "-"}
-                  </td>
-                  <td className="report-pre-line">{culture.gram || "-"}</td>
-                  <td>
-                    <LabResult value={culture.previousResult} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          // as the culture card lists them
+          <CollectionList className="printed">
+            <CultureCollectionDays
+              collections={collections}
+              prescribed={prescribed}
+            />
+          </CollectionList>
         )}
       </section>
 
