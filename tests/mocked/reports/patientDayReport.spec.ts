@@ -219,3 +219,68 @@ test("the segment filter narrows the totals and the CSV", async ({
   expect(lines).toHaveLength(2);
   expect(lines.every((line) => line.includes("Segmento B"))).toBe(true);
 });
+
+// a day off with no rows, so the totals stay the same
+const DAY_OFF = TODAY.subtract(3, "day").format("YYYY-MM-DD");
+
+test("loading a saved filter with days off does not break the report", async ({
+  page,
+  mockApi,
+}) => {
+  mockReport(mockApi, ROWS);
+
+  // saved filters are JSON: the days off come back as strings, not dayjs
+  mockApi.override("GET /memory/:type", {
+    json: {
+      status: "success",
+      data: [
+        {
+          id: 1,
+          type: "patient_day_report",
+          value: [
+            {
+              name: "Filtro Teste",
+              data: {
+                responsibleList: [],
+                departmentList: [],
+                segmentList: [],
+                weekDays: false,
+                minScore: null,
+                maxScore: null,
+                tagList: [],
+                daysOffList: [
+                  `${DAY_OFF}T12:00:00.000Z`,
+                  `${TODAY.subtract(5, "day").format("YYYY-MM-DD")}T12:00:00.000Z`,
+                ],
+              },
+            },
+          ],
+        },
+      ],
+    },
+  });
+
+  const pageErrors: string[] = [];
+  page.on("pageerror", (error) => pageErrors.push(error.message));
+
+  await page.goto(REPORT_URL);
+  await waitForReport(page);
+
+  await page
+    .locator(".ant-btn")
+    .filter({ has: page.locator('[aria-label="filter"]') })
+    .click();
+  await page.getByText("Abrir filtros salvos").click();
+  await page.getByRole("button", { name: /Aplicar/ }).click();
+
+  // the report is summarized again with the loaded filter
+  await expect(stat(page, "Total de Pacientes-Dia")).toHaveText("4");
+
+  // the days off picker (under "see more") shows the loaded dates
+  await page.getByText("Ver mais").click();
+  await expect(page.locator(".ant-picker-selection-overflow")).toContainText(
+    dayjs(DAY_OFF).format("DD/MM/YYYY"),
+  );
+
+  expect(pageErrors).toEqual([]);
+});
