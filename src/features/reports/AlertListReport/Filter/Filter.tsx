@@ -13,7 +13,7 @@ import {
 } from "../AlertListReportSlice";
 import { getReportData, type AlertListFilters } from "../transformers";
 import { MainFilters } from "./MainFilters/MainFilters";
-import { onAfterPrint } from "utils/report";
+import { onBeforePrint, onAfterPrint } from "utils/report";
 
 interface FilterProps {
   printRef: RefObject<HTMLDivElement | null>;
@@ -29,10 +29,10 @@ export function Filter({ printRef }: FilterProps) {
   const initialFilters = useAppSelector(
     (state) => state.reportsArea.alertList.initialFilters,
   );
-  // react-to-print 3 dropped onBeforeGetContent, which this report used to
-  // pass (a no-op since the upgrade), so only onAfterPrint is kept
+  // react-to-print 3 renamed onBeforeGetContent to onBeforePrint
   const handlePrint = useReactToPrint({
     contentRef: printRef,
+    onBeforePrint: onBeforePrint,
     onAfterPrint: onAfterPrint,
   });
   const initialValues: AlertListFilters = {

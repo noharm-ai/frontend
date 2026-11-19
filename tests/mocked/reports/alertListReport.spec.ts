@@ -112,6 +112,13 @@ test("lists every alert, filters them and expands the details", async ({
   await table.locator(".expand-all").click();
   await expect(openDetails).toHaveCount(0);
 
+  // open a Dipirona row, which the filter below leaves out
+  await table
+    .locator(".ant-table-row", { hasText: "Dipirona 500mg" })
+    .first()
+    .click();
+  await expect(openDetails).toHaveCount(1);
+
   // the drug list of the filter comes from the alerts
   // the filters are Nível, Medicamento and Tipo, in that order
   await page.locator(".ant-modal .ant-select").nth(1).click();
@@ -131,8 +138,12 @@ test("lists every alert, filters them and expands the details", async ({
     "Medicamento: Omeprazol 20mg",
   );
 
-  // a click on the row shows the item's dose, frequency, route and alert text
-  await table.locator(".ant-table-row").click();
+  // the open row was filtered out, so the header offers to expand again and
+  // one click opens the row left: its dose, frequency, route and alert text
+  await expect(table.locator(".expand-all")).toHaveClass(
+    /ant-table-row-expand-icon-collapsed/,
+  );
+  await table.locator(".expand-all").click();
   const details = openDetails;
   await expect(details).toHaveCount(1);
   await expect(details).toContainText("20 mg");
@@ -151,8 +162,8 @@ test("a cell of the card opens the report filtered by its alert types", async ({
 
   await openPrescription(page);
 
-  // the second cell of the card counts the drug interactions (typeList "it")
-  await alertsCard(page).locator(".content > div > div").nth(1).click();
+  // the interaction cell counts the drug interactions (typeList "it")
+  await alertsCard(page).locator(".alert-interaction").click();
 
   const table = reportTable(page);
   await expect(table.locator(".ant-table-row")).toHaveCount(1);

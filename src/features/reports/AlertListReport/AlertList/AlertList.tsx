@@ -53,8 +53,13 @@ export function AlertList() {
     setExpandedRows(updateExpandedRows(expandedRows, record.rowKey));
   };
 
+  // a search can drop rows that were open: only the rows still listed count
+  const hasExpandedRows = datasource.some((i) =>
+    expandedRows.includes(i.rowKey),
+  );
+
   const toggleExpansion = () => {
-    if (expandedRows.length) {
+    if (hasExpandedRows) {
       setExpandedRows([]);
     } else {
       setExpandedRows(datasource.map((i) => i.rowKey));
@@ -108,7 +113,7 @@ export function AlertList() {
           // rc-table merges into expandable all the same
           columnTitle: (
             <ExpandColumn
-              expand={!expandedRows.length}
+              expand={!hasExpandedRows}
               toggleExpansion={toggleExpansion}
             />
           ),

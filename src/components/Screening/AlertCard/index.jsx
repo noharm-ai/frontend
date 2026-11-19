@@ -52,6 +52,7 @@ export const getAlerts = (
       filters: { typeList: ["iy", "sl"] },
     },
     {
+      name: "interaction",
       label: t("alerts.interaction"),
       icon: () => <CustomIcon component={IconInteractionAlert} />,
       value: stats.int,
