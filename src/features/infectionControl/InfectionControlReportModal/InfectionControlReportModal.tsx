@@ -17,6 +17,7 @@ import {
   ICultureCollection,
   IFollowUp,
 } from "../InfectionControlSlice";
+import { IExamSeries } from "../exams";
 import { InfectionControlReport } from "../InfectionControlReport/InfectionControlReport";
 import { ReportBody } from "../InfectionControlReport/InfectionControlReport.style";
 
@@ -32,6 +33,8 @@ interface InfectionControlReportModalProps {
   // as the culture card lists them; null while they load, or when they
   // failed to
   collections: ICultureCollection[] | null;
+  // the exams on the timeline (InfectionControlReport)
+  timelineExams?: IExamSeries[] | null;
   now: Dayjs;
 }
 
@@ -47,6 +50,7 @@ export function InfectionControlReportModal({
   courses,
   drugNames,
   collections,
+  timelineExams,
   now,
 }: InfectionControlReportModalProps) {
   const { t } = useTranslation();
@@ -95,6 +99,7 @@ export function InfectionControlReportModal({
           courses={courses}
           drugNames={drugNames}
           collections={collections}
+          timelineExams={timelineExams}
           now={now}
         />
       </ReportBody>

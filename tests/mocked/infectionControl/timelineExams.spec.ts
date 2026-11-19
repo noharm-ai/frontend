@@ -1,4 +1,5 @@
 import { test, expect } from "../support/mockApi";
+import { pickMenuItem } from "../support/antd";
 
 /**
  * Exams on the antimicrobial timeline of the infection control page
@@ -72,6 +73,15 @@ const timeline = (
   },
 });
 
+/**
+ * A naive ISO date some days before now, at a time of that day: the day the
+ * page reads it on does not hang on the hour the test runs
+ */
+const onDay = (daysAgo: number, time: string) =>
+  `${new Date(Date.now() - daysAgo * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .slice(0, 10)}T${time}`;
+
 /** An exam of the history, keyed by the tpexame of the schema */
 const exam = (
   tpExamRef: string | null,
@@ -80,6 +90,23 @@ const exam = (
   reference: [number, number],
   // [value, hours from now], newest first
   results: [number, number][],
+) =>
+  examOn(
+    tpExamRef,
+    name,
+    unit,
+    reference,
+    results.map(([value, hours]) => [value, hoursFromNow(hours)]),
+  );
+
+/** An exam of the history with its results on the dates given */
+const examOn = (
+  tpExamRef: string | null,
+  name: string,
+  unit: string,
+  reference: [number, number],
+  // [value, naive ISO date], newest first
+  results: [number, string][],
 ) => ({
   value: results[0][0],
   unit,
@@ -88,10 +115,10 @@ const exam = (
   configured: true,
   text: false,
   tp_exam_ref: tpExamRef,
-  history: results.map(([value, hours]) => ({
+  history: results.map(([value, date]) => ({
     value,
     unit,
-    date: hoursFromNow(hours),
+    date,
     min: reference[0],
     max: reference[1],
     configured: true,
@@ -510,4 +537,153 @@ test("loads no history without a prescription", async ({ page, mockApi }) => {
     false,
   );
   await expect(page.getByTestId("exam-timeline-group")).toHaveCount(0);
+});
+
+test("prints the exams on the timeline day by day in the report", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override(TIMELINE, { json: timeline("199") });
+  mockApi.override(EXAMS_HISTORY, {
+    json: history({
+      pcr_s: examOn(
+        "pcru",
+        "PCR ultrassensível",
+        "mg/L",
+        [0, 5],
+        [
+          [4, onDay(0, "00:00:00")],
+          [8, onDay(2, "08:00:00")],
+          [12, onDay(4, "08:00:00")],
+          // before the five days
+          [2, onDay(5, "08:00:00")],
+        ],
+      ),
+      tax: examOn(
+        "temp",
+        "Temperatura",
+        "°C",
+        [35.5, 37.7],
+        [
+          // two results on a day: the latest
+          [38.4, hoursFromNow(0)],
+          [37, onDay(0, "00:00:00")],
+          [36.8, onDay(1, "20:00:00")],
+          [39.1, onDay(1, "06:00:00")],
+        ],
+      ),
+      leuco: LEUKOCYTES,
+      creat: examOn(
+        "cr",
+        "Creatinina",
+        "mg/dL",
+        [0.6, 1.2],
+        [[1.1, onDay(3, "10:00:00")]],
+      ),
+    }),
+  });
+
+  await page.goto(PAGE_URL);
+  await expect(examRows(page)).toHaveCount(3, { timeout: 15000 });
+
+  // the report follows the timeline: leukocytes out, creatinine in
+  await examRows(page)
+    .nth(1)
+    .getByRole("button", { name: "Remover Leucócitos da linha do tempo" })
+    .click();
+  await antimicrobialTimeline(page)
+    .getByRole("button", { name: "Adicionar exame" })
+    .click();
+  await page
+    .locator(".ant-select-item-option", { hasText: "Creatinina" })
+    .click();
+  await expect(examRows(page)).toHaveCount(3);
+
+  await pickMenuItem(
+    page,
+    page.getByRole("button", { name: "Mais ações" }),
+    /Relatório/,
+  );
+  const trends = page
+    .getByTestId("infection-control-report")
+    .getByTestId("report-exam-trends");
+  await expect(trends).toContainText("Evolução dos exames");
+
+  // the five days up to today, oldest first
+  const days = trends.getByTestId("report-exam-day");
+  await expect(days).toHaveCount(5);
+  await expect(days.nth(4)).toContainText("(hoje)");
+  await expect(days.nth(0)).not.toContainText("hoje");
+
+  // as the timeline has them
+  const rows = trends.getByTestId("report-exam-trend");
+  await expect(rows).toHaveCount(3);
+  await expect(rows.nth(0)).toContainText("PCR ultrassensível (mg/L)");
+  await expect(rows.nth(0)).toContainText("ref. 0 a 5");
+  await expect(rows.nth(1)).toContainText("Temperatura (°C)");
+  await expect(rows.nth(2)).toContainText("Creatinina (mg/dL)");
+  await expect(trends).not.toContainText("Leucócitos");
+
+  const cells = (row: number) =>
+    rows.nth(row).getByTestId("report-exam-trend-cell");
+  await expect(cells(0)).toHaveText(["12", "-", "8", "-", "4"]);
+  await expect(cells(0).nth(0)).toHaveClass(/report-cell-alert/);
+  await expect(cells(0).nth(4)).not.toHaveClass(/report-cell-alert/);
+  await expect(cells(1)).toHaveText(["-", "-", "-", "36,8", "38,4"]);
+  await expect(cells(1).nth(4)).toHaveClass(/report-cell-alert/);
+  await expect(cells(2)).toHaveText(["-", "1,1", "-", "-", "-"]);
+});
+
+test("says in the report when the exam history did not load", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override(TIMELINE, { json: timeline("199") });
+  mockApi.override(EXAMS_HISTORY, {
+    status: 500,
+    json: { status: "error", message: "erro" },
+  });
+
+  await page.goto(PAGE_URL);
+  await expect(
+    antimicrobialTimeline(page).getByTestId("exam-timeline-error"),
+  ).toBeVisible({ timeout: 15000 });
+
+  await pickMenuItem(
+    page,
+    page.getByRole("button", { name: "Mais ações" }),
+    /Relatório/,
+  );
+  const trends = page
+    .getByTestId("infection-control-report")
+    .getByTestId("report-exam-trends");
+  await expect(trends).toContainText(
+    "O histórico dos exames não foi carregado.",
+  );
+  await expect(trends.getByTestId("report-exam-trend")).toHaveCount(0);
+});
+
+test("leaves the exams day by day out of the report without a course", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override(TIMELINE, { json: timeline("199", []) });
+  mockApi.override(EXAMS_HISTORY, { json: history({ pcr_s: CRP }) });
+
+  await page.goto(PAGE_URL);
+  await expect(
+    page.getByText("Nenhum antimicrobiano prescrito neste atendimento."),
+  ).toBeVisible({ timeout: 15000 });
+  await expect
+    .poll(() => mockApi.requests.some((r) => r.path === `/exams/${ADMISSION}`))
+    .toBe(true);
+
+  await pickMenuItem(
+    page,
+    page.getByRole("button", { name: "Mais ações" }),
+    /Relatório/,
+  );
+  const report = page.getByTestId("infection-control-report");
+  await expect(report).toBeVisible();
+  await expect(report.getByTestId("report-exam-trends")).toHaveCount(0);
 });

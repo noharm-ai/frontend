@@ -186,15 +186,17 @@ export const ReportDocument = styled.div`
     white-space: pre-line;
   }
 
-  /* an exam out of range: tinted and in red, as on the page */
-  .report-exam-alert td {
+  /* a result out of range, of the exams day by day */
+  .report-cell-alert {
     background: #fff1f0;
     color: #cf1322;
     font-weight: 600;
+  }
 
-    &:first-child {
-      color: inherit;
-    }
+  .report-exam-days td:not(:first-child),
+  .report-exam-days th:not(:first-child) {
+    text-align: center;
+    white-space: nowrap;
   }
 
   .report-alert strong {

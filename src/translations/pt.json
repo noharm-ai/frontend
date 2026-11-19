@@ -2227,11 +2227,11 @@
       "interventions": "Intervenções",
       "cultures": "Culturas ({{count}})",
       "culturesNotLoaded": "As culturas não foram carregadas. Atualize a seção de culturas da página e gere o relatório novamente.",
-      "exams": "Exames ({{count}})",
-      "examsPrescription": "Prescrição de {{date}}",
-      "examsOutOfRange_one": "{{count}} fora da referência",
-      "examsOutOfRange_other": "{{count}} fora da referência",
-      "variation": "Variação"
+      "examTrends": "Evolução dos exames",
+      "examTrendsHint": "Exames da linha do tempo nos últimos {{count}} dias; o resultado mais recente de cada dia.",
+      "examTrendsEmpty": "Nenhum exame na linha do tempo.",
+      "examTrendsNotLoaded": "O histórico dos exames não foi carregado. Aguarde os exames da linha do tempo carregarem e gere o relatório novamente.",
+      "today": "hoje"
     },
     "history": {
       "title": "Revisões",
