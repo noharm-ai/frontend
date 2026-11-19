@@ -406,6 +406,59 @@ test.describe("on the timeline", () => {
     await expect(row.getByTestId("timeline-culture")).toHaveCount(3);
   });
 
+  test("passes under the column of the labels when scrolled", async ({
+    page,
+    mockApi,
+  }) => {
+    // a course prescribed for a month ahead: the timeline is wider than the
+    // page, which is still too wide for the list of phones
+    mockApi.override(TIMELINE_ENDPOINT, {
+      json: {
+        ...withCourse,
+        data: {
+          ...withCourse.data,
+          courses: [
+            { ...withCourse.data.courses[0], end: hoursFromNow(24 * 30) },
+          ],
+        },
+      },
+    });
+    await page.setViewportSize({ width: 1024, height: 900 });
+    await page.goto(PAGE_URL);
+
+    const marks = page
+      .getByTestId("timeline-cultures")
+      .getByTestId("timeline-culture");
+    await expect(marks).toHaveCount(3, { timeout: 15000 });
+
+    // the timeline scrolled sideways until a mark sits under the label of
+    // its row: the label covers it, as it covers the courses and the exams
+    const result = await marks.first().evaluate((mark) => {
+      let scroller = mark.parentElement;
+      while (scroller && getComputedStyle(scroller).overflowX !== "auto") {
+        scroller = scroller.parentElement;
+      }
+      const label = mark.closest(
+        '[data-testid="timeline-cultures"]',
+      )!.firstElementChild!;
+      const labelBox = label.getBoundingClientRect();
+      const before = mark.getBoundingClientRect();
+      scroller!.scrollLeft +=
+        before.left + before.width / 2 - (labelBox.left + labelBox.width / 2);
+
+      const box = mark.getBoundingClientRect();
+      const top = document.elementFromPoint(
+        box.left + box.width / 2,
+        box.top + box.height / 2,
+      );
+      return {
+        underLabel: box.left > labelBox.left && box.right < labelBox.right,
+        covered: !!top && label.contains(top),
+      };
+    });
+    expect(result).toEqual({ underLabel: true, covered: true });
+  });
+
   test("a day of several collections is one mark, with their count", async ({
     page,
     mockApi,
