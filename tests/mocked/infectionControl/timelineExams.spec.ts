@@ -5,8 +5,8 @@ import { test, expect } from "../support/mockApi";
  * (src/features/infectionControl/CourseGantt/ExamRows).
  *
  * On opening, the timeline plots some exams under the courses, a row each on
- * the same days: CRP, CKD-EPI (or CKD-EPI 2021, where configured instead) and
- * leukocytes. They are picked by their NoHarm identifier (tpexame_ref of the
+ * the same days: CRP, CKD-EPI (or CKD-EPI 2021, where configured instead),
+ * leukocytes and temperature. They are picked by their NoHarm identifier (tpexame_ref of the
  * segment exams), not by the tpexame of the schema, from the history "Ver
  * todos" shows. "+" adds any other exam of it, and each row can be taken out.
  */
@@ -137,6 +137,16 @@ const LEUKOCYTES = exam(
     [9000, -50],
   ],
 );
+const TEMPERATURE = exam(
+  "temp",
+  "Temperatura",
+  "°C",
+  [35.5, 37.7],
+  [
+    [38.4, -6],
+    [36.8, -30],
+  ],
+);
 const CREATININE = exam("cr", "Creatinina", "mg/dL", [0.6, 1.2], [[1.8, -5]]);
 
 const antimicrobialTimeline = (page: import("@playwright/test").Page) =>
@@ -151,7 +161,7 @@ test.beforeEach(({ mockApi }) => {
   });
 });
 
-test("plots CRP, CKD-EPI and leukocytes under the courses on opening", async ({
+test("plots CRP, CKD-EPI, leukocytes and temperature under the courses on opening", async ({
   page,
   mockApi,
 }) => {
@@ -166,6 +176,7 @@ test("plots CRP, CKD-EPI and leukocytes under the courses on opening", async ({
       ckd: CKD,
       ckd21: CKD21,
       leuco: LEUKOCYTES,
+      tax: TEMPERATURE,
       laudo: { name: "Laudo", text: true, history: [] },
     }),
   });
@@ -183,11 +194,15 @@ test("plots CRP, CKD-EPI and leukocytes under the courses on opening", async ({
     antimicrobialTimeline(page).getByTestId("course-row"),
   ).toHaveCount(1, { timeout: 15000 });
   // in this order, CKD-EPI rather than CKD-EPI 2021, no creatinine
-  await expect(examRows(page)).toHaveCount(3);
+  await expect(examRows(page)).toHaveCount(4);
   await expect(examRows(page).nth(0)).toContainText("PCR ultrassensível");
   await expect(examRows(page).nth(1)).toContainText("CKD-EPI");
   await expect(examRows(page).nth(1)).not.toContainText("2021");
   await expect(examRows(page).nth(2)).toContainText("Leucócitos");
+  await expect(examRows(page).nth(3)).toContainText("Temperatura");
+  await expect(examRows(page).nth(3).locator(".exam-point.alert")).toHaveCount(
+    1,
+  );
 
   // both CRP types, without the result older than the timeline reaches back
   const crp = examRows(page).nth(0);
@@ -232,7 +247,12 @@ test("holds the place of the exams while their history loads", async ({
     await route.fulfill({
       contentType: "application/json",
       body: JSON.stringify(
-        history({ pcr_s: CRP, ckd: CKD, leuco: LEUKOCYTES }),
+        history({
+          pcr_s: CRP,
+          ckd: CKD,
+          leuco: LEUKOCYTES,
+          tax: TEMPERATURE,
+        }),
       ),
     });
   });
@@ -246,13 +266,13 @@ test("holds the place of the exams while their history loads", async ({
     "exam-timeline-loading",
   );
   // one for each exam plotted on opening, under the header
-  await expect(placeholders).toHaveCount(3);
+  await expect(placeholders).toHaveCount(4);
   await expect(page.getByTestId("exam-timeline-group")).toBeVisible();
   await expect(examRows(page)).toHaveCount(0);
   const timelineBox = await antimicrobialTimeline(page).boundingBox();
 
   release();
-  await expect(examRows(page)).toHaveCount(3);
+  await expect(examRows(page)).toHaveCount(4);
   await expect(placeholders).toHaveCount(0);
   // the exams take the place the placeholders held: the timeline keeps its
   // height

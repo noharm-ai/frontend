@@ -47,7 +47,12 @@ export interface IExamSeries {
  * patient has results of: CKD-EPI or, where configured instead, CKD-EPI 2021.
  * Others are added from the timeline
  */
-export const TIMELINE_EXAMS = [["pcru"], ["ckd", "ckd21"], ["h_conleuc"]];
+export const TIMELINE_EXAMS = [
+  ["pcru"],
+  ["ckd", "ckd21"],
+  ["h_conleuc"],
+  ["temp"],
+];
 
 const toNumber = (value: unknown) => {
   const parsed = typeof value === "number" ? value : parseFloat(`${value}`);
