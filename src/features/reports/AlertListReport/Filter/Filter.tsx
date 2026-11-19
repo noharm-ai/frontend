@@ -1,9 +1,9 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { Fragment, useEffect, type RefObject } from "react";
 import { FloatButton, Spin } from "antd";
 import { MenuOutlined, PrinterOutlined } from "@ant-design/icons";
 import { useReactToPrint } from "react-to-print";
 
+import { useAppDispatch, useAppSelector } from "src/store";
 import { FloatButtonGroup } from "components/FloatButton";
 import AdvancedFilter from "components/AdvancedFilter";
 import {
@@ -11,39 +11,41 @@ import {
   setFilteredResult,
   setFilters,
 } from "../AlertListReportSlice";
-import { getReportData } from "../transformers";
-import MainFilters from "./MainFilters";
+import { getReportData, type AlertListFilters } from "../transformers";
+import { MainFilters } from "./MainFilters/MainFilters";
 import { onBeforePrint, onAfterPrint } from "utils/report";
 
-export default function Filter({ printRef }) {
-  const dispatch = useDispatch();
+interface FilterProps {
+  printRef: RefObject<HTMLDivElement | null>;
+}
+
+export function Filter({ printRef }: FilterProps) {
+  const dispatch = useAppDispatch();
   const isFetching =
-    useSelector((state) => state.reportsArea.alertList.status) === "loading";
-  const datasource = useSelector((state) => state.reportsArea.alertList.list);
-  const initialFilters = useSelector(
+    useAppSelector((state) => state.reportsArea.alertList.status) === "loading";
+  const datasource = useAppSelector(
+    (state) => state.reportsArea.alertList.list,
+  );
+  const initialFilters = useAppSelector(
     (state) => state.reportsArea.alertList.initialFilters,
   );
+  // react-to-print 3 renamed onBeforeGetContent to onBeforePrint
   const handlePrint = useReactToPrint({
     contentRef: printRef,
-    onBeforeGetContent: onBeforePrint,
+    onBeforePrint: onBeforePrint,
     onAfterPrint: onAfterPrint,
   });
-  const initialValues = {
+  const initialValues: AlertListFilters = {
     levelList: [],
     drugList: [],
     typeList: [],
     ...initialFilters,
   };
 
-  const search = async (params, forceDs) => {
-    let ds = [];
-    if (!forceDs) {
-      ds = datasource;
-    }
-
+  const search = (params: AlertListFilters) => {
     dispatch(setFilteredStatus("loading"));
     dispatch(setFilters(params));
-    const reportData = getReportData(forceDs || ds, params);
+    const reportData = getReportData(datasource, params);
     dispatch(setFilteredResult(reportData));
 
     setTimeout(() => {
@@ -58,15 +60,18 @@ export default function Filter({ printRef }) {
   }, []); //eslint-disable-line
 
   return (
-    <React.Fragment>
+    <Fragment>
       <Spin spinning={isFetching}>
         {!isFetching && (
           <AdvancedFilter
             initialValues={initialValues}
             mainFilters={<MainFilters />}
+            secondaryFilters={undefined}
             onSearch={search}
+            onChangeValues={undefined}
             loading={isFetching}
             skipFilterList={["dateRange", "segmentList", "departmentList"]}
+            memoryType={undefined}
           />
         )}
       </Spin>
@@ -92,6 +97,6 @@ export default function Filter({ printRef }) {
         style={{ right: 80, bottom: 25 }}
         tooltip="Voltar ao topo"
       />
-    </React.Fragment>
+    </Fragment>
   );
 }

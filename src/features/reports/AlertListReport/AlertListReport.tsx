@@ -1,7 +1,7 @@
-import React, { useRef } from "react";
-import { useSelector } from "react-redux";
+import { useRef } from "react";
 import { Row, Col, Space, Spin } from "antd";
 
+import { useAppSelector } from "src/store";
 import { PageHeader } from "styles/PageHeader.style";
 import {
   ReportContainer,
@@ -9,18 +9,28 @@ import {
   ReportFilterContainer,
   ReportPrintDescriptions,
 } from "styles/Report.style";
-import Filter from "./Filter/Filter";
-import { NoHarmLogoHorizontal as Brand } from "assets/NoHarmLogoHorizontal";
+import { Filter } from "./Filter/Filter";
+import { NoHarmLogoHorizontal as Brand } from "src/assets/NoHarmLogoHorizontal";
 import { filtersToDescription } from "utils/report";
-import AlertList from "./AlertList/AlertList";
+import { AlertList } from "./AlertList/AlertList";
 
-export default function AlertListReport({ prescription }) {
-  const status = useSelector((state) => state.reportsArea.alertList.status);
-  const filteredStatus = useSelector(
-    (state) => state.reportsArea.alertList.filtered.status
+interface AlertListReportProps {
+  prescription: {
+    admissionNumber: number | string;
+    namePatient?: string;
+    birthdateFormat?: string;
+  };
+}
+
+export function AlertListReport({ prescription }: AlertListReportProps) {
+  const status = useAppSelector((state) => state.reportsArea.alertList.status);
+  const filteredStatus = useAppSelector(
+    (state) => state.reportsArea.alertList.filtered.status,
   );
-  const filters = useSelector((state) => state.reportsArea.alertList.filters);
-  const printRef = useRef(null);
+  const filters = useAppSelector(
+    (state) => state.reportsArea.alertList.filters,
+  );
+  const printRef = useRef<HTMLDivElement>(null);
   const isLoading = status === "loading" || filteredStatus === "loading";
   const filtersConfig = {
     drugList: {
@@ -41,15 +51,14 @@ export default function AlertListReport({ prescription }) {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title" data-kb="reports.alertList.title">Relatório: Alertas </h1>
+          <h1 className="page-header-title" data-kb="reports.alertList.title">
+            Relatório: Alertas{" "}
+          </h1>
         </div>
       </PageHeader>
 
       <ReportContainer>
-        <Filter
-          printRef={printRef}
-          admissionNumber={prescription.admissionNumber}
-        />
+        <Filter printRef={printRef} />
 
         <div ref={printRef}>
           <ReportHeader className="report-header">
