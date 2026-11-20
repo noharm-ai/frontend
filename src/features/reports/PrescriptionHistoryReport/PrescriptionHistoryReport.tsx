@@ -1,7 +1,7 @@
-import React, { useRef } from "react";
-import { useSelector } from "react-redux";
+import { useRef } from "react";
 import { Row, Col, Space, Spin } from "antd";
 
+import { useAppSelector } from "src/store";
 import { PageHeader } from "styles/PageHeader.style";
 import {
   ReportContainer,
@@ -9,22 +9,33 @@ import {
   ReportFilterContainer,
   ReportPrintDescriptions,
 } from "styles/Report.style";
-import Filter from "./Filter/Filter";
-import { NoHarmLogoHorizontal as Brand } from "assets/NoHarmLogoHorizontal";
+import { Filter } from "./Filter/Filter";
+import { NoHarmLogoHorizontal as Brand } from "src/assets/NoHarmLogoHorizontal";
 import { filtersToDescription } from "utils/report";
-import HistoryList from "./HistoryList/HistoryList";
+import { HistoryList } from "./HistoryList/HistoryList";
 
-export default function PrescriptionHistoryReport({ prescription }) {
-  const status = useSelector(
-    (state) => state.reportsArea.prescriptionHistory.status
+interface PrescriptionHistoryReportProps {
+  prescription: {
+    idPrescription: number | string;
+    admissionNumber: number | string;
+    namePatient?: string;
+    birthdateFormat?: string;
+  };
+}
+
+export function PrescriptionHistoryReport({
+  prescription,
+}: PrescriptionHistoryReportProps) {
+  const status = useAppSelector(
+    (state) => state.reportsArea.prescriptionHistory.status,
   );
-  const filteredStatus = useSelector(
-    (state) => state.reportsArea.prescriptionHistory.filtered.status
+  const filteredStatus = useAppSelector(
+    (state) => state.reportsArea.prescriptionHistory.filtered.status,
   );
-  const filters = useSelector(
-    (state) => state.reportsArea.prescriptionHistory.filters
+  const filters = useAppSelector(
+    (state) => state.reportsArea.prescriptionHistory.filters,
   );
-  const printRef = useRef(null);
+  const printRef = useRef<HTMLDivElement>(null);
   const isLoading = status === "loading" || filteredStatus === "loading";
   const filtersConfig = {};
 
@@ -32,7 +43,10 @@ export default function PrescriptionHistoryReport({ prescription }) {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title" data-kb="reports.prescriptionHistory.title">
+          <h1
+            className="page-header-title"
+            data-kb="reports.prescriptionHistory.title"
+          >
             Relatório: Histórico de Eventos{" "}
           </h1>
         </div>

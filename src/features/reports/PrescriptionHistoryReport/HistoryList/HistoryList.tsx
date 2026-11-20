@@ -1,29 +1,37 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import type { ComponentType } from "react";
+import type { TableProps } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 
+import { useAppSelector } from "src/store";
 import { formatDateTime } from "utils/date";
 import { CardTable } from "components/Table";
 import Button from "components/Button";
 import DefaultModal from "components/Modal";
+import type { PrescriptionHistoryEvent } from "../transformers";
 
-export default function HistoryList() {
-  const datasource = useSelector(
-    (state) => state.reportsArea.prescriptionHistory.filtered.result.list
+// CardTable is styled(antd Table), which drops the Table's record type
+const HistoryTable = CardTable as unknown as ComponentType<
+  TableProps<PrescriptionHistoryEvent>
+>;
+
+export function HistoryList() {
+  const datasource = useAppSelector(
+    (state) => state.reportsArea.prescriptionHistory.filtered.result.list,
   );
 
-  const columns = [
+  const columns: TableProps<PrescriptionHistoryEvent>["columns"] = [
     {
       title: "Data",
       width: 160,
       align: "center",
-      sorter: (a, b) =>
+      sorter: (a: PrescriptionHistoryEvent, b: PrescriptionHistoryEvent) =>
         a.createdAt < b.createdAt ? -1 : a.createdAt > b.createdAt ? 1 : 0,
-      render: (_, record) => formatDateTime(record.createdAt),
+      render: (_: unknown, record: PrescriptionHistoryEvent) =>
+        formatDateTime(record.createdAt),
     },
     {
       title: "Evento",
-      render: (_, record) => {
+      render: (_: unknown, record: PrescriptionHistoryEvent) => {
         if (record.source === "PrescriptionAudit") {
           switch (record.type) {
             case 1:
@@ -89,16 +97,19 @@ export default function HistoryList() {
               return `Não definido: ${record.type}-${record.source}`;
           }
         }
+
+        return undefined;
       },
     },
     {
       title: "Responsável",
-      render: (_, record) => record.responsible || "NoHarm",
+      render: (_: unknown, record: PrescriptionHistoryEvent) =>
+        record.responsible || "NoHarm",
     },
     {
       title: "Detalhes",
       align: "center",
-      render: (_, record) => {
+      render: (_: unknown, record: PrescriptionHistoryEvent) => {
         if (record.extra) {
           const openModal = () => {
             DefaultModal.info({
@@ -139,7 +150,7 @@ export default function HistoryList() {
 
   return (
     <>
-      <CardTable
+      <HistoryTable
         bordered
         columns={columns}
         rowKey="id"
