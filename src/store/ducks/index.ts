@@ -81,7 +81,7 @@ import { interventionConsolidatedReportReducer } from "features/reports/Interven
 import { infectionControlConsolidatedReportReducer } from "features/reports/InfectionControlConsolidatedReport/InfectionControlConsolidatedReportSlice";
 import reportCultureReport from "features/reports/CultureReport/CultureReportSlice";
 import reportDrugHistoryReport from "features/reports/DrugHistoryReport/DrugHistoryReportSlice";
-import reportPrescriptionHistoryReport from "features/reports/PrescriptionHistoryReport/PrescriptionHistoryReportSlice";
+import { prescriptionHistoryReportReducer } from "features/reports/PrescriptionHistoryReport/PrescriptionHistoryReportSlice";
 import { alertListReportReducer } from "features/reports/AlertListReport/AlertListReportSlice";
 import { examsRawSearchReportReducer } from "features/reports/ExamsRawSearchReport/ExamsRawSearchReportSlice";
 import reportPatientObservationReport from "features/reports/PatientObservationReport/PatientObservationReportSlice";
@@ -118,7 +118,7 @@ const reportReducers = combineReducers({
   infectionControlConsolidated: infectionControlConsolidatedReportReducer,
   culture: reportCultureReport,
   drugHistory: reportDrugHistoryReport,
-  prescriptionHistory: reportPrescriptionHistoryReport,
+  prescriptionHistory: prescriptionHistoryReportReducer,
   examsRawSearch: examsRawSearchReportReducer,
   patientObservation: reportPatientObservationReport,
   checkedIndex: reportCheckedIndexReport,

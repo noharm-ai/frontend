@@ -1,19 +1,28 @@
-import React, { useContext } from "react";
-import { useSelector } from "react-redux";
+import { useContext } from "react";
 
+import { useAppSelector } from "src/store";
 import { Select, SelectCustom } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
+import type { PrescriptionHistoryFilters } from "../../transformers";
 
-export default function MainFilters() {
-  const status = useSelector(
-    (state) => state.reportsArea.prescriptionHistory.status
+// what components/AdvancedFilter (still JS) hands its filters through context
+interface FilterContextValue {
+  values: PrescriptionHistoryFilters;
+  setFieldValue: (values: Partial<PrescriptionHistoryFilters>) => void;
+}
+
+export function MainFilters() {
+  const status = useAppSelector(
+    (state) => state.reportsArea.prescriptionHistory.status,
   );
-  const responsibles = useSelector(
-    (state) => state.reportsArea.prescriptionHistory.filterData.responsibles
+  const responsibles = useAppSelector(
+    (state) => state.reportsArea.prescriptionHistory.filterData.responsibles,
   );
-  const { values, setFieldValue } = useContext(AdvancedFilterContext);
+  const { values, setFieldValue } = useContext(
+    AdvancedFilterContext,
+  ) as FilterContextValue;
 
   return (
     <>
@@ -24,7 +33,7 @@ export default function MainFilters() {
         <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.responsibleList}
-          onChange={(val) => setFieldValue({ responsibleList: val })}
+          onChange={(val: string[]) => setFieldValue({ responsibleList: val })}
           showSearch
           optionFilterProp="children"
           mode="multiple"
