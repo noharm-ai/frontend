@@ -39,6 +39,9 @@ const ALERT_TYPES = [
 // interaction relation kinds: params only lists the ones with settings
 const INTERACTION_KINDS = ["it", "dt", "dm", "iy", "sl", "rx"];
 
+// maxDosePlus frequencies left out of the sum when the backend (older) omits it
+const DEFAULT_MAX_DOSE_PLUS_IGNORE_FREQUENCIES = [66];
+
 const DEFAULT_KIND: IInteractionKindParams = {
   enabled: true,
   ignoreLevels: [],
@@ -267,6 +270,11 @@ export function SchemaParams() {
   const kidneyRow = typeRows.find((row) => row.key === "kidney")!;
   const exams = (list: string[]) => list.join(", ");
 
+  const maxDosePlusRow = typeRows.find((row) => row.key === "maxDosePlus")!;
+  const maxDosePlusIgnore =
+    alerts.types.maxDosePlus?.ignoreFrequencies ??
+    DEFAULT_MAX_DOSE_PLUS_IGNORE_FREQUENCIES;
+
   return (
     <ParamsRoot>
       <div>
@@ -334,6 +342,28 @@ export function SchemaParams() {
               kidneyRow,
               "pediatricExams",
               exams(alerts.types.kidney.pediatricExams),
+            ),
+          },
+        ]}
+      />
+
+      <Descriptions
+        size="small"
+        bordered
+        column={1}
+        title={t("schemaParams.maxDosePlus")}
+        items={[
+          {
+            key: "ignoreFrequencies",
+            label: t("schemaParams.maxDosePlusIgnoreFrequencies"),
+            children: value(
+              maxDosePlusRow,
+              "ignoreFrequencies",
+              maxDosePlusIgnore.length ? (
+                <span>{maxDosePlusIgnore.map(frequency)}</span>
+              ) : (
+                <Muted>{t("schemaParams.maxDosePlusSumAll")}</Muted>
+              ),
             ),
           },
         ]}

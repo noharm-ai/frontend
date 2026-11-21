@@ -507,11 +507,16 @@
     "adultExams": "Adult",
     "pediatricExams": "Pediatric",
     "footer": "Changes are made in Admin, under Parameters.",
+    "maxDosePlus": "Max dose (Sum)",
+    "maxDosePlusIgnoreFrequencies": "Frequencies left out of the sum",
+    "maxDosePlusSumAll": "None: every item is summed",
     "json": "JSON (custom values only)",
     "frequency": {
       "33": "PRN",
       "44": "At discretion",
-      "66": "Now"
+      "55": "Continuous",
+      "66": "Now",
+      "99": "N/A"
     }
   },
   "maintainerBadge": {
