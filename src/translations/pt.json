@@ -2341,7 +2341,12 @@
       "saved": "Lista salva. Os pacientes afetados serão atualizados em alguns minutos.",
       "loadError": "Não foi possível carregar a lista",
       "readOnly": "Somente o controle de infecção pode alterar esta lista.",
-      "exemptTag": "Revisão não obrigatória"
+      "exemptTag": "Revisão não obrigatória",
+      "updated": "Alterada em {{date}} por {{user}}",
+      "updatedAt": "Alterada em {{date}}",
+      "showPrevious": "Ver versão anterior",
+      "hidePrevious": "Ocultar versão anterior",
+      "previousTitle": "Versão anterior"
     },
     "examTriggers": {
       "title": "Gatilhos de exame",

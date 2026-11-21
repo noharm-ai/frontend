@@ -11,7 +11,9 @@ import { openMoreFilters } from "../support/advancedFilter";
  * without a substance. Anyone who sees the worklist reads the list; only the
  * infection control (WRITE_INFECTION_CONTROL) changes it. The patients running
  * only those antimicrobials leave the worklist unless the filter asks for
- * them, and an exempt course says it needs no review.
+ * them, and an exempt course says it needs no review. The list tells when
+ * and by whom it was changed (NoHarm for the NoHarm team) and shows the
+ * version it replaced.
  */
 
 const EXCEPTIONS = "GET /infection-control/review-exceptions";
@@ -35,6 +37,13 @@ const SAVED = {
   substances: [{ id: "9001", name: "ZZ CEFAZOLINA TESTE" }],
   drugs: [],
   updatedAt: "2026-11-01T10:00:00",
+  updatedBy: "Fulano Beltrano",
+  previous: {
+    substances: [{ id: "9002", name: "ZZ AMICACINA TESTE" }],
+    drugs: [],
+    updatedAt: "2026-10-20T08:30:00",
+    updatedBy: "NoHarm",
+  },
 };
 
 const mockExceptions = (mockApi: MockApi) => {
@@ -123,6 +132,29 @@ test.describe("with READ_INFECTION_CONTROL only", () => {
       "READ_INFECTION_CONTROL",
     ]);
     mockExceptions(mockApi);
+  });
+
+  test("shows who changed the list and the version it replaced", async ({
+    page,
+  }) => {
+    const modal = await openExceptions(page);
+
+    await expect(modal.getByTestId("review-exceptions-updated")).toContainText(
+      "Alterada em 01/11/2026 10:00 por Fulano Beltrano",
+    );
+    await expect(modal).not.toContainText("ZZ AMICACINA TESTE");
+
+    await modal.getByRole("button", { name: "Ver versão anterior" }).click();
+
+    const previous = modal.getByTestId("review-exceptions-previous");
+    await expect(previous).toContainText("ZZ AMICACINA TESTE");
+    await expect(previous).toContainText(
+      "Alterada em 20/10/2026 08:30 por NoHarm",
+    );
+    await expect(previous.locator(".ant-tag-close-icon")).toHaveCount(0);
+
+    await modal.getByRole("button", { name: "Ocultar versão anterior" }).click();
+    await expect(previous).toHaveCount(0);
   });
 
   test("reads the list but cannot change it", async ({ page }) => {

@@ -403,6 +403,18 @@ export interface IReviewExceptions {
   drugs: IReviewExceptionItem[];
 }
 
+// one saved version of the list: when and by whom (NoHarm for the NoHarm
+// team) it was saved
+export interface IReviewExceptionsVersion extends IReviewExceptions {
+  updatedAt: string | null;
+  updatedBy: string | null;
+}
+
+// the list in force and the version it replaced (null without one)
+export interface IReviewExceptionsSaved extends IReviewExceptionsVersion {
+  previous: IReviewExceptionsVersion | null;
+}
+
 /** The schema's review exceptions; kept by the caller */
 export const fetchReviewExceptions = createAsyncThunk(
   "infectionControlList/fetchReviewExceptions",
@@ -410,7 +422,7 @@ export const fetchReviewExceptions = createAsyncThunk(
     try {
       const response = await api.infectionControl.getReviewExceptions();
 
-      return response.data.data as IReviewExceptions;
+      return response.data.data as IReviewExceptionsSaved;
     } catch (err) {
       return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
     }
@@ -441,7 +453,7 @@ export const saveReviewExceptions = createAsyncThunk(
     try {
       const response = await api.infectionControl.saveReviewExceptions(params);
 
-      return response.data.data as IReviewExceptions;
+      return response.data.data as IReviewExceptionsSaved;
     } catch (err) {
       return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
     }

@@ -9,6 +9,7 @@ import DefaultModal from "components/Modal";
 import notification from "components/notification";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
+import { formatDateTime } from "utils/date";
 import { getErrorMessage } from "utils/errorHandler";
 import { useAppDispatch } from "src/store";
 
@@ -16,6 +17,8 @@ import {
   fetchReviewExceptions,
   IReviewExceptionItem,
   IReviewExceptions,
+  IReviewExceptionsSaved,
+  IReviewExceptionsVersion,
   saveReviewExceptions,
   searchReviewExceptionOptions,
 } from "../InfectionControlListSlice";
@@ -43,6 +46,32 @@ const Body = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+  }
+
+  .exceptions-updated {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px 8px;
+    margin-top: 16px;
+    font-size: 13px;
+
+    .ant-btn {
+      padding: 0;
+      height: auto;
+    }
+  }
+
+  .exceptions-previous {
+    margin-top: 12px;
+    padding: 12px 16px;
+    border: 1px dashed #d9d9d9;
+    border-radius: 8px;
+
+    h3.previous-title {
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
   }
 
   .exceptions-footer {
@@ -80,6 +109,9 @@ export function ReviewExceptions({ onSaved }: { onSaved: () => void }) {
   const [saving, setSaving] = useState(false);
   const [substances, setSubstances] = useState<IReviewExceptionItem[]>([]);
   const [drugs, setDrugs] = useState<IReviewExceptionItem[]>([]);
+  // the list as saved: when and by whom, and the version it replaced
+  const [saved, setSaved] = useState<IReviewExceptionsSaved | null>(null);
+  const [showPrevious, setShowPrevious] = useState(false);
   const [searching, setSearching] = useState(false);
   const [searched, setSearched] = useState(false);
   const [found, setFound] = useState<IReviewExceptions>({
@@ -96,6 +128,7 @@ export function ReviewExceptions({ onSaved }: { onSaved: () => void }) {
         setFailed(true);
         return;
       }
+      setSaved(response.payload);
       setSubstances(response.payload.substances);
       setDrugs(response.payload.drugs);
     });
@@ -103,6 +136,7 @@ export function ReviewExceptions({ onSaved }: { onSaved: () => void }) {
 
   const show = () => {
     setOpen(true);
+    setShowPrevious(false);
     setFound({ substances: [], drugs: [] });
     setSearched(false);
     load();
@@ -197,6 +231,7 @@ export function ReviewExceptions({ onSaved }: { onSaved: () => void }) {
     type: ItemType,
     title: string,
     items: IReviewExceptionItem[],
+    editable = canEdit,
   ) => (
     <div className="exceptions-group">
       <h3>{title}</h3>
@@ -205,7 +240,7 @@ export function ReviewExceptions({ onSaved }: { onSaved: () => void }) {
           {items.map((item) => (
             <Tag
               key={item.id}
-              closable={canEdit}
+              closable={editable}
               onClose={(event) => {
                 event.preventDefault();
                 remove(type, item.id);
@@ -222,6 +257,19 @@ export function ReviewExceptions({ onSaved }: { onSaved: () => void }) {
       )}
     </div>
   );
+
+  /** When and by whom a version was saved */
+  const updatedText = (version: IReviewExceptionsVersion) =>
+    version.updatedBy
+      ? t("infectionControl.reviewExceptions.updated", {
+          date: formatDateTime(version.updatedAt),
+          user: version.updatedBy,
+        })
+      : t("infectionControl.reviewExceptions.updatedAt", {
+          date: formatDateTime(version.updatedAt),
+        });
+
+  const previous = saved?.previous;
 
   return (
     <>
@@ -298,6 +346,54 @@ export function ReviewExceptions({ onSaved }: { onSaved: () => void }) {
                 "drug",
                 t("infectionControl.reviewExceptions.drugs"),
                 drugs,
+              )}
+
+              {saved?.updatedAt && (
+                <div
+                  className="exceptions-updated muted"
+                  data-testid="review-exceptions-updated"
+                >
+                  <span>{updatedText(saved)}</span>
+                  {previous && (
+                    <Button
+                      type="link"
+                      size="small"
+                      onClick={() => setShowPrevious(!showPrevious)}
+                    >
+                      {t(
+                        showPrevious
+                          ? "infectionControl.reviewExceptions.hidePrevious"
+                          : "infectionControl.reviewExceptions.showPrevious",
+                      )}
+                    </Button>
+                  )}
+                </div>
+              )}
+
+              {previous && showPrevious && (
+                <div
+                  className="exceptions-previous"
+                  data-testid="review-exceptions-previous"
+                >
+                  <h3 className="previous-title">
+                    {t("infectionControl.reviewExceptions.previousTitle")}
+                  </h3>
+                  {previous.updatedAt && (
+                    <div className="muted">{updatedText(previous)}</div>
+                  )}
+                  {renderGroup(
+                    "substance",
+                    t("infectionControl.reviewExceptions.substances"),
+                    previous.substances,
+                    false,
+                  )}
+                  {renderGroup(
+                    "drug",
+                    t("infectionControl.reviewExceptions.drugs"),
+                    previous.drugs,
+                    false,
+                  )}
+                </div>
               )}
 
               <div className="exceptions-footer">

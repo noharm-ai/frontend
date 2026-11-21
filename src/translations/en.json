@@ -2331,7 +2331,12 @@
       "saved": "List saved. The affected patients will be updated in a few minutes.",
       "loadError": "Could not load the list",
       "readOnly": "Only infection control can change this list.",
-      "exemptTag": "Review not required"
+      "exemptTag": "Review not required",
+      "updated": "Changed on {{date}} by {{user}}",
+      "updatedAt": "Changed on {{date}}",
+      "showPrevious": "Show previous version",
+      "hidePrevious": "Hide previous version",
+      "previousTitle": "Previous version"
     },
     "examTriggers": {
       "title": "Exam triggers",
