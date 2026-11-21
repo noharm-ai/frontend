@@ -507,11 +507,16 @@
     "adultExams": "Adulto",
     "pediatricExams": "Pediátrico",
     "footer": "Alterações são feitas no Admin, em Parametrização.",
+    "maxDosePlus": "Dose máxima SOMADA",
+    "maxDosePlusIgnoreFrequencies": "Frequências fora da soma",
+    "maxDosePlusSumAll": "Nenhuma: todos os itens entram na soma",
     "json": "JSON (somente o personalizado)",
     "frequency": {
       "33": "SN",
       "44": "ACM",
-      "66": "Agora"
+      "55": "CONT",
+      "66": "Agora",
+      "99": "N/D"
     }
   },
   "maintainerBadge": {

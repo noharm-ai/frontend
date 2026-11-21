@@ -52,6 +52,8 @@ const defaultParams = () => ({
       ...Object.fromEntries(
         TYPES.map((type) => [type, { enabled: true, level: null }]),
       ),
+      // NOW (66) is left out of the summed daily dose by default
+      maxDosePlus: { enabled: true, level: null, ignoreFrequencies: [66] },
     },
     interactions: {},
   },
@@ -307,4 +309,106 @@ test("a failed request shows an error", async ({ page, mockApi }) => {
   await expect(
     page.getByText("Não foi possível carregar a parametrização"),
   ).toBeVisible();
+});
+
+// the maxDosePlus block under the alert types table
+const maxDosePlusRow = (modal: ReturnType<Page["locator"]>) =>
+  modal.getByRole("row").filter({ hasText: "Frequências fora da soma" });
+
+const withMaxDosePlus = (maxDosePlus: Record<string, unknown> | undefined) => {
+  const params = defaultParams();
+  const types = params.alerts.types as Record<string, unknown>;
+  types.maxDosePlus = { enabled: true, level: null, ...maxDosePlus };
+
+  return params;
+};
+
+test("max dose total: NOW is left out of the sum by default", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override("GET /schema-params", respond(DEFAULTS("found")));
+
+  await loginAsMaintainer(page, mockApi);
+  await openPrescription(page);
+  const modal = await openParams(page);
+
+  await expect(modal.getByText("Dose máxima SOMADA")).toBeVisible();
+  const row = maxDosePlusRow(modal);
+  await expect(row.getByText("Agora", { exact: true })).toBeVisible();
+  await expect(row.locator(".ant-tag")).toHaveCount(1);
+  await expect(row.getByText("personalizado")).toHaveCount(0);
+});
+
+test("max dose total: a custom list is marked as custom", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override(
+    "GET /schema-params",
+    respond({
+      ...DEFAULTS("found"),
+      params: withMaxDosePlus({ ignoreFrequencies: [33, 66] }),
+      custom: {
+        alerts: { types: { maxDosePlus: { ignoreFrequencies: [33, 66] } } },
+      },
+    }),
+  );
+
+  await loginAsMaintainer(page, mockApi);
+  await openPrescription(page);
+  const modal = await openParams(page);
+
+  const row = maxDosePlusRow(modal);
+  await expect(row.getByText("SN", { exact: true })).toBeVisible();
+  await expect(row.getByText("Agora", { exact: true })).toBeVisible();
+  await expect(row.getByText("personalizado")).toHaveCount(1);
+  await expect(modal.getByText("personalizado", { exact: true })).toHaveCount(
+    1,
+  );
+});
+
+test("max dose total: a custom empty list sums every item", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override(
+    "GET /schema-params",
+    respond({
+      ...DEFAULTS("found"),
+      params: withMaxDosePlus({ ignoreFrequencies: [] }),
+      custom: {
+        alerts: { types: { maxDosePlus: { ignoreFrequencies: [] } } },
+      },
+    }),
+  );
+
+  await loginAsMaintainer(page, mockApi);
+  await openPrescription(page);
+  const modal = await openParams(page);
+
+  const row = maxDosePlusRow(modal);
+  await expect(
+    row.getByText("Nenhuma: todos os itens entram na soma"),
+  ).toBeVisible();
+  await expect(row.getByText("Agora", { exact: true })).toHaveCount(0);
+  await expect(row.getByText("personalizado")).toHaveCount(1);
+});
+
+test("max dose total: an older backend without the setting shows the default", async ({
+  page,
+  mockApi,
+}) => {
+  mockApi.override(
+    "GET /schema-params",
+    respond({ ...DEFAULTS("found"), params: withMaxDosePlus(undefined) }),
+  );
+
+  await loginAsMaintainer(page, mockApi);
+  await openPrescription(page);
+  const modal = await openParams(page);
+
+  const row = maxDosePlusRow(modal);
+  await expect(row.getByText("Agora", { exact: true })).toBeVisible();
+  await expect(row.getByText("personalizado")).toHaveCount(0);
 });

@@ -11,6 +11,12 @@ export interface IKidneyAlertParams extends IAlertTypeParams {
   pediatricExams: string[];
 }
 
+export interface IMaxDosePlusAlertParams extends IAlertTypeParams {
+  // daily frequencies left out of the summed daily dose (default [66], NOW);
+  // empty: every item is summed
+  ignoreFrequencies: number[];
+}
+
 export interface IInteractionKindParams {
   enabled: boolean;
   ignoreLevels: AlertLevel[];
@@ -19,7 +25,10 @@ export interface IInteractionKindParams {
 }
 
 export interface IAlertParams {
-  types: Record<string, IAlertTypeParams> & { kidney: IKidneyAlertParams };
+  types: Record<string, IAlertTypeParams> & {
+    kidney: IKidneyAlertParams;
+    maxDosePlus: IMaxDosePlusAlertParams;
+  };
   // only the kinds with settings: a missing kind is all defaults
   interactions: Record<string, IInteractionKindParams>;
 }
@@ -37,7 +46,10 @@ export interface ISchemaParams {
   // only what the schema's item sets (same shape, sparse)
   custom: {
     alerts?: {
-      types?: Record<string, Partial<IKidneyAlertParams>>;
+      types?: Record<
+        string,
+        Partial<IKidneyAlertParams> & Partial<IMaxDosePlusAlertParams>
+      >;
       interactions?: Record<string, Partial<IInteractionKindParams>>;
     };
   };
