@@ -2319,9 +2319,12 @@
         "8": "Culture result"
       }
     },
+    "settings": {
+      "open": "Settings",
+      "title": "Settings"
+    },
     "reviewExceptions": {
-      "open": "Antimicrobials without review",
-      "title": "Antimicrobials not requiring review",
+      "tab": "Antimicrobials without review",
       "description": "Courses of these antimicrobials open no review pending and are left out of the review indicators, but still count in DOT/LOT. Patients on these alone leave the worklist unless the filter includes them. A substance covers all its drugs; drugs without a substance are listed one by one.",
       "add": "Search substance or drug",
       "notFound": "No antimicrobial found",
@@ -2436,7 +2439,7 @@
       "p1": "This report shows antimicrobial use and the infection control review process, from the follow-up of each admission (courses, conformity evaluations, reviews and pending reasons).",
       "p2": "Each number counts by the date of its own record: days of therapy by the day, evaluations by the date they were recorded, courses by their start and admissions by the date their follow-up closed.",
       "p3": "Hover the icon next to each indicator to see how it is calculated.",
-      "p4": "Antimicrobials marked as not requiring review (set on the infection control worklist) count in DOT/LOT and consumption, but are left out of the review indicators: courses evaluated, evaluated by D3, DOT with a record, admissions reviewed, reviews per 100 DOT and pending time. Their days without a record show as \"Review not required\"."
+      "p4": "Antimicrobials marked as not requiring review (set in Settings, on the infection control worklist) count in DOT/LOT and consumption, but are left out of the review indicators: courses evaluated, evaluated by D3, DOT with a record, admissions reviewed, reviews per 100 DOT and pending time. Their days without a record show as \"Review not required\"."
     },
     "status": {
       "conforming": "Conforming",

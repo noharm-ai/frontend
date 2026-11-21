@@ -2329,9 +2329,12 @@
         "8": "Resultado de cultura"
       }
     },
+    "settings": {
+      "open": "Configuração",
+      "title": "Configuração"
+    },
     "reviewExceptions": {
-      "open": "Antimicrobianos sem revisão",
-      "title": "Antimicrobianos sem revisão obrigatória",
+      "tab": "Antimicrobianos sem revisão",
       "description": "Os cursos destes antimicrobianos não geram pendência de revisão e ficam fora dos indicadores de revisão, mas continuam contando no DOT/LOT. Pacientes que usam apenas eles saem da lista de trabalho, a não ser que o filtro os inclua. Uma substância vale para todos os seus medicamentos; medicamentos sem substância são listados um a um.",
       "add": "Buscar substância ou medicamento",
       "notFound": "Nenhum antimicrobiano encontrado",
@@ -2446,7 +2449,7 @@
       "p1": "Este relatório apresenta o uso de antimicrobianos e o processo de revisão do controle de infecção, a partir do acompanhamento dos atendimentos (cursos, avaliações de conformidade, revisões e pendências).",
       "p2": "Cada número é contado pela data do seu próprio registro: dias de terapia pelo dia, avaliações pela data em que foram registradas, cursos pela data de início e atendimentos pela data de encerramento do acompanhamento.",
       "p3": "Passe o mouse sobre o ícone ao lado de cada indicador para ver como ele é calculado.",
-      "p4": "Antimicrobianos marcados como sem revisão obrigatória (configurados na lista de trabalho do controle de infecção) contam no DOT/LOT e no consumo, mas ficam fora dos indicadores de revisão: cursos avaliados, avaliação até D3, DOT com avaliação, atendimentos revisados, revisões por 100 DOT e tempo pendente. Seus dias sem avaliação aparecem como \"Revisão não obrigatória\"."
+      "p4": "Antimicrobianos marcados como sem revisão obrigatória (definidos em Configuração, na lista de trabalho do controle de infecção) contam no DOT/LOT e no consumo, mas ficam fora dos indicadores de revisão: cursos avaliados, avaliação até D3, DOT com avaliação, atendimentos revisados, revisões por 100 DOT e tempo pendente. Seus dias sem avaliação aparecem como \"Revisão não obrigatória\"."
     },
     "status": {
       "conforming": "Conforme",

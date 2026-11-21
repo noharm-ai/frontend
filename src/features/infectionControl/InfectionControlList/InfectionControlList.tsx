@@ -29,7 +29,7 @@ import {
 } from "../InfectionControlListSlice";
 import { describePending } from "../followUp";
 import { Header, StateBox } from "../InfectionControl/InfectionControl.style";
-import { ReviewExceptions } from "../ReviewExceptions/ReviewExceptions";
+import { InfectionControlSettings } from "../InfectionControlSettings/InfectionControlSettings";
 import { WorklistBackfill } from "./WorklistBackfill/WorklistBackfill";
 import { WorklistCards } from "./WorklistCards/WorklistCards";
 import { WorklistFilter } from "./WorklistFilter/WorklistFilter";
@@ -247,7 +247,7 @@ export function InfectionControlList() {
           </div>
         </div>
         <div className="page-header-actions">
-          <ReviewExceptions onSaved={load} />
+          <InfectionControlSettings onSaved={load} />
           {PermissionService().has(Permission.INTEGRATION_UTILS) && (
             <WorklistBackfill onDone={load} />
           )}

@@ -4,7 +4,8 @@ import { openMoreFilters } from "../support/advancedFilter";
 
 /**
  * Antimicrobials exempt from the infection control review
- * (src/features/infectionControl/ReviewExceptions).
+ * (src/features/infectionControl/ReviewExceptions), a tab of the infection
+ * control settings (Configuração, on the worklist header).
  *
  * Each schema keeps the antimicrobials whose courses need no review
  * (GET/PUT /infection-control/review-exceptions): substances, and drugs
@@ -59,13 +60,20 @@ const mockExceptions = (mockApi: MockApi) => {
   });
 };
 
-/** Opens the list from the worklist header */
+/** Opens the settings from the worklist header, on the list's tab */
 const openExceptions = async (page: import("@playwright/test").Page) => {
   await page.goto("/controle-infeccao");
   await page
-    .getByRole("button", { name: "Antimicrobianos sem revisão" })
+    .getByRole("button", { name: "Configuração" })
     .click({ timeout: 15000 });
-  const modal = page.getByTestId("review-exceptions");
+  const settings = page.getByTestId("infection-control-settings");
+  await expect(
+    settings.getByRole("tab", {
+      name: "Antimicrobianos sem revisão",
+      selected: true,
+    }),
+  ).toBeVisible();
+  const modal = settings.getByTestId("review-exceptions");
   await expect(modal).toBeVisible();
   return modal;
 };
@@ -111,6 +119,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     await modal.getByRole("button", { name: "Salvar" }).click();
 
     await expect(page.getByText(/Lista salva/)).toBeVisible();
+    // the settings stay open on the list as saved
+    await expect(modal).toContainText("ZZ ANTIMICROBIANO SEM SUBSTANCIA");
     const saved = mockApi.requests.filter(
       (r) =>
         r.method === "PUT" && r.path === "/infection-control/review-exceptions",
@@ -153,7 +163,9 @@ test.describe("with READ_INFECTION_CONTROL only", () => {
     );
     await expect(previous.locator(".ant-tag-close-icon")).toHaveCount(0);
 
-    await modal.getByRole("button", { name: "Ocultar versão anterior" }).click();
+    await modal
+      .getByRole("button", { name: "Ocultar versão anterior" })
+      .click();
     await expect(previous).toHaveCount(0);
   });
 

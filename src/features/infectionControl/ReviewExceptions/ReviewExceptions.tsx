@@ -1,11 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Alert, Button, Empty, Select, Spin, Tag } from "antd";
-import { SettingOutlined } from "@ant-design/icons";
 import { debounce } from "lodash";
 import styled from "styled-components";
 
-import DefaultModal from "components/Modal";
 import notification from "components/notification";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
@@ -31,6 +29,12 @@ type ItemType = "substance" | "drug";
 const Body = styled.div`
   .exceptions-description {
     margin-bottom: 16px;
+  }
+
+  .exceptions-loading {
+    display: flex;
+    justify-content: center;
+    padding: 24px 0;
   }
 
   .exceptions-group {
@@ -97,14 +101,20 @@ const byName = (items: IReviewExceptionItem[]) =>
  * the review indicators; the patients running only them leave the worklist,
  * unless the filter asks for them. Anyone who sees the worklist reads the
  * list; only the infection control (WRITE_INFECTION_CONTROL) changes it.
- * `onSaved` reloads the worklist
+ * A tab of the infection control settings: `onSaved` reloads the worklist,
+ * `onClose` closes the settings
  */
-export function ReviewExceptions({ onSaved }: { onSaved: () => void }) {
+export function ReviewExceptions({
+  onSaved,
+  onClose,
+}: {
+  onSaved: () => void;
+  onClose: () => void;
+}) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const canEdit = PermissionService().has(Permission.WRITE_INFECTION_CONTROL);
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [failed, setFailed] = useState(false);
   const [saving, setSaving] = useState(false);
   const [substances, setSubstances] = useState<IReviewExceptionItem[]>([]);
@@ -119,9 +129,8 @@ export function ReviewExceptions({ onSaved }: { onSaved: () => void }) {
     drugs: [],
   });
 
-  const load = () => {
-    setLoading(true);
-    setFailed(false);
+  /** Fetches the list (the loading state is set by the caller) */
+  const fetchList = () =>
     (dispatch(fetchReviewExceptions()) as Promise<any>).then((response) => {
       setLoading(false);
       if (response.error) {
@@ -132,15 +141,18 @@ export function ReviewExceptions({ onSaved }: { onSaved: () => void }) {
       setSubstances(response.payload.substances);
       setDrugs(response.payload.drugs);
     });
+
+  const load = () => {
+    setLoading(true);
+    setFailed(false);
+    fetchList();
   };
 
-  const show = () => {
-    setOpen(true);
-    setShowPrevious(false);
-    setFound({ substances: [], drugs: [] });
-    setSearched(false);
-    load();
-  };
+  // loaded each time the settings open (the modal is destroyed on close)
+  useEffect(() => {
+    fetchList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const search = useMemo(
     () =>
@@ -222,7 +234,11 @@ export function ReviewExceptions({ onSaved }: { onSaved: () => void }) {
       notification.success({
         message: t("infectionControl.reviewExceptions.saved"),
       });
-      setOpen(false);
+      // stays open on the list as saved, with the version it replaced
+      const payload = response.payload as IReviewExceptionsSaved;
+      setSaved(payload);
+      setSubstances(payload.substances);
+      setDrugs(payload.drugs);
       onSaved();
     });
   };
@@ -272,144 +288,122 @@ export function ReviewExceptions({ onSaved }: { onSaved: () => void }) {
   const previous = saved?.previous;
 
   return (
-    <>
-      <Button
-        icon={<SettingOutlined />}
-        onClick={show}
-        data-kb="infectionControl.worklist.reviewExceptions"
-      >
-        {t("infectionControl.reviewExceptions.open")}
-      </Button>
+    <Body
+      data-kb="infectionControl.reviewExceptions.modal"
+      data-testid="review-exceptions"
+    >
+      <div className="exceptions-description muted">
+        {t("infectionControl.reviewExceptions.description")}
+      </div>
 
-      <DefaultModal
-        open={open}
-        width={600}
-        centered
-        destroyOnHidden
-        onCancel={() => setOpen(false)}
-        footer={null}
-      >
-        <Body
-          data-kb="infectionControl.reviewExceptions.modal"
-          data-testid="review-exceptions"
+      {loading ? (
+        <div className="exceptions-loading">
+          <Spin />
+        </div>
+      ) : failed ? (
+        <Empty
+          image={Empty.PRESENTED_IMAGE_SIMPLE}
+          description={t("infectionControl.reviewExceptions.loadError")}
         >
-          <h2 className="modal-title">
-            {t("infectionControl.reviewExceptions.title")}
-          </h2>
-          <div className="exceptions-description muted">
-            {t("infectionControl.reviewExceptions.description")}
-          </div>
-
-          {loading ? (
-            <Spin />
-          ) : failed ? (
-            <Empty
-              image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={t("infectionControl.reviewExceptions.loadError")}
-            >
-              <Button onClick={load}>{t("infectionControl.retry")}</Button>
-            </Empty>
+          <Button onClick={load}>{t("infectionControl.retry")}</Button>
+        </Empty>
+      ) : (
+        <>
+          {canEdit ? (
+            <Select<string | null>
+              style={{ width: "100%" }}
+              aria-label={t("infectionControl.reviewExceptions.add")}
+              placeholder={t("infectionControl.reviewExceptions.add")}
+              value={null}
+              loading={searching}
+              showSearch
+              filterOption={false}
+              onSearch={search}
+              onSelect={(value) => value && add(value)}
+              options={options}
+              notFoundContent={
+                searched && !searching
+                  ? t("infectionControl.reviewExceptions.notFound")
+                  : null
+              }
+            />
           ) : (
-            <>
-              {canEdit ? (
-                <Select<string | null>
-                  style={{ width: "100%" }}
-                  aria-label={t("infectionControl.reviewExceptions.add")}
-                  placeholder={t("infectionControl.reviewExceptions.add")}
-                  value={null}
-                  loading={searching}
-                  showSearch
-                  filterOption={false}
-                  onSearch={search}
-                  onSelect={(value) => value && add(value)}
-                  options={options}
-                  notFoundContent={
-                    searched && !searching
-                      ? t("infectionControl.reviewExceptions.notFound")
-                      : null
-                  }
-                />
-              ) : (
-                <Alert
-                  type="info"
-                  showIcon
-                  message={t("infectionControl.reviewExceptions.readOnly")}
-                />
-              )}
+            <Alert
+              type="info"
+              showIcon
+              message={t("infectionControl.reviewExceptions.readOnly")}
+            />
+          )}
 
+          {renderGroup(
+            "substance",
+            t("infectionControl.reviewExceptions.substances"),
+            substances,
+          )}
+          {renderGroup(
+            "drug",
+            t("infectionControl.reviewExceptions.drugs"),
+            drugs,
+          )}
+
+          {saved?.updatedAt && (
+            <div
+              className="exceptions-updated muted"
+              data-testid="review-exceptions-updated"
+            >
+              <span>{updatedText(saved)}</span>
+              {previous && (
+                <Button
+                  type="link"
+                  size="small"
+                  onClick={() => setShowPrevious(!showPrevious)}
+                >
+                  {t(
+                    showPrevious
+                      ? "infectionControl.reviewExceptions.hidePrevious"
+                      : "infectionControl.reviewExceptions.showPrevious",
+                  )}
+                </Button>
+              )}
+            </div>
+          )}
+
+          {previous && showPrevious && (
+            <div
+              className="exceptions-previous"
+              data-testid="review-exceptions-previous"
+            >
+              <h3 className="previous-title">
+                {t("infectionControl.reviewExceptions.previousTitle")}
+              </h3>
+              {previous.updatedAt && (
+                <div className="muted">{updatedText(previous)}</div>
+              )}
               {renderGroup(
                 "substance",
                 t("infectionControl.reviewExceptions.substances"),
-                substances,
+                previous.substances,
+                false,
               )}
               {renderGroup(
                 "drug",
                 t("infectionControl.reviewExceptions.drugs"),
-                drugs,
+                previous.drugs,
+                false,
               )}
-
-              {saved?.updatedAt && (
-                <div
-                  className="exceptions-updated muted"
-                  data-testid="review-exceptions-updated"
-                >
-                  <span>{updatedText(saved)}</span>
-                  {previous && (
-                    <Button
-                      type="link"
-                      size="small"
-                      onClick={() => setShowPrevious(!showPrevious)}
-                    >
-                      {t(
-                        showPrevious
-                          ? "infectionControl.reviewExceptions.hidePrevious"
-                          : "infectionControl.reviewExceptions.showPrevious",
-                      )}
-                    </Button>
-                  )}
-                </div>
-              )}
-
-              {previous && showPrevious && (
-                <div
-                  className="exceptions-previous"
-                  data-testid="review-exceptions-previous"
-                >
-                  <h3 className="previous-title">
-                    {t("infectionControl.reviewExceptions.previousTitle")}
-                  </h3>
-                  {previous.updatedAt && (
-                    <div className="muted">{updatedText(previous)}</div>
-                  )}
-                  {renderGroup(
-                    "substance",
-                    t("infectionControl.reviewExceptions.substances"),
-                    previous.substances,
-                    false,
-                  )}
-                  {renderGroup(
-                    "drug",
-                    t("infectionControl.reviewExceptions.drugs"),
-                    previous.drugs,
-                    false,
-                  )}
-                </div>
-              )}
-
-              <div className="exceptions-footer">
-                <Button onClick={() => setOpen(false)}>
-                  {t(canEdit ? "actions.cancel" : "actions.close")}
-                </Button>
-                {canEdit && (
-                  <Button type="primary" loading={saving} onClick={save}>
-                    {t("actions.save")}
-                  </Button>
-                )}
-              </div>
-            </>
+            </div>
           )}
-        </Body>
-      </DefaultModal>
-    </>
+
+          <div className="exceptions-footer">
+            <Button onClick={onClose}>{t("actions.close")}</Button>
+            {canEdit && (
+              <Button type="primary" loading={saving} onClick={save}>
+                {t("actions.save")}
+              </Button>
+            )}
+          </div>
+        </>
+      )}
+    </Body>
   );
 }
