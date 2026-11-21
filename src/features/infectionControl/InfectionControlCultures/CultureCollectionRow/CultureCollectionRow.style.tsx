@@ -7,15 +7,19 @@ import styled from "styled-components";
 export const CollectionRow = styled.div`
   align-items: start;
   border-bottom: 1px solid #f0f0f0;
-  cursor: pointer;
   display: grid;
   gap: 6px 16px;
   grid-template-areas: "time exam findings action";
   grid-template-columns: 64px minmax(170px, 1.1fr) minmax(0, 3fr) auto;
   padding: 10px 16px;
 
-  &:hover {
-    background: #f6f8fb;
+  /* a row that opens the collection (not on the printed report) */
+  &.openable {
+    cursor: pointer;
+
+    &:hover {
+      background: #f6f8fb;
+    }
   }
 
   /* a drug of the prescription the lab found resistant */
@@ -61,8 +65,28 @@ export const CollectionRow = styled.div`
     min-width: 0;
 
     .culture-exam {
+      color: #2e3c5a;
       font-weight: 600;
     }
+
+    .culture-material {
+      color: #8c8c8c;
+      font-size: 12px;
+    }
+  }
+
+  /* the empty result of the lab (LabResult) */
+  .muted {
+    color: #8c8c8c;
+  }
+
+  /* a text of the lab cut at two lines: the whole of it is where the
+     collection opens */
+  .clamp {
+    -webkit-box-orient: vertical;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
   }
 
   .collection-records {

@@ -1745,7 +1745,6 @@
     },
     "cultures": {
       "title": "Cultures",
-      "legend": "Latest collection of each exam and material, released in the last 60 days",
       "summary": "List",
       "byDrug": "By drug",
       "byDrugLegend": "Antibiogram of each drug, the ones in use in this prescription flagged",
@@ -2218,11 +2217,11 @@
       "interventions": "Interventions",
       "cultures": "Cultures ({{count}})",
       "culturesNotLoaded": "The cultures were not loaded. Reload the cultures section of the page and generate the report again.",
-      "exams": "Exams ({{count}})",
-      "examsPrescription": "Prescription of {{date}}",
-      "examsOutOfRange_one": "{{count}} out of range",
-      "examsOutOfRange_other": "{{count}} out of range",
-      "variation": "Variation"
+      "examTrends": "Exam trends",
+      "examTrendsHint": "The exams on the timeline over the last {{count}} days; the latest result of each day.",
+      "examTrendsEmpty": "No exam on the timeline.",
+      "examTrendsNotLoaded": "The exam history was not loaded. Wait for the exams on the timeline to load and generate the report again.",
+      "today": "today"
     },
     "history": {
       "title": "Reviews",

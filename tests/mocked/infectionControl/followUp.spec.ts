@@ -664,7 +664,7 @@ test("opens a printable report detailing the courses in use and every review", a
   await expect(report).toBeVisible();
 });
 
-test("adds the recent cultures and the exams the page shows to the report", async ({
+test("adds the recent cultures to the report, without the exams of the screening", async ({
   page,
   mockApi,
 }) => {
@@ -742,30 +742,22 @@ test("adds the recent cultures and the exams the page shows to the report", asyn
   const report = page.getByTestId("infection-control-report");
   await expect(report).toBeVisible();
 
-  // the cultures whole: the gram and the result are not cut on paper
+  // the collections as the culture card lists them (recentCultures.spec
+  // goes through them); a backend without collections sends the latest
+  // culture of each exam, without its antibiogram
   const cultures = report.getByTestId("report-cultures");
   await expect(cultures).toContainText("Culturas (1)");
-  const culture = cultures.getByTestId("report-culture");
+  const culture = cultures.getByTestId("culture-collection");
+  await expect(culture).toHaveCount(1);
   await expect(culture).toContainText("Hemocultura teste");
   await expect(culture).toContainText("Sangue teste");
   await expect(culture).toContainText("Staphylococcus aureus");
-  await expect(culture).toContainText("após 18 horas de incubação");
-  await expect(culture).toContainText("RESULTADO: Positivo");
+  await expect(culture).toContainText("Sem antibiograma liberado");
 
-  // the exams of the screening prescription, the ones out of range first
-  const exams = report.getByTestId("report-exams");
-  await expect(exams).toContainText("Exames (3)");
-  await expect(exams).toContainText("1 fora da referência");
-  const rows = exams.getByTestId("report-exam");
-  await expect(rows).toHaveCount(3);
-  await expect(rows.nth(0)).toContainText("Leucócitos");
-  await expect(rows.nth(0)).toContainText("18.500 /mm³");
-  // the reference is left out
-  await expect(rows.nth(0)).not.toContainText("4.000 a 11.000");
-  await expect(rows.nth(0)).toContainText("+25%");
-  await expect(rows.nth(1)).toContainText("Creatinina");
-  await expect(rows.nth(1)).toContainText("0,9 mg/dL");
-  await expect(rows.nth(2)).toContainText("PCR");
+  // the exams of the screening prescription stay on the page: the report
+  // prints the ones on the timeline, day by day (timelineExams.spec)
+  await expect(report.getByTestId("report-exams")).toHaveCount(0);
+  await expect(report).not.toContainText("18.500");
 });
 
 test("says in the report when the cultures did not load", async ({
