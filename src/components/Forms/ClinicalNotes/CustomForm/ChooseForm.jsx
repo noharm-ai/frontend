@@ -1,17 +1,30 @@
 import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Select } from "components/Inputs";
 import { CUSTOM_FORM_STORE_ID, CUSTOM_FORM_MEMORY_TYPE } from "utils/memory";
+import { fetchMemoryThunk } from "features/memory/MemoryText/MemoryTextSlice";
 
-export default function ChooseForm({ fetchMemory, memory, onChange }) {
-  const { isFetching, list } = memory[CUSTOM_FORM_STORE_ID] || {
-    isFetching: true,
-    list: [],
-  };
+// until the first fetch starts the forms count as loading
+const NOT_LOADED = {
+  isFetching: true,
+  list: [],
+};
+
+export default function ChooseForm({ onChange }) {
+  const dispatch = useDispatch();
+  const { isFetching, list } =
+    useSelector((state) => state.memoryText.stores[CUSTOM_FORM_STORE_ID]) ||
+    NOT_LOADED;
 
   useEffect(() => {
-    fetchMemory(CUSTOM_FORM_STORE_ID, CUSTOM_FORM_MEMORY_TYPE);
-  }, [fetchMemory]);
+    dispatch(
+      fetchMemoryThunk({
+        storeId: CUSTOM_FORM_STORE_ID,
+        type: CUSTOM_FORM_MEMORY_TYPE,
+      }),
+    );
+  }, [dispatch]);
 
   const sortForms = (a, b) =>
     `${a?.value?.name}`.localeCompare(`${b?.value?.name}`);

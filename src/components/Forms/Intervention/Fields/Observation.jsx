@@ -1,4 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Button as AntButton } from "antd";
 import {
@@ -26,13 +27,14 @@ import {
 
 import { EditorBox } from "components/Forms/Form.style";
 import { useSlashMenu } from "components/SlashMenu/SlashMenu";
+import {
+  fetchReasonTextThunk,
+  saveReasonTextThunk,
+} from "features/memory/MemoryText/MemoryTextSlice";
 
 export default function Observations({
   content,
   setFieldValue,
-  memory,
-  fetchMemory,
-  saveMemory,
   currentReason,
   reasons,
   drugData,
@@ -41,6 +43,8 @@ export default function Observations({
   uniqueDrugList,
 }) {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const memory = useSelector((state) => state.memoryText.reasonText);
   const [saveTextModal, setSaveTextModal] = useState(null);
   const textareaRef = useRef(null);
 
@@ -58,12 +62,6 @@ export default function Observations({
   });
   const isMemoryDisabled = reasonOptions.length === 0;
   const hasMultipleReasons = reasonOptions.length > 1;
-
-  useEffect(() => {
-    if (memory.save.success) {
-      notification.success({ message: t("success.defaultObservation") });
-    }
-  }, [memory.save.success, t]);
 
   const getDrugName = () => {
     if (drugData.idPrescriptionDrugList) {
@@ -242,7 +240,12 @@ export default function Observations({
    * and undefined when the request failed.
    */
   const fetchReasonText = async (idReason) => {
-    const list = await fetchMemory(`reasonsDefaultText-${idReason}`);
+    const action = await dispatch(
+      fetchReasonTextThunk(`reasonsDefaultText-${idReason}`),
+    );
+    const list = fetchReasonTextThunk.fulfilled.match(action)
+      ? action.payload
+      : null;
 
     if (!Array.isArray(list)) {
       notification.error({ message: t("error.title") });
@@ -264,7 +267,7 @@ export default function Observations({
     });
   };
 
-  const saveDefaultText = (value) => {
+  const saveDefaultText = async (value) => {
     const { idReason, memoryKey } = saveTextModal;
     const payload = {
       type: `reasonsDefaultText-${idReason}`,
@@ -274,9 +277,18 @@ export default function Observations({
     if (memoryKey) {
       payload.id = memoryKey;
     }
-    saveMemory(payload);
 
+    // the text goes to the observation either way; the message says whether
+    // it was also stored as the reason's default
     setFieldValue("observation", applyVariables(value));
+
+    const action = await dispatch(saveReasonTextThunk(payload));
+
+    if (saveReasonTextThunk.rejected.match(action)) {
+      notification.error({ message: t("error.title") });
+      return;
+    }
+
     notification.success({ message: t("success.applyDefaultObservation") });
 
     trackInterventionAction(TrackedInterventionAction.SAVE_DEFAULT_TEXT);
@@ -363,7 +375,7 @@ export default function Observations({
               <Button
                 shape="circle"
                 icon={<SaveOutlined />}
-                loading={memory.isFetching || memory.save.isSaving}
+                loading={memory.isFetching || memory.isSaving}
                 onClick={
                   hasMultipleReasons
                     ? undefined
@@ -382,7 +394,7 @@ export default function Observations({
               <Button
                 shape="circle"
                 icon={<DownloadOutlined />}
-                loading={memory.isFetching || memory.save.isSaving}
+                loading={memory.isFetching || memory.isSaving}
                 onClick={
                   hasMultipleReasons
                     ? undefined

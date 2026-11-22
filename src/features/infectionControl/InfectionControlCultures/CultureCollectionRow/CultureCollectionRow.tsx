@@ -25,7 +25,8 @@ interface CultureCollectionRowProps {
   // the drugs of the prescription, by drugKey: empty without the cultures by
   // drug
   prescribed: Set<string>;
-  onOpen: (collection: ICultureCollection) => void;
+  // without it (the printed report) the row doesn't open
+  onOpen?: (collection: ICultureCollection) => void;
 }
 
 /**
@@ -149,7 +150,7 @@ function OrganismSummary({
  * and what the lab found, each microorganism with its antibiogram summed up.
  * A collection with no microorganism shows the lab's own words (no growth,
  * waiting for the lab...), cut at two lines. The row, or its button, opens
- * the collection whole
+ * the collection whole, when it can be opened
  */
 export function CultureCollectionRow({
   collection,
@@ -166,9 +167,13 @@ export function CultureCollectionRow({
 
   return (
     <CollectionRow
-      className={resistantInUse ? "resistant-in-use" : undefined}
+      className={
+        [resistantInUse && "resistant-in-use", onOpen && "openable"]
+          .filter(Boolean)
+          .join(" ") || undefined
+      }
       data-testid="culture-collection"
-      onClick={() => onOpen(collection)}
+      onClick={onOpen ? () => onOpen(collection) : undefined}
     >
       <div className="collection-time">
         <span
@@ -221,19 +226,21 @@ export function CultureCollectionRow({
         )}
       </div>
 
-      <div className="collection-action">
-        <Tooltip title={t("infectionControl.cultures.collections.details")}>
-          <Button
-            size="small"
-            icon={<SearchOutlined />}
-            aria-label={t("infectionControl.cultures.collections.details")}
-            onClick={(event) => {
-              event.stopPropagation();
-              onOpen(collection);
-            }}
-          />
-        </Tooltip>
-      </div>
+      {onOpen && (
+        <div className="collection-action">
+          <Tooltip title={t("infectionControl.cultures.collections.details")}>
+            <Button
+              size="small"
+              icon={<SearchOutlined />}
+              aria-label={t("infectionControl.cultures.collections.details")}
+              onClick={(event) => {
+                event.stopPropagation();
+                onOpen(collection);
+              }}
+            />
+          </Tooltip>
+        </div>
+      )}
     </CollectionRow>
   );
 }

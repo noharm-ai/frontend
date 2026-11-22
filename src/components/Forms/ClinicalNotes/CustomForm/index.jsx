@@ -21,8 +21,6 @@ export default function ClinicalNotes({
   prescription,
   save,
   afterSave,
-  fetchMemory,
-  memory,
   visible,
   onCancel,
   ...props
@@ -162,11 +160,7 @@ export default function ClinicalNotes({
           {!template ? (
             <>
               <div className="panel-title">Selecione o formulário:</div>
-              <ChooseForm
-                fetchMemory={fetchMemory}
-                memory={memory}
-                onChange={setTemplate}
-              />
+              <ChooseForm onChange={setTemplate} />
             </>
           ) : (
             <>

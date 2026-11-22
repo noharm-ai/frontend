@@ -592,8 +592,15 @@ export function InfectionControl() {
         courses={courses}
         drugNames={drugNames}
         // the report tells apart the cultures it could not include
-        cultures={
-          culturesStatus === "succeeded" ? (cultures?.cultures ?? []) : null
+        collections={culturesStatus === "succeeded" ? cultureCollections : null}
+        // the exams the timeline plots, the ones added or taken out too; none
+        // without a prescription, which has no history
+        timelineExams={
+          timelineExams
+            ? timelineExams.status === "succeeded"
+              ? timelineExams.series
+              : null
+            : undefined
         }
         now={now}
       />

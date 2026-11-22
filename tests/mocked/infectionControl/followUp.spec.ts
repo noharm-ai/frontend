@@ -664,7 +664,7 @@ test("opens a printable report detailing the courses in use and every review", a
   await expect(report).toBeVisible();
 });
 
-test("adds the recent cultures and the exams the page shows to the report", async ({
+test("adds the recent cultures to the report, without the exams of the screening", async ({
   page,
   mockApi,
 }) => {
@@ -742,30 +742,22 @@ test("adds the recent cultures and the exams the page shows to the report", asyn
   const report = page.getByTestId("infection-control-report");
   await expect(report).toBeVisible();
 
-  // the cultures whole: the gram and the result are not cut on paper
+  // the collections as the culture card lists them (recentCultures.spec
+  // goes through them); a backend without collections sends the latest
+  // culture of each exam, without its antibiogram
   const cultures = report.getByTestId("report-cultures");
   await expect(cultures).toContainText("Culturas (1)");
-  const culture = cultures.getByTestId("report-culture");
+  const culture = cultures.getByTestId("culture-collection");
+  await expect(culture).toHaveCount(1);
   await expect(culture).toContainText("Hemocultura teste");
   await expect(culture).toContainText("Sangue teste");
   await expect(culture).toContainText("Staphylococcus aureus");
-  await expect(culture).toContainText("após 18 horas de incubação");
-  await expect(culture).toContainText("RESULTADO: Positivo");
+  await expect(culture).toContainText("Sem antibiograma liberado");
 
-  // the exams of the screening prescription, the ones out of range first
-  const exams = report.getByTestId("report-exams");
-  await expect(exams).toContainText("Exames (3)");
-  await expect(exams).toContainText("1 fora da referência");
-  const rows = exams.getByTestId("report-exam");
-  await expect(rows).toHaveCount(3);
-  await expect(rows.nth(0)).toContainText("Leucócitos");
-  await expect(rows.nth(0)).toContainText("18.500 /mm³");
-  // the reference is left out
-  await expect(rows.nth(0)).not.toContainText("4.000 a 11.000");
-  await expect(rows.nth(0)).toContainText("+25%");
-  await expect(rows.nth(1)).toContainText("Creatinina");
-  await expect(rows.nth(1)).toContainText("0,9 mg/dL");
-  await expect(rows.nth(2)).toContainText("PCR");
+  // the exams of the screening prescription stay on the page: the report
+  // prints the ones on the timeline, day by day (timelineExams.spec)
+  await expect(report.getByTestId("report-exams")).toHaveCount(0);
+  await expect(report).not.toContainText("18.500");
 });
 
 test("says in the report when the cultures did not load", async ({
@@ -2018,8 +2010,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
         .fill("Aguardar cultura");
       await next.click();
 
-      // skipped unless chosen; then the only type there is comes picked, and the
-      // text tells the review
+      // skipped unless chosen; then the only type there is comes picked, the
+      // text starts empty, and the default one tells the review
       const step = dialog.getByTestId("review-clinical-note");
       await expect(step.getByTestId("review-note-skipped")).toBeVisible();
       await expect(dialog.getByTestId("review-rail-note")).toContainText(
@@ -2033,6 +2025,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
         "Registrar",
       );
       const note = step.getByTestId("review-note-text");
+      await expect(note).toHaveValue("");
+      await step.getByTestId("review-note-default").click();
       await expect(note).toHaveValue(/^CONTROLE DE INFECÇÃO/);
       const text = await note.inputValue();
       for (const line of [
@@ -2154,7 +2148,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
   });
 
   test(
-    "keeps the clinical note text in step with the review, until it is edited",
+    "keeps the applied clinical note text in step with the review, until it is edited",
     { tag: "@multiClinicalNotes" },
     async ({ page, mockApi }) => {
       mockPage(mockApi, followUp());
@@ -2179,6 +2173,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       // straight to the note: meropenem is not evaluated yet
       await toNote();
       await dialog.getByText("Registrar evolução", { exact: true }).click();
+      await expect(note).toHaveValue("");
+      await dialog.getByTestId("review-note-default").click();
       await expect(note).toHaveValue(
         /- MEROPENEM 1 g SOL INJ: Avaliação não preenchida/,
       );
@@ -2260,7 +2256,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       const step = dialog.getByTestId("review-clinical-note");
       const note = step.getByTestId("review-note-text");
       await step.getByText("Registrar evolução", { exact: true }).click();
-      await expect(note).toHaveValue(/^CONTROLE DE INFECÇÃO/);
+      await expect(note).toHaveValue("");
       const noteErrors = step.getByTestId("review-field-error");
       await expect(hint).toHaveText("Informe o tipo de evolução");
       await expect(noteErrors).toHaveCount(0);
@@ -2272,10 +2268,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       expect(sent).toBeNull();
       await openSelect(step.getByTestId("review-note-type"));
       await pickOption(page, "Farmácia clínica");
-      await expect(noteErrors).toHaveCount(0);
 
       // and writes something, told below the text, brought into sight
-      await note.fill("");
       await expect(noteErrors).toHaveText(["Informe o texto da evolução"]);
       await step.evaluate((element) =>
         element.closest(".review-step")!.scrollTo({ top: 0 }),
@@ -2340,9 +2334,19 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       const step = dialog.getByTestId("review-clinical-note");
       await step.getByText("Registrar evolução", { exact: true }).click();
       const note = step.getByTestId("review-note-text");
-      await expect(note).toHaveValue(/^CONTROLE DE INFECÇÃO/);
+      await expect(note).toHaveValue("");
       await expect(step.getByTestId("review-note-type")).toHaveCount(0);
+      await note.fill("Revisão do controle de infecção");
       const text = await note.inputValue();
+
+      // the text the user wrote is only replaced by the default one when told
+      await step.getByTestId("review-note-default").click();
+      await expect(
+        page.getByText("Substituir o texto atual pelo texto padrão?"),
+      ).toBeVisible();
+      await page.getByRole("button", { name: "Não", exact: true }).click();
+      await expect(note).toHaveValue(text);
+
       await expect(save).toBeEnabled();
       await save.click();
 
@@ -3042,9 +3046,9 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       rawValue: 1.1,
       rawUnit: "mg/dL",
     };
-    // the eGFR rule and the CRP one turned on in the evaluation of the
-    // vancomycin, and a rule the schema no longer has, recorded without a
-    // baseline
+    // the eGFR rule and the CRP one (its variation optional) turned on in the
+    // evaluation of the vancomycin, and a rule the schema no longer has,
+    // recorded without a baseline
     const recorded = ({
       enabledByDefault: _,
       available: __,
@@ -3052,7 +3056,11 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     }: ReturnType<typeof examRule>) => condition;
     const evaluatedRules = [
       { ...recorded(EXAM_RULES[2]), baseline: tfgBaseline },
-      { ...recorded(EXAM_RULES[0]), baseline: null },
+      {
+        ...recorded(EXAM_RULES[0]),
+        variationOptional: true,
+        baseline: null,
+      },
       {
         ...recorded(
           examRule({
@@ -3175,7 +3183,11 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       await expect(recorded.first()).toHaveText(
         `TFG < 60 e variação < -25% · Referência: 72 ${UNIT} em ${shownDateTime(BASELINE_DATE)} (creatinina 1,1 mg/dL)`,
       );
-      // without a result at review time, a variation never fires
+      // without a result at review time, an optional variation is skipped
+      await expect(recorded.nth(1)).toHaveText(
+        "PCR em elevação > 50 e variação ≥ +20% (se houver referência) · sem valor de referência: vale só a condição de valor",
+      );
+      // and any other never fires
       await expect(recorded.last()).toHaveText(
         "Leucócitos variação > +50% · sem valor de referência: as condições de variação não disparam",
       );
@@ -3472,6 +3484,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
             variationAtLeast: null,
             variationBelow: null,
             variationAtMost: -25,
+            variationOptional: false,
             fromCourseDay: 2,
             enabledByDefault: false,
           },
@@ -3499,6 +3512,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       expect(saved[1].rules[1]).toEqual({
         ...sentRule(EXAM_RULES[1]),
         valueAbove: 25,
+        variationOptional: false,
       });
       await expect(
         drug.getByRole("checkbox", { name: /^Vancocinemia/ }),
@@ -3540,6 +3554,77 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       expect(sent.evaluations).toMatchObject([
         { idDrug: 11, examTriggers: ["van", "new4"] },
       ]);
+    });
+
+    test("makes the variation optional: without a result at review time, the value decides", async ({
+      page,
+      mockApi,
+    }) => {
+      mockPage(mockApi, followUp());
+      const saved = mockSaveRules(mockApi);
+
+      const drug = await openTriggers(page);
+      const rules = drug.getByTestId("review-exam-triggers");
+      const form = page.getByTestId("exam-trigger-form");
+      const optional = form.getByRole("checkbox", {
+        name: "Sem resultado na revisão, considerar só o valor",
+      });
+
+      await rules.getByTestId("exam-trigger-add").click();
+      await form.getByLabel("Nome").fill("Procalcitonina");
+      await openSelectById(page, "exam-trigger-exam");
+      await pickOption(page, "Procalcitonina");
+      // nothing to skip without a variation
+      await expect(optional).toBeDisabled();
+      await pickOperator(page, "variation", ">");
+      await form.getByRole("spinbutton", { name: "Variação" }).fill("-50");
+      await expect(optional).toBeEnabled();
+      await optional.check();
+
+      // alone, it would fire on any result without a baseline
+      await form.getByRole("button", { name: "Salvar" }).click();
+      await expect(form).toContainText("Informe também a condição de valor");
+      expect(saved).toHaveLength(0);
+
+      await form.getByRole("spinbutton", { name: "Valor" }).fill("2");
+      await form.getByLabel("A partir do dia de tratamento").fill("3");
+      await form.getByRole("button", { name: "Salvar" }).click();
+      await expect(form).toHaveCount(0);
+      expect(saved[0].rules.at(-1)).toEqual({
+        name: "Procalcitonina",
+        examRef: "procalcitonina_adult",
+        valueAbove: 2,
+        valueAtLeast: null,
+        valueBelow: null,
+        valueAtMost: null,
+        variationAbove: -50,
+        variationAtLeast: null,
+        variationBelow: null,
+        variationAtMost: null,
+        variationOptional: true,
+        fromCourseDay: 3,
+        enabledByDefault: false,
+      });
+      await expect(
+        drug.getByRole("checkbox", { name: /^Procalcitonina/ }),
+      ).toHaveAccessibleName(
+        "Procalcitonina > 2 e variação > -50% (se houver referência) a partir do D3",
+      );
+
+      // it comes back checked; without the variation it is not sent on
+      await rules
+        .getByTestId("review-exam-trigger-rule")
+        .filter({ hasText: "Procalcitonina" })
+        .getByRole("button", { name: "Editar regra" })
+        .click();
+      await expect(optional).toBeChecked();
+      await form.getByRole("spinbutton", { name: "Variação" }).clear();
+      await form.getByRole("button", { name: "Salvar" }).click();
+      await expect(form).toHaveCount(0);
+      expect(saved[1].rules.at(-1)).toMatchObject({
+        variationAbove: null,
+        variationOptional: false,
+      });
     });
 
     test("keeps the rule form open with the backend message when its save fails", async ({

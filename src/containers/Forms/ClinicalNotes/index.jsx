@@ -2,7 +2,6 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
 import { savePrescriptionThunk } from "store/ducks/prescriptions/thunk";
-import { memoryFetchThunk } from "store/ducks/memory/thunk";
 
 import FormClinicalNotes from "components/Forms/ClinicalNotes";
 
@@ -15,7 +14,6 @@ const mapStateToProps = ({ prescriptions, user }) => ({
 const mapDispatchToProps = (dispatch) =>
   bindActionCreators(
     {
-      fetchMemory: memoryFetchThunk,
       save: savePrescriptionThunk,
     },
     dispatch,

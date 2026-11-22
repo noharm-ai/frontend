@@ -35,7 +35,6 @@
   "success": {
     "generic": "Uhu! Salvo com sucesso! :)",
     "intervention": "Uhu! Intervenção salva com sucesso! :)",
-    "defaultObservation": "Uhu! Observação modelo salva com sucesso!",
     "applyDefaultObservation": "Observação modelo aplicada com sucesso!"
   },
   "menu": {
@@ -380,6 +379,7 @@
     "prescriber": "Prescritor",
     "economyType": "Tipo de economia",
     "hasEconomy": "Possui economia",
+    "recordedByInfectionControl": "Registrada pelo controle de infecção",
     "selectAll": "Selecionar todos",
     "protocols": "Protocolos",
     "protocolAlerts": "Alertas de protocolo",
@@ -507,11 +507,16 @@
     "adultExams": "Adulto",
     "pediatricExams": "Pediátrico",
     "footer": "Alterações são feitas no Admin, em Parametrização.",
+    "maxDosePlus": "Dose máxima SOMADA",
+    "maxDosePlusIgnoreFrequencies": "Frequências fora da soma",
+    "maxDosePlusSumAll": "Nenhuma: todos os itens entram na soma",
     "json": "JSON (somente o personalizado)",
     "frequency": {
       "33": "SN",
       "44": "ACM",
-      "66": "Agora"
+      "55": "CONT",
+      "66": "Agora",
+      "99": "N/D"
     }
   },
   "maintainerBadge": {
@@ -675,8 +680,8 @@
     "title": "Intervenção",
     "titleMultiple": "Intervenção Múltipla",
     "infectionControlTag": "Controle de infecção",
-    "lockedInfectionControl": "Esta intervenção foi registrada pelo controle de infecção e só pode ser alterada por ele.",
     "locked": "Você não tem permissão para alterar esta intervenção.",
+    "createdByInfectionControl": "Esta intervenção foi registrada pelo controle de infecção.",
 
     "labelPrescriptionError": "Possível erro de prescrição",
     "labelPrescriptionErrorHint": "Erro de prescrição com significado clínico é definido como um erro de decisão, não intencional, que pode reduzir a probabilidade do tratamento ser efetivo ou aumentar o risco de lesão no paciente, quando comparado com as praticas clínicas estabelecidas e aceitas. Ref: CFF,  Prot.: MS e Anvisa",
@@ -1755,7 +1760,6 @@
     },
     "cultures": {
       "title": "Culturas",
-      "legend": "Última coleta de cada exame e material, liberada nos últimos 60 dias",
       "summary": "Lista",
       "byDrug": "Por medicamento",
       "byDrugLegend": "Antibiograma de cada medicamento, com os em uso nesta prescrição em destaque",
@@ -2118,7 +2122,7 @@
     },
     "clinicalNote": {
       "stepTitle": "Evolução",
-      "stepLegend": "Opcional. Registre a revisão no prontuário do paciente: o texto parte do que foi revisado e pode ser editado.",
+      "stepLegend": "Opcional. Registre a revisão no prontuário do paciente: escreva o texto ou aplique o texto padrão ou um modelo salvo, e edite como quiser.",
       "next": "Próximo: evolução",
       "create": "Registrar evolução",
       "skip": "Não registrar",
@@ -2228,11 +2232,11 @@
       "interventions": "Intervenções",
       "cultures": "Culturas ({{count}})",
       "culturesNotLoaded": "As culturas não foram carregadas. Atualize a seção de culturas da página e gere o relatório novamente.",
-      "exams": "Exames ({{count}})",
-      "examsPrescription": "Prescrição de {{date}}",
-      "examsOutOfRange_one": "{{count}} fora da referência",
-      "examsOutOfRange_other": "{{count}} fora da referência",
-      "variation": "Variação"
+      "examTrends": "Evolução dos exames",
+      "examTrendsHint": "Exames da linha do tempo nos últimos {{count}} dias; o resultado mais recente de cada dia.",
+      "examTrendsEmpty": "Nenhum exame na linha do tempo.",
+      "examTrendsNotLoaded": "O histórico dos exames não foi carregado. Aguarde os exames da linha do tempo carregarem e gere o relatório novamente.",
+      "today": "hoje"
     },
     "history": {
       "title": "Revisões",
@@ -2335,6 +2339,7 @@
       "variationAtLeast": "variação ≥ {{value}}",
       "variationBelow": "variação < {{value}}",
       "variationAtMost": "variação ≤ {{value}}",
+      "variationOptional": "(se houver referência)",
       "unavailable": "{{exam}} não configurado neste hospital: o gatilho não dispara",
       "current": "Resultado atual do paciente: {{result}}",
       "noCurrent": "Paciente sem resultado deste exame",
@@ -2358,6 +2363,7 @@
         "variation": "Variação",
         "variationOperator": "Operador da variação",
         "variationHint": "Em relação ao resultado da revisão; uma queda é negativa (ex.: < -25%)",
+        "variationOptional": "Sem resultado na revisão, considerar só o valor",
         "fromCourseDay": "A partir do dia de tratamento",
         "fromCourseDayHint": "Ex.: 4 vale a partir do D4. Em branco, vale desde o início do tratamento",
         "optional": "opcional",
@@ -2365,6 +2371,7 @@
         "enabledByDefault": "Ligado por padrão",
         "nameTooLong": "Use até 100 caracteres",
         "conditionRequired": "Informe ao menos uma condição (valor ou variação)",
+        "variationOptionalNeedsValue": "Informe também a condição de valor",
         "limit": "Limite de {{count}} regras atingido",
         "empty": "Nenhuma regra cadastrada"
       },
@@ -2375,7 +2382,8 @@
       "baseline": "Referência: {{result}}",
       "variation": "Variação: {{value}}",
       "noBaseline": "sem valor de referência",
-      "noBaselineVariation": "sem valor de referência: as condições de variação não disparam"
+      "noBaselineVariation": "sem valor de referência: as condições de variação não disparam",
+      "noBaselineValueOnly": "sem valor de referência: vale só a condição de valor"
     }
   },
   "accessibility": {

@@ -107,7 +107,9 @@ export const RowLabel = styled.div`
   min-width: 0;
   padding: 6px 12px;
   position: sticky;
-  z-index: 3;
+  /* over every mark of the days it scrolls over (CultureMark and
+     EvaluationPending are at 3) */
+  z-index: 4;
 
   ${Row}:not(.row-header):hover & {
     background-color: var(--row-hover, ${HOVER_ROW});

@@ -8,13 +8,13 @@ import { segmentsReducer } from "features/segments/SegmentsSlice";
 import interventionReducer from "./intervention";
 import prescriptionsReducer from "./prescriptions";
 import prescriptionDrugsReducer from "./prescriptionDrugs";
-import memoryReducer from "./memory";
 import clinicalNotesReducer from "./clinicalNotes";
 import drugUnitConversionSlice from "features/drugs/DrugUnitConversion/DrugUnitConversionSlice";
 import drugFormStatus from "features/drugs/DrugFormStatus/DrugFormStatusSlice";
 import lists from "features/lists/ListsSlice";
 import serverActionsSlice from "features/serverActions/ServerActionsSlice";
 import summaryReducer from "features/summary/SummarySlice";
+import { memoryTextReducer } from "features/memory/MemoryText/MemoryTextSlice";
 import memoryDraftSlice from "features/memory/MemoryDraft/MemoryDraftSlice";
 import memoryFilterSlice from "features/memory/MemoryFilter/MemoryFilterSlice";
 import memoryCustomFormsSlice from "features/memory/CustomForms/CustomFormsSlice";
@@ -81,9 +81,9 @@ import { interventionConsolidatedReportReducer } from "features/reports/Interven
 import { infectionControlConsolidatedReportReducer } from "features/reports/InfectionControlConsolidatedReport/InfectionControlConsolidatedReportSlice";
 import reportCultureReport from "features/reports/CultureReport/CultureReportSlice";
 import reportDrugHistoryReport from "features/reports/DrugHistoryReport/DrugHistoryReportSlice";
-import reportPrescriptionHistoryReport from "features/reports/PrescriptionHistoryReport/PrescriptionHistoryReportSlice";
-import reportAlertListReport from "features/reports/AlertListReport/AlertListReportSlice";
-import reportExamsRawSearchReport from "features/reports/ExamsRawSearchReport/ExamsRawSearchReportSlice";
+import { prescriptionHistoryReportReducer } from "features/reports/PrescriptionHistoryReport/PrescriptionHistoryReportSlice";
+import { alertListReportReducer } from "features/reports/AlertListReport/AlertListReportSlice";
+import { examsRawSearchReportReducer } from "features/reports/ExamsRawSearchReport/ExamsRawSearchReportSlice";
 import reportPatientObservationReport from "features/reports/PatientObservationReport/PatientObservationReportSlice";
 import reportCheckedIndexReport from "features/reports/CheckedIndexReport/CheckedIndexReportSlice";
 
@@ -118,11 +118,11 @@ const reportReducers = combineReducers({
   infectionControlConsolidated: infectionControlConsolidatedReportReducer,
   culture: reportCultureReport,
   drugHistory: reportDrugHistoryReport,
-  prescriptionHistory: reportPrescriptionHistoryReport,
-  examsRawSearch: reportExamsRawSearchReport,
+  prescriptionHistory: prescriptionHistoryReportReducer,
+  examsRawSearch: examsRawSearchReportReducer,
   patientObservation: reportPatientObservationReport,
   checkedIndex: reportCheckedIndexReport,
-  alertList: reportAlertListReport,
+  alertList: alertListReportReducer,
   reports: reports,
 });
 
@@ -138,7 +138,7 @@ const rootReducer = combineReducers({
   intervention: interventionReducer,
   prescriptions: prescriptionsReducer,
   prescriptionDrugs: prescriptionDrugsReducer,
-  memory: memoryReducer,
+  memoryText: memoryTextReducer,
   memoryDraft: memoryDraftSlice,
   memoryFilter: memoryFilterSlice,
   memoryCustomForms: memoryCustomFormsSlice,

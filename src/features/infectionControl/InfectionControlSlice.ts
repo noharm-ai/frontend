@@ -227,6 +227,10 @@ export interface IExamTriggerCondition {
   variationAtLeast: number | null;
   variationBelow: number | null;
   variationAtMost: number | null;
+  // without a baseline the variation conditions are skipped and the value
+  // conditions decide alone (otherwise the rule never fires); absent on the
+  // rules evaluations kept before it existed
+  variationOptional?: boolean;
   // from this day of the course on (4: from D4)
   fromCourseDay: number | null;
 }
@@ -274,7 +278,8 @@ export interface IExamTriggerResult {
 }
 
 // a rule an evaluation turned on, copied at review time with the result of
-// then; a null baseline (no result at review time) never fires a variation
+// then; a null baseline (no result at review time) never fires a variation,
+// unless the rule makes it optional (variationOptional)
 export interface IEvaluationExamTrigger extends IExamTriggerCondition {
   baseline: IExamTriggerResult | null;
 }
@@ -469,11 +474,12 @@ export interface IRecentCulture {
 export interface IRecentCultures {
   admissionNumber: number;
   releasedSince: string;
-  // every collection, newest first: what the culture card lists. Missing
-  // from a backend older than them (cultureCollections.collectionsOf)
+  // every collection, newest first: what the culture card and the report
+  // list. Missing from a backend older than them
+  // (cultureCollections.collectionsOf)
   collections?: ICultureCollection[];
   // the latest culture of each exam and material, newest collection first:
-  // what the report and the review's clinical note list
+  // what the review's clinical note lists
   cultures: IRecentCulture[];
 }
 

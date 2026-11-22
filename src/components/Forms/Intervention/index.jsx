@@ -21,7 +21,6 @@ import { setSelectedIntervention as setSelectedInterventionOutcome } from "featu
 import { startMultipleOutcome } from "features/intervention/MultipleOutcome/MultipleOutcomeSlice";
 import { setSelectedRowsActive } from "features/prescription/PrescriptionSlice";
 import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/KnowledgeBaseIcon";
-import { isInterventionLocked } from "features/intervention/interventionAccess/interventionAccess";
 import { getErrorMessageFromException } from "utils/errorHandler";
 import {
   trackInterventionAction,
@@ -46,9 +45,6 @@ export default function Intervention({
   fetchReasonsList,
   searchDrugs,
   drugs,
-  reasonTextMemory,
-  memorySaveReasonText,
-  memoryFetchReasonText,
   drugSummary,
   fetchDrugSummary,
   features,
@@ -285,7 +281,7 @@ export default function Intervention({
       });
   };
 
-  const isLocked = isInterventionLocked(item.intervention);
+  const isInfectionControl = !!item.intervention?.idInfectionControlEvaluation;
 
   const InterventionFooter = ({ handleSubmit, setFieldValue }) => {
     const isChecked = item.intervention && item.intervention.status === "s";
@@ -353,7 +349,7 @@ export default function Intervention({
         >
           {t("interventionForm.btnCancel")}
         </Button>
-        {isChecked && !disableUndoIntervention && !isLocked && (
+        {isChecked && !disableUndoIntervention && (
           <Tooltip title={t("interventionForm.btnUndo")} placement="top">
             <Button
               className="gtm-bt-undo-interv"
@@ -370,15 +366,13 @@ export default function Intervention({
           title={
             isClosed
               ? "Esta intervenção não pode ser alterada, pois já possui desfecho cadastrado"
-              : isLocked
-                ? t("interventionForm.lockedInfectionControl")
-                : ""
+              : ""
           }
         >
           <Dropdown.Button
             id="btn-interv-save-action"
             loading={isSaving}
-            disabled={isClosed || isLocked}
+            disabled={isClosed}
             type="primary"
             onClick={() => handleSubmit()}
             menu={{
@@ -450,12 +444,12 @@ export default function Intervention({
             </>
           )}
 
-          {isLocked && (
+          {isInfectionControl && (
             <Alert
-              type="warning"
+              type="info"
               showIcon
-              data-testid="intervention-form-locked"
-              message={t("interventionForm.lockedInfectionControl")}
+              data-testid="intervention-form-infection-control"
+              message={t("interventionForm.createdByInfectionControl")}
               style={{ marginBottom: "15px" }}
             />
           )}
@@ -470,9 +464,6 @@ export default function Intervention({
                 reasons={reasons}
                 searchDrugs={searchDrugs}
                 drugs={drugs}
-                reasonTextMemory={reasonTextMemory}
-                memorySaveReasonText={memorySaveReasonText}
-                memoryFetchReasonText={memoryFetchReasonText}
                 featureService={featureService}
                 prescriptionStatus={prescriptionStatus}
                 prescriptionHeaders={prescriptionHeaders}

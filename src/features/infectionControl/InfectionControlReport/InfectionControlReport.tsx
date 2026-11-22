@@ -15,10 +15,10 @@ import {
   IAntimicrobialEvaluation,
   IAntimicrobialTimeline,
   ICourse,
+  ICultureCollection,
   IFollowUp,
-  IRecentCulture,
 } from "../InfectionControlSlice";
-import { isExamAlert, sortExams } from "../exams";
+import { IExamSeries, REPORT_EXAM_DAYS, toDailyExams } from "../exams";
 import {
   courseKey,
   describeEvaluationOutcome,
@@ -29,7 +29,9 @@ import {
   getFollowUpCourses,
   getInvalidatedEvaluations,
 } from "../followUp";
-import { LabResult } from "../InfectionControlCultures/LabResult/LabResult";
+import { CultureCollectionDays } from "../InfectionControlCultures/CultureCollectionDays/CultureCollectionDays";
+import { CollectionList } from "../InfectionControlCultures/CultureCollectionList/CultureCollectionList.style";
+import { usePrescribedDrugs } from "../InfectionControlCultures/usePrescribedDrugs";
 import { formatDose, formatRegimen, getAge } from "../timeline";
 import { EvaluationExamTriggers } from "../EvaluationExamTriggers/EvaluationExamTriggers";
 import { ExamResultMatches } from "../ExamResultMatches/ExamResultMatches";
@@ -44,11 +46,16 @@ interface InfectionControlReportProps {
   // as the timeline sorts them
   courses: ICourse[];
   drugNames: Record<number, string>;
-  // the recent cultures the page loaded; null while they load, or when they
-  // failed to
-  cultures: IRecentCulture[] | null;
+  // the culture collections the page loaded, newest first, as the culture
+  // card lists them; null while they load, or when they failed to
+  collections: ICultureCollection[] | null;
+  // the exams on the timeline, as it plots them; null while their history
+  // loads, or when it failed to. None without a prescription (no history)
+  timelineExams?: IExamSeries[] | null;
   now: Dayjs;
 }
+
+const formatNumber = (value: number) => value.toLocaleString("pt-BR");
 
 // the label of each trigger an evaluation can send the patient back to
 // pending for
@@ -83,7 +90,7 @@ const Fields = ({ items }: { items: IField[] }) => (
  * infection control reviews, laid out as a document to print: the patient,
  * where the follow-up stands, each course in use with its posologies, gaps,
  * alerts and evaluations, how long each suspended or finished course lasted,
- * the recent cultures and the exams the page shows, and each review with
+ * the recent cultures and the exams on the timeline, day by day, and each review with
  * every detail of what it evaluated. The same document shows on screen and
  * goes to paper
  */
@@ -93,11 +100,14 @@ export function InfectionControlReport({
   followUp,
   courses,
   drugNames,
-  cultures,
+  collections,
+  timelineExams,
   now,
 }: InfectionControlReportProps) {
   const { t } = useTranslation();
   const { patient } = data;
+  // the drugs of the prescription, which the cultures flag as the card does
+  const { prescribed } = usePrescribedDrugs(patient.idPrescription);
 
   const followUpEnabled = !!followUp?.enabled;
   const followUpCourses = useMemo(
@@ -615,10 +625,14 @@ export function InfectionControlReport({
     );
   };
 
-  // the exams of the screening prescription, as the page shows them: only
-  // with a prescription, the ones out of range first
+  // the exams come from the history of the prescription: none without one
   const hasExams = !!patient.idPrescription;
-  const exams = sortExams(data.exams);
+
+  // the exams on the timeline, on the last days, the latest result of each
+  const dailyExams = useMemo(
+    () => (timelineExams ? toDailyExams(timelineExams, now) : null),
+    [timelineExams, now],
+  );
 
   const reviews = followUp?.reviews ?? [];
   // only the courses in use are detailed; of the others, the report keeps
@@ -710,116 +724,99 @@ export function InfectionControlReport({
 
       <section data-testid="report-cultures">
         <h2>
-          {cultures === null
+          {collections === null
             ? t("infectionControl.cultures.title")
             : t("infectionControl.report.cultures", {
-                count: cultures.length,
+                count: collections.length,
               })}
         </h2>
-        <p className="report-muted">{t("infectionControl.cultures.legend")}</p>
-        {cultures === null ? (
+        <p className="report-muted">
+          {t("infectionControl.cultures.collections.legend")}
+        </p>
+        {collections === null ? (
           <p className="report-muted">
             {t("infectionControl.report.culturesNotLoaded")}
           </p>
-        ) : cultures.length === 0 ? (
+        ) : collections.length === 0 ? (
           <p className="report-muted">{t("infectionControl.cultures.empty")}</p>
         ) : (
-          <table className="report-table">
-            <thead>
-              <tr>
-                <th>{t("infectionControl.cultures.exam")}</th>
-                <th>{t("infectionControl.cultures.collectionDate")}</th>
-                <th>{t("infectionControl.cultures.releaseDate")}</th>
-                <th>{t("infectionControl.cultures.microorganism")}</th>
-                <th>{t("infectionControl.cultures.gram")}</th>
-                <th>{t("infectionControl.cultures.result")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cultures.map((culture) => (
-                <tr key={culture.id} data-testid="report-culture">
-                  <td>
-                    {culture.examName ?? "-"}
-                    {culture.material && (
-                      <div className="report-muted">{culture.material}</div>
-                    )}
-                  </td>
-                  <td>{formatDateTime(culture.collectionDate) ?? "-"}</td>
-                  <td>{formatDateTime(culture.releaseDate) ?? "-"}</td>
-                  <td>
-                    {culture.microorganisms.length
-                      ? culture.microorganisms.map((name) => (
-                          <div key={name}>{name}</div>
-                        ))
-                      : "-"}
-                  </td>
-                  <td className="report-pre-line">{culture.gram || "-"}</td>
-                  <td>
-                    <LabResult value={culture.previousResult} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          // as the culture card lists them
+          <CollectionList className="printed">
+            <CultureCollectionDays
+              collections={collections}
+              prescribed={prescribed}
+            />
+          </CollectionList>
         )}
       </section>
 
-      {hasExams && (
-        <section data-testid="report-exams">
-          <h2>{t("infectionControl.report.exams", { count: exams.length })}</h2>
-          <p className="report-muted">
-            {[
-              data.screeningPrescription?.date &&
-                t("infectionControl.report.examsPrescription", {
-                  date: formatDate(data.screeningPrescription.date),
-                }),
-              t("infectionControl.report.examsOutOfRange", {
-                count: exams.filter(({ value }) => isExamAlert(value)).length,
-              }),
-            ]
-              .filter(Boolean)
-              .join(" · ")}
-          </p>
-          {exams.length === 0 ? (
-            <p className="report-muted">{t("infectionControl.exams.empty")}</p>
+      {/* the timeline plots no exam without a course */}
+      {hasExams && courses.length > 0 && timelineExams !== undefined && (
+        <section data-testid="report-exam-trends">
+          <h2>{t("infectionControl.report.examTrends")}</h2>
+          {dailyExams === null ? (
+            <p className="report-muted">
+              {t("infectionControl.report.examTrendsNotLoaded")}
+            </p>
+          ) : dailyExams.rows.length === 0 ? (
+            <p className="report-muted">
+              {t("infectionControl.report.examTrendsEmpty")}
+            </p>
           ) : (
-            <table className="report-table">
-              <thead>
-                <tr>
-                  <th>{t("infectionControl.cultures.exam")}</th>
-                  <th>{t("tableHeader.value")}</th>
-                  <th>{t("patientCard.examDate")}</th>
-                  <th>{t("infectionControl.report.variation")}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {exams.map(({ key, value: exam }) => (
-                  <tr
-                    key={key}
-                    className={isExamAlert(exam) ? "report-exam-alert" : ""}
-                    data-testid="report-exam"
-                  >
-                    <td>{exam.name ?? exam.initials ?? key}</td>
-                    <td>
-                      {exam.value ? (
-                        <NumericValue
-                          value={exam.value}
-                          suffix={exam.unit ? ` ${exam.unit}` : ""}
-                        />
-                      ) : (
-                        "-"
-                      )}
-                    </td>
-                    <td>{formatDateTime(exam.date) ?? "-"}</td>
-                    <td>
-                      {exam.value && exam.delta != null
-                        ? `${exam.delta > 0 ? "+" : ""}${exam.delta}%`
-                        : "-"}
-                    </td>
+            <>
+              <p className="report-muted">
+                {t("infectionControl.report.examTrendsHint", {
+                  count: REPORT_EXAM_DAYS,
+                })}
+              </p>
+              <table className="report-table report-exam-days">
+                <thead>
+                  <tr>
+                    <th>{t("infectionControl.cultures.exam")}</th>
+                    {dailyExams.days.map((day) => (
+                      <th key={day.valueOf()} data-testid="report-exam-day">
+                        {day.format("DD/MM")}
+                        {day.isSame(now, "day") && (
+                          <span className="report-muted">
+                            {" "}
+                            ({t("infectionControl.report.today")})
+                          </span>
+                        )}
+                      </th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {dailyExams.rows.map((row) => (
+                    <tr key={row.key} data-testid="report-exam-trend">
+                      <td>
+                        {row.name}
+                        {row.unit && (
+                          <span className="report-muted"> ({row.unit})</span>
+                        )}
+                        {row.reference && (
+                          <span className="report-label">
+                            {t("infectionControl.exams.timelineReference", {
+                              min: formatNumber(row.reference.min),
+                              max: formatNumber(row.reference.max),
+                            })}
+                          </span>
+                        )}
+                      </td>
+                      {row.cells.map((point, index) => (
+                        <td
+                          key={dailyExams.days[index].valueOf()}
+                          className={point?.alert ? "report-cell-alert" : ""}
+                          data-testid="report-exam-trend-cell"
+                        >
+                          {point ? <NumericValue value={point.value} /> : "-"}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
           )}
         </section>
       )}

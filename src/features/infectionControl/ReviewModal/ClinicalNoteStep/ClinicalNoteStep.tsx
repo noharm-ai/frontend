@@ -5,7 +5,7 @@ import { Alert, Button, Popconfirm, Popover } from "antd";
 import { DownloadOutlined, QuestionCircleOutlined } from "@ant-design/icons";
 
 import { Select, Textarea } from "components/Inputs";
-import MemoryText from "containers/MemoryText";
+import { MemoryText } from "features/memory/MemoryText/MemoryText";
 import {
   IC_CLINICAL_NOTES_MEMORY_TYPE,
   IC_CLINICAL_NOTES_PRIVATE_MEMORY_TYPE,
@@ -62,8 +62,8 @@ const writeLastType = (idType: string | null) => {
 
 /**
  * The last step of the review, optional: the clinical note it writes in the
- * patient's record, started from a default text made of what was reviewed.
- * Saved templates take the variables of the review.
+ * patient's record. It starts empty: the user writes it, or applies the
+ * default text or a saved template, which take the variables of the review.
  */
 export function ClinicalNoteStep({
   unavailable,
@@ -96,22 +96,20 @@ export function ClinicalNoteStep({
     setFieldValue("clinicalNote.generated", text);
   };
 
-  // the note starts from the default text, and follows the review while the
-  // user has not edited it
+  // a text the user applied follows the review while they have not edited it
   useEffect(() => {
-    if (fresh == null || !clinicalNote.create || edited) return;
-    if (clinicalNote.text !== fresh || clinicalNote.template == null) {
-      setFieldValue("clinicalNote.template", template);
+    if (fresh == null || !clinicalNote.create) return;
+    if (clinicalNote.generated == null || edited) return;
+    if (clinicalNote.text !== fresh) {
       setFieldValue("clinicalNote.text", fresh);
       setFieldValue("clinicalNote.generated", fresh);
     }
   }, [
     fresh,
-    template,
     edited,
     clinicalNote.create,
     clinicalNote.text,
-    clinicalNote.template,
+    clinicalNote.generated,
     setFieldValue,
   ]);
 
@@ -128,6 +126,9 @@ export function ClinicalNoteStep({
   }, [types, clinicalNote.idClinicalNoteType, setFieldValue]);
 
   const applyDefault = () => fill(getDefaultTemplate(t));
+  // the text the user wrote, or changed, is only replaced once confirmed
+  const confirmReplace =
+    !!clinicalNote.text.trim() && clinicalNote.text !== clinicalNote.generated;
 
   // the variables offered when a template is saved, by group
   const variableGroups = CLINICAL_NOTE_VARIABLE_GROUPS.map((group) => ({
@@ -278,14 +279,14 @@ export function ClinicalNoteStep({
                   okText={t("labels.yes")}
                   cancelText={t("labels.no")}
                   onConfirm={applyDefault}
-                  disabled={!edited || !clinicalNote.text.trim()}
+                  disabled={!confirmReplace}
                 >
                   <Button
                     size="small"
                     icon={<DownloadOutlined />}
                     data-testid="review-note-default"
                     onClick={() => {
-                      if (!edited || !clinicalNote.text.trim()) {
+                      if (!confirmReplace) {
                         applyDefault();
                       }
                     }}

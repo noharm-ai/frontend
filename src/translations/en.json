@@ -35,7 +35,6 @@
   "success": {
     "generic": "Yeah! Saved successfully! :)",
     "intervention": "Yeah! Your Intervention has been saved! :)",
-    "defaultObservation": "Yeah! Your Observation has been saved!",
     "applyDefaultObservation": "Observation applied"
   },
   "menu": {
@@ -380,6 +379,7 @@
     "prescriber": "Prescriber",
     "economyType": "Economy type",
     "hasEconomy": "Has economy",
+    "recordedByInfectionControl": "Recorded by infection control",
     "selectAll": "Select all",
     "protocols": "Protocols",
     "protocolAlerts": "Protocol alerts",
@@ -507,11 +507,16 @@
     "adultExams": "Adult",
     "pediatricExams": "Pediatric",
     "footer": "Changes are made in Admin, under Parameters.",
+    "maxDosePlus": "Max dose (Sum)",
+    "maxDosePlusIgnoreFrequencies": "Frequencies left out of the sum",
+    "maxDosePlusSumAll": "None: every item is summed",
     "json": "JSON (custom values only)",
     "frequency": {
       "33": "PRN",
       "44": "At discretion",
-      "66": "Now"
+      "55": "Continuous",
+      "66": "Now",
+      "99": "N/A"
     }
   },
   "maintainerBadge": {
@@ -675,8 +680,8 @@
     "title": "Intervention",
     "titleMultiple": "Multiple Intervention",
     "infectionControlTag": "Infection control",
-    "lockedInfectionControl": "This intervention was recorded by infection control and only infection control can change it.",
     "locked": "You are not allowed to change this intervention.",
+    "createdByInfectionControl": "This intervention was recorded by infection control.",
 
     "labelPrescriptionError": "Prescription error",
     "labelPrescriptionErrorHint": "Prescribing error with clinical significance is defined as an unintentional decision error that may reduce the likelihood that the treatment will be effective or increase the risk of injury to the patient, when compared to established and accepted clinical practices. Ref: CFF, Prot.: MS and Anvisa",
@@ -1745,7 +1750,6 @@
     },
     "cultures": {
       "title": "Cultures",
-      "legend": "Latest collection of each exam and material, released in the last 60 days",
       "summary": "List",
       "byDrug": "By drug",
       "byDrugLegend": "Antibiogram of each drug, the ones in use in this prescription flagged",
@@ -2108,7 +2112,7 @@
     },
     "clinicalNote": {
       "stepTitle": "Clinical note",
-      "stepLegend": "Optional. Record the review in the patient's chart: the text starts from what was reviewed and can be edited.",
+      "stepLegend": "Optional. Record the review in the patient's chart: write the text, or apply the default text or a saved template, and edit it as you like.",
       "next": "Next: clinical note",
       "create": "Write clinical note",
       "skip": "Don't write",
@@ -2218,11 +2222,11 @@
       "interventions": "Interventions",
       "cultures": "Cultures ({{count}})",
       "culturesNotLoaded": "The cultures were not loaded. Reload the cultures section of the page and generate the report again.",
-      "exams": "Exams ({{count}})",
-      "examsPrescription": "Prescription of {{date}}",
-      "examsOutOfRange_one": "{{count}} out of range",
-      "examsOutOfRange_other": "{{count}} out of range",
-      "variation": "Variation"
+      "examTrends": "Exam trends",
+      "examTrendsHint": "The exams on the timeline over the last {{count}} days; the latest result of each day.",
+      "examTrendsEmpty": "No exam on the timeline.",
+      "examTrendsNotLoaded": "The exam history was not loaded. Wait for the exams on the timeline to load and generate the report again.",
+      "today": "today"
     },
     "history": {
       "title": "Reviews",
@@ -2325,6 +2329,7 @@
       "variationAtLeast": "variation ≥ {{value}}",
       "variationBelow": "variation < {{value}}",
       "variationAtMost": "variation ≤ {{value}}",
+      "variationOptional": "(when there is a baseline)",
       "unavailable": "{{exam}} isn't configured in this hospital: the trigger won't fire",
       "current": "Patient's current result: {{result}}",
       "noCurrent": "The patient has no result of this exam",
@@ -2348,6 +2353,7 @@
         "variation": "Variation",
         "variationOperator": "Variation operator",
         "variationHint": "From the result at review time; a fall is negative (e.g. < -25%)",
+        "variationOptional": "Without a result at review time, use the value only",
         "fromCourseDay": "From treatment day",
         "fromCourseDayHint": "E.g. 4 applies from D4 on. Leave it blank to apply from the start of the treatment",
         "optional": "optional",
@@ -2355,6 +2361,7 @@
         "enabledByDefault": "On by default",
         "nameTooLong": "Use up to 100 characters",
         "conditionRequired": "Enter at least one condition (value or variation)",
+        "variationOptionalNeedsValue": "Also set the value condition",
         "limit": "Limit of {{count}} rules reached",
         "empty": "No rules yet"
       },
@@ -2365,7 +2372,8 @@
       "baseline": "Baseline: {{result}}",
       "variation": "Variation: {{value}}",
       "noBaseline": "no baseline value",
-      "noBaselineVariation": "no baseline value: the variation conditions won't fire"
+      "noBaselineVariation": "no baseline value: the variation conditions won't fire",
+      "noBaselineValueOnly": "no baseline value: only the value condition applies"
     }
   },
   "accessibility": {

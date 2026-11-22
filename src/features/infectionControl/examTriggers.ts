@@ -18,7 +18,8 @@ export const formatVariation = (value: number) =>
   `${value > 0 ? "+" : ""}${formatExamValue(value)}%`;
 
 // whether a rule compares the result with the one at review time: without
-// that one (no baseline) these conditions never fire
+// that one (no baseline) these conditions never fire, or are skipped when the
+// rule makes them optional
 export const hasVariation = (rule: IExamTriggerCondition) =>
   [
     rule.variationAbove,
@@ -42,7 +43,8 @@ const variation = (
 
 /**
  * The conditions of a rule, in a few words: "> 1,5 e variação > +30%",
- * "< 60 e variação < -25%", "> 38 a partir do D4", "> 50 e variação ≥ +20%"
+ * "< 60 e variação < -25%", "> 38 a partir do D4", "> 50 e variação ≥ +20%",
+ * "> 0,5 e variação > -50% (se houver referência)"
  */
 export const describeExamTriggerRule = (
   rule: IExamTriggerCondition,
@@ -61,6 +63,9 @@ export const describeExamTriggerRule = (
 
   return [
     conditions.join(t("infectionControl.examTriggers.and")),
+    rule.variationOptional &&
+      hasVariation(rule) &&
+      t("infectionControl.examTriggers.variationOptional"),
     rule.fromCourseDay != null &&
       t("infectionControl.examTriggers.fromCourseDay", {
         day: rule.fromCourseDay,

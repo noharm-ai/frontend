@@ -4,7 +4,7 @@ import { SwapOutlined } from "@ant-design/icons";
 import Tooltip from "components/Tooltip";
 import Popover from "components/PopoverStyled";
 import Button from "components/Button";
-import { DoseCellPopover } from "./DoseCell.style";
+import { DoseCellPopover, DoseValue } from "./DoseCell.style";
 import { formatNumber } from "src/utils/number";
 import { getDifferentiatedDose } from "src/utils/dose";
 import { setDrugUnitConversionOpen } from "features/drugs/DrugUnitConversion/DrugUnitConversionSlice";
@@ -27,13 +27,18 @@ interface DoseRecord {
   differentiatedDose?: string | null;
   dosage?: string | number;
   idMeasureUnitDefault?: string;
+  // prescalc's outlier score key: the range of a range drug
   doseconv?: string | number;
+  // the dose in the default unit (dose x factor), as the alerts read it
+  convertedDose?: number | null;
   useWeight?: boolean;
   doseRange?: string | number;
   doseWeight?: string;
   doseWeightValue?: string;
   doseWeightDay?: string;
   doseWeightDayValue?: string;
+  // prescribed in a unit other than the default one, with no factor to it
+  missingConvertFactor?: boolean;
 }
 
 interface DoseCellBag {
@@ -93,21 +98,35 @@ function DoseCell({ record, bag }: DoseCellProps): React.ReactElement | null {
           <tr>
             <td className="info-value header">Dose convertida</td>
             <td className="info-value right">
-              {record.useWeight && !record.doseWeight ? (
-                <span className="missing-data">Peso indefinido</span>
+              {record.missingConvertFactor ? (
+                <span className="missing-data">Sem fator de conversão</span>
               ) : (
-                <>
-                  {record.doseRange && record.doseconv
-                    ? `${formatNumber(Number(record.doseconv) - Number(record.doseRange), 2)} - ${formatNumber(record.doseconv, 2)}`
-                    : formatNumber(record.doseconv, 2)}
-                </>
+                formatNumber(record.convertedDose, 2)
               )}
             </td>
             <td className="info-value">
               {record.idMeasureUnitDefault || "(indefinida)"}
-              {record.useWeight ? " / Kg" : ""}
             </td>
           </tr>
+
+          {record.doseRange && (
+            <tr>
+              <td className="info-value header">Faixa (escore)</td>
+              <td className="info-value right">
+                {record.useWeight && !record.doseWeight ? (
+                  <span className="missing-data">Peso indefinido</span>
+                ) : record.doseconv ? (
+                  `${formatNumber(Number(record.doseconv) - Number(record.doseRange), 2)} - ${formatNumber(record.doseconv, 2)}`
+                ) : (
+                  "-"
+                )}
+              </td>
+              <td className="info-value">
+                {record.idMeasureUnitDefault || "(indefinida)"}
+                {record.useWeight ? " / Kg" : ""}
+              </td>
+            </tr>
+          )}
 
           {record.doseWeight && (
             <tr>
@@ -136,6 +155,15 @@ function DoseCell({ record, bag }: DoseCellProps): React.ReactElement | null {
           <strong>Dose diferenciada:</strong> o prescritor definiu uma dose
           diferente para cada administração ({differentiatedDose}). A dose
           convertida corresponde à soma de todas as doses.
+        </p>
+      )}
+
+      {record.missingConvertFactor && (
+        <p className="missing-convert-factor-note">
+          <strong>Sem fator de conversão:</strong> não há fator de{" "}
+          {record.measureUnit?.value} para a unidade padrão (
+          {record.idMeasureUnitDefault}). A dose não é convertida e a dose
+          máxima a considera como se já estivesse na unidade padrão.
         </p>
       )}
 
@@ -180,7 +208,11 @@ function DoseCell({ record, bag }: DoseCellProps): React.ReactElement | null {
 
   return (
     <Popover content={popoverContent} mouseEnterDelay={0.3}>
-      {formattedDose} {measureUnit}
+      <DoseValue
+        className={record.missingConvertFactor ? "missing-convert-factor" : ""}
+      >
+        {formattedDose} {measureUnit}
+      </DoseValue>
     </Popover>
   );
 }

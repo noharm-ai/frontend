@@ -10,6 +10,8 @@ import { Select, Input, Radio } from "components/Inputs";
 import { searchDrugs } from "features/lists/ListsSlice";
 import Tooltip from "components/Tooltip";
 import LoadBox from "components/LoadBox";
+import Feature from "models/Feature";
+import { FeatureService } from "services/FeatureService";
 
 export default function SecondaryFilters({ segments }) {
   const { t } = useTranslation();
@@ -131,6 +133,27 @@ export default function SecondaryFilters({ segments }) {
           value={values.hasEconomy}
         />
       </Col>
+
+      {FeatureService.has(Feature.INFECTION_CONTROL) && (
+        <Col
+          md={24}
+          xl={16}
+          xxl={14}
+          data-kb="interventions.infectionControlFilter"
+        >
+          <Heading as="label" $size="14px">
+            {t("labels.recordedByInfectionControl")}:
+          </Heading>
+          <Radio.Group
+            options={yesNoOptionsNullable}
+            optionType="button"
+            onChange={({ target: { value } }) =>
+              setFieldValue({ infectionControl: value })
+            }
+            value={values.infectionControl}
+          />
+        </Col>
+      )}
     </Row>
   );
 }
