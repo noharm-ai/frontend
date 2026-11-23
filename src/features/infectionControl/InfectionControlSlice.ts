@@ -162,6 +162,10 @@ export interface IAntimicrobialTimeline {
   exams: IExamCardItem[];
   // how many of them are out of range
   alertExams: number;
+  // the exams the timeline opens with, by reference (tpexame_ref), in order,
+  // as the schema chose them; null while it never chose (and absent from an
+  // older backend): the default ones then (TIMELINE_EXAMS)
+  timelineExams?: string[] | null;
 }
 
 // the antimicrobial timeline comes with the follow-up, judged from the same

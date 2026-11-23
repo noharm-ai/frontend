@@ -41,11 +41,12 @@ export interface IExamSeries {
 }
 
 /**
- * The exams the antimicrobial timeline plots, by their NoHarm identifier
- * (tpexame_ref of the segment exams, the same in every schema, unlike the
- * tpexame of each schema). Each slot takes the first of its identifiers the
- * patient has results of: CKD-EPI or, where configured instead, CKD-EPI 2021.
- * Others are added from the timeline
+ * The exams the antimicrobial timeline plots when the backend sends none
+ * (each schema chooses them, see getDefaultExamIds), by their NoHarm
+ * identifier (tpexame_ref of the segment exams, the same in every schema,
+ * unlike the tpexame of each schema). Each slot takes the first of its
+ * identifiers the patient has results of: CKD-EPI or, where configured
+ * instead, CKD-EPI 2021. Others are added from the timeline
  */
 export const TIMELINE_EXAMS = [["pcru"], ["ckd", "ckd21"], ["h_conleuc"]];
 
@@ -133,13 +134,18 @@ export const getExamOptions = (historyList: IExamHistory[]): IExamOption[] => {
 };
 
 /**
- * The exams the timeline opens with (TIMELINE_EXAMS), among the options, in
- * that order; the ones the patient has no results of are left out
+ * The exams the timeline opens with, among the options, in order; the ones
+ * the patient has no results of are left out. `refs` are the references the
+ * schema chose (sent with the timeline); without them (an older backend),
+ * TIMELINE_EXAMS
  */
-export const getDefaultExamIds = (options: IExamOption[]) =>
-  TIMELINE_EXAMS.flatMap((refs) => {
-    const id = refs
-      .map((ref) => `ref:${ref}`)
+export const getDefaultExamIds = (
+  options: IExamOption[],
+  refs?: string[] | null,
+) =>
+  (refs ? refs.map((ref) => [ref]) : TIMELINE_EXAMS).flatMap((slot) => {
+    const id = slot
+      .map((ref) => `ref:${ref.toLowerCase()}`)
       .find((candidate) => options.some((option) => option.id === candidate));
     return id ? [id] : [];
   });

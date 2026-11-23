@@ -7,7 +7,6 @@ import styled from "styled-components";
 import notification from "components/notification";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
-import { formatDateTime } from "utils/date";
 import { getErrorMessage } from "utils/errorHandler";
 import { useAppDispatch } from "src/store";
 
@@ -16,10 +15,10 @@ import {
   IReviewExceptionItem,
   IReviewExceptions,
   IReviewExceptionsSaved,
-  IReviewExceptionsVersion,
   saveReviewExceptions,
   searchReviewExceptionOptions,
 } from "../InfectionControlListSlice";
+import { SettingVersions } from "../InfectionControlSettings/SettingVersions/SettingVersions";
 
 // letters typed before the antimicrobials are searched
 const MIN_SEARCH = 3;
@@ -50,32 +49,6 @@ const Body = styled.div`
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
-  }
-
-  .exceptions-updated {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 4px 8px;
-    margin-top: 16px;
-    font-size: 13px;
-
-    .ant-btn {
-      padding: 0;
-      height: auto;
-    }
-  }
-
-  .exceptions-previous {
-    margin-top: 12px;
-    padding: 12px 16px;
-    border: 1px dashed #d9d9d9;
-    border-radius: 8px;
-
-    h3.previous-title {
-      font-size: 14px;
-      margin-bottom: 4px;
-    }
   }
 
   .exceptions-footer {
@@ -121,7 +94,6 @@ export function ReviewExceptions({
   const [drugs, setDrugs] = useState<IReviewExceptionItem[]>([]);
   // the list as saved: when and by whom, and the version it replaced
   const [saved, setSaved] = useState<IReviewExceptionsSaved | null>(null);
-  const [showPrevious, setShowPrevious] = useState(false);
   const [searching, setSearching] = useState(false);
   const [searched, setSearched] = useState(false);
   const [found, setFound] = useState<IReviewExceptions>({
@@ -274,17 +246,6 @@ export function ReviewExceptions({
     </div>
   );
 
-  /** When and by whom a version was saved */
-  const updatedText = (version: IReviewExceptionsVersion) =>
-    version.updatedBy
-      ? t("infectionControl.reviewExceptions.updated", {
-          date: formatDateTime(version.updatedAt),
-          user: version.updatedBy,
-        })
-      : t("infectionControl.reviewExceptions.updatedAt", {
-          date: formatDateTime(version.updatedAt),
-        });
-
   const previous = saved?.previous;
 
   return (
@@ -331,7 +292,7 @@ export function ReviewExceptions({
             <Alert
               type="info"
               showIcon
-              message={t("infectionControl.reviewExceptions.readOnly")}
+              title={t("infectionControl.reviewExceptions.readOnly")}
             />
           )}
 
@@ -346,53 +307,28 @@ export function ReviewExceptions({
             drugs,
           )}
 
-          {saved?.updatedAt && (
-            <div
-              className="exceptions-updated muted"
-              data-testid="review-exceptions-updated"
-            >
-              <span>{updatedText(saved)}</span>
-              {previous && (
-                <Button
-                  type="link"
-                  size="small"
-                  onClick={() => setShowPrevious(!showPrevious)}
-                >
-                  {t(
-                    showPrevious
-                      ? "infectionControl.reviewExceptions.hidePrevious"
-                      : "infectionControl.reviewExceptions.showPrevious",
+          <SettingVersions
+            current={saved}
+            previous={previous}
+            renderPrevious={() =>
+              previous && (
+                <>
+                  {renderGroup(
+                    "substance",
+                    t("infectionControl.reviewExceptions.substances"),
+                    previous.substances,
+                    false,
                   )}
-                </Button>
-              )}
-            </div>
-          )}
-
-          {previous && showPrevious && (
-            <div
-              className="exceptions-previous"
-              data-testid="review-exceptions-previous"
-            >
-              <h3 className="previous-title">
-                {t("infectionControl.reviewExceptions.previousTitle")}
-              </h3>
-              {previous.updatedAt && (
-                <div className="muted">{updatedText(previous)}</div>
-              )}
-              {renderGroup(
-                "substance",
-                t("infectionControl.reviewExceptions.substances"),
-                previous.substances,
-                false,
-              )}
-              {renderGroup(
-                "drug",
-                t("infectionControl.reviewExceptions.drugs"),
-                previous.drugs,
-                false,
-              )}
-            </div>
-          )}
+                  {renderGroup(
+                    "drug",
+                    t("infectionControl.reviewExceptions.drugs"),
+                    previous.drugs,
+                    false,
+                  )}
+                </>
+              )
+            }
+          />
 
           <div className="exceptions-footer">
             <Button onClick={onClose}>{t("actions.close")}</Button>

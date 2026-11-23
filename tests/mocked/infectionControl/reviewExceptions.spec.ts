@@ -149,14 +149,14 @@ test.describe("with READ_INFECTION_CONTROL only", () => {
   }) => {
     const modal = await openExceptions(page);
 
-    await expect(modal.getByTestId("review-exceptions-updated")).toContainText(
+    await expect(modal.getByTestId("setting-updated")).toContainText(
       "Alterada em 01/11/2026 10:00 por Fulano Beltrano",
     );
     await expect(modal).not.toContainText("ZZ AMICACINA TESTE");
 
     await modal.getByRole("button", { name: "Ver versão anterior" }).click();
 
-    const previous = modal.getByTestId("review-exceptions-previous");
+    const previous = modal.getByTestId("setting-previous");
     await expect(previous).toContainText("ZZ AMICACINA TESTE");
     await expect(previous).toContainText(
       "Alterada em 20/10/2026 08:30 por NoHarm",

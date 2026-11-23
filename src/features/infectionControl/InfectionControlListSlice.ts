@@ -460,6 +460,58 @@ export const saveReviewExceptions = createAsyncThunk(
   },
 );
 
+// an exam of the timeline, by its reference (tpexame_ref); available when
+// the schema maps an active exam to it
+export interface ITimelineExam {
+  examRef: string;
+  name: string;
+  available: boolean;
+}
+
+// one saved version of the timeline exams
+export interface ITimelineExamsVersion {
+  exams: ITimelineExam[];
+  updatedAt: string | null;
+  updatedBy: string | null;
+}
+
+// the exams the timeline opens with (the default ones while the schema never
+// chose them), the version they replaced, and what can be chosen
+export interface ITimelineExamsSaved extends ITimelineExamsVersion {
+  default: boolean;
+  previous: ITimelineExamsVersion | null;
+  defaultExams: ITimelineExam[];
+  options: { examRef: string; name: string }[];
+}
+
+/** The exams the antimicrobial timeline opens with; kept by the caller */
+export const fetchTimelineExams = createAsyncThunk(
+  "infectionControlList/fetchTimelineExams",
+  async (_: void, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.getTimelineExams();
+
+      return response.data.data as ITimelineExamsSaved;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
+/** Replaces the exams the timeline opens with (WRITE_INFECTION_CONTROL) */
+export const saveTimelineExams = createAsyncThunk(
+  "infectionControlList/saveTimelineExams",
+  async (params: { exams: string[] }, thunkAPI) => {
+    try {
+      const response = await api.infectionControl.saveTimelineExams(params);
+
+      return response.data.data as ITimelineExamsSaved;
+    } catch (err) {
+      return thunkAPI.rejectWithValue((err as AxiosError).response?.data);
+    }
+  },
+);
+
 export type BackfillType = "admissions" | "summary";
 
 export interface IBackfillResult {

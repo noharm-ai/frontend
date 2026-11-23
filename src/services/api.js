@@ -947,6 +947,11 @@ api.infectionControl.searchReviewExceptionOptions = (term) =>
 // replaces the whole list: a substance or drug left out is reviewed again
 api.infectionControl.saveReviewExceptions = (params) =>
   instance.put("/infection-control/review-exceptions", params, setHeaders());
+// the exams the antimicrobial timeline opens with
+api.infectionControl.getTimelineExams = () =>
+  instance.get("/infection-control/timeline-exams", setHeaders());
+api.infectionControl.saveTimelineExams = (params) =>
+  instance.put("/infection-control/timeline-exams", params, setHeaders());
 
 // the antimicrobials, by name
 api.infectionControl.searchAntimicrobials = (term) =>

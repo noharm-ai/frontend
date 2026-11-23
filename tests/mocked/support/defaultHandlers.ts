@@ -124,6 +124,34 @@ export function defaultHandlers(): Record<string, Handler> {
     "POST /infection-control/admissions": {
       json: { status: "success", data: { count: 0, admissions: [] } },
     },
+    // the infection control settings (Configuração, on the worklist): no
+    // antimicrobial exempt from review, and the default timeline exams
+    "GET /infection-control/review-exceptions": {
+      json: {
+        status: "success",
+        data: {
+          substances: [],
+          drugs: [],
+          updatedAt: null,
+          updatedBy: null,
+          previous: null,
+        },
+      },
+    },
+    "GET /infection-control/timeline-exams": {
+      json: {
+        status: "success",
+        data: {
+          exams: [],
+          default: true,
+          updatedAt: null,
+          updatedBy: null,
+          previous: null,
+          defaultExams: [],
+          options: [],
+        },
+      },
+    },
 
     // async job polling: always terminal so the UI never polls forever
     "GET /queue/status/:id": {

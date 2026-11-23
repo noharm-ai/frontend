@@ -2331,7 +2331,28 @@
     },
     "settings": {
       "open": "Configuração",
-      "title": "Configuração"
+      "title": "Configuração",
+      "updated": "Alterada em {{date}} por {{user}}",
+      "updatedAt": "Alterada em {{date}}",
+      "showPrevious": "Ver versão anterior",
+      "hidePrevious": "Ocultar versão anterior",
+      "previousTitle": "Versão anterior"
+    },
+    "timelineExams": {
+      "tab": "Exames da linha do tempo",
+      "description": "Exames exibidos abaixo dos antimicrobianos na linha do tempo de cada paciente, nesta ordem. Cada exame aparece quando o paciente tem resultado dele; outros podem ser adicionados na própria linha do tempo.",
+      "defaultNotice": "Este hospital usa os exames padrão da NoHarm.",
+      "add": "Adicionar exame",
+      "none": "Nenhum exame: a linha do tempo abre sem exames.",
+      "unavailable": "Sem exame do hospital mapeado",
+      "moveUp": "Mover para cima",
+      "moveDown": "Mover para baixo",
+      "remove": "Remover",
+      "restoreDefault": "Usar exames padrão",
+      "max": "Até {{max}} exames",
+      "saved": "Exames salvos. Valem para as próximas linhas do tempo abertas.",
+      "loadError": "Não foi possível carregar os exames",
+      "readOnly": "Somente o controle de infecção pode alterar estes exames."
     },
     "reviewExceptions": {
       "tab": "Antimicrobianos sem revisão",
@@ -2344,12 +2365,7 @@
       "saved": "Lista salva. Os pacientes afetados serão atualizados em alguns minutos.",
       "loadError": "Não foi possível carregar a lista",
       "readOnly": "Somente o controle de infecção pode alterar esta lista.",
-      "exemptTag": "Revisão não obrigatória",
-      "updated": "Alterada em {{date}} por {{user}}",
-      "updatedAt": "Alterada em {{date}}",
-      "showPrevious": "Ver versão anterior",
-      "hidePrevious": "Ocultar versão anterior",
-      "previousTitle": "Versão anterior"
+      "exemptTag": "Revisão não obrigatória"
     },
     "examTriggers": {
       "title": "Gatilhos de exame",

@@ -2321,7 +2321,28 @@
     },
     "settings": {
       "open": "Settings",
-      "title": "Settings"
+      "title": "Settings",
+      "updated": "Changed on {{date}} by {{user}}",
+      "updatedAt": "Changed on {{date}}",
+      "showPrevious": "Show previous version",
+      "hidePrevious": "Hide previous version",
+      "previousTitle": "Previous version"
+    },
+    "timelineExams": {
+      "tab": "Timeline exams",
+      "description": "Exams shown below the antimicrobials on each patient's timeline, in this order. Each exam appears when the patient has a result of it; others can be added on the timeline itself.",
+      "defaultNotice": "This hospital uses the NoHarm default exams.",
+      "add": "Add exam",
+      "none": "No exams: the timeline opens without exams.",
+      "unavailable": "No hospital exam mapped",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "remove": "Remove",
+      "restoreDefault": "Use default exams",
+      "max": "Up to {{max}} exams",
+      "saved": "Exams saved. They apply to the timelines opened from now on.",
+      "loadError": "Could not load the exams",
+      "readOnly": "Only infection control can change these exams."
     },
     "reviewExceptions": {
       "tab": "Antimicrobials without review",
@@ -2334,12 +2355,7 @@
       "saved": "List saved. The affected patients will be updated in a few minutes.",
       "loadError": "Could not load the list",
       "readOnly": "Only infection control can change this list.",
-      "exemptTag": "Review not required",
-      "updated": "Changed on {{date}} by {{user}}",
-      "updatedAt": "Changed on {{date}}",
-      "showPrevious": "Show previous version",
-      "hidePrevious": "Hide previous version",
-      "previousTitle": "Previous version"
+      "exemptTag": "Review not required"
     },
     "examTriggers": {
       "title": "Exam triggers",

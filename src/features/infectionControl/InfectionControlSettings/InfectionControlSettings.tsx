@@ -7,6 +7,7 @@ import styled from "styled-components";
 import DefaultModal from "components/Modal";
 
 import { ReviewExceptions } from "../ReviewExceptions/ReviewExceptions";
+import { TimelineExams } from "../TimelineExams/TimelineExams";
 
 const Body = styled.div`
   .ant-tabs-nav {
@@ -16,8 +17,8 @@ const Body = styled.div`
 
 /**
  * The schema's infection control settings, opened from the worklist header:
- * one tab per setting (for now, the antimicrobials whose courses need no
- * review). Anyone who sees the worklist reads them; each tab says who may
+ * one tab per setting (the antimicrobials whose courses need no review, the
+ * exams the antimicrobial timeline opens with). Anyone who sees the worklist reads them; each tab says who may
  * change it. `onSaved` reloads the worklist
  */
 export function InfectionControlSettings({ onSaved }: { onSaved: () => void }) {
@@ -59,6 +60,11 @@ export function InfectionControlSettings({ onSaved }: { onSaved: () => void }) {
                 children: (
                   <ReviewExceptions onSaved={onSaved} onClose={close} />
                 ),
+              },
+              {
+                key: "timelineExams",
+                label: t("infectionControl.timelineExams.tab"),
+                children: <TimelineExams onClose={close} />,
               },
             ]}
           />
