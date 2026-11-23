@@ -35,7 +35,9 @@ const PENDING_TYPES = [
  * The filters under "see more", in group cards like the prescription
  * prioritization: the antimicrobials running (each on its treatment days, and
  * the AWaRe level) and the follow-up (admission numbers, how far back the
- * closed ones go, pending reason, non-conformity and overdue review). The cards are not forms, nothing submits on Enter.
+ * closed ones go, pending reason, non-conformity, overdue review and the
+ * patients running only antimicrobials that need no review, hidden unless
+ * asked). The cards are not forms, nothing submits on Enter.
  *
  * A closed admission has nothing running, no open reason and no evaluation in
  * force, so with only the closed ones chosen those filters are disabled
@@ -240,6 +242,26 @@ export function SecondaryFilters() {
                   checked={!!values.overdueReview}
                   onChange={(overdueReview: boolean) =>
                     setFieldValue({ overdueReview })
+                  }
+                />
+              </div>
+            </div>
+
+            <div
+              className="form-row"
+              data-kb="infectionControl.worklist.filters.includeNotRequired"
+            >
+              <div className="form-label-actions">
+                <label htmlFor="includeNotRequired">
+                  {t("infectionControl.worklist.filters.includeNotRequired")}:
+                </label>
+              </div>
+              <div className="form-input">
+                <Switch
+                  id="includeNotRequired"
+                  checked={!!values.includeNotRequired}
+                  onChange={(includeNotRequired: boolean) =>
+                    setFieldValue({ includeNotRequired })
                   }
                 />
               </div>

@@ -687,3 +687,37 @@ test("leaves the exams day by day out of the report without a course", async ({
   await expect(report).toBeVisible();
   await expect(report.getByTestId("report-exam-trends")).toHaveCount(0);
 });
+
+test("opens with the exams the schema chose, in its order", async ({
+  page,
+  mockApi,
+}) => {
+  // leukocytes first, then CKD-EPI 2021; no CRP
+  mockApi.override(TIMELINE, {
+    json: {
+      ...timeline("199"),
+      data: {
+        ...timeline("199").data,
+        timelineExams: ["h_conleuc", "ckd21", "zz_not_in_history"],
+      },
+    },
+  });
+  mockApi.override(EXAMS_HISTORY, {
+    json: history({
+      pcr_s: CRP,
+      ckd: CKD,
+      ckd21: CKD21,
+      leuco: LEUKOCYTES,
+    }),
+  });
+
+  await page.goto(PAGE_URL);
+
+  await expect(
+    antimicrobialTimeline(page).getByTestId("course-row"),
+  ).toHaveCount(1, { timeout: 15000 });
+  // an exam the patient has no results of is left out
+  await expect(examRows(page)).toHaveCount(2);
+  await expect(examRows(page).nth(0)).toContainText("Leucócitos");
+  await expect(examRows(page).nth(1)).toContainText("CKD-EPI 2021");
+});

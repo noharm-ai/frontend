@@ -125,7 +125,7 @@ export function InfectionControl() {
   // it is still one tap away
   const [coursesView, setCoursesView] = useState<"list" | "timeline">("list");
   // the exams on the timeline, by IExamOption id; null until one is added or
-  // taken out, the default ones (getDefaultExamIds) meanwhile
+  // taken out, the ones the schema chose (getDefaultExamIds) meanwhile
   const [examIds, setExamIds] = useState<string[] | null>(null);
 
   const isValid = /^\d+$/.test(admissionNumber);
@@ -221,7 +221,7 @@ export function InfectionControl() {
   const timelineExams = useMemo(() => {
     if (!hasExams) return null;
 
-    const ids = examIds ?? getDefaultExamIds(examOptions);
+    const ids = examIds ?? getDefaultExamIds(examOptions, data?.timelineExams);
     const plotted = ids
       .map((id) => examOptions.find((option) => option.id === id))
       .filter((option) => !!option);
@@ -244,7 +244,7 @@ export function InfectionControl() {
       },
       onRetry: loadExamHistory,
     };
-  }, [hasExams, examIds, examOptions, examHistory.status]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [hasExams, examIds, examOptions, examHistory.status, data?.timelineExams]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // the next one of the worklist the page came from, by its filters
   const showNextPending =

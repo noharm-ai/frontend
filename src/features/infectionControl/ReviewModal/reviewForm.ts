@@ -61,6 +61,9 @@ export interface IDrugEvaluationFields {
   courseStart: string;
   drug: string;
   current: IAntimicrobialEvaluation | null;
+  // false when its drug is among the review exceptions: listed so it may
+  // still be evaluated, but not selected
+  reviewRequired: boolean;
   evaluate: boolean;
   conforming: boolean | null;
   start: EvaluationStart;
@@ -220,7 +223,9 @@ const watches = (
 
 /**
  * A fresh review: one entry per running course. Drugs without an evaluation
- * in force (none, expired or with a changed posology) come selected.
+ * in force (none, expired or with a changed posology) come selected, but for
+ * the ones exempt from review (the review exceptions), which may still be
+ * evaluated.
  */
 export const getInitialValues = (
   followUp: IFollowUp,
@@ -258,7 +263,10 @@ export const getInitialValues = (
         courseStart: course.start,
         drug: drugNames[course.idDrug] ?? `${course.idDrug}`,
         current: course.evaluation,
-        evaluate: !course.evaluation || drugsWithReason.has(course.idDrug),
+        reviewRequired: course.reviewRequired !== false,
+        evaluate:
+          course.reviewRequired !== false &&
+          (!course.evaluation || drugsWithReason.has(course.idDrug)),
         conforming: null,
         start: "courseStart" as EvaluationStart,
         startDate: null,

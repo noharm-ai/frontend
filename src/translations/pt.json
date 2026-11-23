@@ -2316,6 +2316,7 @@
         "treatmentDayTo": "até",
         "treatmentDayHint": "Dia de tratamento do antimicrobiano desta linha (D1 são as primeiras 24 horas): amoxicilina em D1 traz quem começou amoxicilina nas últimas 24 horas",
         "nonConforming": "Somente com avaliação não conforme vigente",
+        "includeNotRequired": "Incluir pacientes sem revisão obrigatória",
         "groups": {
           "antimicrobials": "Antimicrobianos",
           "followUp": "Acompanhamento"
@@ -2331,6 +2332,45 @@
         "7": "Resultado de exame",
         "8": "Resultado de cultura"
       }
+    },
+    "settings": {
+      "open": "Configuração",
+      "title": "Configuração",
+      "updated": "Alterada em {{date}} por {{user}}",
+      "updatedAt": "Alterada em {{date}}",
+      "showPrevious": "Ver versão anterior",
+      "hidePrevious": "Ocultar versão anterior",
+      "previousTitle": "Versão anterior"
+    },
+    "timelineExams": {
+      "tab": "Exames da linha do tempo",
+      "description": "Exames exibidos abaixo dos antimicrobianos na linha do tempo de cada paciente, nesta ordem. Cada exame aparece quando o paciente tem resultado dele; outros podem ser adicionados na própria linha do tempo.",
+      "defaultNotice": "Este hospital usa os exames padrão da NoHarm e acompanha as mudanças do padrão.",
+      "previousDefault": "Exames padrão da NoHarm",
+      "add": "Adicionar exame",
+      "none": "Nenhum exame: a linha do tempo abre sem exames.",
+      "unavailable": "Sem exame do hospital mapeado",
+      "moveUp": "Mover para cima",
+      "moveDown": "Mover para baixo",
+      "remove": "Remover",
+      "restoreDefault": "Usar exames padrão",
+      "max": "Até {{max}} exames",
+      "saved": "Exames salvos. Valem para as próximas linhas do tempo abertas.",
+      "loadError": "Não foi possível carregar os exames",
+      "readOnly": "Somente o controle de infecção pode alterar estes exames."
+    },
+    "reviewExceptions": {
+      "tab": "Antimicrobianos sem revisão",
+      "description": "Os cursos destes antimicrobianos não geram pendência de revisão e ficam fora dos indicadores de revisão, mas continuam contando no DOT/LOT. Pacientes que usam apenas eles saem da lista de trabalho, a não ser que o filtro os inclua. Uma substância vale para todos os seus medicamentos; um medicamento vale só para ele mesmo.",
+      "add": "Buscar substância ou medicamento",
+      "notFound": "Nenhum antimicrobiano encontrado",
+      "substances": "Substâncias",
+      "drugs": "Medicamentos",
+      "none": "Nenhum",
+      "saved": "Lista salva. Os pacientes afetados serão atualizados em alguns minutos.",
+      "loadError": "Não foi possível carregar a lista",
+      "readOnly": "Somente o controle de infecção pode alterar esta lista.",
+      "exemptTag": "Revisão não obrigatória"
     },
     "examTriggers": {
       "title": "Gatilhos de exame",
@@ -2429,13 +2469,15 @@
     "help": {
       "p1": "Este relatório apresenta o uso de antimicrobianos e o processo de revisão do controle de infecção, a partir do acompanhamento dos atendimentos (cursos, avaliações de conformidade, revisões e pendências).",
       "p2": "Cada número é contado pela data do seu próprio registro: dias de terapia pelo dia, avaliações pela data em que foram registradas, cursos pela data de início e atendimentos pela data de encerramento do acompanhamento.",
-      "p3": "Passe o mouse sobre o ícone ao lado de cada indicador para ver como ele é calculado."
+      "p3": "Passe o mouse sobre o ícone ao lado de cada indicador para ver como ele é calculado.",
+      "p4": "Antimicrobianos marcados como sem revisão obrigatória (definidos em Configuração, na lista de trabalho do controle de infecção) contam no DOT/LOT e no consumo, mas ficam fora dos indicadores de revisão: cursos avaliados, avaliação até D3, DOT com avaliação, atendimentos revisados, revisões por 100 DOT e tempo pendente. Seus dias sem avaliação aparecem como \"Revisão não obrigatória\"."
     },
     "status": {
       "conforming": "Conforme",
       "non_conforming": "Não conforme",
       "not_evaluated": "Não avaliado",
-      "expired": "Avaliação vencida"
+      "expired": "Avaliação vencida",
+      "not_required": "Revisão não obrigatória"
     },
     "route": {
       "iv": "Endovenosa",
@@ -2466,7 +2508,7 @@
       "title": "Conformidade",
       "description": "Avaliações, a situação dos antimicrobianos prescritos, direcionamento por cultura, conformidade por tipo de tratamento e foco, motivos de não conformidade, substituições, intervenções e avaliações por substância",
       "withRecord": "Antimicrobianos com registro de conformidade",
-      "withRecordHelp": "Dias de antimicrobiano (DOT) com uma avaliação vigente no dia, conforme ou não conforme ÷ DOT do período. Dias não avaliados (sem avaliação ou com a avaliação vencida) contam só no total. É o total do gráfico Situação dos antimicrobianos prescritos.",
+      "withRecordHelp": "Dias de antimicrobiano (DOT) com uma avaliação vigente no dia, conforme ou não conforme ÷ DOT dos antimicrobianos com revisão obrigatória no período. Dias não avaliados (sem avaliação ou com a avaliação vencida) contam só no total. É o total do gráfico Situação dos antimicrobianos prescritos.",
       "withRecordDetail": "{{recorded}} de {{dot}} DOT",
       "conforming": "Avaliações conformes",
       "conformingHelp": "Avaliações registradas no período com parecer conforme ÷ avaliações registradas no período.",

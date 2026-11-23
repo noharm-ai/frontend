@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import LoadBox from "components/LoadBox";
 import { Row } from "components/Grid";
 import CultureReport from "features/reports/CultureReport/CultureReport";
-import DrugHistoryReport from "features/reports/DrugHistoryReport/DrugHistoryReport";
+import { DrugHistoryReport } from "features/reports/DrugHistoryReport/DrugHistoryReport";
 import { PrescriptionHistoryReport } from "features/reports/PrescriptionHistoryReport/PrescriptionHistoryReport";
 import { ExamsRawSearchReport } from "features/reports/ExamsRawSearchReport/ExamsRawSearchReport";
 import PatientObservationReport from "src/features/reports/PatientObservationReport/PatientObservationReport";

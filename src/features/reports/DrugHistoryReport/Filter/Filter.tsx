@@ -1,5 +1,4 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { Fragment, useEffect, type RefObject } from "react";
 import { useTranslation } from "react-i18next";
 import { FloatButton, Spin } from "antd";
 import {
@@ -9,6 +8,7 @@ import {
 } from "@ant-design/icons";
 import { useReactToPrint } from "react-to-print";
 
+import { useAppDispatch, useAppSelector } from "src/store";
 import { FloatButtonGroup } from "components/FloatButton";
 import AdvancedFilter from "components/AdvancedFilter";
 import DefaultModal from "components/Modal";
@@ -19,43 +19,52 @@ import {
   setFilteredResult,
   setFilters,
 } from "../DrugHistoryReportSlice";
-import { getReportData } from "../transformers";
-import { exportCSV } from "utils/report";
-import MainFilters from "./MainFilters";
-import { onBeforePrint, onAfterPrint } from "utils/report";
+import {
+  getReportData,
+  type DrugHistoryItem,
+  type DrugHistoryFilters,
+} from "../transformers";
+import { exportCSV, onBeforePrint, onAfterPrint } from "utils/report";
+import { MainFilters } from "./MainFilters/MainFilters";
 
-export default function Filter({ printRef, admissionNumber, attribute }) {
+type FetchReportDataAction =
+  | ReturnType<typeof fetchReportData.fulfilled>
+  | ReturnType<typeof fetchReportData.rejected>;
+
+interface FilterProps {
+  printRef: RefObject<HTMLDivElement | null>;
+  admissionNumber: number | string;
+  attribute: string;
+}
+
+export function Filter({ printRef, admissionNumber, attribute }: FilterProps) {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const isFetching =
-    useSelector((state) => state.reportsArea.drugHistory.status) ===
+    useAppSelector((state) => state.reportsArea.drugHistory.status) ===
     "loading";
-  const datasource = useSelector(
+  const datasource = useAppSelector(
     (state) => state.reportsArea.drugHistory.list,
   );
-  const filteredList = useSelector(
+  const filteredList = useAppSelector(
     (state) => state.reportsArea.drugHistory.filtered.result.list,
   );
   const handlePrint = useReactToPrint({
     contentRef: printRef,
-    onBeforeGetContent: onBeforePrint,
+    // react-to-print 3 renamed onBeforeGetContent to onBeforePrint
+    onBeforePrint: onBeforePrint,
     onAfterPrint: onAfterPrint,
   });
-  const initialValues = {
+  const initialValues: DrugHistoryFilters = {
     dateRange: [],
     drugList: [],
     substanceList: [],
   };
 
-  const search = async (params, forceDs) => {
-    let ds = [];
-    if (!forceDs) {
-      ds = datasource;
-    }
-
+  const search = (params: DrugHistoryFilters, forceDs?: DrugHistoryItem[]) => {
     dispatch(setFilteredStatus("loading"));
     dispatch(setFilters(params));
-    const reportData = getReportData(forceDs || ds, params);
+    const reportData = getReportData(forceDs ?? datasource, params);
     dispatch(setFilteredResult(reportData));
 
     setTimeout(() => {
@@ -65,35 +74,37 @@ export default function Filter({ printRef, admissionNumber, attribute }) {
 
   useEffect(() => {
     const fetchData = () => {
-      dispatch(fetchReportData({ admissionNumber, attribute })).then((response) => {
-        if (response.error) {
-          DefaultModal.confirm({
-            title: "Não foi possível exibir este relatório.",
-            content: (
-              <>
-                <p>
-                  Por favor, tente novamente.
-                  <br />
-                  Se o problema persistir, entre em contato com a Ajuda.
-                </p>
-              </>
-            ),
-            width: 500,
-            okText: "Tentar novamente",
-            cancelText: "Fechar",
-            onOk: () => fetchData(),
-            wrapClassName: "default-modal",
-          });
-        } else {
-          search(
-            {
-              ...initialValues,
-              dateRange: [],
-            },
-            response.payload.data,
-          );
-        }
-      });
+      dispatch(fetchReportData({ admissionNumber, attribute })).then(
+        (response: FetchReportDataAction) => {
+          if (fetchReportData.rejected.match(response)) {
+            DefaultModal.confirm({
+              title: "Não foi possível exibir este relatório.",
+              content: (
+                <>
+                  <p>
+                    Por favor, tente novamente.
+                    <br />
+                    Se o problema persistir, entre em contato com a Ajuda.
+                  </p>
+                </>
+              ),
+              width: 500,
+              okText: "Tentar novamente",
+              cancelText: "Fechar",
+              onOk: () => fetchData(),
+              wrapClassName: "default-modal",
+            });
+          } else {
+            search(
+              {
+                ...initialValues,
+                dateRange: [],
+              },
+              response.payload.data,
+            );
+          }
+        },
+      );
     };
 
     fetchData();
@@ -103,20 +114,23 @@ export default function Filter({ printRef, admissionNumber, attribute }) {
     };
   }, []); //eslint-disable-line
 
-  const exportList = async () => {
+  const exportList = () => {
     exportCSV(filteredList, t, "reportcsv");
   };
 
   return (
-    <React.Fragment>
+    <Fragment>
       <Spin spinning={isFetching}>
         {!isFetching && (
           <AdvancedFilter
             initialValues={initialValues}
             mainFilters={<MainFilters />}
+            secondaryFilters={undefined}
             onSearch={search}
+            onChangeValues={undefined}
             loading={isFetching}
             skipFilterList={["dateRange", "segmentList", "departmentList"]}
+            memoryType={undefined}
           />
         )}
       </Spin>
@@ -153,6 +167,6 @@ export default function Filter({ printRef, admissionNumber, attribute }) {
         style={{ right: 80, bottom: 25 }}
         tooltip="Voltar ao topo"
       />
-    </React.Fragment>
+    </Fragment>
   );
 }

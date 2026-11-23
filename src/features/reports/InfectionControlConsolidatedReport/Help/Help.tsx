@@ -34,6 +34,7 @@ export function HelpModal() {
         <p>{t("infectionControlConsolidated.help.p1")}</p>
         <p>{t("infectionControlConsolidated.help.p2")}</p>
         <p>{t("infectionControlConsolidated.help.p3")}</p>
+        <p>{t("infectionControlConsolidated.help.p4")}</p>
 
         <Alert
           title={

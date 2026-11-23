@@ -29,6 +29,9 @@ export interface IVerdictDays {
   non_conforming: number;
   not_evaluated: number;
   expired: number;
+  // days of courses exempt from review without a record (left out of the
+  // review indicators); missing in reports built before it
+  not_required?: number;
 }
 
 // antimicrobial days by the treatment type in force on them, by its code
@@ -48,6 +51,9 @@ export interface IOverview {
   patientsOnAntimicrobials: number;
   dotPer1000PatientDays: number | null;
   accessShare: number | null;
+  // antimicrobial days of the courses that need review (the share's
+  // denominator: the review exceptions are left out)
+  dotReviewRequired?: number;
   // antimicrobial days with a conforming or non-conforming record in force
   dotWithRecord: number;
   dotWithRecordShare: number | null;
