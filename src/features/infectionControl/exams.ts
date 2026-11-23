@@ -46,9 +46,15 @@ export interface IExamSeries {
  * identifier (tpexame_ref of the segment exams, the same in every schema,
  * unlike the tpexame of each schema). Each slot takes the first of its
  * identifiers the patient has results of: CKD-EPI or, where configured
- * instead, CKD-EPI 2021. Others are added from the timeline
+ * instead, CKD-EPI 2021. Then the leukocytes and the patient's temperature.
+ * Others are added from the timeline
  */
-export const TIMELINE_EXAMS = [["pcru"], ["ckd", "ckd21"], ["h_conleuc"]];
+export const TIMELINE_EXAMS = [
+  ["pcru"],
+  ["ckd", "ckd21"],
+  ["h_conleuc"],
+  ["temp"],
+];
 
 const toNumber = (value: unknown) => {
   const parsed = typeof value === "number" ? value : parseFloat(`${value}`);
