@@ -75,8 +75,11 @@ export function CourseList({
       {rows.map(({ idDrug, course, courses: drugCourses }) => {
         const followUp = followUps?.[courseKey(course.idDrug, course.start)];
         const evaluation = followUp?.evaluation ?? null;
-        // a course nobody has to evaluate any more says nothing about it
-        const showEvaluation = !!followUp && (!!evaluation || followUp.ongoing);
+        // a course nobody has to evaluate (any more, or at all: its drug is
+        // among the review exceptions) says nothing about it
+        const exempt = followUp?.reviewRequired === false;
+        const showEvaluation =
+          !!followUp && (!!evaluation || (followUp.ongoing && !exempt));
 
         return (
           <CourseCard
@@ -94,6 +97,11 @@ export function CourseList({
                 <Tag color={STATUS_TAG_COLORS[course.status]}>
                   {t(`infectionControl.status.${course.status}`)}
                 </Tag>
+                {exempt && (
+                  <Tag data-testid="course-exempt">
+                    {t("infectionControl.reviewExceptions.exemptTag")}
+                  </Tag>
+                )}
                 {!!course.alerts?.length && (
                   <span data-testid="course-alerts">
                     <DrugAlertLevelTag

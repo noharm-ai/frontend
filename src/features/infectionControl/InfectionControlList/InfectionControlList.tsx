@@ -29,6 +29,7 @@ import {
 } from "../InfectionControlListSlice";
 import { describePending } from "../followUp";
 import { Header, StateBox } from "../InfectionControl/InfectionControl.style";
+import { InfectionControlSettings } from "../InfectionControlSettings/InfectionControlSettings";
 import { WorklistBackfill } from "./WorklistBackfill/WorklistBackfill";
 import { WorklistCards } from "./WorklistCards/WorklistCards";
 import { WorklistFilter } from "./WorklistFilter/WorklistFilter";
@@ -245,11 +246,12 @@ export function InfectionControlList() {
             {t("infectionControl.worklist.legend")}
           </div>
         </div>
-        {PermissionService().has(Permission.INTEGRATION_UTILS) && (
-          <div className="page-header-actions">
+        <div className="page-header-actions">
+          <InfectionControlSettings onSaved={load} />
+          {PermissionService().has(Permission.INTEGRATION_UTILS) && (
             <WorklistBackfill onDone={load} />
-          </div>
-        )}
+          )}
+        </div>
       </Header>
 
       <WorklistFilter />

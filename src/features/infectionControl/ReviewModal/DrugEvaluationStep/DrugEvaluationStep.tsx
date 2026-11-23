@@ -8,6 +8,7 @@ import {
   RightOutlined,
   SyncOutlined,
 } from "@ant-design/icons";
+import { Tag } from "antd";
 import dayjs, { Dayjs } from "dayjs";
 
 import { Checkbox, DatePicker, Select, Textarea } from "components/Inputs";
@@ -211,7 +212,14 @@ export function DrugEvaluationStep({
     <DrugEvaluation data-testid="review-drug">
       <div className="drug-header">
         <div className="drug-header-main">
-          <h3 className="drug-name">{evaluation.drug}</h3>
+          <h3 className="drug-name">
+            {evaluation.drug}
+            {!evaluation.reviewRequired && (
+              <Tag style={{ marginLeft: 8 }} data-testid="review-drug-exempt">
+                {t("infectionControl.reviewExceptions.exemptTag")}
+              </Tag>
+            )}
+          </h3>
           {activeCourse && (
             <div className="drug-regimen">
               {regimen && formatRegimen(regimen) && (

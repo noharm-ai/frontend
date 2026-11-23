@@ -934,6 +934,25 @@ api.infectionControl.getExamTriggers = (admissionNumber) =>
 api.infectionControl.saveExamTriggers = (rules) =>
   instance.put("/infection-control/exam-triggers", { rules }, setHeaders());
 
+// the antimicrobials whose courses need no review: substances, and drugs
+// without a substance
+api.infectionControl.getReviewExceptions = () =>
+  instance.get("/infection-control/review-exceptions", setHeaders());
+// what the list can hold, by name
+api.infectionControl.searchReviewExceptionOptions = (term) =>
+  instance.get("/infection-control/review-exceptions/options", {
+    params: { q: term },
+    ...setHeaders(),
+  });
+// replaces the whole list: a substance or drug left out is reviewed again
+api.infectionControl.saveReviewExceptions = (params) =>
+  instance.put("/infection-control/review-exceptions", params, setHeaders());
+// the exams the antimicrobial timeline opens with
+api.infectionControl.getTimelineExams = () =>
+  instance.get("/infection-control/timeline-exams", setHeaders());
+api.infectionControl.saveTimelineExams = (params) =>
+  instance.put("/infection-control/timeline-exams", params, setHeaders());
+
 // the antimicrobials, by name
 api.infectionControl.searchAntimicrobials = (term) =>
   instance.get("/infection-control/antimicrobials", {

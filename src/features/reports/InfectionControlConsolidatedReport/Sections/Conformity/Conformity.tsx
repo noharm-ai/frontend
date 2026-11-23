@@ -59,7 +59,7 @@ export function Conformity({
             data.dot != null &&
             t("infectionControlConsolidated.conformity.withRecordDetail", {
               recorded: formatInteger(data.dotWithRecord),
-              dot: formatInteger(data.dot),
+              dot: formatInteger(data.dotReviewRequired ?? data.dot),
             })
           }
           help={tk("withRecordHelp")}

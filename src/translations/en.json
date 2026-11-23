@@ -2306,6 +2306,7 @@
         "treatmentDayTo": "to",
         "treatmentDayHint": "Treatment day of this row's antimicrobial (D1 is the first 24 hours): amoxicillin on D1 brings who started amoxicillin in the last 24 hours",
         "nonConforming": "Only with a non-conforming evaluation in force",
+        "includeNotRequired": "Include patients not requiring review",
         "groups": {
           "antimicrobials": "Antimicrobials",
           "followUp": "Follow-up"
@@ -2321,6 +2322,45 @@
         "7": "Exam result",
         "8": "Culture result"
       }
+    },
+    "settings": {
+      "open": "Settings",
+      "title": "Settings",
+      "updated": "Changed on {{date}} by {{user}}",
+      "updatedAt": "Changed on {{date}}",
+      "showPrevious": "Show previous version",
+      "hidePrevious": "Hide previous version",
+      "previousTitle": "Previous version"
+    },
+    "timelineExams": {
+      "tab": "Timeline exams",
+      "description": "Exams shown below the antimicrobials on each patient's timeline, in this order. Each exam appears when the patient has a result of it; others can be added on the timeline itself.",
+      "defaultNotice": "This hospital uses the NoHarm default exams and follows changes to the default.",
+      "previousDefault": "NoHarm default exams",
+      "add": "Add exam",
+      "none": "No exams: the timeline opens without exams.",
+      "unavailable": "No hospital exam mapped",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "remove": "Remove",
+      "restoreDefault": "Use default exams",
+      "max": "Up to {{max}} exams",
+      "saved": "Exams saved. They apply to the timelines opened from now on.",
+      "loadError": "Could not load the exams",
+      "readOnly": "Only infection control can change these exams."
+    },
+    "reviewExceptions": {
+      "tab": "Antimicrobials without review",
+      "description": "Courses of these antimicrobials open no review pending and are left out of the review indicators, but still count in DOT/LOT. Patients on these alone leave the worklist unless the filter includes them. A substance covers all its drugs; a drug covers only itself.",
+      "add": "Search substance or drug",
+      "notFound": "No antimicrobial found",
+      "substances": "Substances",
+      "drugs": "Drugs",
+      "none": "None",
+      "saved": "List saved. The affected patients will be updated in a few minutes.",
+      "loadError": "Could not load the list",
+      "readOnly": "Only infection control can change this list.",
+      "exemptTag": "Review not required"
     },
     "examTriggers": {
       "title": "Exam triggers",
@@ -2419,13 +2459,15 @@
     "help": {
       "p1": "This report shows antimicrobial use and the infection control review process, from the follow-up of each admission (courses, conformity evaluations, reviews and pending reasons).",
       "p2": "Each number counts by the date of its own record: days of therapy by the day, evaluations by the date they were recorded, courses by their start and admissions by the date their follow-up closed.",
-      "p3": "Hover the icon next to each indicator to see how it is calculated."
+      "p3": "Hover the icon next to each indicator to see how it is calculated.",
+      "p4": "Antimicrobials marked as not requiring review (set in Settings, on the infection control worklist) count in DOT/LOT and consumption, but are left out of the review indicators: courses evaluated, evaluated by D3, DOT with a record, admissions reviewed, reviews per 100 DOT and pending time. Their days without a record show as \"Review not required\"."
     },
     "status": {
       "conforming": "Conforming",
       "non_conforming": "Non-conforming",
       "not_evaluated": "Not evaluated",
-      "expired": "Evaluation expired"
+      "expired": "Evaluation expired",
+      "not_required": "Review not required"
     },
     "route": {
       "iv": "Intravenous",
@@ -2456,7 +2498,7 @@
       "title": "Conformity",
       "description": "Evaluations, the record of the prescribed antimicrobials, culture-guided therapy, conformity by treatment type and focus, non-conformity reasons, substitutions, interventions and evaluations by substance",
       "withRecord": "Antimicrobials with a conformity record",
-      "withRecordHelp": "Antimicrobial days (DOT) with an evaluation in force on the day, conforming or non-conforming ÷ DOT of the period. Days not evaluated (no evaluation or an expired one) count only in the total. It is the total of the Prescribed antimicrobials by record chart.",
+      "withRecordHelp": "Antimicrobial days (DOT) with an evaluation in force on the day, conforming or non-conforming ÷ DOT of the antimicrobials requiring review in the period. Days not evaluated (no evaluation or an expired one) count only in the total. It is the total of the Prescribed antimicrobials by record chart.",
       "withRecordDetail": "{{recorded}} of {{dot}} DOT",
       "conforming": "Conforming evaluations",
       "conformingHelp": "Evaluations recorded in the period with a conforming verdict ÷ evaluations recorded in the period.",
