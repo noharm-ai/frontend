@@ -194,8 +194,9 @@ export function ReviewExceptions({
     (
       dispatch(
         saveReviewExceptions({
-          substances: substances.map((item) => Number(item.id)),
-          drugs: drugs.map((item) => Number(item.id)),
+          // as strings: a sctid can be longer than a number holds exactly
+          substances: substances.map((item) => item.id),
+          drugs: drugs.map((item) => item.id),
         }),
       ) as Promise<any>
     ).then((response) => {

@@ -59,6 +59,7 @@ const CHOSEN_RESPONSE = {
   updatedBy: "Maria Teste",
   previous: {
     exams: [CRP, LEUKOCYTES],
+    default: false,
     updatedAt: "2026-11-02T14:00:00",
     updatedBy: "NoHarm",
   },
@@ -108,7 +109,7 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     const tab = await openTimelineExams(page);
 
     await expect(tab).toContainText(
-      "Este hospital usa os exames padrão da NoHarm.",
+      "Este hospital usa os exames padrão da NoHarm",
     );
     await expect(examNames(tab)).toHaveText([
       "PCR",
@@ -165,8 +166,22 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     );
   });
 
-  test("restores the default exams", async ({ page, mockApi }) => {
+  test("goes back to following the default, not to a copy of it", async ({
+    page,
+    mockApi,
+  }) => {
     mockExams(mockApi, CHOSEN_RESPONSE);
+    mockApi.override(SAVE, {
+      json: {
+        status: "success",
+        data: {
+          ...DEFAULT_RESPONSE,
+          updatedAt: "2026-11-23T08:00:00",
+          updatedBy: "Maria Teste",
+          previous: { ...CHOSEN_RESPONSE, previous: undefined },
+        },
+      },
+    });
 
     const tab = await openTimelineExams(page);
     await expect(examNames(tab)).toHaveText(["Leucócitos Absoluto", "PCR"]);
@@ -180,6 +195,58 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
       "CKD-EPI 2021",
       "Leucócitos Absoluto",
     ]);
+    await expect(tab).toContainText("exames padrão da NoHarm");
+    await expect(
+      tab.getByRole("button", { name: "Usar exames padrão" }),
+    ).toHaveCount(0);
+
+    await tab.getByRole("button", { name: "Salvar" }).click();
+
+    await expect(page.getByText(/Exames salvos/)).toBeVisible();
+    const saved = mockApi.requests.filter(
+      (r) =>
+        r.method === "PUT" && r.path === "/infection-control/timeline-exams",
+    );
+    expect(saved).toHaveLength(1);
+    // the default itself, so its later changes reach the hospital
+    expect(JSON.parse(saved[0].postData!)).toEqual({ default: true });
+
+    // the version replaced was the hospital's own list
+    await tab.getByRole("button", { name: "Ver versão anterior" }).click();
+    await expect(examNames(tab.getByTestId("setting-previous"))).toHaveText([
+      "Leucócitos Absoluto",
+      "PCR",
+    ]);
+  });
+
+  test("an edit of the default is a list of the hospital's own", async ({
+    page,
+    mockApi,
+  }) => {
+    mockExams(mockApi, DEFAULT_RESPONSE);
+    mockApi.override(SAVE, {
+      json: { status: "success", data: CHOSEN_RESPONSE },
+    });
+
+    const tab = await openTimelineExams(page);
+    await tab
+      .getByTestId("timeline-exam")
+      .filter({ hasText: "CKD-EPI 2021" })
+      .getByRole("button", { name: "Remover" })
+      .click();
+
+    await expect(tab).not.toContainText("exames padrão da NoHarm");
+    await tab.getByRole("button", { name: "Salvar" }).click();
+
+    const puts = () =>
+      mockApi.requests.filter(
+        (r) =>
+          r.method === "PUT" && r.path === "/infection-control/timeline-exams",
+      );
+    await expect.poll(() => puts().length).toBe(1);
+    expect(JSON.parse(puts()[0].postData!)).toEqual({
+      exams: ["pcru", "ckd", "h_conleuc"],
+    });
   });
 });
 

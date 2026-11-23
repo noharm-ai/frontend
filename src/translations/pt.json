@@ -2341,7 +2341,8 @@
     "timelineExams": {
       "tab": "Exames da linha do tempo",
       "description": "Exames exibidos abaixo dos antimicrobianos na linha do tempo de cada paciente, nesta ordem. Cada exame aparece quando o paciente tem resultado dele; outros podem ser adicionados na própria linha do tempo.",
-      "defaultNotice": "Este hospital usa os exames padrão da NoHarm.",
+      "defaultNotice": "Este hospital usa os exames padrão da NoHarm e acompanha as mudanças do padrão.",
+      "previousDefault": "Exames padrão da NoHarm",
       "add": "Adicionar exame",
       "none": "Nenhum exame: a linha do tempo abre sem exames.",
       "unavailable": "Sem exame do hospital mapeado",

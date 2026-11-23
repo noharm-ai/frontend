@@ -96,10 +96,6 @@ const Body = styled.div`
   }
 `;
 
-/** The references of a list, to compare lists */
-const refsOf = (exams: ITimelineExam[]) =>
-  exams.map((exam) => exam.examRef).join(",");
-
 /**
  * The exams the antimicrobial timeline of every admission opens with, in
  * order (a row each, plotted when the patient has results of it): the
@@ -117,13 +113,28 @@ export function TimelineExams({ onClose }: { onClose: () => void }) {
   const [saving, setSaving] = useState(false);
   // the exams as saved: the default flag, the version replaced, the options
   const [saved, setSaved] = useState<ITimelineExamsSaved | null>(null);
-  // the list being edited
+  // the list being edited, and whether it follows the default (saved as
+  // such, not as a copy, so later changes of the default reach the schema)
   const [exams, setExams] = useState<ITimelineExam[]>([]);
+  const [followsDefault, setFollowsDefault] = useState(true);
 
   /** Keeps the exams as saved and edits them from there */
   const keep = (payload: ITimelineExamsSaved) => {
     setSaved(payload);
     setExams(payload.exams);
+    setFollowsDefault(payload.default);
+  };
+
+  /** An edited list is the schema's own choice */
+  const edit = (next: ITimelineExam[]) => {
+    setExams(next);
+    setFollowsDefault(false);
+  };
+
+  const restoreDefault = () => {
+    if (!saved) return;
+    setExams(saved.defaultExams);
+    setFollowsDefault(true);
   };
 
   /** Fetches the exams (the loading state is set by the caller) */
@@ -158,24 +169,28 @@ export function TimelineExams({ onClose }: { onClose: () => void }) {
   const add = (examRef: string) => {
     const option = saved?.options.find((item) => item.examRef === examRef);
     if (!option || full) return;
-    setExams([...exams, { ...option, available: true }]);
+    edit([...exams, { ...option, available: true }]);
   };
 
   const move = (index: number, offset: number) => {
     const next = [...exams];
     const [exam] = next.splice(index, 1);
     next.splice(index + offset, 0, exam);
-    setExams(next);
+    edit(next);
   };
 
   const remove = (index: number) =>
-    setExams(exams.filter((_, position) => position !== index));
+    edit(exams.filter((_, position) => position !== index));
 
   const save = () => {
     setSaving(true);
     (
       dispatch(
-        saveTimelineExams({ exams: exams.map((exam) => exam.examRef) }),
+        saveTimelineExams(
+          followsDefault
+            ? { default: true }
+            : { exams: exams.map((exam) => exam.examRef) },
+        ),
       ) as Promise<any>
     ).then((response) => {
       setSaving(false);
@@ -249,7 +264,6 @@ export function TimelineExams({ onClose }: { onClose: () => void }) {
     );
 
   const previous = saved?.previous;
-  const isDefaultList = !!saved && refsOf(exams) === refsOf(saved.defaultExams);
 
   return (
     <Body
@@ -273,7 +287,7 @@ export function TimelineExams({ onClose }: { onClose: () => void }) {
         </Empty>
       ) : (
         <>
-          {saved.default && (
+          {followsDefault && (
             <Alert
               className="timeline-exams-notice"
               type="info"
@@ -308,8 +322,8 @@ export function TimelineExams({ onClose }: { onClose: () => void }) {
                 onSelect={(value) => value && add(value)}
                 options={options}
               />
-              {!isDefaultList && (
-                <Button onClick={() => setExams(saved.defaultExams)}>
+              {!followsDefault && (
+                <Button onClick={restoreDefault}>
                   {t("infectionControl.timelineExams.restoreDefault")}
                 </Button>
               )}
@@ -321,7 +335,18 @@ export function TimelineExams({ onClose }: { onClose: () => void }) {
           <SettingVersions
             current={saved}
             previous={previous}
-            renderPrevious={() => previous && renderList(previous.exams, false)}
+            renderPrevious={() =>
+              previous && (
+                <>
+                  {previous.default && (
+                    <div className="muted">
+                      {t("infectionControl.timelineExams.previousDefault")}
+                    </div>
+                  )}
+                  {renderList(previous.exams, false)}
+                </>
+              )
+            }
           />
 
           <div className="timeline-exams-footer">

@@ -449,7 +449,9 @@ export const searchReviewExceptionOptions = createAsyncThunk(
 /** Replaces the schema's review exceptions (WRITE_INFECTION_CONTROL) */
 export const saveReviewExceptions = createAsyncThunk(
   "infectionControlList/saveReviewExceptions",
-  async (params: { substances: number[]; drugs: number[] }, thunkAPI) => {
+  // ids as the backend sends them: strings, since a substance's sctid can be
+  // longer than a number holds exactly
+  async (params: { substances: string[]; drugs: string[] }, thunkAPI) => {
     try {
       const response = await api.infectionControl.saveReviewExceptions(params);
 
@@ -471,6 +473,8 @@ export interface ITimelineExam {
 // one saved version of the timeline exams
 export interface ITimelineExamsVersion {
   exams: ITimelineExam[];
+  // following the NoHarm default (its exams then), changes to it included
+  default: boolean;
   updatedAt: string | null;
   updatedBy: string | null;
 }
@@ -478,7 +482,6 @@ export interface ITimelineExamsVersion {
 // the exams the timeline opens with (the default ones while the schema never
 // chose them), the version they replaced, and what can be chosen
 export interface ITimelineExamsSaved extends ITimelineExamsVersion {
-  default: boolean;
   previous: ITimelineExamsVersion | null;
   defaultExams: ITimelineExam[];
   options: { examRef: string; name: string }[];
@@ -498,10 +501,13 @@ export const fetchTimelineExams = createAsyncThunk(
   },
 );
 
-/** Replaces the exams the timeline opens with (WRITE_INFECTION_CONTROL) */
+/**
+ * Replaces the exams the timeline opens with, or goes back to following the
+ * default (`default`: no copy of it is saved) (WRITE_INFECTION_CONTROL)
+ */
 export const saveTimelineExams = createAsyncThunk(
   "infectionControlList/saveTimelineExams",
-  async (params: { exams: string[] }, thunkAPI) => {
+  async (params: { exams: string[] } | { default: true }, thunkAPI) => {
     try {
       const response = await api.infectionControl.saveTimelineExams(params);
 

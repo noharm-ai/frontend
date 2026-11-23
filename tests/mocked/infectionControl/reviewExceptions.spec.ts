@@ -127,8 +127,8 @@ test.describe("with WRITE_INFECTION_CONTROL", () => {
     );
     expect(saved).toHaveLength(1);
     expect(JSON.parse(saved[0].postData!)).toEqual({
-      substances: [9001],
-      drugs: [77],
+      substances: ["9001"],
+      drugs: ["77"],
     });
   });
 });

@@ -2331,7 +2331,8 @@
     "timelineExams": {
       "tab": "Timeline exams",
       "description": "Exams shown below the antimicrobials on each patient's timeline, in this order. Each exam appears when the patient has a result of it; others can be added on the timeline itself.",
-      "defaultNotice": "This hospital uses the NoHarm default exams.",
+      "defaultNotice": "This hospital uses the NoHarm default exams and follows changes to the default.",
+      "previousDefault": "NoHarm default exams",
       "add": "Add exam",
       "none": "No exams: the timeline opens without exams.",
       "unavailable": "No hospital exam mapped",
