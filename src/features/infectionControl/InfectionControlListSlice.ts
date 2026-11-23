@@ -397,7 +397,7 @@ export interface IReviewExceptionItem {
 }
 
 // the antimicrobials whose courses need no review: substances (each covers
-// every drug of it) and drugs without a substance
+// every drug of it) and drugs (each covers only itself)
 export interface IReviewExceptions {
   substances: IReviewExceptionItem[];
   drugs: IReviewExceptionItem[];

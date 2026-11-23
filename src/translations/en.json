@@ -2346,11 +2346,11 @@
     },
     "reviewExceptions": {
       "tab": "Antimicrobials without review",
-      "description": "Courses of these antimicrobials open no review pending and are left out of the review indicators, but still count in DOT/LOT. Patients on these alone leave the worklist unless the filter includes them. A substance covers all its drugs; drugs without a substance are listed one by one.",
+      "description": "Courses of these antimicrobials open no review pending and are left out of the review indicators, but still count in DOT/LOT. Patients on these alone leave the worklist unless the filter includes them. A substance covers all its drugs; a drug covers only itself.",
       "add": "Search substance or drug",
       "notFound": "No antimicrobial found",
       "substances": "Substances",
-      "drugs": "Drugs without a substance",
+      "drugs": "Drugs",
       "none": "None",
       "saved": "List saved. The affected patients will be updated in a few minutes.",
       "loadError": "Could not load the list",

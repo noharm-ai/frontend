@@ -69,7 +69,8 @@ const byName = (items: IReviewExceptionItem[]) =>
 /**
  * The antimicrobials whose courses need no infection control review (the
  * schema's review exceptions): a substance covers every drug of it, a drug
- * without a substance is listed by itself. Their courses still count as
+ * (any antimicrobial, with a substance or not) covers only itself. Their
+ * courses still count as
  * antimicrobial therapy (DOT/LOT), but open no pending reason and stay out of
  * the review indicators; the patients running only them leave the worklist,
  * unless the filter asks for them. Anyone who sees the worklist reads the

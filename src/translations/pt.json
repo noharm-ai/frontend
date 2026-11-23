@@ -2356,11 +2356,11 @@
     },
     "reviewExceptions": {
       "tab": "Antimicrobianos sem revisão",
-      "description": "Os cursos destes antimicrobianos não geram pendência de revisão e ficam fora dos indicadores de revisão, mas continuam contando no DOT/LOT. Pacientes que usam apenas eles saem da lista de trabalho, a não ser que o filtro os inclua. Uma substância vale para todos os seus medicamentos; medicamentos sem substância são listados um a um.",
+      "description": "Os cursos destes antimicrobianos não geram pendência de revisão e ficam fora dos indicadores de revisão, mas continuam contando no DOT/LOT. Pacientes que usam apenas eles saem da lista de trabalho, a não ser que o filtro os inclua. Uma substância vale para todos os seus medicamentos; um medicamento vale só para ele mesmo.",
       "add": "Buscar substância ou medicamento",
       "notFound": "Nenhum antimicrobiano encontrado",
       "substances": "Substâncias",
-      "drugs": "Medicamentos sem substância",
+      "drugs": "Medicamentos",
       "none": "Nenhum",
       "saved": "Lista salva. Os pacientes afetados serão atualizados em alguns minutos.",
       "loadError": "Não foi possível carregar a lista",

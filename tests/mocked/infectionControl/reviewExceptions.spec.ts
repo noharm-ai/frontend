@@ -9,7 +9,7 @@ import { openMoreFilters } from "../support/advancedFilter";
  *
  * Each schema keeps the antimicrobials whose courses need no review
  * (GET/PUT /infection-control/review-exceptions): substances, and drugs
- * without a substance. Anyone who sees the worklist reads the list; only the
+ * (any antimicrobial, each covering only itself). Anyone who sees the worklist reads the list; only the
  * infection control (WRITE_INFECTION_CONTROL) changes it. The patients running
  * only those antimicrobials leave the worklist unless the filter asks for
  * them, and an exempt course says it needs no review. The list tells when
