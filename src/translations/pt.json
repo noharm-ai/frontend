@@ -507,11 +507,16 @@
     "adultExams": "Adulto",
     "pediatricExams": "Pediátrico",
     "footer": "Alterações são feitas no Admin, em Parametrização.",
+    "maxDosePlus": "Dose máxima SOMADA",
+    "maxDosePlusIgnoreFrequencies": "Frequências fora da soma",
+    "maxDosePlusSumAll": "Nenhuma: todos os itens entram na soma",
     "json": "JSON (somente o personalizado)",
     "frequency": {
       "33": "SN",
       "44": "ACM",
-      "66": "Agora"
+      "55": "CONT",
+      "66": "Agora",
+      "99": "N/D"
     }
   },
   "maintainerBadge": {
@@ -1755,7 +1760,6 @@
     },
     "cultures": {
       "title": "Culturas",
-      "legend": "Última coleta de cada exame e material, liberada nos últimos 60 dias",
       "summary": "Lista",
       "byDrug": "Por medicamento",
       "byDrugLegend": "Antibiograma de cada medicamento, com os em uso nesta prescrição em destaque",
@@ -2228,11 +2232,11 @@
       "interventions": "Intervenções",
       "cultures": "Culturas ({{count}})",
       "culturesNotLoaded": "As culturas não foram carregadas. Atualize a seção de culturas da página e gere o relatório novamente.",
-      "exams": "Exames ({{count}})",
-      "examsPrescription": "Prescrição de {{date}}",
-      "examsOutOfRange_one": "{{count}} fora da referência",
-      "examsOutOfRange_other": "{{count}} fora da referência",
-      "variation": "Variação"
+      "examTrends": "Evolução dos exames",
+      "examTrendsHint": "Exames da linha do tempo nos últimos {{count}} dias; o resultado mais recente de cada dia.",
+      "examTrendsEmpty": "Nenhum exame na linha do tempo.",
+      "examTrendsNotLoaded": "O histórico dos exames não foi carregado. Aguarde os exames da linha do tempo carregarem e gere o relatório novamente.",
+      "today": "hoje"
     },
     "history": {
       "title": "Revisões",

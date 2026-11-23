@@ -481,11 +481,12 @@ export interface IRecentCulture {
 export interface IRecentCultures {
   admissionNumber: number;
   releasedSince: string;
-  // every collection, newest first: what the culture card lists. Missing
-  // from a backend older than them (cultureCollections.collectionsOf)
+  // every collection, newest first: what the culture card and the report
+  // list. Missing from a backend older than them
+  // (cultureCollections.collectionsOf)
   collections?: ICultureCollection[];
   // the latest culture of each exam and material, newest collection first:
-  // what the report and the review's clinical note list
+  // what the review's clinical note lists
   cultures: IRecentCulture[];
 }
 

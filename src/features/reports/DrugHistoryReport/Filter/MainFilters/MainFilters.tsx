@@ -1,23 +1,33 @@
-import React, { useContext } from "react";
-import { useSelector } from "react-redux";
+import { useContext } from "react";
+import type { Dayjs } from "dayjs";
 
+import { useAppSelector } from "src/store";
 import { RangeDatePicker, Select, SelectCustom } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
+import type { DrugHistoryFilters } from "../../transformers";
 
-export default function MainFilters() {
-  const drugs = useSelector(
-    (state) => state.reportsArea.drugHistory.filterData.drugs
+// what components/AdvancedFilter (still JS) hands its filters through context
+interface FilterContextValue {
+  values: DrugHistoryFilters;
+  setFieldValue: (values: Partial<DrugHistoryFilters>) => void;
+}
+
+export function MainFilters() {
+  const drugs = useAppSelector(
+    (state) => state.reportsArea.drugHistory.filterData.drugs,
   );
-  const substances = useSelector(
-    (state) => state.reportsArea.drugHistory.filterData.substances
+  const substances = useAppSelector(
+    (state) => state.reportsArea.drugHistory.filterData.substances,
   );
 
-  const status = useSelector(
-    (state) => state.reportsArea.drugHistory.status
+  const status = useAppSelector(
+    (state) => state.reportsArea.drugHistory.status,
   );
-  const { values, setFieldValue } = useContext(AdvancedFilterContext);
+  const { values, setFieldValue } = useContext(
+    AdvancedFilterContext,
+  ) as FilterContextValue;
 
   return (
     <>
@@ -28,7 +38,7 @@ export default function MainFilters() {
         <RangeDatePicker
           format="DD/MM/YYYY"
           value={values.dateRange}
-          onChange={(val) => setFieldValue({ dateRange: val })}
+          onChange={(val: Dayjs[] | null) => setFieldValue({ dateRange: val })}
           allowClear
           style={{ width: "100%" }}
         />
@@ -40,7 +50,7 @@ export default function MainFilters() {
         <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.drugList}
-          onChange={(val) => setFieldValue({ drugList: val })}
+          onChange={(val: string[]) => setFieldValue({ drugList: val })}
           showSearch
           optionFilterProp="children"
           mode="multiple"
@@ -63,7 +73,7 @@ export default function MainFilters() {
         <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.substanceList}
-          onChange={(val) => setFieldValue({ substanceList: val })}
+          onChange={(val: string[]) => setFieldValue({ substanceList: val })}
           showSearch
           optionFilterProp="children"
           mode="multiple"

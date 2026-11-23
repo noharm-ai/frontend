@@ -1,3 +1,5 @@
+import dayjs, { Dayjs } from "dayjs";
+
 import {
   IExamCardItem,
   IExamHistory,
@@ -155,6 +157,49 @@ export const getDefaultExamIds = (
       .find((candidate) => options.some((option) => option.id === candidate));
     return id ? [id] : [];
   });
+
+// how many days the report shows the exams of the timeline on
+export const REPORT_EXAM_DAYS = 5;
+
+export interface IExamDailyRow {
+  key: string;
+  name: string;
+  unit: string | null;
+  reference: IExamSeries["reference"];
+  // a cell a day, as the days: the latest result of the day, null when none
+  cells: (IExamPoint | null)[];
+}
+
+/**
+ * The exams of the timeline a column a day, as the report prints them: the
+ * days up to the current one, oldest first, each with the latest result of
+ * the day. An exam with no result on them keeps its row
+ */
+export const toDailyExams = (
+  series: IExamSeries[],
+  now: Dayjs,
+  count = REPORT_EXAM_DAYS,
+) => {
+  const days = Array.from({ length: count }, (_, index) =>
+    now.subtract(count - 1 - index, "day").startOf("day"),
+  );
+
+  const rows: IExamDailyRow[] = series.map((item) => ({
+    key: item.key,
+    name: item.name,
+    unit: item.unit,
+    reference: item.reference,
+    cells: days.map(
+      (day) =>
+        // oldest first (toPoints): the last of the day is the latest
+        item.points
+          .filter((point) => dayjs(point.date).isSame(day, "day"))
+          .at(-1) ?? null,
+    ),
+  }));
+
+  return { days, rows };
+};
 
 /**
  * The series of an exam: the results of its types merged, the name, unit and

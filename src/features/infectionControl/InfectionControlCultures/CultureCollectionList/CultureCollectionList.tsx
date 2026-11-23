@@ -1,14 +1,6 @@
-import {
-  CSSProperties,
-  Fragment,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { CSSProperties, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Empty, Spin } from "antd";
-
-import { formatDate } from "utils/date";
 
 import { ICultureCollection } from "../../InfectionControlSlice";
 import {
@@ -18,7 +10,7 @@ import {
   IDetailOption,
 } from "../cultureCollections";
 import { CollectionDetailsFilter } from "../CollectionDetailsFilter/CollectionDetailsFilter";
-import { CultureCollectionRow } from "../CultureCollectionRow/CultureCollectionRow";
+import { CultureCollectionDays } from "../CultureCollectionDays/CultureCollectionDays";
 import { CollectionList } from "./CultureCollectionList.style";
 
 interface CultureCollectionListProps {
@@ -86,8 +78,6 @@ export function CultureCollectionList({
 
   const visible = filterCollections(collections, details);
 
-  let lastDay: string | null | undefined;
-
   return (
     <CollectionList
       style={{ "--toolbar-height": `${toolbarHeight}px` } as CSSProperties}
@@ -104,31 +94,11 @@ export function CultureCollectionList({
       </div>
 
       {visible.length ? (
-        visible.map((collection) => {
-          const day = formatDate(collection.collectionDate);
-          const dayHeader =
-            day !== lastDay ? (
-              <div className="collections-day" data-testid="collection-day">
-                {day
-                  ? t("infectionControl.cultures.collections.collectedOn", {
-                      date: day,
-                    })
-                  : t("infectionControl.cultures.collections.noCollectionDate")}
-              </div>
-            ) : null;
-          lastDay = day;
-
-          return (
-            <Fragment key={collection.id}>
-              {dayHeader}
-              <CultureCollectionRow
-                collection={collection}
-                prescribed={prescribed}
-                onOpen={onOpen}
-              />
-            </Fragment>
-          );
-        })
+        <CultureCollectionDays
+          collections={visible}
+          prescribed={prescribed}
+          onOpen={onOpen}
+        />
       ) : (
         <div className="collections-empty">
           <Empty
