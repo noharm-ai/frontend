@@ -1,12 +1,26 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import { Descriptions } from "antd";
+import { useState, type ComponentType, type ReactNode } from "react";
+import { Descriptions, type DescriptionsProps, type TableProps } from "antd";
 
+import { useAppSelector } from "src/store";
 import { formatDateTime } from "utils/date";
 import { CardTable } from "components/Table";
 import Button from "components/Button";
+import type { DrugHistoryItem } from "../transformers";
 
-const ExpandColumn = ({ expand, toggleExpansion }) => {
+type RowKey = DrugHistoryItem["idPrescriptionDrug"];
+
+// CardTable is styled(antd Table), which drops the Table's record type; the
+// expand-all header (columnTitle) is not part of antd's TableProps either
+const HistoryTable = CardTable as unknown as ComponentType<
+  TableProps<DrugHistoryItem> & { columnTitle?: ReactNode }
+>;
+
+interface ExpandColumnProps {
+  expand: boolean;
+  toggleExpansion: () => void;
+}
+
+const ExpandColumn = ({ expand, toggleExpansion }: ExpandColumnProps) => {
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
       <button
@@ -20,13 +34,13 @@ const ExpandColumn = ({ expand, toggleExpansion }) => {
   );
 };
 
-export default function HistoryList() {
-  const [expandedRows, setExpandedRows] = useState([]);
-  const datasource = useSelector(
+export function HistoryList() {
+  const [expandedRows, setExpandedRows] = useState<RowKey[]>([]);
+  const datasource = useAppSelector(
     (state) => state.reportsArea.drugHistory.filtered.result.list,
   );
 
-  const updateExpandedRows = (list, key) => {
+  const updateExpandedRows = (list: RowKey[], key: RowKey): RowKey[] => {
     if (list.includes(key)) {
       return list.filter((i) => i !== key);
     }
@@ -34,7 +48,7 @@ export default function HistoryList() {
     return [...list, key];
   };
 
-  const handleRowExpand = (record) => {
+  const handleRowExpand = (record: DrugHistoryItem) => {
     setExpandedRows(
       updateExpandedRows(expandedRows, record.idPrescriptionDrug),
     );
@@ -46,56 +60,61 @@ export default function HistoryList() {
     } else {
       setExpandedRows(
         datasource
-          .filter((i) => /^[0-9]*$/g.test(i.idPrescriptionDrug))
+          .filter((i) => /^[0-9]*$/g.test(String(i.idPrescriptionDrug)))
           .map((i) => i.idPrescriptionDrug),
       );
     }
   };
 
-  const columns = [
+  const columns: TableProps<DrugHistoryItem>["columns"] = [
     {
       title: "Prescrito em",
       width: 160,
-      sorter: (a, b) =>
+      sorter: (a: DrugHistoryItem, b: DrugHistoryItem) =>
         a.prescriptionDate < b.prescriptionDate
           ? -1
           : a.prescriptionDate > b.prescriptionDate
             ? 1
             : 0,
-      render: (_, record) => formatDateTime(record.prescriptionDate),
+      render: (_: unknown, record: DrugHistoryItem) =>
+        formatDateTime(record.prescriptionDate),
     },
     {
       title: "Vigência",
       width: 160,
-      sorter: (a, b) =>
-        a.prescriptionExpirationDate < b.prescriptionExpirationDate
+      sorter: (a: DrugHistoryItem, b: DrugHistoryItem) =>
+        (a.prescriptionExpirationDate as string) <
+        (b.prescriptionExpirationDate as string)
           ? -1
-          : a.prescriptionExpirationDate > b.prescriptionExpirationDate
+          : (a.prescriptionExpirationDate as string) >
+              (b.prescriptionExpirationDate as string)
             ? 1
             : 0,
-      render: (_, record) => formatDateTime(record.prescriptionExpirationDate),
+      render: (_: unknown, record: DrugHistoryItem) =>
+        formatDateTime(record.prescriptionExpirationDate),
     },
     {
       title: "Suspenso em",
       width: 160,
-      sorter: (a, b) =>
-        a.suspensionDate < b.suspensionDate
+      sorter: (a: DrugHistoryItem, b: DrugHistoryItem) =>
+        // null dates compare as neither earlier nor later, as before
+        (a.suspensionDate as string) < (b.suspensionDate as string)
           ? -1
-          : a.suspensionDate > b.suspensionDate
+          : (a.suspensionDate as string) > (b.suspensionDate as string)
             ? 1
             : 0,
-      render: (_, record) =>
+      render: (_: unknown, record: DrugHistoryItem) =>
         record.suspensionDate ? formatDateTime(record.suspensionDate) : "-",
     },
     {
       title: "Medicamento",
-      render: (_, record) => record.drug,
+      render: (_: unknown, record: DrugHistoryItem) => record.drug,
     },
   ];
 
   return (
     <>
-      <CardTable
+      <HistoryTable
         bordered
         columns={columns}
         rowKey="idPrescriptionDrug"
@@ -107,7 +126,7 @@ export default function HistoryList() {
         )}
         expandable={{
           expandedRowRender: (record) => <ExpandedRow record={record} />,
-          onExpand: (expanded, record) => handleRowExpand(record),
+          onExpand: (_expanded, record) => handleRowExpand(record),
           expandedRowKeys: expandedRows,
         }}
         onRow={(record) => {
@@ -130,8 +149,8 @@ export default function HistoryList() {
   );
 }
 
-const ExpandedRow = ({ record }) => {
-  const items = [
+const ExpandedRow = ({ record }: { record: DrugHistoryItem }) => {
+  const items: DescriptionsProps["items"] = [
     {
       label: "Atendimento",
       span: 3,
