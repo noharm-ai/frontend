@@ -1,7 +1,7 @@
-import React, { useRef } from "react";
-import { useSelector } from "react-redux";
+import { useRef } from "react";
 import { Row, Col, Space, Spin } from "antd";
 
+import { useAppSelector } from "src/store";
 import { PageHeader } from "styles/PageHeader.style";
 import {
   ReportContainer,
@@ -9,12 +9,12 @@ import {
   ReportFilterContainer,
   ReportPrintDescriptions,
 } from "styles/Report.style";
-import Filter from "./Filter/Filter";
-import { NoHarmLogoHorizontal as Brand } from "assets/NoHarmLogoHorizontal";
+import { Filter } from "./Filter/Filter";
+import { NoHarmLogoHorizontal as Brand } from "src/assets/NoHarmLogoHorizontal";
 import { filtersToDescription } from "utils/report";
-import HistoryList from "./HistoryList/HistoryList";
+import { HistoryList } from "./HistoryList/HistoryList";
 
-const ATTRIBUTE_LABELS = {
+const ATTRIBUTE_LABELS: Record<string, string> = {
   antimicro: "Antimicrobianos",
   mav: "Alta vigilância",
   controlled: "Controlados",
@@ -25,14 +25,31 @@ const ATTRIBUTE_LABELS = {
   dialyzable: "Dializável",
 };
 
-export default function DrugHistoryReport({ prescription, attribute }) {
+interface DrugHistoryReportProps {
+  prescription: {
+    admissionNumber: number | string;
+    namePatient?: string;
+    birthdateFormat?: string;
+  };
+  // antimicro, mav, controlled, chemo...
+  attribute: string;
+}
+
+export function DrugHistoryReport({
+  prescription,
+  attribute,
+}: DrugHistoryReportProps) {
   const attributeLabel = ATTRIBUTE_LABELS[attribute] ?? attribute;
-  const status = useSelector((state) => state.reportsArea.drugHistory.status);
-  const filteredStatus = useSelector(
+  const status = useAppSelector(
+    (state) => state.reportsArea.drugHistory.status,
+  );
+  const filteredStatus = useAppSelector(
     (state) => state.reportsArea.drugHistory.filtered.status,
   );
-  const filters = useSelector((state) => state.reportsArea.drugHistory.filters);
-  const printRef = useRef(null);
+  const filters = useAppSelector(
+    (state) => state.reportsArea.drugHistory.filters,
+  );
+  const printRef = useRef<HTMLDivElement>(null);
   const isLoading = status === "loading" || filteredStatus === "loading";
   const filtersConfig = {
     dateRange: {
