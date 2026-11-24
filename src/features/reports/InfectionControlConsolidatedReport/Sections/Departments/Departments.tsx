@@ -16,6 +16,7 @@ import {
 } from "../../infectionControlReportTypes";
 import { Block } from "../../Block/Block";
 import { DepartmentAdmissions } from "../../DepartmentAdmissions/DepartmentAdmissions";
+import { isLiteReport } from "../../lite";
 
 // which numbers the table shows: the ones of the tab it sits in
 type DepartmentsView = "conformity" | "reviews" | "dotLot";
@@ -108,9 +109,14 @@ export function Departments({
       column("lot", "lot", formatInteger),
       column("dotLot", "dotLot", (value) => formatDecimal(value, 2)),
       column("access", "accessShare", formatShare),
-      typeColumn("empirical", ["1"]),
-      typeColumn("cultureGuided", ["2"]),
-      typeColumn("prophylaxis", PROPHYLAXIS_TYPES),
+      // a lite schema has no indication
+      ...(isLiteReport()
+        ? []
+        : [
+            typeColumn("empirical", ["1"]),
+            typeColumn("cultureGuided", ["2"]),
+            typeColumn("prophylaxis", PROPHYLAXIS_TYPES),
+          ]),
     ],
   };
 

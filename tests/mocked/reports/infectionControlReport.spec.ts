@@ -3,6 +3,7 @@ import type { Page, Request } from "@playwright/test";
 import { test, expect } from "../support/mockApi";
 import { openSelectById, pickOption } from "../support/antd";
 import { openMoreFilters } from "../support/advancedFilter";
+import { loginWithFeatures } from "../support/featureLogin";
 
 /**
  * Infection control report (/relatorios/consolidado/controle-infeccao,
@@ -1188,4 +1189,92 @@ test("warns when the report can't be loaded", async ({ page, mockApi }) => {
   await expect(
     indicator(page, "Avaliações conformes").first().locator(".indicator-value"),
   ).toHaveText("-");
+});
+
+/**
+ * A lite schema (INFECTION_CONTROL_LITE without INFECTION_CONTROL) keeps only
+ * its antimicrobial courses: no reviews, records in force or indication, so
+ * the report opens on DOT/LOT and shows only the use of antimicrobials.
+ */
+test.describe("lite schema", () => {
+  test.use({ storageState: { cookies: [], origins: [] } });
+
+  test("shows only the use tabs, without reviews or indication", async ({
+    page,
+    mockApi,
+  }) => {
+    mockReport(mockApi);
+    await loginWithFeatures(page, mockApi, ["INFECTION_CONTROL_LITE"]);
+
+    await page.goto(PAGE_URL);
+
+    await expect(
+      page.getByRole("tab", { name: "DOT/LOT", selected: true }),
+    ).toBeVisible();
+    await expect(page.getByRole("tab")).toHaveText([
+      "DOT/LOT",
+      "Cursos",
+      "Perfil dos pacientes",
+    ]);
+    await expect(
+      indicator(page, "Dias com antimicrobiano (LOT)").locator(
+        ".indicator-value",
+      ),
+    ).toBeVisible();
+    await expect(indicator(page, "DOT com tipo de tratamento")).toHaveCount(0);
+    await expect(
+      page.locator('[data-kb="reports.infectionControl.dotByIndication"]'),
+    ).toHaveCount(0);
+    await expect(
+      page.locator('[data-kb="reports.infectionControl.dotByFocus"]'),
+    ).toHaveCount(0);
+
+    await openTab(page, "Cursos");
+    await expect(indicator(page, "Profilaxia cirúrgica > 24h")).toHaveCount(0);
+
+    await openMoreFilters(page);
+    await expect(page.locator("#infection-control-treatment-type")).toHaveCount(
+      0,
+    );
+    await expect(page.getByText("Revisor:")).toHaveCount(0);
+  });
+
+  test("a department lists its admissions and courses without reviews or a link to the follow-up", async ({
+    page,
+    mockApi,
+  }) => {
+    mockReport(mockApi);
+    await loginWithFeatures(page, mockApi, ["INFECTION_CONTROL_LITE"]);
+
+    await page.goto(PAGE_URL);
+    await page
+      .locator('[data-kb="reports.infectionControl.dotLotDepartments"]')
+      .getByRole("row", { name: /UTI Teste/ })
+      .getByRole("button", { name: "Ver os atendimentos do setor" })
+      .click();
+
+    const modal = page.locator(
+      '[data-kb="reports.infectionControl.departmentAdmissions"]',
+    );
+    const row = modal.getByRole("row", { name: /90002/ });
+    await expect(row).toContainText("Encerrado em 06/03/26");
+    await expect(
+      row.getByLabel("Abrir o acompanhamento do atendimento (dados atuais)"),
+    ).toHaveCount(0);
+    await expect(
+      modal.getByRole("columnheader", { name: "1ª revisão (h)" }),
+    ).toHaveCount(0);
+
+    await row.click();
+    const list = page.locator(
+      '[data-kb="reports.infectionControl.admissionCourses"]',
+    );
+    await expect(list).toContainText("SUBSTANCIA TESTE");
+    await expect(
+      list.getByRole("columnheader", { name: "Último parecer" }),
+    ).toHaveCount(0);
+    await expect(
+      list.getByRole("columnheader", { name: "Tipo de tratamento e foco" }),
+    ).toHaveCount(0);
+  });
 });

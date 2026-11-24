@@ -55,6 +55,7 @@ import { Filter } from "./Filter/Filter";
 import { focusName, treatmentTypeName } from "./indication";
 import { HelpModal } from "./Help/Help";
 import { StickyTabBar } from "./StickyTabBar/StickyTabBar";
+import { isLiteReport } from "./lite";
 import { Conformity } from "./Sections/Conformity/Conformity";
 import { DotLot } from "./Sections/DotLot/DotLot";
 import { Departments } from "./Sections/Departments/Departments";
@@ -77,6 +78,8 @@ const values = (list?: { value: number }[]) =>
 
 // up to yesterday, the last complete day of the files
 const yesterday = () => dayjs().subtract(1, "day");
+// what a lite schema's report shows: the use of antimicrobials, not the reviews
+const LITE_TABS = ["dotLot", "consumption", "outcomes"];
 
 // the period is set when the page opens
 const INITIAL_VALUES: Omit<IFilterValues, "dateRange"> = {
@@ -118,6 +121,8 @@ export function InfectionControlConsolidatedReport() {
   const isLoading = status === "loading";
   const indicators: Partial<IIndicators> = result?.indicators || {};
   const hideNames = FeatureService.has(Feature.HIDE_NAMES);
+  // a lite schema has no reviews: only the use tabs
+  const lite = isLiteReport();
   const tk = (key: string) => t(`infectionControlConsolidated.${key}`);
 
   const filtersConfig = {
@@ -380,7 +385,7 @@ export function InfectionControlConsolidatedReport() {
                     />
                   ),
                 },
-              ]}
+              ].filter((tab) => !lite || LITE_TABS.includes(tab.key))}
             />
           </ReportTabs>
         </div>

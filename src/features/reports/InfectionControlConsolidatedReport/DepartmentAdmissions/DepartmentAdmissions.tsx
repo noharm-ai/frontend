@@ -18,6 +18,7 @@ import {
 } from "../InfectionControlConsolidatedReportSlice";
 import { EMPTY, formatDecimal, formatInteger } from "../format";
 import { focusName, treatmentTypeName } from "../indication";
+import { isLiteReport } from "../lite";
 import {
   IAdmission,
   ICourse,
@@ -33,6 +34,15 @@ interface DepartmentAdmissionsProps {
   params: IReportParams | null;
   onClose: () => void;
 }
+
+// what a lite schema can't show: it has no reviews, records or indication
+const LITE_HIDDEN_COLUMNS = [
+  "reviews",
+  "timeToFirstReviewHours",
+  "indication",
+  "evaluatedByD3",
+  "finalVerdict",
+];
 
 // the modal takes the whole screen but this margin, and only its list scrolls
 const MARGIN = 24;
@@ -53,6 +63,12 @@ export function DepartmentAdmissions({
   const dispatch = useAppDispatch();
   const tk = (key: string, options?: Record<string, unknown>) =>
     t(`infectionControlConsolidated.drill.${key}`, options);
+  const lite = isLiteReport();
+  // in a lite schema, without the columns it has no data for
+  const shown = <T,>(columns: TableColumnsType<T>) =>
+    lite
+      ? columns.filter((c) => !LITE_HIDDEN_COLUMNS.includes(String(c.key)))
+      : columns;
   const admissions = useAppSelector(
     (state) => state.reportsArea.infectionControlConsolidated.admissions,
   );
@@ -102,21 +118,25 @@ export function DepartmentAdmissions({
       title: tk("admission"),
       dataIndex: "admissionNumber",
       key: "admissionNumber",
-      render: (value: number) => (
-        <Space size={4}>
-          {value}
-          <Tooltip title={tk("openAdmission")}>
-            <Link
-              to={`/controle-infeccao/${value}`}
-              target="_blank"
-              onClick={(event) => event.stopPropagation()}
-              aria-label={tk("openAdmission")}
-            >
-              <ExportOutlined />
-            </Link>
-          </Tooltip>
-        </Space>
-      ),
+      // a lite schema has no infection control page to open
+      render: (value: number) =>
+        lite ? (
+          value
+        ) : (
+          <Space size={4}>
+            {value}
+            <Tooltip title={tk("openAdmission")}>
+              <Link
+                to={`/controle-infeccao/${value}`}
+                target="_blank"
+                onClick={(event) => event.stopPropagation()}
+                aria-label={tk("openAdmission")}
+              >
+                <ExportOutlined />
+              </Link>
+            </Tooltip>
+          </Space>
+        ),
     },
     {
       title: tk("status"),
@@ -319,7 +339,7 @@ export function DepartmentAdmissions({
           {tk("courses", { admission: admission.admissionNumber })}
         </strong>
         <Table<ICourse>
-          columns={courseColumns}
+          columns={shown(courseColumns)}
           dataSource={courses.result.courses || []}
           rowKey={(row: ICourse) => `${row.course}`}
           loading={courses.status === "loading"}
@@ -368,7 +388,7 @@ export function DepartmentAdmissions({
             <Spin spinning={admissions.status === "loading"}>
               <Table<IAdmission>
                 sticky={{ getContainer: () => listRef.current || window }}
-                columns={admissionColumns}
+                columns={shown(admissionColumns)}
                 dataSource={admissions.result.admissions || []}
                 rowKey={(row: IAdmission) => `${row.admissionNumber}`}
                 locale={{
