@@ -35,6 +35,7 @@ import {
   IOverview,
   IUsePoint,
 } from "../../infectionControlReportTypes";
+import { isLiteReport } from "../../lite";
 
 // a treatment type's days and their AWaRe mix
 interface ITypeRow {
@@ -71,6 +72,8 @@ export function DotLot({
   );
   const right = "right" as const;
   const dot = data.dot || 0;
+  // a lite schema has no indication: every day would read "none"
+  const lite = isLiteReport();
 
   // the treatment types with days, each with the AWaRe mix of its days
   const typeRows: ITypeRow[] = TREATMENT_TYPE_GROUPS.map((g) => ({
@@ -180,21 +183,23 @@ export function DotLot({
           help={tk("dotLotHelp")}
           loading={loading}
         />
-        <Indicator
-          title={tk("withIndication")}
-          value={formatShare(consumed.dotWithTreatmentTypeShare)}
-          detail={
-            consumed.dotWithTreatmentType != null &&
-            data.dot != null &&
-            t("infectionControlConsolidated.dotLot.withIndicationDetail", {
-              informed: formatInteger(consumed.dotWithTreatmentType),
-              dot: formatInteger(data.dot),
-            })
-          }
-          help={tk("withIndicationHelp")}
-          kb="reports.infectionControl.withIndication"
-          loading={loading}
-        />
+        {!lite && (
+          <Indicator
+            title={tk("withIndication")}
+            value={formatShare(consumed.dotWithTreatmentTypeShare)}
+            detail={
+              consumed.dotWithTreatmentType != null &&
+              data.dot != null &&
+              t("infectionControlConsolidated.dotLot.withIndicationDetail", {
+                informed: formatInteger(consumed.dotWithTreatmentType),
+                dot: formatInteger(data.dot),
+              })
+            }
+            help={tk("withIndicationHelp")}
+            kb="reports.infectionControl.withIndication"
+            loading={loading}
+          />
+        )}
       </IndicatorGrid>
 
       <Row gutter={[24, 24]}>
@@ -219,55 +224,62 @@ export function DotLot({
             <AwareTrendChart points={monthlyUse || []} loading={loading} />
           </Block>
         </Col>
-        <Col xs={24}>
-          <Block
-            title={tk("indicationTrend")}
-            help={tk("indicationTrendHelp")}
-            loading={loading}
-            kb="reports.infectionControl.indicationTrend"
-          >
-            <IndicationTrendChart points={monthlyUse || []} loading={loading} />
-          </Block>
-        </Col>
-        <Col xs={24}>
-          <Block
-            title={tk("byIndication")}
-            help={tk("byIndicationHelp")}
-            loading={loading}
-            kb="reports.infectionControl.dotByIndication"
-          >
-            <Table<ITypeRow>
-              columns={typeColumns}
-              dataSource={typeRows}
-              rowKey={(row: ITypeRow) => row.key}
-              pagination={false}
-              size="small"
-              scroll={{ x: true }}
-            />
-          </Block>
-        </Col>
-        <Col xs={24}>
-          <Block
-            title={tk("byFocus")}
-            help={tk("byFocusHelp")}
-            loading={loading}
-            kb="reports.infectionControl.dotByFocus"
-          >
-            <BlockHint>
-              {t("infectionControlConsolidated.dotLot.byFocusHint", {
-                withFocus: formatShare(consumed.dotWithFocusShare),
-                multiple: formatShare(consumed.multipleFociShare),
-              })}
-            </BlockHint>
-            <Table<IFocusDot>
-              columns={focusColumns}
-              dataSource={consumed.dotByFocus || []}
-              rowKey={(row: IFocusDot) => `${row.focus}`}
-              pagination={{ pageSize: 10, hideOnSinglePage: true }}
-              size="small"
-            />
-          </Block>
-        </Col>
+        {!lite && (
+          <>
+            <Col xs={24}>
+              <Block
+                title={tk("indicationTrend")}
+                help={tk("indicationTrendHelp")}
+                loading={loading}
+                kb="reports.infectionControl.indicationTrend"
+              >
+                <IndicationTrendChart
+                  points={monthlyUse || []}
+                  loading={loading}
+                />
+              </Block>
+            </Col>
+            <Col xs={24}>
+              <Block
+                title={tk("byIndication")}
+                help={tk("byIndicationHelp")}
+                loading={loading}
+                kb="reports.infectionControl.dotByIndication"
+              >
+                <Table<ITypeRow>
+                  columns={typeColumns}
+                  dataSource={typeRows}
+                  rowKey={(row: ITypeRow) => row.key}
+                  pagination={false}
+                  size="small"
+                  scroll={{ x: true }}
+                />
+              </Block>
+            </Col>
+            <Col xs={24}>
+              <Block
+                title={tk("byFocus")}
+                help={tk("byFocusHelp")}
+                loading={loading}
+                kb="reports.infectionControl.dotByFocus"
+              >
+                <BlockHint>
+                  {t("infectionControlConsolidated.dotLot.byFocusHint", {
+                    withFocus: formatShare(consumed.dotWithFocusShare),
+                    multiple: formatShare(consumed.multipleFociShare),
+                  })}
+                </BlockHint>
+                <Table<IFocusDot>
+                  columns={focusColumns}
+                  dataSource={consumed.dotByFocus || []}
+                  rowKey={(row: IFocusDot) => `${row.focus}`}
+                  pagination={{ pageSize: 10, hideOnSinglePage: true }}
+                  size="small"
+                />
+              </Block>
+            </Col>
+          </>
+        )}
         <Col xs={24}>
           <Block
             title={tk("bySubstance")}
