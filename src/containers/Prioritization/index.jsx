@@ -10,20 +10,11 @@ import {
   checkScreeningThunk,
   updatePrescriptionStatusThunk,
 } from "store/ducks/prescriptions/thunk";
-import {
-  searchDrugsThunk,
-  fetchDrugsFrequenciesListThunk,
-} from "store/ducks/drugs/thunk";
+import { searchDrugs, fetchDrugFrequencies } from "features/drugs/DrugsSlice";
 
 import Prioritization from "components/Prioritization";
 
-const mapStateToProps = ({
-  segments,
-  prescriptions,
-  app,
-  drugs,
-  user,
-}) => ({
+const mapStateToProps = ({ segments, prescriptions, app, drugs, user }) => ({
   segments: {
     error: segments.error,
     list: segments.list,
@@ -54,11 +45,11 @@ const mapDispatchToProps = (dispatch) =>
       checkScreening: checkScreeningThunk,
       updatePrescriptionListStatus: updatePrescriptionStatusThunk,
       setScreeningListFilter: setScreeningListFilterThunk,
-      searchDrugs: searchDrugsThunk,
-      fetchFrequencies: fetchDrugsFrequenciesListThunk,
+      searchDrugs: (idSegment, params) => searchDrugs({ idSegment, params }),
+      fetchFrequencies: fetchDrugFrequencies,
       setJourney: setJourneyThunk,
     },
-    dispatch
+    dispatch,
   );
 
 export default connect(mapStateToProps, mapDispatchToProps)(Prioritization);
