@@ -5,7 +5,7 @@ import { MaintainerGroup } from "components/MaintainerGroup/MaintainerGroup";
 import { MedicineBoxOutlined } from "@ant-design/icons";
 
 import { useAppDispatch, useAppSelector } from "src/store";
-import { searchDrugsThunk } from "store/ducks/drugs/thunk";
+import { searchDrugs } from "features/drugs/DrugsSlice";
 import {
   setIdSegment,
   setIdDrug,
@@ -34,7 +34,7 @@ import { KnowledgeBaseIcon } from "features/knowledgeBase/KnowledgeBaseIcon/Know
 export function DrugDashboard() {
   const dispatch = useAppDispatch();
   const [attributesCardReloadKey, setAttributesCardReloadKey] = useState(0);
-  const drugsSearch = useAppSelector((state: any) => state.drugs.search);
+  const drugsSearch = useAppSelector((state) => state.drugs.search);
   const segments = useAppSelector((state: any) => state.segments);
   const drugDashboard = useAppSelector((state: any) => state.drugDashboard);
   const drugGenerateScoreOpenCount = useAppSelector(
@@ -53,7 +53,7 @@ export function DrugDashboard() {
   useEffect(() => {
     dispatch(setIdSegment(idSegmentParam));
     if (idSegmentParam) {
-      dispatch(searchDrugsThunk(idSegmentParam));
+      dispatch(searchDrugs({ idSegment: idSegmentParam }));
     }
   }, [dispatch, idSegmentParam]);
 

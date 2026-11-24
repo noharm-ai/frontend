@@ -42,7 +42,6 @@ export function DrugGenerateScore({ onAfterSave }: DrugGenerateScoreProps) {
   const substance = useAppSelector(
     (state: any) => state.drugGenerateScore.substance,
   );
-  const units = useAppSelector((state: any) => state.drugs.units.list);
 
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -89,7 +88,8 @@ export function DrugGenerateScore({ onAfterSave }: DrugGenerateScoreProps) {
       division: hasDivision ? localDivision : null,
       useWeight: hasDivision ? localUseWeight : null,
       idMeasureUnit,
-      measureUnitList: units,
+      // drugs.units was never loaded, so this list has always been sent empty
+      measureUnitList: [],
     };
 
     const steps = [configDrugV2, prepareGeneration, generateSingle];

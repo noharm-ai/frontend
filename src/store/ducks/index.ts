@@ -3,7 +3,6 @@ import { combineReducers } from "redux";
 import appReducer from "./app";
 import authReducer from "./auth";
 import userReducer from "./user";
-import drugsReducer from "./drugs";
 import { segmentsReducer } from "features/segments/SegmentsSlice";
 import interventionReducer from "./intervention";
 import prescriptionsReducer from "./prescriptions";
@@ -38,6 +37,7 @@ import drugGenerateScoreSlice from "features/drugs/DrugGenerateScore/DrugGenerat
 import drugSubstanceSlice from "features/drugs/DrugSubstance/DrugSubstanceSlice";
 import { userProfileReducer } from "features/user/UserProfile/UserProfileSlice";
 import { patientFormReducer } from "features/patients/PatientForm/PatientFormSlice";
+import { drugsReducer } from "features/drugs/DrugsSlice";
 
 import adminIntegration from "features/admin/Integration/IntegrationSlice";
 import adminExam from "features/admin/Exam/ExamSlice";

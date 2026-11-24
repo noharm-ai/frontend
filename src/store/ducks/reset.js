@@ -1,5 +1,4 @@
 import { Creators as ClinicalNotesCreators } from "./clinicalNotes";
-import { Creators as DrugsCreators } from "./drugs";
 import { Creators as InterventionCreators } from "./intervention";
 import { Creators as PrescriptionDrugsCreators } from "./prescriptionDrugs";
 import { Creators as PrescriptionsCreators } from "./prescriptions";
@@ -52,9 +51,9 @@ import { reset as regulationReset } from "features/regulation/Regulation/Regulat
 import { reset as regulationFormReset } from "features/regulation/RegulationForm/RegulationFormSlice";
 import { reset as regulationAttributeReset } from "features/regulation/RegulationAttribute/RegulationAttributeSlice";
 import { reset as regulationIndicatorsPanelReportReset } from "features/regulation/IndicatorsPanelReport/IndicatorsPanelReportSlice";
+import { reset as drugsReset } from "features/drugs/DrugsSlice";
 
 const { clinicalNotesReset } = ClinicalNotesCreators;
-const { drugsReset } = DrugsCreators;
 const { interventionReset } = InterventionCreators;
 const { prescriptionDrugsReset } = PrescriptionDrugsCreators;
 const { prescriptionsReset } = PrescriptionsCreators;
