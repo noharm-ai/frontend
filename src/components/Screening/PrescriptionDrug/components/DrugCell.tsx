@@ -64,10 +64,13 @@ export interface DrugRecord {
   drugAttributes?: DrugAttributes;
   // the allergy alert of the item (backend alert_service.is_allergic): the
   // flag as it arrived (presmed.alergia) and what the patient's allergy
-  // records (alergia) said of the item, null when none decided
+  // records (alergia) said of the item, null when none decided.
+  // allergyAlertDisabled: the substance is tagged no_allergy_alert, so there
+  // is no allergy whatever the flag and the records say
   allergy?: boolean;
   allergyFlag?: string | null;
   allergyRecord?: "active" | "inactive" | null;
+  allergyAlertDisabled?: boolean;
 }
 
 interface DrugCellBag {
@@ -179,6 +182,13 @@ const allergyReason = (record: DrugRecord): string | null => {
 
   const outcome = record.allergy ? "sim" : "não";
   const flag = `presmed.alergia: ${record.allergyFlag || "vazio"}`;
+
+  if (record.allergyAlertDisabled) {
+    const recorded = record.allergyRecord
+      ? `, registro ${record.allergyRecord === "active" ? "ativo" : "inativado"} na tabela alergia`
+      : "";
+    return `${outcome} — substância com o marcador "Sem alerta de alergia" (${flag}${recorded})`;
+  }
 
   switch (record.allergyRecord) {
     case "active":
