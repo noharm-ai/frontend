@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import { useState } from "react";
 import {
   SaveOutlined,
   FolderOpenOutlined,
@@ -8,15 +7,26 @@ import {
 
 import Dropdown from "components/Dropdown";
 import Button from "components/Button";
-import MemoryFilterSave from "./MemoryFilterSave";
-import MemoryFilterLoad from "./MemoryFilterLoad";
+import { MemoryFilterSave } from "./MemoryFilterSave";
+import { MemoryFilterLoad } from "./MemoryFilterLoad";
 
-function MemoryFilter({ type, currentValue, setFilter, loading }) {
+interface IMemoryFilterProps {
+  // memory type the filters are saved under (e.g. intervention_list_<userId>)
+  type: string;
+  // the AdvancedFilter values saved by "Salvar filtro atual"
+  currentValue: Record<string, unknown>;
+  setFilter: (filter: Record<string, unknown>) => void;
+  loading?: boolean;
+}
+
+export function MemoryFilter({
+  type,
+  currentValue,
+  setFilter,
+  loading,
+}: IMemoryFilterProps) {
   const [modalLoadVisible, setModalLoadVisible] = useState(false);
   const [modalSaveVisible, setModalSaveVisible] = useState(false);
-  const status = useSelector(
-    (state) => state.memoryFilter[type]?.status || "loading"
-  );
 
   const items = [
     {
@@ -31,7 +41,7 @@ function MemoryFilter({ type, currentValue, setFilter, loading }) {
     },
   ];
 
-  const onMenuClick = ({ key }) => {
+  const onMenuClick = ({ key }: { key: string }) => {
     switch (key) {
       case "load":
         setModalLoadVisible(true);
@@ -48,10 +58,7 @@ function MemoryFilter({ type, currentValue, setFilter, loading }) {
 
   return (
     <>
-      <Dropdown
-        menu={{ items, onClick: onMenuClick }}
-        loading={status === "loading"}
-      >
+      <Dropdown menu={{ items, onClick: onMenuClick }}>
         <Button
           shape="circle"
           icon={<FilterOutlined />}
@@ -74,5 +81,3 @@ function MemoryFilter({ type, currentValue, setFilter, loading }) {
     </>
   );
 }
-
-export default MemoryFilter;

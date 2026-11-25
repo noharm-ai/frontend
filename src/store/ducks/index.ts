@@ -15,7 +15,7 @@ import serverActionsSlice from "features/serverActions/ServerActionsSlice";
 import summaryReducer from "features/summary/SummarySlice";
 import { memoryTextReducer } from "features/memory/MemoryText/MemoryTextSlice";
 import memoryDraftSlice from "features/memory/MemoryDraft/MemoryDraftSlice";
-import memoryFilterSlice from "features/memory/MemoryFilter/MemoryFilterSlice";
+import { memoryFilterReducer } from "features/memory/MemoryFilter/MemoryFilterSlice";
 import memoryCustomFormsSlice from "features/memory/CustomForms/CustomFormsSlice";
 import memoryListSlice from "features/memory/MemoryList/MemoryListSlice";
 import scoreWizardSlice from "features/outliers/ScoreWizard/ScoreWizardSlice";
@@ -140,7 +140,7 @@ const rootReducer = combineReducers({
   prescriptionDrugs: prescriptionDrugsReducer,
   memoryText: memoryTextReducer,
   memoryDraft: memoryDraftSlice,
-  memoryFilter: memoryFilterSlice,
+  memoryFilter: memoryFilterReducer,
   memoryCustomForms: memoryCustomFormsSlice,
   memoryList: memoryListSlice,
   clinicalNotes: clinicalNotesReducer,

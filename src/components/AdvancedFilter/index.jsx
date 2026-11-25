@@ -13,7 +13,7 @@ import Tooltip from "components/Tooltip";
 import Button from "components/Button";
 import { Row, Col } from "components/Grid";
 import Badge from "components/Badge";
-import MemoryFilter from "features/memory/MemoryFilter/MemoryFilter";
+import { MemoryFilter } from "features/memory/MemoryFilter/MemoryFilter";
 
 import { SearchBox, FilterCard } from "./index.style";
 

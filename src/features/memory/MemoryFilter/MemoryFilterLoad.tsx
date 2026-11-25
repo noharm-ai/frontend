@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { isEmpty } from "lodash";
 import { List } from "antd";
@@ -11,24 +10,38 @@ import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import Empty from "components/Empty";
 import { getErrorMessage } from "utils/errorHandler";
+import { useAppDispatch, useAppSelector } from "store/index";
 import { saveFilter, fetchFilter } from "./MemoryFilterSlice";
+import type { ISavedFilter } from "./MemoryFilterSlice";
 
-export default function MemoryFilterLoad({ setOpen, open, type, setFilter }) {
-  const dispatch = useDispatch();
+interface IMemoryFilterLoadProps {
+  setOpen: (open: boolean) => void;
+  open: boolean;
+  type: string;
+  setFilter: (filter: Record<string, unknown>) => void;
+}
+
+export function MemoryFilterLoad({
+  setOpen,
+  open,
+  type,
+  setFilter,
+}: IMemoryFilterLoadProps) {
+  const dispatch = useAppDispatch();
   const { t } = useTranslation();
-  const status = useSelector(
-    (state) => state.memoryFilter[type]?.status || "idle"
+  const status = useAppSelector(
+    (state) => state.memoryFilter[type]?.status || "idle",
   );
-  const [data, setData] = useState([]);
+  const [data, setData] = useState<ISavedFilter[]>([]);
 
   useEffect(() => {
     if (open) {
-      dispatch(fetchFilter(type)).then((response) => {
-        if (response.error) {
+      dispatch(fetchFilter(type)).then((response: unknown) => {
+        if (fetchFilter.rejected.match(response)) {
           notification.error({
             message: getErrorMessage(response, t),
           });
-        } else {
+        } else if (fetchFilter.fulfilled.match(response)) {
           if (!isEmpty(response.payload.data)) {
             setData([...response.payload.data[0].value]);
           }
@@ -37,23 +50,25 @@ export default function MemoryFilterLoad({ setOpen, open, type, setFilter }) {
     }
   }, [open, dispatch, t, type]);
 
-  const removeItem = (index) => {
+  const removeItem = (index: number) => {
     const newArray = [...data];
     newArray.splice(index, 1);
 
     setData(newArray);
-    dispatch(saveFilter({ type: type, value: newArray })).then((response) => {
-      if (response.error) {
-        notification.error({
-          message: getErrorMessage(response, t),
-        });
-      } else {
-        notification.success({ message: "Filtro removido com sucesso." });
-      }
-    });
+    dispatch(saveFilter({ type: type, value: newArray })).then(
+      (response: unknown) => {
+        if (saveFilter.rejected.match(response)) {
+          notification.error({
+            message: getErrorMessage(response, t),
+          });
+        } else {
+          notification.success({ message: "Filtro removido com sucesso." });
+        }
+      },
+    );
   };
 
-  const applyFilter = (item) => {
+  const applyFilter = (item: ISavedFilter) => {
     setFilter(item.data);
     setOpen(false);
   };
