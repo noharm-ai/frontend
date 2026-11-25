@@ -137,6 +137,47 @@ test.describe("as a MAINTAINER", () => {
     ).toBeVisible();
   });
 
+  test("a substance tagged no_allergy_alert never raises the allergy", async ({
+    page,
+    mockApi,
+  }) => {
+    // the tag wins over the flag and over an active record
+    mockApi.override("GET /prescriptions/:id", {
+      json: prescriptionWithAllergies({
+        "9001": {
+          allergy: false,
+          allergyFlag: "S",
+          allergyRecord: "active",
+          allergyAlertDisabled: true,
+        },
+        "9002": {
+          allergy: false,
+          allergyFlag: "S",
+          allergyRecord: null,
+          allergyAlertDisabled: true,
+        },
+      }),
+    });
+
+    await openPrescription(page);
+
+    await drugPopover(page, "Dipirona 500mg");
+    await expect(
+      page.getByText(
+        'não — substância com o marcador "Sem alerta de alergia" (presmed.alergia: S, registro ativo na tabela alergia)',
+      ),
+    ).toBeVisible();
+
+    await page.mouse.move(0, 0);
+
+    await drugPopover(page, "Omeprazol 20mg");
+    await expect(
+      page.getByText(
+        'não — substância com o marcador "Sem alerta de alergia" (presmed.alergia: S)',
+      ),
+    ).toBeVisible();
+  });
+
   test("a backend that does not confirm the flag states nothing", async ({
     page,
     mockApi,

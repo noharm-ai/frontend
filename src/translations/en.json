@@ -1177,7 +1177,8 @@
     "chemoterapy": "Chemotherapy",
     "not_validated": "Not Validated",
     "tube": "Feeding Tube",
-    "no_dosemax": "No Maximum Dose"
+    "no_dosemax": "No Maximum Dose",
+    "no_allergy_alert": "No Allergy Alert"
   },
 
   "protocolType": {
