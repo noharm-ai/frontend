@@ -17,6 +17,7 @@ import {
   formatShare,
 } from "../../format";
 import { IConsumption } from "../../infectionControlReportTypes";
+import { isLiteReport } from "../../lite";
 
 interface ConsumptionProps {
   consumption?: IConsumption;
@@ -29,6 +30,8 @@ export function Consumption({ consumption, loading }: ConsumptionProps) {
   const tk = (key: string) =>
     t(`infectionControlConsolidated.consumption.${key}`);
   const data: Partial<IConsumption> = consumption || {};
+  // a lite schema has no indication, so no surgical prophylaxis to tell
+  const lite = isLiteReport();
   const days = t("infectionControlConsolidated.units.days");
   const hours = t("infectionControlConsolidated.units.hours");
   const prophylaxis = data.surgicalProphylaxis;
@@ -83,31 +86,38 @@ export function Consumption({ consumption, loading }: ConsumptionProps) {
           color="orange"
           loading={loading}
         />
-        <Indicator
-          title={tk("prophylaxisOver24h")}
-          value={formatShare(prophylaxis?.longerThan24hShare)}
-          detail={
-            prophylaxis &&
-            t("infectionControlConsolidated.consumption.prophylaxisDetail", {
-              over: formatInteger(prophylaxis.longerThan24h),
-              courses: formatInteger(prophylaxis.courses),
-            })
-          }
-          help={tk("prophylaxisOver24hHelp")}
-          color="orange"
-          kb="reports.infectionControl.surgicalProphylaxis"
-          loading={loading}
-        />
-        <Indicator
-          title={tk("prophylaxisDuration")}
-          value={formatMedian(prophylaxis?.durationHours, hours)}
-          detail={
-            prophylaxis?.durationHours?.p90 != null &&
-            `p90: ${formatDecimal(prophylaxis.durationHours.p90)} ${hours}`
-          }
-          help={tk("prophylaxisDurationHelp")}
-          loading={loading}
-        />
+        {!lite && (
+          <>
+            <Indicator
+              title={tk("prophylaxisOver24h")}
+              value={formatShare(prophylaxis?.longerThan24hShare)}
+              detail={
+                prophylaxis &&
+                t(
+                  "infectionControlConsolidated.consumption.prophylaxisDetail",
+                  {
+                    over: formatInteger(prophylaxis.longerThan24h),
+                    courses: formatInteger(prophylaxis.courses),
+                  },
+                )
+              }
+              help={tk("prophylaxisOver24hHelp")}
+              color="orange"
+              kb="reports.infectionControl.surgicalProphylaxis"
+              loading={loading}
+            />
+            <Indicator
+              title={tk("prophylaxisDuration")}
+              value={formatMedian(prophylaxis?.durationHours, hours)}
+              detail={
+                prophylaxis?.durationHours?.p90 != null &&
+                `p90: ${formatDecimal(prophylaxis.durationHours.p90)} ${hours}`
+              }
+              help={tk("prophylaxisDurationHelp")}
+              loading={loading}
+            />
+          </>
+        )}
       </IndicatorGrid>
 
       <Row gutter={[24, 24]}>

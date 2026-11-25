@@ -32,6 +32,9 @@ export default class Feature {
   static MULTI_CLINICAL_NOTES = "MULTI_CLINICAL_NOTES";
   static CULTURE = "CULTURE";
   static INFECTION_CONTROL = "INFECTION_CONTROL";
+  // only the infection control report's DOT/LOT (no worklist, reviews or
+  // indication); INFECTION_CONTROL wins when both are on
+  static INFECTION_CONTROL_LITE = "INFECTION_CONTROL_LITE";
   // test case prescriptions (menu Curadoria), for maintainers; read from the
   // schema's own features only (FeatureService.hasSchemaFeature), like the
   // backend, never from the user's. Absent from getFeatures(): as an extra
@@ -219,6 +222,12 @@ export default class Feature {
         label: "Controle de Infecção",
         description:
           "Habilita o acompanhamento dos pacientes em uso de antimicrobianos: lista de pendências, revisões e avaliação de conformidade pelo infectologista.",
+      },
+      {
+        id: Feature.INFECTION_CONTROL_LITE,
+        label: "Controle de Infecção (lite)",
+        description:
+          "Mantém só o DOT/LOT do relatório de Controle de Infecção, atualizado uma vez por noite, sem lista de pendências, revisões nem indicação. Ignorado quando Controle de Infecção está habilitado. O relatório também precisa estar habilitado.",
       },
     ];
   }

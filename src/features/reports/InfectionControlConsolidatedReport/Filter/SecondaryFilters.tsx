@@ -22,6 +22,7 @@ import { HIDDEN_NAME } from "utils/report";
 import { Form } from "styles/Form.style";
 
 import { focusName, treatmentTypeName } from "../indication";
+import { isLiteReport } from "../lite";
 import { IFilterContext, IOption } from "../infectionControlReportTypes";
 
 // letters typed before searching
@@ -79,7 +80,7 @@ const toUser = (u: { id: number; name: string }) => ({
   label: u.name,
 });
 
-/** AWaRe classification, substance, indication (treatment type and infection focus) and reviewer. */
+/** AWaRe classification, substance, indication (treatment type and infection focus) and reviewer; a lite schema only the first two. */
 export function SecondaryFilters() {
   const { t } = useTranslation();
   const { values, setFieldValue } = useContext(
@@ -87,6 +88,8 @@ export function SecondaryFilters() {
   ) as IFilterContext;
   const tk = (key: string) => t(`infectionControlConsolidated.filter.${key}`);
   const hideNames = FeatureService.has(Feature.HIDE_NAMES);
+  // a lite schema has no indication or reviewers to filter by
+  const lite = isLiteReport();
   const substances = useSearch(searchSubstances, toSubstance);
   const users = useSearch(searchUsers, toUser);
 
@@ -132,7 +135,7 @@ export function SecondaryFilters() {
 
   return (
     <Row gutter={[20, 20]} style={{ marginTop: "15px", padding: "10px 0" }}>
-      <Col md={12}>
+      <Col md={lite ? 24 : 12}>
         <Card
           title={tk("antimicrobial")}
           size="small"
@@ -173,80 +176,86 @@ export function SecondaryFilters() {
               </div>
             </div>
 
-            <div className="form-row">
-              <div className="form-label">
-                <label>{tk("treatmentType")}:</label>
-              </div>
-              <div className="form-input">
-                <Select
-                  id="infection-control-treatment-type"
-                  style={{ width: "100%" }}
-                  value={values.treatment_type}
-                  onChange={(val) =>
-                    setFieldValue({ treatment_type: val as number[] })
-                  }
-                  mode="multiple"
-                  allowClear
-                  maxTagCount="responsive"
-                  aria-label={tk("treatmentType")}
-                >
-                  {AntimicrobialTreatmentTypeEnum.list.map((type) => (
-                    <Select.Option key={type} value={type}>
-                      {treatmentTypeName(type, t)}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </div>
-            </div>
+            {!lite && (
+              <>
+                <div className="form-row">
+                  <div className="form-label">
+                    <label>{tk("treatmentType")}:</label>
+                  </div>
+                  <div className="form-input">
+                    <Select
+                      id="infection-control-treatment-type"
+                      style={{ width: "100%" }}
+                      value={values.treatment_type}
+                      onChange={(val) =>
+                        setFieldValue({ treatment_type: val as number[] })
+                      }
+                      mode="multiple"
+                      allowClear
+                      maxTagCount="responsive"
+                      aria-label={tk("treatmentType")}
+                    >
+                      {AntimicrobialTreatmentTypeEnum.list.map((type) => (
+                        <Select.Option key={type} value={type}>
+                          {treatmentTypeName(type, t)}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
 
-            <div className="form-row">
-              <div className="form-label">
-                <label>{tk("infectionFocus")}:</label>
-              </div>
-              <div className="form-input">
-                <Select
-                  id="infection-control-infection-focus"
-                  style={{ width: "100%" }}
-                  value={values.infection_focus}
-                  onChange={(val) =>
-                    setFieldValue({ infection_focus: val as number[] })
-                  }
-                  mode="multiple"
-                  allowClear
-                  maxTagCount="responsive"
-                  optionFilterProp="children"
-                  aria-label={tk("infectionFocus")}
-                >
-                  {InfectionFocusEnum.list.map((focus) => (
-                    <Select.Option key={focus} value={focus}>
-                      {focusName(focus, t)}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </div>
-            </div>
+                <div className="form-row">
+                  <div className="form-label">
+                    <label>{tk("infectionFocus")}:</label>
+                  </div>
+                  <div className="form-input">
+                    <Select
+                      id="infection-control-infection-focus"
+                      style={{ width: "100%" }}
+                      value={values.infection_focus}
+                      onChange={(val) =>
+                        setFieldValue({ infection_focus: val as number[] })
+                      }
+                      mode="multiple"
+                      allowClear
+                      maxTagCount="responsive"
+                      optionFilterProp="children"
+                      aria-label={tk("infectionFocus")}
+                    >
+                      {InfectionFocusEnum.list.map((focus) => (
+                        <Select.Option key={focus} value={focus}>
+                          {focusName(focus, t)}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </div>
+                </div>
+              </>
+            )}
           </Form>
         </Card>
       </Col>
-      <Col md={12}>
-        <Card
-          title={tk("review")}
-          size="small"
-          type="inner"
-          style={{ background: "#fafafa" }}
-        >
-          <Form>
-            <div className="form-row">
-              <div className="form-label">
-                <label>{tk("reviewer")}:</label>
+      {!lite && (
+        <Col md={12}>
+          <Card
+            title={tk("review")}
+            size="small"
+            type="inner"
+            style={{ background: "#fafafa" }}
+          >
+            <Form>
+              <div className="form-row">
+                <div className="form-label">
+                  <label>{tk("reviewer")}:</label>
+                </div>
+                <div className="form-input">
+                  {searchSelect("reviewer", users, hideNames)}
+                </div>
               </div>
-              <div className="form-input">
-                {searchSelect("reviewer", users, hideNames)}
-              </div>
-            </div>
-          </Form>
-        </Card>
-      </Col>
+            </Form>
+          </Card>
+        </Col>
+      )}
     </Row>
   );
 }
