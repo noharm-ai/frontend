@@ -30,8 +30,9 @@ const existingTags = [
   },
 ];
 
-const listCalls = (mockApi: { requests: { path: string }[] }) =>
-  mockApi.requests.filter((r) => r.path === "/admin/tag/list");
+const listCalls = (mockApi: {
+  requests: { path: string; postData?: string }[];
+}) => mockApi.requests.filter((r) => r.path === "/admin/tag/list");
 
 test.use({ storageState: { cookies: [], origins: [] } });
 
