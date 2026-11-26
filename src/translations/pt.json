@@ -1185,7 +1185,8 @@
     "chemoterapy": "Quimioterápico",
     "not_validated": "Sem validação",
     "tube": "Sonda",
-    "no_dosemax": "Sem dose máxima"
+    "no_dosemax": "Sem dose máxima",
+    "no_allergy_alert": "Sem alerta de alergia"
   },
 
   "protocolType": {

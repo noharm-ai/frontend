@@ -10,6 +10,7 @@ export class SubstanceTagEnum {
   static NOT_VALIDATED = "not_validated";
   static TUBE = "tube";
   static NO_DOSEMAX = "no_dosemax";
+  static NO_ALLERGY_ALERT = "no_allergy_alert";
 
   static getSubstanceTags = (t: (key: string) => string) => {
     const enumValues = SubstanceTagEnum as unknown as Record<string, unknown>;
