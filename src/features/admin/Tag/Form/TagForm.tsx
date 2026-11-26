@@ -1,8 +1,8 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
+
+import { useAppDispatch, useAppSelector } from "src/store";
 
 import notification from "components/notification";
 import Heading from "components/Heading";
@@ -11,17 +11,18 @@ import { getErrorMessage } from "utils/errorHandler";
 
 import { Form } from "styles/Form.style";
 
-import { setTag, upsertTag } from "../TagSlice";
+import { setTag, upsertTag, ITagFormData } from "../TagSlice";
 import { canCreateTags, canWriteTag } from "../tagPermissions";
-import Base from "./Base";
+import { BaseForm } from "./Base";
 
 const MAX_TAG_CHARS = 40;
 
-export function TagForm({ ...props }) {
+// extra props are forwarded to the modal
+export function TagForm({ ...props }: Record<string, unknown>) {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
-  const formData = useSelector((state) => state.admin.tag.single.data);
-  const status = useSelector((state) => state.admin.tag.single.status);
+  const dispatch = useAppDispatch();
+  const formData = useAppSelector((state) => state.admin.tag.single.data);
+  const status = useAppSelector((state) => state.admin.tag.single.status);
   const isSaving = status === "loading";
   const canWrite = formData?.new
     ? canCreateTags()
@@ -35,12 +36,12 @@ export function TagForm({ ...props }) {
     tagType: Yup.number().nullable().required(t("validation.requiredField")),
     active: Yup.boolean().nullable().required(t("validation.requiredField")),
   });
-  const initialValues = {
+  const initialValues: ITagFormData = {
     ...formData,
   };
 
-  const onSave = (params) => {
-    dispatch(upsertTag(params)).then((response) => {
+  const onSave = (params: ITagFormData) => {
+    dispatch(upsertTag(params)).then((response: any) => {
       if (response.error) {
         notification.error({
           message: getErrorMessage(response, t),
@@ -68,12 +69,12 @@ export function TagForm({ ...props }) {
     >
       {({ handleSubmit }) => (
         <DefaultModal
-          open={formData}
+          open={!!formData}
           width={350}
           centered
           destroyOnHidden
           onCancel={onCancel}
-          onOk={handleSubmit}
+          onOk={() => handleSubmit()}
           okText={t("actions.save")}
           cancelText={canWrite ? t("actions.cancel") : t("actions.close")}
           confirmLoading={isSaving}
@@ -91,7 +92,7 @@ export function TagForm({ ...props }) {
           </header>
 
           <Form onSubmit={handleSubmit}>
-            <Base open={formData} />
+            <BaseForm open={!!formData} />
           </Form>
         </DefaultModal>
       )}

@@ -1,30 +1,31 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+
+import { useAppDispatch, useAppSelector } from "src/store";
 
 import notification from "components/notification";
 import AdvancedFilter from "components/AdvancedFilter";
 
-import { fetchTags, reset } from "../TagSlice";
+import { fetchTags, reset, ITagFilterParams } from "../TagSlice";
 
-import MainFilters from "./MainFilters";
+import { MainFilters } from "./MainFilters";
 
-export default function Filter() {
-  const dispatch = useDispatch();
+export function Filter() {
+  const dispatch = useAppDispatch();
   const isFetching =
-    useSelector((state) => state.admin.tag.status) === "loading";
+    useAppSelector((state) => state.admin.tag.status) === "loading";
 
   const { t } = useTranslation();
   const errorMessage = {
     message: t("error.title"),
     description: t("error.description"),
   };
-  const initialValues = {
+  const initialValues: ITagFilterParams = {
     active: null,
   };
 
   useEffect(() => {
-    dispatch(fetchTags({ ...initialValues })).then((response) => {
+    dispatch(fetchTags({ ...initialValues })).then((response: any) => {
       if (response.error) {
         notification.error(errorMessage);
       }
@@ -35,8 +36,8 @@ export default function Filter() {
     };
   }, []); //eslint-disable-line
 
-  const search = (params) => {
-    dispatch(fetchTags(params)).then((response) => {
+  const search = (params: ITagFilterParams) => {
+    dispatch(fetchTags(params)).then((response: any) => {
       if (response.error) {
         notification.error(errorMessage);
       }
@@ -47,9 +48,12 @@ export default function Filter() {
     <AdvancedFilter
       initialValues={initialValues}
       mainFilters={<MainFilters />}
+      secondaryFilters={null}
       onSearch={search}
+      onChangeValues={null}
       loading={isFetching}
       skipFilterList={["active"]}
+      memoryType={null}
     />
   );
 }

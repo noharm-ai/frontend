@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import { useContext } from "react";
 
 import { Select } from "components/Inputs";
 import Tag from "components/Tag";
@@ -6,8 +6,9 @@ import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
 
-export default function MainFilters() {
-  const { values, setFieldValue } = useContext(AdvancedFilterContext);
+export function MainFilters() {
+  // TODO(ts): AdvancedFilterContext is still JS and untyped
+  const { values, setFieldValue }: any = useContext(AdvancedFilterContext);
 
   return (
     <>
