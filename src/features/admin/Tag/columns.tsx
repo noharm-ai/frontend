@@ -1,12 +1,19 @@
-import React from "react";
 import { EditOutlined, EyeOutlined } from "@ant-design/icons";
-import { Tag } from "antd";
+import { Tag, TableProps } from "antd";
+import { TFunction } from "i18next";
 
 import Button from "components/Button";
 import Tooltip from "components/Tooltip";
 import { canWriteTag } from "./tagPermissions";
+import { ITag, setTag as setTagAction } from "./TagSlice";
+import { AppDispatch } from "src/store";
 
-const columns = (setTag, dispatch, t) => {
+export const columns = (
+  setTag: typeof setTagAction,
+  dispatch: AppDispatch,
+  t: TFunction,
+  // TODO(ts): components/Table is still JS, so its rows are typed as unknown
+): TableProps<any>["columns"] => {
   return [
     {
       title: "Marcador",
@@ -15,7 +22,7 @@ const columns = (setTag, dispatch, t) => {
     {
       title: "Tipo",
       align: "center",
-      render: (entry, record) => {
+      render: (_entry: unknown, record: ITag) => {
         switch (record.tagType) {
           case 1:
             return "Paciente";
@@ -29,7 +36,7 @@ const columns = (setTag, dispatch, t) => {
     {
       title: "Situação",
       align: "center",
-      render: (entry, record) => {
+      render: (_entry: unknown, record: ITag) => {
         return record.active ? (
           <Tag color="green">Ativo</Tag>
         ) : (
@@ -42,7 +49,7 @@ const columns = (setTag, dispatch, t) => {
       key: "operations",
       width: 70,
       align: "center",
-      render: (text, record) => {
+      render: (_text: unknown, record: ITag) => {
         // write access depends on the tag type: WRITE_PATIENT_TAGS covers
         // navigation tags only
         const label = canWriteTag(record.tagType)
@@ -65,4 +72,3 @@ const columns = (setTag, dispatch, t) => {
     },
   ];
 };
-export default columns;

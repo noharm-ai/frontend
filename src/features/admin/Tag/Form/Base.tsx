@@ -1,4 +1,5 @@
-import React, { useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
+import type { InputRef } from "antd";
 import { useFormikContext } from "formik";
 import { useTranslation } from "react-i18next";
 
@@ -8,18 +9,23 @@ import { TagTypeEnum } from "models/TagTypeEnum";
 import Permission from "models/Permission";
 import PermissionService from "services/PermissionService";
 import { canCreateTags, canWriteTag, canWriteTags } from "../tagPermissions";
+import { ITagFormData } from "../TagSlice";
 
-function BaseForm({ open }) {
+interface BaseFormProps {
+  open: boolean;
+}
+
+export function BaseForm({ open }: BaseFormProps) {
   const { t } = useTranslation();
-  const inputRef = useRef(null);
-  const { values, errors, touched, handleBlur, setFieldValue } =
-    useFormikContext();
+  const inputRef = useRef<InputRef>(null);
+  const { values, errors, touched, setFieldValue } =
+    useFormikContext<ITagFormData>();
 
   useEffect(() => {
     if (open && inputRef.current) {
       setTimeout(() => {
-        inputRef.current.focus();
-        inputRef.current.select();
+        inputRef.current?.focus();
+        inputRef.current?.select();
       }, 0);
     }
   }, [open, inputRef]);
@@ -59,7 +65,9 @@ function BaseForm({ open }) {
         </div>
         <div className="form-input">
           <Input
-            onChange={({ target }) => setFieldValue("name", target.value)}
+            onChange={({ target }: React.ChangeEvent<HTMLInputElement>) =>
+              setFieldValue("name", target.value)
+            }
             value={values.name}
             ref={inputRef}
             style={{ width: "100%" }}
@@ -97,9 +105,7 @@ function BaseForm({ open }) {
         <div className="form-input">
           <Switch
             checked={values.active}
-            onChange={(value) => setFieldValue("active", value)}
-            onBlur={handleBlur}
-            status={errors.active && touched.active ? "error" : null}
+            onChange={(value: boolean) => setFieldValue("active", value)}
             checkedChildren={t("labels.yes")}
             unCheckedChildren={t("labels.no")}
             disabled={!canWrite}
@@ -112,5 +118,3 @@ function BaseForm({ open }) {
     </>
   );
 }
-
-export default BaseForm;

@@ -1,17 +1,17 @@
-import React from "react";
-import { useSelector, useDispatch } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { PlusOutlined } from "@ant-design/icons";
+
+import { useAppDispatch, useAppSelector } from "src/store";
 
 import Table from "components/Table";
 import Empty from "components/Empty";
 import BackTop from "components/BackTop";
 import Button from "components/Button";
-import columns from "./columns";
-import { toDataSource } from "utils";
+import { columns } from "./columns";
+import { toDataSource } from "utils/index";
 import { PageCard, PaginationContainer } from "styles/Utils.style";
 import { PageHeader } from "styles/PageHeader.style";
-import Filter from "./Filter/Filter";
+import { Filter } from "./Filter/Filter";
 import { setTag } from "./TagSlice";
 import { TagForm } from "./Form/TagForm";
 import { canCreateTags } from "./tagPermissions";
@@ -29,9 +29,9 @@ const emptyText = (
 
 export function Tag() {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
-  const list = useSelector((state) => state.admin.tag.list);
-  const status = useSelector((state) => state.admin.tag.status);
+  const dispatch = useAppDispatch();
+  const list = useAppSelector((state) => state.admin.tag.list);
+  const status = useAppSelector((state) => state.admin.tag.status);
 
   const ds = toDataSource(list, null, {});
 
