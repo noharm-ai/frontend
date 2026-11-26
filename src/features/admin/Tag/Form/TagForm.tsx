@@ -15,6 +15,9 @@ import { setTag, upsertTag, ITagFormData } from "../TagSlice";
 import { canCreateTags, canWriteTag } from "../tagPermissions";
 import { BaseForm } from "./Base";
 
+// the autoRefreshToken middleware returns a plain Promise of the thunk action
+type UpsertTagAction = Awaited<ReturnType<ReturnType<typeof upsertTag>>>;
+
 const MAX_TAG_CHARS = 40;
 
 // extra props are forwarded to the modal
@@ -41,8 +44,8 @@ export function TagForm({ ...props }: Record<string, unknown>) {
   };
 
   const onSave = (params: ITagFormData) => {
-    dispatch(upsertTag(params)).then((response: any) => {
-      if (response.error) {
+    dispatch(upsertTag(params)).then((response: UpsertTagAction) => {
+      if (upsertTag.rejected.match(response)) {
         notification.error({
           message: getErrorMessage(response, t),
         });

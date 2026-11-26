@@ -8,6 +8,9 @@ import AdvancedFilter from "components/AdvancedFilter";
 
 import { fetchTags, reset, ITagFilterParams } from "../TagSlice";
 
+// the autoRefreshToken middleware returns a plain Promise of the thunk action
+type FetchTagsAction = Awaited<ReturnType<ReturnType<typeof fetchTags>>>;
+
 import { MainFilters } from "./MainFilters";
 
 export function Filter() {
@@ -25,11 +28,13 @@ export function Filter() {
   };
 
   useEffect(() => {
-    dispatch(fetchTags({ ...initialValues })).then((response: any) => {
-      if (response.error) {
-        notification.error(errorMessage);
-      }
-    });
+    dispatch(fetchTags({ ...initialValues })).then(
+      (response: FetchTagsAction) => {
+        if (fetchTags.rejected.match(response)) {
+          notification.error(errorMessage);
+        }
+      },
+    );
 
     return () => {
       dispatch(reset());
@@ -37,8 +42,8 @@ export function Filter() {
   }, []); //eslint-disable-line
 
   const search = (params: ITagFilterParams) => {
-    dispatch(fetchTags(params)).then((response: any) => {
-      if (response.error) {
+    dispatch(fetchTags(params)).then((response: FetchTagsAction) => {
+      if (fetchTags.rejected.match(response)) {
         notification.error(errorMessage);
       }
     });
