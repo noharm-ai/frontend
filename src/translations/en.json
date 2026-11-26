@@ -1800,6 +1800,7 @@
         "otherCount_one": "{{count}} other",
         "otherCount_other": "{{count}} others",
         "resistantTo": "R:",
+        "susceptibleTo": "S:",
         "details": "View details",
         "resultOf": "Result {{current}} of {{total}}",
         "previous": "Previous collection",

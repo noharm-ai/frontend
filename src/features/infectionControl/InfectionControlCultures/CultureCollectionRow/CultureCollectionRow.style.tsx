@@ -205,6 +205,18 @@ export const CollectionRow = styled.div`
 
     .label {
       color: #8c8c8c;
+
+      /* the resistant and susceptible lists side by side: their label in the
+         colour of their count */
+      &.resistant {
+        color: #cf1322;
+        font-weight: 600;
+      }
+
+      &.susceptible {
+        color: #389e0d;
+        font-weight: 600;
+      }
     }
   }
 

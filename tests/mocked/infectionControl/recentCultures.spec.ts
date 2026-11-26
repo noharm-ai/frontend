@@ -212,6 +212,9 @@ test("lists each collection with what it found", async ({ page, mockApi }) => {
   await expect(organism.getByTestId("organism-resistant")).toHaveText(
     "R: OXACILINA, PENICILINA, CLINDAMICINA",
   );
+  await expect(organism.getByTestId("organism-susceptible")).toHaveText(
+    "S: VANCOMICINA, LINEZOLIDA",
+  );
   // no drug of the prescription is known without the cultures by drug
   await expect(blood.getByTestId("organism-in-use")).toHaveCount(0);
 
@@ -818,12 +821,20 @@ test.describe("drugs of the prescription", () => {
     await expect(blood.getByTestId("organism-resistant")).toHaveText(
       "R: PENICILINA, CLINDAMICINA",
     );
+    // the susceptible ones too
+    await expect(blood.getByTestId("organism-susceptible")).toHaveText(
+      "S: VANCOMICINA, LINEZOLIDA",
+    );
     await expect(rows(page).nth(0)).not.toHaveClass(/resistant-in-use/);
 
     // resistant for one microorganism of the urine, susceptible for the other
     const urine = rows(page).nth(2).getByTestId("collection-organism");
     await expect(urine.nth(0).getByTestId("organism-in-use")).toHaveText(
       "AMICACINA Sem uso",
+    );
+    // a susceptible drug in use is not listed again among the susceptible
+    await expect(urine.nth(0).getByTestId("organism-susceptible")).toHaveCount(
+      0,
     );
     await expect(urine.nth(1).getByTestId("organism-in-use")).toHaveText(
       "AMICACINA Rem uso",

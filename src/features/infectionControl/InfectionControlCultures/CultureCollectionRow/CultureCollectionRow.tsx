@@ -3,7 +3,10 @@ import { Button, Tag, Tooltip } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
 import { formatDate, formatDateTime } from "utils/date";
-import { RESULT_RESISTANT } from "features/culture/cultureResistance";
+import {
+  RESULT_RESISTANT,
+  RESULT_SUSCEPTIBLE,
+} from "features/culture/cultureResistance";
 
 import { ICultureCollection } from "../../InfectionControlSlice";
 import {
@@ -32,7 +35,7 @@ interface CultureCollectionRowProps {
 /**
  * A microorganism of the collection and its antibiogram at a glance: how many
  * drugs it resists and is susceptible to, the drugs of the prescription with
- * their result, and the other drugs it resists
+ * their result, and the other drugs it resists and is susceptible to
  */
 function OrganismSummary({
   organism,
@@ -66,6 +69,9 @@ function OrganismSummary({
   const inUse = ordered.filter((row) => isInUse(row, prescribed));
   const resistant = ordered.filter(
     (row) => row.resultType === RESULT_RESISTANT && !isInUse(row, prescribed),
+  );
+  const susceptible = ordered.filter(
+    (row) => row.resultType === RESULT_SUSCEPTIBLE && !isInUse(row, prescribed),
   );
 
   return (
@@ -134,10 +140,18 @@ function OrganismSummary({
         ))}
         {resistant.length > 0 && (
           <span data-testid="organism-resistant">
-            <span className="label">
+            <span className="label resistant">
               {t("infectionControl.cultures.collections.resistantTo")}
             </span>{" "}
             {resistant.map((row) => row.drug).join(", ")}
+          </span>
+        )}
+        {susceptible.length > 0 && (
+          <span data-testid="organism-susceptible">
+            <span className="label susceptible">
+              {t("infectionControl.cultures.collections.susceptibleTo")}
+            </span>{" "}
+            {susceptible.map((row) => row.drug).join(", ")}
           </span>
         )}
       </span>
