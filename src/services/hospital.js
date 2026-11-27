@@ -10,6 +10,139 @@ import { getStorageItem } from "utils/storage";
 const FLAG = "{idPatient}";
 
 /**
+ * Per-patient name lookups (one GET per id, when there is no multipleNameUrl)
+ * in flight at once, shared by every caller. Firing a whole list at once makes
+ * the browser queue most requests behind its ~6 connections per host, so the
+ * 8s timeout runs out before they are even sent, and a name service may answer
+ * the burst with 429. 4 leaves room for the app's own API calls when getname
+ * runs through the NoHarm backend (proxy mode, same host).
+ */
+export const NAME_REQUEST_CONCURRENCY = 4;
+const NAME_REQUEST_TIMEOUT = 8000;
+// retries of a lookup answered with 429 (Too Many Requests)
+const NAME_RATE_LIMIT_RETRIES = 2;
+const NAME_RETRY_BASE_DELAY = 1000;
+const NAME_RETRY_MAX_DELAY = 10000;
+
+let activeNameRequests = 0;
+const nameRequestQueue = [];
+
+const canceled = () => new axios.CanceledError();
+
+/** Waits for a free name request slot; rejects when the signal aborts first. */
+const acquireNameSlot = (signal) =>
+  new Promise((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(canceled());
+      return;
+    }
+
+    if (activeNameRequests < NAME_REQUEST_CONCURRENCY) {
+      activeNameRequests++;
+      resolve();
+      return;
+    }
+
+    const onAbort = () => {
+      const index = nameRequestQueue.indexOf(waiter);
+      if (index !== -1) nameRequestQueue.splice(index, 1);
+      reject(canceled());
+    };
+    const waiter = () => {
+      signal?.removeEventListener("abort", onAbort);
+      resolve();
+    };
+    signal?.addEventListener("abort", onAbort, { once: true });
+    nameRequestQueue.push(waiter);
+  });
+
+/** Hands the slot over to the next queued lookup, or frees it. */
+const releaseNameSlot = () => {
+  const next = nameRequestQueue.shift();
+  if (next) {
+    next();
+  } else {
+    activeNameRequests--;
+  }
+};
+
+const wait = (ms, signal) =>
+  new Promise((resolve, reject) => {
+    if (signal?.aborted) {
+      reject(canceled());
+      return;
+    }
+
+    const onAbort = () => {
+      clearTimeout(timer);
+      reject(canceled());
+    };
+    const timer = setTimeout(() => {
+      signal?.removeEventListener("abort", onAbort);
+      resolve();
+    }, ms);
+    signal?.addEventListener("abort", onAbort, { once: true });
+  });
+
+/**
+ * How long to wait before retrying a 429: the Retry-After header (seconds or
+ * an HTTP date) when present, an exponential backoff otherwise. A name service
+ * on another origin only exposes Retry-After to the page when it lists it in
+ * Access-Control-Expose-Headers, so the backoff is the usual case there.
+ */
+const rateLimitDelay = (error, attempt) => {
+  const retryAfter = error?.response?.headers?.["retry-after"];
+  if (retryAfter) {
+    const seconds = Number(retryAfter);
+    const ms = Number.isFinite(seconds)
+      ? seconds * 1000
+      : Date.parse(retryAfter) - Date.now();
+
+    if (Number.isFinite(ms)) {
+      return Math.min(Math.max(ms, 0), NAME_RETRY_MAX_DELAY);
+    }
+  }
+
+  const backoff = NAME_RETRY_BASE_DELAY * 2 ** attempt;
+  return Math.min(backoff + Math.random() * backoff, NAME_RETRY_MAX_DELAY);
+};
+
+/**
+ * GETs one patient's name within the shared concurrency limit, retrying a
+ * 429 a few times. The slot is kept while waiting to retry, so a rate-limited
+ * service gets fewer requests, not more. Any other error is thrown as is.
+ */
+const requestName = async (url, { headers, signal }) => {
+  await acquireNameSlot(signal);
+
+  try {
+    for (let attempt = 0; ; attempt++) {
+      try {
+        return await axios.get(url, {
+          timeout: NAME_REQUEST_TIMEOUT,
+          headers,
+          signal,
+        });
+      } catch (error) {
+        if (
+          error?.response?.status !== 429 ||
+          attempt >= NAME_RATE_LIMIT_RETRIES
+        ) {
+          throw error;
+        }
+        await wait(rateLimitDelay(error, attempt), signal);
+      }
+    }
+  } finally {
+    releaseNameSlot();
+  }
+};
+
+// getPatients lookups in flight, keyed by schema and id, so a list loaded
+// again while the previous load is still resolving does not ask twice
+const pendingPatients = new Map();
+
+/**
  * Builds the headers for the configured getname mode: the NoHarm token in
  * proxy mode, a short-lived getname token in auth mode, the configured
  * headers otherwise.
@@ -111,39 +244,73 @@ const getPatients = async (requestConfig) => {
       patientCache.clearLoading(requestIds);
     }
   } else {
-    await Promise.all(
-      listToRequest.map(async ({ idPatient, birthdate }) => {
-        if (!forceRefresh && patientCache.getPatient(idPatient)?.cache) {
+    const schema = getStorageItem("schema");
+    const seen = new Set();
+    const toRequest = [];
+    const pending = [];
+
+    listToRequest.forEach(({ idPatient, birthdate }) => {
+      const key = `${schema}:${idPatient}`;
+      if (seen.has(key)) {
+        return;
+      }
+      seen.add(key);
+
+      if (!forceRefresh && patientCache.getPatient(idPatient)?.cache) {
+        return;
+      }
+
+      if (!forceRefresh && pendingPatients.has(key)) {
+        pending.push(pendingPatients.get(key));
+        return;
+      }
+
+      toRequest.push({ idPatient, birthdate, key });
+    });
+
+    // every queued id shows as loading, not only the ones in flight
+    if (toRequest.length) {
+      patientCache.markLoading(toRequest.map(({ idPatient }) => idPatient));
+    }
+
+    const fetchPatient = async ({ idPatient, birthdate }) => {
+      const cache = birthdate ? moment().diff(birthdate, "years") > 0 : false;
+      const urlRequest =
+        getnameType === "proxy"
+          ? `${import.meta.env.VITE_APP_API_URL}/names/${idPatient}`
+          : nameUrl.replace(FLAG, idPatient);
+
+      try {
+        const { data: patient } = await requestName(urlRequest, {
+          headers: nameHeaders,
+        });
+
+        if (patient == null || patient.status === "error") {
+          patientCache.clearLoading([idPatient]);
           return;
         }
-
-        patientCache.markLoading([idPatient]);
-        const cache = birthdate ? moment().diff(birthdate, "years") > 0 : false;
-        const urlRequest =
-          getnameType === "proxy"
-            ? `${import.meta.env.VITE_APP_API_URL}/names/${idPatient}`
-            : nameUrl.replace(FLAG, idPatient);
-
-        try {
-          const { data: patient } = await axios.get(urlRequest, {
-            timeout: 8000,
-            headers: nameHeaders,
-          });
-
-          if (patient == null || patient.status === "error") {
-            patientCache.clearLoading([idPatient]);
-            return;
-          }
-          if (patient.id) {
-            patient.idPatient = patient.id;
-          }
-
-          patientCache.setPatient({ ...patient, cache });
-        } catch (e) {
-          patientCache.clearLoading([idPatient]);
+        if (patient.id) {
+          patient.idPatient = patient.id;
         }
+
+        patientCache.setPatient({ ...patient, cache });
+      } catch (e) {
+        patientCache.clearLoading([idPatient]);
+      }
+    };
+
+    await Promise.all([
+      ...pending,
+      ...toRequest.map((item) => {
+        const request = fetchPatient(item).finally(() => {
+          if (pendingPatients.get(item.key) === request) {
+            pendingPatients.delete(item.key);
+          }
+        });
+        pendingPatients.set(item.key, request);
+        return request;
       }),
-    );
+    ]);
   }
 };
 
@@ -189,7 +356,8 @@ const getSinglePatient = async (requestConfig) => {
  * @param {boolean} [requestConfig.proxy] call getname through the NoHarm backend
  * @param {object} [requestConfig.headers] headers already resolved with
  *   resolveNameHeaders, so a run of many calls fetches an auth token once
- * @param {AbortSignal} [requestConfig.signal] cancels the in-flight requests
+ * @param {AbortSignal} [requestConfig.signal] cancels the in-flight and the
+ *   queued requests
  * @returns {Promise<{ names: Record<string, string>, notFound: string[] }>}
  *   keyed by String(idPatient). Empty when name resolution is disabled.
  *   Rejects when a batch request fails or is aborted.
@@ -243,8 +411,7 @@ const getPatientNames = async (requestConfig) => {
           : nameUrl.replace(FLAG, idPatient);
 
       try {
-        const { data: patient } = await axios.get(urlRequest, {
-          timeout: 8000,
+        const { data: patient } = await requestName(urlRequest, {
           headers: nameHeaders,
           signal,
         });
@@ -254,7 +421,11 @@ const getPatientNames = async (requestConfig) => {
           throw error;
         }
         // the backend answers a patient it does not know with an error body
-        if (error?.response?.data?.status === "error") {
+        // (a 429 that outlasted the retries is a failed lookup, not that)
+        if (
+          error?.response?.status !== 429 &&
+          error?.response?.data?.status === "error"
+        ) {
           collect(error.response.data, idPatient);
         }
         // otherwise the lookup failed: the id is left out, to be retried
