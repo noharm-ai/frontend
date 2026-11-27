@@ -1,16 +1,44 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
-import { Descriptions } from "antd";
+import { useState, type ComponentType, type ReactNode } from "react";
+import { Descriptions, type DescriptionsProps, type TableProps } from "antd";
 import DOMPurify from "dompurify";
 
+import { useAppSelector } from "src/store";
 import { formatDate } from "utils/date";
 import { CardTable } from "components/Table";
 import Button from "components/Button";
 import { stripHtmlPreserveSpaces } from "utils/stripHtml";
+import type {
+  CultureReportItem,
+  CultureReportDrug,
+  CultureReportPrediction,
+} from "../transformers";
 
 import { CultureResultContainer } from "../CultureReport.style";
 
-const ExpandColumn = ({ expand, toggleExpansion }) => {
+type RowKey = CultureReportItem["key"];
+
+// CardTable is styled(antd Table), which drops the Table's record type; the
+// expand-all header (columnTitle) is not part of antd's TableProps either
+const CultureTable = CardTable as unknown as ComponentType<
+  TableProps<CultureReportItem> & { columnTitle?: ReactNode }
+>;
+const DrugResultTable = CardTable as unknown as ComponentType<
+  TableProps<CultureReportDrug>
+>;
+const PredictionResultTable = CardTable as unknown as ComponentType<
+  TableProps<CultureReportPrediction>
+>;
+
+// the dates are ISO strings; compared as the JS did, a missing one included
+const compareDates = (a?: string | null, b?: string | null) =>
+  (a as string) < (b as string) ? -1 : (a as string) > (b as string) ? 1 : 0;
+
+interface ExpandColumnProps {
+  expand: boolean;
+  toggleExpansion: () => void;
+}
+
+const ExpandColumn = ({ expand, toggleExpansion }: ExpandColumnProps) => {
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
       <button
@@ -24,13 +52,13 @@ const ExpandColumn = ({ expand, toggleExpansion }) => {
   );
 };
 
-export default function CultureList() {
-  const [expandedRows, setExpandedRows] = useState([]);
-  const datasource = useSelector(
+export function CultureList() {
+  const [expandedRows, setExpandedRows] = useState<RowKey[]>([]);
+  const datasource = useAppSelector(
     (state) => state.reportsArea.culture.filtered.result.list,
   );
 
-  const updateExpandedRows = (list, key) => {
+  const updateExpandedRows = (list: RowKey[], key: RowKey): RowKey[] => {
     if (list.includes(key)) {
       return list.filter((i) => i !== key);
     }
@@ -38,7 +66,7 @@ export default function CultureList() {
     return [...list, key];
   };
 
-  const handleRowExpand = (record) => {
+  const handleRowExpand = (record: CultureReportItem) => {
     setExpandedRows(updateExpandedRows(expandedRows, record.key));
   };
 
@@ -50,27 +78,17 @@ export default function CultureList() {
     }
   };
 
-  const columns = [
+  const columns: TableProps<CultureReportItem>["columns"] = [
     {
       title: "Data Coleta",
       width: 150,
-      sorter: (a, b) =>
-        a.collectionDate < b.collectionDate
-          ? -1
-          : a.collectionDate > b.collectionDate
-            ? 1
-            : 0,
+      sorter: (a, b) => compareDates(a.collectionDate, b.collectionDate),
       render: (_, record) => formatDate(record.collectionDate),
     },
     {
       title: "Data Liberação",
       width: 160,
-      sorter: (a, b) =>
-        a.releaseDate < b.releaseDate
-          ? -1
-          : a.releaseDate > b.releaseDate
-            ? 1
-            : 0,
+      sorter: (a, b) => compareDates(a.releaseDate, b.releaseDate),
       render: (_, record) => formatDate(record.releaseDate),
     },
     {
@@ -106,7 +124,7 @@ export default function CultureList() {
 
   return (
     <>
-      <CardTable
+      <CultureTable
         bordered
         columns={columns}
         rowKey="key"
@@ -118,7 +136,7 @@ export default function CultureList() {
         )}
         expandable={{
           expandedRowRender: (record) => <ExpandedRow record={record} />,
-          onExpand: (expanded, record) => handleRowExpand(record),
+          onExpand: (_expanded, record) => handleRowExpand(record),
           expandedRowKeys: expandedRows,
         }}
         onRow={(record) => {
@@ -141,9 +159,13 @@ export default function CultureList() {
   );
 }
 
-const ExpandedRow = ({ record }) => {
-  const items = [];
-  const hasValue = (value) => {
+interface RecordProps {
+  record: CultureReportItem;
+}
+
+const ExpandedRow = ({ record }: RecordProps) => {
+  const items: NonNullable<DescriptionsProps["items"]> = [];
+  const hasValue = (value: unknown) => {
     return value !== null && `${value}`.trim() !== "";
   };
 
@@ -211,7 +233,7 @@ const ExpandedRow = ({ record }) => {
   return <Descriptions bordered items={items} />;
 };
 
-const DrugTable = ({ record }) => {
+const DrugTable = ({ record }: RecordProps) => {
   const cultures = record.cultures.filter((culture) => culture.result !== null);
 
   if (!record.cultures.length) {
@@ -222,7 +244,7 @@ const DrugTable = ({ record }) => {
     return "Nenhum perfil de sensibilidade por medicamento encontrado";
   }
 
-  const columns = [
+  const columns: TableProps<CultureReportDrug>["columns"] = [
     {
       title: "Medicamento",
       sorter: (a, b) => `${a?.drug}`.localeCompare(`${b?.drug}`),
@@ -240,7 +262,7 @@ const DrugTable = ({ record }) => {
   ];
 
   return (
-    <CardTable
+    <DrugResultTable
       bordered
       columns={columns}
       rowKey="drug"
@@ -251,10 +273,10 @@ const DrugTable = ({ record }) => {
   );
 };
 
-const PredictionTable = ({ record }) => {
+const PredictionTable = ({ record }: RecordProps) => {
   const [show, setShow] = useState(false);
 
-  const columns = [
+  const columns: TableProps<CultureReportPrediction>["columns"] = [
     {
       title: "Medicamento",
       sorter: (a, b) => `${a?.drug}`.localeCompare(`${b?.drug}`),
@@ -262,7 +284,11 @@ const PredictionTable = ({ record }) => {
     },
     {
       title: "Sensibilidade",
-      sorter: (a, b) => `${a?.result}`.localeCompare(`${b?.result}`),
+      // the predictions carry no result: kept as the JS sorted them
+      sorter: (a, b) =>
+        `${(a as { result?: unknown })?.result}`.localeCompare(
+          `${(b as { result?: unknown })?.result}`,
+        ),
       render: (_, record) =>
         record.prediction === "R" ? "Resistente" : "Sensível",
     },
@@ -285,7 +311,7 @@ const PredictionTable = ({ record }) => {
   }
 
   return (
-    <CardTable
+    <PredictionResultTable
       bordered
       columns={columns}
       rowKey="drug"

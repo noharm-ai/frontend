@@ -1,7 +1,7 @@
-import React, { useRef } from "react";
-import { useSelector } from "react-redux";
+import { useRef } from "react";
 import { Row, Col, Space, Spin } from "antd";
 
+import { useAppSelector } from "src/store";
 import { PageHeader } from "styles/PageHeader.style";
 import {
   ReportContainer,
@@ -9,18 +9,27 @@ import {
   ReportFilterContainer,
   ReportPrintDescriptions,
 } from "styles/Report.style";
-import Filter from "./Filter/Filter";
-import { NoHarmLogoHorizontal as Brand } from "assets/NoHarmLogoHorizontal";
+import { Filter } from "./Filter/Filter";
+import { NoHarmLogoHorizontal as Brand } from "src/assets/NoHarmLogoHorizontal";
 import { filtersToDescription } from "utils/report";
-import CultureList from "./CultureList/CultureList";
+import { CultureList } from "./CultureList/CultureList";
 
-export default function CultureReport({ idPatient, prescription }) {
-  const status = useSelector((state) => state.reportsArea.culture.status);
-  const filteredStatus = useSelector(
-    (state) => state.reportsArea.culture.filtered.status
+interface CultureReportProps {
+  idPatient: number | string;
+  prescription: {
+    admissionNumber?: number | string;
+    namePatient?: string;
+    birthdateFormat?: string;
+  };
+}
+
+export function CultureReport({ idPatient, prescription }: CultureReportProps) {
+  const status = useAppSelector((state) => state.reportsArea.culture.status);
+  const filteredStatus = useAppSelector(
+    (state) => state.reportsArea.culture.filtered.status,
   );
-  const filters = useSelector((state) => state.reportsArea.culture.filters);
-  const printRef = useRef(null);
+  const filters = useAppSelector((state) => state.reportsArea.culture.filters);
+  const printRef = useRef<HTMLDivElement>(null);
   const isLoading = status === "loading" || filteredStatus === "loading";
   const filtersConfig = {
     dateRange: {
@@ -45,7 +54,9 @@ export default function CultureReport({ idPatient, prescription }) {
     <>
       <PageHeader>
         <div>
-          <h1 className="page-header-title" data-kb="reports.culture.title">Relatório: Culturas </h1>
+          <h1 className="page-header-title" data-kb="reports.culture.title">
+            Relatório: Culturas{" "}
+          </h1>
         </div>
       </PageHeader>
 
