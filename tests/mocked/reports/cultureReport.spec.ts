@@ -40,6 +40,13 @@ const ITEMS = [
         microorganismAmount: ">=16",
         microorganism: "Microorganismo Teste A",
       },
+      // the same drug tested against a second microorganism
+      {
+        drug: "Medicamento Teste A",
+        result: "Resistente",
+        microorganismAmount: ">=32",
+        microorganism: "Microorganismo Teste B",
+      },
     ],
     predictions: [],
   },
@@ -53,12 +60,13 @@ const ITEMS = [
     examMaterialName: "Urina Teste",
     previousResult: null,
     microorganism: null,
-    colony: null,
-    gram: null,
-    extraInfo: null,
+    // colony, gram and extraInfo left out by the backend
     cultures: [],
     predictions: [
-      { drug: "Medicamento Teste C", prediction: "R", probability: 0.5 },
+      { drug: "Medicamento Teste C", prediction: "R", probability: 0.07 },
+      // no prediction: must not read as susceptible
+      { drug: "Medicamento Teste D", prediction: null, probability: 0.29 },
+      { drug: "Medicamento Teste E", prediction: "S", probability: 0.875 },
     ],
   },
 ];
@@ -125,6 +133,12 @@ test("lists the cultures, expands one and filters them by exam", async ({
   await expect(expanded).toContainText("Medicamento Teste B");
   await expect(expanded).toContainText("Resistente");
   await expect(expanded).toContainText(">=16");
+  // a drug repeated for another microorganism keeps its own row
+  const antibiogram = expanded.locator(".ant-table").last();
+  await expect(antibiogram.locator(".ant-table-row")).toHaveCount(3);
+  await expect(
+    antibiogram.locator(".ant-table-row", { hasText: ">=32" }),
+  ).toContainText("Medicamento Teste A");
 
   // the pending culture says so and shows its prediction on demand
   await table
@@ -132,11 +146,39 @@ test("lists the cultures, expands one and filters them by exam", async ({
     .click();
   const pending = table.locator(".ant-table-expanded-row").last();
   await expect(pending).toContainText("Resultado pendente");
+  // fields the backend left out get no row
+  await expect(pending).not.toContainText("Descrição da Colônia");
+  await expect(pending).not.toContainText("Bacterioscópico");
+  await expect(pending).not.toContainText("Complemento");
   await pending
     .getByRole("button", { name: "Exibir Predição de Resultados" })
     .click();
-  await expect(pending).toContainText("Medicamento Teste C");
-  await expect(pending).toContainText("50%");
+  const predictions = pending
+    .locator(".ant-table.ai-data, .ai-data .ant-table")
+    .first();
+  const predictionRow = (drug: string) =>
+    predictions.locator(".ant-table-row", { hasText: drug });
+  await expect(predictions.locator(".ant-table-row")).toHaveCount(3);
+  await expect(predictionRow("Medicamento Teste C")).toContainText(
+    "Resistente",
+  );
+  await expect(predictionRow("Medicamento Teste C")).toContainText("7%");
+  await expect(predictionRow("Medicamento Teste C")).not.toContainText("7.0");
+  await expect(predictionRow("Medicamento Teste D")).toContainText("-");
+  await expect(predictionRow("Medicamento Teste D")).not.toContainText(
+    "Sensível",
+  );
+  await expect(predictionRow("Medicamento Teste D")).toContainText("29%");
+  await expect(predictionRow("Medicamento Teste E")).toContainText("Sensível");
+  await expect(predictionRow("Medicamento Teste E")).toContainText("88%");
+
+  // sorting by the prediction puts the drug without one first
+  await predictions
+    .getByRole("columnheader", { name: /Sensibilidade/ })
+    .click();
+  await expect(predictions.locator(".ant-table-row").first()).toContainText(
+    "Medicamento Teste D",
+  );
 
   // filter by exam
   const exam = page
@@ -176,13 +218,14 @@ test("exports one CSV line per antibiogram drug", async ({ page, mockApi }) => {
     .click();
   const lines = await csvLines(await downloadPromise);
   // the collection (in the order the backend sends its fields) without the
-  // drug list and the internal ids, then the drug: two lines for the released
-  // culture, one for the pending culture with no antibiogram
+  // drug and prediction lists and the internal ids, then the drug: one line
+  // per antibiogram drug of the released culture, one for the pending culture
   expect(lines).toEqual([
-    "reportcsvCulture.key,DATA DE COLETA,DATA LIBERACAO,EXAME,MATERIAL,RESULTADO PREVIO,MICROORGANISMO,COLONIA,GRAM,COMPLEMENTO,reportcsvCulture.predictions,MEDICAMENTO,SENSIBILIDADE,MIC",
-    '"c1","01/03/2024 12:00","04/03/2024 08:00","Hemocultura Teste","Sangue Teste","Gram negativo<br>em análise","Microorganismo Teste A","Colônia Teste","","","[]","Medicamento Teste A","Sensível","<=1"',
-    '"c1","01/03/2024 12:00","04/03/2024 08:00","Hemocultura Teste","Sangue Teste","Gram negativo<br>em análise","Microorganismo Teste A","Colônia Teste","","","[]","Medicamento Teste B","Resistente",">=16"',
-    '"c2","02/03/2024 12:00","","Urocultura Teste","Urina Teste","","","","","","[{drug:Medicamento Teste C,prediction:R,probability:0.5}]",,,',
+    "DATA DE COLETA,DATA LIBERACAO,EXAME,MATERIAL,RESULTADO PREVIO,MICROORGANISMO,COLONIA,GRAM,COMPLEMENTO,MEDICAMENTO,SENSIBILIDADE,MIC",
+    '"01/03/2024 12:00","04/03/2024 08:00","Hemocultura Teste","Sangue Teste","Gram negativo<br>em análise","Microorganismo Teste A","Colônia Teste","","","Medicamento Teste A","Sensível","<=1"',
+    '"01/03/2024 12:00","04/03/2024 08:00","Hemocultura Teste","Sangue Teste","Gram negativo<br>em análise","Microorganismo Teste A","Colônia Teste","","","Medicamento Teste B","Resistente",">=16"',
+    '"01/03/2024 12:00","04/03/2024 08:00","Hemocultura Teste","Sangue Teste","Gram negativo<br>em análise","Microorganismo Teste B","Colônia Teste","","","Medicamento Teste A","Resistente",">=32"',
+    '"02/03/2024 12:00","","Urocultura Teste","Urina Teste","","",,,,,,',
   ]);
 });
 

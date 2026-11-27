@@ -32,7 +32,10 @@ type FetchReportDataAction =
   | ReturnType<typeof fetchReportData.rejected>;
 
 // a CSV row: a collection flattened with one of its antibiogram drugs
-type CultureCsvRow = Omit<CultureReportItem, "cultures" | "id" | "idExamItem"> &
+type CultureCsvRow = Omit<
+  CultureReportItem,
+  "cultures" | "predictions" | "id" | "idExamItem" | "key"
+> &
   Partial<CultureReportItem["cultures"][number]>;
 
 interface FilterProps {
@@ -122,11 +125,14 @@ export function Filter({ printRef, idPatient }: FilterProps) {
     const results: CultureCsvRow[] = [];
 
     filteredList.forEach((i) => {
-      // the CSV leaves out the drug list and the internal ids
+      // the CSV leaves out the drug and prediction lists and the internal
+      // ids, which have no column name
       const {
         cultures: _cultures,
+        predictions: _predictions,
         id: _id,
         idExamItem: _idExamItem,
+        key: _key,
         ...item
       } = i;
 

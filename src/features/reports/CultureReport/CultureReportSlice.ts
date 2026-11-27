@@ -109,7 +109,13 @@ const cultureReportSlice = createSlice({
       })
       .addCase(fetchReportData.rejected, (state, action) => {
         state.status = "failed";
-        state.error = action.error.message ?? null;
+        // rejectWithValue leaves error.message as "Rejected": prefer the
+        // backend's message
+        const payload = action.payload as { message?: unknown } | undefined;
+        state.error =
+          typeof payload?.message === "string"
+            ? payload.message
+            : (action.error.message ?? null);
         state.list = [];
       });
   },

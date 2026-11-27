@@ -22,12 +22,23 @@ type RowKey = CultureReportItem["key"];
 const CultureTable = CardTable as unknown as ComponentType<
   TableProps<CultureReportItem> & { columnTitle?: ReactNode }
 >;
+// a drug can repeat (or be null) within a collection, so the sub-tables key
+// their rows by position
+type DrugRow = CultureReportDrug & { rowIndex: number };
+type PredictionRow = CultureReportPrediction & { rowIndex: number };
+
 const DrugResultTable = CardTable as unknown as ComponentType<
-  TableProps<CultureReportDrug>
+  TableProps<DrugRow>
 >;
 const PredictionResultTable = CardTable as unknown as ComponentType<
-  TableProps<CultureReportPrediction>
+  TableProps<PredictionRow>
 >;
+
+// only an explicit R or S is a prediction: anything else is not a result
+const PREDICTION_LABELS: Record<string, string> = {
+  R: "Resistente",
+  S: "Sensível",
+};
 
 // the dates are ISO strings; compared as the JS did, a missing one included
 const compareDates = (a?: string | null, b?: string | null) =>
@@ -166,7 +177,7 @@ interface RecordProps {
 const ExpandedRow = ({ record }: RecordProps) => {
   const items: NonNullable<DescriptionsProps["items"]> = [];
   const hasValue = (value: unknown) => {
-    return value !== null && `${value}`.trim() !== "";
+    return value != null && `${value}`.trim() !== "";
   };
 
   if (record.previousResult) {
@@ -234,7 +245,9 @@ const ExpandedRow = ({ record }: RecordProps) => {
 };
 
 const DrugTable = ({ record }: RecordProps) => {
-  const cultures = record.cultures.filter((culture) => culture.result !== null);
+  const cultures: DrugRow[] = record.cultures
+    .filter((culture) => culture.result !== null)
+    .map((culture, rowIndex) => ({ ...culture, rowIndex }));
 
   if (!record.cultures.length) {
     return "Resultado pendente";
@@ -244,7 +257,7 @@ const DrugTable = ({ record }: RecordProps) => {
     return "Nenhum perfil de sensibilidade por medicamento encontrado";
   }
 
-  const columns: TableProps<CultureReportDrug>["columns"] = [
+  const columns: TableProps<DrugRow>["columns"] = [
     {
       title: "Medicamento",
       sorter: (a, b) => `${a?.drug}`.localeCompare(`${b?.drug}`),
@@ -265,7 +278,7 @@ const DrugTable = ({ record }: RecordProps) => {
     <DrugResultTable
       bordered
       columns={columns}
-      rowKey="drug"
+      rowKey="rowIndex"
       dataSource={cultures}
       pagination={false}
       size="small"
@@ -276,7 +289,11 @@ const DrugTable = ({ record }: RecordProps) => {
 const PredictionTable = ({ record }: RecordProps) => {
   const [show, setShow] = useState(false);
 
-  const columns: TableProps<CultureReportPrediction>["columns"] = [
+  const predictions: PredictionRow[] = record.predictions.map(
+    (prediction, rowIndex) => ({ ...prediction, rowIndex }),
+  );
+
+  const columns: TableProps<PredictionRow>["columns"] = [
     {
       title: "Medicamento",
       sorter: (a, b) => `${a?.drug}`.localeCompare(`${b?.drug}`),
@@ -284,18 +301,13 @@ const PredictionTable = ({ record }: RecordProps) => {
     },
     {
       title: "Sensibilidade",
-      // the predictions carry no result: kept as the JS sorted them
-      sorter: (a, b) =>
-        `${(a as { result?: unknown })?.result}`.localeCompare(
-          `${(b as { result?: unknown })?.result}`,
-        ),
-      render: (_, record) =>
-        record.prediction === "R" ? "Resistente" : "Sensível",
+      sorter: (a, b) => `${a?.prediction}`.localeCompare(`${b?.prediction}`),
+      render: (_, record) => PREDICTION_LABELS[record.prediction ?? ""] ?? "-",
     },
     {
       title: "Acurácia",
       align: "right",
-      render: (_, record) => `${record.probability * 100}%`,
+      render: (_, record) => `${Math.round(record.probability * 100)}%`,
     },
   ];
 
@@ -314,8 +326,8 @@ const PredictionTable = ({ record }: RecordProps) => {
     <PredictionResultTable
       bordered
       columns={columns}
-      rowKey="drug"
-      dataSource={record.predictions}
+      rowKey="rowIndex"
+      dataSource={predictions}
       pagination={false}
       size="small"
       className="ai-data"
