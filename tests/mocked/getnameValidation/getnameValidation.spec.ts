@@ -38,6 +38,8 @@ type GetnameOptions = {
 type Getname = {
   url: string;
   requests: string[];
+  // while true, every connection is dropped without an answer
+  control: { down: boolean };
   close: () => Promise<void>;
 };
 
@@ -52,9 +54,15 @@ const startGetname = async (options: GetnameOptions = {}): Promise<Getname> => {
     hang = false,
   } = options;
   const requests: string[] = [];
+  const control = { down: false };
 
   const server = http.createServer((req, res) => {
     requests.push(`${req.method} ${req.url}`);
+
+    if (control.down) {
+      req.socket.destroy();
+      return;
+    }
 
     if (hang) {
       // accepts the connection and never answers: a firewall dropping packets
@@ -122,6 +130,7 @@ const startGetname = async (options: GetnameOptions = {}): Promise<Getname> => {
   return {
     url: `http://localhost:${port}/`,
     requests,
+    control,
     close: () =>
       new Promise<void>((resolve) => {
         server.closeAllConnections();
@@ -167,6 +176,39 @@ const verdict = (page: import("@playwright/test").Page) =>
 
 const check = (page: import("@playwright/test").Page, id: string) =>
   page.locator(`[data-check="${id}"]`);
+
+const option = (page: import("@playwright/test").Page, observation: string) =>
+  page.locator(`[data-observation="${observation}"]`);
+
+/** The receipts posted so far, oldest first. */
+const receipts = (mockApi: { requests: { path: string; postData?: string }[] }) =>
+  mockApi.requests
+    .filter((r) => r.path.endsWith("/result"))
+    .map((r) => JSON.parse(r.postData!));
+
+/**
+ * Captures what the page copies. Granting the clipboard permission is not an
+ * option here: Playwright denies every permission it was not asked to grant,
+ * the local network one included, and that is a diagnosis of this page.
+ */
+const captureClipboard = async (page: import("@playwright/test").Page) => {
+  await page.addInitScript(() => {
+    navigator.clipboard.writeText = async (text: string) => {
+      (window as any).__copied = text;
+    };
+  });
+
+  return () => page.evaluate(() => (window as any).__copied as string);
+};
+
+/** A port with nothing listening: connections to it are refused. */
+const closedPort = async () => {
+  const server = await startGetname();
+  const port = new URL(server.url).port;
+  await server.close();
+
+  return port;
+};
 
 test("an anonymous visitor tests a healthy getname and the receipt becomes a ticket", async ({
   page,
@@ -295,15 +337,13 @@ test("a getname that asks for a token the configuration does not send is a misma
   expect(getname.requests).not.toContain("GET /patient-name/0");
 });
 
-test("nothing listening at the address is reported as unreachable, with a way to see why", async ({
+test("a connection that fails is narrowed down in two clicks, and the answer goes with the receipt", async ({
   page,
   mockApi,
 }) => {
-  getname = await startGetname();
-  const url = getname.url;
-  await getname.close();
-  getname = undefined;
-
+  const copied = await captureClipboard(page);
+  const port = await closedPort();
+  const url = `http://localhost:${port}/`;
   mockApi.override("GET /public/getname-validation/:token", {
     json: plan({ url }),
   });
@@ -314,20 +354,193 @@ test("nothing listening at the address is reported as unreachable, with a way to
   await page.goto(`/validar-getname/${TOKEN}`);
   await page.getByRole("button", { name: "Iniciar teste" }).click();
 
+  // the page cannot know why: it says so and asks for two clicks
   await expect(verdict(page)).toHaveAttribute("data-diagnosis", "unreachable");
   await expect(check(page, "reachability")).toHaveAttribute(
     "data-status",
     "failed",
   );
-  await expect(
-    page.getByRole("link", { name: "Abrir o endereço do getname em uma nova aba" }),
-  ).toHaveAttribute("href", url);
+  // a http getname has no certificate and localhost has no name to resolve:
+  // those two are not offered
+  await expect(page.locator("[data-observation]")).toHaveCount(3);
+  await expect(option(page, "saw_security_warning")).toHaveCount(0);
+  await expect(option(page, "saw_not_found")).toHaveCount(0);
+  // nothing to mark before the getname was opened
+  await expect(option(page, "saw_refused")).toBeDisabled();
 
-  const receipt = JSON.parse(
-    mockApi.requests.find((r) => r.path.endsWith("/result"))!.postData!,
+  // the getname opens in a tab of its own, where the browser shows its error
+  await expect(
+    page.getByRole("link", { name: "Abrir o getname" }),
+  ).toHaveAttribute("href", url);
+  const popup = page.waitForEvent("popup");
+  await page.getByRole("link", { name: "Abrir o getname" }).click();
+  await popup;
+
+  await option(page, "saw_refused").click();
+
+  // the test ran again and the answer named the cause
+  await expect(verdict(page)).toHaveAttribute(
+    "data-diagnosis",
+    "connection_refused",
   );
-  expect(receipt.status).toBe("failed");
-  expect(receipt.diagnosis).toBe("unreachable");
+  await expect(
+    page.getByText(`O getname não está atendendo na porta ${port}`),
+  ).toBeVisible();
+  await expect(check(page, "manual")).toHaveAttribute("data-status", "warning");
+  // whoever fixes it already has the result: nothing to report by hand
+  await expect(page.locator("[data-owner]")).toHaveAttribute(
+    "data-owner",
+    "noharm",
+  );
+  await expect(
+    page.getByText(
+      "Você não precisa fazer nada. A equipe NoHarm já recebeu este resultado no chamado T0042",
+    ),
+  ).toBeVisible();
+
+  const [first, second] = receipts(mockApi);
+  expect(first.diagnosis).toBe("unreachable");
+  expect(second.status).toBe("failed");
+  expect(second.diagnosis).toBe("connection_refused");
+  expect(second.checks.find((c: any) => c.id === "manual").code).toBe(
+    "saw_refused",
+  );
+
+  // and what is for the hospital's network team comes written, with the
+  // server and the port
+  await page.getByRole("button", { name: "Copiar mensagem para a TI" }).click();
+  await expect(page.getByText("Mensagem copiada")).toBeVisible();
+  const message = await copied();
+  expect(message).toContain(`Servidor do getname: localhost, porta ${port} (http)`);
+  expect(message).toContain(`Site que faz as chamadas: ${ORIGIN}`);
+  expect(message).toContain("Chamado NoHarm: T0042");
+});
+
+test("a https getname offers the security warning, which points at the certificate", async ({
+  page,
+  mockApi,
+}) => {
+  const url = `https://localhost:${await closedPort()}/`;
+  mockApi.override("GET /public/getname-validation/:token", {
+    json: plan({ url }),
+  });
+  mockApi.override("POST /public/getname-validation/:token/result", {
+    json: saved(),
+  });
+
+  await page.goto(`/validar-getname/${TOKEN}`);
+  await page.getByRole("button", { name: "Iniciar teste" }).click();
+  await expect(verdict(page)).toHaveAttribute("data-diagnosis", "unreachable");
+
+  await page.getByRole("link", { name: "Abrir o getname" }).click();
+  await option(page, "saw_security_warning").click();
+
+  await expect(verdict(page)).toHaveAttribute("data-diagnosis", "certificate");
+  await expect(
+    page.getByText(
+      "O certificado https do getname não é aceito por este computador",
+    ),
+  ).toBeVisible();
+});
+
+test("a getname with a name offers the address not found, which goes to the hospital IT", async ({
+  page,
+  mockApi,
+}) => {
+  // .invalid never resolves (RFC 2606)
+  mockApi.override("GET /public/getname-validation/:token", {
+    json: plan({ url: "http://getname.invalid:8443/" }),
+  });
+  mockApi.override("POST /public/getname-validation/:token/result", {
+    json: saved(),
+  });
+
+  await page.goto(`/validar-getname/${TOKEN}`);
+  await page.getByRole("button", { name: "Iniciar teste" }).click();
+  await expect(verdict(page)).toHaveAttribute("data-diagnosis", "unreachable", {
+    timeout: 30000,
+  });
+
+  await page.getByRole("link", { name: "Abrir o getname" }).click();
+  await option(page, "saw_not_found").click();
+
+  await expect(verdict(page)).toHaveAttribute("data-diagnosis", "dns", {
+    timeout: 30000,
+  });
+  await expect(
+    page.getByText("Este computador não encontra o endereço getname.invalid"),
+  ).toBeVisible();
+  await expect(page.locator("[data-owner]")).toHaveAttribute("data-owner", "it");
+});
+
+test("a getname that works after the security warning was accepted is not the same as ok", async ({
+  page,
+  mockApi,
+}) => {
+  // a plain http server addressed as https: the handshake fails, as it does
+  // with a certificate the browser does not accept
+  getname = await startGetname();
+  const httpUrl = getname.url;
+  const httpsUrl = httpUrl.replace("http://", "https://");
+  mockApi.override("GET /public/getname-validation/:token", {
+    json: plan({ url: httpsUrl }),
+  });
+  mockApi.override("POST /public/getname-validation/:token/result", {
+    json: saved(),
+  });
+
+  await page.goto(`/validar-getname/${TOKEN}`);
+  await page.getByRole("button", { name: "Iniciar teste" }).click();
+  await expect(verdict(page)).toHaveAttribute("data-diagnosis", "unreachable");
+
+  // the person goes past the warning in the other tab: from here on the
+  // browser reaches the getname
+  await page.route(`${httpsUrl}**`, async (route) =>
+    route.fulfill({
+      response: await route.fetch({
+        url: route.request().url().replace(httpsUrl, httpUrl),
+      }),
+    }),
+  );
+  await page.getByRole("link", { name: "Abrir o getname" }).click();
+  await option(page, "saw_security_warning").click();
+
+  await expect(verdict(page)).toHaveAttribute(
+    "data-diagnosis",
+    "certificate_accepted",
+  );
+  await expect(
+    page.getByText("Funciona neste computador, mas o certificado do getname não é confiável"),
+  ).toBeVisible();
+  const last = receipts(mockApi).at(-1);
+  expect(last.status).toBe("passed");
+  expect(last.diagnosis).toBe("certificate_accepted");
+});
+
+test("a getname that opens in a tab and still cannot be called is blocked by the browser", async ({
+  page,
+  mockApi,
+}) => {
+  const url = `http://localhost:${await closedPort()}/`;
+  mockApi.override("GET /public/getname-validation/:token", {
+    json: plan({ url }),
+  });
+  mockApi.override("POST /public/getname-validation/:token/result", {
+    json: saved(),
+  });
+
+  await page.goto(`/validar-getname/${TOKEN}`);
+  await page.getByRole("button", { name: "Iniciar teste" }).click();
+  await expect(verdict(page)).toHaveAttribute("data-diagnosis", "unreachable");
+
+  await page.getByRole("link", { name: "Abrir o getname" }).click();
+  await option(page, "saw_getname_page").click();
+
+  await expect(verdict(page)).toHaveAttribute(
+    "data-diagnosis",
+    "blocked_by_browser",
+  );
+  await expect(page.locator("[data-owner]")).toHaveAttribute("data-owner", "you");
 });
 
 test("a getname that never answers is reported as a network without a path to it", async ({
@@ -378,29 +591,41 @@ test("a getname that does not allow the NoHarm origin is told apart from a netwo
 
   await expect(verdict(page)).toHaveAttribute("data-diagnosis", "cors");
   await expect(
-    page.getByText(`não autoriza chamadas vindas de ${ORIGIN}`),
+    page.getByText(`O getname não autoriza chamadas vindas de ${ORIGIN}`),
   ).toBeVisible();
+  // the fix is NoHarm's and NoHarm already has the result
+  await expect(page.locator("[data-owner]")).toHaveAttribute(
+    "data-owner",
+    "noharm",
+  );
+  await expect(page.getByText("Você não precisa fazer nada.")).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Copiar mensagem para a TI" }),
+  ).toHaveCount(0);
 });
 
-test("a browser that blocks the local network is told apart from a network problem", async ({
+test("a browser that blocks the local network says where to click, and the test restarts by itself", async ({
   page,
   mockApi,
 }) => {
+  const copied = await captureClipboard(page);
   getname = await startGetname();
-  const url = getname.url;
-  await getname.close();
-  getname = undefined;
+  // what a blocked request looks like from the page: it never gets an answer
+  getname.control.down = true;
 
-  // the browser's answer for a site whose local network access was blocked
+  // the browser's answer for a site whose local network access was blocked,
+  // with a handle for the test to "allow it in the site settings"
   await page.addInitScript(() => {
+    const status: any = { state: "denied", onchange: null };
+    (window as any).__localNetwork = status;
     const query = navigator.permissions.query.bind(navigator.permissions);
     navigator.permissions.query = (descriptor: any) =>
       descriptor.name === "local-network-access"
-        ? Promise.resolve({ state: "denied" } as PermissionStatus)
+        ? Promise.resolve(status as PermissionStatus)
         : query(descriptor);
   });
   mockApi.override("GET /public/getname-validation/:token", {
-    json: plan({ url }),
+    json: plan(getname),
   });
   mockApi.override("POST /public/getname-validation/:token/result", {
     json: saved(),
@@ -413,12 +638,29 @@ test("a browser that blocks the local network is told apart from a network probl
     "data-diagnosis",
     "local_network_denied",
   );
-  await expect(page.getByText("LocalNetworkAccessAllowedForUrls")).toBeVisible();
+  await expect(page.locator("[data-owner]")).toHaveAttribute("data-owner", "you");
+  await expect(
+    page.getByText('Em "Acesso à rede local" (ou "Dispositivos na rede local"), escolha Permitir.'),
+  ).toBeVisible();
+  expect(
+    receipts(mockApi)[0].environment.permissions["local-network-access"],
+  ).toBe("denied");
 
-  const receipt = JSON.parse(
-    mockApi.requests.find((r) => r.path.endsWith("/result"))!.postData!,
-  );
-  expect(receipt.environment.permissions["local-network-access"]).toBe("denied");
+  // for a computer where the option is locked, the message for IT names the policy
+  await page.getByRole("button", { name: "Copiar mensagem para a TI" }).click();
+  await expect(page.getByText("Mensagem copiada")).toBeVisible();
+  expect(await copied()).toContain("LocalNetworkAccessAllowedForUrls");
+
+  // the person allows it in the site settings: no click on this page
+  getname.control.down = false;
+  await page.evaluate(() => {
+    const status = (window as any).__localNetwork;
+    status.state = "granted";
+    status.onchange?.();
+  });
+
+  await expect(verdict(page)).toHaveAttribute("data-diagnosis", "ok");
+  expect(receipts(mockApi)).toHaveLength(2);
 });
 
 test("a getname that cannot read the hospital database fails on the database step", async ({

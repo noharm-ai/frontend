@@ -2,23 +2,38 @@ import styled from "styled-components";
 
 import colors from "styles/colors";
 import { get } from "styles/utils";
-import { LoginContainer } from "components/Login/Login.style";
+import { Brand as LoginBrand } from "components/Login/Login.style";
 
-/* the login layout is one screen tall; a receipt is not */
-export const PageContainer = styled(LoginContainer)`
-  height: auto;
+/* a page of its own, centered: the login layout keeps its form to one side
+   and is one screen tall, and a receipt is neither */
+export const PageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   min-height: 100vh;
+  padding: 48px 16px;
+  box-sizing: border-box;
+  background: #f5f7fa;
+  font-size: 14px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif;
 
-  .form {
-    padding-top: 32px;
-    padding-bottom: 32px;
+  @media (max-width: ${get("breakpoints.sm")}) {
+    padding: 24px 12px;
+  }
+`;
+
+/* the login's logo, with the room a page that scrolls can spare */
+export const Brand = styled(LoginBrand)`
+  && {
+    width: 13em;
+    margin: 0 auto 32px;
   }
 `;
 
 export const ValidationCard = styled.div`
   width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
+  max-width: 640px;
   padding: 32px;
   box-sizing: border-box;
   background: #fff;
@@ -74,15 +89,118 @@ export const ValidationCard = styled.div`
     margin-top: 20px;
   }
 
-  .what-to-do {
-    margin: 8px 0 0;
-    line-height: 1.5;
-  }
-
   .saved {
     margin: 16px 0 0;
     color: ${colors.text};
     font-size: 0.9rem;
+  }
+`;
+
+/* what to do about a verdict: who acts, in what order */
+export const Resolution = styled.div`
+  margin-top: 12px;
+  line-height: 1.5;
+
+  .owner {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: ${colors.text};
+    font-size: 0.85rem;
+  }
+
+  .owner-notice {
+    margin: 0 0 8px;
+  }
+
+  ol {
+    margin: 0 0 8px;
+    padding-left: 20px;
+  }
+
+  li {
+    margin-bottom: 4px;
+  }
+
+  .resolution-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+`;
+
+/* the two clicks that find why a connection failed */
+export const Guide = styled.div`
+  margin-top: 12px;
+
+  .guide-step {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 12px 0 8px;
+    color: ${colors.primary};
+    font-weight: 500;
+  }
+
+  .guide-number {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: ${colors.primary};
+    color: #fff;
+    font-size: 0.8rem;
+    line-height: 22px;
+    text-align: center;
+  }
+
+  .guide-options {
+    display: grid;
+    gap: 8px;
+  }
+
+  .guide-option {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid ${colors.detail};
+    border-radius: 8px;
+    background: #fff;
+    text-align: left;
+    cursor: pointer;
+    font: inherit;
+    transition: border-color 0.2s;
+
+    &:hover:not(:disabled),
+    &:focus-visible {
+      border-color: ${colors.accentSecondary};
+      outline: none;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  .guide-option-label {
+    display: block;
+    color: ${colors.primary};
+    font-weight: 500;
+  }
+
+  .guide-option-hint {
+    display: block;
+    color: ${colors.text};
+    font-size: 0.8rem;
+  }
+
+  .guide-note {
+    margin: 8px 0 0;
+    color: ${colors.text};
+    font-size: 0.8rem;
   }
 `;
 

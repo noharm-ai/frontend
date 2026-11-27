@@ -19,6 +19,7 @@ export type CheckStatus = "passed" | "failed" | "warning" | "skipped";
 export type CheckId =
   | "config"
   | "environment"
+  | "manual"
   | "reachability"
   | "health"
   | "database"
@@ -53,6 +54,19 @@ export interface IValidationPlan {
 
 export type AddressSpace = "private" | "loopback" | "public" | "hostname";
 
+/**
+ * What the person saw when the getname was opened in a tab of its own. A
+ * failed connection reaches JavaScript with no reason attached - DNS, a
+ * refused connection and a certificate the computer does not trust are the
+ * same error here - but the browser shows the reason on its own error page.
+ */
+export type Observation =
+  | "saw_getname_page"
+  | "saw_security_warning"
+  | "saw_refused"
+  | "saw_not_found"
+  | "saw_timeout";
+
 export interface IEnvironment {
   userAgent: string;
   pageOrigin: string;
@@ -78,6 +92,9 @@ export interface IRunOptions {
   onProgress?: (checks: ICheck[], running: CheckId | null) => void;
   // the browser is about to ask (or is asking) for the local network permission
   onPermissionPrompt?: () => void;
+  // what the person saw in the getname's own tab, after a run that could not
+  // connect: it goes in the receipt and names the cause if this run fails too
+  observation?: Observation;
   timeoutMs?: number;
 }
 
@@ -263,16 +280,40 @@ const DIAGNOSIS_BY_CODE: Record<string, string> = {
   lookup_error: "lookup_error",
 };
 
+/** The cause of a connection that failed, by what the person saw in the tab. */
+const DIAGNOSIS_BY_OBSERVATION: Record<Observation, string> = {
+  // the tab opens it and the page cannot call it: the browser is in the way
+  saw_getname_page: "blocked_by_browser",
+  saw_security_warning: "certificate",
+  saw_refused: "connection_refused",
+  saw_not_found: "dns",
+  saw_timeout: "unreachable_timeout",
+};
+
 export const diagnose = (
   checks: ICheck[],
 ): Pick<IReceipt, "status" | "diagnosis"> => {
   const failed = checks.find((check) => check.status === "failed");
+  const observation = checks.find((check) => check.id === "manual")?.code as
+    | Observation
+    | undefined;
 
   if (failed) {
+    const diagnosis = DIAGNOSIS_BY_CODE[failed.code ?? ""] ?? "http_error";
+
     return {
       status: "failed",
-      diagnosis: DIAGNOSIS_BY_CODE[failed.code ?? ""] ?? "http_error",
+      diagnosis:
+        diagnosis === "unreachable" && observation
+          ? (DIAGNOSIS_BY_OBSERVATION[observation] ?? diagnosis)
+          : diagnosis,
     };
+  }
+
+  // it works now, after the person went past the browser's security warning:
+  // only on this computer, so it is not the same as "ok"
+  if (observation === "saw_security_warning") {
+    return { status: "passed", diagnosis: "certificate_accepted" };
   }
 
   if (checks.some((check) => check.code === "resolved_by_backend")) {
@@ -361,6 +402,14 @@ export const runGetnameValidation = async (
         ? "local_network_denied"
         : undefined,
   });
+
+  if (options.observation) {
+    add({
+      id: "manual",
+      status: options.observation === "saw_getname_page" ? "passed" : "warning",
+      code: options.observation,
+    });
+  }
 
   // --- reachability: does a request from this browser get an answer? --------
   progress("reachability");
@@ -602,6 +651,79 @@ export const runGetnameValidation = async (
   }
 
   return finish();
+};
+
+/**
+ * What the getname's own tab can show for a plan: a http getname has no
+ * certificate to warn about, and an ip (or localhost) has no name to resolve.
+ */
+export const observationOptions = (plan: IValidationPlan): Observation[] => {
+  const base = parseBaseUrl(plan);
+  const options: Observation[] = ["saw_getname_page"];
+
+  if (!base) {
+    return options;
+  }
+
+  if (base.protocol === "https:") {
+    options.push("saw_security_warning");
+  }
+  options.push("saw_refused");
+  if (addressSpaceOf(base.hostname) === "hostname") {
+    options.push("saw_not_found");
+  }
+  options.push("saw_timeout");
+
+  return options;
+};
+
+/** Host, port and protocol of the getname, for a message to who runs the network. */
+export const serverOf = (
+  plan: IValidationPlan,
+): { host: string; port: string; protocol: string } | null => {
+  const base = parseBaseUrl(plan);
+
+  if (!base) {
+    return null;
+  }
+
+  return {
+    host: base.hostname,
+    port: base.port || (base.protocol === "https:" ? "443" : "80"),
+    protocol: base.protocol.replace(":", ""),
+  };
+};
+
+/**
+ * Calls back when a local network permission of this site changes (the person
+ * allowed it in the site settings). Returns the function that stops watching.
+ */
+export const watchPermissions = (onChange: () => void): (() => void) => {
+  const watched: PermissionStatus[] = [];
+  let stopped = false;
+
+  PERMISSION_NAMES.forEach(async (name) => {
+    try {
+      const status = await navigator.permissions.query({
+        name: name as PermissionName,
+      });
+
+      if (stopped) return;
+      status.onchange = () => {
+        if (status.state !== "denied") onChange();
+      };
+      watched.push(status);
+    } catch {
+      // a name this browser does not have
+    }
+  });
+
+  return () => {
+    stopped = true;
+    watched.forEach((status) => {
+      status.onchange = null;
+    });
+  };
 };
 
 /** The receipt as plain text, for the person to copy and send. */
