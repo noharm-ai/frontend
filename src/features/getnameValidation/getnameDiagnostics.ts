@@ -69,6 +69,9 @@ export type Observation =
 
 export interface IEnvironment {
   userAgent: string;
+  // readable name and version of the browser and of the operating system
+  browser?: string;
+  platform?: string;
   pageOrigin: string;
   online: boolean;
   secureContext: boolean;
@@ -176,6 +179,86 @@ export const isMixedContent = (
   pageProtocol === "https:" &&
   target.protocol === "http:" &&
   space !== "loopback";
+
+const UA_BROWSERS: [RegExp, string][] = [
+  // order matters: Edge and Opera also say "Chrome", Chrome also says "Safari"
+  [/Edg(?:e|A|iOS)?\/([\d.]+)/, "Microsoft Edge"],
+  [/OPR\/([\d.]+)/, "Opera"],
+  [/Firefox\/([\d.]+)/, "Firefox"],
+  [/(?:Chrome|CriOS)\/([\d.]+)/, "Chrome"],
+  [/Version\/([\d.]+).*Safari/, "Safari"],
+];
+
+const UA_PLATFORMS: [RegExp, string][] = [
+  [/Windows NT 10/, "Windows 10/11"],
+  [/Windows NT/, "Windows"],
+  [/Android ([\d.]+)/, "Android"],
+  [/(?:iPhone|iPad).*OS ([\d_]+)/, "iOS"],
+  [/Mac OS X ([\d_.]+)/, "macOS"],
+  [/CrOS/, "ChromeOS"],
+  [/Linux/, "Linux"],
+];
+
+const fromUserAgent = (userAgent: string, table: [RegExp, string][]) => {
+  for (const [pattern, name] of table) {
+    const match = userAgent.match(pattern);
+
+    if (match) {
+      return [name, match[1]?.replace(/_/g, ".")].filter(Boolean).join(" ");
+    }
+  }
+
+  return undefined;
+};
+
+/**
+ * The browser and the operating system in words someone can read on a ticket
+ * ("Google Chrome 142.0.7444.60", "Windows 11"). Chromium browsers say it
+ * themselves (User-Agent Client Hints); the others are read off the user
+ * agent, which is sent along as it is anyway.
+ */
+export const describeBrowser = async (): Promise<
+  Pick<IEnvironment, "browser" | "platform">
+> => {
+  const userAgent = navigator.userAgent;
+  let browser = fromUserAgent(userAgent, UA_BROWSERS);
+  let platform = fromUserAgent(userAgent, UA_PLATFORMS);
+  const hints = (navigator as any).userAgentData;
+
+  if (hints?.getHighEntropyValues) {
+    try {
+      const values = await hints.getHighEntropyValues([
+        "fullVersionList",
+        "platformVersion",
+      ]);
+      // the list carries a decoy ("Not A Brand") and the engine next to the
+      // product: the product is the one that is neither
+      const brands: { brand: string; version: string }[] = (
+        values.fullVersionList ?? []
+      ).filter((item: { brand: string }) => !/not.?a.?brand/i.test(item.brand));
+      const product =
+        brands.find((item) => item.brand !== "Chromium") ?? brands[0];
+
+      if (product) {
+        browser = `${product.brand} ${product.version}`;
+      }
+
+      if (values.platform === "Windows") {
+        // Windows 11 reports a platform version of 13 or more
+        const major = parseInt(values.platformVersion ?? "", 10);
+        platform = major >= 13 ? "Windows 11" : major > 0 ? "Windows 10" : "Windows";
+      } else if (values.platform) {
+        platform = [values.platform, values.platformVersion]
+          .filter(Boolean)
+          .join(" ");
+      }
+    } catch {
+      // the user agent already answered
+    }
+  }
+
+  return { browser: browser?.slice(0, 80), platform: platform?.slice(0, 80) };
+};
 
 /** State of each local network permission this browser knows about. */
 export const queryPermissions = async (): Promise<Record<string, string>> => {
@@ -357,6 +440,8 @@ export const runGetnameValidation = async (
     secureContext: window.isSecureContext,
     language: navigator.language,
   };
+
+  Object.assign(environment, await describeBrowser());
 
   const progress = (running: CheckId | null) =>
     options.onProgress?.([...checks], running);
@@ -741,7 +826,8 @@ export const receiptToText = (
     `result: ${receipt.status} (${receipt.diagnosis})`,
     `ticket: ${ticket ?? "-"}`,
     `origin: ${receipt.environment.pageOrigin}`,
-    `browser: ${receipt.environment.userAgent}`,
+    `browser: ${receipt.environment.browser ?? "-"} (${receipt.environment.platform ?? "-"})`,
+    `user agent: ${receipt.environment.userAgent}`,
     `address: ${receipt.environment.targetAddressSpace ?? "-"}`,
     `permissions: ${
       Object.entries(receipt.environment.permissions ?? {})

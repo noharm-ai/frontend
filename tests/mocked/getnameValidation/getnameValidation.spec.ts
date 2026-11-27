@@ -246,6 +246,9 @@ test("an anonymous visitor tests a healthy getname and the receipt becomes a tic
     "lookup",
   ]);
   expect(receipt.environment.pageOrigin).toBe(ORIGIN);
+  // the browser in words, for who reads the ticket: name and version
+  expect(receipt.environment.browser).toMatch(/Chrom\w* \d+\./);
+  expect(receipt.environment.platform).toBeTruthy();
   expect(receipt.environment.targetAddressSpace).toBe("loopback");
   expect(receipt.environment.getnameVersion).toBe("3.1.0");
   // the lookup asks for a patient that does not exist, and no name travels
