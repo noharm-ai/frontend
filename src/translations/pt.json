@@ -1541,6 +1541,153 @@
     "invalidFormat": "O código deve ter 8 ou 12 caracteres.",
     "close": "Fechar"
   },
+  "getnameValidation": {
+    "pageTitle": "Validação do serviço de nomes",
+    "subtitle": "Este teste verifica se este computador, neste navegador, consegue acessar o serviço de nomes (getname) do hospital. É ele que exibe os nomes dos pacientes na NoHarm.",
+    "loading": "Carregando o link de validação...",
+    "hospital": "Hospital",
+    "address": "Endereço do getname",
+    "expiresAt": "Link válido até",
+    "start": "Iniciar teste",
+    "running": "Testando...",
+    "again": "Testar novamente",
+    "copy": "Copiar comprovante",
+    "copied": "Comprovante copiado",
+    "openGetname": "Abrir o endereço do getname em uma nova aba",
+    "saving": "Registrando o resultado...",
+    "savedWithTicket": "Resultado registrado e enviado à equipe NoHarm no chamado {{ticket}}.",
+    "savedWithoutTicket": "Resultado registrado para a equipe NoHarm.",
+    "saveError": "Não foi possível registrar o resultado. Copie o comprovante e envie à equipe NoHarm.",
+    "saveRetry": "Tentar registrar de novo",
+    "spent": "Este link atingiu o limite de testes. Peça um novo link à equipe NoHarm para testar novamente.",
+    "before": {
+      "title": "Antes de começar",
+      "description": "Faça o teste em um computador da rede do hospital, no mesmo navegador que será usado no dia a dia. Se o navegador perguntar se a NoHarm pode acessar dispositivos da rede local, clique em Permitir. Nenhum dado de paciente é consultado."
+    },
+    "permissionPrompt": {
+      "title": "Seu navegador pode pedir uma permissão",
+      "description": "Se aparecer uma pergunta sobre acesso à rede local ou a dispositivos da rede, clique em Permitir. O teste continua em seguida."
+    },
+    "invalid": {
+      "title": "Link de validação inválido",
+      "unknown": "Este link não é válido. Confira se o endereço foi copiado por inteiro ou peça um novo link à equipe NoHarm.",
+      "expired": "Este link expirou. Peça um novo link à equipe NoHarm.",
+      "exhausted": "Este link atingiu o limite de testes. Peça um novo link à equipe NoHarm."
+    },
+    "loadError": {
+      "title": "Não foi possível carregar o link",
+      "description": "Ocorreu um erro ao consultar a NoHarm. Verifique a conexão com a internet e recarregue a página."
+    },
+    "checks": {
+      "config": "Configuração do getname",
+      "environment": "Navegador e tipo de rede",
+      "reachability": "Acesso ao getname",
+      "health": "Serviço em funcionamento",
+      "database": "Banco de dados do hospital",
+      "auth_config": "Autenticação",
+      "lookup": "Consulta de nome"
+    },
+    "codes": {
+      "resolved_by_backend": "Os nomes são resolvidos pelos servidores da NoHarm",
+      "not_configured": "URL do getname não configurada",
+      "mixed_content_risk": "O getname usa http e esta página usa https",
+      "local_network_denied": "Acesso à rede local bloqueado no navegador",
+      "mixed_content": "Chamada http bloqueada a partir de uma página https",
+      "unreachable": "Sem conexão com o getname",
+      "timeout": "Sem resposta do getname",
+      "cors": "O getname respondeu, mas recusa esta origem",
+      "legacy_version": "Versão antiga do getname, sem health check",
+      "http_error": "O getname respondeu com erro",
+      "not_healthy": "A resposta não é de um getname saudável",
+      "request_failed": "A consulta ao estado do getname falhou",
+      "database_timeout": "O getname não respondeu sobre o banco de dados",
+      "unhealthy": "O getname não consegue acessar o banco de dados",
+      "not_available": "Não informado por esta versão do getname",
+      "auth_disabled_on_getname": "A configuração pede autenticação, mas o getname não exige",
+      "auth_required_by_getname": "O getname exige autenticação, mas a configuração não envia",
+      "not_tested": "Não testado nesta configuração",
+      "token_unavailable": "A NoHarm não conseguiu gerar o token do getname",
+      "preflight_blocked": "O navegador bloqueou a consulta (CORS)",
+      "lookup_timeout": "A consulta não respondeu",
+      "found": "Consulta respondida",
+      "not_found_as_expected": "Consulta respondida (paciente de teste inexistente, como esperado)",
+      "token_refused": "O getname recusou o token da NoHarm",
+      "unauthorized": "O getname recusou a consulta sem autenticação",
+      "lookup_error": "A consulta retornou erro"
+    },
+    "diagnosis": {
+      "ok": {
+        "title": "Tudo certo: o getname está acessível e funcionando",
+        "description": "Este computador acessa o serviço de nomes e ele consegue consultar o banco de dados do hospital.",
+        "action": "Os nomes dos pacientes serão exibidos na NoHarm neste navegador. Nenhuma ação é necessária."
+      },
+      "legacy_version": {
+        "title": "O getname está acessível, em uma versão antiga",
+        "description": "O serviço respondeu, mas é uma versão anterior ao health check: não foi possível confirmar o acesso ao banco de dados.",
+        "action": "Os nomes devem ser exibidos normalmente. A equipe NoHarm vai avaliar a atualização do getname."
+      },
+      "not_applicable": {
+        "title": "Não há o que testar neste navegador",
+        "description": "Neste hospital os nomes dos pacientes são consultados pelos servidores da NoHarm, e não diretamente pelo navegador.",
+        "action": "O acesso deste computador à NoHarm está funcionando. A equipe NoHarm valida o serviço de nomes pelo lado dos servidores."
+      },
+      "not_configured": {
+        "title": "O getname ainda não foi configurado",
+        "description": "A NoHarm ainda não tem o endereço do serviço de nomes deste hospital.",
+        "action": "Avise a equipe NoHarm: a URL do getname precisa ser preenchida antes do teste."
+      },
+      "mixed_content": {
+        "title": "O navegador bloqueou a chamada: o getname está em http",
+        "description": "A NoHarm é acessada por https e o endereço do getname usa http. Os navegadores bloqueiam esse tipo de chamada (conteúdo misto).",
+        "action": "O getname precisa ser publicado em https, com um certificado válido. Avise a TI do hospital e a equipe NoHarm."
+      },
+      "local_network_denied": {
+        "title": "O navegador não permite que a NoHarm acesse a rede local",
+        "description": "O getname fica na rede interna do hospital e o navegador está bloqueando o acesso de {{origin}} a endereços da rede local.",
+        "action": "Clique no ícone ao lado do endereço da página, abra as configurações do site e permita \"Acesso à rede local\" (ou \"Dispositivos na rede local\"). Recarregue a página e teste novamente. Em computadores gerenciados, a TI pode liberar {{origin}} pela política LocalNetworkAccessAllowedForUrls (LocalNetworkAllowedForUrls nas versões mais novas do Chrome e do Edge)."
+      },
+      "unreachable_timeout": {
+        "title": "Este computador não recebeu resposta do getname",
+        "description": "A chamada foi enviada e ficou sem resposta. Normalmente esta rede não tem caminho até o servidor do getname: computador fora da rede do hospital, VPN desligada ou firewall bloqueando a porta.",
+        "action": "Confirme que o computador está na rede do hospital e peça à TI para liberar o acesso deste segmento de rede ao servidor e à porta do getname. Depois teste novamente."
+      },
+      "unreachable": {
+        "title": "Não foi possível conectar ao getname",
+        "description": "A conexão falhou antes de qualquer resposta. As causas mais comuns são: nome do servidor não resolvido (DNS), serviço parado ou porta errada, ou certificado https não confiável neste computador.",
+        "action": "Abra o endereço do getname em uma nova aba: o navegador mostra o erro exato. Envie essa mensagem à TI do hospital e à equipe NoHarm."
+      },
+      "cors": {
+        "title": "O getname respondeu, mas recusa chamadas da NoHarm",
+        "description": "A rede está correta: o serviço foi alcançado. Ele só não autoriza chamadas vindas de {{origin}} (CORS).",
+        "action": "A equipe NoHarm precisa incluir {{origin}} nas origens permitidas do getname (CORS_EXTRA_ORIGINS) e reiniciar o serviço."
+      },
+      "http_error": {
+        "title": "O getname respondeu com erro",
+        "description": "Algo respondeu no endereço do getname, mas não com a resposta de um serviço saudável. Pode ser outro serviço no mesmo endereço, um proxy no caminho ou o getname com falha.",
+        "action": "Envie o comprovante à equipe NoHarm para análise."
+      },
+      "unhealthy_database": {
+        "title": "O getname não consegue acessar o banco de dados do hospital",
+        "description": "O serviço está no ar e este computador o acessa, mas ele não conseguiu consultar o banco de dados de onde vêm os nomes.",
+        "action": "A TI do hospital e a equipe NoHarm precisam conferir a conexão do getname com o banco: usuário, senha, endereço e liberação de rede."
+      },
+      "auth_mismatch": {
+        "title": "A autenticação do getname não confere com a configuração",
+        "description": "O getname instalado e a configuração da NoHarm discordam sobre o uso de autenticação: as consultas de nome seriam recusadas.",
+        "action": "A equipe NoHarm precisa ajustar o tipo do getname na configuração do hospital ou a instalação do serviço."
+      },
+      "auth_secret_mismatch": {
+        "title": "O getname recusou o token da NoHarm",
+        "description": "O serviço exige autenticação e o segredo configurado na NoHarm é diferente do instalado no getname.",
+        "action": "A equipe NoHarm precisa alinhar o secret da configuração com o do getname instalado (JWT_SECRET)."
+      },
+      "lookup_error": {
+        "title": "A consulta de nome falhou",
+        "description": "O serviço está no ar, mas uma consulta de teste (de um paciente que não existe) retornou erro. A consulta SQL do getname ou o endereço de consulta podem estar incorretos.",
+        "action": "Envie o comprovante à equipe NoHarm para análise."
+      }
+    }
+  },
   "trainingPlayer": {
     "previous": "Anterior",
     "next": "Próximo",

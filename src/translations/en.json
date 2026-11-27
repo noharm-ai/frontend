@@ -1531,6 +1531,153 @@
     "invalidFormat": "The code must have 8 or 12 characters.",
     "close": "Close"
   },
+  "getnameValidation": {
+    "pageTitle": "Name service validation",
+    "subtitle": "This test checks whether this computer, in this browser, can reach the hospital's name service (getname). It is what shows patient names in NoHarm.",
+    "loading": "Loading the validation link...",
+    "hospital": "Hospital",
+    "address": "Getname address",
+    "expiresAt": "Link valid until",
+    "start": "Start test",
+    "running": "Testing...",
+    "again": "Test again",
+    "copy": "Copy receipt",
+    "copied": "Receipt copied",
+    "openGetname": "Open the getname address in a new tab",
+    "saving": "Saving the result...",
+    "savedWithTicket": "Result saved and sent to the NoHarm team in ticket {{ticket}}.",
+    "savedWithoutTicket": "Result saved for the NoHarm team.",
+    "saveError": "The result could not be saved. Copy the receipt and send it to the NoHarm team.",
+    "saveRetry": "Try saving again",
+    "spent": "This link reached its test limit. Ask the NoHarm team for a new link to test again.",
+    "before": {
+      "title": "Before you start",
+      "description": "Run the test on a computer in the hospital network, in the same browser that will be used day to day. If the browser asks whether NoHarm may access devices on the local network, click Allow. No patient data is queried."
+    },
+    "permissionPrompt": {
+      "title": "Your browser may ask for a permission",
+      "description": "If a question about access to the local network or to devices on the network shows up, click Allow. The test continues right after."
+    },
+    "invalid": {
+      "title": "Invalid validation link",
+      "unknown": "This link is not valid. Check that the whole address was copied or ask the NoHarm team for a new link.",
+      "expired": "This link has expired. Ask the NoHarm team for a new link.",
+      "exhausted": "This link reached its test limit. Ask the NoHarm team for a new link."
+    },
+    "loadError": {
+      "title": "The link could not be loaded",
+      "description": "An error occurred while contacting NoHarm. Check the internet connection and reload the page."
+    },
+    "checks": {
+      "config": "Getname configuration",
+      "environment": "Browser and network type",
+      "reachability": "Access to the getname",
+      "health": "Service running",
+      "database": "Hospital database",
+      "auth_config": "Authentication",
+      "lookup": "Name lookup"
+    },
+    "codes": {
+      "resolved_by_backend": "Names are resolved by the NoHarm servers",
+      "not_configured": "Getname URL not configured",
+      "mixed_content_risk": "The getname uses http and this page uses https",
+      "local_network_denied": "Local network access blocked in the browser",
+      "mixed_content": "http call blocked from an https page",
+      "unreachable": "No connection to the getname",
+      "timeout": "No answer from the getname",
+      "cors": "The getname answered, but refuses this origin",
+      "legacy_version": "Old getname version, without a health check",
+      "http_error": "The getname answered with an error",
+      "not_healthy": "The answer is not from a healthy getname",
+      "request_failed": "The getname status request failed",
+      "database_timeout": "The getname did not answer about the database",
+      "unhealthy": "The getname cannot reach the database",
+      "not_available": "Not reported by this getname version",
+      "auth_disabled_on_getname": "The configuration asks for authentication, but the getname does not require it",
+      "auth_required_by_getname": "The getname requires authentication, but the configuration does not send it",
+      "not_tested": "Not tested in this configuration",
+      "token_unavailable": "NoHarm could not generate the getname token",
+      "preflight_blocked": "The browser blocked the lookup (CORS)",
+      "lookup_timeout": "The lookup did not answer",
+      "found": "Lookup answered",
+      "not_found_as_expected": "Lookup answered (test patient does not exist, as expected)",
+      "token_refused": "The getname refused the NoHarm token",
+      "unauthorized": "The getname refused the lookup without authentication",
+      "lookup_error": "The lookup returned an error"
+    },
+    "diagnosis": {
+      "ok": {
+        "title": "All good: the getname is reachable and working",
+        "description": "This computer reaches the name service and the service can query the hospital database.",
+        "action": "Patient names will show up in NoHarm in this browser. No action is needed."
+      },
+      "legacy_version": {
+        "title": "The getname is reachable, in an old version",
+        "description": "The service answered, but it predates the health check: access to the database could not be confirmed.",
+        "action": "Names should show up normally. The NoHarm team will evaluate updating the getname."
+      },
+      "not_applicable": {
+        "title": "Nothing to test in this browser",
+        "description": "In this hospital patient names are fetched by the NoHarm servers, not directly by the browser.",
+        "action": "This computer's access to NoHarm is working. The NoHarm team validates the name service from the server side."
+      },
+      "not_configured": {
+        "title": "The getname has not been configured yet",
+        "description": "NoHarm does not have the address of this hospital's name service yet.",
+        "action": "Tell the NoHarm team: the getname URL must be filled in before the test."
+      },
+      "mixed_content": {
+        "title": "The browser blocked the call: the getname is on http",
+        "description": "NoHarm is served over https and the getname address uses http. Browsers block this kind of call (mixed content).",
+        "action": "The getname must be published over https, with a valid certificate. Tell the hospital IT and the NoHarm team."
+      },
+      "local_network_denied": {
+        "title": "The browser does not allow NoHarm to access the local network",
+        "description": "The getname lives in the hospital's internal network and the browser is blocking {{origin}} from reaching local network addresses.",
+        "action": "Click the icon next to the page address, open the site settings and allow \"Local network access\" (or \"Devices on the local network\"). Reload the page and test again. On managed computers, IT can allow {{origin}} with the LocalNetworkAccessAllowedForUrls policy (LocalNetworkAllowedForUrls in newer Chrome and Edge versions)."
+      },
+      "unreachable_timeout": {
+        "title": "This computer got no answer from the getname",
+        "description": "The call was sent and nothing came back. Usually this network has no path to the getname server: computer outside the hospital network, VPN off or a firewall blocking the port.",
+        "action": "Confirm the computer is in the hospital network and ask IT to allow this network segment to reach the getname server and port. Then test again."
+      },
+      "unreachable": {
+        "title": "Could not connect to the getname",
+        "description": "The connection failed before any answer. The most common causes are: server name not resolved (DNS), service stopped or wrong port, or an https certificate this computer does not trust.",
+        "action": "Open the getname address in a new tab: the browser shows the exact error. Send that message to the hospital IT and the NoHarm team."
+      },
+      "cors": {
+        "title": "The getname answered, but refuses calls from NoHarm",
+        "description": "The network is fine: the service was reached. It just does not authorize calls coming from {{origin}} (CORS).",
+        "action": "The NoHarm team must add {{origin}} to the getname's allowed origins (CORS_EXTRA_ORIGINS) and restart the service."
+      },
+      "http_error": {
+        "title": "The getname answered with an error",
+        "description": "Something answered at the getname address, but not with the answer of a healthy service. It may be another service at the same address, a proxy on the way or a failing getname.",
+        "action": "Send the receipt to the NoHarm team for analysis."
+      },
+      "unhealthy_database": {
+        "title": "The getname cannot reach the hospital database",
+        "description": "The service is up and this computer reaches it, but it could not query the database the names come from.",
+        "action": "The hospital IT and the NoHarm team must check the getname's connection to the database: user, password, address and network rules."
+      },
+      "auth_mismatch": {
+        "title": "The getname authentication does not match the configuration",
+        "description": "The installed getname and the NoHarm configuration disagree about authentication: name lookups would be refused.",
+        "action": "The NoHarm team must fix the getname type in the hospital's configuration or the service installation."
+      },
+      "auth_secret_mismatch": {
+        "title": "The getname refused the NoHarm token",
+        "description": "The service requires authentication and the secret configured in NoHarm differs from the one installed on the getname.",
+        "action": "The NoHarm team must align the configured secret with the one installed on the getname (JWT_SECRET)."
+      },
+      "lookup_error": {
+        "title": "The name lookup failed",
+        "description": "The service is up, but a test lookup (of a patient that does not exist) returned an error. The getname's SQL query or the lookup address may be wrong.",
+        "action": "Send the receipt to the NoHarm team for analysis."
+      }
+    }
+  },
   "trainingPlayer": {
     "previous": "Previous",
     "next": "Next",

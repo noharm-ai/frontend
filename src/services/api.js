@@ -987,6 +987,35 @@ api.training.validateCertificate = (code) =>
   });
 
 /**
+ * Getname validation namespace (public page /validar-getname/:token).
+ * Public endpoints, as validateCertificate above: the api key comes from the
+ * env var and the link token in the path is the credential.
+ */
+api.getnameValidation = {};
+const publicHeaders = () => ({
+  headers: {
+    "x-api-key": import.meta.env.VITE_APP_API_KEY,
+  },
+});
+api.getnameValidation.getPlan = (token) =>
+  instance.get(
+    `/public/getname-validation/${encodeURIComponent(token)}`,
+    publicHeaders(),
+  );
+api.getnameValidation.getAuthToken = (token) =>
+  instance.post(
+    `/public/getname-validation/${encodeURIComponent(token)}/auth-token`,
+    {},
+    publicHeaders(),
+  );
+api.getnameValidation.saveResult = (token, params) =>
+  instance.post(
+    `/public/getname-validation/${encodeURIComponent(token)}/result`,
+    params,
+    publicHeaders(),
+  );
+
+/**
  * Summary namespace
  */
 api.summary = {};

@@ -33,6 +33,7 @@ import MemoryListPage from "pages/Memory/MemoryListPage";
 import MemoryEditorPage from "pages/Memory/MemoryEditorPage";
 import TrainingCentral from "pages/TrainingCentral";
 import { CertificateValidationPage } from "pages/CertificateValidation/CertificateValidationPage";
+import { GetnameValidationPage } from "pages/GetnameValidation/GetnameValidationPage";
 import TrainingPlayer from "pages/TrainingPlayer";
 import { KnowledgeBasePage } from "pages/KnowledgeBase/KnowledgeBasePage";
 import { KnowledgeBaseArticlePage } from "pages/KnowledgeBase/KnowledgeBaseArticlePage";
@@ -106,6 +107,15 @@ const routes = [
     path: "/validar-certificado/:code",
     element: (
       <WithAuth component={CertificateValidationPage} isPublicPage={true} />
+    ),
+  },
+  // public: the link generated in the admin (Integration Config > Getname)
+  // points here, so this path is a contract with noharm-ai/admin
+  {
+    exact: true,
+    path: "/validar-getname/:token",
+    element: (
+      <WithAuth component={GetnameValidationPage} isPublicPage={true} />
     ),
   },
   {

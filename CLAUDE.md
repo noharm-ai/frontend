@@ -144,7 +144,7 @@ tests/
     userAdmin/  userProfile/  customForms/  training/  reports/
     regulation/  culture/  password/  switchSchema/  scenarios/
     memory/  supportCenter/  knowledgeBase/  news/
-    summary/  drugs/  search/  admin/  helpText/
+    summary/  drugs/  search/  admin/  helpText/  getnameValidation/
 ```
 
 Tests run in Chromium only. Firefox/WebKit are commented out in `playwright.config.ts`.
