@@ -203,8 +203,24 @@ export const CollectionRow = styled.div`
       margin: 0;
     }
 
+    /* the resistant and the susceptible drugs, each list on its own line */
+    .drug-list {
+      flex-basis: 100%;
+    }
+
     .label {
       color: #8c8c8c;
+
+      /* the label in the colour of its count */
+      &.resistant {
+        color: #cf1322;
+        font-weight: 600;
+      }
+
+      &.susceptible {
+        color: #389e0d;
+        font-weight: 600;
+      }
     }
   }
 
