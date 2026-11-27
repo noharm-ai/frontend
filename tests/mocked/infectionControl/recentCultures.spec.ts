@@ -885,6 +885,13 @@ test.describe("drugs of the prescription", () => {
     await expect(printed.nth(1).getByTestId("organism-in-use")).toHaveText(
       "OXACILINA Rem uso",
     );
+    // the resistant and the susceptible drugs, apart from the ones in use
+    await expect(printed.nth(1).getByTestId("organism-resistant")).toHaveText(
+      "R: PENICILINA, CLINDAMICINA",
+    );
+    await expect(printed.nth(1).getByTestId("organism-susceptible")).toHaveText(
+      "S: VANCOMICINA, LINEZOLIDA",
+    );
 
     // on paper nothing opens, and the lab's words are not cut
     await expect(section.getByRole("button")).toHaveCount(0);
