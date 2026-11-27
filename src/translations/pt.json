@@ -1618,7 +1618,9 @@
       "saw_security_warning": "Aviso de segurança (certificado)",
       "saw_refused": "Conexão recusada",
       "saw_not_found": "Endereço não encontrado (DNS)",
-      "saw_timeout": "Não respondeu"
+      "saw_timeout": "Não respondeu",
+      "permission_pending": "Sem resposta enquanto o navegador aguardava a permissão de rede local",
+      "custom_headers": "A NoHarm usa cabeçalhos próprios neste getname, que esta página não testa"
     },
     "diagnosis": {
       "ok": {
@@ -1659,6 +1661,14 @@
           "Em \"Acesso à rede local\" (ou \"Dispositivos na rede local\"), escolha Permitir.",
           "Pronto: o teste recomeça sozinho assim que a permissão for liberada.",
           "Se a opção não aparecer ou estiver travada, não é preciso fazer mais nada: a equipe NoHarm já recebeu este resultado e vai tratar com a TI do hospital."
+        ]
+      },
+      "permission_pending": {
+        "title": "O navegador está aguardando a sua permissão",
+        "description": "O teste ficou sem resposta enquanto o navegador aguardava a permissão de acesso à rede local para {{origin}}.",
+        "steps": [
+          "Se o navegador mostrar uma pergunta sobre acesso à rede local (ou a dispositivos da rede), clique em Permitir: o teste recomeça sozinho.",
+          "Se nenhuma pergunta apareceu, clique em Testar novamente."
         ]
       },
       "unreachable_timeout": {

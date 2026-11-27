@@ -48,6 +48,8 @@ export interface IValidationPlan {
   nameUrl?: string | null;
   // token: with a getname token; open: without one; skip: not tested
   lookup?: "token" | "open" | "skip";
+  // the app authenticates with headers of its own (never handed to this page)
+  customHeaders?: boolean;
   runs?: number;
   maxRuns?: number;
 }
@@ -98,6 +100,9 @@ export interface IRunOptions {
   // what the person saw in the getname's own tab, after a run that could not
   // connect: it goes in the receipt and names the cause if this run fails too
   observation?: Observation;
+  // the previous run ended waiting for the browser's permission prompt: if
+  // this one gets no answer either, the silence is the network's
+  afterPendingPrompt?: boolean;
   timeoutMs?: number;
 }
 
@@ -116,12 +121,12 @@ const PERMISSION_NAMES = [
   "loopback-network",
 ];
 // The permissions that gate a request to each kind of address. A name hides
-// its address until DNS answers, so any of them may apply; a public address
-// needs none.
+// its address until DNS answers: a getname is never this computer itself, so
+// a name is taken for a private address; a public address needs none.
 const PERMISSIONS_BY_SPACE: Record<AddressSpace, string[]> = {
   private: ["local-network-access", "local-network"],
   loopback: ["local-network-access", "loopback-network"],
-  hostname: PERMISSION_NAMES,
+  hostname: ["local-network-access", "local-network"],
   public: [],
 };
 const MAX_DETAIL = 300;
@@ -293,15 +298,22 @@ export const hasPermissionState = (
 
 interface IAttempt {
   response?: Response;
+  // the parsed body, when it was asked for and is JSON
+  body?: any;
   timedOut: boolean;
   durationMs: number;
 }
 
-/** One request with a deadline; never throws. */
+/**
+ * One request with a deadline; never throws. With `readJson` the body is read
+ * under the same deadline: a server that sends its headers and then stalls
+ * must not hold the test forever.
+ */
 const attempt = async (
   url: string,
   init: RequestInit,
   timeoutMs: number,
+  readJson = false,
 ): Promise<IAttempt> => {
   const controller = new AbortController();
   let timedOut = false;
@@ -318,23 +330,23 @@ const attempt = async (
       signal: controller.signal,
     });
 
-    return {
-      response,
-      timedOut: false,
-      durationMs: Math.round(performance.now() - start),
-    };
+    const durationMs = Math.round(performance.now() - start);
+    let body = null;
+
+    if (readJson) {
+      try {
+        body = await response.json();
+      } catch {
+        // not JSON, or the deadline passed while it was coming
+        body = null;
+      }
+    }
+
+    return { response, body, timedOut: false, durationMs };
   } catch {
     return { timedOut, durationMs: Math.round(performance.now() - start) };
   } finally {
     clearTimeout(timer);
-  }
-};
-
-const readJson = async (response: Response): Promise<any> => {
-  try {
-    return await response.json();
-  } catch {
-    return null;
   }
 };
 
@@ -345,6 +357,7 @@ const DIAGNOSIS_BY_CODE: Record<string, string> = {
   not_configured: "not_configured",
   mixed_content: "mixed_content",
   local_network_denied: "local_network_denied",
+  permission_pending: "permission_pending",
   timeout: "unreachable_timeout",
   unreachable: "unreachable",
   cors: "cors",
@@ -508,6 +521,7 @@ export const runGetnameValidation = async (
     healthUrl,
     { mode: "cors" },
     waitingPrompt ? PROMPT_TIMEOUT : timeoutMs,
+    true,
   );
   permissions = await queryPermissions();
   environment.permissions = permissions;
@@ -516,19 +530,34 @@ export const runGetnameValidation = async (
     // every failure looks the same from here; narrow it down
     let code = "unreachable";
 
-    if (hasPermissionState(permissions, space, "denied")) {
-      code = "local_network_denied";
-    } else if (mixedContent) {
-      code = "mixed_content";
+    if (health.timedOut) {
+      // Silence. What the browser blocks (a denied permission, mixed content)
+      // fails at once, so those are out. Left: a prompt nobody answered - the
+      // request waits behind it - or a network with no path to the getname.
+      // The browser does not say whether a prompt is showing, so the first
+      // silence with the permission still unanswered asks for it; a second one
+      // is the network's.
+      code =
+        waitingPrompt &&
+        hasPermissionState(permissions, space, "prompt") &&
+        !options.afterPendingPrompt
+          ? "permission_pending"
+          : "timeout";
     } else {
-      // a request that ignores CORS: an answer means the getname is there and
-      // only refuses this origin
+      // It failed at once. A request that ignores CORS tells whether the
+      // getname is there: an answer means it only refuses this origin. Only
+      // with no answer at all is a browser block (permission, mixed content)
+      // taken for the cause.
       const opaque = await attempt(healthUrl, { mode: "no-cors" }, timeoutMs);
 
       if (opaque.response) {
         code = "cors";
-      } else if (health.timedOut || opaque.timedOut) {
+      } else if (opaque.timedOut) {
         code = "timeout";
+      } else if (hasPermissionState(permissions, space, "denied")) {
+        code = "local_network_denied";
+      } else if (mixedContent) {
+        code = "mixed_content";
       }
     }
 
@@ -568,7 +597,7 @@ export const runGetnameValidation = async (
     add({ id: "health", status: "skipped", code: "legacy_version" });
     add({ id: "database", status: "skipped", code: "legacy_version" });
   } else {
-    const body = health.response!.ok ? await readJson(health.response!) : null;
+    const body = health.response!.ok ? health.body : null;
 
     if (!health.response!.ok) {
       add({
@@ -605,8 +634,9 @@ export const runGetnameValidation = async (
       { mode: "cors" },
       // the getname waits for the database before answering
       timeoutMs * 2,
+      true,
     );
-    const detail = detailed.response ? await readJson(detailed.response) : null;
+    const detail = detailed.response ? detailed.body : null;
 
     if (!detailed.response) {
       add({
@@ -659,6 +689,10 @@ export const runGetnameValidation = async (
       code: "auth_disabled_on_getname",
     });
     return finish();
+  } else if (plan.getnameType !== "auth" && authEnabled && plan.customHeaders) {
+    // the app answers this getname with headers of its own, which this page
+    // never receives: nothing here can say whether they are the right ones
+    add({ id: "auth_config", status: "skipped", code: "custom_headers" });
   } else if (plan.getnameType !== "auth" && authEnabled) {
     add({
       id: "auth_config",

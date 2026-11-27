@@ -67,6 +67,7 @@ const OWNERS: Record<string, Owner> = {
   not_configured: "noharm",
   mixed_content: "noharm",
   local_network_denied: "you",
+  permission_pending: "you",
   unreachable_timeout: "it",
   unreachable: "you",
   certificate: "noharm",
@@ -163,6 +164,8 @@ export function GetnameValidation() {
 
     const result = await runGetnameValidation(plan, {
       observation,
+      // read before the state below is reset: what the last run ended on
+      afterPendingPrompt: receipt?.diagnosis === "permission_pending",
       getAuthToken: async () => {
         const response: any = await api.getnameValidation.getAuthToken(token);
 
@@ -195,7 +198,9 @@ export function GetnameValidation() {
     };
   });
   const blockedByPermission =
-    phase === "done" && receipt?.diagnosis === "local_network_denied";
+    phase === "done" &&
+    (receipt?.diagnosis === "local_network_denied" ||
+      receipt?.diagnosis === "permission_pending");
   useEffect(() => {
     if (!blockedByPermission) return;
 

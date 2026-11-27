@@ -1608,7 +1608,9 @@
       "saw_security_warning": "Security warning (certificate)",
       "saw_refused": "Connection refused",
       "saw_not_found": "Address not found (DNS)",
-      "saw_timeout": "No answer"
+      "saw_timeout": "No answer",
+      "permission_pending": "No answer while the browser waited for the local network permission",
+      "custom_headers": "NoHarm uses headers of its own with this getname, which this page does not test"
     },
     "diagnosis": {
       "ok": {
@@ -1649,6 +1651,14 @@
           "Under \"Local network access\" (or \"Devices on the local network\"), choose Allow.",
           "That's it: the test starts again by itself as soon as the permission is allowed.",
           "If the option does not show up or is locked, there is nothing else to do: the NoHarm team already received this result and will handle it with the hospital IT."
+        ]
+      },
+      "permission_pending": {
+        "title": "The browser is waiting for your permission",
+        "description": "The test got no answer while the browser waited for the local network access permission for {{origin}}.",
+        "steps": [
+          "If the browser shows a question about access to the local network (or to devices on the network), click Allow: the test starts again by itself.",
+          "If no question showed up, click Test again."
         ]
       },
       "unreachable_timeout": {

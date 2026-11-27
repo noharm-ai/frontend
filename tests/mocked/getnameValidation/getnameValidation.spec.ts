@@ -33,13 +33,16 @@ type GetnameOptions = {
   acceptToken?: string;
   legacy?: boolean;
   hang?: boolean;
+  // /health sends its headers and never finishes the body
+  stallBody?: boolean;
 };
 
 type Getname = {
   url: string;
   requests: string[];
-  // while true, every connection is dropped without an answer
-  control: { down: boolean };
+  // down: every connection is dropped without an answer; hang: it is accepted
+  // and never answered (a firewall dropping packets)
+  control: { down: boolean; hang: boolean };
   close: () => Promise<void>;
 };
 
@@ -52,9 +55,10 @@ const startGetname = async (options: GetnameOptions = {}): Promise<Getname> => {
     acceptToken,
     legacy = false,
     hang = false,
+    stallBody = false,
   } = options;
   const requests: string[] = [];
-  const control = { down: false };
+  const control = { down: false, hang };
 
   const server = http.createServer((req, res) => {
     requests.push(`${req.method} ${req.url}`);
@@ -64,8 +68,7 @@ const startGetname = async (options: GetnameOptions = {}): Promise<Getname> => {
       return;
     }
 
-    if (hang) {
-      // accepts the connection and never answers: a firewall dropping packets
+    if (control.hang) {
       return;
     }
 
@@ -90,6 +93,12 @@ const startGetname = async (options: GetnameOptions = {}): Promise<Getname> => {
 
     if (req.url === "/" && legacy) {
       return send(200, "NoHarm - GetName\n", "text/plain");
+    }
+
+    if (req.url === "/health" && stallBody) {
+      res.writeHead(200, { ...headers, "Content-Type": "application/json" });
+      res.write('{"status":');
+      return;
     }
 
     if (req.url === "/health" && !legacy) {
@@ -535,11 +544,54 @@ test("a getname that opens in a tab and still cannot be called is blocked by the
   await expect(page.locator("[data-owner]")).toHaveAttribute("data-owner", "you");
 });
 
-test("a getname that never answers is reported as a network without a path to it", async ({
+/**
+ * The browser's local network permission in a state the test controls: what
+ * `navigator.permissions.query` answers for it, and a way to change it as the
+ * person would by answering the prompt or the site settings.
+ */
+const withLocalNetworkPermission = async (
+  page: import("@playwright/test").Page,
+  state: "prompt" | "granted" | "denied",
+) => {
+  await page.addInitScript((initial) => {
+    const status: any = { state: initial, onchange: null };
+    (window as any).__localNetwork = status;
+    const query = navigator.permissions.query.bind(navigator.permissions);
+    navigator.permissions.query = (descriptor: any) =>
+      ["local-network-access", "local-network", "loopback-network"].includes(
+        descriptor.name,
+      )
+        ? Promise.resolve(status as PermissionStatus)
+        : query(descriptor);
+  }, state);
+
+  return (next: "prompt" | "granted" | "denied") =>
+    page.evaluate((value) => {
+      const status = (window as any).__localNetwork;
+      status.state = value;
+      status.onchange?.();
+    }, next);
+};
+
+/** Runs the page's timers until the verdict shows a diagnosis. */
+const waitForDiagnosis = async (
+  page: import("@playwright/test").Page,
+  diagnosis: string,
+) => {
+  await expect(async () => {
+    await page.clock.runFor(11000);
+    await expect(verdict(page)).toHaveAttribute("data-diagnosis", diagnosis, {
+      timeout: 1000,
+    });
+  }).toPass();
+};
+
+test("a getname that never answers, with the permission already given, is a network without a path to it", async ({
   page,
   mockApi,
 }) => {
   getname = await startGetname({ hang: true });
+  await withLocalNetworkPermission(page, "granted");
   mockApi.override("GET /public/getname-validation/:token", {
     json: plan(getname),
   });
@@ -555,15 +607,123 @@ test("a getname that never answers is reported as a network without a path to it
     "running",
   );
 
-  // the request and the one that ignores CORS each wait their own deadline
-  await expect(async () => {
-    await page.clock.runFor(11000);
-    await expect(verdict(page)).toHaveAttribute(
-      "data-diagnosis",
-      "unreachable_timeout",
-      { timeout: 1000 },
-    );
-  }).toPass();
+  await waitForDiagnosis(page, "unreachable_timeout");
+  // one silence is enough: no second request is made to confirm it
+  expect(getname.requests).toEqual(["GET /health"]);
+});
+
+test("silence while the browser may be asking for the permission asks for it first, then blames the network", async ({
+  page,
+  mockApi,
+}) => {
+  getname = await startGetname({ hang: true });
+  await withLocalNetworkPermission(page, "prompt");
+  mockApi.override("GET /public/getname-validation/:token", {
+    json: plan(getname),
+  });
+  mockApi.override("POST /public/getname-validation/:token/result", {
+    json: saved(),
+  });
+
+  await page.clock.install();
+  await page.goto(`/validar-getname/${TOKEN}`);
+  await page.getByRole("button", { name: "Iniciar teste" }).click();
+
+  // the request may be waiting behind a prompt nobody answered: not a
+  // firewall, not yet
+  await waitForDiagnosis(page, "permission_pending");
+  await expect(
+    page.getByText("O navegador está aguardando a sua permissão"),
+  ).toBeVisible();
+  await expect(page.locator("[data-owner]")).toHaveAttribute("data-owner", "you");
+
+  // no prompt was there to answer: the second silence is the network's
+  await page.getByRole("button", { name: "Testar novamente" }).click();
+  await waitForDiagnosis(page, "unreachable_timeout");
+
+  // the verdict shows before the receipt is posted
+  await expect.poll(() => receipts(mockApi).length).toBe(2);
+  const [first, second] = receipts(mockApi);
+  expect(first.diagnosis).toBe("permission_pending");
+  expect(second.diagnosis).toBe("unreachable_timeout");
+});
+
+test("answering the permission prompt late restarts the test by itself", async ({
+  page,
+  mockApi,
+}) => {
+  getname = await startGetname({ hang: true });
+  const setPermission = await withLocalNetworkPermission(page, "prompt");
+  mockApi.override("GET /public/getname-validation/:token", {
+    json: plan(getname),
+  });
+  mockApi.override("POST /public/getname-validation/:token/result", {
+    json: saved(),
+  });
+
+  await page.clock.install();
+  await page.goto(`/validar-getname/${TOKEN}`);
+  await page.getByRole("button", { name: "Iniciar teste" }).click();
+  await waitForDiagnosis(page, "permission_pending");
+
+  // the person clicks Allow on the prompt: the request goes through now
+  getname.control.hang = false;
+  await setPermission("granted");
+
+  await waitForDiagnosis(page, "ok");
+});
+
+test("a getname that sends its headers and stalls the body does not hold the test forever", async ({
+  page,
+  mockApi,
+}) => {
+  getname = await startGetname({ stallBody: true });
+  await withLocalNetworkPermission(page, "granted");
+  mockApi.override("GET /public/getname-validation/:token", {
+    json: plan(getname),
+  });
+  mockApi.override("POST /public/getname-validation/:token/result", {
+    json: saved(),
+  });
+
+  await page.clock.install();
+  await page.goto(`/validar-getname/${TOKEN}`);
+  await page.getByRole("button", { name: "Iniciar teste" }).click();
+
+  // something answered, but not as a getname: the body is read under the
+  // same deadline as the request
+  await waitForDiagnosis(page, "http_error");
+  await expect(check(page, "reachability")).toHaveAttribute(
+    "data-status",
+    "passed",
+  );
+  await expect(check(page, "health")).toHaveAttribute("data-status", "failed");
+});
+
+test("a getname the app answers with headers of its own is not failed for asking authentication", async ({
+  page,
+  mockApi,
+}) => {
+  getname = await startGetname({ authEnabled: true });
+  mockApi.override("GET /public/getname-validation/:token", {
+    // type default, but the schema has custom headers (never sent to the page)
+    json: plan(getname, { lookup: "skip", customHeaders: true }),
+  });
+  mockApi.override("POST /public/getname-validation/:token/result", {
+    json: saved(),
+  });
+
+  await page.goto(`/validar-getname/${TOKEN}`);
+  await page.getByRole("button", { name: "Iniciar teste" }).click();
+
+  await expect(verdict(page)).toHaveAttribute("data-diagnosis", "ok");
+  await expect(check(page, "auth_config")).toHaveAttribute(
+    "data-status",
+    "skipped",
+  );
+  await expect(check(page, "lookup")).toHaveAttribute("data-status", "skipped");
+  // without that flag the same getname is a mismatch (the test above)
+  expect(getname.requests).not.toContain("GET /patient-name/0");
 });
 
 test("a getname that does not allow the NoHarm origin is told apart from a network problem", async ({
@@ -606,15 +766,7 @@ test("a browser that blocks the local network says where to click, and the test 
 
   // the browser's answer for a site whose local network access was blocked,
   // with a handle for the test to "allow it in the site settings"
-  await page.addInitScript(() => {
-    const status: any = { state: "denied", onchange: null };
-    (window as any).__localNetwork = status;
-    const query = navigator.permissions.query.bind(navigator.permissions);
-    navigator.permissions.query = (descriptor: any) =>
-      descriptor.name === "local-network-access"
-        ? Promise.resolve(status as PermissionStatus)
-        : query(descriptor);
-  });
+  const setPermission = await withLocalNetworkPermission(page, "denied");
   mockApi.override("GET /public/getname-validation/:token", {
     json: plan(getname),
   });
@@ -649,11 +801,7 @@ test("a browser that blocks the local network says where to click, and the test 
 
   // the person allows it in the site settings: no click on this page
   getname.control.down = false;
-  await page.evaluate(() => {
-    const status = (window as any).__localNetwork;
-    status.state = "granted";
-    status.onchange?.();
-  });
+  await setPermission("granted");
 
   await expect(verdict(page)).toHaveAttribute("data-diagnosis", "ok");
   expect(receipts(mockApi)).toHaveLength(2);
