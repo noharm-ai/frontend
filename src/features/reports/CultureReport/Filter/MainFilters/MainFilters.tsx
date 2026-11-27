@@ -1,23 +1,33 @@
-import React, { useContext } from "react";
-import { useSelector } from "react-redux";
+import { useContext } from "react";
+import type { Dayjs } from "dayjs";
 
+import { useAppSelector } from "src/store";
 import { RangeDatePicker, Select, SelectCustom } from "components/Inputs";
 import Heading from "components/Heading";
 import { Col } from "components/Grid";
 import { AdvancedFilterContext } from "components/AdvancedFilter";
+import type { CultureReportFilters } from "../../transformers";
 
-export default function MainFilters() {
-  const exams = useSelector(
-    (state) => state.reportsArea.culture.filterData.exams
+// what components/AdvancedFilter (still JS) hands its filters through context
+interface FilterContextValue {
+  values: CultureReportFilters;
+  setFieldValue: (values: Partial<CultureReportFilters>) => void;
+}
+
+export function MainFilters() {
+  const exams = useAppSelector(
+    (state) => state.reportsArea.culture.filterData.exams,
   );
-  const materials = useSelector(
-    (state) => state.reportsArea.culture.filterData.examMaterials
+  const materials = useAppSelector(
+    (state) => state.reportsArea.culture.filterData.examMaterials,
   );
-  const microorganisms = useSelector(
-    (state) => state.reportsArea.culture.filterData.microorganisms
+  const microorganisms = useAppSelector(
+    (state) => state.reportsArea.culture.filterData.microorganisms,
   );
-  const status = useSelector((state) => state.reportsArea.culture.status);
-  const { values, setFieldValue } = useContext(AdvancedFilterContext);
+  const status = useAppSelector((state) => state.reportsArea.culture.status);
+  const { values, setFieldValue } = useContext(
+    AdvancedFilterContext,
+  ) as FilterContextValue;
 
   return (
     <>
@@ -28,7 +38,7 @@ export default function MainFilters() {
         <RangeDatePicker
           format="DD/MM/YYYY"
           value={values.dateRange}
-          onChange={(val) => setFieldValue({ dateRange: val })}
+          onChange={(val: Dayjs[] | null) => setFieldValue({ dateRange: val })}
           allowClear
           style={{ width: "100%" }}
         />
@@ -40,7 +50,7 @@ export default function MainFilters() {
         <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.examNameList}
-          onChange={(val) => setFieldValue({ examNameList: val })}
+          onChange={(val: string[]) => setFieldValue({ examNameList: val })}
           showSearch
           optionFilterProp="children"
           mode="multiple"
@@ -63,7 +73,9 @@ export default function MainFilters() {
         <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.examMaterialNameList}
-          onChange={(val) => setFieldValue({ examMaterialNameList: val })}
+          onChange={(val: string[]) =>
+            setFieldValue({ examMaterialNameList: val })
+          }
           showSearch
           optionFilterProp="children"
           mode="multiple"
@@ -86,7 +98,9 @@ export default function MainFilters() {
         <SelectCustom
           style={{ width: "100%", maxWidth: "400px" }}
           value={values.microorganismList}
-          onChange={(val) => setFieldValue({ microorganismList: val })}
+          onChange={(val: string[]) =>
+            setFieldValue({ microorganismList: val })
+          }
           showSearch
           optionFilterProp="children"
           mode="multiple"

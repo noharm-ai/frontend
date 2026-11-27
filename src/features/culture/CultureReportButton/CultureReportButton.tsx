@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import Button from "components/Button";
 import DefaultModal from "components/Modal";
-import CultureReport from "features/reports/CultureReport/CultureReport";
+import { CultureReport } from "features/reports/CultureReport/CultureReport";
 import { trackReport, TrackedReport } from "src/utils/tracker";
 
 interface ICultureReportButtonProps {
