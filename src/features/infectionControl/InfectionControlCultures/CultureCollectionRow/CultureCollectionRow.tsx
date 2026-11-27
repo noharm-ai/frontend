@@ -139,7 +139,7 @@ function OrganismSummary({
           </span>
         ))}
         {resistant.length > 0 && (
-          <span data-testid="organism-resistant">
+          <span className="drug-list" data-testid="organism-resistant">
             <span className="label resistant">
               {t("infectionControl.cultures.collections.resistantTo")}
             </span>{" "}
@@ -147,7 +147,7 @@ function OrganismSummary({
           </span>
         )}
         {susceptible.length > 0 && (
-          <span data-testid="organism-susceptible">
+          <span className="drug-list" data-testid="organism-susceptible">
             <span className="label susceptible">
               {t("infectionControl.cultures.collections.susceptibleTo")}
             </span>{" "}
