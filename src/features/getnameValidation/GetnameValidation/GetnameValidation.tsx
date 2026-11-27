@@ -56,9 +56,11 @@ const CHECK_ORDER: CheckId[] = [
   "lookup",
 ];
 
-// Who has to act on each diagnosis. The person in front of the page is told
-// to do something only when it is theirs to do; what the NoHarm team fixes
-// already reached it with the saved result.
+// Who has to act on each diagnosis. The person in front of the page only runs
+// the test: they are asked for something only when it is in their own browser
+// ("you"). Everything else already reached the NoHarm team with the saved
+// result, and when the hospital's IT has to act ("it") it is the NoHarm team
+// that contacts it - the ticket carries the message to send (backend).
 const OWNERS: Record<string, Owner> = {
   legacy_version: "noharm",
   certificate_accepted: "noharm",
@@ -85,17 +87,6 @@ const OWNER_COLORS: Record<Owner, string> = {
   noharm: "green",
 };
 
-// diagnoses with something for who runs the hospital's network: the page
-// writes the message, with the server and the port, ready to be sent
-const IT_MESSAGE_DIAGNOSES = [
-  "local_network_denied",
-  "unreachable_timeout",
-  "connection_refused",
-  "dns",
-  "blocked_by_browser",
-  "unhealthy_database",
-];
-
 const STATUS_ICONS: Record<string, React.ReactNode> = {
   passed: <CheckCircleFilled />,
   failed: <CloseCircleFilled />,
@@ -118,7 +109,7 @@ export function GetnameValidation() {
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const [ticket, setTicket] = useState<string | null>(null);
   const [runs, setRuns] = useState(0);
-  const [copied, setCopied] = useState<"receipt" | "it" | null>(null);
+  const [copied, setCopied] = useState(false);
   // the getname was opened in a tab of its own (guided step of "unreachable")
   const [opened, setOpened] = useState(false);
 
@@ -167,7 +158,7 @@ export function GetnameValidation() {
     setReceipt(null);
     setPermissionPrompt(false);
     setSaveState("idle");
-    setCopied(null);
+    setCopied(false);
     setOpened(false);
 
     const result = await runGetnameValidation(plan, {
@@ -211,11 +202,13 @@ export function GetnameValidation() {
     return watchPermissions(() => retest.current());
   }, [blockedByPermission]);
 
-  const copy = (text: string, kind: "receipt" | "it") => {
+  const copyReceipt = () => {
+    if (!plan || !receipt) return;
+
     navigator.clipboard
-      ?.writeText(text)
-      .then(() => setCopied(kind))
-      .catch(() => setCopied(null));
+      ?.writeText(receiptToText(plan, receipt, ticket))
+      .then(() => setCopied(true))
+      .catch(() => setCopied(false));
   };
 
   // host, port and origin, for the texts that name them
@@ -225,17 +218,6 @@ export function GetnameValidation() {
     port: (plan && serverOf(plan)?.port) ?? "",
     protocol: (plan && serverOf(plan)?.protocol) ?? "",
   });
-
-  const itMessage = (diagnosis: string) =>
-    t("getnameValidation.itMessage.body", {
-      ...context(),
-      problem: t(`getnameValidation.it.${diagnosis}.problem`, context()),
-      request: t(`getnameValidation.it.${diagnosis}.request`, context()),
-      date: new Date().toLocaleString(i18n.language),
-      ticketLine: ticket
-        ? t("getnameValidation.itMessage.ticketLine", { ticket })
-        : "",
-    });
 
   const checkMessage = (check: ICheck) => {
     const parts = [];
@@ -352,6 +334,9 @@ export function GetnameValidation() {
 
     if (!owner) return null;
 
+    // the texts of what the NoHarm team takes from here, alone or with IT
+    const handled = owner === "it" ? "withIt" : "noharm";
+
     return (
       <Resolution data-owner={owner}>
         <div className="owner">
@@ -361,14 +346,15 @@ export function GetnameValidation() {
           </Tag>
         </div>
 
-        {owner === "noharm" && (
+        {owner !== "you" && (
           <p className="owner-notice">
             {saveState === "saved"
-              ? ticket
-                ? t("getnameValidation.noharm.saved", { ticket })
-                : t("getnameValidation.noharm.savedNoTicket")
+              ? t(
+                  `getnameValidation.${handled}.${ticket ? "saved" : "savedNoTicket"}`,
+                  { ticket },
+                )
               : saveState === "error"
-                ? t("getnameValidation.noharm.unsaved")
+                ? t(`getnameValidation.${handled}.unsaved`)
                 : t("getnameValidation.saving")}
           </p>
         )}
@@ -387,19 +373,6 @@ export function GetnameValidation() {
 
         {diagnosis === "unreachable" && renderGuide()}
 
-        {IT_MESSAGE_DIAGNOSES.includes(diagnosis) && (
-          <div className="resolution-actions">
-            <Button
-              icon={<CopyOutlined />}
-              data-kb="getnameValidation.itMessage"
-              onClick={() => copy(itMessage(diagnosis), "it")}
-            >
-              {copied === "it"
-                ? t("getnameValidation.itMessage.copied")
-                : t("getnameValidation.itMessage.button")}
-            </Button>
-          </div>
-        )}
       </Resolution>
     );
   };
@@ -595,15 +568,8 @@ export function GetnameValidation() {
                     >
                       {t("getnameValidation.again")}
                     </Button>
-                    <Button
-                      icon={<CopyOutlined />}
-                      onClick={() =>
-                        plan &&
-                        receipt &&
-                        copy(receiptToText(plan, receipt, ticket), "receipt")
-                      }
-                    >
-                      {copied === "receipt"
+                    <Button icon={<CopyOutlined />} onClick={copyReceipt}>
+                      {copied
                         ? t("getnameValidation.copied")
                         : t("getnameValidation.copy")}
                     </Button>

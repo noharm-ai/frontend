@@ -1658,16 +1658,14 @@
           "Clique no ícone à esquerda do endereço desta página (cadeado ou controles do site).",
           "Em \"Acesso à rede local\" (ou \"Dispositivos na rede local\"), escolha Permitir.",
           "Pronto: o teste recomeça sozinho assim que a permissão for liberada.",
-          "Se a opção estiver travada pela empresa, envie a mensagem abaixo para a TI."
+          "Se a opção não aparecer ou estiver travada, não é preciso fazer mais nada: a equipe NoHarm já recebeu este resultado e vai tratar com a TI do hospital."
         ]
       },
       "unreachable_timeout": {
         "title": "Esta rede não chega até o servidor do getname",
         "description": "A chamada foi enviada para {{host}} (porta {{port}}) e nenhuma resposta voltou. É o que acontece quando um firewall bloqueia o caminho ou quando o computador está fora da rede do hospital.",
         "steps": [
-          "Confirme que este computador está na rede do hospital (cabo ou Wi-Fi interno; VPN ligada, se for o caso).",
-          "Envie a mensagem abaixo para a TI do hospital.",
-          "Depois da liberação, clique em Testar novamente."
+          "Se este computador estiver fora da rede do hospital (ou com a VPN desligada), conecte-o e clique em Testar novamente."
         ]
       },
       "unreachable": {
@@ -1678,24 +1676,17 @@
       "certificate": {
         "title": "O certificado https do getname não é aceito por este computador",
         "description": "O servidor está no ar e a rede chega até ele, mas o navegador recusa o certificado de {{host}}: vencido, emitido para outro endereço ou por uma autoridade que este computador não conhece.",
-        "steps": [
-          "Para usar já neste computador: na outra aba, clique em Avançado e depois em Continuar; volte aqui e clique em Testar novamente."
-        ]
+        "steps": []
       },
       "connection_refused": {
         "title": "O getname não está atendendo na porta {{port}}",
         "description": "A rede chega até {{host}}, mas a conexão é recusada na porta {{port}}: o serviço está parado, está em outra porta ou um firewall rejeita a conexão.",
-        "steps": [
-          "Se existe um firewall entre esta rede e o servidor, envie a mensagem abaixo para a TI do hospital."
-        ]
+        "steps": []
       },
       "dns": {
         "title": "Este computador não encontra o endereço {{host}}",
         "description": "O nome do servidor do getname não é resolvido pelo DNS que este computador usa.",
-        "steps": [
-          "Envie a mensagem abaixo para a TI do hospital.",
-          "Depois do ajuste, clique em Testar novamente."
-        ]
+        "steps": []
       },
       "blocked_by_browser": {
         "title": "O navegador abre o getname, mas bloqueia as chamadas feitas pela NoHarm",
@@ -1703,7 +1694,7 @@
         "steps": [
           "Clique no ícone à esquerda do endereço desta página e permita \"Acesso à rede local\", se a opção existir.",
           "Teste em uma janela anônima ou com as extensões desativadas.",
-          "Se continuar, envie a mensagem abaixo para a TI."
+          "Se continuar, não é preciso fazer mais nada: a equipe NoHarm já recebeu este resultado e vai tratar com a TI do hospital."
         ]
       },
       "cors": {
@@ -1719,9 +1710,7 @@
       "unhealthy_database": {
         "title": "O getname não consegue acessar o banco de dados do hospital",
         "description": "O serviço está no ar e este computador o acessa. Quem não responde é o banco de dados de onde vêm os nomes.",
-        "steps": [
-          "Se o banco ou o usuário do getname mudou recentemente, envie a mensagem abaixo para a TI do hospital."
-        ]
+        "steps": []
       },
       "auth_mismatch": {
         "title": "O getname e a configuração da NoHarm discordam sobre autenticação",
@@ -1742,13 +1731,18 @@
     "owner": {
       "label": "Quem resolve",
       "you": "Você, agora",
-      "it": "TI do hospital",
+      "it": "Equipe NoHarm, com a TI do hospital",
       "noharm": "Equipe NoHarm"
     },
     "noharm": {
       "saved": "Você não precisa fazer nada. A equipe NoHarm já recebeu este resultado no chamado {{ticket}} e vai corrigir. Quando avisarem, abra este link de novo e repita o teste.",
       "savedNoTicket": "Você não precisa fazer nada. A equipe NoHarm já recebeu este resultado e vai corrigir. Quando avisarem, abra este link de novo e repita o teste.",
       "unsaved": "A correção é feita pela equipe NoHarm, mas o resultado ainda não chegou até ela. Use \"Copiar comprovante\" e envie para a NoHarm."
+    },
+    "withIt": {
+      "saved": "Você não precisa fazer nada. A equipe NoHarm já recebeu este resultado no chamado {{ticket}} e vai tratar com a TI do hospital. Quando avisarem, abra este link de novo e repita o teste.",
+      "savedNoTicket": "Você não precisa fazer nada. A equipe NoHarm já recebeu este resultado e vai tratar com a TI do hospital. Quando avisarem, abra este link de novo e repita o teste.",
+      "unsaved": "Quem trata com a TI do hospital é a equipe NoHarm, mas o resultado ainda não chegou até ela. Use \"Copiar comprovante\" e envie para a NoHarm."
     },
     "guide": {
       "step1": "Abra o getname em outra aba",
@@ -1776,38 +1770,6 @@
           "label": "Ficou carregando e não abriu",
           "hint": "\"Demorou muito para responder\" · ERR_CONNECTION_TIMED_OUT"
         }
-      }
-    },
-    "itMessage": {
-      "button": "Copiar mensagem para a TI",
-      "copied": "Mensagem copiada",
-      "body": "Olá! Estamos validando o acesso ao serviço de nomes da NoHarm (getname) e o teste falhou neste computador.\n\nProblema: {{problem}}\nServidor do getname: {{host}}, porta {{port}} ({{protocol}})\nSite que faz as chamadas: {{origin}}\nO que precisamos: {{request}}\n\nTeste feito em {{date}}.{{ticketLine}}",
-      "ticketLine": " Chamado NoHarm: {{ticket}}."
-    },
-    "it": {
-      "local_network_denied": {
-        "problem": "o navegador bloqueia o acesso de {{origin}} à rede local (Local Network Access).",
-        "request": "liberar {{origin}} na política LocalNetworkAccessAllowedForUrls do Chrome/Edge (LocalNetworkAllowedForUrls nas versões mais novas) nos computadores que usam a NoHarm."
-      },
-      "unreachable_timeout": {
-        "problem": "este computador não recebe resposta do servidor do getname (tempo esgotado).",
-        "request": "liberar o acesso da rede dos computadores que usam a NoHarm ao servidor e à porta acima (firewall / roteamento)."
-      },
-      "connection_refused": {
-        "problem": "a conexão com o servidor do getname é recusada.",
-        "request": "confirmar que nenhum firewall rejeita conexões desta rede para o servidor e a porta acima."
-      },
-      "dns": {
-        "problem": "o nome do servidor do getname não é resolvido (DNS).",
-        "request": "fazer com que os computadores que usam a NoHarm resolvam o nome acima (DNS interno ou liberação do DNS externo)."
-      },
-      "blocked_by_browser": {
-        "problem": "o navegador bloqueia as chamadas de {{origin}} ao servidor do getname, embora o servidor abra normalmente em uma aba.",
-        "request": "verificar políticas do navegador, extensões ou antivírus que bloqueiem chamadas de {{origin}} a endereços da rede interna."
-      },
-      "unhealthy_database": {
-        "problem": "o serviço de nomes da NoHarm (getname) não consegue conectar ao banco de dados do hospital.",
-        "request": "confirmar que o banco está no ar e que o usuário, a senha e a liberação de rede usados pelo getname continuam válidos."
       }
     }
   },

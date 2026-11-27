@@ -186,21 +186,6 @@ const receipts = (mockApi: { requests: { path: string; postData?: string }[] }) 
     .filter((r) => r.path.endsWith("/result"))
     .map((r) => JSON.parse(r.postData!));
 
-/**
- * Captures what the page copies. Granting the clipboard permission is not an
- * option here: Playwright denies every permission it was not asked to grant,
- * the local network one included, and that is a diagnosis of this page.
- */
-const captureClipboard = async (page: import("@playwright/test").Page) => {
-  await page.addInitScript(() => {
-    navigator.clipboard.writeText = async (text: string) => {
-      (window as any).__copied = text;
-    };
-  });
-
-  return () => page.evaluate(() => (window as any).__copied as string);
-};
-
 /** A port with nothing listening: connections to it are refused. */
 const closedPort = async () => {
   const server = await startGetname();
@@ -341,7 +326,6 @@ test("a connection that fails is narrowed down in two clicks, and the answer goe
   page,
   mockApi,
 }) => {
-  const copied = await captureClipboard(page);
   const port = await closedPort();
   const url = `http://localhost:${port}/`;
   mockApi.override("GET /public/getname-validation/:token", {
@@ -406,14 +390,12 @@ test("a connection that fails is narrowed down in two clicks, and the answer goe
     "saw_refused",
   );
 
-  // and what is for the hospital's network team comes written, with the
-  // server and the port
-  await page.getByRole("button", { name: "Copiar mensagem para a TI" }).click();
-  await expect(page.getByText("Mensagem copiada")).toBeVisible();
-  const message = await copied();
-  expect(message).toContain(`Servidor do getname: localhost, porta ${port} (http)`);
-  expect(message).toContain(`Site que faz as chamadas: ${ORIGIN}`);
-  expect(message).toContain("Chamado NoHarm: T0042");
+  // the person only runs the test: no errand to the hospital's IT. The
+  // message for IT goes in the ticket, for the NoHarm staff (backend)
+  await expect(
+    page.getByRole("button", { name: "Copiar mensagem para a TI" }),
+  ).toHaveCount(0);
+  await expect(page.getByText(/envie .* para a TI/i)).toHaveCount(0);
 });
 
 test("a https getname offers the security warning, which points at the certificate", async ({
@@ -470,7 +452,14 @@ test("a getname with a name offers the address not found, which goes to the hosp
   await expect(
     page.getByText("Este computador não encontra o endereço getname.invalid"),
   ).toBeVisible();
+  // IT has to act, and it is the NoHarm team that goes to IT
   await expect(page.locator("[data-owner]")).toHaveAttribute("data-owner", "it");
+  await expect(
+    page.getByText(
+      "Você não precisa fazer nada. A equipe NoHarm já recebeu este resultado no chamado T0042 e vai tratar com a TI do hospital.",
+    ),
+  ).toBeVisible();
+  await expect(page.getByText(/envie .* para a TI/i)).toHaveCount(0);
 });
 
 test("a getname that works after the security warning was accepted is not the same as ok", async ({
@@ -608,7 +597,6 @@ test("a browser that blocks the local network says where to click, and the test 
   page,
   mockApi,
 }) => {
-  const copied = await captureClipboard(page);
   getname = await startGetname();
   // what a blocked request looks like from the page: it never gets an answer
   getname.control.down = true;
@@ -646,10 +634,15 @@ test("a browser that blocks the local network says where to click, and the test 
     receipts(mockApi)[0].environment.permissions["local-network-access"],
   ).toBe("denied");
 
-  // for a computer where the option is locked, the message for IT names the policy
-  await page.getByRole("button", { name: "Copiar mensagem para a TI" }).click();
-  await expect(page.getByText("Mensagem copiada")).toBeVisible();
-  expect(await copied()).toContain("LocalNetworkAccessAllowedForUrls");
+  // a locked option is not the person's problem either
+  await expect(
+    page.getByText(
+      "Se a opção não aparecer ou estiver travada, não é preciso fazer mais nada",
+    ),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Copiar mensagem para a TI" }),
+  ).toHaveCount(0);
 
   // the person allows it in the site settings: no click on this page
   getname.control.down = false;

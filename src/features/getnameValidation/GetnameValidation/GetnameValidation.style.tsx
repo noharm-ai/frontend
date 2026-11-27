@@ -122,13 +122,6 @@ export const Resolution = styled.div`
   li {
     margin-bottom: 4px;
   }
-
-  .resolution-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 12px;
-  }
 `;
 
 /* the two clicks that find why a connection failed */
